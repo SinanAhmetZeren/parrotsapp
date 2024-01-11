@@ -3,13 +3,12 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, Button } from "react-native";
 
-export default function MainScreen({ route, navigation }) {
-  const { message } = route.params;
+export default function MainScreen({ navigation }) {
+  //   const { message } = route.params;
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text style={styles.spacer}>Main Screen</Text>
-      {message ? <Text style={styles.spacer}>{message}</Text> : null}
 
       <Image
         style={styles.logo}
@@ -19,7 +18,6 @@ export default function MainScreen({ route, navigation }) {
         title="Go to Profile"
         onPress={() =>
           navigation.navigate("Profile", {
-            message: "hello from main screen",
             title: "Came from Main",
           })
         }

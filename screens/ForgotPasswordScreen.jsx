@@ -3,25 +3,17 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, Button } from "react-native";
 
-export default function CreateVoyageScreen({ navigation }) {
+export default function ForgotPasswordScreen({ navigation }) {
   //   const { message } = route.params;
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={styles.spacer}>Create Voyage Screen</Text>
-      {/* {message ? <Text style={styles.spacer}>{message}</Text> : null} */}
+      <Text style={styles.spacer}>Messages Screen</Text>
 
       <Image
         style={styles.logo}
         source={require("../assets/parrot-profile.jpg")}
       />
-      <Button
-        title="Go to Main"
-        onPress={() =>
-          navigation.navigate("Main", {
-            // message: "hello from profile screen",
-          })
-        }
-      />
+      <Button title="Go to Main" onPress={() => navigation.navigate("Home")} />
     </View>
   );
 }
