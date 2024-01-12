@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from "react-native";
 import MapView from "react-native-maps";
 import VehicleCard from "../components/VehicleCard";
@@ -21,92 +22,103 @@ export default function MainScreen({ navigation }) {
   const username = "Öznur";
 
   return (
-    <SafeAreaView>
-      <View style={{ backgroundColor: "cornsilk" }}>
-        {/* <ScrollView style={styles.scrollView}> */}
-        <View style={{ height: 20 }}></View>
+    <View>
+      <View style={{ height: 40, backgroundColor: "red" }}></View>
 
-        {/* ------ WELCOME AND FILTER CONTAINER ------ */}
-        <View style={styles.welcomeandFilters}>
-          <View style={styles.welcomebox}>
-            <Text style={styles.welcome}>Welcome to Parrots</Text>
-            <Text style={styles.username}>{username}!</Text>
-          </View>
-          <View style={styles.filterbox}>
-            <MaterialCommunityIcons
-              style={styles.icon}
-              name="human"
-              size={24}
-              color="black"
-            />
-            <AntDesign
-              style={styles.icon}
-              name="calendar"
-              size={24}
-              color="black"
-            />
-            <Ionicons
-              style={styles.icon}
-              name="car-outline"
-              size={24}
-              color="black"
-            />
-          </View>
+      <View style={styles.welcomeandFilters}>
+        <View style={styles.welcomebox}>
+          <Text style={styles.welcome}>Welcome to Parrots</Text>
+          <Text style={styles.username}>{username}!</Text>
         </View>
-        {/* ------ WELCOME AND FILTER CONTAINER ------ */}
-
-        {/* ------ VOYAGE AND VEHICLE CONTAINER ------ */}
-        <View style={styles.viewChoice}>
-          <View style={styles.choiceItem}>
-            <TouchableOpacity>
-              <Text style={styles.choiceItemText}>Vehicles</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.choiceItem}>
-            <TouchableOpacity>
-              <Text style={styles.choiceItemText}>Voyages</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.filterbox}>
+          <MaterialCommunityIcons
+            style={styles.icon}
+            name="human"
+            size={24}
+            color="black"
+          />
+          <AntDesign
+            style={styles.icon}
+            name="calendar"
+            size={24}
+            color="black"
+          />
+          <Ionicons
+            style={styles.icon}
+            name="car-outline"
+            size={24}
+            color="black"
+          />
         </View>
-
-        {/* ------ VOYAGE AND VEHICLE CONTAINER ------ */}
-
-        {/* ------ MAP CONTAINER ------ */}
-        <View style={styles.mapContainer}>
-          <View style={styles.mapWrapper}>
-            <MapView style={styles.map} initialRegion={initialRegion} />
-          </View>
-        </View>
-        {/* ------ MAP CONTAINER ------ */}
-
-        <View style={styles.flatListToBe}>
-          <VehicleCard />
-        </View>
-        <View style={styles.flatListToBe}>
-          <VehicleCard />
-        </View>
-        {/* </ScrollView> */}
       </View>
-    </SafeAreaView>
+
+      <View style={styles.viewChoice}>
+        <View style={styles.choiceItem}>
+          <TouchableOpacity>
+            <Text style={styles.choiceItemText}>Vehicles</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.choiceItem}>
+          <TouchableOpacity>
+            <Text style={styles.choiceItemText}>Voyages</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.mapContainer}>
+        <View style={styles.mapWrapper}>
+          <MapView style={styles.map} initialRegion={initialRegion} />
+        </View>
+      </View>
+
+      <View style={styles.flatListToBe}>
+        <VehicleCard />
+        <VehicleCard />
+        <VehicleCard />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-    height: 200,
-    backgroundColor: "red",
+  scroll: {
+    // flex: 1,
+    height: 800,
+    marginTop: 0,
+    marginBottom: 0,
+    backgroundColor: "brown",
   },
-
+  welcomeandFilters: {
+    height: "7%",
+    flexDirection: "row",
+    paddingHorizontal: 15,
+    marginTop: 15,
+    backgroundColor: "lightgreen",
+  },
+  viewChoice: {
+    height: "5%",
+    backgroundColor: "lightblue",
+    padding: 10,
+    marginTop: 2,
+    flexDirection: "row",
+  },
   mapContainer: {
-    backgroundColor: "white",
+    height: "50%",
+    backgroundColor: "khaki",
     width: "100%",
-    height: 400,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 3,
+    paddingBottom: 3,
     alignItems: "center",
     justifyContent: "center",
+    alignSelf: "center",
   },
+  flatListToBe: {
+    height: "30%",
+    flexDirection: "row",
+    backgroundColor: "red",
+    paddingBottom: 0,
+  },
+
   mapWrapper: {
     width: "92%",
     height: "98%",
@@ -125,12 +137,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "700",
   },
-  welcomeandFilters: {
-    flexDirection: "row",
-    padding: 15,
-    marginTop: 15,
-    backgroundColor: "white",
-  },
+
   welcomebox: {
     backgroundColor: "white",
   },
@@ -147,11 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
   },
-  viewChoice: {
-    backgroundColor: "white",
-    margin: 10,
-    flexDirection: "row",
-  },
+
   choiceItem: {
     marginHorizontal: 15,
   },
@@ -159,10 +162,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "grey",
-  },
-  flatListToBe: {
-    backgroundColor: "red",
-    height: "33%",
   },
 });
 

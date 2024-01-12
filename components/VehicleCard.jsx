@@ -36,15 +36,16 @@ export default function VehicleCard() {
 const styles = StyleSheet.create({
   cardContainer: {
     marginLeft: 5,
+    marginBottom: 10,
     flexDirection: "row",
     width: "82%",
     height: "100%",
-    backgroundColor: "white",
+    backgroundColor: "yellow",
   },
   imageContainer: {
     backgroundColor: "white",
     width: "55%",
-    height: "95%",
+    height: "100%",
   },
   cardImage: {
     height: "100%",
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
   textContainer: {
     width: "45%",
     padding: 5,
-    backgroundColor: "white",
+    backgroundColor: "yellow",
   },
   header: {
     marginTop: 2,
