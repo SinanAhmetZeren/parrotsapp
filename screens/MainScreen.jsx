@@ -12,13 +12,13 @@ import {
   FlatList,
   TextInput,
 } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import VehicleCard from "../components/VehicleCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-
 export default function MainScreen({ navigation }) {
   //   const { message } = route.params;
   const username = "Öznur";
@@ -28,12 +28,18 @@ export default function MainScreen({ navigation }) {
       {/* <View style={styles.dummyview2}></View> */}
 
       <View style={styles.container1}>
+        <Feather
+          name="menu"
+          size={24}
+          color="black"
+          style={{ marginRight: 8 }}
+        />
         <TextInput
           style={styles.searchInput1}
           placeholder="Search..."
           // Add any other TextInput props you need
         />
-        <Feather name="search" size={24} color="black" />
+        <Fontisto name="bell" size={24} color="black" />
       </View>
 
       <View style={styles.welcomeandFilters}>
@@ -65,8 +71,8 @@ export default function MainScreen({ navigation }) {
 
       <View style={styles.viewChoice}>
         <View style={styles.choiceItem}>
-          <TouchableOpacity>
-            <Text style={styles.choiceItemText}>Vehicles</Text>
+          <TouchableOpacity style={styles.selectedChoice}>
+            <Text style={styles.selectedText}>Vehicles</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.choiceItem}>
@@ -77,7 +83,23 @@ export default function MainScreen({ navigation }) {
       </View>
 
       <View style={styles.mapContainer}>
-        <MapView style={styles.map} initialRegion={initialRegion} />
+        <MapView style={styles.map} initialRegion={initialRegion}>
+          <Marker
+            coordinate={markerCoordinate1}
+            title="Bisikletle Amsterdam"
+            description="Bisiklete binip sokaklarda gezicez"
+          />
+          <Marker
+            coordinate={markerCoordinate2}
+            title="Bisikletle Amsterdam"
+            description="Bisiklete binip sokaklarda gezicez"
+          />
+        </MapView>
+      </View>
+
+      <View style={styles.popularBox}>
+        <Text style={styles.popular}>Popular</Text>
+        <Text style={styles.seeall}>see all</Text>
       </View>
 
       <View style={styles.flatListToBe}>
@@ -122,11 +144,13 @@ const styles = StyleSheet.create({
     // height: "40%",
     flexDirection: "row",
     // backgroundColor: "white",
+    marginLeft: 10,
     paddingBottom: 0,
+    marginTop: 6,
     bottom: 0,
   },
   dummyview1: {
-    height: 430,
+    height: 470,
   },
   dummyview2: {
     height: 50,
@@ -184,6 +208,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
   },
+  popularBox: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    marginTop: 5,
+  },
+  popular: {
+    marginLeft: 6,
+    fontWeight: "700",
+    fontSize: 18,
+    color: "grey",
+  },
+  seeall: {
+    fontWeight: "600",
+    color: "#0077ea",
+    marginRight: 6,
+  },
+  selectedChoice: {
+    backgroundColor: "rgba(0, 0, 255, 0.05)",
+    paddingHorizontal: 14,
+    paddingVertical: 0,
+    borderRadius: 10,
+  },
+  selectedText: {
+    color: "#0077ea",
+    fontSize: 18,
+    fontWeight: "700",
+  },
 });
 
 const initialRegion = {
@@ -191,4 +243,13 @@ const initialRegion = {
   longitude: 4.922197,
   latitudeDelta: 0.5,
   longitudeDelta: 0.5,
+};
+
+const markerCoordinate1 = {
+  latitude: 52.362847,
+  longitude: 4.922197,
+};
+const markerCoordinate2 = {
+  latitude: 52.392847,
+  longitude: 4.962197,
 };

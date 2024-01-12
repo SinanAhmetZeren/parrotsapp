@@ -4,8 +4,8 @@ import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
 export default function VehicleCard() {
-  const cardHeader = "Card Header";
-  const cardSubHeader = "Card SubHeader";
+  const cardHeader = "Boat Tour";
+  const cardSubHeader = "in Greece";
   const cardDescription =
     "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis e";
 
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     width: "82%",
     height: "100%",
     // backgroundColor: "white",
-    borderRadius: 20,
+    borderRadius: 0,
   },
   imageContainer: {
     // backgroundColor: "white",
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     height: 150,
     width: 150,
     margin: 3,
-    borderRadius: 20,
+    borderRadius: 30,
   },
   textContainer: {
     width: "45%",
@@ -59,11 +59,12 @@ const styles = StyleSheet.create({
   },
   header: {
     marginTop: 2,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "700",
   },
   subHeader: {
-    fontSize: 18,
+    fontSize: 14,
+    fontWeight: "600",
   },
   cardDescription: {
     paddingHorizontal: 0,
