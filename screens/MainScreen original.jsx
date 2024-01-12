@@ -19,94 +19,94 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
-
 export default function MainScreen({ navigation }) {
   //   const { message } = route.params;
   const username = "Öznur";
 
   return (
     <ScrollView style={styles.scrollview}>
-      <View style={{ height: vh(100) }}>
-        <View style={styles.searchAndMenu}>
-          <Feather
-            name="menu"
+      {/* <View style={styles.dummyview2}></View> */}
+
+      <View style={styles.container1}>
+        <Feather
+          name="menu"
+          size={24}
+          color="black"
+          style={{ marginRight: 8 }}
+        />
+        <TextInput
+          style={styles.searchInput1}
+          placeholder="Search..."
+          // Add any other TextInput props you need
+        />
+        <Fontisto name="bell" size={24} color="black" />
+      </View>
+
+      <View style={styles.welcomeandFilters}>
+        <View style={styles.welcomebox}>
+          <Text style={styles.welcome}>Welcome to Parrots</Text>
+          <Text style={styles.username}>{username}!</Text>
+        </View>
+        <View style={styles.filterbox}>
+          <MaterialCommunityIcons
+            style={styles.icon}
+            name="human"
             size={24}
             color="black"
-            style={{ marginRight: 8 }}
           />
-          <TextInput
-            style={styles.searchInput1}
-            placeholder="Search..."
-            // Add any other TextInput props you need
+          <AntDesign
+            style={styles.icon}
+            name="calendar"
+            size={24}
+            color="black"
           />
-          <Fontisto name="bell" size={24} color="black" />
-        </View>
-
-        <View style={styles.welcomeandFilters}>
-          <View style={styles.welcomebox}>
-            <Text style={styles.welcome}>Welcome to Parrots</Text>
-            <Text style={styles.username}>{username}!</Text>
-          </View>
-          <View style={styles.filterbox}>
-            <MaterialCommunityIcons
-              style={styles.icon}
-              name="human"
-              size={24}
-              color="black"
-            />
-            <AntDesign
-              style={styles.icon}
-              name="calendar"
-              size={24}
-              color="black"
-            />
-            <Ionicons
-              style={styles.icon}
-              name="car-outline"
-              size={24}
-              color="black"
-            />
-          </View>
-        </View>
-
-        <View style={styles.viewChoice}>
-          <View style={styles.choiceItem}>
-            <TouchableOpacity style={styles.selectedChoice}>
-              <Text style={styles.selectedText}>Vehicles</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.choiceItem}>
-            <TouchableOpacity>
-              <Text style={styles.choiceItemText}>Voyages</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.mapContainer}>
-          <MapView style={styles.map} initialRegion={initialRegion}>
-            <Marker
-              coordinate={markerCoordinate1}
-              title="Bisikletle Amsterdam"
-              description="Bisiklete binip sokaklarda gezicez"
-            />
-            <Marker
-              coordinate={markerCoordinate2}
-              title="Bisikletle Amsterdam"
-              description="Bisiklete binip sokaklarda gezicez"
-            />
-          </MapView>
-        </View>
-
-        <View style={styles.popularBox}>
-          <Text style={styles.popular}>Popular</Text>
-          <Text style={styles.seeall}>see all</Text>
-        </View>
-
-        <View style={styles.flatListToBe}>
-          <VehicleCard />
+          <Ionicons
+            style={styles.icon}
+            name="car-outline"
+            size={24}
+            color="black"
+          />
         </View>
       </View>
+
+      <View style={styles.viewChoice}>
+        <View style={styles.choiceItem}>
+          <TouchableOpacity style={styles.selectedChoice}>
+            <Text style={styles.selectedText}>Vehicles</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.choiceItem}>
+          <TouchableOpacity>
+            <Text style={styles.choiceItemText}>Voyages</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.mapContainer}>
+        <MapView style={styles.map} initialRegion={initialRegion}>
+          <Marker
+            coordinate={markerCoordinate1}
+            title="Bisikletle Amsterdam"
+            description="Bisiklete binip sokaklarda gezicez"
+          />
+          <Marker
+            coordinate={markerCoordinate2}
+            title="Bisikletle Amsterdam"
+            description="Bisiklete binip sokaklarda gezicez"
+          />
+        </MapView>
+      </View>
+
+      <View style={styles.popularBox}>
+        <Text style={styles.popular}>Popular</Text>
+        <Text style={styles.seeall}>see all</Text>
+      </View>
+
+      <View style={styles.flatListToBe}>
+        <VehicleCard />
+      </View>
+
+      <View style={styles.dummyview1}></View>
     </ScrollView>
   );
 }
@@ -121,29 +121,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 15,
     marginTop: 15,
-    backgroundColor: "lightgreen",
+    // backgroundColor: "lightgreen",
   },
   viewChoice: {
-    backgroundColor: "lightblue",
+    // backgroundColor: "lightblue",
     padding: 10,
     marginTop: 2,
     flexDirection: "row",
   },
   mapContainer: {
-    height: "46%",
+    height: "53%",
     marginBottom: 7,
+    // backgroundColor: "white",
     width: "94%",
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
     overflow: "hidden",
     borderRadius: 20,
-    backgroundColor: "lavenderblush ",
   },
   flatListToBe: {
     // height: "40%",
     flexDirection: "row",
-    backgroundColor: "lightpink",
+    // backgroundColor: "white",
     marginLeft: 10,
     paddingBottom: 0,
     marginTop: 6,
@@ -192,12 +192,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "grey",
   },
-  searchAndMenu: {
+  container1: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 10,
-    backgroundColor: "powderblue", // Set background color as needed
+    padding: 10,
+    backgroundColor: "#fff", // Set background color as needed
   },
   searchInput1: {
     flex: 1,
@@ -213,7 +213,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     marginTop: 5,
-    backgroundColor: "paleturquoise",
   },
   popular: {
     marginLeft: 6,
@@ -254,12 +253,3 @@ const markerCoordinate2 = {
   latitude: 52.392847,
   longitude: 4.962197,
 };
-
-const dummyText = <Text>akalal fldkflak </Text>;
-const dummyText2 = (
-  <Text>
-    akalal fldkf flak lal fldkf flak lal fldkf flak lal fldkf flak lal fldkf
-    flak lal fldkf flak lal fldkf flak lal fldkf flak lal fldkf flak lal fldkf
-    flak lal fldkf flak lal fldkf flak{" "}
-  </Text>
-);
