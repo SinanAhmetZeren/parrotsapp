@@ -12,7 +12,7 @@ export default function MessagesScreen({ navigation }) {
 
       <Image
         style={styles.logo}
-        source={require("../assets/parrot-profile.jpg")}
+        source={require("../assets/parrots-message.jpg")}
       />
       <Button
         title="Go to Main"

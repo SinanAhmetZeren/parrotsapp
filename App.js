@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { Text, Platform, View } from "react-native";
+import { Text, Platform, View, StyleSheet, Image } from "react-native";
 
 import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -30,12 +31,14 @@ const screenOptions = {
   headerShown: false,
   tabBarStyle: {
     position: "absolute",
-    bottom: 0,
+    bottom: -20,
     right: 0,
     left: 0,
     elevation: 0,
-    height: 60,
-    background: "#fff",
+    height: 120,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    backgroundColor: "#fff6ec",
   },
 };
 
@@ -93,8 +96,8 @@ const TabNavigator = () => (
               <Text
                 style={
                   focused
-                    ? { fonSize: 12, color: "#3aa4ff" }
-                    : { fonSize: 12, color: "#000" }
+                    ? { fontSize: 12, color: "#3aa4ff" }
+                    : { fontSize: 12, color: "#000" }
                 }
               >
                 Home
@@ -119,8 +122,8 @@ const TabNavigator = () => (
               <Text
                 style={
                   focused
-                    ? { fonSize: 12, color: "#3aa4ff" }
-                    : { fonSize: 12, color: "#000" }
+                    ? { fontSize: 12, color: "#3aa4ff" }
+                    : { fontSize: 12, color: "#000" }
                 }
               >
                 Favorites
@@ -140,14 +143,17 @@ const TabNavigator = () => (
               style={{
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: "#fff",
+                backgroundColor: "#f21f4f",
                 width: Platform.OS == "ios" ? 50 : 60,
                 height: Platform.OS == "ios" ? 50 : 60,
                 top: Platform.OS == "ios" ? -10 : -20,
                 borderRadius: Platform.OS == "ios" ? 25 : 30,
               }}
             >
-              <Entypo name="circle-with-plus" size={60} color="#299cff" />
+              <Image
+                style={styles.plusSign}
+                source={require("./assets/plus-icon.png")}
+              />
             </View>
           );
         },
@@ -168,8 +174,8 @@ const TabNavigator = () => (
               <Text
                 style={
                   focused
-                    ? { fonSize: 12, color: "#3aa4ff" }
-                    : { fonSize: 12, color: "#000" }
+                    ? { fontSize: 12, color: "#3aa4ff" }
+                    : { fontSize: 12, color: "#000" }
                 }
               >
                 Messages
@@ -194,8 +200,8 @@ const TabNavigator = () => (
               <Text
                 style={
                   focused
-                    ? { fonSize: 12, color: "#3aa4ff" }
-                    : { fonSize: 12, color: "#000" }
+                    ? { fontSize: 12, color: "#3aa4ff" }
+                    : { fontSize: 12, color: "#000" }
                 }
               >
                 Profile
@@ -230,3 +236,10 @@ function App() {
 }
 
 export default App;
+
+const styles = StyleSheet.create({
+  plusSign: {
+    height: 60,
+    width: 60,
+  },
+});
