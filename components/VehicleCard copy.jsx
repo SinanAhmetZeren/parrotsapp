@@ -11,10 +11,12 @@ export default function VehicleCard() {
 
   return (
     <View style={styles.cardContainer}>
-      <Image
-        style={styles.cardImage}
-        source={require("../assets/sailboat.jpg")}
-      />
+      <View style={styles.imageContainer}>
+        <Image
+          style={styles.cardImage}
+          source={require("../assets/parrot-profile.jpg")}
+        />
+      </View>
 
       <View style={styles.textContainer}>
         <Text style={styles.header}>{cardHeader}</Text>
@@ -38,24 +40,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "82%",
     height: "100%",
-    // backgroundColor: "white",
-    borderRadius: 20,
+    backgroundColor: "yellow",
   },
   imageContainer: {
-    // backgroundColor: "white",
+    backgroundColor: "white",
     width: "55%",
     height: "100%",
   },
   cardImage: {
-    height: 150,
-    width: 150,
+    height: "100%",
+    width: "100%",
     margin: 3,
     borderRadius: 20,
   },
   textContainer: {
     width: "45%",
     padding: 5,
-    // backgroundColor: "white",
+    backgroundColor: "yellow",
   },
   header: {
     marginTop: 2,

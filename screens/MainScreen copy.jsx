@@ -10,31 +10,20 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
-  TextInput,
 } from "react-native";
 import MapView from "react-native-maps";
 import VehicleCard from "../components/VehicleCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
 
 export default function MainScreen({ navigation }) {
   //   const { message } = route.params;
   const username = "Öznur";
 
   return (
-    <ScrollView style={styles.scrollview}>
-      {/* <View style={styles.dummyview2}></View> */}
-
-      <View style={styles.container1}>
-        <TextInput
-          style={styles.searchInput1}
-          placeholder="Search..."
-          // Add any other TextInput props you need
-        />
-        <Feather name="search" size={24} color="black" />
-      </View>
+    <View>
+      <View style={{ height: 40, backgroundColor: "red" }}></View>
 
       <View style={styles.welcomeandFilters}>
         <View style={styles.welcomebox}>
@@ -77,60 +66,65 @@ export default function MainScreen({ navigation }) {
       </View>
 
       <View style={styles.mapContainer}>
-        <MapView style={styles.map} initialRegion={initialRegion} />
+        <View style={styles.mapWrapper}>
+          <MapView style={styles.map} initialRegion={initialRegion} />
+        </View>
       </View>
 
       <View style={styles.flatListToBe}>
         <VehicleCard />
+        <VehicleCard />
+        <VehicleCard />
       </View>
-
-      <View style={styles.dummyview1}></View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollview: {
-    marginTop: 40,
-    marginBottom: 80,
-    backgroundColor: "white",
+  scroll: {
+    // flex: 1,
+    height: 800,
+    marginTop: 0,
+    marginBottom: 0,
+    backgroundColor: "brown",
   },
   welcomeandFilters: {
+    height: "7%",
     flexDirection: "row",
     paddingHorizontal: 15,
     marginTop: 15,
-    // backgroundColor: "lightgreen",
+    backgroundColor: "lightgreen",
   },
   viewChoice: {
-    // backgroundColor: "lightblue",
+    height: "5%",
+    backgroundColor: "lightblue",
     padding: 10,
     marginTop: 2,
     flexDirection: "row",
   },
   mapContainer: {
-    height: "53%",
-    marginBottom: 7,
-    // backgroundColor: "white",
-    width: "94%",
+    height: "50%",
+    backgroundColor: "khaki",
+    width: "100%",
+    paddingTop: 3,
+    paddingBottom: 3,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    overflow: "hidden",
-    borderRadius: 20,
   },
   flatListToBe: {
-    // height: "40%",
+    height: "30%",
     flexDirection: "row",
-    // backgroundColor: "white",
+    backgroundColor: "red",
     paddingBottom: 0,
-    bottom: 0,
   },
-  dummyview1: {
-    height: 430,
-  },
-  dummyview2: {
-    height: 50,
-    backgroundColor: "yellow",
+
+  mapWrapper: {
+    width: "92%",
+    height: "98%",
+    backgroundColor: "cornsilk",
+    borderRadius: 15,
+    overflow: "hidden",
   },
   map: {
     width: "100%",
@@ -143,20 +137,21 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "700",
   },
+
   welcomebox: {
-    // backgroundColor: "white",
+    backgroundColor: "white",
   },
   filterbox: {
     flexDirection: "row",
     flex: 1,
-    // backgroundColor: "white",
+    backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
   },
   icon: {
     padding: 7,
     margin: 2,
-    // backgroundColor: "white",
+    backgroundColor: "white",
     borderRadius: 20,
   },
 
@@ -167,22 +162,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "grey",
-  },
-  container1: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 10,
-    backgroundColor: "#fff", // Set background color as needed
-  },
-  searchInput1: {
-    flex: 1,
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginRight: 10,
-    paddingHorizontal: 10,
-    borderRadius: 5,
   },
 });
 
