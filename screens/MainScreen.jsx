@@ -1,8 +1,17 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, StyleSheet, Button, SafeAreaView, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import MapView from "react-native-maps";
+import VehicleCard from "../components/VehicleCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -12,25 +21,55 @@ export default function MainScreen({ navigation }) {
   const username = "Öznur";
 
   return (
-    <SafeAreaView style={styles.safeAreaView}>
-      <View>
-        <View style={{ height: 40 }}></View>
+    <SafeAreaView>
+      <View style={{ backgroundColor: "cornsilk" }}>
+        {/* <ScrollView style={styles.scrollView}> */}
+        <View style={{ height: 20 }}></View>
 
+        {/* ------ WELCOME AND FILTER CONTAINER ------ */}
         <View style={styles.welcomeandFilters}>
-          <View>
+          <View style={styles.welcomebox}>
             <Text style={styles.welcome}>Welcome to Parrots</Text>
             <Text style={styles.username}>{username}!</Text>
           </View>
           <View style={styles.filterbox}>
             <MaterialCommunityIcons
-              name="human-handsdown"
+              style={styles.icon}
+              name="human"
               size={24}
               color="black"
             />
-            <AntDesign name="calendar" size={24} color="black" />
-            <Ionicons name="car-outline" size={24} color="black" />
+            <AntDesign
+              style={styles.icon}
+              name="calendar"
+              size={24}
+              color="black"
+            />
+            <Ionicons
+              style={styles.icon}
+              name="car-outline"
+              size={24}
+              color="black"
+            />
           </View>
         </View>
+        {/* ------ WELCOME AND FILTER CONTAINER ------ */}
+
+        {/* ------ VOYAGE AND VEHICLE CONTAINER ------ */}
+        <View style={styles.viewChoice}>
+          <View style={styles.choiceItem}>
+            <TouchableOpacity>
+              <Text style={styles.choiceItemText}>Vehicles</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.choiceItem}>
+            <TouchableOpacity>
+              <Text style={styles.choiceItemText}>Voyages</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* ------ VOYAGE AND VEHICLE CONTAINER ------ */}
 
         {/* ------ MAP CONTAINER ------ */}
         <View style={styles.mapContainer}>
@@ -40,38 +79,38 @@ export default function MainScreen({ navigation }) {
         </View>
         {/* ------ MAP CONTAINER ------ */}
 
-        <Button
-          title="Go to Profile"
-          onPress={() =>
-            navigation.navigate("Profile", {
-              title: "Came from Main",
-            })
-          }
-        />
+        <View style={styles.flatListToBe}>
+          <VehicleCard />
+        </View>
+        <View style={styles.flatListToBe}>
+          <VehicleCard />
+        </View>
+        {/* </ScrollView> */}
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeAreaView: {
+  scrollView: {
     flex: 1,
-    backgroundColor: "#F5F1D9",
+    height: 200,
+    backgroundColor: "red",
   },
+
   mapContainer: {
     backgroundColor: "white",
     width: "100%",
-    height: "75%",
+    height: 400,
     paddingTop: 10,
     paddingBottom: 10,
     alignItems: "center",
     justifyContent: "center",
   },
-
   mapWrapper: {
-    width: "94%",
-    height: "100%",
-    backgroundColor: "orange",
+    width: "92%",
+    height: "98%",
+    backgroundColor: "cornsilk",
     borderRadius: 15,
     overflow: "hidden",
   },
@@ -86,12 +125,44 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "700",
   },
-  welcomeandFilters: { flexDirection: "row" },
+  welcomeandFilters: {
+    flexDirection: "row",
+    padding: 15,
+    marginTop: 15,
+    backgroundColor: "white",
+  },
+  welcomebox: {
+    backgroundColor: "white",
+  },
   filterbox: {
     flexDirection: "row",
-    width: "30%",
+    flex: 1,
     backgroundColor: "white",
-    alignSelf: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    padding: 7,
+    margin: 2,
+    backgroundColor: "white",
+    borderRadius: 20,
+  },
+  viewChoice: {
+    backgroundColor: "white",
+    margin: 10,
+    flexDirection: "row",
+  },
+  choiceItem: {
+    marginHorizontal: 15,
+  },
+  choiceItemText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "grey",
+  },
+  flatListToBe: {
+    backgroundColor: "red",
+    height: "33%",
   },
 });
 
