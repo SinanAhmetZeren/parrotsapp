@@ -13,7 +13,7 @@ import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const FilterCountModal = ({ isVisible, onClose }) => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(1);
 
   const handleIncrement = () => {
     setCount((count) => {
@@ -24,9 +24,13 @@ const FilterCountModal = ({ isVisible, onClose }) => {
   };
 
   const handleDecrement = () => {
-    if (count > 0) {
+    if (count > 1) {
       setCount(count - 1);
     }
+  };
+
+  const handleClear = () => {
+    setCount(1);
   };
 
   const handleSave = () => {
@@ -58,12 +62,20 @@ const FilterCountModal = ({ isVisible, onClose }) => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              onPress={handleSave}
-              style={styles.buttonSaveContainer}
-            >
-              <Text style={styles.buttonSave}>Save</Text>
-            </TouchableOpacity>
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity
+                onPress={handleClear}
+                style={styles.buttonClearContainer}
+              >
+                <Text style={styles.buttonClear}>Clear</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSave}
+                style={styles.buttonSaveContainer}
+              >
+                <Text style={styles.buttonSave}>Save</Text>
+              </TouchableOpacity>
+            </View>
           </View>
           <View style={styles.floatingIcon}>
             <MaterialCommunityIcons
@@ -88,7 +100,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    paddingTop: vh(15),
+    paddingTop: vh(17),
     paddingBottom: vh(70),
   },
   innerContainer: {
@@ -109,18 +121,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20,
   },
+
+  buttonsContainer: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "space-around",
+  },
+
   buttonSaveContainer: {
     alignItems: "center",
   },
-
+  buttonClearContainer: {
+    alignItems: "center",
+  },
   buttonSave: {
     fontSize: 18,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#0275d8",
-    padding: 6,
-    width: vh(33),
+    backgroundColor: "#186ff1",
+    padding: 5,
+    width: vw(30),
     borderRadius: 10,
+    marginTop: 5,
+  },
+  buttonClear: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    backgroundColor: "#2ac898",
+    padding: 5,
+    width: vw(30),
+    borderRadius: 10,
+    marginTop: 5,
   },
   buttonCount: {
     fontSize: 24,
@@ -144,7 +176,7 @@ const styles = StyleSheet.create({
     width: 40,
     borderRadius: 15,
     position: "absolute",
-    top: vh(8),
+    top: vh(10),
     right: vw(35),
     justifyContent: "center",
     alignItems: "center",

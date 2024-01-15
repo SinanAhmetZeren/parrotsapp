@@ -13,6 +13,7 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import { AntDesign } from "@expo/vector-icons";
 import CalendarPicker from "react-native-calendar-picker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const FilterCalendarModal = ({ isVisible, onClose }) => {
   const [startDate, setStartDate] = useState(null);
@@ -25,6 +26,11 @@ const FilterCalendarModal = ({ isVisible, onClose }) => {
       setStartDate(date);
       setEndDate(null); // Reset end date if start date changes
     }
+  };
+
+  const handleClear = () => {
+    setStartDate(null);
+    setEndDate(null);
   };
 
   const handleSave = () => {
@@ -54,12 +60,8 @@ const FilterCalendarModal = ({ isVisible, onClose }) => {
     onClose();
   };
 
-  const renderCustomPrev = ({ onPress }) => {
-    return (
-      <TouchableOpacity onPress={onPress} style={styles.customPrevContainer}>
-        <MaterialCommunityIcons name="chevron-left" size={24} color="#0275d8" />
-      </TouchableOpacity>
-    );
+  const handleClose = () => {
+    onClose();
   };
 
   return (
@@ -78,33 +80,50 @@ const FilterCalendarModal = ({ isVisible, onClose }) => {
               selectedStartDate={startDate}
               selectedEndDate={endDate}
               onDateChange={handleDateChange}
-              selectedDayColor="#70fe0e"
-              selectedDayTextColor="#333333"
+              selectedDayColor="#2ac898"
+              selectedDayTextColor="white"
               textStyle={{ fontWeight: "700", color: "#333333" }}
               previousTitle={
-                <MaterialCommunityIcons
-                  name="chevron-left"
+                <Ionicons
+                  name="arrow-back-circle-outline"
                   size={24}
-                  color="#0275d8"
+                  color="blue"
                 />
               }
               nextTitle={
-                <MaterialCommunityIcons
-                  name="chevron-right"
+                <Ionicons
+                  name="arrow-forward-circle-outline"
                   size={24}
-                  color="#0275d8"
+                  color="blue"
                 />
               }
               width={300}
               // height={500}
             />
 
-            <TouchableOpacity
-              onPress={handleSave}
-              style={styles.buttonSaveContainer}
-            >
-              <Text style={styles.buttonSave}>Save</Text>
-            </TouchableOpacity>
+            {startDate || endDate ? (
+              <View style={styles.buttonsContainer}>
+                <TouchableOpacity
+                  onPress={handleClear}
+                  style={styles.buttonClearContainer}
+                >
+                  <Text style={styles.buttonClear}>Clear</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleSave}
+                  style={styles.buttonSaveContainer}
+                >
+                  <Text style={styles.buttonSave}>Save</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={handleClose}
+                style={styles.buttonSaveContainer}
+              >
+                <Text style={styles.buttonClose}>Close</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View style={styles.floatingIcon}>
             <AntDesign
@@ -129,7 +148,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    paddingTop: vh(15),
+    paddingTop: vh(17),
     paddingBottom: vh(70),
   },
   innerContainer: {
@@ -140,17 +159,47 @@ const styles = StyleSheet.create({
     height: vh(40),
   },
 
+  buttonsContainer: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "space-around",
+  },
+
   buttonSaveContainer: {
     alignItems: "center",
+  },
+  buttonClearContainer: {
+    alignItems: "center",
+  },
+  buttonClose: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    backgroundColor: "#186ff1",
+    padding: 5,
+    width: vw(60),
+    borderRadius: 10,
+    marginTop: 5,
   },
   buttonSave: {
     fontSize: 18,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#0275d8",
-    padding: 6,
-    width: vw(60),
+    backgroundColor: "#186ff1",
+    padding: 5,
+    width: vw(30),
     borderRadius: 10,
+    marginTop: 5,
+  },
+  buttonClear: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    backgroundColor: "#2ac898",
+    padding: 5,
+    width: vw(30),
+    borderRadius: 10,
+    marginTop: 5,
   },
   floatingIcon: {
     backgroundColor: "white",
@@ -158,7 +207,7 @@ const styles = StyleSheet.create({
     width: 40,
     borderRadius: 15,
     position: "absolute",
-    top: vh(8),
+    top: vh(10),
     right: vw(24),
     justifyContent: "center",
     alignItems: "center",

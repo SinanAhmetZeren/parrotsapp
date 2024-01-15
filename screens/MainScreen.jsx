@@ -25,10 +25,12 @@ import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 import VehicleFlatList from "../components/VehicleFlatList";
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
+import FilterVehicleModal from "../components/FilterVehicleModal";
 
 export default function MainScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
   const [calendarModalVisibility, setCalendarModalVisibility] = useState(false);
+  const [vehicleModalVisibility, setVehicleModalVisibility] = useState(false);
   //   const { message } = route.params;
   const username = "Öznur";
 
@@ -52,6 +54,10 @@ export default function MainScreen({ navigation }) {
 
   function handleCalendarModal() {
     setCalendarModalVisibility(!calendarModalVisibility);
+  }
+
+  function handleVehicleModal() {
+    setVehicleModalVisibility(!vehicleModalVisibility);
     // console.log("hello from calendar modal");
   }
 
@@ -63,10 +69,16 @@ export default function MainScreen({ navigation }) {
           isVisible={countModalVisibility}
         />
       </View>
-      <View style={styles.calendar}>
+      <View style={styles.calendarModal}>
         <FilterCalendarModal
           onClose={handleCalendarModal}
           isVisible={calendarModalVisibility}
+        />
+      </View>
+      <View style={styles.vehicleModal}>
+        <FilterVehicleModal
+          onClose={handleVehicleModal}
+          isVisible={vehicleModalVisibility}
         />
       </View>
       <View style={{ height: vh(100) }}>
@@ -106,12 +118,14 @@ export default function MainScreen({ navigation }) {
                 color="black"
               />
             </TouchableOpacity>
-            <Ionicons
-              style={styles.icon}
-              name="car-outline"
-              size={24}
-              color="black"
-            />
+            <TouchableOpacity onPress={handleVehicleModal}>
+              <Ionicons
+                style={styles.icon}
+                name="car-outline"
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.viewChoice}>
@@ -156,6 +170,7 @@ export default function MainScreen({ navigation }) {
 const styles = StyleSheet.create({
   scrollview: {
     marginTop: vh(4),
+    paddingTop: vh(2),
     marginBottom: vh(5),
     backgroundColor: "white",
   },
@@ -163,10 +178,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 15,
     marginTop: 15,
-    backgroundColor: "lightgreen",
+    backgroundColor: "white",
   },
   viewChoice: {
-    backgroundColor: "lightblue",
+    backgroundColor: "white",
     padding: 10,
     marginTop: 2,
     flexDirection: "row",
@@ -180,24 +195,18 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     overflow: "hidden",
     borderRadius: 20,
-    backgroundColor: "lavenderblush ",
+    backgroundColor: "white ",
   },
-  flatListToBe: {
+  flatList: {
     // height: "40%",
     flexDirection: "row",
-    backgroundColor: "lightpink",
+    backgroundColor: "white",
     marginLeft: 10,
     paddingBottom: 0,
     marginTop: 6,
     bottom: 0,
   },
-  dummyview1: {
-    height: 470,
-  },
-  dummyview2: {
-    height: 50,
-    backgroundColor: "yellow",
-  },
+
   map: {
     width: "100%",
     height: "100%",
@@ -239,7 +248,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,
-    backgroundColor: "powderblue", // Set background color as needed
+    backgroundColor: "white", // Set background color as needed
   },
   searchInput1: {
     flex: 1,
@@ -255,7 +264,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 16,
     marginTop: 5,
-    backgroundColor: "paleturquoise",
+    backgroundColor: "white",
   },
   popular: {
     marginLeft: 6,
@@ -278,9 +287,6 @@ const styles = StyleSheet.create({
     color: "#0077ea",
     fontSize: 18,
     fontWeight: "700",
-  },
-  countModal: {
-    top: vh(5),
   },
 });
 

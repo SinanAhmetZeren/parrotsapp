@@ -43,11 +43,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: vw(83),
     height: vh(20),
-    backgroundColor: "green",
+    backgroundColor: "white",
     borderRadius: 0,
   },
   imageContainer: {
-    backgroundColor: "blue",
+    backgroundColor: "white",
   },
   cardImage: {
     width: vw(40),
@@ -58,21 +58,21 @@ const styles = StyleSheet.create({
   textContainer: {
     width: vw(40),
     padding: 5,
-    backgroundColor: "blue",
+    backgroundColor: "white",
   },
   header: {
     marginTop: 2,
     fontSize: 16,
     fontWeight: "700",
-    backgroundColor: "orange",
+    backgroundColor: "white",
   },
   subHeader: {
     fontSize: 14,
-    backgroundColor: "yellow",
+    backgroundColor: "white",
     fontWeight: "600",
   },
   cardDescription: {
-    backgroundColor: "moccasin",
+    backgroundColor: "white",
     paddingHorizontal: 0,
   },
 });
