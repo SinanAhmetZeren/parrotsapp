@@ -1,33 +1,38 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 
-export default function VehicleCard() {
-  const cardHeader = "Boat Tour";
-  const cardSubHeader = "in Greece";
-  const cardDescription =
-    "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis e";
-
+export default function VehicleCard({
+  cardHeader,
+  cardSubHeader,
+  cardDescription,
+}) {
   return (
-    <View style={styles.cardContainer}>
-      <Image
-        style={styles.cardImage}
-        source={require("../assets/sailboat.jpg")}
-      />
+    <>
+      <View style={styles.cardContainer}>
+        <View style={styles.shadow}>
+          <Image
+            style={styles.cardImage}
+            source={require("../assets/sailboat.jpg")}
+          />
+        </View>
 
-      <View style={styles.textContainer}>
-        <Text style={styles.header}>{cardHeader}</Text>
-        <Text style={styles.subHeader}>{cardSubHeader}</Text>
-        <Text
-          style={styles.cardDescription}
-          numberOfLines={5}
-          ellipsizeMode="tail"
-        >
-          {cardDescription}
-        </Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>{cardHeader}</Text>
+          <Text style={styles.subHeader}>{cardSubHeader}</Text>
+          <Text
+            style={styles.cardDescription}
+            numberOfLines={5}
+            ellipsizeMode="tail"
+          >
+            {cardDescription}
+          </Text>
+        </View>
       </View>
-    </View>
+    </>
   );
 }
 
@@ -36,37 +41,38 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginBottom: 10,
     flexDirection: "row",
-    width: "82%",
-    height: "100%",
-    // backgroundColor: "white",
+    width: vw(83),
+    height: vh(20),
+    backgroundColor: "green",
     borderRadius: 0,
   },
   imageContainer: {
-    // backgroundColor: "white",
-    width: "55%",
-    height: "100%",
+    backgroundColor: "blue",
   },
   cardImage: {
-    height: 150,
-    width: 150,
+    width: vw(40),
+    height: vh(19),
     margin: 3,
     borderRadius: 30,
   },
   textContainer: {
-    width: "45%",
+    width: vw(40),
     padding: 5,
-    // backgroundColor: "white",
+    backgroundColor: "blue",
   },
   header: {
     marginTop: 2,
     fontSize: 16,
     fontWeight: "700",
+    backgroundColor: "orange",
   },
   subHeader: {
     fontSize: 14,
+    backgroundColor: "yellow",
     fontWeight: "600",
   },
   cardDescription: {
+    backgroundColor: "moccasin",
     paddingHorizontal: 0,
   },
 });

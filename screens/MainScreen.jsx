@@ -10,10 +10,11 @@ import {
   TouchableOpacity,
   ScrollView,
   FlatList,
+  Alert,
   TextInput,
 } from "react-native";
+import { useState } from "react";
 import MapView, { Marker } from "react-native-maps";
-import VehicleCard from "../components/VehicleCard";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,12 +22,53 @@ import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 
+import VehicleFlatList from "../components/VehicleFlatList";
+import FilterCountModal from "../components/FilterCountModal";
+import FilterCalendarModal from "../components/FilterCalendarModal";
+
 export default function MainScreen({ navigation }) {
+  const [countModalVisibility, setCountModalVisibility] = useState(false);
+  const [calendarModalVisibility, setCalendarModalVisibility] = useState(false);
   //   const { message } = route.params;
   const username = "Öznur";
 
+  const showAlert = (message) => {
+    Alert.alert(
+      message,
+      `Your selection was ${message.toUpperCase()}`,
+      [
+        {
+          text: "OK",
+          onPress: () => console.log("OK Pressed"),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  function handleCountModal() {
+    setCountModalVisibility(!countModalVisibility);
+  }
+
+  function handleCalendarModal() {
+    setCalendarModalVisibility(!calendarModalVisibility);
+    // console.log("hello from calendar modal");
+  }
+
   return (
     <ScrollView style={styles.scrollview}>
+      <View style={styles.countModal}>
+        <FilterCountModal
+          onClose={handleCountModal}
+          isVisible={countModalVisibility}
+        />
+      </View>
+      <View style={styles.calendar}>
+        <FilterCalendarModal
+          onClose={handleCalendarModal}
+          isVisible={calendarModalVisibility}
+        />
+      </View>
       <View style={{ height: vh(100) }}>
         <View style={styles.searchAndMenu}>
           <Feather
@@ -42,25 +84,28 @@ export default function MainScreen({ navigation }) {
           />
           <Fontisto name="bell" size={24} color="black" />
         </View>
-
         <View style={styles.welcomeandFilters}>
           <View style={styles.welcomebox}>
             <Text style={styles.welcome}>Welcome to Parrots</Text>
             <Text style={styles.username}>{username}!</Text>
           </View>
           <View style={styles.filterbox}>
-            <MaterialCommunityIcons
-              style={styles.icon}
-              name="human"
-              size={24}
-              color="black"
-            />
-            <AntDesign
-              style={styles.icon}
-              name="calendar"
-              size={24}
-              color="black"
-            />
+            <TouchableOpacity onPress={handleCountModal}>
+              <MaterialCommunityIcons
+                style={styles.icon}
+                name="human"
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleCalendarModal}>
+              <AntDesign
+                style={styles.icon}
+                name="calendar"
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
             <Ionicons
               style={styles.icon}
               name="car-outline"
@@ -69,20 +114,21 @@ export default function MainScreen({ navigation }) {
             />
           </View>
         </View>
-
         <View style={styles.viewChoice}>
           <View style={styles.choiceItem}>
-            <TouchableOpacity style={styles.selectedChoice}>
+            <TouchableOpacity
+              onPress={() => showAlert("vehicles")}
+              style={styles.selectedChoice}
+            >
               <Text style={styles.selectedText}>Vehicles</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.choiceItem}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => showAlert("voyages")}>
               <Text style={styles.choiceItemText}>Voyages</Text>
             </TouchableOpacity>
           </View>
         </View>
-
         <View style={styles.mapContainer}>
           <MapView style={styles.map} initialRegion={initialRegion}>
             <Marker
@@ -97,15 +143,11 @@ export default function MainScreen({ navigation }) {
             />
           </MapView>
         </View>
-
         <View style={styles.popularBox}>
           <Text style={styles.popular}>Popular</Text>
           <Text style={styles.seeall}>see all</Text>
         </View>
-
-        <View style={styles.flatListToBe}>
-          <VehicleCard />
-        </View>
+        <VehicleFlatList />
       </View>
     </ScrollView>
   );
@@ -113,8 +155,8 @@ export default function MainScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   scrollview: {
-    marginTop: 40,
-    marginBottom: 80,
+    marginTop: vh(4),
+    marginBottom: vh(5),
     backgroundColor: "white",
   },
   welcomeandFilters: {
@@ -237,6 +279,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
   },
+  countModal: {
+    top: vh(5),
+  },
 });
 
 const initialRegion = {
@@ -254,12 +299,3 @@ const markerCoordinate2 = {
   latitude: 52.392847,
   longitude: 4.962197,
 };
-
-const dummyText = <Text>akalal fldkflak </Text>;
-const dummyText2 = (
-  <Text>
-    akalal fldkf flak lal fldkf flak lal fldkf flak lal fldkf flak lal fldkf
-    flak lal fldkf flak lal fldkf flak lal fldkf flak lal fldkf flak lal fldkf
-    flak lal fldkf flak lal fldkf flak{" "}
-  </Text>
-);
