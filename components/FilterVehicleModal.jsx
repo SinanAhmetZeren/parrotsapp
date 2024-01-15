@@ -4,7 +4,7 @@ import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Ionicons } from "@expo/vector-icons";
 
-const FilterVehicleModal = ({ isVisible, onClose }) => {
+const FilterVehicleModal = ({ isVisible, onClose, setIsVehicleFiltered }) => {
   const vehicleTypes = ["Car", "Bus", "Boat", "Bicycle"];
   const [selectedValue, setSelectedValue] = useState(null);
 
@@ -13,10 +13,17 @@ const FilterVehicleModal = ({ isVisible, onClose }) => {
   };
   const handleClear = () => {
     setSelectedValue(null);
+    setIsVehicleFiltered(false);
+    onClose();
   };
 
   const handleSave = () => {
     console.log("selected vehicle is: ", selectedValue);
+    if (selectedValue) {
+      setIsVehicleFiltered(true);
+    } else {
+      setIsVehicleFiltered(false);
+    }
     onClose();
   };
 

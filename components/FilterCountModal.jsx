@@ -12,7 +12,7 @@ import {
 import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const FilterCountModal = ({ isVisible, onClose }) => {
+const FilterCountModal = ({ isVisible, onClose, setIsCountFiltered }) => {
   const [count, setCount] = useState(1);
 
   const handleIncrement = () => {
@@ -35,6 +35,11 @@ const FilterCountModal = ({ isVisible, onClose }) => {
 
   const handleSave = () => {
     onClose();
+    if (count == 1) {
+      setIsCountFiltered(false);
+    } else {
+      setIsCountFiltered(true);
+    }
     console.log("saved with a count of: " + count);
   };
 

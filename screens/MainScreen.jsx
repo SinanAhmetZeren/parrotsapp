@@ -9,7 +9,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  FlatList,
   Alert,
   TextInput,
 } from "react-native";
@@ -31,6 +30,9 @@ export default function MainScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
   const [calendarModalVisibility, setCalendarModalVisibility] = useState(false);
   const [vehicleModalVisibility, setVehicleModalVisibility] = useState(false);
+  const [isCountFiltered, setIsCountFiltered] = useState(false);
+  const [isDatesFiltered, setIsDatesFiltered] = useState(false);
+  const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
   //   const { message } = route.params;
   const username = "Öznur";
 
@@ -65,18 +67,24 @@ export default function MainScreen({ navigation }) {
     <ScrollView style={styles.scrollview}>
       <View style={styles.countModal}>
         <FilterCountModal
+          isCountFiltered={isCountFiltered}
+          setIsCountFiltered={setIsCountFiltered}
           onClose={handleCountModal}
           isVisible={countModalVisibility}
         />
       </View>
       <View style={styles.calendarModal}>
         <FilterCalendarModal
+          isDatesFiltered={isDatesFiltered}
+          setIsDatesFiltered={setIsDatesFiltered}
           onClose={handleCalendarModal}
           isVisible={calendarModalVisibility}
         />
       </View>
       <View style={styles.vehicleModal}>
         <FilterVehicleModal
+          isVehicleFiltered={isVehicleFiltered}
+          setIsVehicleFiltered={setIsVehicleFiltered}
           onClose={handleVehicleModal}
           isVisible={vehicleModalVisibility}
         />
@@ -104,7 +112,7 @@ export default function MainScreen({ navigation }) {
           <View style={styles.filterbox}>
             <TouchableOpacity onPress={handleCountModal}>
               <MaterialCommunityIcons
-                style={styles.icon}
+                style={[styles.icon, isCountFiltered ? styles.filtered : null]}
                 name="human"
                 size={24}
                 color="black"
@@ -112,7 +120,7 @@ export default function MainScreen({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity onPress={handleCalendarModal}>
               <AntDesign
-                style={styles.icon}
+                style={[styles.icon, isDatesFiltered ? styles.filtered : null]}
                 name="calendar"
                 size={24}
                 color="black"
@@ -120,7 +128,10 @@ export default function MainScreen({ navigation }) {
             </TouchableOpacity>
             <TouchableOpacity onPress={handleVehicleModal}>
               <Ionicons
-                style={styles.icon}
+                style={[
+                  styles.icon,
+                  isVehicleFiltered ? styles.filtered : null,
+                ]}
                 name="car-outline"
                 size={24}
                 color="black"
@@ -287,6 +298,11 @@ const styles = StyleSheet.create({
     color: "#0077ea",
     fontSize: 18,
     fontWeight: "700",
+  },
+  filtered: {
+    color: "#0077ea",
+    backgroundColor: "rgba(0, 119, 234,0.1)",
+    borderRadius: 15,
   },
 });
 
