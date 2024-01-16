@@ -37,7 +37,7 @@ export default function VehicleList({ data }) {
       cardSubHeader: "Subheader 4",
       cardDescription:
         "Sed ut perspiciatis unde omnis iste natus errunde omnis iste natus error sit voluptatem accusantiomnis iste natus error sit voluptatem accusantium doomnis iste natus error sit voluptatem accusantium doum doloremque laudantium, 2",
-      cardImage: require("../assets/boatvietnam.jpg"),
+      cardImage: require("../assets/motorcycle.jpeg"),
     },
     {
       id: "5",
@@ -45,7 +45,7 @@ export default function VehicleList({ data }) {
       cardSubHeader: "Subheader 5",
       cardDescription:
         "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium omnis iste natus error sit voluptatem accusantium dodoloremque laudantium, 3",
-      cardImage: require("../assets/catamaran.jpeg"),
+      cardImage: require("../assets/caravan.jpeg"),
     },
   ];
 

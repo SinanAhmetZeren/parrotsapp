@@ -1,44 +1,46 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet, Button } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
+// import CoversationView from "../components/CoversationView";
+import { vw } from "react-native-expo-viewport-units";
+import ConversationList from "../components/ConversationList";
 
 export default function MessagesScreen({ navigation }) {
   //   const { message } = route.params;
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={styles.spacer}>Messages Screen</Text>
-      {/* {message ? <Text style={styles.spacer}>{message}</Text> : null} */}
+  console.log(navigation);
 
-      <Image
-        style={styles.logo}
-        source={require("../assets/parrots-message.jpg")}
-      />
-      <Button
-        title="Go to Main"
-        onPress={() =>
-          navigation.navigate("Main", {
-            // message: "hello from profile screen",
-          })
-        }
-      />
+  return (
+    <View style={styles.container}>
+      <View>
+        <Text style={styles.recentChats}>Recent Chats</Text>
+      </View>
+      <View style={styles.flatlist}>
+        <ConversationList />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
+    marginTop: 100,
+    //  backgroundColor: "#e9e9e9",
+    backgroundColor: "white",
+    width: vw(100),
     justifyContent: "center",
+    alignSelf: "center",
   },
-  logo: {
-    height: 150,
-    width: 150,
+  recentChats: {
+    fontWeight: "700",
+    fontSize: 26,
+    paddingBottom: 30,
+    justifyContent: "center",
+    alignSelf: "center",
   },
-  spacer: {
-    marginTop: 10,
-    marginBottom: 10,
+  flatlist: {
+    width: vw(94),
+    justifyContent: "center",
+    alignSelf: "center",
   },
 });

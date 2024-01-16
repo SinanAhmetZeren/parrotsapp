@@ -36,7 +36,7 @@ export default function VehicleFlatList() {
       cardSubHeader: "Subheader 4",
       cardDescription:
         "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 2",
-      cardImage: require("../assets/boatvietnam.jpg"),
+      cardImage: require("../assets/motorcycle.jpeg"),
     },
     {
       id: "5",
@@ -44,7 +44,7 @@ export default function VehicleFlatList() {
       cardSubHeader: "Subheader 5",
       cardDescription:
         "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 3",
-      cardImage: require("../assets/catamaran.jpeg"),
+      cardImage: require("../assets/caravan.jpeg"),
     },
   ];
 
