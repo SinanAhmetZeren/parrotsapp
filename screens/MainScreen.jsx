@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
     bottom: 0,
   },
-
   map: {
     width: "100%",
     height: "100%",
@@ -245,7 +244,6 @@ const styles = StyleSheet.create({
     // backgroundColor: "white",
     borderRadius: 20,
   },
-
   choiceItem: {
     marginHorizontal: 15,
   },
@@ -301,7 +299,7 @@ const styles = StyleSheet.create({
   },
   filtered: {
     color: "#0077ea",
-    backgroundColor: "rgba(0, 119, 234,0.1)",
+    backgroundColor: "rgba(0, 119, 234,0.06)",
     borderRadius: 15,
   },
 });

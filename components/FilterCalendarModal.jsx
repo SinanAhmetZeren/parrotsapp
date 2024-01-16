@@ -121,7 +121,7 @@ const FilterCalendarModal = ({ isVisible, onClose, setIsDatesFiltered }) => {
                   onPress={handleSave}
                   style={styles.buttonSaveContainer}
                 >
-                  <Text style={styles.buttonSave}>Save</Text>
+                  <Text style={styles.buttonSave}>Apply</Text>
                 </TouchableOpacity>
               </View>
             ) : (

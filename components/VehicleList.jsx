@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, View } from "react-native";
 import VehicleCard from "./VehicleCard";
 
-export default function VehicleFlatList() {
-  const data = [
+export default function VehicleList({ data }) {
+  console.log(data);
+  const data1 = [
     {
       id: "1",
       cardHeader: "Header 1z",
@@ -48,29 +49,23 @@ export default function VehicleFlatList() {
     },
   ];
 
-  const renderItem = ({ item }) => (
-    <VehicleCard
-      cardHeader={item.cardHeader}
-      cardSubHeader={item.cardSubHeader}
-      cardDescription={item.cardDescription}
-      cardImage={item.cardImage}
-    />
-  );
+  const renderVehicleCards = () => {
+    return data1.map((item) => (
+      <VehicleCard
+        key={item.id}
+        cardHeader={item.cardHeader}
+        cardSubHeader={item.cardSubHeader}
+        cardDescription={item.cardDescription}
+        cardImage={item.cardImage}
+      />
+    ));
+  };
 
-  return (
-    <FlatList
-      style={styles.flatList}
-      horizontal={true}
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={(item) => item.id}
-    />
-  );
+  return <View style={styles.container}>{renderVehicleCards()}</View>;
 }
 
 const styles = StyleSheet.create({
-  flatList: {
-    height: 200,
+  container: {
     backgroundColor: "white",
     marginBottom: 50,
   },

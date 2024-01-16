@@ -3,21 +3,19 @@
 /* eslint-disable no-undef */
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
+import { vw, vh } from "react-native-expo-viewport-units";
 
 export default function VehicleCard({
   cardHeader,
   cardSubHeader,
   cardDescription,
+  cardImage,
 }) {
   return (
     <>
       <View style={styles.cardContainer}>
         <View style={styles.shadow}>
-          <Image
-            style={styles.cardImage}
-            source={require("../assets/sailboat.jpg")}
-          />
+          <Image style={styles.cardImage} source={cardImage} />
         </View>
 
         <View style={styles.textContainer}>

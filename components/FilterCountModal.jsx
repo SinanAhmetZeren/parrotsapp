@@ -78,7 +78,7 @@ const FilterCountModal = ({ isVisible, onClose, setIsCountFiltered }) => {
                 onPress={handleSave}
                 style={styles.buttonSaveContainer}
               >
-                <Text style={styles.buttonSave}>Save</Text>
+                <Text style={styles.buttonSave}>Apply</Text>
               </TouchableOpacity>
             </View>
           </View>
