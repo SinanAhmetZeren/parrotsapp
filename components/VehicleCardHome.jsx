@@ -5,7 +5,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 
-export default function VehicleCard({
+export default function VehicleCardHome({
   cardHeader,
   cardSubHeader,
   cardDescription,

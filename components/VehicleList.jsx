@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import VehicleCard from "./VehicleCard";
+import VehicleCardProfile from "./VehicleCardProfile";
 
 export default function VehicleList({ data }) {
   console.log(data);
@@ -12,7 +12,7 @@ export default function VehicleList({ data }) {
       cardHeader: "Header 1z",
       cardSubHeader: "Subheader 1",
       cardDescription:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 1",
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doomnis iste natus error sit voluptatem accusantium doloremque laudantium, 1",
       cardImage: require("../assets/sailboat.jpg"),
     },
     {
@@ -20,7 +20,7 @@ export default function VehicleList({ data }) {
       cardHeader: "Header 2",
       cardSubHeader: "Subheader 2",
       cardDescription:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 2",
+        "Sed ut perspiciatis unde omnisunde omnis iste natus err iste natus error sitomnis iste natus error sit voluptatem accusantium doomnis iste natus error sit voluptatem accusantium do voluptatem accusantium doloremque laudantium, 2",
       cardImage: require("../assets/boatvietnam.jpg"),
     },
     {
@@ -28,7 +28,7 @@ export default function VehicleList({ data }) {
       cardHeader: "Header 3",
       cardSubHeader: "Subheader 3",
       cardDescription:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 3",
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem aomnis iste natus error sit voluptatem accusantium doomnis iste natus error sit voluptatem accusantium doccusantium doloremque laudantium, 3",
       cardImage: require("../assets/catamaran.jpeg"),
     },
     {
@@ -36,7 +36,7 @@ export default function VehicleList({ data }) {
       cardHeader: "Header 4",
       cardSubHeader: "Subheader 4",
       cardDescription:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 2",
+        "Sed ut perspiciatis unde omnis iste natus errunde omnis iste natus error sit voluptatem accusantiomnis iste natus error sit voluptatem accusantium doomnis iste natus error sit voluptatem accusantium doum doloremque laudantium, 2",
       cardImage: require("../assets/boatvietnam.jpg"),
     },
     {
@@ -44,14 +44,14 @@ export default function VehicleList({ data }) {
       cardHeader: "Header 5",
       cardSubHeader: "Subheader 5",
       cardDescription:
-        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 3",
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium omnis iste natus error sit voluptatem accusantium dodoloremque laudantium, 3",
       cardImage: require("../assets/catamaran.jpeg"),
     },
   ];
 
   const renderVehicleCards = () => {
     return data1.map((item) => (
-      <VehicleCard
+      <VehicleCardProfile
         key={item.id}
         cardHeader={item.cardHeader}
         cardSubHeader={item.cardSubHeader}

@@ -1,0 +1,77 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-undef */
+import React from "react";
+import { View, Text, Image, StyleSheet } from "react-native";
+import { vw, vh } from "react-native-expo-viewport-units";
+
+export default function VehicleCardProfile({
+  cardHeader,
+  cardSubHeader,
+  cardDescription,
+  cardImage,
+}) {
+  return (
+    <>
+      <View style={styles.cardContainer}>
+        <View style={styles.shadow}>
+          <Image style={styles.cardImage} source={cardImage} />
+        </View>
+
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>{cardHeader}</Text>
+          <Text style={styles.subHeader}>{cardSubHeader}</Text>
+          <Text
+            style={styles.cardDescription}
+            numberOfLines={6}
+            ellipsizeMode="tail"
+          >
+            {cardDescription}
+          </Text>
+        </View>
+      </View>
+    </>
+  );
+}
+
+const styles = StyleSheet.create({
+  cardContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginBottom: 10,
+    flexDirection: "row",
+    height: vh(20),
+    backgroundColor: "white",
+    borderRadius: 0,
+  },
+  imageContainer: {
+    backgroundColor: "white",
+  },
+  cardImage: {
+    width: vw(46),
+    height: vh(19),
+    margin: 3,
+    borderRadius: 30,
+  },
+  textContainer: {
+    width: vw(47),
+    padding: 5,
+    backgroundColor: "white",
+  },
+  header: {
+    marginTop: 2,
+    fontSize: 16,
+    fontWeight: "700",
+    backgroundColor: "white",
+  },
+  subHeader: {
+    fontSize: 14,
+    backgroundColor: "white",
+    fontWeight: "600",
+  },
+  cardDescription: {
+    backgroundColor: "white",
+    paddingHorizontal: 0,
+  },
+});

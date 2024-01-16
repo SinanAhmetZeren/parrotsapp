@@ -43,11 +43,14 @@ export default function ProfileScreen({ navigation }) {
           source={require("../assets/amazon.jpeg")}
         />
       </View>
+
+      <View style={styles.roundedCorner}></View>
       <Image
         style={styles.profileImage}
         resizeMode="cover"
         source={require("../assets/parrot-looks.jpg")}
       />
+
       <View>
         <ScrollView style={styles.scrollView}>
           {/* ------- PROFILE AND SOCIAL ------ */}
@@ -118,7 +121,9 @@ export default function ProfileScreen({ navigation }) {
             </View>
           </View>
           {/* ------- CHOICE ------ */}
-          <VehicleList style={styles.vehicleList} data={{}} />
+          <View style={styles.vehicleListContainer}>
+            <VehicleList style={styles.vehicleList} data={{}} />
+          </View>
         </ScrollView>
       </View>
     </>
@@ -128,25 +133,34 @@ export default function ProfileScreen({ navigation }) {
 const styles = StyleSheet.create({
   rectangularBox: {
     height: vh(35),
-    backgroundColor: "orange",
+    backgroundColor: "white",
   },
   imageContainer: {
     top: vh(5),
     height: vh(30),
     width: vw(100),
   },
+  roundedCorner: {
+    backgroundColor: "white",
+    height: vh(5),
+    top: vh(-5),
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+
   scrollView: {
     backgroundColor: "white",
-    borderRadius: 20,
+    // borderRadius: 20,
     marginBottom: vh(20),
-    top: vh(-20),
+    top: vh(-25),
     height: vh(65),
     zIndex: 1, // Add zIndex property
   },
   profileAndSocial: {
     flexDirection: "row",
-    // backgroundColor: "rgba(222, 119, 24,0.16)",
+    //backgroundColor: "rgba(222, 119, 24,0.86)",
     height: vh(10),
+    top: vh(-2),
     justifyContent: "flex-end",
     paddingRight: 20,
     paddingTop: 10,
@@ -155,7 +169,7 @@ const styles = StyleSheet.create({
     height: vh(18),
     width: vh(18),
     borderRadius: vh(18),
-    top: vh(-12),
+    top: vh(-17),
     left: vw(5),
     zIndex: 100,
     borderWidth: 3,
@@ -211,8 +225,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
   },
-  vehicleList: {
-    paddingLeft: 20,
-    marginBottom: vh(30),
+  vehicleListContainer: {
+    width: vw(98),
+    backgroundColor: "white",
+    paddingTop: 10,
+    paddingLeft: vw(2),
+    overflow: "hidden",
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
+  vehicleList: {},
 });

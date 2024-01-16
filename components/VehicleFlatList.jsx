@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 import React from "react";
 import { StyleSheet, FlatList } from "react-native";
-import VehicleCard from "./VehicleCard";
+import VehicleCardHome from "./VehicleCardHome";
 
 export default function VehicleFlatList() {
   const data = [
@@ -49,7 +49,7 @@ export default function VehicleFlatList() {
   ];
 
   const renderItem = ({ item }) => (
-    <VehicleCard
+    <VehicleCardHome
       cardHeader={item.cardHeader}
       cardSubHeader={item.cardSubHeader}
       cardDescription={item.cardDescription}
