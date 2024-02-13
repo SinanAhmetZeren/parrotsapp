@@ -1,3 +1,0 @@
-
-createAppContainer  - react-navigation
-createStackNavigator  - react-navigation-stack

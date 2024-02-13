@@ -12,7 +12,7 @@
     "@expo/webpack-config": "^19.0.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native-stack": "^6.9.17",
-    "expo": "~49.0.15",
+    "expo": "^50.0.0",
     "expo-status-bar": "~1.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -24,7 +24,8 @@
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
     "react-native-web": "~0.19.6",
-    "@react-native-picker/picker": "2.4.10"
+    "@react-native-picker/picker": "2.4.10",
+    "undefined": "react-query/react-native"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
