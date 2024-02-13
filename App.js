@@ -24,6 +24,11 @@ import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen";
 import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 
+import { Provider } from "react-redux"; // Import the Provider
+import { store } from "./store/store";
+import { extendedApiSlice } from "./slices/UserSlice";
+
+store.dispatch(extendedApiSlice.endpoints.getAllUsers.initiate());
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const screenOptions = {
@@ -218,20 +223,22 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
 
   return (
-    <NavigationContainer>
-      {isLoggedIn ? (
-        <TabNavigator />
-      ) : (
-        <Stack.Navigator>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Signup" component={SignupScreen} />
-          <Stack.Screen
-            name="ForgotPassword"
-            component={ForgotPasswordScreen}
-          />
-        </Stack.Navigator>
-      )}
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        {isLoggedIn ? (
+          <TabNavigator />
+        ) : (
+          <Stack.Navigator>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen
+              name="ForgotPassword"
+              component={ForgotPasswordScreen}
+            />
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </Provider>
   );
 }
 
