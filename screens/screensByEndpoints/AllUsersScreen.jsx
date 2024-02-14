@@ -11,7 +11,7 @@ import {
   selectUsersById,
 } from "../slices/UserSlice";
 
-export default function FavoritesScreen({ navigation }) {
+export default function AllUsersScreen({ navigation }) {
   //   const { message } = route.params;
   const {
     data: users,

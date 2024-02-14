@@ -49,6 +49,43 @@ const screenOptions = {
   },
 };
 
+const MainStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Main"
+      component={MainScreen}
+      initialParams={{ message: "welcome to parrots" }}
+      options={{
+        title: "Main Page",
+        headerTitleAlign: "center",
+        headerStyle: {
+          backgroundColor: "#004592",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      }}
+    />
+    <Stack.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={({ route }) => ({
+        title: route.params.title,
+        headerTitleAlign: "center",
+        headerStyle: {
+          backgroundColor: "#004592",
+        },
+        headerTintColor: "#fff",
+        headerTitleStyle: {
+          fontWeight: "bold",
+        },
+      })}
+      initialParams={{ message: "welcome to profile page" }}
+    />
+  </Stack.Navigator>
+);
+
 const TabNavigator = () => (
   <Tab.Navigator screenOptions={screenOptions}>
     <Tab.Screen
@@ -185,22 +222,21 @@ const TabNavigator = () => (
   </Tab.Navigator>
 );
 
-const FncScreensStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Register" component={RegisterScreen} />
-  </Stack.Navigator>
-);
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
 
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Main" component={TabNavigator} />
-          <Stack.Screen name="FncScreensStack" component={FncScreensStack} />
-        </Stack.Navigator>
+        {isLoggedIn ? (
+          <TabNavigator />
+        ) : (
+          <Stack.Navigator>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+            <Stack.Screen name="ForPassword" component={ForPasswordScreen} />
+          </Stack.Navigator>
+        )}
       </NavigationContainer>
     </Provider>
   );
@@ -214,40 +250,3 @@ const styles = StyleSheet.create({
     width: 60,
   },
 });
-
-const MainStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen
-      name="Main"
-      component={MainScreen}
-      initialParams={{ message: "welcome to parrots" }}
-      options={{
-        title: "Main Page",
-        headerTitleAlign: "center",
-        headerStyle: {
-          backgroundColor: "#004592",
-        },
-        headerTintColor: "#fff",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-      }}
-    />
-    <Stack.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={({ route }) => ({
-        title: route.params.title,
-        headerTitleAlign: "center",
-        headerStyle: {
-          backgroundColor: "#004592",
-        },
-        headerTintColor: "#fff",
-        headerTitleStyle: {
-          fontWeight: "bold",
-        },
-      })}
-      initialParams={{ message: "welcome to profile page" }}
-    />
-  </Stack.Navigator>
-);

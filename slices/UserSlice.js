@@ -9,25 +9,31 @@ const initialState = usersAdapter.getInitialState();
 export const extendedApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllUsers: builder.query({
-      query: () => "api/user/getAllUsers",
+      query: () => "/api/user/getAllUsers",
       transformResponse: (responseData) => {
-        console.log("hello");
-        console.log(responseData["data"]);
-        const normalizedData = usersAdapter.getInitialState({
-          entities: responseData["data"].reduce((entities, user) => {
-            entities[user.id] = user;
-            return entities;
-          }, {}),
-          ids: responseData.map((user) => user.id),
+        const { data } = responseData;
+        //return usersAdapter.setAll({}, data);
+        const newState = usersAdapter.setAll({}, data);
+        /*
+        Object.keys(newState.entities).forEach((id) => {
+          console.log(
+            `ID: ${id}` + "ENTITY: " + newState.entities[id].userName
+          );
         });
-        return usersAdapter.setAll(initialState, normalizedData);
+        let str1 = "c809e7c0-6e57-40eb-99e7-9e7ab2e9a17e";
+        console.log(newState.entities[str1].userName);*/
+        return newState;
       },
-      providesTags: (result, error, arg) => [
-        { type: "User", id: "LIST" },
-        ...result.ids.map((id) => ({ type: "User", id })),
-      ],
+      providesTags: (result, error, arg) => {
+        const userTags = result.data?.ids ?? [];
+        return [
+          { type: "User", id: "LIST" },
+          ...userTags.map((id) => ({ type: "User", id })),
+        ];
+      },
     }),
   }),
+  overrideExisting: true,
 });
 
 export const { useGetAllUsersQuery } = extendedApiSlice;
