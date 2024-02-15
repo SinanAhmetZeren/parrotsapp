@@ -12,16 +12,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       query: () => "/api/user/getAllUsers",
       transformResponse: (responseData) => {
         const { data } = responseData;
-        //return usersAdapter.setAll({}, data);
         const newState = usersAdapter.setAll({}, data);
-        /*
-        Object.keys(newState.entities).forEach((id) => {
-          console.log(
-            `ID: ${id}` + "ENTITY: " + newState.entities[id].userName
-          );
-        });
-        let str1 = "c809e7c0-6e57-40eb-99e7-9e7ab2e9a17e";
-        console.log(newState.entities[str1].userName);*/
         return newState;
       },
       providesTags: (result, error, arg) => {
@@ -32,11 +23,44 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         ];
       },
     }),
+    registerUser: builder.mutation({
+      query: (userData) => ({
+        url: "/api/account/register",
+        method: "POST",
+        body: userData,
+      }),
+      invalidatesTags: [{ type: "User", id: "LIST" }],
+    }),
+    loginUser: builder.mutation({
+      query: (userData) => ({
+        url: "/api/account/login",
+        method: "POST",
+        body: userData,
+      }),
+      invalidatesTags: [{ type: "User", id: "LIST" }],
+    }),
+    getUserById: builder.query({
+      query: (userId) => `/api/User/getUserById/${userId}`,
+      /*
+      transformResponse: (responseData) => {
+        const { data } = responseData;
+        console.log("getting data");
+
+        return usersAdapter.setAll(initialState, data);
+      },
+      */
+      transformResponse: (responseData) => responseData.data,
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useGetAllUsersQuery } = extendedApiSlice;
+export const {
+  useGetAllUsersQuery,
+  useRegisterUserMutation,
+  useLoginUserMutation,
+  useGetUserByIdQuery,
+} = extendedApiSlice;
 
 export const selectUsersResult =
   extendedApiSlice.endpoints.getAllUsers.select();
@@ -48,7 +72,7 @@ export const selectUsersData = createSelector(
 
 export const {
   selectAll: selectAllUsers,
-  selectById: selectUsersById,
+  selectById: selectUserById,
   selectIds: selectUserIds,
 } = usersAdapter.getSelectors(
   (state) => selectUsersData(state) ?? initialState

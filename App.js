@@ -1,34 +1,28 @@
+/* eslint-disable react/display-name */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import * as React from "react";
+import { forwardRef } from "react";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
 import { Text, Platform, View, StyleSheet, Image } from "react-native";
 
-import { Entypo } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { FontAwesome } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { FontAwesome6 } from "@expo/vector-icons";
 
 import MainScreen from "./screens/MainScreen";
 import MessagesScreen from "./screens/MessagesScreen";
 import ProfileScreen from "./screens/ProfileScreen";
-import FavoritesScreen from "./screens/FavoritesScreen";
 import CreateVoyageScreen from "./screens/CreateVoyageScreen";
 import ScreensList from "./screens/screensByEndpoints/ScreensList";
-
-import LoginScreen from "./screens/LoginScreen";
-import SignupScreen from "./screens/SignupScreen";
-import ForgotPasswordScreen from "./screens/ForgotPasswordScreen";
 
 import { Provider } from "react-redux"; // Import the Provider
 import { store } from "./store/store";
 import { extendedApiSlice } from "./slices/UserSlice";
-import RegisterScreen from "./screens/screensByEndpoints/RegisterScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import LoginScreen from "./screens/LoginScreen";
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 
 //store.dispatch(extendedApiSlice.endpoints.getAllUsers.initiate());
 const Stack = createNativeStackNavigator();
@@ -52,6 +46,33 @@ const screenOptions = {
 const TabNavigator = () => (
   <Tab.Navigator screenOptions={screenOptions}>
     <Tab.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{
+        tabBarIcon: ({ focused }) => {
+          return (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <Feather
+                name="user"
+                size={24}
+                color={focused ? "#3aa4ff" : "#000"}
+              />
+              <Text
+                style={
+                  focused
+                    ? { fontSize: 12, color: "#3aa4ff" }
+                    : { fontSize: 12, color: "#000" }
+                }
+              >
+                Profile
+              </Text>
+            </View>
+          );
+        },
+      }}
+    />
+
+    <Tab.Screen
       name="ScreensList"
       component={ScreensList}
       options={{
@@ -70,33 +91,7 @@ const TabNavigator = () => (
                     : { fontSize: 12, color: "#000" }
                 }
               >
-                DevPages
-              </Text>
-            </View>
-          );
-        },
-      }}
-    />
-    <Tab.Screen
-      name="Home"
-      component={MainScreen}
-      options={{
-        tabBarIcon: ({ focused }) => {
-          return (
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
-              <Feather
-                name="home"
-                size={24}
-                color={focused ? "#3aa4ff" : "#000"}
-              />
-              <Text
-                style={
-                  focused
-                    ? { fontSize: 12, color: "#3aa4ff" }
-                    : { fontSize: 12, color: "#000" }
-                }
-              >
-                Home
+                ScreensList
               </Text>
             </View>
           );
@@ -131,6 +126,32 @@ const TabNavigator = () => (
       }}
     />
     <Tab.Screen
+      name="Home"
+      component={MainScreen}
+      options={{
+        tabBarIcon: ({ focused }) => {
+          return (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <Feather
+                name="home"
+                size={24}
+                color={focused ? "#3aa4ff" : "#000"}
+              />
+              <Text
+                style={
+                  focused
+                    ? { fontSize: 12, color: "#3aa4ff" }
+                    : { fontSize: 12, color: "#000" }
+                }
+              >
+                Home
+              </Text>
+            </View>
+          );
+        },
+      }}
+    />
+    <Tab.Screen
       name="Messages"
       component={MessagesScreen}
       options={{
@@ -156,40 +177,46 @@ const TabNavigator = () => (
         },
       }}
     />
-    <Tab.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{
-        tabBarIcon: ({ focused }) => {
-          return (
-            <View style={{ alignItems: "center", justifyContent: "center" }}>
-              <Feather
-                name="user"
-                size={24}
-                color={focused ? "#3aa4ff" : "#000"}
-              />
-              <Text
-                style={
-                  focused
-                    ? { fontSize: 12, color: "#3aa4ff" }
-                    : { fontSize: 12, color: "#000" }
-                }
-              >
-                Profile
-              </Text>
-            </View>
-          );
-        },
-      }}
-    />
   </Tab.Navigator>
 );
 
-const FncScreensStack = () => (
+const DevScreens = () => (
   <Stack.Navigator>
     <Stack.Screen name="Register" component={RegisterScreen} />
+    <Stack.Screen name="Login" component={LoginScreen} />
   </Stack.Navigator>
 );
+
+const toastConfig = {
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: "pink" }}
+      contentContainerStyle={{ paddingHorizontal: 15 }}
+      text1Style={{
+        fontSize: 15,
+        fontWeight: "400",
+      }}
+      text2Style={{
+        fontSize: 15,
+        fontWeight: "400",
+        color: "purple",
+      }}
+    />
+  ),
+
+  error: (props) => (
+    <ErrorToast
+      {...props}
+      text1Style={{
+        fontSize: 17,
+      }}
+      text2Style={{
+        fontSize: 15,
+      }}
+    />
+  ),
+};
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(true);
@@ -199,8 +226,9 @@ function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Main" component={TabNavigator} />
-          <Stack.Screen name="FncScreensStack" component={FncScreensStack} />
+          <Stack.Screen name="DevScreens" component={DevScreens} />
         </Stack.Navigator>
+        <Toast config={toastConfig} />
       </NavigationContainer>
     </Provider>
   );

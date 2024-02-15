@@ -9,125 +9,184 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  Alert,
+  Linking,
+  ActivityIndicator,
 } from "react-native";
-import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
-import { AntDesign } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
+import { vw, vh } from "react-native-expo-viewport-units";
 import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
+import Toast from "react-native-toast-message";
+
+import { useSelector } from "react-redux";
+import { selectUserById, useGetUserByIdQuery } from "../slices/UserSlice";
 
 export default function ProfileScreen({ navigation }) {
   //   const { message } = route.params;
+  let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
+  console.log("hi there");
+  const {
+    data: userData,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+  } = useGetUserByIdQuery(userId);
+  //const user = useSelector((state) => selectUserById(state, userId));
+  console.log(userData);
+  const [copiedText, setCopiedText] = React.useState("");
 
-  const showAlert = (message) => {
-    Alert.alert(
-      message,
-      `Your selection was ${message.toUpperCase()}`,
-      [
-        {
-          text: "OK",
-          onPress: () => console.log(navigation),
-        },
-      ],
-      { cancelable: false }
+  const handleInstagramPress = () => {
+    const instagramProfile = `https://www.instagram.com/${userData.instagram}`;
+    //const instagramProfile = `https://www.instagram.com`;
+    Linking.openURL(instagramProfile);
+  };
+
+  const handleFacebookPress = () => {
+    const facebookPageID = "pageID";
+    const facebookDeepLink = `fb://page/${facebookPageID}`;
+    const fallbackUrl = `https://www.facebook.com/${facebookPageID}`;
+    Linking.openURL(facebookDeepLink).catch(() => {
+      Linking.openURL(fallbackUrl);
+    });
+  };
+
+  const handleEmailPress = async () => {
+    let emailStr = userData.email;
+
+    try {
+      await Clipboard.setStringAsync(emailStr);
+      Toast.show({
+        type: "success",
+        text1: "Email copied to clipboard",
+        text2: emailStr,
+        visibilityTime: 5000,
+        topOffset: 150,
+      });
+    } catch (error) {
+      console.error("Error copying to clipboard", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to copy email to clipboard",
+      });
+    }
+  };
+
+  const handlePhonePress = async () => {
+    const phoneUrl = `tel:${userData.phoneNumber}`;
+
+    Linking.openURL(phoneUrl).catch((err) =>
+      console.error("Error opening phone app:", err)
     );
   };
-  return (
-    <>
-      <View style={styles.rectangularBox}>
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
+  }
+
+  if (isError) {
+    console.log(error);
+  }
+
+  if (isSuccess) {
+    const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
+
+    return (
+      <>
+        <View style={styles.rectangularBox}>
+          <Image
+            style={styles.imageContainer}
+            resizeMode="cover"
+            source={require("../assets/amazon.jpeg")}
+          />
+        </View>
+
+        <View style={styles.roundedCorner}></View>
         <Image
-          style={styles.imageContainer}
+          style={styles.profileImage}
           resizeMode="cover"
-          source={require("../assets/amazon.jpeg")}
+          //resizeMode="contain"
+          source={{ uri: profileImageUrl }}
         />
-      </View>
 
-      <View style={styles.roundedCorner}></View>
-      <Image
-        style={styles.profileImage}
-        resizeMode="cover"
-        source={require("../assets/parrot-looks.jpg")}
-      />
-
-      <View>
-        <ScrollView style={styles.scrollView}>
-          {/* ------- PROFILE AND SOCIAL ------ */}
-          <View style={styles.profileAndSocial}>
-            <TouchableOpacity onPress={() => console.log("icon email")}>
-              <Fontisto
-                style={styles.icon}
-                name="email"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => console.log("icon instagram")}>
-              <Ionicons
-                style={styles.icon}
-                name="logo-instagram"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => console.log("icon facebook")}>
-              <Feather
-                style={styles.icon}
-                name="facebook"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => console.log("icon phone")}>
-              <Feather
-                style={styles.icon}
-                name="phone"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-          </View>
-          {/* ------- PROFILE AND SOCIAL ------ */}
-
-          {/* ------- BIO ------ */}
-          <View style={styles.bioBox}>
-            <Text style={styles.name}> Fiesta Flutterbeak</Text>
-            <Text style={styles.title}> Feathered Global Voyager</Text>
-            <Text style={styles.bio}>
-              🌍 Adventurous Parrot Explorer 🦜✈️ | Unleashing my wings to
-              explore the world`s wonders! 🗺️ | Your daily dose of feathers,
-              fun, and fantastic destinations 🌴 | Soaring through life, one
-              destination at a time 🌈 | Join me on this feathered odyssey! 🌟
-              #ParrotExplorer #WanderlustWings
-            </Text>
-          </View>
-          {/* ------- BIO ------ */}
-
-          {/* ------- CHOICE ------ */}
-          <View style={styles.viewChoice}>
-            <View style={styles.choiceItem}>
-              <TouchableOpacity
-                onPress={() => showAlert("vehicles")}
-                style={styles.selectedChoice}
-              >
-                <Text style={styles.selectedText}>Vehicles</Text>
+        <View>
+          <ScrollView style={styles.scrollView}>
+            {/* ------- PROFILE AND SOCIAL ------ */}
+            <View style={styles.profileAndSocial}>
+              <TouchableOpacity onPress={() => handleEmailPress()}>
+                <Fontisto
+                  style={styles.icon}
+                  name="email"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleInstagramPress()}>
+                <Ionicons
+                  style={styles.icon}
+                  name="logo-instagram"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleFacebookPress()}>
+                <Feather
+                  style={styles.icon}
+                  name="facebook"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handlePhonePress()}>
+                <Feather
+                  style={styles.icon}
+                  name="phone"
+                  size={24}
+                  color="black"
+                />
               </TouchableOpacity>
             </View>
-            <View style={styles.choiceItem}>
-              <TouchableOpacity onPress={() => showAlert("voyages")}>
-                <Text style={styles.choiceItemText}>Voyages</Text>
-              </TouchableOpacity>
+            {/* ------- PROFILE AND SOCIAL ------ */}
+
+            {/* ------- BIO ------ */}
+            <View style={styles.bioBox}>
+              <Text style={styles.name}> {userData.userName}</Text>
+              <Text style={styles.title}> {userData.title}</Text>
+              <Text style={styles.bio}>{userData.bio}</Text>
             </View>
-          </View>
-          {/* ------- CHOICE ------ */}
-          <View style={styles.vehicleListContainer}>
-            <VehicleList style={styles.vehicleList} data={{}} />
-          </View>
-        </ScrollView>
-      </View>
-    </>
-  );
+            {/* ------- BIO ------ */}
+
+            {/* ------- CHOICE ------ */}
+            <View style={styles.viewChoice}>
+              <View style={styles.choiceItem}>
+                <TouchableOpacity
+                  onPress={() => {}}
+                  style={styles.selectedChoice}
+                >
+                  <Text style={styles.selectedText}>Vehicles</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.choiceItem}>
+                <TouchableOpacity onPress={() => {}}>
+                  <Text style={styles.choiceItemText}>Voyages</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            {/* ------- CHOICE ------ */}
+            <View style={styles.vehicleListContainer}>
+              <VehicleList style={styles.vehicleList} data={{}} />
+            </View>
+          </ScrollView>
+        </View>
+      </>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

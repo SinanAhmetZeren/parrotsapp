@@ -2,18 +2,15 @@
 // RegisterPage.js
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
-import { useLoginUserMutation } from "../slices/UserSlice";
+import { useRegisterUserMutation } from "../slices/UserSlice";
 import { TouchableOpacity } from "react-native";
-import JWT from "expo-jwt";
-import { coreModule } from "@reduxjs/toolkit/query";
 
 const RegisterScreen = () => {
+  const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
-  const [decodedToken, setDecodedToken] = useState("");
 
-  const [loginUser, { isLoading, isSuccess }] = useLoginUserMutation();
+  const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
   const imageUrl =
     "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
 
@@ -21,51 +18,46 @@ const RegisterScreen = () => {
     console.log("Current Email:", text);
     setEmail(text);
   };
-
+  const handleUserNameChange = (text) => {
+    console.log("Current USername:", text);
+    setUserName(text);
+  };
   const handlePasswordChange = (text) => {
-    console.log("Current password:", text);
+    console.log("Current Email:", text);
     setPassword(text);
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     try {
-      const response = await loginUser({
+      await registerUser({
         Email: email,
+        UserName: userName,
         Password: password,
       }).unwrap();
+      setUserName("");
       setEmail("");
       setPassword("");
-      setToken(response.token);
-      const secretKey =
-        "f09mdn*0rıe9895uofs0fı905548582uja09s7f09a7a097fda90u90275irjh30720fh097";
-      const decodedToken = JWT.decode(response.token, secretKey);
-      setDecodedToken(decodedToken);
+      console.log("Registering user:", { userName, email, password });
     } catch (err) {
-      console.error("Failed logging in", err);
+      console.error("Failed to register user", err);
     }
   };
 
   return (
     <View style={styles.container}>
       {isSuccess ? (
-        <View style={styles.output}>
-          <Text style={styles.successMessage}>Login successful!{"\n"}</Text>
-          <Text style={styles.successMessage}>
-            Email from token:{"\n"}
-            {decodedToken.email}
-            {"\n"}
-          </Text>
-          <Text style={styles.successMessage}>
-            User id from token:{"\n"}
-            {decodedToken.nameid}
-            {"\n"}
-          </Text>
-        </View>
+        <Text style={styles.successMessage}>Registration successful!</Text>
       ) : (
         <View style={styles.formContainer}>
           <View style={styles.imagecontainer}>
             <Image source={{ uri: imageUrl }} style={styles.image} />
           </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={userName}
+            onChangeText={(text) => handleUserNameChange(text)}
+          />
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -79,7 +71,11 @@ const RegisterScreen = () => {
             value={password}
             onChangeText={(text) => handlePasswordChange(text)}
           />
-          <Button title="Login" onPress={handleLogin} disabled={isLoading} />
+          <Button
+            title="Register"
+            onPress={handleRegister}
+            disabled={isLoading}
+          />
         </View>
       )}
     </View>
@@ -117,9 +113,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 200,
-  },
-  output: {
-    flexDirection: "column",
   },
 });
 
