@@ -23,7 +23,7 @@ export default function VehicleCardProfile({
           <Text style={styles.subHeader}>{cardSubHeader}</Text>
           <Text
             style={styles.cardDescription}
-            numberOfLines={6}
+            numberOfLines={8}
             ellipsizeMode="tail"
           >
             {cardDescription}
@@ -42,36 +42,35 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "white",
-    borderRadius: 0,
+    backgroundColor: "rgba(0, 119, 234,0.071)",
+    borderRadius: vh(2),
   },
   imageContainer: {
     backgroundColor: "white",
   },
   cardImage: {
     width: vw(46),
-    height: vh(19),
-    margin: 3,
-    borderRadius: 30,
+    height: vh(20),
+    marginRight: vh(0.5),
+    borderRadius: vh(2),
+    borderTopRightRadius: vh(0),
+    borderBottomRightRadius: vh(0),
   },
   textContainer: {
-    width: vw(47),
-    padding: 5,
-    backgroundColor: "white",
+    width: vw(46),
+    padding: vh(0.2),
   },
   header: {
-    marginTop: 2,
-    fontSize: 16,
+    // marginTop: 2,
+    fontSize: 14,
     fontWeight: "700",
-    backgroundColor: "white",
   },
   subHeader: {
-    fontSize: 14,
-    backgroundColor: "white",
+    fontSize: 12,
     fontWeight: "600",
   },
   cardDescription: {
-    backgroundColor: "white",
     paddingHorizontal: 0,
+    fontSize: 11.5,
   },
 });

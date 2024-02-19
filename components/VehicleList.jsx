@@ -3,6 +3,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import VehicleCardProfile from "./VehicleCardProfile";
+import { vh } from "react-native-expo-viewport-units";
 
 export default function VehicleList({ data }) {
   console.log(data);
@@ -66,7 +67,9 @@ export default function VehicleList({ data }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
-    marginBottom: 50,
+    // backgroundColor: "red",
+    marginBottom: vh(17),
+    marginTop: 10,
+    borderRadius: vh(2),
   },
 });

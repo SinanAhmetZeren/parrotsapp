@@ -20,7 +20,6 @@ import { Feather } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
 import { useFocusEffect } from "@react-navigation/native";
-
 import { useSelector } from "react-redux";
 import { selectUserById, useGetUserByIdQuery } from "../slices/UserSlice";
 
@@ -179,18 +178,20 @@ export default function ProfileScreen({ navigation }) {
           <ScrollView style={styles.scrollView}>
             <View style={styles.profileImageAndSocial}>
               <View style={styles.profileImageAndName}>
-                <Image
-                  style={styles.profileImage}
-                  resizeMode="cover"
-                  //resizeMode="contain"
-                  source={{ uri: profileImageUrl }}
-                />
+                <View style={styles.solidCircleProfile}>
+                  <Image
+                    style={styles.profileImage}
+                    resizeMode="cover"
+                    //resizeMode="contain"
+                    source={{ uri: profileImageUrl }}
+                  />
+                </View>
               </View>
               {/* ------- PROFILE AND SOCIAL ------ */}
               <View style={styles.social}>
                 {/* -----------EMAIL------------- */}
                 <TouchableOpacity
-                  style={styles.socialBox}
+                  style={styles.socialBox1}
                   onPress={() => handleEmailPress()}
                 >
                   <Fontisto
@@ -204,7 +205,7 @@ export default function ProfileScreen({ navigation }) {
 
                 {/* --------------INSTAGRAM---------- */}
                 <TouchableOpacity
-                  style={styles.socialBox}
+                  style={styles.socialBox2}
                   onPress={() => handleInstagramPress()}
                 >
                   <Ionicons
@@ -232,7 +233,7 @@ export default function ProfileScreen({ navigation }) {
                 {/* --------------FACEBOOK---------- */}
 
                 <TouchableOpacity
-                  style={styles.socialBox}
+                  style={styles.socialBox2}
                   onPress={() => handleFacebookPress()}
                 >
                   <Feather
@@ -245,7 +246,7 @@ export default function ProfileScreen({ navigation }) {
                 </TouchableOpacity>
                 {/* --------------PHONE---------- */}
                 <TouchableOpacity
-                  style={styles.socialBox}
+                  style={styles.socialBox1}
                   onPress={() => handlePhonePress()}
                 >
                   <Feather
@@ -267,14 +268,12 @@ export default function ProfileScreen({ navigation }) {
 
                 <TouchableOpacity onPress={showNameToast}>
                   <Text style={styles.name}>
-                    {exampleText.length <= 30 ? (
-                      exampleText
+                    {userData.userName.length <= 30 ? (
+                      userData.userName
                     ) : (
                       <>
-                        <Text style={{ color: "blue" }}>
-                          {exampleText.slice(0, 30)}
-                        </Text>
-                        <Text>...</Text>
+                        <Text>{userData.userName.slice(0, 30)}</Text>
+                        <Text style={styles.clickableText}>...</Text>
                       </>
                     )}
                   </Text>
@@ -322,13 +321,13 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   imageContainer: {
-    top: vh(5),
-    height: vh(30),
+    top: vh(0),
+    height: vh(35),
     width: vw(100),
   },
   roundedCorner: {
     backgroundColor: "white",
-    height: vh(5),
+    height: vh(3),
     top: vh(-5),
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -338,11 +337,18 @@ const styles = StyleSheet.create({
     marginBottom: vh(20),
     top: vh(-5),
     height: vh(65),
-    zIndex: 1,
   },
   bioBox: {
-    paddingHorizontal: 20,
-    marginTop: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    marginTop: 0,
+    paddingVertical: 10,
+    backgroundColor: "rgba(190, 119, 234,0.08)",
+    width: "93%",
+    borderRadius: 20,
+
+    borderWidth: 1,
+    borderColor: "rgba(190, 119, 234,0.5)",
   },
   choiceItem: {
     marginHorizontal: 15,
@@ -370,11 +376,8 @@ const styles = StyleSheet.create({
   },
   vehicleListContainer: {
     width: vw(98),
-    backgroundColor: "white",
     paddingTop: 10,
-    paddingLeft: vw(2),
     overflow: "hidden",
-    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
@@ -382,11 +385,12 @@ const styles = StyleSheet.create({
   vehicleList: {},
   blueText: {
     fontWeight: "600",
-    color: "blue",
+    color: "#000077",
   },
   bioText: {
     fontWeight: "600",
-    color: "#416181",
+    color: "#878787",
+    fontSize: 12,
   },
   nameContainer: {
     marginLeft: 0,
@@ -395,50 +399,75 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 19,
     fontWeight: "600",
-    //alignSelf: "center",
     flexWrap: "wrap",
     flexShrink: 1,
-
-    //textAlign: "center",
+    color: "#5b5bff",
   },
-  ellipsis: { fontSize: 12 },
+  clickableText: {
+    color: "blue",
+    textDecorationLine: "underline",
+  },
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#0077ea",
+    color: "#9f9fff",
   },
   bio: {
-    fontSize: 14,
     paddingTop: 5,
   },
   socialBox: {
     flexDirection: "row",
-    backgroundColor: "rgba(0, 119, 234,0.05)",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
     borderRadius: 20,
     marginTop: 2,
+    borderWidth: 1,
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  socialBox1: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: 2,
+    left: vw(-5.5),
+    borderWidth: 1,
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  socialBox2: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: 2,
+    left: vw(-1.7),
+    borderWidth: 1,
+    borderColor: "rgba(190, 119, 234,0.4)",
   },
   icon: {
     padding: 3,
     margin: 2,
+    marginLeft: 8,
     borderRadius: 20,
-    color: "rgba(0, 119, 234,0.6)",
-    fontSize: 22,
+    color: "rgba(0, 119, 234,0.9)",
+    fontSize: 18,
   },
+
   iconText: {
-    lineHeight: 30,
+    lineHeight: 22,
     marginVertical: 1,
-    fontSize: 12,
+    fontSize: 11,
   },
   //container of image and social
   profileImageAndSocial: {
     flexDirection: "row",
     justifyContent: "space-between",
-    //backgroundColor: "rgba(44, 119, 24,0.16)",
+    // backgroundColor: "rgba(0, 119, 234,0.09)",
+    borderRadius: vh(3),
+    width: "95%",
+    alignSelf: "center",
+    paddingBottom: vh(0.95),
   },
   //container of social
   social: {
     flexDirection: "column",
-    //backgroundColor: "rgba(77, 33, 111,0.16)",
     width: vw(50),
     zIndex: 100,
     paddingRight: 20,
@@ -446,15 +475,21 @@ const styles = StyleSheet.create({
   },
   //container of image and name
   profileImageAndName: {
-    //backgroundColor: "rgba(222, 1, 99,0.16)",
-    left: vw(5),
+    left: vw(2),
   },
   profileImage: {
+    position: "absolute",
+    top: vh(0.4),
+    left: vh(0.4),
     height: vh(18),
     width: vh(18),
-    borderRadius: vh(18),
+    borderRadius: vh(14),
     zIndex: 100,
-    borderWidth: 3,
-    borderColor: "rgba(0, 119, 234,0.6)",
+  },
+  solidCircleProfile: {
+    height: vh(18.8),
+    width: vh(18.8),
+    borderRadius: vh(25),
+    backgroundColor: "rgba(190, 119, 234,0.6)",
   },
 });
