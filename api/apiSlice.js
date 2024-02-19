@@ -9,3 +9,5 @@ export const apiSlice = createApi({
   tagTypes: ["User"],
   endpoints: (builder) => ({}),
 });
+
+// ngrok http --domain=measured-wolf-grossly.ngrok-free.app https://localhost:7151

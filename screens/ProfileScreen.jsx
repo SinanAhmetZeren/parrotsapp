@@ -19,12 +19,14 @@ import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { useSelector } from "react-redux";
 import { selectUserById, useGetUserByIdQuery } from "../slices/UserSlice";
 
 export default function ProfileScreen({ navigation }) {
   //   const { message } = route.params;
+
   let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
   console.log("hi there");
   const {
@@ -33,52 +35,116 @@ export default function ProfileScreen({ navigation }) {
     isError,
     error,
     isSuccess,
+    refetch,
   } = useGetUserByIdQuery(userId);
   //const user = useSelector((state) => selectUserById(state, userId));
   console.log(userData);
   const [copiedText, setCopiedText] = React.useState("");
+  exampleText = "Elizabeth Annabelle Kensington-Smith";
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const handleInstagramPress = () => {
-    const instagramProfile = `https://www.instagram.com/${userData.instagram}`;
-    //const instagramProfile = `https://www.instagram.com`;
-    Linking.openURL(instagramProfile);
+    if (userData.instagram) {
+      const instagramProfile = `https://www.instagram.com/${userData.instagram}`;
+      Linking.openURL(instagramProfile);
+    }
   };
 
   const handleFacebookPress = () => {
-    const facebookPageID = "pageID";
-    const facebookDeepLink = `fb://page/${facebookPageID}`;
+    const facebookPageID = `${userData.facebook}`;
+    //const facebookPageID = `marcos.cezar.948`;
     const fallbackUrl = `https://www.facebook.com/${facebookPageID}`;
-    Linking.openURL(facebookDeepLink).catch(() => {
-      Linking.openURL(fallbackUrl);
-    });
+    Linking.openURL(fallbackUrl);
   };
 
   const handleEmailPress = async () => {
-    let emailStr = userData.email;
+    if (userData.email) {
+      let emailStr = userData.email;
 
-    try {
-      await Clipboard.setStringAsync(emailStr);
-      Toast.show({
-        type: "success",
-        text1: "Email copied to clipboard",
-        text2: emailStr,
-        visibilityTime: 5000,
-        topOffset: 150,
-      });
-    } catch (error) {
-      console.error("Error copying to clipboard", error);
-      Toast.show({
-        type: "error",
-        text1: "Failed to copy email to clipboard",
-      });
+      try {
+        await Clipboard.setStringAsync(emailStr);
+        Toast.show({
+          type: "success",
+          text1: "Email copied to clipboard",
+          text2: emailStr,
+          visibilityTime: 5000,
+          topOffset: 150,
+        });
+      } catch (error) {
+        console.error("Error copying to clipboard", error);
+        Toast.show({
+          type: "error",
+          text1: "Failed to copy email to clipboard",
+        });
+      }
     }
   };
 
   const handlePhonePress = async () => {
-    const phoneUrl = `tel:${userData.phoneNumber}`;
+    if (userData.phoneNumber) {
+      const phoneUrl = `tel:${userData.phoneNumber}`;
 
-    Linking.openURL(phoneUrl).catch((err) =>
-      console.error("Error opening phone app:", err)
+      Linking.openURL(phoneUrl).catch((err) =>
+        console.error("Error opening phone app:", err)
+      );
+    }
+  };
+
+  const handleYoutubePress = async () => {
+    if (userData.youtube) {
+      const youtubeUrl = `https://www.youtube.com/@${userData.youtube}`;
+      Linking.openURL(youtubeUrl);
+    }
+  };
+
+  const showNameToast = async () => {
+    if (userData.userName) {
+      let usernameStr = userData.userName;
+
+      try {
+        await Clipboard.setStringAsync(usernameStr);
+        Toast.show({
+          type: "success",
+          text1: "Username is",
+          text2: userData.userName,
+          visibilityTime: 5000,
+          topOffset: 150,
+        });
+      } catch (error) {
+        console.error("Error copying to clipboard", error);
+        Toast.show({
+          type: "error",
+          text1: "Failed to copy email to clipboard",
+        });
+      }
+    }
+  };
+
+  const BlueHashTagText = ({ originalText }) => {
+    const words = originalText.split(" ");
+    return (
+      <Text style={styles.container}>
+        {words.map((word, index) => {
+          if (word.startsWith("#")) {
+            return (
+              <Text key={index} style={styles.blueText}>
+                {word + " "}
+              </Text>
+            );
+          } else {
+            return (
+              <Text style={styles.bioText} key={index}>
+                {word + " "}
+              </Text>
+            );
+          }
+        })}
+      </Text>
     );
   };
 
@@ -108,57 +174,118 @@ export default function ProfileScreen({ navigation }) {
         </View>
 
         <View style={styles.roundedCorner}></View>
-        <Image
-          style={styles.profileImage}
-          resizeMode="cover"
-          //resizeMode="contain"
-          source={{ uri: profileImageUrl }}
-        />
 
         <View>
           <ScrollView style={styles.scrollView}>
-            {/* ------- PROFILE AND SOCIAL ------ */}
-            <View style={styles.profileAndSocial}>
-              <TouchableOpacity onPress={() => handleEmailPress()}>
-                <Fontisto
-                  style={styles.icon}
-                  name="email"
-                  size={24}
-                  color="black"
+            <View style={styles.profileImageAndSocial}>
+              <View style={styles.profileImageAndName}>
+                <Image
+                  style={styles.profileImage}
+                  resizeMode="cover"
+                  //resizeMode="contain"
+                  source={{ uri: profileImageUrl }}
                 />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleInstagramPress()}>
-                <Ionicons
-                  style={styles.icon}
-                  name="logo-instagram"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleFacebookPress()}>
-                <Feather
-                  style={styles.icon}
-                  name="facebook"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handlePhonePress()}>
-                <Feather
-                  style={styles.icon}
-                  name="phone"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
+              </View>
+              {/* ------- PROFILE AND SOCIAL ------ */}
+              <View style={styles.social}>
+                {/* -----------EMAIL------------- */}
+                <TouchableOpacity
+                  style={styles.socialBox}
+                  onPress={() => handleEmailPress()}
+                >
+                  <Fontisto
+                    style={styles.icon}
+                    name="email"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.iconText}>{userData.email}</Text>
+                </TouchableOpacity>
+
+                {/* --------------INSTAGRAM---------- */}
+                <TouchableOpacity
+                  style={styles.socialBox}
+                  onPress={() => handleInstagramPress()}
+                >
+                  <Ionicons
+                    style={styles.icon}
+                    name="logo-instagram"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.iconText}>{userData.instagram}</Text>
+                </TouchableOpacity>
+                {/* --------------YOUTUBE---------- */}
+
+                <TouchableOpacity
+                  style={styles.socialBox}
+                  onPress={() => handleYoutubePress()}
+                >
+                  <Feather
+                    style={styles.icon}
+                    name="youtube"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.iconText}>{userData.youtube}</Text>
+                </TouchableOpacity>
+                {/* --------------FACEBOOK---------- */}
+
+                <TouchableOpacity
+                  style={styles.socialBox}
+                  onPress={() => handleFacebookPress()}
+                >
+                  <Feather
+                    style={styles.icon}
+                    name="facebook"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.iconText}>{userData.facebook}</Text>
+                </TouchableOpacity>
+                {/* --------------PHONE---------- */}
+                <TouchableOpacity
+                  style={styles.socialBox}
+                  onPress={() => handlePhonePress()}
+                >
+                  <Feather
+                    style={styles.icon}
+                    name="phone"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.iconText}>{userData.phoneNumber}</Text>
+                </TouchableOpacity>
+              </View>
+              {/* ------- PROFILE AND SOCIAL ------ */}
             </View>
-            {/* ------- PROFILE AND SOCIAL ------ */}
 
             {/* ------- BIO ------ */}
             <View style={styles.bioBox}>
-              <Text style={styles.name}> {userData.userName}</Text>
-              <Text style={styles.title}> {userData.title}</Text>
-              <Text style={styles.bio}>{userData.bio}</Text>
+              <View style={styles.nameContainer}>
+                {/* <Text style={styles.name}>{userData.userName}</Text> */}
+
+                <TouchableOpacity onPress={showNameToast}>
+                  <Text style={styles.name}>
+                    {exampleText.length <= 30 ? (
+                      exampleText
+                    ) : (
+                      <>
+                        <Text style={{ color: "blue" }}>
+                          {exampleText.slice(0, 30)}
+                        </Text>
+                        <Text>...</Text>
+                      </>
+                    )}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View>
+                <Text style={styles.title}>{userData.title}</Text>
+              </View>
+              <View>
+                <BlueHashTagText originalText={userData.bio}></BlueHashTagText>
+              </View>
             </View>
             {/* ------- BIO ------ */}
 
@@ -206,58 +333,16 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-
   scrollView: {
     backgroundColor: "white",
-    // borderRadius: 20,
     marginBottom: vh(20),
-    top: vh(-25),
+    top: vh(-5),
     height: vh(65),
-    zIndex: 1, // Add zIndex property
-  },
-  profileAndSocial: {
-    flexDirection: "row",
-    //backgroundColor: "rgba(222, 119, 24,0.86)",
-    height: vh(10),
-    top: vh(-2),
-    justifyContent: "flex-end",
-    paddingRight: 20,
-    paddingTop: 10,
-  },
-  profileImage: {
-    height: vh(18),
-    width: vh(18),
-    borderRadius: vh(18),
-    top: vh(-17),
-    left: vw(5),
-    zIndex: 100,
-    borderWidth: 3,
-    borderColor: "rgba(0, 119, 234,0.6)",
-  },
-  icon: {
-    padding: 7,
-    margin: 2,
-    // backgroundColor: "rgba(0, 119, 234,0.06)",
-    borderRadius: 20,
-    color: "#909090",
+    zIndex: 1,
   },
   bioBox: {
     paddingHorizontal: 20,
-    // backgroundColor: "rgba(155, 44, 77,0.3)",
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: "700",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#0077ea",
-  },
-  bio: {
-    fontSize: 14,
-    paddingHorizontal: 3,
-    paddingTop: 5,
+    marginTop: 10,
   },
   choiceItem: {
     marginHorizontal: 15,
@@ -268,7 +353,6 @@ const styles = StyleSheet.create({
     color: "grey",
   },
   viewChoice: {
-    // backgroundColor: "pink",
     padding: 10,
     marginTop: 2,
     flexDirection: "row",
@@ -296,4 +380,81 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   vehicleList: {},
+  blueText: {
+    fontWeight: "600",
+    color: "blue",
+  },
+  bioText: {
+    fontWeight: "600",
+    color: "#416181",
+  },
+  nameContainer: {
+    marginLeft: 0,
+    paddingLeft: 0,
+  },
+  name: {
+    fontSize: 19,
+    fontWeight: "600",
+    //alignSelf: "center",
+    flexWrap: "wrap",
+    flexShrink: 1,
+
+    //textAlign: "center",
+  },
+  ellipsis: { fontSize: 12 },
+  title: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#0077ea",
+  },
+  bio: {
+    fontSize: 14,
+    paddingTop: 5,
+  },
+  socialBox: {
+    flexDirection: "row",
+    backgroundColor: "rgba(0, 119, 234,0.05)",
+    borderRadius: 20,
+    marginTop: 2,
+  },
+  icon: {
+    padding: 3,
+    margin: 2,
+    borderRadius: 20,
+    color: "rgba(0, 119, 234,0.6)",
+    fontSize: 22,
+  },
+  iconText: {
+    lineHeight: 30,
+    marginVertical: 1,
+    fontSize: 12,
+  },
+  //container of image and social
+  profileImageAndSocial: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    //backgroundColor: "rgba(44, 119, 24,0.16)",
+  },
+  //container of social
+  social: {
+    flexDirection: "column",
+    //backgroundColor: "rgba(77, 33, 111,0.16)",
+    width: vw(50),
+    zIndex: 100,
+    paddingRight: 20,
+    paddingTop: 0,
+  },
+  //container of image and name
+  profileImageAndName: {
+    //backgroundColor: "rgba(222, 1, 99,0.16)",
+    left: vw(5),
+  },
+  profileImage: {
+    height: vh(18),
+    width: vh(18),
+    borderRadius: vh(18),
+    zIndex: 100,
+    borderWidth: 3,
+    borderColor: "rgba(0, 119, 234,0.6)",
+  },
 });

@@ -41,15 +41,9 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     getUserById: builder.query({
       query: (userId) => `/api/User/getUserById/${userId}`,
-      /*
-      transformResponse: (responseData) => {
-        const { data } = responseData;
-        console.log("getting data");
-
-        return usersAdapter.setAll(initialState, data);
-      },
-      */
       transformResponse: (responseData) => responseData.data,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
     }),
   }),
   overrideExisting: true,
