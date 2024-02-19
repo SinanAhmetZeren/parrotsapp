@@ -101,29 +101,6 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
-  const showNameToast = async () => {
-    if (userData.userName) {
-      let usernameStr = userData.userName;
-
-      try {
-        await Clipboard.setStringAsync(usernameStr);
-        Toast.show({
-          type: "success",
-          text1: "Username is",
-          text2: userData.userName,
-          visibilityTime: 5000,
-          topOffset: 150,
-        });
-      } catch (error) {
-        console.error("Error copying to clipboard", error);
-        Toast.show({
-          type: "error",
-          text1: "Failed to copy email to clipboard",
-        });
-      }
-    }
-  };
-
   const BlueHashTagText = ({ originalText }) => {
     const words = originalText.split(" ");
     return (
@@ -159,23 +136,24 @@ export default function ProfileScreen({ navigation }) {
     console.log(error);
   }
 
+  let xx = "1234567890123456789012345678901";
+
   if (isSuccess) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
 
     return (
       <>
-        <View style={styles.rectangularBox}>
-          <Image
-            style={styles.imageContainer}
-            resizeMode="cover"
-            source={require("../assets/amazon.jpeg")}
-          />
-        </View>
-
-        <View style={styles.roundedCorner}></View>
-
         <View>
           <ScrollView style={styles.scrollView}>
+            <View style={styles.rectangularBox}>
+              <Image
+                style={styles.imageContainer}
+                resizeMode="cover"
+                source={require("../assets/amazon.jpeg")}
+              />
+            </View>
+            <View style={styles.roundedCorner}></View>
+
             <View style={styles.profileImageAndSocial}>
               <View style={styles.profileImageAndName}>
                 <View style={styles.solidCircleProfile}>
@@ -200,7 +178,11 @@ export default function ProfileScreen({ navigation }) {
                     size={24}
                     color="black"
                   />
-                  <Text style={styles.iconText}>{userData.email}</Text>
+                  <Text style={styles.iconText}>
+                    {userData.email.length > 20
+                      ? `${userData.email.substring(0, 20)}...`
+                      : userData.email}
+                  </Text>
                 </TouchableOpacity>
 
                 {/* --------------INSTAGRAM---------- */}
@@ -214,8 +196,13 @@ export default function ProfileScreen({ navigation }) {
                     size={24}
                     color="black"
                   />
-                  <Text style={styles.iconText}>{userData.instagram}</Text>
+                  <Text style={styles.iconText}>
+                    {userData.instagram.length > 20
+                      ? `${userData.instagram.substring(0, 20)}...`
+                      : userData.instagram}
+                  </Text>
                 </TouchableOpacity>
+
                 {/* --------------YOUTUBE---------- */}
 
                 <TouchableOpacity
@@ -228,7 +215,11 @@ export default function ProfileScreen({ navigation }) {
                     size={24}
                     color="black"
                   />
-                  <Text style={styles.iconText}>{userData.youtube}</Text>
+                  <Text style={styles.iconText}>
+                    {userData.youtube.length > 20
+                      ? `${userData.youtube.substring(0, 20)}...`
+                      : userData.youtube}
+                  </Text>
                 </TouchableOpacity>
                 {/* --------------FACEBOOK---------- */}
 
@@ -242,7 +233,11 @@ export default function ProfileScreen({ navigation }) {
                     size={24}
                     color="black"
                   />
-                  <Text style={styles.iconText}>{userData.facebook}</Text>
+                  <Text style={styles.iconText}>
+                    {userData.facebook.length > 20
+                      ? `${userData.facebook.substring(0, 20)}...`
+                      : userData.facebook}
+                  </Text>
                 </TouchableOpacity>
                 {/* --------------PHONE---------- */}
                 <TouchableOpacity
@@ -255,7 +250,12 @@ export default function ProfileScreen({ navigation }) {
                     size={24}
                     color="black"
                   />
-                  <Text style={styles.iconText}>{userData.phoneNumber}</Text>
+                  <Text style={styles.iconText}>
+                    {" "}
+                    {userData.phoneNumber.length > 20
+                      ? `${userData.phoneNumber.substring(0, 20)}...`
+                      : userData.phoneNumber}
+                  </Text>
                 </TouchableOpacity>
               </View>
               {/* ------- PROFILE AND SOCIAL ------ */}
@@ -264,23 +264,28 @@ export default function ProfileScreen({ navigation }) {
             {/* ------- BIO ------ */}
             <View style={styles.bioBox}>
               <View style={styles.nameContainer}>
-                {/* <Text style={styles.name}>{userData.userName}</Text> */}
-
-                <TouchableOpacity onPress={showNameToast}>
-                  <Text style={styles.name}>
-                    {userData.userName.length <= 30 ? (
-                      userData.userName
-                    ) : (
-                      <>
-                        <Text>{userData.userName.slice(0, 30)}</Text>
-                        <Text style={styles.clickableText}>...</Text>
-                      </>
-                    )}
-                  </Text>
-                </TouchableOpacity>
+                <Text style={styles.name}>
+                  {userData.userName.length <= 30 ? (
+                    userData.userName
+                  ) : (
+                    <>
+                      <Text>{userData.userName.slice(0, 30)}</Text>
+                      <Text style={styles.clickableText}>...</Text>
+                    </>
+                  )}
+                </Text>
               </View>
               <View>
-                <Text style={styles.title}>{userData.title}</Text>
+                <Text style={styles.title}>
+                  {userData.title.length <= 35 ? (
+                    userData.title
+                  ) : (
+                    <>
+                      <Text>{userData.title.slice(0, 3)}</Text>
+                      <Text style={styles.clickableText}>...</Text>
+                    </>
+                  )}
+                </Text>
               </View>
               <View>
                 <BlueHashTagText originalText={userData.bio}></BlueHashTagText>
@@ -325,30 +330,31 @@ const styles = StyleSheet.create({
     height: vh(35),
     width: vw(100),
   },
-  roundedCorner: {
-    backgroundColor: "white",
-    height: vh(3),
-    top: vh(-5),
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
+  // roundedCorner: {
+  //   backgroundColor: "white",
+  //   height: vh(3),
+  //   top: vh(-2),
+  //   borderTopLeftRadius: 20,
+  //   borderTopRightRadius: 20,
+  // },
   scrollView: {
-    backgroundColor: "white",
-    marginBottom: vh(20),
+    marginBottom: vh(30),
     top: vh(-5),
-    height: vh(65),
+    height: vh(95),
+    borderRadius: vh(4),
+    backgroundColor: "white",
   },
   bioBox: {
     paddingHorizontal: 10,
     marginHorizontal: 10,
-    marginTop: 0,
+    marginTop: vh(3),
     paddingVertical: 10,
     backgroundColor: "rgba(190, 119, 234,0.08)",
     width: "93%",
     borderRadius: 20,
-
     borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.5)",
+    top: vh(-9),
   },
   choiceItem: {
     marginHorizontal: 15,
@@ -362,6 +368,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 2,
     flexDirection: "row",
+    top: vh(-9),
   },
   selectedChoice: {
     backgroundColor: "rgba(0, 0, 255, 0.05)",
@@ -381,6 +388,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+    top: vh(-12),
   },
   vehicleList: {},
   blueText: {
@@ -405,7 +413,6 @@ const styles = StyleSheet.create({
   },
   clickableText: {
     color: "blue",
-    textDecorationLine: "underline",
   },
   title: {
     fontSize: 18,
@@ -418,6 +425,8 @@ const styles = StyleSheet.create({
   socialBox: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
+    // backgroundColor: "white",
+    left: vw(-1),
     borderRadius: 20,
     marginTop: 2,
     borderWidth: 1,
@@ -426,18 +435,21 @@ const styles = StyleSheet.create({
   socialBox1: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
+    // backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    left: vw(-5.5),
+    left: vw(-7.5),
     borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   socialBox2: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
+    // backgroundColor: "white",
+
     borderRadius: 20,
     marginTop: 2,
-    left: vw(-1.7),
+    left: vw(-3),
     borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },
@@ -459,11 +471,14 @@ const styles = StyleSheet.create({
   profileImageAndSocial: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // backgroundColor: "rgba(0, 119, 234,0.09)",
-    borderRadius: vh(3),
-    width: "95%",
+    borderRadius: vh(5),
+    borderBottomLeftRadius: vh(0),
+    borderBottomRightRadius: vh(0),
+    width: "100%",
     alignSelf: "center",
     paddingBottom: vh(0.95),
+    backgroundColor: "white",
+    top: vh(-7),
   },
   //container of social
   social: {
@@ -472,10 +487,12 @@ const styles = StyleSheet.create({
     zIndex: 100,
     paddingRight: 20,
     paddingTop: 0,
+    top: vh(1),
   },
   //container of image and name
   profileImageAndName: {
-    left: vw(2),
+    left: vw(4),
+    top: vh(2),
   },
   profileImage: {
     position: "absolute",

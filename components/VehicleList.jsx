@@ -67,8 +67,8 @@ export default function VehicleList({ data }) {
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "red",
-    marginBottom: vh(17),
+    // backgroundColor: "",
+    marginBottom: vh(13),
     marginTop: 10,
     borderRadius: vh(2),
   },

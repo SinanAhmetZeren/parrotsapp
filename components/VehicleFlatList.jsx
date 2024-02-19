@@ -3,6 +3,7 @@
 import React from "react";
 import { StyleSheet, FlatList } from "react-native";
 import VehicleCardHome from "./VehicleCardHome";
+import { vh } from "react-native-expo-viewport-units";
 
 export default function VehicleFlatList() {
   const data = [
@@ -70,8 +71,8 @@ export default function VehicleFlatList() {
 
 const styles = StyleSheet.create({
   flatList: {
-    height: 200,
-    backgroundColor: "white",
-    marginBottom: 50,
+    height: vh(100),
+    //backgroundColor: "",
+    marginBottom: 0,
   },
 });
