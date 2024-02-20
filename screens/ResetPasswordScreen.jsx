@@ -2,7 +2,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-const VehicleDetailScreen = () => {
+const ResetPasswordScreen = () => {
   return (
     <View>
       <Text>Vehicle Detail Screen</Text>
@@ -10,4 +10,4 @@ const VehicleDetailScreen = () => {
   );
 };
 
-export default VehicleDetailScreen;
+export default ResetPasswordScreen;

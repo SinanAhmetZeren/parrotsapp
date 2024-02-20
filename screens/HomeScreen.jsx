@@ -26,7 +26,7 @@ import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
 
-export default function MainScreen({ navigation }) {
+export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
   const [calendarModalVisibility, setCalendarModalVisibility] = useState(false);
   const [vehicleModalVisibility, setVehicleModalVisibility] = useState(false);

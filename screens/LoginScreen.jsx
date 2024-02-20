@@ -7,7 +7,7 @@ import { TouchableOpacity } from "react-native";
 import JWT from "expo-jwt";
 import { coreModule } from "@reduxjs/toolkit/query";
 
-const RegisterScreen = () => {
+const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
@@ -123,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default LoginScreen;

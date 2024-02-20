@@ -136,8 +136,6 @@ export default function ProfileScreen({ navigation }) {
     console.log(error);
   }
 
-  let xx = "1234567890123456789012345678901";
-
   if (isSuccess) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
 
@@ -330,13 +328,6 @@ const styles = StyleSheet.create({
     height: vh(35),
     width: vw(100),
   },
-  // roundedCorner: {
-  //   backgroundColor: "white",
-  //   height: vh(3),
-  //   top: vh(-2),
-  //   borderTopLeftRadius: 20,
-  //   borderTopRightRadius: 20,
-  // },
   scrollView: {
     marginBottom: vh(30),
     top: vh(-5),
@@ -425,7 +416,6 @@ const styles = StyleSheet.create({
   socialBox: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
-    // backgroundColor: "white",
     left: vw(-1),
     borderRadius: 20,
     marginTop: 2,
@@ -435,7 +425,6 @@ const styles = StyleSheet.create({
   socialBox1: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
-    // backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
     left: vw(-7.5),
@@ -445,8 +434,6 @@ const styles = StyleSheet.create({
   socialBox2: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
-    // backgroundColor: "white",
-
     borderRadius: 20,
     marginTop: 2,
     left: vw(-3),
@@ -500,13 +487,13 @@ const styles = StyleSheet.create({
     left: vh(0.4),
     height: vh(18),
     width: vh(18),
-    borderRadius: vh(14),
+    borderRadius: vh(9),
     zIndex: 100,
   },
   solidCircleProfile: {
     height: vh(18.8),
     width: vh(18.8),
-    borderRadius: vh(25),
+    borderRadius: vh(10),
     backgroundColor: "rgba(190, 119, 234,0.6)",
   },
 });
