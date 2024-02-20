@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
@@ -6,7 +7,7 @@ import VehicleCardProfile from "./VehicleCardProfile";
 import { vh } from "react-native-expo-viewport-units";
 
 export default function VehicleList({ data }) {
-  console.log(data);
+  // console.log(data);
   const data1 = [
     {
       id: "1",

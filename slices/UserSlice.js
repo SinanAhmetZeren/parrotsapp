@@ -45,6 +45,18 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    updateBackgroundImage: builder.mutation({
+      // Modify the query function to match your backend API
+      query: (userData) => ({
+        url: `/api/User/${userData.id}/updateBackgroundImage`,
+        method: "POST",
+        // Assuming `userData` includes the image file, adjust the body accordingly
+        body: userData,
+      }),
+      // Assuming invalidatesTags is not needed for updateUser
+      // Modify the invalidatesTags function accordingly
+      invalidatesTags: [],
+    }),
   }),
   overrideExisting: true,
 });
@@ -54,6 +66,7 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useGetUserByIdQuery,
+  useUpdateBackgroundImageMutation,
 } = extendedApiSlice;
 
 export const selectUsersResult =

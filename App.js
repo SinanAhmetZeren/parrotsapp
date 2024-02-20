@@ -102,7 +102,7 @@ const HomeStack = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
       <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
     </Stack.Navigator>
@@ -238,7 +238,6 @@ const TabNavigator = () => {
           },
         }}
       />
-
       <Tab.Screen
         name="Messages"
         component={MessagesScreen}

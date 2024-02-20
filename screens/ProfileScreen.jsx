@@ -17,17 +17,16 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
 import { useFocusEffect } from "@react-navigation/native";
-import { useSelector } from "react-redux";
-import { selectUserById, useGetUserByIdQuery } from "../slices/UserSlice";
+import { useGetUserByIdQuery } from "../slices/UserSlice";
 
 export default function ProfileScreen({ navigation }) {
   //   const { message } = route.params;
 
   let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
-  console.log("hi there");
   const {
     data: userData,
     isLoading,
@@ -36,10 +35,10 @@ export default function ProfileScreen({ navigation }) {
     isSuccess,
     refetch,
   } = useGetUserByIdQuery(userId);
-  //const user = useSelector((state) => selectUserById(state, userId));
-  console.log(userData);
+  if (isSuccess) {
+    console.log("user id: ", userData.id);
+  }
   const [copiedText, setCopiedText] = React.useState("");
-  exampleText = "Elizabeth Annabelle Kensington-Smith";
 
   useFocusEffect(
     React.useCallback(() => {
@@ -47,14 +46,14 @@ export default function ProfileScreen({ navigation }) {
     }, [refetch])
   );
 
-  const handleInstagramPress = () => {
+  const handleInstagramPress = async () => {
     if (userData.instagram) {
       const instagramProfile = `https://www.instagram.com/${userData.instagram}`;
       Linking.openURL(instagramProfile);
     }
   };
 
-  const handleFacebookPress = () => {
+  const handleFacebookPress = async () => {
     const facebookPageID = `${userData.facebook}`;
     //const facebookPageID = `marcos.cezar.948`;
     const fallbackUrl = `https://www.facebook.com/${facebookPageID}`;
@@ -150,8 +149,26 @@ export default function ProfileScreen({ navigation }) {
                 source={require("../assets/amazon.jpeg")}
               />
             </View>
-            <View style={styles.roundedCorner}></View>
-
+            {/* <View style={styles.roundedCorner}></View> */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate("EditProfile")}
+              activeOpacity={0.8}
+            >
+              <View style={styles.editProfileBox}>
+                <View style={styles.innerProfileContainer}>
+                  <MaterialCommunityIcons
+                    name="account-edit-outline"
+                    size={18}
+                    color="rgba(0, 119, 234,0.9)"
+                  />
+                  <Text
+                    style={{ lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}
+                  >
+                    Edit Profile
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
             <View style={styles.profileImageAndSocial}>
               <View style={styles.profileImageAndName}>
                 <View style={styles.solidCircleProfile}>
@@ -465,7 +482,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingBottom: vh(0.95),
     backgroundColor: "white",
-    top: vh(-7),
+    top: vh(-9),
   },
   //container of social
   social: {
@@ -495,5 +512,25 @@ const styles = StyleSheet.create({
     width: vh(18.8),
     borderRadius: vh(10),
     backgroundColor: "rgba(190, 119, 234,0.6)",
+  },
+  editProfileBox: {
+    backgroundColor: "white",
+    top: vh(-9.5),
+    width: vw(30),
+    left: vw(-4),
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    borderRadius: vh(2),
+    padding: vw(1),
+    borderWidth: 1,
+    borderColor: "rgba(190, 119, 234,0.5)",
+  },
+  innerProfileContainer: {
+    backgroundColor: "rgba(190, 119, 234,0.08)",
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    borderRadius: vh(2),
+    borderColor: "rgba(190, 119, 234,0.5)",
+    paddingHorizontal: vw(2),
   },
 });

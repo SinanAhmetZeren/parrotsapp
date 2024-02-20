@@ -32,6 +32,7 @@
     "react-native-calendar-picker": "^8.0.0",
     "react-native-clipboard": "^0.0.5",
     "react-native-expo-viewport-units": "^0.0.8",
+    "react-native-image-picker": "^7.1.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-maps": "1.10.0",
     "react-native-picker": "^4.3.7",
@@ -40,7 +41,8 @@
     "react-native-svg": "14.1.0",
     "react-native-toast-message": "^2.2.0",
     "react-native-web": "~0.19.6",
-    "react-redux": "^9.1.0"
+    "react-redux": "^9.1.0",
+    "expo-image-picker": "~14.7.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
