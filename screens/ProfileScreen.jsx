@@ -36,7 +36,8 @@ export default function ProfileScreen({ navigation }) {
     refetch,
   } = useGetUserByIdQuery(userId);
   if (isSuccess) {
-    console.log("user id: ", userData.id);
+    //console.log("user id: ", userData.id);
+    console.log("");
   }
   const [copiedText, setCopiedText] = React.useState("");
 
@@ -137,6 +138,7 @@ export default function ProfileScreen({ navigation }) {
 
   if (isSuccess) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
+    const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
     return (
       <>
@@ -146,12 +148,15 @@ export default function ProfileScreen({ navigation }) {
               <Image
                 style={styles.imageContainer}
                 resizeMode="cover"
-                source={require("../assets/amazon.jpeg")}
+                source={{ uri: backgroundImageUrl }}
               />
             </View>
             {/* <View style={styles.roundedCorner}></View> */}
             <TouchableOpacity
-              onPress={() => navigation.navigate("EditProfile")}
+              onPress={() => {
+                console.log("navigate to edit profile");
+                navigation.navigate("EditProfile");
+              }}
               activeOpacity={0.8}
             >
               <View style={styles.editProfileBox}>
@@ -433,7 +438,7 @@ const styles = StyleSheet.create({
   socialBox: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
-    left: vw(-1),
+    left: vw(-4),
     borderRadius: 20,
     marginTop: 2,
     borderWidth: 1,
@@ -444,7 +449,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(190, 119, 234,0.1)",
     borderRadius: 20,
     marginTop: 2,
-    left: vw(-7.5),
+    left: vw(-10.5),
     borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },
@@ -453,7 +458,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(190, 119, 234,0.1)",
     borderRadius: 20,
     marginTop: 2,
-    left: vw(-3),
+    left: vw(-6),
     borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },

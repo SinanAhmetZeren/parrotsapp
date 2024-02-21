@@ -45,16 +45,53 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    updateProfileImage: builder.mutation({
+      query: (data) => {
+        const { formData, userId } = data;
+
+        console.log("data: ", data);
+        //formData.append("imageFile", imageFile);
+        console.log("userid12: ", userId);
+        //console.log("imagefile - name ", imageFile["_parts"][0][1].name);
+        return {
+          url: `/api/User/${userId}/updateProfileImage`,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            // Add any other headers if needed
+          },
+          body: formData,
+        };
+      },
+
+      invalidatesTags: [],
+    }),
     updateBackgroundImage: builder.mutation({
-      // Modify the query function to match your backend API
-      query: (userData) => ({
-        url: `/api/User/${userData.id}/updateBackgroundImage`,
-        method: "POST",
-        // Assuming `userData` includes the image file, adjust the body accordingly
-        body: userData,
-      }),
-      // Assuming invalidatesTags is not needed for updateUser
-      // Modify the invalidatesTags function accordingly
+      query: (data) => {
+        const { formData, userId } = data;
+        return {
+          url: `/api/User/${userId}/updateBackgroundImage`,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
+
+      invalidatesTags: [],
+    }),
+    patchUser: builder.mutation({
+      query: ({ userId, patchDoc }) => {
+        console.log("userid", userId);
+        console.log("patchDoc", patchDoc);
+        return {
+          url: `/api/User/PatchUser/${userId}`,
+          method: "PATCH",
+          body: patchDoc,
+        };
+      },
+
       invalidatesTags: [],
     }),
   }),
@@ -66,7 +103,9 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useGetUserByIdQuery,
+  useUpdateProfileImageMutation,
   useUpdateBackgroundImageMutation,
+  usePatchUserMutation,
 } = extendedApiSlice;
 
 export const selectUsersResult =
