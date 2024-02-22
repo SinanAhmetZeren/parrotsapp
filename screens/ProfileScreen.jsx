@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Image,
@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Linking,
   ActivityIndicator,
+  Button,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -18,10 +19,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import VoyageList from "../components/VoyageList";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
 import { useFocusEffect } from "@react-navigation/native";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
+import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
+import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 
 export default function ProfileScreen({ navigation }) {
   //   const { message } = route.params;
@@ -35,17 +39,28 @@ export default function ProfileScreen({ navigation }) {
     isSuccess,
     refetch,
   } = useGetUserByIdQuery(userId);
-  if (isSuccess) {
-    //console.log("user id: ", userData.id);
-    console.log("");
-  }
-  const [copiedText, setCopiedText] = React.useState("");
+  const {
+    data: VoyagesData,
+    isSuccess: isSuccessVoyages,
+    isLoading: isLoadingVoyages,
+  } = useGetVoyagesByUserByIdQuery(userId);
+  const {
+    data: VehiclesData,
+    isSuccess: isSuccessVehicles,
+    isLoading: isLoadingVehicles,
+  } = useGetVehiclesByUserByIdQuery(userId);
+  const [selected, setSelected] = useState("voyages");
 
   useFocusEffect(
     React.useCallback(() => {
       refetch();
+      console.log("from profile screen");
     }, [refetch])
   );
+
+  const handleRefetch = () => {
+    refetch();
+  };
 
   const handleInstagramPress = async () => {
     if (userData.instagram) {
@@ -101,6 +116,10 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  const handleChangeSelection = (s) => {
+    setSelected(s);
+  };
+
   const BlueHashTagText = ({ originalText }) => {
     const words = originalText.split(" ");
     return (
@@ -139,201 +158,267 @@ export default function ProfileScreen({ navigation }) {
   if (isSuccess) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
     const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
+    // console.log("isLoadingVoyages ", isLoadingVoyages);
+    // console.log("isLoadingVehicles ", isLoadingVehicles);
+    // console.log("isLoadingVoyages ", isLoadingVoyages);
+    // console.log("isLoadingVehicles ", isLoadingVehicles);
 
     return (
       <>
-        <View>
+        <View style={styles.mainContainer}>
           <ScrollView style={styles.scrollView}>
-            <View style={styles.rectangularBox}>
-              <Image
-                style={styles.imageContainer}
-                resizeMode="cover"
-                source={{ uri: backgroundImageUrl }}
+            <View style={styles.innerContainer}>
+              <View style={styles.rectangularBox}>
+                <Image
+                  style={styles.imageContainer}
+                  resizeMode="cover"
+                  source={{ uri: backgroundImageUrl }}
+                />
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  console.log("navigate to edit profile");
+                  navigation.navigate("EditProfile");
+                }}
+                activeOpacity={0.8}
+              >
+                <View style={styles.editProfileBox}>
+                  <View style={styles.innerProfileContainer}>
+                    <MaterialCommunityIcons
+                      name="account-edit-outline"
+                      size={18}
+                      color="rgba(0, 119, 234,0.9)"
+                    />
+                    <Text
+                      style={{
+                        lineHeight: 22,
+                        marginLeft: vw(2),
+                        fontSize: 11,
+                      }}
+                    >
+                      Edit Profile
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <View style={styles.profileImageAndSocial}>
+                <View style={styles.profileImageAndName}>
+                  <View style={styles.solidCircleProfile}>
+                    <Image
+                      style={styles.profileImage}
+                      resizeMode="cover"
+                      //resizeMode="contain"
+                      source={{ uri: profileImageUrl }}
+                    />
+                  </View>
+                </View>
+                {/* ------- PROFILE AND SOCIAL ------ */}
+                <View style={styles.social}>
+                  {/* -----------EMAIL------------- */}
+                  <TouchableOpacity
+                    style={styles.socialBox1}
+                    onPress={() => handleEmailPress()}
+                  >
+                    <Fontisto
+                      style={styles.icon}
+                      name="email"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.iconText}>
+                      {userData.email.length > 20
+                        ? `${userData.email.substring(0, 20)}...`
+                        : userData.email}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* --------------INSTAGRAM---------- */}
+                  <TouchableOpacity
+                    style={styles.socialBox2}
+                    onPress={() => handleInstagramPress()}
+                  >
+                    <Ionicons
+                      style={styles.icon}
+                      name="logo-instagram"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.iconText}>
+                      {userData.instagram.length > 20
+                        ? `${userData.instagram.substring(0, 20)}...`
+                        : userData.instagram}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* --------------YOUTUBE---------- */}
+
+                  <TouchableOpacity
+                    style={styles.socialBox}
+                    onPress={() => handleYoutubePress()}
+                  >
+                    <Feather
+                      style={styles.icon}
+                      name="youtube"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.iconText}>
+                      {userData.youtube.length > 20
+                        ? `${userData.youtube.substring(0, 20)}...`
+                        : userData.youtube}
+                    </Text>
+                  </TouchableOpacity>
+                  {/* --------------FACEBOOK---------- */}
+
+                  <TouchableOpacity
+                    style={styles.socialBox2}
+                    onPress={() => handleFacebookPress()}
+                  >
+                    <Feather
+                      style={styles.icon}
+                      name="facebook"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.iconText}>
+                      {userData.facebook.length > 20
+                        ? `${userData.facebook.substring(0, 20)}...`
+                        : userData.facebook}
+                    </Text>
+                  </TouchableOpacity>
+                  {/* --------------PHONE---------- */}
+                  <TouchableOpacity
+                    style={styles.socialBox1}
+                    onPress={() => handlePhonePress()}
+                  >
+                    <Feather
+                      style={styles.icon}
+                      name="phone"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.iconText}>
+                      {userData.phoneNumber.length > 20
+                        ? `${userData.phoneNumber.substring(0, 20)}...`
+                        : userData.phoneNumber}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {/* ------- PROFILE AND SOCIAL ------ */}
+              </View>
+
+              {/* ------- BIO ------ */}
+              <View style={styles.bioBox}>
+                <View style={styles.nameContainer}>
+                  <Text style={styles.name}>
+                    {userData.userName.length <= 30 ? (
+                      userData.userName
+                    ) : (
+                      <>
+                        <Text>{userData.userName.slice(0, 30)}</Text>
+                        <Text style={styles.clickableText}>...</Text>
+                      </>
+                    )}
+                  </Text>
+                </View>
+                <View>
+                  <Text style={styles.title}>
+                    {userData.title.length <= 35 ? (
+                      userData.title
+                    ) : (
+                      <>
+                        <Text>{userData.title.slice(0, 3)}</Text>
+                        <Text style={styles.clickableText}>...</Text>
+                      </>
+                    )}
+                  </Text>
+                </View>
+                <View>
+                  <BlueHashTagText
+                    originalText={userData.bio}
+                  ></BlueHashTagText>
+                </View>
+              </View>
+              {/* ------- BIO ------ */}
+
+              {/* ------- CHOICE ------ */}
+              <View style={styles.viewChoice}>
+                <View style={styles.choiceItem}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleChangeSelection("voyages");
+                    }}
+                    style={
+                      selected === "voyages"
+                        ? styles.selectedChoice
+                        : styles.nonSelectedChoice
+                    }
+                  >
+                    <Text
+                      style={
+                        selected === "voyages"
+                          ? styles.selectedText
+                          : styles.nonSelectedText
+                      }
+                    >
+                      Voyages
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.choiceItem}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleChangeSelection("vehicles");
+                    }}
+                    style={
+                      selected === "vehicles"
+                        ? styles.selectedChoice
+                        : styles.nonSelectedChoice
+                    }
+                  >
+                    <Text
+                      style={
+                        selected === "vehicles"
+                          ? styles.selectedText
+                          : styles.nonSelectedText
+                      }
+                    >
+                      Vehicles
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              {/* ------- CHOICE ------ */}
+
+              {selected === "voyages" &&
+                (isLoadingVoyages ? (
+                  <Text>Loading Voyages</Text>
+                ) : isSuccessVoyages ? (
+                  <View style={styles.voyageListContainer}>
+                    <VoyageList style={styles.voyageList} data={VoyagesData} />
+                  </View>
+                ) : null)}
+
+              {selected === "vehicles" &&
+                (isLoadingVehicles ? (
+                  <Text>Loading vehicles</Text>
+                ) : isSuccessVehicles ? (
+                  <View style={styles.voyageListContainer}>
+                    <VehicleList
+                      style={styles.voyageList}
+                      data={VehiclesData}
+                    />
+                  </View>
+                ) : null)}
+              <Button
+                title="Handle Refetch"
+                onPress={() => {
+                  handleRefetch();
+                }}
               />
             </View>
-            {/* <View style={styles.roundedCorner}></View> */}
-            <TouchableOpacity
-              onPress={() => {
-                console.log("navigate to edit profile");
-                navigation.navigate("EditProfile");
-              }}
-              activeOpacity={0.8}
-            >
-              <View style={styles.editProfileBox}>
-                <View style={styles.innerProfileContainer}>
-                  <MaterialCommunityIcons
-                    name="account-edit-outline"
-                    size={18}
-                    color="rgba(0, 119, 234,0.9)"
-                  />
-                  <Text
-                    style={{ lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}
-                  >
-                    Edit Profile
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-            <View style={styles.profileImageAndSocial}>
-              <View style={styles.profileImageAndName}>
-                <View style={styles.solidCircleProfile}>
-                  <Image
-                    style={styles.profileImage}
-                    resizeMode="cover"
-                    //resizeMode="contain"
-                    source={{ uri: profileImageUrl }}
-                  />
-                </View>
-              </View>
-              {/* ------- PROFILE AND SOCIAL ------ */}
-              <View style={styles.social}>
-                {/* -----------EMAIL------------- */}
-                <TouchableOpacity
-                  style={styles.socialBox1}
-                  onPress={() => handleEmailPress()}
-                >
-                  <Fontisto
-                    style={styles.icon}
-                    name="email"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.iconText}>
-                    {userData.email.length > 20
-                      ? `${userData.email.substring(0, 20)}...`
-                      : userData.email}
-                  </Text>
-                </TouchableOpacity>
-
-                {/* --------------INSTAGRAM---------- */}
-                <TouchableOpacity
-                  style={styles.socialBox2}
-                  onPress={() => handleInstagramPress()}
-                >
-                  <Ionicons
-                    style={styles.icon}
-                    name="logo-instagram"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.iconText}>
-                    {userData.instagram.length > 20
-                      ? `${userData.instagram.substring(0, 20)}...`
-                      : userData.instagram}
-                  </Text>
-                </TouchableOpacity>
-
-                {/* --------------YOUTUBE---------- */}
-
-                <TouchableOpacity
-                  style={styles.socialBox}
-                  onPress={() => handleYoutubePress()}
-                >
-                  <Feather
-                    style={styles.icon}
-                    name="youtube"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.iconText}>
-                    {userData.youtube.length > 20
-                      ? `${userData.youtube.substring(0, 20)}...`
-                      : userData.youtube}
-                  </Text>
-                </TouchableOpacity>
-                {/* --------------FACEBOOK---------- */}
-
-                <TouchableOpacity
-                  style={styles.socialBox2}
-                  onPress={() => handleFacebookPress()}
-                >
-                  <Feather
-                    style={styles.icon}
-                    name="facebook"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.iconText}>
-                    {userData.facebook.length > 20
-                      ? `${userData.facebook.substring(0, 20)}...`
-                      : userData.facebook}
-                  </Text>
-                </TouchableOpacity>
-                {/* --------------PHONE---------- */}
-                <TouchableOpacity
-                  style={styles.socialBox1}
-                  onPress={() => handlePhonePress()}
-                >
-                  <Feather
-                    style={styles.icon}
-                    name="phone"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.iconText}>
-                    {" "}
-                    {userData.phoneNumber.length > 20
-                      ? `${userData.phoneNumber.substring(0, 20)}...`
-                      : userData.phoneNumber}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              {/* ------- PROFILE AND SOCIAL ------ */}
-            </View>
-
-            {/* ------- BIO ------ */}
-            <View style={styles.bioBox}>
-              <View style={styles.nameContainer}>
-                <Text style={styles.name}>
-                  {userData.userName.length <= 30 ? (
-                    userData.userName
-                  ) : (
-                    <>
-                      <Text>{userData.userName.slice(0, 30)}</Text>
-                      <Text style={styles.clickableText}>...</Text>
-                    </>
-                  )}
-                </Text>
-              </View>
-              <View>
-                <Text style={styles.title}>
-                  {userData.title.length <= 35 ? (
-                    userData.title
-                  ) : (
-                    <>
-                      <Text>{userData.title.slice(0, 3)}</Text>
-                      <Text style={styles.clickableText}>...</Text>
-                    </>
-                  )}
-                </Text>
-              </View>
-              <View>
-                <BlueHashTagText originalText={userData.bio}></BlueHashTagText>
-              </View>
-            </View>
-            {/* ------- BIO ------ */}
-
-            {/* ------- CHOICE ------ */}
-            <View style={styles.viewChoice}>
-              <View style={styles.choiceItem}>
-                <TouchableOpacity
-                  onPress={() => {}}
-                  style={styles.selectedChoice}
-                >
-                  <Text style={styles.selectedText}>Vehicles</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={styles.choiceItem}>
-                <TouchableOpacity onPress={() => {}}>
-                  <Text style={styles.choiceItemText}>Voyages</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            {/* ------- CHOICE ------ */}
-            <View style={styles.vehicleListContainer}>
-              <VehicleList style={styles.vehicleList} data={{}} />
-            </View>
           </ScrollView>
+          <Text>kv4bk</Text>
         </View>
       </>
     );
@@ -341,21 +426,28 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    backgroundColor: "white",
+  },
+  innerContainer: {
+    backgroundColor: "white",
+  },
+
   rectangularBox: {
     height: vh(35),
     backgroundColor: "white",
   },
   imageContainer: {
-    top: vh(0),
-    height: vh(35),
+    top: vh(5),
+    height: vh(40),
     width: vw(100),
   },
   scrollView: {
-    marginBottom: vh(30),
-    top: vh(-5),
+    //marginBottom: vh(30),
+    // top: vh(-5),
     height: vh(95),
     borderRadius: vh(4),
-    backgroundColor: "white",
+    //backgroundColor: "pink",
   },
   bioBox: {
     paddingHorizontal: 10,
@@ -367,7 +459,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.5)",
-    top: vh(-9),
+    // top: vh(-9),
   },
   choiceItem: {
     marginHorizontal: 15,
@@ -379,29 +471,48 @@ const styles = StyleSheet.create({
   },
   viewChoice: {
     padding: 10,
-    marginTop: 2,
+    marginVertical: vh(1),
+    width: vw(100),
+    alignSelf: "center",
     flexDirection: "row",
-    top: vh(-9),
+    justifyContent: "space-around",
+    // top: vh(-9),
   },
   selectedChoice: {
-    backgroundColor: "rgba(0, 0, 255, 0.05)",
-    paddingHorizontal: 14,
-    paddingVertical: 0,
-    borderRadius: 10,
+    paddingHorizontal: vh(6),
+    paddingVertical: vh(0.3),
+    backgroundColor: "rgba(0, 119, 234,0.07)",
+    borderRadius: vh(1.5),
+    borderWidth: 1,
+    borderColor: "rgba(10, 119, 234,0.4)",
+  },
+  nonSelectedChoice: {
+    paddingHorizontal: vh(6),
+    paddingVertical: vh(0.3),
+    backgroundColor: "rgba(0, 119, 234,0.04)",
+    borderRadius: vh(1.5),
+    borderWidth: 1,
+    borderColor: "rgba(10, 119, 234,0.08)",
   },
   selectedText: {
-    color: "#0077ea",
+    color: "#5b5bff",
     fontSize: 18,
     fontWeight: "700",
   },
-  vehicleListContainer: {
+  nonSelectedText: {
+    fontSize: 18,
+    fontWeight: "700",
+    // color: "#b0b0ff",
+    color: "#5b5bff",
+  },
+  voyageListContainer: {
     width: vw(98),
     paddingTop: 10,
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    top: vh(-12),
+    // top: vh(-12),
   },
   vehicleList: {},
   blueText: {
@@ -487,7 +598,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingBottom: vh(0.95),
     backgroundColor: "white",
-    top: vh(-9),
+    // top: vh(-9),
   },
   //container of social
   social: {
@@ -520,7 +631,7 @@ const styles = StyleSheet.create({
   },
   editProfileBox: {
     backgroundColor: "white",
-    top: vh(-9.5),
+    top: vh(-0.5),
     width: vw(30),
     left: vw(-4),
     alignSelf: "flex-end",

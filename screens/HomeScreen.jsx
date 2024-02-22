@@ -36,18 +36,11 @@ export default function HomeScreen({ navigation }) {
   //   const { message } = route.params;
   const username = "Öznur";
 
-  const showAlert = (message) => {
-    Alert.alert(
-      message,
-      `Your selection was ${message.toUpperCase()}`,
-      [
-        {
-          text: "OK",
-          onPress: () => console.log("OK Pressed"),
-        },
-      ],
-      { cancelable: false }
-    );
+  const [selected, setSelected] = useState("voyages");
+
+  const handleChangeSelection = (s) => {
+    console.log(s);
+    setSelected(s);
   };
 
   function handleCountModal() {
@@ -139,21 +132,54 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
+
         <View style={styles.viewChoice}>
           <View style={styles.choiceItem}>
             <TouchableOpacity
-              onPress={() => showAlert("vehicles")}
-              style={styles.selectedChoice}
+              onPress={() => {
+                handleChangeSelection("voyages");
+              }}
+              style={
+                selected === "voyages"
+                  ? styles.selectedChoice
+                  : styles.nonSelectedChoice
+              }
             >
-              <Text style={styles.selectedText}>Vehicles</Text>
+              <Text
+                style={
+                  selected === "voyages"
+                    ? styles.selectedText
+                    : styles.nonSelectedText
+                }
+              >
+                Voyages
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.choiceItem}>
-            <TouchableOpacity onPress={() => showAlert("voyages")}>
-              <Text style={styles.choiceItemText}>Voyages</Text>
+            <TouchableOpacity
+              onPress={() => {
+                handleChangeSelection("vehicles");
+              }}
+              style={
+                selected === "vehicles"
+                  ? styles.selectedChoice
+                  : styles.nonSelectedChoice
+              }
+            >
+              <Text
+                style={
+                  selected === "vehicles"
+                    ? styles.selectedText
+                    : styles.nonSelectedText
+                }
+              >
+                Vehicles
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
+
         <View style={styles.mapContainer}>
           <MapView style={styles.map} initialRegion={initialRegion}>
             <Marker
@@ -191,12 +217,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     backgroundColor: "white",
   },
-  viewChoice: {
-    backgroundColor: "white",
-    padding: 10,
-    marginTop: 2,
-    flexDirection: "row",
-  },
+
   mapContainer: {
     height: "46%",
     marginBottom: 7,
@@ -244,14 +265,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "white",
     borderRadius: 20,
   },
-  choiceItem: {
-    marginHorizontal: 15,
-  },
-  choiceItemText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "grey",
-  },
+
   searchAndMenu: {
     flexDirection: "row",
     alignItems: "center",
@@ -286,21 +300,53 @@ const styles = StyleSheet.create({
     color: "#0077ea",
     marginRight: 6,
   },
-  selectedChoice: {
-    backgroundColor: "rgba(0, 0, 255, 0.05)",
-    paddingHorizontal: 14,
-    paddingVertical: 0,
-    borderRadius: 10,
-  },
-  selectedText: {
-    color: "#0077ea",
-    fontSize: 18,
-    fontWeight: "700",
-  },
   filtered: {
     color: "#0077ea",
     backgroundColor: "rgba(0, 119, 234,0.06)",
     borderRadius: 15,
+  },
+  choiceItem: {
+    marginHorizontal: 15,
+  },
+  choiceItemText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "grey",
+  },
+  viewChoice: {
+    padding: 10,
+    marginVertical: vh(1),
+    width: vw(100),
+    alignSelf: "center",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    // top: vh(-9),
+  },
+  selectedChoice: {
+    backgroundColor: "rgba(0, 0, 255, 0.05)",
+    paddingHorizontal: vh(6),
+    paddingVertical: vh(0.3),
+    borderRadius: vw(5),
+    borderWidth: 1,
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  nonSelectedChoice: {
+    backgroundColor: "rgba(0, 0, 255, 0.05)",
+    paddingHorizontal: vh(6),
+    paddingVertical: vh(0.3),
+    borderRadius: vw(5),
+    borderWidth: 1,
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  selectedText: {
+    color: "#5b5bff",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  nonSelectedText: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#9f9fff",
   },
 });
 

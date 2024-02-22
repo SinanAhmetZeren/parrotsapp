@@ -3,10 +3,10 @@
 /* eslint-disable no-undef */
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import VehicleCardProfile from "./VehicleCardProfile";
+import VoyageCardProfile from "./VoyageCardProfile";
 import { vh } from "react-native-expo-viewport-units";
 
-export default function VehicleList({ data }) {
+export default function VoyageList({ data }) {
   // console.log(data);
   const data12 = [
     {
@@ -51,20 +51,24 @@ export default function VehicleList({ data }) {
     },
   ];
 
-  const renderVehicleCards = () => {
+  const renderVoyageCards = () => {
     return data.map((item) => (
-      <VehicleCardProfile
+      <VoyageCardProfile
         key={item.id}
-        vehiclename={item.name}
-        description={item.description}
-        cardImage={item.profileImageUrl}
-        vehicletype={item.type}
-        capacity={item.capacity}
+        voyageId={item.id}
+        cardHeader={item.name}
+        cardDescription={item.brief}
+        cardImage={item.profileImage}
+        vacancy={item.vacancy}
+        startdate={item.startDate}
+        enddate={item.endDate}
+        vehiclename={item.vehicle.name}
+        vehicletype={item.vehicle.type}
       />
     ));
   };
 
-  return <View style={styles.container}>{renderVehicleCards()}</View>;
+  return <View style={styles.container}>{renderVoyageCards()}</View>;
 }
 
 const styles = StyleSheet.create({
