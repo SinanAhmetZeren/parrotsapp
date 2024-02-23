@@ -6,7 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text, Platform, View, StyleSheet, Image } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 
 // Import statements for each screen
 import AddNewVehicleScreen from "./screens/AddNewVehicleScreen";
@@ -92,6 +92,8 @@ const ProfileStack = () => {
       <Stack.Screen name="MyVoyages" component={MyVoyagesScreen} />
       <Stack.Screen name="MyVehicles" component={MyVehiclesScreen} />
       <Stack.Screen name="MyBids" component={MyBidsScreen} />
+      <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
+      <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
     </Stack.Navigator>
   );
 };
@@ -134,6 +136,33 @@ const AuthStack = () => {
 const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={screenOptions}>
+      <Tab.Screen
+        name="VoyageDetail"
+        component={VoyageDetailScreen}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                <MaterialIcons
+                  name="details"
+                  size={24}
+                  color={focused ? "#3aa4ff" : "#000"}
+                />
+                <Text
+                  style={
+                    focused
+                      ? { fontSize: 12, color: "#3aa4ff" }
+                      : { fontSize: 12, color: "#000" }
+                  }
+                >
+                  Voyage Detail
+                </Text>
+              </View>
+            );
+          },
+        }}
+      />
+
       <Tab.Screen
         name="Home"
         component={HomeStack}

@@ -158,10 +158,6 @@ export default function ProfileScreen({ navigation }) {
   if (isSuccess) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
     const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
-    // console.log("isLoadingVoyages ", isLoadingVoyages);
-    // console.log("isLoadingVehicles ", isLoadingVehicles);
-    // console.log("isLoadingVoyages ", isLoadingVoyages);
-    // console.log("isLoadingVehicles ", isLoadingVehicles);
 
     return (
       <>
@@ -410,15 +406,15 @@ export default function ProfileScreen({ navigation }) {
                     />
                   </View>
                 ) : null)}
-              <Button
+
+              {/* <Button
                 title="Handle Refetch"
                 onPress={() => {
                   handleRefetch();
                 }}
-              />
+              /> */}
             </View>
           </ScrollView>
-          <Text>kv4bk</Text>
         </View>
       </>
     );
@@ -426,12 +422,8 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    backgroundColor: "white",
-  },
-  innerContainer: {
-    backgroundColor: "white",
-  },
+  mainContainer: {},
+  innerContainer: {},
 
   rectangularBox: {
     height: vh(35),
@@ -447,7 +439,7 @@ const styles = StyleSheet.create({
     // top: vh(-5),
     height: vh(95),
     borderRadius: vh(4),
-    //backgroundColor: "pink",
+    backgroundColor: "white",
   },
   bioBox: {
     paddingHorizontal: 10,
