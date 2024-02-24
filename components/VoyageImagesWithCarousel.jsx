@@ -19,33 +19,16 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    console.log(currentIndex);
+    console.log("from useEffect:", currentIndex);
   }, [currentIndex]);
 
   const handleImagePress = (index) => {
-    setCurrentIndex(index + 1);
+    setCurrentIndex(index);
     setModalVisible(true);
   };
 
   const handleCloseModal = () => {
     setModalVisible(false);
-  };
-
-  const Pager = () => {
-    return (
-      <PagerView style={styles2.pagerView} initialPage={currentIndex}>
-        {voyageImages.map((item, index) => (
-          <View key={index} style={styles2.dummyText}>
-            <Image
-              source={{
-                uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/${item.voyageImagePath}`,
-              }}
-              style={styles2.carouselImage}
-            />
-          </View>
-        ))}
-      </PagerView>
-    );
   };
 
   const flatListRef = useRef(null);
@@ -57,7 +40,12 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
         data={voyageImages}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
-          <TouchableOpacity onPress={() => handleImagePress(index)}>
+          <TouchableOpacity
+            onPress={() => {
+              handleImagePress(index);
+              console.log(index);
+            }}
+          >
             <View style={styles2.imageContainer1}>
               <Image
                 source={{
@@ -72,29 +60,53 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
 
       <Modal
         animationType="fade"
-        transparent={false}
+        transparent={true}
         visible={modalVisible}
         onRequestClose={handleCloseModal}
+        style={{ flex: 1, backgroundColor: "rgba(1,1,1,0.1)", height: vh(50) }}
       >
-        {/* <Pager /> */}
-
-        <FlatList
-          horizontal
-          data={voyageImages}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => (
-            <TouchableOpacity onPress={() => handleImagePress(index)}>
-              <View style={styles2.imageContainerModal}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(1,1,1,0.4)",
+            height: vh(50),
+          }}
+        >
+          <FlatList
+            ref={flatListRef}
+            horizontal
+            data={
+              voyageImages
+                .slice(currentIndex)
+                .concat(voyageImages.slice(0, currentIndex))
+              //   .concat(
+              //     voyageImages
+              //       .slice(currentIndex)
+              //       .concat(voyageImages.slice(0, currentIndex))
+              //   )
+              //   .concat(
+              //     voyageImages
+              //       .slice(currentIndex)
+              //       .concat(voyageImages.slice(0, currentIndex))
+              //   )
+            }
+            initialScrollIndex={0}
+            onScrollToIndexFailed={(error) => {
+              return null;
+            }}
+            renderItem={({ item, index }) => (
+              <View style={styles2.imageContainerInModal}>
                 <Image
                   source={{
                     uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/${item.voyageImagePath}`,
                   }}
-                  style={styles2.voyageImageModal}
+                  style={styles2.voyageImageInModal}
                 />
               </View>
-            </TouchableOpacity>
-          )}
-        />
+            )}
+            keyExtractor={(item) => item.id}
+          />
+        </View>
 
         <TouchableOpacity
           style={styles2.closeButtonAndText}
@@ -111,7 +123,6 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
 };
 
 const styles2 = StyleSheet.create({
-  dummyText: { backgroundColor: "transparent" },
   modalWrappeer: {
     position: "absolute",
     top: 0,
@@ -119,14 +130,20 @@ const styles2 = StyleSheet.create({
     height: vh(10),
     width: vw(80),
   },
-  imageContainerModal: {
-    backgroundColor: "yellow",
-  },
-  voyageImageModal: {
+
+  imageContainerInModal: {
+    top: vh(30),
     height: vh(40),
-    width: vh(40),
+    paddingLeft: vw(10),
+    backgroundColor: "transparent",
+  },
+  voyageImageInModal: {
+    height: vh(35),
+    width: vw(80),
     marginRight: vh(1),
     borderRadius: vh(1.5),
+    borderWidth: 2,
+    borderColor: "white",
   },
 
   imageContainer1: {
