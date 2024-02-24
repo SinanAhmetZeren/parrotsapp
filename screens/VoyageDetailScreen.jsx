@@ -29,6 +29,7 @@ import {
   Button,
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
+import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
 
 const VoyageDetailScreen = () => {
   //const route = useRoute();
@@ -56,12 +57,6 @@ const VoyageDetailScreen = () => {
     // console.log(coords);
     return (
       <>
-        {/* <Marker
-          coordinate={coords}
-          title="Bisikletle Amsterdam"
-          description="Bisiklete binip sokaklarda gezicez"
-        /> */}
-
         <Marker coordinate={coords}>
           <Callout>
             <View>
@@ -170,13 +165,12 @@ const VoyageDetailScreen = () => {
         break;
     }
 
-    const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/${VoyageData.profileImage}`;
     const initialRegion = getInitialRegion(waypoints);
 
     return (
       <>
         <ScrollView style={styles.ScrollView}>
-          <View style={styles.mapContainer}>
+          <View style={styles.mapAndEmojisContainer}>
             <MapView style={styles.map} initialRegion={initialRegion}>
               <WaypointList waypoints={waypoints} />
             </MapView>
@@ -197,6 +191,26 @@ const VoyageDetailScreen = () => {
               />
             </View>
           </View>
+          <View style={styles.subContainer}>
+            <Text style={styles.voyageName}>{VoyageData.name}</Text>
+            <Text style={styles.userName}>{VoyageData.user.userName}</Text>
+          </View>
+          <View style={styles.ImagesMainContainer}>
+            <View style={styles.ImagesSubContainer}>
+              <VoyageImagesWithCarousel
+                voyageImages={VoyageData.voyageImages}
+              />
+            </View>
+          </View>
+          <View style={styles.subContainer}>
+            <Text style={styles.innerContainer}>Description</Text>
+          </View>
+          <View style={styles.subContainer}>
+            <Text style={styles.innerContainer}>Current Bids x</Text>
+          </View>
+          <View style={styles.subContainer}>
+            <Text style={styles.innerContainer}>Enter Bid</Text>
+          </View>
         </ScrollView>
       </>
     );
@@ -204,25 +218,24 @@ const VoyageDetailScreen = () => {
 };
 
 export default VoyageDetailScreen;
-
 const styles = StyleSheet.create({
-  mapContainer: {
+  ScrollView: {
+    backgroundColor: "green",
+  },
+  mapAndEmojisContainer: {
     height: vh(40),
     padding: vh(1),
     backgroundColor: "blue",
-    width: "94%",
+    width: "98%",
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    margin: vh(2),
+    margin: vh(1),
     marginTop: vh(5),
   },
   map: {
     width: "100%",
     height: "100%",
-  },
-  ScrollView: {
-    backgroundColor: "green",
   },
   heartContainer1: {
     position: "absolute",
@@ -247,5 +260,102 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(5),
     borderWidth: 1,
+  },
+  subContainer: {
+    backgroundColor: "blue",
+    padding: vh(1),
+    margin: vh(0.5),
+    marginTop: vh(0.5),
+  },
+  innerContainer: {
+    marginVertical: vh(0.2),
+    backgroundColor: "honeydew",
+  },
+  voyageName: {
+    fontSize: 24,
+    fontWeight: "700",
+    backgroundColor: "honeydew",
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: "600",
+    backgroundColor: "honeydew",
+    marginTop: vh(0.2),
+    textDecorationLine: "underline",
+    color: "blue",
+  },
+  voyageImage: {
+    height: vh(13),
+    width: vh(13),
+    marginRight: vh(1),
+    borderRadius: vh(1.5),
+  },
+  ImagesMainContainer: {
+    backgroundColor: "green",
+  },
+  ImagesSubContainer: {
+    backgroundColor: "green",
+    paddingHorizontal: vh(1),
+    marginTop: vh(0.5),
+  },
+});
+
+const initialRegion2 = {
+  latitude: 52.362847,
+  longitude: 4.922197,
+  latitudeDelta: 0.5,
+  longitudeDelta: 0.5,
+};
+
+const styles2 = StyleSheet.create({
+  imageContainer1: {
+    backgroundColor: "cyan",
+  },
+  voyageImage1: {
+    height: vh(13),
+    width: vh(13),
+    marginRight: vh(1),
+    borderRadius: vh(1.5),
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust opacity as needed
+  },
+  carouselImage: {
+    position: "absolute",
+    top: vh(30),
+    alignSelf: "center",
+    height: vh(40),
+    width: vw(90),
+    borderRadius: vh(3),
+    borderWidth: 1.5,
+    borderColor: "white",
+  },
+  closeButtonAndText: {
+    flexDirection: "row",
+    position: "absolute",
+    height: vh(3.5),
+    width: vh(11.45),
+    backgroundColor: "white",
+    borderRadius: vh(2.5),
+    bottom: vh(24),
+    borderColor: "rgb(148,1,1)",
+    borderWidth: 1,
+    verticalAlign: "middle",
+  },
+  closeText1: {
+    marginLeft: vw(1),
+    fontSize: 18,
+    height: vh(3),
+    alignSelf: "center",
+    color: "rgb(148,1,1)",
+  },
+  closeText2: {
+    fontSize: 18,
+    height: vh(3),
+    alignSelf: "center",
+    color: "rgb(148,1,1)",
   },
 });
