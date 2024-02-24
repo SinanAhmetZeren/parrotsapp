@@ -43,8 +43,40 @@ const VoyageDetailScreen = () => {
     isLoading: isLoadingVoyages,
   } = useGetVoyageByIdQuery(voyageId);
 
+  const renderBids2 = (bids) => {
+    return bids.map((bid, index) => (
+      <Text key={index}>
+        {bid.userId}
+        {" \n "}
+      </Text>
+    ));
+  };
+
   const renderBids = (bids) => {
-    return bids.map((bid, index) => <Text key={index}>{bid.userId}</Text>);
+    console.log(bids[0]);
+    const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
+    return bids.map((bid, index) => (
+      <View key={index} style={styles.singleBidContainer}>
+        <Image
+          source={{
+            uri: UserImageBaseUrl + bid.userProfileImage,
+          }}
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 15,
+            marginRight: 8,
+            backgroundColor: "purple",
+          }}
+        />
+        <View>
+          <Text style={{ backgroundColor: "red" }}>{bid.userName}</Text>
+        </View>
+        <View>
+          <Text style={{ backgroundColor: "purple" }}>{bid.offerPrice}</Text>
+        </View>
+      </View>
+    ));
   };
 
   const WaypointComponent = ({
@@ -166,6 +198,13 @@ const VoyageDetailScreen = () => {
         break;
     }
 
+    let allVoyageImages = [
+      {
+        id: "0",
+        voyageId: VoyageData.id,
+        voyageImagePath: VoyageData.profileImage,
+      },
+    ].concat(VoyageData.voyageImages);
     const initialRegion = getInitialRegion(waypoints);
 
     return (
@@ -198,19 +237,22 @@ const VoyageDetailScreen = () => {
           </View>
           <View style={styles.ImagesMainContainer}>
             <View style={styles.ImagesSubContainer}>
-              <VoyageImagesWithCarousel
-                voyageImages={VoyageData.voyageImages}
-              />
+              <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
             </View>
           </View>
           <View style={styles.subContainer}>
-            <Text style={styles.innerContainer}>Description</Text>
+            <Text style={styles.innerContainer}>{VoyageData.description}</Text>
           </View>
-          <View style={styles.subContainer}>
-            <Text style={styles.innerContainer}>Current Bids x</Text>
+          <View style={{}}>
+            <View style={styles.allBidsContainer}>
+              {renderBids(VoyageData.bids)}
+            </View>
           </View>
           <View style={styles.subContainer}>
             <Text style={styles.innerContainer}>Enter Bid</Text>
+          </View>
+          <View style={{ height: vh(14) }}>
+            <Text> </Text>
           </View>
         </ScrollView>
       </>
@@ -287,6 +329,17 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  allBidsContainer: {
+    backgroundColor: "blue",
+    margin: vh(1),
+    padding: vh(0),
+  },
+  singleBidContainer: {
+    flexDirection: "row",
+    backgroundColor: "cyan",
+    padding: vh(1),
+    margin: vh(1),
+  },
   ScrollView: {
     backgroundColor: "green",
   },
