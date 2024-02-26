@@ -2,9 +2,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRoute } from "@react-navigation/native";
-import { useGetVoyageByIdQuery } from "../slices/VoyageSlice";
+import {
+  useGetVoyageByIdQuery,
+  useSendBidMutation,
+} from "../slices/VoyageSlice";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   Feather,
@@ -28,6 +31,7 @@ import {
   FlatList,
   Modal,
   TextInput,
+  Share,
 } from "react-native";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
@@ -42,12 +46,14 @@ const VoyageDetailScreen = () => {
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
   } = useGetVoyageByIdQuery(voyageId);
+  const [sendBid] = useSendBidMutation();
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const route = useRoute();
+  console.log(route);
 
   const handleSeeAll = () => {
     setModalVisible(true);
-    console.log("see all");
   };
 
   const renderBids = (bids) => {
@@ -85,7 +91,7 @@ const VoyageDetailScreen = () => {
           visible={modalVisible}
           onRequestClose={closeModal}
         >
-          <View>
+          <View style={{ paddingTop: vh(5) }}>
             <FlatList
               style={styles.BidsFlatList}
               data={bids}
@@ -220,27 +226,56 @@ const VoyageDetailScreen = () => {
       latitudeDelta,
       longitudeDelta,
     };
-    // console.log("initial region: ", initialRegion);
     return initialRegion;
   };
 
   const CreateBidComponent = () => {
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(false);
     const [price, setPrice] = useState(0);
     const [message, setMessage] = useState("");
+    const [persons, setPersons] = useState(0);
+    const textInputRef = useRef(null);
 
-    const handleIncrement = () => {
+    useEffect(() => {
+      if (visible && textInputRef.current) {
+        textInputRef.current.focus();
+      }
+    }, [visible]);
+
+    const handleIncrementPrice = () => {
       setPrice(price + 1);
     };
 
-    const handleDecrement = () => {
+    const handleDecrementPrice = () => {
       if (price > 0) {
         setPrice(price - 1);
       }
     };
 
+    const handleIncrementPersons = () => {
+      setPersons(persons + 1);
+    };
+
+    const handleDecrementPersons = () => {
+      if (persons > 0) {
+        setPersons(persons - 1);
+      }
+    };
+
     const handleSendBid = () => {
-      console.log("Sending bid:", { price, message });
+      let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
+      bidData = {
+        personCount: persons,
+        message: message,
+        offerPrice: price,
+        currency: "€",
+        voyageId: 2,
+        userId,
+        userProfileImage: "string",
+        userName: "string",
+      };
+
+      sendBid(bidData);
       setVisible(false);
     };
 
@@ -250,6 +285,9 @@ const VoyageDetailScreen = () => {
 
     const handleCloseModal = () => {
       setVisible(false);
+      setPersons(0);
+      setPrice(0);
+      setMessage("");
     };
 
     return (
@@ -271,27 +309,55 @@ const VoyageDetailScreen = () => {
               <Text style={styles2.title}>Enter Your Bid</Text>
 
               {/* Bid Amount */}
-              <View style={styles2.counterContainer}>
-                <TouchableOpacity onPress={handleDecrement}>
-                  <Text style={styles2.buttonCount}>-</Text>
-                </TouchableOpacity>
+              <View style={styles2.inputMainContainer}>
+                <Text style={styles2.InputName}>Offer Price: </Text>
 
-                <TextInput
-                  style={styles2.bidInput}
-                  keyboardType="numeric"
-                  value={price.toString()}
-                  onChangeText={(text) => setPrice(parseInt(text) || 0)}
-                />
+                <View style={styles2.counterContainer}>
+                  <TouchableOpacity onPress={handleDecrementPrice}>
+                    <Text style={styles2.buttonCount}>-</Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity onPress={handleIncrement}>
-                  <Text style={styles2.buttonCount}>+</Text>
-                </TouchableOpacity>
+                  <TextInput
+                    ref={textInputRef}
+                    style={styles2.bidInput}
+                    keyboardType="numeric"
+                    value={price.toString()}
+                    onChangeText={(text) => setPrice(parseInt(text) || 0)}
+                  />
+
+                  <TouchableOpacity onPress={handleIncrementPrice}>
+                    <Text style={styles2.buttonCount}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Person count */}
+              <View style={styles2.inputMainContainer}>
+                <Text style={styles2.InputName}>Persons: </Text>
+
+                <View style={styles2.counterContainer}>
+                  <TouchableOpacity onPress={handleDecrementPersons}>
+                    <Text style={styles2.buttonCount}>-</Text>
+                  </TouchableOpacity>
+
+                  <TextInput
+                    style={styles2.bidInput}
+                    keyboardType="numeric"
+                    value={persons.toString()}
+                    onChangeText={(text) => setPersons(parseInt(text) || 0)}
+                  />
+
+                  <TouchableOpacity onPress={handleIncrementPersons}>
+                    <Text style={styles2.buttonCount}>+</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
 
               {/* Message */}
               <TextInput
                 style={styles2.messageInput}
-                placeholder="Enter your bid message"
+                placeholder="Enter your message"
+                placeholderTextColor="#2ac898"
                 multiline
                 value={message}
                 onChangeText={(text) => setMessage(text)}
@@ -319,11 +385,40 @@ const VoyageDetailScreen = () => {
     );
   };
 
+  const getCurrentPageLink = () => {
+    if (route) {
+      // Replace 'YourScreen' with the name of the screen you want to share
+      const currentScreenLink = `https://measured-wolf-grossly.ngrok-free.app/${route.name}`;
+      return currentScreenLink;
+    }
+    return null;
+  };
+
+  const shareLink = async () => {
+    const currentScreenLink = getCurrentPageLink();
+
+    if (currentScreenLink) {
+      try {
+        const result = await Share.share({
+          message: `Check out this link: ${currentScreenLink}`,
+          url: currentScreenLink,
+          title: "Share Link",
+        });
+      } catch (error) {
+        console.error("Error sharing:", error.message);
+      }
+    } else {
+      console.warn("Unable to determine the current screen link.");
+    }
+  };
+
   const navigation = useNavigation();
 
   if (isSuccessVoyages) {
     const bids = VoyageData.bids || [];
     const waypoints = VoyageData.waypoints || [];
+    const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
+    const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
 
     const descriptionShortenedChars = 165;
     const displayText = showFullText
@@ -376,6 +471,10 @@ const VoyageDetailScreen = () => {
     ].concat(VoyageData.voyageImages);
     const initialRegion = getInitialRegion(waypoints);
 
+    const goToProfilePage = () => {
+      navigation.navigate("ProfileStack", { screen: "ProfileScreen" });
+    };
+
     return (
       <>
         <ScrollView style={styles.ScrollView}>
@@ -409,7 +508,33 @@ const VoyageDetailScreen = () => {
             {/* // VoyageName and Username */}
             <View style={styles.VoyageNameAndUsername}>
               <Text style={styles.voyageName}>{VoyageData.name}</Text>
-              <Text style={styles.userName}>{VoyageData.user.userName}</Text>
+              <View style={styles.OwnerAndBoat}>
+                <TouchableOpacity
+                  style={styles.voyageOwner}
+                  onPress={goToProfilePage}
+                >
+                  <Image
+                    source={{
+                      uri: UserImageBaseUrl + VoyageData.user.profileImageUrl,
+                    }}
+                    style={styles.bidImage}
+                  />
+                  <Text style={styles.userName}>
+                    {VoyageData.user.userName}
+                  </Text>
+                </TouchableOpacity>
+                <View style={styles.voyageBoat}>
+                  <Image
+                    source={{
+                      uri:
+                        VehicleImageBaseUrl +
+                        VoyageData.vehicle.profileImageUrl,
+                    }}
+                    style={styles.bidImage}
+                  />
+                  <Text style={styles.userName}>{VoyageData.vehicle.name}</Text>
+                </View>
+              </View>
             </View>
 
             {/* // Voyage Images */}
@@ -461,6 +586,12 @@ const VoyageDetailScreen = () => {
             </View>
           </View>
 
+          <View>
+            <TouchableOpacity onPress={shareLink}>
+              <Text>Share</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* // enter bid */}
 
           <View style={{ marginBottom: vh(25) }}>
@@ -475,10 +606,30 @@ const VoyageDetailScreen = () => {
 export default VoyageDetailScreen;
 
 const styles2 = StyleSheet.create({
-  messageInput: {
+  inputMainContainer: {
+    backgroundColor: "#f4fdfa",
+    padding: vh(1),
+    marginBottom: vh(1),
+    borderRadius: vh(2),
+    borderColor: "#d8f7ee",
+    borderWidth: 2,
+  },
+  InputName: {
     fontSize: 18,
     color: "#186ff1",
     fontWeight: "700",
+    marginBottom: vh(2),
+  },
+  messageInput: {
+    fontSize: 18,
+    color: "#186ff1",
+
+    fontWeight: "700",
+    marginBottom: vh(2),
+    borderColor: "#186ff1",
+    padding: vh(1),
+    borderWidth: 1,
+    borderRadius: vh(2),
   },
   bidInput: {
     color: "#2ac898",
@@ -564,20 +715,36 @@ const styles2 = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  floatingIcon: {
-    backgroundColor: "white",
-    height: 40,
-    width: 40,
-    borderRadius: 15,
-    position: "absolute",
-    top: vh(10),
-    right: vw(35),
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
 
 const styles = StyleSheet.create({
+  OwnerAndBoat: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  voyageOwner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#dceef9",
+    borderRadius: vh(2),
+    borderColor: "#b0d8f2",
+    borderWidth: 1,
+    marginTop: vh(1),
+    paddingVertical: vh(0.3),
+    paddingHorizontal: vw(2),
+  },
+  voyageBoat: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#dceef9",
+    borderRadius: vh(2),
+    borderColor: "#b0d8f2",
+    borderWidth: 1,
+    marginTop: vh(1),
+    paddingVertical: vh(0.3),
+    paddingHorizontal: vw(2),
+  },
   priceInputContainer: {
     flexDirection: "row",
   },
@@ -690,12 +857,12 @@ const styles = StyleSheet.create({
     // backgroundColor: "honeydew",
   },
   userName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "600",
     // backgroundColor: "honeydew",
     marginTop: vh(0.2),
     textDecorationLine: "underline",
-    color: "blue",
+    color: "#186ff1",
   },
   voyageImage: {
     height: vh(13),

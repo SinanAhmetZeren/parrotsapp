@@ -27,26 +27,23 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    sendBid: builder.mutation({
+      query: (bidData) => ({
+        url: "/api/Bid/createBid",
+        method: "POST",
+        body: {
+          ...bidData,
+          dateTime: new Date().toISOString(),
+        },
+      }),
+    }),
   }),
 
   overrideExisting: true,
 });
 
-export const { useGetVoyagesByUserByIdQuery, useGetVoyageByIdQuery } =
-  extendedApiSlice;
-
-// export const selectVoyagesResult =
-//   extendedApiSlice.endpoints.getAllVoyages.select();
-
-// export const selectVoyagesData = createSelector(
-//   selectVoyagesResult,
-//   (voyageResult) => voyageResult.data
-// );
-
-// export const {
-//   selectAll: selectAllVoyages,
-//   selectById: selectVoyageById,
-//   selectIds: selectVoyageIds,
-// } = voyagesAdapter.getSelectors(
-//   (state) => selectVoyagesData(state) ?? initialState
-// );
+export const {
+  useGetVoyagesByUserByIdQuery,
+  useGetVoyageByIdQuery,
+  useSendBidMutation,
+} = extendedApiSlice;
