@@ -14,6 +14,7 @@ import {
   FontAwesome,
   Ionicons,
   MaterialIcons,
+  MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { BackHandler } from "react-native";
@@ -26,6 +27,7 @@ import {
   TouchableOpacity,
   FlatList,
   Modal,
+  TextInput,
 } from "react-native";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
@@ -47,6 +49,7 @@ const VoyageDetailScreen = () => {
     setModalVisible(true);
     console.log("see all");
   };
+
   const renderBids = (bids) => {
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const visibleBids = bids.slice(0, 6);
@@ -221,6 +224,101 @@ const VoyageDetailScreen = () => {
     return initialRegion;
   };
 
+  const CreateBidComponent = () => {
+    const [visible, setVisible] = useState(true);
+    const [price, setPrice] = useState(0);
+    const [message, setMessage] = useState("");
+
+    const handleIncrement = () => {
+      setPrice(price + 1);
+    };
+
+    const handleDecrement = () => {
+      if (price > 0) {
+        setPrice(price - 1);
+      }
+    };
+
+    const handleSendBid = () => {
+      console.log("Sending bid:", { price, message });
+      setVisible(false);
+    };
+
+    const handleOpenModal = () => {
+      setVisible(true);
+    };
+
+    const handleCloseModal = () => {
+      setVisible(false);
+    };
+
+    return (
+      <View>
+        <View style={styles.bidButtonContainer}>
+          <TouchableOpacity onPress={handleOpenModal}>
+            <Text style={styles.createBidButton}>Create Bid</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Modal
+          visible={visible}
+          transparent
+          animationType="fade"
+          onRequestClose={handleCloseModal}
+        >
+          <View style={styles2.modalContainer}>
+            <View style={styles2.innerContainer}>
+              <Text style={styles2.title}>Enter Your Bid</Text>
+
+              {/* Bid Amount */}
+              <View style={styles2.counterContainer}>
+                <TouchableOpacity onPress={handleDecrement}>
+                  <Text style={styles2.buttonCount}>-</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles2.bidInput}
+                  keyboardType="numeric"
+                  value={price.toString()}
+                  onChangeText={(text) => setPrice(parseInt(text) || 0)}
+                />
+
+                <TouchableOpacity onPress={handleIncrement}>
+                  <Text style={styles2.buttonCount}>+</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Message */}
+              <TextInput
+                style={styles2.messageInput}
+                placeholder="Enter your bid message"
+                multiline
+                value={message}
+                onChangeText={(text) => setMessage(text)}
+              />
+
+              {/* Buttons */}
+              <View style={styles2.buttonsContainer}>
+                <TouchableOpacity
+                  onPress={handleCloseModal}
+                  style={styles2.buttonCancelContainer}
+                >
+                  <Text style={styles2.buttonClear}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleSendBid}
+                  style={styles2.buttonSendBidContainer}
+                >
+                  <Text style={styles2.buttonSave}>Send Bid</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    );
+  };
+
   const navigation = useNavigation();
 
   if (isSuccessVoyages) {
@@ -364,11 +462,9 @@ const VoyageDetailScreen = () => {
           </View>
 
           {/* // enter bid */}
-          <View style={styles.EnterBidContainer}>
-            <Text style={styles.innerContainer}>Enter Bid</Text>
-          </View>
-          <View style={{ height: vh(14) }}>
-            <Text> Enter bid </Text>
+
+          <View style={{ marginBottom: vh(25) }}>
+            <CreateBidComponent />
           </View>
         </ScrollView>
       </>
@@ -378,7 +474,137 @@ const VoyageDetailScreen = () => {
 
 export default VoyageDetailScreen;
 
+const styles2 = StyleSheet.create({
+  messageInput: {
+    fontSize: 18,
+    color: "#186ff1",
+    fontWeight: "700",
+  },
+  bidInput: {
+    color: "#2ac898",
+    fontSize: 22,
+    fontWeight: "800",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    paddingTop: vh(17),
+    paddingBottom: vh(70),
+  },
+  innerContainer: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  counterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+
+  buttonsContainer: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "space-around",
+  },
+
+  buttonSaveContainer: {
+    alignItems: "center",
+  },
+  buttonClearContainer: {
+    alignItems: "center",
+  },
+  buttonSave: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    backgroundColor: "#186ff1",
+    padding: 5,
+    width: vw(30),
+    borderRadius: 10,
+    marginTop: 5,
+  },
+  buttonClear: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    backgroundColor: "#2ac898",
+    padding: 5,
+    width: vw(30),
+    borderRadius: 10,
+    marginTop: 5,
+  },
+  buttonCount: {
+    fontSize: 24,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: "#3498db",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    width: vh(6),
+    textAlign: "center",
+    color: "#2ac898",
+    fontWeight: "800",
+  },
+  count: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  floatingIcon: {
+    backgroundColor: "white",
+    height: 40,
+    width: 40,
+    borderRadius: 15,
+    position: "absolute",
+    top: vh(10),
+    right: vw(35),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
 const styles = StyleSheet.create({
+  priceInputContainer: {
+    flexDirection: "row",
+  },
+  bidButtonContainer: {
+    backgroundColor: "#186ff1",
+    borderRadius: vh(2),
+    borderColor: "#3c9ede",
+    borderWidth: 3,
+    marginBottom: vh(35),
+    width: vw(60),
+    alignSelf: "center",
+    marginTop: vh(1),
+    height: vh(5),
+    justifyContent: "center",
+  },
+  createBidButton: {
+    fontSize: 22,
+    color: "white",
+    alignSelf: "center",
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+  bidModalContainer: {
+    backgroundColor: "#06d1d3",
+    padding: vh(4),
+    margin: vh(5),
+  },
   ScrollView: {
     backgroundColor: "white",
   },
@@ -397,6 +623,8 @@ const styles = StyleSheet.create({
     height: "100%",
     overflow: "hidden",
     borderRadius: 20,
+    borderColor: "#93c9ed",
+    borderWidth: 3,
   },
   map: {
     width: "100%",
@@ -510,7 +738,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f2fafa",
     borderRadius: vw(5),
     marginHorizontal: vw(2),
-    borderColor: "#bfdff4",
+    borderColor: "#93c9ed",
     borderWidth: 2,
   },
   allBidsContainer: {
@@ -591,8 +819,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f2fafa",
     borderRadius: vw(5),
     marginHorizontal: vw(2),
-    marginBottom: vh(1),
-    borderColor: "#bfdff4",
+    marginBottom: vh(2),
+    borderColor: "#93c9ed",
     borderWidth: 2,
   },
   closeButtonInModal: {
@@ -600,7 +828,7 @@ const styles = StyleSheet.create({
     marginRight: vw(10),
     backgroundColor: "#f2fafa",
     borderRadius: vw(5),
-    borderColor: "#bfdff4",
+    borderColor: "#93c9ed",
     borderWidth: 2,
     padding: vw(1),
     paddingHorizontal: vw(3),
