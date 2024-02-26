@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useGetVoyageByIdQuery } from "../slices/VoyageSlice";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -28,9 +28,8 @@ import {
   ActivityIndicator,
   Button,
 } from "react-native";
-import MapView, { Marker, Callout } from "react-native-maps";
+import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
-import PagerView from "react-native-pager-view";
 
 const VoyageDetailScreen = () => {
   //const route = useRoute();
@@ -42,18 +41,9 @@ const VoyageDetailScreen = () => {
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
   } = useGetVoyageByIdQuery(voyageId);
-
-  const renderBids2 = (bids) => {
-    return bids.map((bid, index) => (
-      <Text key={index}>
-        {bid.userId}
-        {" \n "}
-      </Text>
-    ));
-  };
+  const [showFullText, setShowFullText] = useState(false);
 
   const renderBids = (bids) => {
-    console.log(bids[0]);
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     return bids.map((bid, index) => (
       <View key={index} style={styles.singleBidContainer}>
@@ -61,19 +51,15 @@ const VoyageDetailScreen = () => {
           source={{
             uri: UserImageBaseUrl + bid.userProfileImage,
           }}
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 15,
-            marginRight: 8,
-            backgroundColor: "purple",
-          }}
+          style={styles.bidImage}
         />
         <View>
-          <Text style={{ backgroundColor: "red" }}>{bid.userName}</Text>
+          <Text style={styles.bidUsername}>{bid.userName}</Text>
         </View>
         <View>
-          <Text style={{ backgroundColor: "purple" }}>{bid.offerPrice}</Text>
+          <Text style={styles.offerPrice}>
+            {bid.currency} {bid.offerPrice.toFixed(2)}
+          </Text>
         </View>
       </View>
     ));
@@ -85,12 +71,13 @@ const VoyageDetailScreen = () => {
     longitude,
     profileImage,
     title,
+    pinColor,
   }) => {
     const coords = { latitude, longitude };
-    // console.log(coords);
+
     return (
       <>
-        <Marker coordinate={coords}>
+        <Marker coordinate={coords} pinColor={pinColor}>
           <Callout>
             <View>
               <Text>{title}</Text>
@@ -111,8 +98,15 @@ const VoyageDetailScreen = () => {
   const WaypointList = ({ waypoints }) => {
     return (
       <>
-        {waypoints.map((waypoint) => {
-          // console.log(waypoint);
+        {waypoints.map((waypoint, index) => {
+          // let pinColor = "#cfc200";
+          let pinColor = "orange";
+          if (index === 0) {
+            pinColor = "#115500";
+          } else if (index === waypoints.length - 1) {
+            pinColor = "#610101";
+          }
+
           return (
             <WaypointComponent
               key={waypoint.id}
@@ -121,10 +115,29 @@ const VoyageDetailScreen = () => {
               longitude={waypoint.longitude}
               profileImage={waypoint.profileImage}
               title={waypoint.title}
+              pinColor={pinColor}
             />
           );
         })}
       </>
+    );
+  };
+
+  const renderPolylines = (waypoints) => {
+    const coordinates = waypoints.map((marker) => {
+      return { latitude: marker.latitude, longitude: marker.longitude };
+    });
+
+    return (
+      <Polyline
+        coordinates={coordinates}
+        strokeColor="#1468fb" // Change the color as needed
+        strokeWidth={3}
+        lineCap="butt"
+        lineDashPattern={[20, 7]}
+        geodesic={true}
+        lineJoin="round" // Example line join
+      />
     );
   };
 
@@ -143,15 +156,15 @@ const VoyageDetailScreen = () => {
     );
     const centerLatitude = (maxLatitude + minLatitude) / 2;
     const centerLongitude = (maxLongitude + minLongitude) / 2;
-    const latitudeDelta = (maxLatitude - minLatitude) * 1.3;
+    const latitudeDelta = (maxLatitude - minLatitude) * 1.4;
     const longitudeDelta = (maxLongitude - minLongitude) * 1.3;
     const initialRegion = {
-      latitude: centerLatitude,
+      latitude: centerLatitude + (maxLatitude - minLatitude) * 0.1,
       longitude: centerLongitude,
       latitudeDelta,
       longitudeDelta,
     };
-    console.log("initial region: ", initialRegion);
+    // console.log("initial region: ", initialRegion);
     return initialRegion;
   };
 
@@ -160,6 +173,11 @@ const VoyageDetailScreen = () => {
   if (isSuccessVoyages) {
     const bids = VoyageData.bids || [];
     const waypoints = VoyageData.waypoints || [];
+
+    const descriptionShortenedChars = 165;
+    const displayText = showFullText
+      ? VoyageData.description
+      : VoyageData.description.slice(0, descriptionShortenedChars) + "...";
 
     let icon;
     switch (VoyageData.vehicle.type) {
@@ -210,10 +228,14 @@ const VoyageDetailScreen = () => {
     return (
       <>
         <ScrollView style={styles.ScrollView}>
+          {/* // map */}
           <View style={styles.mapAndEmojisContainer}>
-            <MapView style={styles.map} initialRegion={initialRegion}>
-              <WaypointList waypoints={waypoints} />
-            </MapView>
+            <View style={styles.mapContainer}>
+              <MapView style={styles.map} initialRegion={initialRegion}>
+                <WaypointList waypoints={waypoints} />
+                {renderPolylines(waypoints)}
+              </MapView>
+            </View>
             <View style={styles.heartContainer1}>
               <Ionicons
                 name="heart"
@@ -231,28 +253,56 @@ const VoyageDetailScreen = () => {
               />
             </View>
           </View>
-          <View style={styles.subContainer}>
+
+          {/* // VoyageName and Username */}
+          <View style={styles.VoyageNameAndUsername}>
             <Text style={styles.voyageName}>{VoyageData.name}</Text>
             <Text style={styles.userName}>{VoyageData.user.userName}</Text>
           </View>
+
+          {/* // Voyage Images */}
           <View style={styles.ImagesMainContainer}>
             <View style={styles.ImagesSubContainer}>
               <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
             </View>
           </View>
-          <View style={styles.subContainer}>
-            <Text style={styles.innerContainer}>{VoyageData.description}</Text>
+
+          {/* // Voyage Description */}
+          <View style={styles.DescriptionContainer}>
+            <Text style={styles.descriptionInnerContainer}>{displayText}</Text>
+            {VoyageData.description.length > descriptionShortenedChars &&
+              !showFullText && (
+                <TouchableOpacity onPress={() => setShowFullText(true)}>
+                  <Text style={styles.ReadMoreLess}>
+                    Read more...
+                    <MaterialIcons name="expand-more" size={24} color="blue" />
+                  </Text>
+                </TouchableOpacity>
+              )}
+            {showFullText && (
+              <TouchableOpacity onPress={() => setShowFullText(false)}>
+                <Text style={styles.ReadMoreLess}>
+                  Read less...
+                  <MaterialIcons name="expand-less" size={24} color="blue" />
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-          <View style={{}}>
+
+          {/* // Bids */}
+          <View style={styles.currentBidsContainer}>
+            <Text style={styles.currentBidsTitle}>Current Bids</Text>
             <View style={styles.allBidsContainer}>
               {renderBids(VoyageData.bids)}
             </View>
           </View>
-          <View style={styles.subContainer}>
+
+          {/* // enter bid */}
+          <View style={styles.EnterBidContainer}>
             <Text style={styles.innerContainer}>Enter Bid</Text>
           </View>
           <View style={{ height: vh(14) }}>
-            <Text> </Text>
+            <Text> Enter bid </Text>
           </View>
         </ScrollView>
       </>
@@ -329,34 +379,29 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  allBidsContainer: {
-    backgroundColor: "blue",
-    margin: vh(1),
-    padding: vh(0),
-  },
-  singleBidContainer: {
-    flexDirection: "row",
-    backgroundColor: "cyan",
-    padding: vh(1),
-    margin: vh(1),
-  },
   ScrollView: {
-    backgroundColor: "green",
+    backgroundColor: "white",
   },
   mapAndEmojisContainer: {
     height: vh(40),
-    padding: vh(1),
-    backgroundColor: "blue",
+    padding: vh(0.5),
     width: "98%",
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    margin: vh(1),
+    marginBottom: vh(2),
     marginTop: vh(5),
+  },
+  mapContainer: {
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+    borderRadius: 20,
   },
   map: {
     width: "100%",
     height: "100%",
+    borderRadius: vw(10),
   },
   heartContainer1: {
     position: "absolute",
@@ -368,7 +413,7 @@ const styles = StyleSheet.create({
     width: vw(8),
     backgroundColor: "white",
     borderRadius: vh(5),
-    borderWidth: 1,
+    // borderWidth: 1,
   },
   shareContainer1: {
     position: "absolute",
@@ -380,7 +425,26 @@ const styles = StyleSheet.create({
     width: vw(8),
     backgroundColor: "white",
     borderRadius: vh(5),
-    borderWidth: 1,
+    // borderWidth: 1,
+  },
+  VoyageNameAndUsername: {
+    // backgroundColor: "blue",
+    padding: vh(1),
+    margin: vh(0.5),
+    marginTop: vh(0.5),
+  },
+  DescriptionContainer: {
+    // backgroundColor: "blue",
+    padding: vh(1),
+    margin: vh(0.5),
+    marginTop: vh(0.5),
+  },
+  descriptionInnerContainer: {
+    marginVertical: vh(0.2),
+    // backgroundColor: "honeydew",
+  },
+  ReadMoreLess: {
+    color: "blue",
   },
   subContainer: {
     backgroundColor: "blue",
@@ -395,12 +459,12 @@ const styles = StyleSheet.create({
   voyageName: {
     fontSize: 24,
     fontWeight: "700",
-    backgroundColor: "honeydew",
+    // backgroundColor: "honeydew",
   },
   userName: {
     fontSize: 16,
     fontWeight: "600",
-    backgroundColor: "honeydew",
+    // backgroundColor: "honeydew",
     marginTop: vh(0.2),
     textDecorationLine: "underline",
     color: "blue",
@@ -412,18 +476,57 @@ const styles = StyleSheet.create({
     borderRadius: vh(1.5),
   },
   ImagesMainContainer: {
-    backgroundColor: "green",
+    backgroundColor: "white",
   },
   ImagesSubContainer: {
-    backgroundColor: "green",
+    backgroundColor: "white",
     paddingHorizontal: vh(1),
     marginTop: vh(0.5),
   },
+  bidImage: {
+    width: vh(5),
+    height: vh(5),
+    borderRadius: vh(2.5),
+    marginRight: 8,
+    backgroundColor: "purple",
+  },
+  bidUsername: {
+    // backgroundColor: "red",
+    fontSize: 17,
+    fontWeight: "700",
+    width: vw(55),
+  },
+  offerPrice: {
+    // backgroundColor: "grey",
+    fontSize: 18,
+    fontWeight: "800",
+    color: "blue",
+    width: vw(25),
+    textAlign: "right",
+  },
+  currentBidsTitle: {
+    paddingLeft: vw(2),
+    fontSize: 25,
+    fontWeight: "700",
+    color: "blue",
+  },
+  currentBidsContainer: {
+    backgroundColor: "white",
+    // paddingLeft: vw(0),
+    // fontSize: 50,
+    // fontWeight: "900",
+    // color: "red",
+  },
+  allBidsContainer: {
+    // backgroundColor: "blue",
+    margin: vh(1),
+    padding: vh(0),
+  },
+  singleBidContainer: {
+    flexDirection: "row",
+    // backgroundColor: "cyan",
+    padding: vh(0.1),
+    margin: vh(0.3),
+    alignItems: "center",
+  },
 });
-
-const initialRegion2 = {
-  latitude: 52.362847,
-  longitude: 4.922197,
-  latitudeDelta: 0.5,
-  longitudeDelta: 0.5,
-};

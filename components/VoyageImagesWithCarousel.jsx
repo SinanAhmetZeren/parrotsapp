@@ -70,6 +70,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
             flex: 1,
             backgroundColor: "rgba(1,1,1,0.4)",
             height: vh(50),
+            paddingRight: vw(10),
           }}
         >
           <FlatList
@@ -147,7 +148,7 @@ const styles2 = StyleSheet.create({
   },
 
   imageContainer1: {
-    backgroundColor: "cyan",
+    // backgroundColor: "white",
   },
   voyageImage1: {
     height: vh(13),
