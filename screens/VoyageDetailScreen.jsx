@@ -24,9 +24,8 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  Linking,
-  ActivityIndicator,
-  Button,
+  FlatList,
+  Modal,
 } from "react-native";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
@@ -42,27 +41,81 @@ const VoyageDetailScreen = () => {
     isLoading: isLoadingVoyages,
   } = useGetVoyageByIdQuery(voyageId);
   const [showFullText, setShowFullText] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
+  const handleSeeAll = () => {
+    setModalVisible(true);
+    console.log("see all");
+  };
   const renderBids = (bids) => {
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
-    return bids.map((bid, index) => (
-      <View key={index} style={styles.singleBidContainer}>
-        <Image
-          source={{
-            uri: UserImageBaseUrl + bid.userProfileImage,
-          }}
-          style={styles.bidImage}
-        />
-        <View>
-          <Text style={styles.bidUsername}>{bid.userName}</Text>
-        </View>
-        <View>
-          <Text style={styles.offerPrice}>
-            {bid.currency} {bid.offerPrice.toFixed(2)}
-          </Text>
-        </View>
+    const visibleBids = bids.slice(0, 6);
+
+    const closeModal = () => {
+      setModalVisible(false);
+    };
+
+    return (
+      <View>
+        {visibleBids.map((bid, index) => (
+          <View key={index} style={styles.singleBidContainer}>
+            <Image
+              source={{
+                uri: UserImageBaseUrl + bid.userProfileImage,
+              }}
+              style={styles.bidImage}
+            />
+            <View>
+              <Text style={styles.bidUsername}>{bid.userName}</Text>
+            </View>
+            <View>
+              <Text style={styles.offerPrice}>
+                {bid.currency} {bid.offerPrice.toFixed(2)}
+              </Text>
+            </View>
+          </View>
+        ))}
+
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={modalVisible}
+          onRequestClose={closeModal}
+        >
+          <View>
+            <FlatList
+              style={styles.BidsFlatList}
+              data={bids}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item, index }) => (
+                <View key={index} style={styles.singleBidContainer2}>
+                  <Image
+                    source={{
+                      uri: UserImageBaseUrl + item.userProfileImage,
+                    }}
+                    style={styles.bidImage2}
+                  />
+                  <View>
+                    <Text style={styles.bidUsername2}>{item.userName}</Text>
+                  </View>
+                  <View>
+                    <Text style={styles.offerPrice2}>
+                      {item.currency} {item.offerPrice.toFixed(2)}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            />
+            <TouchableOpacity
+              onPress={closeModal}
+              style={styles.closeButtonInModal}
+            >
+              <Text style={styles.closeTextInModal}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </View>
-    ));
+    );
   };
 
   const WaypointComponent = ({
@@ -254,44 +307,57 @@ const VoyageDetailScreen = () => {
             </View>
           </View>
 
-          {/* // VoyageName and Username */}
-          <View style={styles.VoyageNameAndUsername}>
-            <Text style={styles.voyageName}>{VoyageData.name}</Text>
-            <Text style={styles.userName}>{VoyageData.user.userName}</Text>
-          </View>
-
-          {/* // Voyage Images */}
-          <View style={styles.ImagesMainContainer}>
-            <View style={styles.ImagesSubContainer}>
-              <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
+          <View style={styles.VoyageDataContainer}>
+            {/* // VoyageName and Username */}
+            <View style={styles.VoyageNameAndUsername}>
+              <Text style={styles.voyageName}>{VoyageData.name}</Text>
+              <Text style={styles.userName}>{VoyageData.user.userName}</Text>
             </View>
-          </View>
 
-          {/* // Voyage Description */}
-          <View style={styles.DescriptionContainer}>
-            <Text style={styles.descriptionInnerContainer}>{displayText}</Text>
-            {VoyageData.description.length > descriptionShortenedChars &&
-              !showFullText && (
-                <TouchableOpacity onPress={() => setShowFullText(true)}>
+            {/* // Voyage Images */}
+            <View style={styles.ImagesMainContainer}>
+              <View style={styles.ImagesSubContainer}>
+                <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
+              </View>
+            </View>
+
+            {/* // Voyage Description */}
+            <View style={styles.DescriptionContainer}>
+              <Text style={styles.descriptionInnerContainer}>
+                {displayText}
+              </Text>
+              {VoyageData.description.length > descriptionShortenedChars &&
+                !showFullText && (
+                  <TouchableOpacity onPress={() => setShowFullText(true)}>
+                    <Text style={styles.ReadMoreLess}>
+                      Read more...
+                      <MaterialIcons
+                        name="expand-more"
+                        size={24}
+                        color="blue"
+                      />
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              {showFullText && (
+                <TouchableOpacity onPress={() => setShowFullText(false)}>
                   <Text style={styles.ReadMoreLess}>
-                    Read more...
-                    <MaterialIcons name="expand-more" size={24} color="blue" />
+                    Read less...
+                    <MaterialIcons name="expand-less" size={24} color="blue" />
                   </Text>
                 </TouchableOpacity>
               )}
-            {showFullText && (
-              <TouchableOpacity onPress={() => setShowFullText(false)}>
-                <Text style={styles.ReadMoreLess}>
-                  Read less...
-                  <MaterialIcons name="expand-less" size={24} color="blue" />
-                </Text>
-              </TouchableOpacity>
-            )}
+            </View>
           </View>
-
           {/* // Bids */}
-          <View style={styles.currentBidsContainer}>
-            <Text style={styles.currentBidsTitle}>Current Bids</Text>
+          <View style={styles.mainBidsContainer}>
+            <View style={styles.currentBidsAndSeeAll}>
+              <Text style={styles.currentBidsTitle}>Current Bids</Text>
+              <TouchableOpacity onPress={handleSeeAll}>
+                <Text style={styles.seeAllButton}>See All</Text>
+              </TouchableOpacity>
+            </View>
+
             <View style={styles.allBidsContainer}>
               {renderBids(VoyageData.bids)}
             </View>
@@ -311,72 +377,6 @@ const VoyageDetailScreen = () => {
 };
 
 export default VoyageDetailScreen;
-
-const styles2 = StyleSheet.create({
-  modalWrapper: {
-    backgroundColor: "red",
-  },
-  imageContainer1: {
-    backgroundColor: "cyan",
-  },
-  voyageImage1: {
-    height: vh(13),
-    width: vh(13),
-    marginRight: vh(1),
-    borderRadius: vh(1.5),
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust opacity as needed
-  },
-  carouselImage: {
-    position: "absolute",
-    top: vh(30),
-    alignSelf: "center",
-    height: vh(40),
-    width: vw(90),
-    borderRadius: vh(3),
-    borderWidth: 1.5,
-    borderColor: "white",
-  },
-  closeButtonAndText: {
-    flexDirection: "row",
-    position: "absolute",
-    height: vh(3.5),
-    width: vh(11.45),
-    backgroundColor: "white",
-    borderRadius: vh(2.5),
-    bottom: vh(24),
-    borderColor: "rgb(148,1,1)",
-    borderWidth: 1,
-    verticalAlign: "middle",
-  },
-  closeText1: {
-    marginLeft: vw(1),
-    fontSize: 18,
-    height: vh(3),
-    alignSelf: "center",
-    color: "rgb(148,1,1)",
-  },
-  closeText2: {
-    fontSize: 18,
-    height: vh(3),
-    alignSelf: "center",
-    color: "rgb(148,1,1)",
-  },
-  pagerView: {
-    backgroundColor: "red",
-    height: vh(20),
-    flex: 1,
-  },
-  dummyText: {
-    backgroundColor: "red",
-    height: vh(20),
-    width: vw(50),
-  },
-});
 
 const styles = StyleSheet.create({
   ScrollView: {
@@ -475,11 +475,7 @@ const styles = StyleSheet.create({
     marginRight: vh(1),
     borderRadius: vh(1.5),
   },
-  ImagesMainContainer: {
-    backgroundColor: "white",
-  },
   ImagesSubContainer: {
-    backgroundColor: "white",
     paddingHorizontal: vh(1),
     marginTop: vh(0.5),
   },
@@ -488,7 +484,7 @@ const styles = StyleSheet.create({
     height: vh(5),
     borderRadius: vh(2.5),
     marginRight: 8,
-    backgroundColor: "purple",
+    backgroundColor: "grey",
   },
   bidUsername: {
     // backgroundColor: "red",
@@ -500,22 +496,22 @@ const styles = StyleSheet.create({
     // backgroundColor: "grey",
     fontSize: 18,
     fontWeight: "800",
-    color: "blue",
-    width: vw(25),
+    color: "#4aa5e1",
+    width: vw(23),
     textAlign: "right",
   },
   currentBidsTitle: {
     paddingLeft: vw(2),
     fontSize: 25,
     fontWeight: "700",
-    color: "blue",
+    color: "#1c71a9",
   },
-  currentBidsContainer: {
-    backgroundColor: "white",
-    // paddingLeft: vw(0),
-    // fontSize: 50,
-    // fontWeight: "900",
-    // color: "red",
+  mainBidsContainer: {
+    backgroundColor: "#f2fafa",
+    borderRadius: vw(5),
+    marginHorizontal: vw(2),
+    borderColor: "#bfdff4",
+    borderWidth: 2,
   },
   allBidsContainer: {
     // backgroundColor: "blue",
@@ -524,9 +520,96 @@ const styles = StyleSheet.create({
   },
   singleBidContainer: {
     flexDirection: "row",
-    // backgroundColor: "cyan",
     padding: vh(0.1),
     margin: vh(0.3),
     alignItems: "center",
+  },
+
+  // BID FLATLIST STYLES
+  BidsFlatList: {
+    width: vw(85),
+    height: vh(90),
+    alignSelf: "center",
+    backgroundColor: "#f2fafa",
+    borderColor: "#bfdff4",
+    borderWidth: 2,
+    borderRadius: vh(2),
+    padding: vh(1),
+  },
+  singleBidContainer2: {
+    flexDirection: "row",
+    padding: vh(0.1),
+    margin: vh(0.3),
+    alignItems: "center",
+  },
+  bidImage2: {
+    width: vh(5),
+    height: vh(5),
+    borderRadius: vh(2.5),
+    marginRight: 8,
+    backgroundColor: "grey",
+  },
+  bidUsername2: {
+    fontSize: 17,
+    fontWeight: "700",
+    width: vw(45),
+  },
+  offerPrice2: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "blue",
+    width: vw(25),
+    textAlign: "right",
+  },
+  currentBidsTitle2: {
+    paddingLeft: vw(2),
+    fontSize: 25,
+    fontWeight: "700",
+    color: "blue",
+  },
+  currentBidsContainer2: {
+    width: vw(90),
+  },
+  allBidsContainer2: {
+    margin: vh(1),
+    padding: vh(0),
+    backgroundColor: "red",
+  },
+  // BID FLATLIST STYLES - END
+  currentBidsAndSeeAll: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingRight: vw(10),
+    alignItems: "center",
+  },
+  seeAllButton: {
+    color: "#3c9dde",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  VoyageDataContainer: {
+    backgroundColor: "#f2fafa",
+    borderRadius: vw(5),
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    borderColor: "#bfdff4",
+    borderWidth: 2,
+  },
+  closeButtonInModal: {
+    alignSelf: "flex-end",
+    marginRight: vw(10),
+    backgroundColor: "#f2fafa",
+    borderRadius: vw(5),
+    borderColor: "#bfdff4",
+    borderWidth: 2,
+    padding: vw(1),
+    paddingHorizontal: vw(3),
+    marginTop: vh(1),
+  },
+
+  closeTextInModal: {
+    color: "#3c9dde",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });
