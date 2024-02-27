@@ -6,7 +6,7 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://measured-wolf-grossly.ngrok-free.app",
   }),
-  tagTypes: ["User"],
+  tagTypes: ["User", "Voyage"],
   endpoints: (builder) => ({}),
 });
 

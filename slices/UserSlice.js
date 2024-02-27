@@ -2,10 +2,18 @@
 import { createEntityAdapter, createSelector } from "@reduxjs/toolkit";
 import { apiSlice } from "../api/apiSlice";
 
+//
+
+//
+
+//
+
+//
+
+//
+// -------------- USER API
 const usersAdapter = createEntityAdapter({});
-
-const initialState = usersAdapter.getInitialState();
-
+const initialState = usersAdapter.getInitialState({});
 export const extendedApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllUsers: builder.query({
@@ -97,7 +105,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
   }),
   overrideExisting: true,
 });
-
 export const {
   useGetAllUsersQuery,
   useRegisterUserMutation,
@@ -107,7 +114,6 @@ export const {
   useUpdateBackgroundImageMutation,
   usePatchUserMutation,
 } = extendedApiSlice;
-
 export const selectUsersResult =
   extendedApiSlice.endpoints.getAllUsers.select();
 
@@ -115,7 +121,6 @@ export const selectUsersData = createSelector(
   selectUsersResult,
   (usersResult) => usersResult.data
 );
-
 export const {
   selectAll: selectAllUsers,
   selectById: selectUserById,

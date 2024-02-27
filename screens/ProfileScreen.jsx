@@ -28,9 +28,10 @@ import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 
 export default function ProfileScreen({ navigation }) {
-  //   const { message } = route.params;
+  const route = useRoute();
+  const { userId } = route.params;
 
-  let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
+  // let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
   const {
     data: userData,
     isLoading,

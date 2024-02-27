@@ -12,7 +12,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       query: (userId) => `/api/Vehicle/GetVehiclesByUserId/${userId}`,
       transformResponse: (responseData) => {
         // console.log("hi");
-        console.log("vehicles", responseData.data);
+        // console.log("vehicles", responseData.data);
         return responseData.data;
       },
       refetchOnMountOrArgChange: true,

@@ -29,7 +29,6 @@ import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider } from "react-redux"; // Import the Provider
 import { store } from "./store/store";
 
-//store.dispatch(extendedApiSlice.endpoints.getAllUsers.initiate());
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 

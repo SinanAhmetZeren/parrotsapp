@@ -35,6 +35,10 @@ import {
 } from "react-native";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
+import { useLoginUserMutation } from "../slices/UserSlice";
+import { setLoggedIn } from "../slices/UserSlice";
+import { useSelector } from "react-redux";
+import { selectIsLoggedIn } from "../slices/UserSlice";
 
 const VoyageDetailScreen = () => {
   //const route = useRoute();
@@ -46,11 +50,33 @@ const VoyageDetailScreen = () => {
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
   } = useGetVoyageByIdQuery(voyageId);
+  const [loginUser, { data: loginData }] = useLoginUserMutation();
+
+  const handleLogin = async () => {
+    try {
+      const response = await loginUser({
+        email: "123456",
+        password: "123456",
+      });
+      const token = response.data?.token;
+
+      if (token) {
+        console.log("token", token);
+      }
+    } catch (error) {
+      console.error("Login error", error);
+    }
+  };
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
+
   const [sendBid] = useSendBidMutation();
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const route = useRoute();
-  console.log(route);
+  // console.log(route);
 
   const handleSeeAll = () => {
     setModalVisible(true);
@@ -67,7 +93,7 @@ const VoyageDetailScreen = () => {
     return (
       <View>
         {visibleBids.map((bid, index) => (
-          <View key={index} style={styles.singleBidContainer}>
+          <TouchableOpacity key={index} style={styles.singleBidContainer}>
             <Image
               source={{
                 uri: UserImageBaseUrl + bid.userProfileImage,
@@ -82,7 +108,7 @@ const VoyageDetailScreen = () => {
                 {bid.currency} {bid.offerPrice.toFixed(2)}
               </Text>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
 
         <Modal
@@ -473,6 +499,8 @@ const VoyageDetailScreen = () => {
 
     const goToProfilePage = () => {
       navigation.navigate("ProfileStack", { screen: "ProfileScreen" });
+      // TODO
+      // --> go to profile page with ID
     };
 
     return (

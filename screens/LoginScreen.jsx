@@ -1,17 +1,19 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 // RegisterPage.js
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
 import { useLoginUserMutation } from "../slices/UserSlice";
 import { TouchableOpacity } from "react-native";
-import JWT from "expo-jwt";
-import { coreModule } from "@reduxjs/toolkit/query";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
+  console.log("hello from login screen");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
-  const [decodedToken, setDecodedToken] = useState("");
+  const [userId, setUserId] = useState("");
+  const [responseEmail, setResponseEmail] = useState("");
+  const [responseUsername, setResponseUsername] = useState("");
 
   const [loginUser, { isLoading, isSuccess }] = useLoginUserMutation();
   const imageUrl =
@@ -30,18 +32,25 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     try {
       const response = await loginUser({
-        Email: email,
-        Password: password,
+        Email: 123456,
+        Password: 123456,
       }).unwrap();
+
       setEmail("");
       setPassword("");
       setToken(response.token);
-      const secretKey =
-        "f09mdn*0rıe9895uofs0fı905548582uja09s7f09a7a097fda90u90275irjh30720fh097";
-      const decodedToken = JWT.decode(response.token, secretKey);
-      setDecodedToken(decodedToken);
+      setResponseEmail(response.email);
+      setResponseUsername(response.userName);
+      setUserId(response.userId);
+
+      navigation.navigate("ProfileStack", {
+        screen: "ProfileScreen",
+        params: { userId: response.userId },
+      });
+
+      // navigation.navigate("ProfileScreen", { userId: response.userId });
     } catch (err) {
-      console.error("Failed logging in", err);
+      console.error("Failed logging  in", err);
     }
   };
 
@@ -52,12 +61,17 @@ const LoginScreen = () => {
           <Text style={styles.successMessage}>Login successful!{"\n"}</Text>
           <Text style={styles.successMessage}>
             Email from token:{"\n"}
-            {decodedToken.email}
+            {responseEmail}
             {"\n"}
           </Text>
           <Text style={styles.successMessage}>
-            User id from token:{"\n"}
-            {decodedToken.nameid}
+            UserName from token:{"\n"}
+            {responseUsername}
+            {"\n"}
+          </Text>
+          <Text style={styles.successMessage}>
+            userId from token:{"\n"}
+            {userId}
             {"\n"}
           </Text>
         </View>
