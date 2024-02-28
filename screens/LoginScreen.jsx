@@ -2,11 +2,25 @@
 /* eslint-disable no-unused-vars */
 // RegisterPage.js
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Image,
+  Platform,
+} from "react-native";
 import { useLoginUserMutation } from "../slices/UserSlice";
 import { TouchableOpacity } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { updateAsLoggedIn } from "../slices/UserSlice";
+import Toast from "react-native-toast-message";
 
 const LoginScreen = ({ navigation }) => {
+  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+  const dispatch = useDispatch();
+
   console.log("hello from login screen");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,6 +46,8 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       const response = await loginUser({
+        //Email: email,
+        //Password: password,
         Email: 123456,
         Password: 123456,
       }).unwrap();
@@ -42,15 +58,17 @@ const LoginScreen = ({ navigation }) => {
       setResponseEmail(response.email);
       setResponseUsername(response.userName);
       setUserId(response.userId);
-
-      navigation.navigate("ProfileStack", {
-        screen: "ProfileScreen",
-        params: { userId: response.userId },
-      });
-
-      // navigation.navigate("ProfileScreen", { userId: response.userId });
+      if (response.token) {
+        dispatch(updateAsLoggedIn());
+      }
     } catch (err) {
-      console.error("Failed logging  in", err);
+      Toast.show({
+        type: "success",
+        text1: "Could not log in",
+        text2: "Please check your credentials",
+        visibilityTime: 5000,
+        topOffset: 350,
+      });
     }
   };
 
@@ -80,6 +98,10 @@ const LoginScreen = ({ navigation }) => {
           <View style={styles.imagecontainer}>
             <Image source={{ uri: imageUrl }} style={styles.image} />
           </View>
+          <View style={styles.welcomeBox}>
+            <Text style={styles.welcomeText}>Welcome to Parrots</Text>
+          </View>
+
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -103,7 +125,7 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    backgroundColor: "pink",
+    backgroundColor: "#186ff1",
     flex: 1,
     justifyContent: "center",
     padding: 16,
@@ -123,17 +145,43 @@ const styles = StyleSheet.create({
   },
   imagecontainer: {
     flexDirection: "row",
-    // backgroundColor: "red",
     justifyContent: "center",
+    borderRadius: 200,
+    width: 200,
+    height: 200,
+    alignSelf: "center",
     marginBottom: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 20,
+      },
+    }),
   },
   image: {
     width: 200,
     height: 200,
     borderRadius: 200,
+    padding: 40,
+    backgroundColor: "red",
   },
   output: {
     flexDirection: "column",
+  },
+  welcomeBox: {
+    marginBottom: 20,
+  },
+  welcomeText: {
+    justifyContent: "center",
+    alignSelf: "center",
+    fontSize: 30,
+    fontWeight: "900",
+    color: "white",
   },
 });
 

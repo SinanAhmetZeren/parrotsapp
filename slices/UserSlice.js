@@ -1,16 +1,28 @@
 /* eslint-disable no-unused-vars */
 import { createEntityAdapter, createSelector } from "@reduxjs/toolkit";
 import { apiSlice } from "../api/apiSlice";
+import { createSlice } from "@reduxjs/toolkit";
 
-//
+const usersSlice = createSlice({
+  name: "users",
+  initialState: {
+    isLoggedIn: false,
+  },
+  reducers: {
+    updateAsLoggedIn: (state) => {
+      state.isLoggedIn = true;
+      console.log(state.isLoggedIn);
+    },
+    updateAsLoggedOut: (state) => {
+      state.isLoggedIn = false;
+    },
+  },
+});
 
-//
+export const { updateAsLoggedIn, updateAsLoggedOut } = usersSlice.actions;
 
-//
+export default usersSlice.reducer;
 
-//
-
-//
 // -------------- USER API
 const usersAdapter = createEntityAdapter({});
 const initialState = usersAdapter.getInitialState({});

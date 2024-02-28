@@ -36,9 +36,8 @@ import {
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
 import { useLoginUserMutation } from "../slices/UserSlice";
-import { setLoggedIn } from "../slices/UserSlice";
-import { useSelector } from "react-redux";
-import { selectIsLoggedIn } from "../slices/UserSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { updateAsLoggedIn, updateAsLoggedOut } from "../slices/UserSlice";
 
 const VoyageDetailScreen = () => {
   //const route = useRoute();
@@ -51,6 +50,10 @@ const VoyageDetailScreen = () => {
     isLoading: isLoadingVoyages,
   } = useGetVoyageByIdQuery(voyageId);
   const [loginUser, { data: loginData }] = useLoginUserMutation();
+  const dispatch = useDispatch();
+
+  //const isLoggedIn_fromStore = useSelector((state) => state.users.isLoggedIn);
+  //console.log("isLoggedIn_fromStore: ", isLoggedIn_fromStore);
 
   const handleLogin = async () => {
     try {
@@ -62,6 +65,7 @@ const VoyageDetailScreen = () => {
 
       if (token) {
         console.log("token", token);
+        dispatch(updateAsLoggedIn());
       }
     } catch (error) {
       console.error("Login error", error);
@@ -69,14 +73,13 @@ const VoyageDetailScreen = () => {
   };
 
   useEffect(() => {
-    handleLogin();
+    // handleLogin();
   }, []);
 
   const [sendBid] = useSendBidMutation();
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const route = useRoute();
-  // console.log(route);
 
   const handleSeeAll = () => {
     setModalVisible(true);

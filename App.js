@@ -28,6 +28,7 @@ import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider } from "react-redux"; // Import the Provider
 import { store } from "./store/store";
+import { useDispatch, useSelector } from "react-redux";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -296,13 +297,16 @@ const TabNavigator = () => {
   );
 };
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(true);
+function RenderNavigator() {
+  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+  return isLoggedIn ? <TabNavigator /> : <AuthStack />;
+}
 
+function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        {isLoggedIn ? <TabNavigator /> : <AuthStack />}
+        <RenderNavigator />
         <Toast config={toastConfig} />
       </NavigationContainer>
     </Provider>
