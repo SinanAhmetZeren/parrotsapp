@@ -27,14 +27,12 @@ export default function VoyageCardProfile({
   vehicletype,
   voyageId,
 }) {
-  // console.log(cardImage);
   const cardImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
   const formattedEndDate = require("date-fns").format(enddate, "MMM d, yy");
   const navigation = useNavigation();
 
-  const handleNavigation = () => {
-    console.log("navigate to: ", voyageId);
+  const handleNavigation = (voyageId) => {
     navigation.navigate("VoyageDetail", { voyageId });
   };
 
@@ -77,7 +75,7 @@ export default function VoyageCardProfile({
 
   // let x = "1234567890123456789012345";
   return (
-    <TouchableOpacity onPress={() => handleNavigation()}>
+    <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
       <View style={styles.cardContainer}>
         <View style={styles.shadow}>
           <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />

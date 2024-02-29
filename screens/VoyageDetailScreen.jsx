@@ -40,46 +40,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateAsLoggedIn, updateAsLoggedOut } from "../slices/UserSlice";
 
 const VoyageDetailScreen = () => {
-  //const route = useRoute();
-  //const { voyageId } = route.params;
-  //console.log("hello from: ", voyageId);
-  const voyageId = 2;
+  const route = useRoute();
+  // const { voyageId } = route.params;
+  const { voyageId } = route.params || { voyageId: 2 };
+
   const {
     data: VoyageData,
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
   } = useGetVoyageByIdQuery(voyageId);
-  const [loginUser, { data: loginData }] = useLoginUserMutation();
   const dispatch = useDispatch();
-
-  //const isLoggedIn_fromStore = useSelector((state) => state.users.isLoggedIn);
-  //console.log("isLoggedIn_fromStore: ", isLoggedIn_fromStore);
-
-  const handleLogin = async () => {
-    try {
-      const response = await loginUser({
-        email: "123456",
-        password: "123456",
-      });
-      const token = response.data?.token;
-
-      if (token) {
-        console.log("token", token);
-        dispatch(updateAsLoggedIn());
-      }
-    } catch (error) {
-      console.error("Login error", error);
-    }
-  };
-
-  useEffect(() => {
-    // handleLogin();
-  }, []);
 
   const [sendBid] = useSendBidMutation();
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const route = useRoute();
+  // const route = useRoute();
 
   const handleSeeAll = () => {
     setModalVisible(true);
@@ -292,7 +267,9 @@ const VoyageDetailScreen = () => {
     };
 
     const handleSendBid = () => {
-      let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
+      //let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
+      const userId = useSelector((state) => state.users.userId);
+      console.log("userId from voyageDetailScreen: ", userId);
       bidData = {
         personCount: persons,
         message: message,
@@ -441,6 +418,12 @@ const VoyageDetailScreen = () => {
     }
   };
 
+  const goToProfilePage = (userId) => {
+    navigation.navigate("ProfileScreen", {
+      userId: userId,
+    });
+  };
+
   const navigation = useNavigation();
 
   if (isSuccessVoyages) {
@@ -500,12 +483,6 @@ const VoyageDetailScreen = () => {
     ].concat(VoyageData.voyageImages);
     const initialRegion = getInitialRegion(waypoints);
 
-    const goToProfilePage = () => {
-      navigation.navigate("ProfileStack", { screen: "ProfileScreen" });
-      // TODO
-      // --> go to profile page with ID
-    };
-
     return (
       <>
         <ScrollView style={styles.ScrollView}>
@@ -542,7 +519,7 @@ const VoyageDetailScreen = () => {
               <View style={styles.OwnerAndBoat}>
                 <TouchableOpacity
                   style={styles.voyageOwner}
-                  onPress={goToProfilePage}
+                  onPress={() => goToProfilePage(VoyageData.user.userId)}
                 >
                   <Image
                     source={{

@@ -15,15 +15,12 @@ const RegisterScreen = () => {
     "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
 
   const handleEmailChange = (text) => {
-    console.log("Current Email:", text);
     setEmail(text);
   };
   const handleUserNameChange = (text) => {
-    console.log("Current USername:", text);
     setUserName(text);
   };
   const handlePasswordChange = (text) => {
-    console.log("Current Email:", text);
     setPassword(text);
   };
 
@@ -37,7 +34,6 @@ const RegisterScreen = () => {
       setUserName("");
       setEmail("");
       setPassword("");
-      console.log("Registering user:", { userName, email, password });
     } catch (err) {
       console.error("Failed to register user", err);
     }

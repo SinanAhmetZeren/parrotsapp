@@ -2,7 +2,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React, { useState } from "react";
-import { useEffect } from "react";
 import {
   View,
   Image,
@@ -28,34 +27,13 @@ import { useGetUserByIdQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
-import react from "react";
-import { store } from "../store/store";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useMemo } from "react";
 
 export default function ProfileScreen({ navigation }) {
-  // const userId = useSelector((state) => state.users.userId);
-  const [userId, setUserId] = useState(null);
-
-  useEffect(() => {
-    const getUserIdFromLocalStorage = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem("userId");
-        if (storedUserId) {
-          console.log("userId from AsyncStorage:", storedUserId);
-          setUserId(storedUserId);
-        } else {
-          console.log("No userId found in AsyncStorage.");
-        }
-      } catch (error) {
-        console.error("Error retrieving userId from AsyncStorage:", error);
-      }
-    };
-
-    // Call the function to get userId from AsyncStorage
-    getUserIdFromLocalStorage();
-  }, []);
-
+  // const route = useRoute();
+  // const { userId } = route.params;
+  const userId = useSelector((state) => state.users.userId);
+  console.log("userId: ");
+  console.log(userId);
   const {
     data: userData,
     isLoading,
@@ -64,7 +42,6 @@ export default function ProfileScreen({ navigation }) {
     isSuccess,
     refetch,
   } = useGetUserByIdQuery(userId);
-
   const {
     data: VoyagesData,
     isSuccess: isSuccessVoyages,
@@ -76,6 +53,17 @@ export default function ProfileScreen({ navigation }) {
     isLoading: isLoadingVehicles,
   } = useGetVehiclesByUserByIdQuery(userId);
   const [selected, setSelected] = useState("voyages");
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     refetch();
+  //     console.log("from profile screen");
+  //   }, [refetch])
+  // );
+
+  const handleRefetch = () => {
+    refetch();
+  };
 
   const handleInstagramPress = async () => {
     if (userData.instagram) {
@@ -161,17 +149,13 @@ export default function ProfileScreen({ navigation }) {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <Text style={{ fontSize: 50 }}>loading...</Text>
+        <ActivityIndicator size="large" color="blue" />
       </View>
     );
   }
 
   if (isError) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 50 }}>error...</Text>
-      </View>
-    );
+    console.log(error);
   }
 
   if (isSuccess) {

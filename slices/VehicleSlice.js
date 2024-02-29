@@ -11,8 +11,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     getVehiclesByUserById: builder.query({
       query: (userId) => `/api/Vehicle/GetVehiclesByUserId/${userId}`,
       transformResponse: (responseData) => {
-        // console.log("hi");
-        // console.log("vehicles", responseData.data);
         return responseData.data;
       },
       refetchOnMountOrArgChange: true,

@@ -20,7 +20,6 @@ export default function VehicleCardProfile({
   vehicletype,
   capacity,
 }) {
-  // console.log(cardImage);
   const cardImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/${cardImage}`;
   let icon;
   switch (vehicletype) {

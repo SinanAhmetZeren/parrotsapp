@@ -28,7 +28,6 @@ export default function ProfileScreen({ navigation }) {
   //   const { message } = route.params;
 
   let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
-  console.log("hi there");
   const {
     data: userData,
     isLoading,
@@ -38,7 +37,6 @@ export default function ProfileScreen({ navigation }) {
     refetch,
   } = useGetUserByIdQuery(userId);
   //const user = useSelector((state) => selectUserById(state, userId));
-  console.log(userData);
   const [copiedText, setCopiedText] = React.useState("");
 
   useFocusEffect(

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -30,10 +31,11 @@ import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider } from "react-redux"; // Import the Provider
 import { store } from "./store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+let storedToken;
 
 const screenOptions = {
   tabBarShowLabel: false,
@@ -298,50 +300,42 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
+
+function RenderNavigator({ isLoggedIn }) {
+  return isLoggedIn ? <TabNavigator /> : <AuthStack />;
+}
+
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState("");
-  const [storedToken, setStoredToken] = React.useState("");
-  console.log("isloggedin: ", isLoggedIn);
-  console.log("storedToken: ", storedToken);
+  const dispatch = useDispatch();
+  const [isLoggedIn, setIsLoggedIn] = useState("");
 
   useEffect(() => {
     const checkToken = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem("userToken");
-        const storedUserId = await AsyncStorage.getItem("userId");
-        console.log("usertoken...", storedToken);
-        console.log("isloggedin: ", isLoggedIn);
-        console.log("storedToken: ", storedToken);
-        console.log("storedUserID: ", storedToken);
-        if (storedToken) {
-          // Dispatch an action or perform other logic based on the stored token
-          // console.log("Stored token from app.js:", storedToken);
-          setIsLoggedIn(true); // Set isLoggedIn state here
+        const token = await AsyncStorage.getItem("userToken");
+        if (token) {
+          console.log("Stored token from app.js:", token);
+          dispatch(setLoggedIn(true));
         } else {
           console.log("No token found.");
         }
       } catch (error) {
-        console.log("Error retrieving token: ", error);
+        console.log("Error retrieving token:", error);
       }
     };
 
     checkToken();
-  }, []);
-
-  function RenderNavigator() {
-    return isLoggedIn || storedToken ? <TabNavigator /> : <AuthStack />;
-  }
+  }, [dispatch]);
 
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <RenderNavigator />
+        <RenderNavigator isLoggedIn={isLoggedIn} />
         <Toast config={toastConfig} />
       </NavigationContainer>
     </Provider>
   );
 }
-
 export default App;
 
 const styles = StyleSheet.create({

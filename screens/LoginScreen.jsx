@@ -16,6 +16,7 @@ import { TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAsLoggedIn } from "../slices/UserSlice";
 import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
   const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
@@ -34,21 +35,18 @@ const LoginScreen = ({ navigation }) => {
     "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
 
   const handleEmailChange = (text) => {
-    console.log("Current Email:", text);
     setEmail(text);
   };
 
   const handlePasswordChange = (text) => {
-    console.log("Current password:", text);
     setPassword(text);
   };
 
   const handleLogin = async () => {
     try {
+      console.log("logging in user sinanzen@gmail.com");
       const response = await loginUser({
-        //Email: email,
-        //Password: password,
-        Email: 123456,
+        Email: "sinanzen@gmail.com",
         Password: 123456,
       }).unwrap();
 
@@ -59,7 +57,9 @@ const LoginScreen = ({ navigation }) => {
       setResponseUsername(response.userName);
       setUserId(response.userId);
       if (response.token) {
-        dispatch(updateAsLoggedIn());
+        dispatch(updateAsLoggedIn(response.userId));
+        await AsyncStorage.setItem("userToken", response.token);
+        await AsyncStorage.setItem("userId", response.userId);
       }
     } catch (err) {
       Toast.show({

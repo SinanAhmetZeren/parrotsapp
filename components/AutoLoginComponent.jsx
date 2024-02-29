@@ -11,8 +11,6 @@ export default function AutoLogin() {
       email: "123456",
       password: "123456",
     });
-
-    console.log(res);
   }, []);
 
   return;

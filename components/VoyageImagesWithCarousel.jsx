@@ -43,7 +43,6 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
           <TouchableOpacity
             onPress={() => {
               handleImagePress(index);
-              console.log(index);
             }}
           >
             <View style={styles2.imageContainer1}>

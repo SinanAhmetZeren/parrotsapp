@@ -21,9 +21,10 @@ import {
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome, Entypo, Fontisto, Feather } from "@expo/vector-icons";
+import { useSelector, useDispatch } from "react-redux";
 
 const EditProfileScreen = () => {
-  let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
+  const userId = useSelector((state) => state.users.userId);
 
   const {
     data: userData,
@@ -52,7 +53,6 @@ const EditProfileScreen = () => {
   const [image2, setImage2] = useState(null);
 
   useEffect(() => {
-    //console.log("user id: ", userData.id);
     console.log(" ************************ ");
 
     setProfileImage(userData.profileImage);
@@ -70,8 +70,6 @@ const EditProfileScreen = () => {
   }, [isSuccess]);
 
   const handleUploadProfile = async () => {
-    console.log("from handleUploadProfile", userId);
-
     if (!image) {
       return;
     }
@@ -82,7 +80,6 @@ const EditProfileScreen = () => {
       name: "profileImage.jpg",
     });
     try {
-      //console.log("userId: ", userId);
       const response = await updateProfileImage({ formData, userId });
     } catch (error) {
       console.error("Error uploading image", error);
@@ -102,7 +99,6 @@ const EditProfileScreen = () => {
       name: "backgroundImage.jpg",
     });
     try {
-      //console.log("userId: ", userId);
       const response = await updateBackgroundImage({ formData, userId });
     } catch (error) {
       console.error("Error uploading image", error);
@@ -110,7 +106,6 @@ const EditProfileScreen = () => {
   };
 
   const handlePathcUser = async () => {
-    console.log("hello");
     const patchDoc = [
       { op: "replace", path: "/userName", value: username },
       { op: "replace", path: "/email", value: email },
@@ -130,15 +125,12 @@ const EditProfileScreen = () => {
 
   const pickProfileImage = async () => {
     // No permissions request is necessary for launching the image library
-    console.log(userData.id);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
-
-    //console.log(result.assets[0].uri);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
@@ -161,7 +153,6 @@ const EditProfileScreen = () => {
 
   const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
   const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
-  console.log(userData.backgroundImageUrl);
 
   return (
     <ScrollView style={styles.scrollview}>

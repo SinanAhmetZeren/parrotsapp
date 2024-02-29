@@ -53,7 +53,6 @@ export default function HomeScreen({ navigation }) {
 
   function handleVehicleModal() {
     setVehicleModalVisibility(!vehicleModalVisibility);
-    // console.log("hello from calendar modal");
   }
 
   return (

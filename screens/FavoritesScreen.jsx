@@ -23,15 +23,12 @@ export default function FavoritesScreen({ navigation }) {
   } = useGetAllUsersQuery();
 
   const allUsers = useSelector(selectAllUsers);
-  console.log(allUsers[4]);
 
   const handlePrint = () => {
     let str1 = "c809e7c0-6e57-40eb-99e7-9e7ab2e9a17e";
-    console.log(users.entities[str1]);
   };
 
   const handleRefetch = () => {
-    console.log("refetching");
     refetch();
   };
 
