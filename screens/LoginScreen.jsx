@@ -12,17 +12,15 @@ import {
   Platform,
 } from "react-native";
 import { useLoginUserMutation } from "../slices/UserSlice";
-import { TouchableOpacity } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { updateAsLoggedIn } from "../slices/UserSlice";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { updateAsLoggedIn, updateAsLoggedOut } from "../slices/UserSlice";
+import { useEffect } from "react";
 
 const LoginScreen = ({ navigation }) => {
-  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
   const dispatch = useDispatch();
 
-  console.log("hello from login screen");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
@@ -34,12 +32,35 @@ const LoginScreen = ({ navigation }) => {
   const imageUrl =
     "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
 
+  let x = 1;
+
   const handleEmailChange = (text) => {
     setEmail(text);
   };
 
   const handlePasswordChange = (text) => {
     setPassword(text);
+  };
+
+  const state_token = useSelector((state) => state.users.token);
+  const state_userId = useSelector((state) => state.users.userId);
+  const state_isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+
+  const [printoutCounter, setPrintoutCounter] = useState(0);
+
+  const handlePrintout = () => {
+    setPrintoutCounter((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    console.log("------");
+    console.log("state_userId: ", state_userId);
+    console.log("state_isLoggedIn: ", state_isLoggedIn);
+    console.log("printoutCounter: ", printoutCounter);
+  }, [printoutCounter, state_token, state_userId, state_isLoggedIn]);
+
+  const handleLogout = async () => {
+    dispatch(updateAsLoggedOut());
   };
 
   const handleLogin = async () => {
@@ -56,16 +77,17 @@ const LoginScreen = ({ navigation }) => {
       setResponseEmail(response.email);
       setResponseUsername(response.userName);
       setUserId(response.userId);
+
       if (response.token) {
-        dispatch(updateAsLoggedIn(response.userId));
-        await AsyncStorage.setItem("userToken", response.token);
-        await AsyncStorage.setItem("userId", response.userId);
+        dispatch(
+          updateAsLoggedIn({ userId: response.userId, token: response.token })
+        );
       }
     } catch (err) {
       Toast.show({
         type: "success",
         text1: "Could not log in",
-        text2: "Please check your credentials",
+        text2: "Please check your credentials ",
         visibilityTime: 5000,
         topOffset: 350,
       });
@@ -74,7 +96,7 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {isSuccess ? (
+      {x == 0 ? (
         <View style={styles.output}>
           <Text style={styles.successMessage}>Login successful!{"\n"}</Text>
           <Text style={styles.successMessage}>
@@ -92,6 +114,12 @@ const LoginScreen = ({ navigation }) => {
             {userId}
             {"\n"}
           </Text>
+          <Button
+            title="Printout"
+            onPress={handlePrintout}
+            disabled={isLoading}
+          />
+          <Button title="Logout" onPress={handleLogout} disabled={isLoading} />
         </View>
       ) : (
         <View style={styles.formContainer}>
@@ -116,6 +144,12 @@ const LoginScreen = ({ navigation }) => {
             onChangeText={(text) => handlePasswordChange(text)}
           />
           <Button title="Login" onPress={handleLogin} disabled={isLoading} />
+          <Button
+            title="Printout"
+            onPress={handlePrintout}
+            disabled={isLoading}
+          />
+          <Button title="Logout" onPress={handleLogout} disabled={isLoading} />
         </View>
       )}
     </View>

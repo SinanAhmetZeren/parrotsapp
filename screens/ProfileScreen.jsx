@@ -28,33 +28,11 @@ import { useGetUserByIdQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
-import react from "react";
-import { store } from "../store/store";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useMemo } from "react";
+import { updateAsLoggedOut } from "../slices/UserSlice";
 
 export default function ProfileScreen({ navigation }) {
-  // const userId = useSelector((state) => state.users.userId);
-  const [userId, setUserId] = useState(null);
-
-  useEffect(() => {
-    const getUserIdFromLocalStorage = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem("userId");
-        if (storedUserId) {
-          console.log("userId from AsyncStorage:", storedUserId);
-          setUserId(storedUserId);
-        } else {
-          console.log("No userId found in AsyncStorage.");
-        }
-      } catch (error) {
-        console.error("Error retrieving userId from AsyncStorage:", error);
-      }
-    };
-
-    // Call the function to get userId from AsyncStorage
-    getUserIdFromLocalStorage();
-  }, []);
+  const userId = useSelector((state) => state.users.userId);
+  const dispatch = useDispatch();
 
   const {
     data: userData,
@@ -76,6 +54,10 @@ export default function ProfileScreen({ navigation }) {
     isLoading: isLoadingVehicles,
   } = useGetVehiclesByUserByIdQuery(userId);
   const [selected, setSelected] = useState("voyages");
+
+  const handleLogout = async () => {
+    dispatch(updateAsLoggedOut());
+  };
 
   const handleInstagramPress = async () => {
     if (userData.instagram) {
@@ -190,6 +172,34 @@ export default function ProfileScreen({ navigation }) {
                   source={{ uri: backgroundImageUrl }}
                 />
               </View>
+
+              <TouchableOpacity
+                onPress={() => {
+                  console.log("logout");
+                  handleLogout();
+                }}
+                activeOpacity={0.8}
+              >
+                <View style={styles.logoutBox}>
+                  <View style={styles.innerProfileContainer}>
+                    <MaterialCommunityIcons
+                      name="account-edit-outline"
+                      size={18}
+                      color="rgba(0, 119, 234,0.9)"
+                    />
+                    <Text
+                      style={{
+                        lineHeight: 22,
+                        marginLeft: vw(2),
+                        fontSize: 11,
+                      }}
+                    >
+                      Logout
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+
               <TouchableOpacity
                 onPress={() => {
                   console.log("navigate to edit profile");
@@ -216,6 +226,7 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </View>
               </TouchableOpacity>
+
               <View style={styles.profileImageAndSocial}>
                 <View style={styles.profileImageAndName}>
                   <View style={styles.solidCircleProfile}>
@@ -645,6 +656,19 @@ const styles = StyleSheet.create({
     top: vh(-0.5),
     width: vw(30),
     left: vw(-4),
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    borderRadius: vh(2),
+    padding: vw(1),
+    borderWidth: 1,
+    borderColor: "rgba(190, 119, 234,0.5)",
+  },
+  logoutBox: {
+    backgroundColor: "white",
+    position: "absolute",
+    top: vh(-5),
+    width: vw(30),
+    right: vw(4),
     alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),

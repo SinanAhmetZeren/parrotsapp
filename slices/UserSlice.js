@@ -9,19 +9,55 @@ const usersSlice = createSlice({
   initialState: {
     isLoggedIn: false,
     userId: "",
+    token: "",
   },
   reducers: {
     updateAsLoggedIn: (state, action) => {
+      console.log("----------");
+      console.log("action.payload.userId:", action.payload.userId);
+      console.log("action.payload.token:", action.payload.token);
       state.isLoggedIn = true;
-      state.userId = action.payload;
+      state.userId = action.payload.userId;
+      state.token = action.payload.token;
+      AsyncStorage.setItem("storedToken", action.payload.token).catch(
+        (error) => {
+          console.error("Error setting storedToken ", error);
+        }
+      );
+      AsyncStorage.setItem("storedUserId", action.payload.userId).catch(
+        (error) => {
+          console.error("Error setting storedUserId:", error);
+        }
+      );
     },
     updateAsLoggedOut: (state) => {
+      console.log("----------");
+      console.log("from reducer: UpdateAsLoggedOut");
       state.isLoggedIn = false;
+      state.userId = "";
+      state.token = "";
+      AsyncStorage.removeItem("storedToken").catch((error) => {
+        console.error("Error clearing AsyncStorage storedToken:", error);
+      });
+      AsyncStorage.removeItem("storedUserId").catch((error) => {
+        console.error("Error clearing AsyncStorage storedUserId:", error);
+      });
+    },
+    updateStateFromLocalStorage: (state, action) => {
+      const { token, userId } = action.payload;
+      console.log("userId -->", userId);
+      state.userId = userId;
+      state.token = token;
+      state.isLoggedIn = true;
     },
   },
 });
 
-export const { updateAsLoggedIn, updateAsLoggedOut } = usersSlice.actions;
+export const {
+  updateAsLoggedIn,
+  updateAsLoggedOut,
+  updateStateFromLocalStorage,
+} = usersSlice.actions;
 
 export default usersSlice.reducer;
 
@@ -52,13 +88,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         body: userData,
       }),
       invalidatesTags: [{ type: "User", id: "LIST" }],
-      onSuccess: async (result, variables, api, store) => {
-        const userToken = result.data?.token;
-        if (userToken) {
-          await AsyncStorage.setItem("userToken", userToken);
-          console.log("Token stored successfully!");
-        }
-      },
     }),
     loginUser: builder.mutation({
       query: (userData) => ({
@@ -67,14 +96,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         body: userData,
       }),
       invalidatesTags: [{ type: "User", id: "LIST" }],
-      onSuccess: async (result, variables, api, store) => {
-        const userToken = result.data?.token;
-        console.log("token from loginUser mutation ", userToken);
-        if (userToken) {
-          await AsyncStorage.setItem("userToken", userToken);
-          console.log("Token stored successfully!");
-        }
-      },
     }),
     getUserById: builder.query({
       query: (userId) => `/api/User/getUserById/${userId}`,

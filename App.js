@@ -25,7 +25,10 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import {
+  updateAsLoggedIn,
+  updateStateFromLocalStorage,
+} from "./slices/UserSlice";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider } from "react-redux"; // Import the Provider
 import { store } from "./store/store";
@@ -298,37 +301,42 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
+
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState("");
-  const [storedToken, setStoredToken] = React.useState("");
-  console.log("isloggedin: ", isLoggedIn);
-  console.log("storedToken: ", storedToken);
-
-  useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const storedToken = await AsyncStorage.getItem("userToken");
-        const storedUserId = await AsyncStorage.getItem("userId");
-        console.log("usertoken...", storedToken);
-        console.log("isloggedin: ", isLoggedIn);
-        console.log("storedToken: ", storedToken);
-        console.log("storedUserID: ", storedToken);
-        if (storedToken) {
-          // Dispatch an action or perform other logic based on the stored token
-          // console.log("Stored token from app.js:", storedToken);
-          setIsLoggedIn(true); // Set isLoggedIn state here
-        } else {
-          console.log("No token found.");
-        }
-      } catch (error) {
-        console.log("Error retrieving token: ", error);
-      }
-    };
-
-    checkToken();
-  }, []);
-
   function RenderNavigator() {
+    //const [isLoggedIn1, setIsLoggedIn1] = React.useState("");
+    // const [storedToken, setStoredToken] = React.useState("");
+
+    const isLoggedIn = useSelector((state) => state.isLoggedIn);
+    const storedToken = useSelector((state) => state.token);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+      const checkToken = async () => {
+        try {
+          const storedToken = await AsyncStorage.getItem("storedToken");
+          const storedUserId = await AsyncStorage.getItem("storedUserId");
+          if (storedToken) {
+            console.log("here");
+            console.log("stored token: ", storedToken);
+            dispatch(
+              updateStateFromLocalStorage({
+                token: storedToken,
+                userId: storedUserId,
+              })
+            );
+            //setIsLoggedIn(true); // Set isLoggedIn state here
+          } else {
+            console.log("No token found.");
+          }
+        } catch (error) {
+          console.log("Error retrieving token: ", error);
+        }
+      };
+
+      checkToken();
+    }, []);
+
     return isLoggedIn || storedToken ? <TabNavigator /> : <AuthStack />;
   }
 
