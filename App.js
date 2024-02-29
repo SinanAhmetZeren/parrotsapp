@@ -127,7 +127,7 @@ const AddNewStack = () => {
 };
 const AuthStack = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
@@ -301,14 +301,9 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
-
 function App() {
   function RenderNavigator() {
-    //const [isLoggedIn1, setIsLoggedIn1] = React.useState("");
-    // const [storedToken, setStoredToken] = React.useState("");
-
-    const isLoggedIn = useSelector((state) => state.isLoggedIn);
-    const storedToken = useSelector((state) => state.token);
+    const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -317,15 +312,12 @@ function App() {
           const storedToken = await AsyncStorage.getItem("storedToken");
           const storedUserId = await AsyncStorage.getItem("storedUserId");
           if (storedToken) {
-            console.log("here");
-            console.log("stored token: ", storedToken);
             dispatch(
               updateStateFromLocalStorage({
                 token: storedToken,
                 userId: storedUserId,
               })
             );
-            //setIsLoggedIn(true); // Set isLoggedIn state here
           } else {
             console.log("No token found.");
           }
@@ -335,9 +327,9 @@ function App() {
       };
 
       checkToken();
-    }, []);
+    }, [dispatch]); // Include dispatch as a dependency
 
-    return isLoggedIn || storedToken ? <TabNavigator /> : <AuthStack />;
+    return isLoggedIn ? <TabNavigator /> : <AuthStack />;
   }
 
   return (
