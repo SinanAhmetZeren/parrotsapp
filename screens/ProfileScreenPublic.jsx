@@ -389,9 +389,6 @@ export default function ProfileScreenPublic({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {},
-  innerContainer: {},
-
   rectangularBox: {
     height: vh(35),
     backgroundColor: "white",
@@ -402,8 +399,6 @@ const styles = StyleSheet.create({
     width: vw(100),
   },
   scrollView: {
-    //marginBottom: vh(30),
-    // top: vh(-5),
     height: vh(95),
     borderRadius: vh(4),
     backgroundColor: "white",

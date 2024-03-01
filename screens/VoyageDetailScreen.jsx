@@ -502,9 +502,188 @@ const VoyageDetailScreen = () => {
       "MMM d, yy"
     );
 
+    const baseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/`;
+    const imageUrl = baseUrl + VoyageData.profileImage;
+
     return (
       <>
         <ScrollView style={styles.ScrollView}>
+          <View style={styles.rectangularBox}>
+            <Image
+              style={styles.imageContainer}
+              resizeMode="cover"
+              source={{ uri: imageUrl }}
+            />
+          </View>
+
+          {/* // map */}
+          {/* <View style={styles.mapAndEmojisContainer}>
+            <View style={styles.mapContainer}>
+              <MapView style={styles.map} initialRegion={initialRegion}>
+                <WaypointList waypoints={waypoints} />
+                {renderPolylines(waypoints)}
+              </MapView>
+            </View>
+            <View style={styles.heartContainer1}>
+              <Ionicons
+                name="heart"
+                size={24}
+                color="red"
+                style={styles.heartContainer2}
+              />
+            </View>
+            <View style={styles.shareContainer1}>
+              <MaterialIcons
+                name="ios-share"
+                size={24}
+                color="black"
+                style={styles.shareContainer2}
+              />
+            </View>
+          </View> */}
+          <View style={styles.voyageDataWrapper}>
+            <View style={styles.VoyageDataContainer}>
+              {/* // VoyageName and Username */}
+              <View style={styles.VoyageNameAndUsername}>
+                <Text style={styles.voyageName}>{VoyageData.name}</Text>
+                <View style={styles.voyageDetailsContainer}>
+                  <View style={styles.OwnerAndBoat}>
+                    <TouchableOpacity
+                      style={styles.voyageOwner}
+                      onPress={() => {
+                        console.log("zzz: ", VoyageData.user.id);
+                        goToProfilePage(VoyageData.user.id);
+                      }}
+                    >
+                      <Image
+                        source={{
+                          uri:
+                            UserImageBaseUrl + VoyageData.user.profileImageUrl,
+                        }}
+                        style={styles.profileImage}
+                      />
+                      <Text style={styles.userName}>
+                        {VoyageData.user.userName}
+                      </Text>
+                    </TouchableOpacity>
+                    <View style={styles.voyageBoat}>
+                      <Image
+                        source={{
+                          uri:
+                            VehicleImageBaseUrl +
+                            VoyageData.vehicle.profileImageUrl,
+                        }}
+                        style={styles.profileImage}
+                      />
+                      <Text style={styles.userName}>
+                        {VoyageData.vehicle.name}
+                      </Text>
+                    </View>
+                  </View>
+                  {/*/////////////////////////////////////////*/}
+                  <View style={styles.VoyagePropsBox}>
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>Vacancy: </Text>
+                      <Text style={styles.propText}>{VoyageData.vacancy}</Text>
+                    </View>
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>
+                        Bids close:{" "}
+                      </Text>
+                      <Text style={styles.propText}>
+                        {formattedLastBidDate}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.VoyagePropsBox}>
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>Between: </Text>
+                      <Text style={styles.propText}>{formattedStartDate}</Text>
+                      <Text style={styles.propText}> - </Text>
+                      <Text style={styles.propText}>{formattedEndDate}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.VoyagePropsBox}>
+                    {VoyageData.minPrice ? (
+                      <View style={styles.VoyageProps}>
+                        <Text style={styles.propTextDescription}>
+                          Min Price:{" "}
+                        </Text>
+                        <Text style={styles.propText}>
+                          €{VoyageData.minPrice}
+                        </Text>
+                      </View>
+                    ) : null}
+                    {VoyageData.maxPrice ? (
+                      <View style={styles.VoyageProps}>
+                        <Text style={styles.propTextDescription}>
+                          Max Price:{" "}
+                        </Text>
+                        <Text style={styles.propText}>
+                          €{VoyageData.maxPrice}
+                        </Text>
+                      </View>
+                    ) : null}
+
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>Auction: </Text>
+                      <Text style={styles.propText}>
+                        {VoyageData.auction ? (
+                          <Feather name="thumbs-up" size={20} color="#123456" />
+                        ) : (
+                          <Feather
+                            name="thumbs-down"
+                            size={20}
+                            color="#123456"
+                          />
+                        )}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              {/* // Voyage Images */}
+              <View style={styles.ImagesMainContainer}>
+                <View style={styles.ImagesSubContainer}>
+                  <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
+                </View>
+              </View>
+
+              {/* // Voyage Description */}
+              <View style={styles.DescriptionContainer}>
+                <Text style={styles.descriptionInnerContainer}>
+                  {displayText}
+                </Text>
+                {VoyageData.description.length > descriptionShortenedChars &&
+                  !showFullText && (
+                    <TouchableOpacity onPress={() => setShowFullText(true)}>
+                      <Text style={styles.ReadMoreLess}>
+                        Read more...
+                        <MaterialIcons
+                          name="expand-more"
+                          size={24}
+                          color="blue"
+                        />
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                {showFullText && (
+                  <TouchableOpacity onPress={() => setShowFullText(false)}>
+                    <Text style={styles.ReadMoreLess}>
+                      Read less...
+                      <MaterialIcons
+                        name="expand-less"
+                        size={24}
+                        color="blue"
+                      />
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          </View>
           {/* // map */}
           <View style={styles.mapAndEmojisContainer}>
             <View style={styles.mapContainer}>
@@ -531,134 +710,6 @@ const VoyageDetailScreen = () => {
             </View>
           </View>
 
-          <View style={styles.VoyageDataContainer}>
-            {/* // VoyageName and Username */}
-            <View style={styles.VoyageNameAndUsername}>
-              <Text style={styles.voyageName}>{VoyageData.name}</Text>
-              <View style={styles.voyageDetailsContainer}>
-                <View style={styles.OwnerAndBoat}>
-                  <TouchableOpacity
-                    style={styles.voyageOwner}
-                    onPress={() => {
-                      console.log("zzz: ", VoyageData.user.id);
-                      goToProfilePage(VoyageData.user.id);
-                    }}
-                  >
-                    <Image
-                      source={{
-                        uri: UserImageBaseUrl + VoyageData.user.profileImageUrl,
-                      }}
-                      style={styles.profileImage}
-                    />
-                    <Text style={styles.userName}>
-                      {VoyageData.user.userName}
-                    </Text>
-                  </TouchableOpacity>
-                  <View style={styles.voyageBoat}>
-                    <Image
-                      source={{
-                        uri:
-                          VehicleImageBaseUrl +
-                          VoyageData.vehicle.profileImageUrl,
-                      }}
-                      style={styles.profileImage}
-                    />
-                    <Text style={styles.userName}>
-                      {VoyageData.vehicle.name}
-                    </Text>
-                  </View>
-                </View>
-                {/*/////////////////////////////////////////*/}
-                <View style={styles.VoyagePropsBox}>
-                  <View style={styles.VoyageProps}>
-                    <Text style={styles.propTextDescription}>Vacancy: </Text>
-                    <Text style={styles.propText}>{VoyageData.vacancy}</Text>
-                  </View>
-                  <View style={styles.VoyageProps}>
-                    <Text style={styles.propTextDescription}>Bids close: </Text>
-                    <Text style={styles.propText}>{formattedLastBidDate}</Text>
-                  </View>
-                </View>
-                <View style={styles.VoyagePropsBox}>
-                  <View style={styles.VoyageProps}>
-                    <Text style={styles.propTextDescription}>Between: </Text>
-                    <Text style={styles.propText}>{formattedStartDate}</Text>
-                    <Text style={styles.propText}> - </Text>
-                    <Text style={styles.propText}>{formattedEndDate}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.VoyagePropsBox}>
-                  {VoyageData.minPrice ? (
-                    <View style={styles.VoyageProps}>
-                      <Text style={styles.propTextDescription}>
-                        Min Price:{" "}
-                      </Text>
-                      <Text style={styles.propText}>
-                        €{VoyageData.minPrice}
-                      </Text>
-                    </View>
-                  ) : null}
-                  {VoyageData.maxPrice ? (
-                    <View style={styles.VoyageProps}>
-                      <Text style={styles.propTextDescription}>
-                        Max Price:{" "}
-                      </Text>
-                      <Text style={styles.propText}>
-                        €{VoyageData.maxPrice}
-                      </Text>
-                    </View>
-                  ) : null}
-
-                  <View style={styles.VoyageProps}>
-                    <Text style={styles.propTextDescription}>Auction: </Text>
-                    <Text style={styles.propText}>
-                      {VoyageData.auction ? (
-                        <Feather name="thumbs-up" size={20} color="#123456" />
-                      ) : (
-                        <Feather name="thumbs-down" size={20} color="#123456" />
-                      )}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            {/* // Voyage Images */}
-            <View style={styles.ImagesMainContainer}>
-              <View style={styles.ImagesSubContainer}>
-                <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
-              </View>
-            </View>
-
-            {/* // Voyage Description */}
-            <View style={styles.DescriptionContainer}>
-              <Text style={styles.descriptionInnerContainer}>
-                {displayText}
-              </Text>
-              {VoyageData.description.length > descriptionShortenedChars &&
-                !showFullText && (
-                  <TouchableOpacity onPress={() => setShowFullText(true)}>
-                    <Text style={styles.ReadMoreLess}>
-                      Read more...
-                      <MaterialIcons
-                        name="expand-more"
-                        size={24}
-                        color="blue"
-                      />
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              {showFullText && (
-                <TouchableOpacity onPress={() => setShowFullText(false)}>
-                  <Text style={styles.ReadMoreLess}>
-                    Read less...
-                    <MaterialIcons name="expand-less" size={24} color="blue" />
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
           {/* // Bids */}
           <View style={styles.mainBidsContainer}>
             <View style={styles.currentBidsAndSeeAll}>
@@ -805,6 +856,14 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  rectangularBox: {
+    height: vh(27),
+    backgroundColor: "white",
+  },
+  imageContainer: {
+    top: vh(5),
+    height: vh(29),
+  },
   voyageDetailsContainer: {
     marginTop: vh(2),
     backgroundColor: "rgba(0, 119, 234,0.071)",
@@ -1107,9 +1166,15 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16,
   },
+  voyageDataWrapper: {
+    backgroundColor: "white",
+    paddingTop: vh(1),
+    borderRadius: vh(5),
+  },
   VoyageDataContainer: {
     backgroundColor: "#f2fafa",
-    borderRadius: vw(5),
+
+    borderRadius: vh(5),
     marginHorizontal: vw(2),
     marginBottom: vh(2),
     borderColor: "#93c9ed",
