@@ -53,7 +53,7 @@ export default function ProfileScreen({ navigation }) {
     isSuccess: isSuccessVehicles,
     isLoading: isLoadingVehicles,
   } = useGetVehiclesByUserByIdQuery(userId);
-  const [selected, setSelected] = useState("voyages");
+  const [selected, setSelected] = useState("vehicles");
 
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());

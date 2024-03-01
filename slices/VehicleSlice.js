@@ -19,25 +19,18 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     providesTags: (result, error, arg) => [
       ...result.ids.map((id) => ({ type: "Vehicle", id })),
     ],
+    getVehicleById: builder.query({
+      query: (vehicleId) => `/api/Vehicle/GetVehicleById/${vehicleId}`,
+      transformResponse: (responseData) => {
+        return responseData.data;
+      },
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }),
   }),
 
   overrideExisting: true,
 });
 
-export const { useGetVehiclesByUserByIdQuery } = extendedApiSlice;
-
-// export const selectVoyagesResult =
-//   extendedApiSlice.endpoints.getAllVoyages.select();
-
-// export const selectVoyagesData = createSelector(
-//   selectVoyagesResult,
-//   (voyageResult) => voyageResult.data
-// );
-
-// export const {
-//   selectAll: selectAllVoyages,
-//   selectById: selectVoyageById,
-//   selectIds: selectVoyageIds,
-// } = voyagesAdapter.getSelectors(
-//   (state) => selectVoyagesData(state) ?? initialState
-// );
+export const { useGetVehiclesByUserByIdQuery, useGetVehicleByIdQuery } =
+  extendedApiSlice;

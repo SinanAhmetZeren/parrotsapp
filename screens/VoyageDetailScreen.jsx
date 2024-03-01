@@ -1031,6 +1031,7 @@ const styles = StyleSheet.create({
   voyageName: {
     fontSize: 24,
     fontWeight: "700",
+    alignSelf: "center",
   },
   userName: {
     fontSize: 14,
@@ -1172,12 +1173,12 @@ const styles = StyleSheet.create({
     borderRadius: vh(5),
   },
   VoyageDataContainer: {
-    backgroundColor: "#f2fafa",
+    // backgroundColor: "#f2fafa",
 
     borderRadius: vh(5),
     marginHorizontal: vw(2),
-    marginBottom: vh(2),
-    borderColor: "#93c9ed",
+    // marginBottom: vh(2),
+    // borderColor: "#93c9ed",
     borderWidth: 2,
   },
   closeButtonInModal: {

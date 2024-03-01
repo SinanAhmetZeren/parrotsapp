@@ -6,7 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text, Platform, View, StyleSheet, Image } from "react-native";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 
 // Import statements for each screen
 import AddNewVehicleScreen from "./screens/AddNewVehicleScreen";
@@ -142,6 +142,36 @@ const AuthStack = () => {
 const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={screenOptions}>
+      <Tab.Screen
+        name="VehicleDetailScreen"
+        component={VehicleDetailScreen}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return (
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                <Ionicons
+                  name="boat-outline"
+                  size={24}
+                  color={focused ? "#3aa4ff" : "#000"}
+                />
+                <Text
+                  style={
+                    focused
+                      ? {
+                          fontSize: 12,
+                          color: "#3aa4ff",
+                        }
+                      : { fontSize: 12, color: "#000" }
+                  }
+                >
+                  Vehicle Detail
+                </Text>
+              </View>
+            );
+          },
+        }}
+      />
+
       <Tab.Screen
         name="ProfileStack"
         component={ProfileStack}
