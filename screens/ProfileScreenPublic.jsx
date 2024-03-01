@@ -27,12 +27,12 @@ import { useGetUserByIdQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useRoute } from "@react-navigation/native";
 
-export default function ProfileScreen({ navigation }) {
-  // const route = useRoute();
-  // const { userId } = route.params;
-  const userId = useSelector((state) => state.users.userId);
-  console.log("userId: ");
+export default function ProfileScreenPublic({ navigation }) {
+  const route = useRoute();
+  const { userId } = route.params;
+  console.log("userId is: ");
   console.log(userId);
   const {
     data: userData,
@@ -53,17 +53,6 @@ export default function ProfileScreen({ navigation }) {
     isLoading: isLoadingVehicles,
   } = useGetVehiclesByUserByIdQuery(userId);
   const [selected, setSelected] = useState("voyages");
-
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     refetch();
-  //     console.log("from profile screen");
-  //   }, [refetch])
-  // );
-
-  const handleRefetch = () => {
-    refetch();
-  };
 
   const handleInstagramPress = async () => {
     if (userData.instagram) {
@@ -174,32 +163,7 @@ export default function ProfileScreen({ navigation }) {
                   source={{ uri: backgroundImageUrl }}
                 />
               </View>
-              <TouchableOpacity
-                onPress={() => {
-                  console.log("navigate to edit profile");
-                  navigation.navigate("EditProfile");
-                }}
-                activeOpacity={0.8}
-              >
-                <View style={styles.editProfileBox}>
-                  <View style={styles.innerProfileContainer}>
-                    <MaterialCommunityIcons
-                      name="account-edit-outline"
-                      size={18}
-                      color="rgba(0, 119, 234,0.9)"
-                    />
-                    <Text
-                      style={{
-                        lineHeight: 22,
-                        marginLeft: vw(2),
-                        fontSize: 11,
-                      }}
-                    >
-                      Edit Profile
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
+
               <View style={styles.profileImageAndSocial}>
                 <View style={styles.profileImageAndName}>
                   <View style={styles.solidCircleProfile}>

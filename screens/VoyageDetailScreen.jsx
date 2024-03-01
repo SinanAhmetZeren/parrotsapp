@@ -38,6 +38,7 @@ import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
 import { useLoginUserMutation } from "../slices/UserSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { updateAsLoggedIn, updateAsLoggedOut } from "../slices/UserSlice";
+import { format } from "date-fns";
 
 const VoyageDetailScreen = () => {
   const route = useRoute();
@@ -419,7 +420,11 @@ const VoyageDetailScreen = () => {
   };
 
   const goToProfilePage = (userId) => {
-    navigation.navigate("ProfileScreen", {
+    console.log("--------------");
+    console.log("navigate to user profile with id: ", userId);
+    console.log("--------------");
+
+    navigation.navigate("ProfileScreenPublic", {
       userId: userId,
     });
   };
@@ -432,7 +437,7 @@ const VoyageDetailScreen = () => {
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
 
-    const descriptionShortenedChars = 165;
+    const descriptionShortenedChars = 500;
     const displayText = showFullText
       ? VoyageData.description
       : VoyageData.description.slice(0, descriptionShortenedChars) + "...";
@@ -483,6 +488,20 @@ const VoyageDetailScreen = () => {
     ].concat(VoyageData.voyageImages);
     const initialRegion = getInitialRegion(waypoints);
 
+    const formattedStartDate = require("date-fns").format(
+      VoyageData.startDate,
+      "MMM d, yy"
+    );
+    const formattedEndDate = require("date-fns").format(
+      VoyageData.endDate,
+      "MMM d, yy"
+    );
+
+    const formattedLastBidDate = require("date-fns").format(
+      VoyageData.lastBidDate,
+      "MMM d, yy"
+    );
+
     return (
       <>
         <ScrollView style={styles.ScrollView}>
@@ -516,31 +535,91 @@ const VoyageDetailScreen = () => {
             {/* // VoyageName and Username */}
             <View style={styles.VoyageNameAndUsername}>
               <Text style={styles.voyageName}>{VoyageData.name}</Text>
-              <View style={styles.OwnerAndBoat}>
-                <TouchableOpacity
-                  style={styles.voyageOwner}
-                  onPress={() => goToProfilePage(VoyageData.user.userId)}
-                >
-                  <Image
-                    source={{
-                      uri: UserImageBaseUrl + VoyageData.user.profileImageUrl,
+              <View style={styles.voyageDetailsContainer}>
+                <View style={styles.OwnerAndBoat}>
+                  <TouchableOpacity
+                    style={styles.voyageOwner}
+                    onPress={() => {
+                      console.log("zzz: ", VoyageData.user.id);
+                      goToProfilePage(VoyageData.user.id);
                     }}
-                    style={styles.bidImage}
-                  />
-                  <Text style={styles.userName}>
-                    {VoyageData.user.userName}
-                  </Text>
-                </TouchableOpacity>
-                <View style={styles.voyageBoat}>
-                  <Image
-                    source={{
-                      uri:
-                        VehicleImageBaseUrl +
-                        VoyageData.vehicle.profileImageUrl,
-                    }}
-                    style={styles.bidImage}
-                  />
-                  <Text style={styles.userName}>{VoyageData.vehicle.name}</Text>
+                  >
+                    <Image
+                      source={{
+                        uri: UserImageBaseUrl + VoyageData.user.profileImageUrl,
+                      }}
+                      style={styles.profileImage}
+                    />
+                    <Text style={styles.userName}>
+                      {VoyageData.user.userName}
+                    </Text>
+                  </TouchableOpacity>
+                  <View style={styles.voyageBoat}>
+                    <Image
+                      source={{
+                        uri:
+                          VehicleImageBaseUrl +
+                          VoyageData.vehicle.profileImageUrl,
+                      }}
+                      style={styles.profileImage}
+                    />
+                    <Text style={styles.userName}>
+                      {VoyageData.vehicle.name}
+                    </Text>
+                  </View>
+                </View>
+                {/*/////////////////////////////////////////*/}
+                <View style={styles.VoyagePropsBox}>
+                  <View style={styles.VoyageProps}>
+                    <Text style={styles.propTextDescription}>Vacancy: </Text>
+                    <Text style={styles.propText}>{VoyageData.vacancy}</Text>
+                  </View>
+                  <View style={styles.VoyageProps}>
+                    <Text style={styles.propTextDescription}>Bids close: </Text>
+                    <Text style={styles.propText}>{formattedLastBidDate}</Text>
+                  </View>
+                </View>
+                <View style={styles.VoyagePropsBox}>
+                  <View style={styles.VoyageProps}>
+                    <Text style={styles.propTextDescription}>Between: </Text>
+                    <Text style={styles.propText}>{formattedStartDate}</Text>
+                    <Text style={styles.propText}> - </Text>
+                    <Text style={styles.propText}>{formattedEndDate}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.VoyagePropsBox}>
+                  {VoyageData.minPrice ? (
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>
+                        Min Price:{" "}
+                      </Text>
+                      <Text style={styles.propText}>
+                        €{VoyageData.minPrice}
+                      </Text>
+                    </View>
+                  ) : null}
+                  {VoyageData.maxPrice ? (
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>
+                        Max Price:{" "}
+                      </Text>
+                      <Text style={styles.propText}>
+                        €{VoyageData.maxPrice}
+                      </Text>
+                    </View>
+                  ) : null}
+
+                  <View style={styles.VoyageProps}>
+                    <Text style={styles.propTextDescription}>Auction: </Text>
+                    <Text style={styles.propText}>
+                      {VoyageData.auction ? (
+                        <Feather name="thumbs-up" size={20} color="#123456" />
+                      ) : (
+                        <Feather name="thumbs-down" size={20} color="#123456" />
+                      )}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -594,11 +673,11 @@ const VoyageDetailScreen = () => {
             </View>
           </View>
 
-          <View>
+          {/* <View>
             <TouchableOpacity onPress={shareLink}>
               <Text>Share</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
           {/* // enter bid */}
 
@@ -726,33 +805,69 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  voyageDetailsContainer: {
+    marginTop: vh(2),
+    backgroundColor: "rgba(0, 119, 234,0.071)",
+    borderWidth: 1,
+    borderColor: "rgba(10, 119, 234,0.2)",
+    padding: 4,
+    borderRadius: vh(2),
+  },
   OwnerAndBoat: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
+    margin: 1,
   },
-
   voyageOwner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#dceef9",
-    borderRadius: vh(2),
-    borderColor: "#b0d8f2",
-    borderWidth: 1,
+    borderRadius: vh(5),
     marginTop: vh(1),
+    marginHorizontal: vw(2),
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
+    backgroundColor: "rgba(0, 119, 234,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(10, 119, 234,0.3)",
   },
   voyageBoat: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#dceef9",
-    borderRadius: vh(2),
-    borderColor: "#b0d8f2",
-    borderWidth: 1,
+    borderRadius: vh(5),
     marginTop: vh(1),
+    marginHorizontal: vw(2),
+    backgroundColor: "rgba(0, 119, 234,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(10, 119, 234,0.3)",
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
   },
+  VoyagePropsBox: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    margin: 1,
+  },
+  VoyageProps: {
+    flexDirection: "row",
+    paddingHorizontal: vh(0.9),
+    paddingVertical: vh(0.2),
+    marginTop: vh(0.2),
+    marginHorizontal: vw(1),
+    borderRadius: vw(3),
+    backgroundColor: "rgba(0, 119, 234,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(10, 119, 234,0.3)",
+  },
+  propTextDescription: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "blue",
+  },
+  propText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
   priceInputContainer: {
     flexDirection: "row",
   },
@@ -816,7 +931,6 @@ const styles = StyleSheet.create({
     width: vw(8),
     backgroundColor: "white",
     borderRadius: vh(5),
-    // borderWidth: 1,
   },
   shareContainer1: {
     position: "absolute",
@@ -828,23 +942,19 @@ const styles = StyleSheet.create({
     width: vw(8),
     backgroundColor: "white",
     borderRadius: vh(5),
-    // borderWidth: 1,
   },
   VoyageNameAndUsername: {
-    // backgroundColor: "blue",
     padding: vh(1),
     margin: vh(0.5),
     marginTop: vh(0.5),
   },
   DescriptionContainer: {
-    // backgroundColor: "blue",
     padding: vh(1),
     margin: vh(0.5),
     marginTop: vh(0.5),
   },
   descriptionInnerContainer: {
     marginVertical: vh(0.2),
-    // backgroundColor: "honeydew",
   },
   ReadMoreLess: {
     color: "blue",
@@ -862,16 +972,14 @@ const styles = StyleSheet.create({
   voyageName: {
     fontSize: 24,
     fontWeight: "700",
-    // backgroundColor: "honeydew",
   },
   userName: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "600",
-    // backgroundColor: "honeydew",
     marginTop: vh(0.2),
-    textDecorationLine: "underline",
-    color: "#186ff1",
+    color: "blue",
   },
+
   voyageImage: {
     height: vh(13),
     width: vh(13),
@@ -889,14 +997,19 @@ const styles = StyleSheet.create({
     marginRight: 8,
     backgroundColor: "grey",
   },
+  profileImage: {
+    width: vh(3),
+    height: vh(3),
+    borderRadius: vh(2.5),
+    marginRight: 8,
+    backgroundColor: "grey",
+  },
   bidUsername: {
-    // backgroundColor: "red",
     fontSize: 17,
     fontWeight: "700",
-    width: vw(55),
+    width: vw(50),
   },
   offerPrice: {
-    // backgroundColor: "grey",
     fontSize: 18,
     fontWeight: "800",
     color: "#4aa5e1",
@@ -923,9 +1036,13 @@ const styles = StyleSheet.create({
   },
   singleBidContainer: {
     flexDirection: "row",
-    padding: vh(0.1),
+    padding: vh(0.5),
     margin: vh(0.3),
     alignItems: "center",
+    borderRadius: vh(3),
+    backgroundColor: "rgba(0, 119, 234,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(10, 119, 234,0.3)",
   },
 
   // BID FLATLIST STYLES

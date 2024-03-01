@@ -15,6 +15,7 @@ import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
 import VehicleDetailScreen from "./screens/VehicleDetailScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import ProfileScreenPublic from "./screens/ProfileScreenPublic";
 import EditProfileScreen from "./screens/EditProfileScreen";
 import MyVoyagesScreen from "./screens/MyVoyagesScreen";
 import MyVehiclesScreen from "./screens/MyVehiclesScreen";
@@ -91,6 +92,10 @@ const ProfileStack = () => {
       }}
     >
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublic}
+      />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="MyVoyages" component={MyVoyagesScreen} />
       <Stack.Screen name="MyVehicles" component={MyVehiclesScreen} />
