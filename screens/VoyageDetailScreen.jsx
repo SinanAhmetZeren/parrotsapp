@@ -43,7 +43,7 @@ import { format } from "date-fns";
 const VoyageDetailScreen = () => {
   const route = useRoute();
   // const { voyageId } = route.params;
-  const { voyageId } = route.params || { voyageId: 2 };
+  const { voyageId } = route.params;
 
   const {
     data: VoyageData,

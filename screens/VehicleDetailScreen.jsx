@@ -38,23 +38,23 @@ import {
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
 import { useDispatch, useSelector } from "react-redux";
+import VehicleVoyages from "../components/VehicleVoyages";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
-  // const { voyageId } = route.params;
-  const { voyageId } = route.params || { voyageId: 2 };
-  const vehicleId = 4;
-
-  const {
-    data: VoyageData,
-    isSuccess: isSuccessVoyages,
-    isLoading: isLoadingVoyages,
-  } = useGetVoyageByIdQuery(voyageId);
+  const { vehicleId } = route.params;
+  console.log("hello from vehicle detail ", vehicleId);
+  // const {
+  //   data: VoyageData,
+  //   isSuccess: isSuccessVoyages,
+  //   isLoading: isLoadingVoyages,
+  // } = useGetVoyageByIdQuery(voyageId);
 
   const {
     data: VehicleData,
     isSuccess: isSuccessVehicles,
     isLoading: isLoadingVehicles,
+    isError: isErrorVehicles,
   } = useGetVehicleByIdQuery(vehicleId);
 
   const dispatch = useDispatch();
@@ -98,19 +98,34 @@ const VehicleDetailScreen = () => {
 
   const navigation = useNavigation();
 
-  if (isSuccessVoyages) {
-    console.log("xxxxxx ->>", VehicleData);
+  if (isLoadingVehicles) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ fontSize: 50 }}>loading...</Text>
+      </View>
+    );
+  }
 
+  if (isErrorVehicles) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ fontSize: 50 }}>error...</Text>
+      </View>
+    );
+  }
+
+  if (isSuccessVehicles) {
+    console.log("issuccess??", isSuccessVehicles);
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
 
     const descriptionShortenedChars = 500;
     const displayText = showFullText
-      ? VoyageData.description
-      : VoyageData.description.slice(0, descriptionShortenedChars) + "...";
+      ? VehicleData.description
+      : VehicleData.description.slice(0, descriptionShortenedChars) + "...";
 
     let icon;
-    switch (VoyageData.vehicle.type) {
+    switch (VehicleData.type) {
       case 0:
         icon = <FontAwesome6 name="sailboat" size={12} color="blue" />;
         break;
@@ -169,8 +184,8 @@ const VehicleDetailScreen = () => {
                     <TouchableOpacity
                       style={styles.voyageOwner}
                       onPress={() => {
-                        console.log("zzz: ", VoyageData.user.id);
-                        goToProfilePage(VoyageData.user.id);
+                        console.log("zzz: ", VehicleData.user.id);
+                        goToProfilePage(VehicleData.user.id);
                       }}
                     >
                       <Image
@@ -188,80 +203,21 @@ const VehicleDetailScreen = () => {
                   {/*/////////////////////////////////////////*/}
                   <View style={styles.VoyagePropsBox}>
                     <View style={styles.VoyageProps}>
-                      <Text style={styles.propTextDescription}>Vacancy: </Text>
-                      <Text style={styles.propText}>{VoyageData.vacancy}</Text>
-                    </View>
-                    <View style={styles.VoyageProps}>
-                      <Text style={styles.propTextDescription}>
-                        Bids close:{" "}
-                      </Text>
-                      <Text style={styles.propText}>vvvvvv</Text>
-                    </View>
-                  </View>
-                  <View style={styles.VoyagePropsBox}>
-                    <View style={styles.VoyageProps}>
-                      <Text style={styles.propTextDescription}>Between: </Text>
-                      <Text style={styles.propText}>vvvvv</Text>
-                      <Text style={styles.propText}> - </Text>
-                      <Text style={styles.propText}>vvvvv</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.VoyagePropsBox}>
-                    {VoyageData.minPrice ? (
-                      <View style={styles.VoyageProps}>
-                        <Text style={styles.propTextDescription}>
-                          Min Price:{" "}
-                        </Text>
-                        <Text style={styles.propText}>
-                          €{VoyageData.minPrice}
-                        </Text>
-                      </View>
-                    ) : null}
-                    {VoyageData.maxPrice ? (
-                      <View style={styles.VoyageProps}>
-                        <Text style={styles.propTextDescription}>
-                          Max Price:{" "}
-                        </Text>
-                        <Text style={styles.propText}>
-                          €{VoyageData.maxPrice}
-                        </Text>
-                      </View>
-                    ) : null}
-
-                    <View style={styles.VoyageProps}>
-                      <Text style={styles.propTextDescription}>Auction: </Text>
+                      <Text style={styles.propTextDescription}>Capacity: </Text>
                       <Text style={styles.propText}>
-                        {VoyageData.auction ? (
-                          <Feather name="thumbs-up" size={20} color="#123456" />
-                        ) : (
-                          <Feather
-                            name="thumbs-down"
-                            size={20}
-                            color="#123456"
-                          />
-                        )}
+                        {VehicleData.capacity}
                       </Text>
                     </View>
                   </View>
                 </View>
               </View>
 
-              {/* // Voyage Images */}
-              <View style={styles.ImagesMainContainer}>
-                <View style={styles.ImagesSubContainer}>
-                  <VehicleImagesWithCarousel
-                    vehicleImages={VehicleData.vehicleImages}
-                  />
-                </View>
-              </View>
-
-              {/* // Voyage Description */}
+              {/* // Vehicle Description */}
               <View style={styles.DescriptionContainer}>
                 <Text style={styles.descriptionInnerContainer}>
                   {displayText}
                 </Text>
-                {VoyageData.description.length > descriptionShortenedChars &&
+                {VehicleData.description.length > descriptionShortenedChars &&
                   !showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
                       <Text style={styles.ReadMoreLess}>
@@ -287,6 +243,20 @@ const VehicleDetailScreen = () => {
                   </TouchableOpacity>
                 )}
               </View>
+
+              {/* // Vehicle Images */}
+              <View style={styles.ImagesMainContainer}>
+                <View style={styles.ImagesSubContainer}>
+                  <VehicleImagesWithCarousel
+                    vehicleImages={VehicleData.vehicleImages}
+                  />
+                </View>
+              </View>
+
+              {/* // Vehicle VOYAGES */}
+              <View style={styles.VoyagesContainer}>
+                <VehicleVoyages voyages={VehicleData.voyages} />
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -294,6 +264,13 @@ const VehicleDetailScreen = () => {
     );
   }
 };
+
+// Santa Voyage on Santa Maria from Feb 02, 23 to Mar 01, 23
+//  (item.name)
+//  (item.startDate)
+//  (item.endDate)
+//  (item.vacancy)
+//  (item.profileImage)
 
 export default VehicleDetailScreen;
 
@@ -410,6 +387,9 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  ImagesMainContainer: {
+    // marginBottom: vh(13),
+  },
   rectangularBox: {
     height: vh(27),
     backgroundColor: "white",
@@ -510,12 +490,22 @@ const styles = StyleSheet.create({
     padding: vh(1),
     margin: vh(0.5),
     marginTop: vh(0.5),
+    backgroundColor: "rgba(20,24,220,0.15)",
   },
   DescriptionContainer: {
-    padding: vh(1),
+    paddingHorizontal: vh(1),
     margin: vh(0.5),
     marginTop: vh(0.5),
+    backgroundColor: "rgba(20,244,22,0.15)",
   },
+  VoyagesContainer: {
+    paddingHorizontal: vh(1),
+    margin: vh(0.5),
+    marginTop: vh(0.5),
+    backgroundColor: "rgba(20,244,22,0.15)",
+    marginBottom: vh(13),
+  },
+
   descriptionInnerContainer: {
     marginVertical: vh(0.2),
   },

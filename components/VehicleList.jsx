@@ -52,16 +52,20 @@ export default function VehicleList({ data }) {
   ];
 
   const renderVehicleCards = () => {
-    return data.map((item) => (
-      <VehicleCardProfile
-        key={item.id}
-        vehiclename={item.name}
-        description={item.description}
-        cardImage={item.profileImageUrl}
-        vehicletype={item.type}
-        capacity={item.capacity}
-      />
-    ));
+    return data.map((item) => {
+      // console.log("-->>>>", item);
+      return (
+        <VehicleCardProfile
+          key={item.id}
+          vehiclename={item.name}
+          description={item.description}
+          cardImage={item.profileImageUrl}
+          vehicletype={item.type}
+          capacity={item.capacity}
+          vehicleId={item.id}
+        />
+      );
+    });
   };
 
   return <View style={styles.container}>{renderVehicleCards()}</View>;

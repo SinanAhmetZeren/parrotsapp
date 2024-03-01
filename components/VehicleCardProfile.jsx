@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   Feather,
@@ -12,8 +12,10 @@ import {
   FontAwesome,
   Ionicons,
 } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function VehicleCardProfile({
+  vehicleId,
   vehiclename,
   description,
   cardImage,
@@ -128,8 +130,14 @@ export default function VehicleCardProfile({
       break;
   }
 
+  const navigation = useNavigation();
+  const handleNavigateToVehicle = (vehicleId) => {
+    console.log(vehicleId);
+    navigation.navigate("VehicleDetail", { vehicleId });
+  };
+
   return (
-    <>
+    <TouchableOpacity onPress={() => handleNavigateToVehicle(vehicleId)}>
       <View style={styles.cardContainer}>
         <View style={styles.shadow}>
           <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
@@ -158,7 +166,7 @@ export default function VehicleCardProfile({
           </Text>
         </View>
       </View>
-    </>
+    </TouchableOpacity>
   );
 }
 

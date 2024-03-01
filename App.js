@@ -142,6 +142,7 @@ const AuthStack = () => {
 const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={screenOptions}>
+      {/*       
       <Tab.Screen
         name="VehicleDetailScreen"
         component={VehicleDetailScreen}
@@ -170,7 +171,7 @@ const TabNavigator = () => {
             );
           },
         }}
-      />
+      /> */}
 
       <Tab.Screen
         name="ProfileStack"
