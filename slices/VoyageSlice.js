@@ -27,6 +27,58 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    createVoyage: builder.mutation({
+      query: (data) => {
+        const {
+          formData,
+          name,
+          brief,
+          description,
+          vacancy,
+          formattedStartDate,
+          formattedEndDate,
+          formattedLastBidDate,
+          minPrice,
+          maxPrice,
+          isAuction,
+          isFixedPrice,
+          userId,
+          vehicleId,
+        } = data;
+
+        const queryParams = new URLSearchParams({
+          Name: name,
+          Brief: brief,
+          Description: description,
+          Vacancy: vacancy,
+          StartDate: formattedStartDate,
+          EndDate: formattedEndDate,
+          LastBidDate: formattedEndDate,
+          MinPrice: minPrice,
+          MaxPrice: maxPrice,
+          Auction: isAuction.toString(), // Assuming isAuction is a boolean
+          FixedPrice: isFixedPrice.toString(), // Assuming isFixedPrice is a boolean
+          UserId: userId,
+          VehicleId: vehicleId,
+        });
+
+        const url = `/api/Voyage/AddVoyage?${queryParams}`;
+
+        console.log("url");
+        console.log(url);
+
+        return {
+          url,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
+      // ... other configuration options
+    }),
+
     sendBid: builder.mutation({
       query: (bidData) => ({
         url: "/api/Bid/createBid",
@@ -41,6 +93,8 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
 
   overrideExisting: true,
 });
+
+export const { useCreateVoyageMutation } = extendedApiSlice;
 
 export const {
   useGetVoyagesByUserByIdQuery,

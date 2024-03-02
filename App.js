@@ -18,6 +18,7 @@ import ProfileScreen from "./screens/ProfileScreen";
 import ProfileScreenPublic from "./screens/ProfileScreenPublic";
 import EditProfileScreen from "./screens/EditProfileScreen";
 import MyVoyagesScreen from "./screens/MyVoyagesScreen";
+import CreateVoyageScreen from "./screens/CreateVoyageScreen";
 import MyVehiclesScreen from "./screens/MyVehiclesScreen";
 import MyBidsScreen from "./screens/MyBidsScreen";
 import MessagesScreen from "./screens/MessagesScreen";
@@ -91,7 +92,9 @@ const ProfileStack = () => {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+
       <Stack.Screen
         name="ProfileScreenPublic"
         component={ProfileScreenPublic}
