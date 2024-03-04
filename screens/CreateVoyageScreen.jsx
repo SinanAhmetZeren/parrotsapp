@@ -32,6 +32,7 @@ import CalendarPicker from "react-native-calendar-picker";
 import Checkbox from "expo-checkbox";
 import DropdownComponent from "../components/DropdownComponent";
 import StepBar from "../components/StepBar";
+import CreateVoyageMapComponent from "../components/CreateVoyageMapComponent";
 
 const CreateVoyageScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -64,7 +65,7 @@ const CreateVoyageScreen = () => {
   const [image, setImage] = useState(x);
   const [voyageImage, setVoyageImage] = useState("");
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(3);
 
   useEffect(() => {
     console.log("---");
@@ -525,7 +526,9 @@ const CreateVoyageScreen = () => {
               </View>
             </ImageBackground>
           </ScrollView>
-        ) : currentStep === 2 ? (
+        ) : null}
+
+        {currentStep === 2 ? (
           <ScrollView style={styles.scrollview}>
             <ImageBackground
               source={require("../assets/sea.png")}
@@ -600,9 +603,24 @@ const CreateVoyageScreen = () => {
               </View>
             </ImageBackground>
           </ScrollView>
-        ) : (
-          <Text>Hello </Text>
-        )}
+        ) : null}
+
+        {currentStep == 3 ? (
+          <View
+            style={{
+              top: vh(5),
+              backgroundColor: "purple",
+            }}
+          >
+            <ScrollView
+              style={{
+                backgroundColor: "white",
+              }}
+            >
+              <CreateVoyageMapComponent voyageId={voyageId} />
+            </ScrollView>
+          </View>
+        ) : null}
       </>
     );
   }
@@ -610,6 +628,12 @@ const CreateVoyageScreen = () => {
 
 export default CreateVoyageScreen;
 
+const styles3 = StyleSheet.create({
+  WayPointsScreen: {
+    top: vh(5),
+    backgroundColor: "green",
+  },
+});
 const styles2 = StyleSheet.create({
   modalWrappeer: {
     position: "absolute",

@@ -102,13 +102,58 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         },
       }),
     }),
+    addWaypoint: builder.mutation({
+      query: (data) => {
+        const {
+          formData,
+          latitude,
+          longitude,
+          title,
+          description,
+          voyageId,
+          order,
+        } = data;
+
+        console.log("--> latitude:", latitude);
+        console.log("--> longitude:", longitude);
+        console.log("--> title:", title);
+        console.log("--> description:", description);
+        console.log("--> formdata:", formData);
+
+        const queryParams = new URLSearchParams({
+          Latitude: latitude,
+          Longitude: longitude,
+          Title: title,
+          Description: description,
+          VoyageId: voyageId,
+          Order: order,
+        });
+
+        const url = `/api/Waypoint/AddWaypoint?${queryParams}`;
+
+        console.log("url");
+        console.log(url);
+
+        return {
+          url,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
+    }),
   }),
 
   overrideExisting: true,
 });
 
-export const { useCreateVoyageMutation, useAddVoyageImageMutation } =
-  extendedApiSlice;
+export const {
+  useCreateVoyageMutation,
+  useAddVoyageImageMutation,
+  useAddWaypointMutation,
+} = extendedApiSlice;
 
 export const {
   useGetVoyagesByUserByIdQuery,
