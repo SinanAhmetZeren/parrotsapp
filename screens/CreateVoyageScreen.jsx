@@ -11,6 +11,8 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  ImageBackground,
+  FlatList,
 } from "react-native";
 import {
   useGetUserByIdQuery,
@@ -18,7 +20,10 @@ import {
   useUpdateBackgroundImageMutation,
   usePatchUserMutation,
 } from "../slices/UserSlice";
-import { useCreateVoyageMutation } from "../slices/VoyageSlice";
+import {
+  useCreateVoyageMutation,
+  useAddVoyageImageMutation,
+} from "../slices/VoyageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome, Entypo, Fontisto, Feather } from "@expo/vector-icons";
@@ -26,6 +31,7 @@ import { useSelector, useDispatch } from "react-redux";
 import CalendarPicker from "react-native-calendar-picker";
 import Checkbox from "expo-checkbox";
 import DropdownComponent from "../components/DropdownComponent";
+import StepBar from "../components/StepBar";
 
 const CreateVoyageScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -38,6 +44,7 @@ const CreateVoyageScreen = () => {
     refetch,
   } = useGetUserByIdQuery(userId);
   const [createVoyage] = useCreateVoyageMutation();
+  const [addVoyageImage] = useAddVoyageImageMutation();
 
   const [name, setName] = useState("1");
   const [brief, setBrief] = useState("1");
@@ -51,18 +58,19 @@ const CreateVoyageScreen = () => {
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
   const [vehicleId, setVehicleId] = useState("1");
+  const [voyageId, setVoyageId] = useState("");
   const x =
     "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/89042c38-6644-4c42-8ef6-1f40fc66434b.jpeg";
-
   const [image, setImage] = useState(x);
+  const [voyageImage, setVoyageImage] = useState("");
+  const [addedVoyageImages, setAddedVoyageImages] = useState([]);
+  const [currentStep, setCurrentStep] = useState(2);
 
   useEffect(() => {
     console.log("---");
   }, [isSuccess]);
 
-  useEffect(() => {
-    console.log("---");
-  }, [startDate, endDate, lastBidDate]);
+  useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
 
   const printState = () => {
     console.log("----------");
@@ -77,15 +85,21 @@ const CreateVoyageScreen = () => {
     console.log("maxPrice:", maxPrice);
     console.log("isAuction:", isAuction);
     console.log("isFixedPrice:", isFixedPrice);
-    console.log("--- image ---", image);
-    // profileImage
-    // userId
-    // vehicleId
-
-    // /api/Voyage/AddVoyage?Name=1dd&Brief=1dd&Description=1dd
-    //&Vacancy=155&StartDate=Fri+Mar+22+2024+12%3A00%3A00+GMT%2B0300&EndDate=Sat+Mar+23+2024+12%3A00%3A00+GMT%2B0300&LastBidDate=11%2F11%2F2022&MinPrice=1&MaxPrice=1&
-    //Auction=true&FixedPrice=true&UserId=1bf7d55e-7be2-49fb-99aa-93d947711e32&VehicleId=1
+    console.log("image", image);
+    console.log("voyageId", voyageId);
     console.log("----------");
+  };
+
+  const printState2 = () => {
+    console.log("----------");
+    console.log("voyage image:", voyageImage);
+    console.log("added images:", addedVoyageImages);
+
+    console.log("----------");
+  };
+
+  const changeCurrentState = (index) => {
+    setCurrentStep(index);
   };
 
   function convertDateFormat(inputDate) {
@@ -138,7 +152,7 @@ const CreateVoyageScreen = () => {
       const formattedEndDate = convertDateFormat(endDate);
       const formattedLastBidDate = convertDateFormat_LastBidDate(lastBidDate);
 
-      await createVoyage({
+      const response = await createVoyage({
         formData,
         name,
         brief,
@@ -154,9 +168,41 @@ const CreateVoyageScreen = () => {
         userId,
         vehicleId,
       });
+      const createdVoyageId = response.data.data.id;
+      setVoyageId(createdVoyageId);
+      setCurrentStep(2);
     } catch (error) {
       console.error("Error uploading image", error);
     }
+  };
+
+  const handleUploadImage = async () => {
+    if (!voyageImage) {
+      return;
+    }
+    console.log("voyage image -> : ", voyageImage);
+
+    const formData = new FormData();
+    formData.append("imageFile", {
+      uri: voyageImage,
+      type: "image/jpeg",
+      name: "profileImage.jpg",
+    });
+
+    try {
+      let voyageId = 8;
+      await addVoyageImage({
+        formData,
+        voyageId,
+      });
+      setAddedVoyageImages((prevImages) => [...prevImages, voyageImage]);
+    } catch (error) {
+      console.error("Error uploading image", error);
+    }
+  };
+
+  const handleNextPage = () => {
+    setCurrentStep(3);
   };
 
   const pickProfileImage = async () => {
@@ -169,6 +215,19 @@ const CreateVoyageScreen = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+    }
+  };
+
+  const pickVoyageImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setVoyageImage(result.assets[0].uri);
     }
   };
 
@@ -214,221 +273,459 @@ const CreateVoyageScreen = () => {
     }));
 
     return (
-      <ScrollView style={styles.scrollview}>
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <TouchableOpacity onPress={pickProfileImage}>
-            {image ? (
-              <Image source={{ uri: image }} style={styles.profileImage} />
-            ) : (
-              <Image
-                source={{ uri: profileImageUrl }}
-                style={styles.profileImage}
-              />
-            )}
-            <View style={styles.recycleBox}>
-              <Entypo
-                name="image"
-                size={24}
-                color="black"
-                style={styles.recycle}
-              />
-            </View>
-          </TouchableOpacity>
-          {/* Your other UI elements */}
-        </View>
+      <>
+        <StepBar style={styles.StepBar} currentStep={currentStep} />
+        {currentStep == 1 ? (
+          <ScrollView style={styles.scrollview}>
+            <ImageBackground
+              source={require("../assets/sea.png")}
+              style={styles.backgroundImageMain}
+              resizeMode="repeat" // This property ensures the background image is repeated to fill the available space
+            >
+              <View style={styles.overlay}>
+                <View style={styles.profileContainer}>
+                  {/* <Text style={styles.voyageImage}>Voyage Image</Text> */}
 
-        <View style={styles.formContainer}>
-          {/* Username */}
-          <View style={styles.socialBox}>
-            <Feather style={styles.icon} name="user" size={24} color="black" />
-            <Text style={styles.inputDescription}>Voyage name</Text>
+                  <TouchableOpacity onPress={pickProfileImage}>
+                    {image ? (
+                      <Image
+                        source={{ uri: image }}
+                        style={styles.profileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={{ uri: profileImageUrl }}
+                        style={styles.profileImage}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  {/* Your other UI elements */}
+                </View>
 
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter voyage name"
-              value={name}
-              onChangeText={(text) => setName(text)}
-            />
-          </View>
+                <View style={styles.formContainer}>
+                  {/* Username */}
 
-          <View style={styles.socialBox}>
-            <Fontisto
-              style={styles.icon}
-              name="email"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Brief</Text>
-            <TextInput
-              placeholder="Enter voyage brief"
-              value={brief}
-              onChangeText={(text) => setBrief(text)}
-              style={styles.textInput}
-            />
-          </View>
+                  <View style={styles.socialBox}>
+                    <Feather
+                      style={styles.icon}
+                      name="user"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.inputDescription}>Voyage name</Text>
 
-          {/* Phone Number */}
-          <View style={styles.socialBox}>
-            <Feather style={styles.icon} name="phone" size={24} color="black" />
-            <Text style={styles.inputDescription}>Description</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Enter voyage name"
+                      value={name}
+                      onChangeText={(text) => setName(text)}
+                    />
+                  </View>
 
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter voyage description"
-              value={description}
-              onChangeText={(text) => setDescription(text)}
-            />
-          </View>
+                  <View style={styles.socialBox}>
+                    <Fontisto
+                      style={styles.icon}
+                      name="email"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.inputDescription}>Brief</Text>
+                    <TextInput
+                      placeholder="Enter voyage brief"
+                      value={brief}
+                      onChangeText={(text) => setBrief(text)}
+                      style={styles.textInput}
+                    />
+                  </View>
 
-          {/* Facebook Profile */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="facebook"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Vacancy</Text>
+                  {/* Phone Number */}
+                  <View style={styles.socialBox}>
+                    <Feather
+                      style={styles.icon}
+                      name="phone"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.inputDescription}>Description</Text>
 
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter voyage vacancy"
-              value={vacancy}
-              onChangeText={(text) => setVacancy(text)}
-              keyboardType="numeric"
-            />
-          </View>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Enter voyage description"
+                      value={description}
+                      onChangeText={(text) => setDescription(text)}
+                    />
+                  </View>
 
-          <DropdownComponent data={dropdownData} label={"Select Vehicle"} />
+                  {/* Facebook Profile */}
+                  <View style={styles.socialBox}>
+                    <Feather
+                      style={styles.icon}
+                      name="facebook"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.inputDescription}>Vacancy</Text>
 
-          <View style={styles.calendarContainer}>
-            <View style={styles.voyageDatesContainer}>
-              <Feather
-                style={styles.icon}
-                name="calendar"
-                size={24}
-                color="blue"
-              />
-              <Text style={styles.voyageDates}>Select Voyage Dates</Text>
-            </View>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Enter voyage vacancy"
+                      value={vacancy}
+                      onChangeText={(text) => setVacancy(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
 
-            <CalendarPicker
-              startFromMonday={true}
-              allowRangeSelection={true}
-              minDate={new Date()}
-              selectedStartDate={startDate}
-              selectedEndDate={endDate}
-              onDateChange={onDateChange}
-              width={300}
-            />
-          </View>
+                  <DropdownComponent
+                    data={dropdownData}
+                    label={"Select Vehicle"}
+                  />
 
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="calendar"
-              size={24}
-              color="blue"
-            />
-            <Text style={styles.inputDescription}>Last Bid Date</Text>
+                  <View style={styles.calendarContainer}>
+                    <View style={styles.voyageDatesContainer}>
+                      <Feather
+                        style={styles.icon}
+                        name="calendar"
+                        size={24}
+                        color="blue"
+                      />
+                      <Text style={styles.voyageDates}>
+                        Select Voyage Dates
+                      </Text>
+                    </View>
 
-            <TextInput
-              style={styles.textInput}
-              value={lastBidDate}
-              onChangeText={handleDateChange}
-              keyboardType="numeric"
-              placeholder="MM/DD/YYYY" // Placeholder without hyphens
-              maxLength={10} // Restrict length for proper date format
-            />
-          </View>
+                    <CalendarPicker
+                      startFromMonday={true}
+                      allowRangeSelection={true}
+                      minDate={new Date()}
+                      selectedStartDate={startDate}
+                      selectedEndDate={endDate}
+                      onDateChange={onDateChange}
+                      width={300}
+                    />
+                  </View>
 
-          {/* min price */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="facebook"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Min Price</Text>
+                  <View style={styles.socialBox}>
+                    <Feather
+                      style={styles.icon}
+                      name="calendar"
+                      size={24}
+                      color="blue"
+                    />
+                    <Text style={styles.inputDescription}>Last Bid Date</Text>
 
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter Min Price"
-              value={minPrice}
-              onChangeText={(text) => setMinPrice(text)}
-              keyboardType="numeric"
-            />
-          </View>
+                    <TextInput
+                      style={styles.textInput}
+                      value={lastBidDate}
+                      onChangeText={handleDateChange}
+                      keyboardType="numeric"
+                      placeholder="MM/DD/YYYY" // Placeholder without hyphens
+                      maxLength={10} // Restrict length for proper date format
+                    />
+                  </View>
 
-          {/* max price */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="facebook"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Max Price</Text>
+                  {/* min price */}
+                  <View style={styles.socialBox}>
+                    <Feather
+                      style={styles.icon}
+                      name="facebook"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.inputDescription}>Min Price</Text>
 
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter Min Price"
-              value={maxPrice}
-              onChangeText={(text) => setMaxPrice(text)}
-              keyboardType="numeric"
-            />
-          </View>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Enter Min Price"
+                      value={minPrice}
+                      onChangeText={(text) => setMinPrice(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
 
-          <View style={styles.mainCheckboxContainer}>
-            <View style={styles.checkboxContainer}>
-              <Text>Auction </Text>
-              <View>
-                <Checkbox
-                  value={isAuction}
-                  onValueChange={setIsAuction}
-                  color={isAuction ? "#4630EB" : undefined}
-                />
+                  {/* max price */}
+                  <View style={styles.socialBox}>
+                    <Feather
+                      style={styles.icon}
+                      name="facebook"
+                      size={24}
+                      color="black"
+                    />
+                    <Text style={styles.inputDescription}>Max Price</Text>
+
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="Enter Min Price"
+                      value={maxPrice}
+                      onChangeText={(text) => setMaxPrice(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
+
+                  <View style={styles.mainCheckboxContainer}>
+                    <View style={styles.checkboxContainer}>
+                      <Text>Auction </Text>
+                      <View>
+                        <Checkbox
+                          value={isAuction}
+                          onValueChange={setIsAuction}
+                          color={isAuction ? "#4630EB" : undefined}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.checkboxContainer}>
+                      <Text>FixedPrice </Text>
+                      <View>
+                        <Checkbox
+                          value={isFixedPrice}
+                          onValueChange={setIsFixedPrice}
+                          color={isFixedPrice ? "#4630EB" : undefined}
+                        />
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* Save Button */}
+                  <View style={styles.saveButton}>
+                    <Button
+                      title="Create Voyage"
+                      onPress={() => handleCreateVoyage()}
+                    />
+                  </View>
+
+                  <View style={styles.refetch}>
+                    <Button
+                      title="print state"
+                      onPress={() => {
+                        printState();
+                      }}
+                    />
+                  </View>
+                  <View style={styles.refetch}>
+                    <Button
+                      title="step 1"
+                      onPress={() => {
+                        changeCurrentState(1);
+                      }}
+                    />
+                    <Button
+                      title="step 2"
+                      onPress={() => {
+                        changeCurrentState(2);
+                      }}
+                    />
+                    <Button
+                      title="step 3"
+                      onPress={() => {
+                        changeCurrentState(3);
+                      }}
+                    />
+                  </View>
+                </View>
               </View>
-            </View>
+            </ImageBackground>
+          </ScrollView>
+        ) : currentStep === 2 ? (
+          <ScrollView style={styles.scrollview}>
+            <ImageBackground
+              source={require("../assets/sea.png")}
+              style={styles.backgroundImageMain}
+              resizeMode="repeat" // This property ensures the background image is repeated to fill the available space
+            >
+              <View style={styles.overlay}>
+                <View style={styles.profileContainer}>
+                  {/* <Text style={styles.voyageImage}>Voyage Image</Text> */}
 
-            <View style={styles.checkboxContainer}>
-              <Text>FixedPrice </Text>
-              <View>
-                <Checkbox
-                  value={isFixedPrice}
-                  onValueChange={setIsFixedPrice}
-                  color={isFixedPrice ? "#4630EB" : undefined}
+                  <TouchableOpacity onPress={pickVoyageImage}>
+                    {voyageImage ? (
+                      <Image
+                        source={{ uri: voyageImage }}
+                        style={styles.profileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={{ uri: profileImageUrl }}
+                        style={styles.profileImage}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  {/* Your other UI elements */}
+                </View>
+
+                <FlatList
+                  horizontal
+                  data={addedVoyageImages}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item, index }) => {
+                    console.log("item: ", item);
+                    return (
+                      <View key={index} style={styles2.imageContainer1}>
+                        <Image
+                          source={{ uri: item }}
+                          style={styles2.voyageImage1}
+                        />
+
+                        <TouchableOpacity
+                          onPress={() => handleDeleteImage(index)}
+                        >
+                          <Text style={{ backgroundColor: "green" }}>
+                            Delete
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  }}
                 />
+
+                <View style={styles.saveButton}>
+                  <Button
+                    title="Add Voyage Image"
+                    onPress={() => handleUploadImage()}
+                  />
+                </View>
+                <View style={styles.saveButton}>
+                  <Button
+                    title="Create Itinerary"
+                    onPress={() => handleNextPage()}
+                  />
+                </View>
+                <View style={styles.refetch}>
+                  <Button
+                    title="print state"
+                    onPress={() => {
+                      printState2();
+                    }}
+                  />
+                </View>
               </View>
-            </View>
-          </View>
-
-          {/* Save Button */}
-          <View style={styles.saveButton}>
-            <Button
-              title="Create Voyage"
-              onPress={() => handleCreateVoyage()}
-            />
-          </View>
-
-          <View style={styles.refetch}>
-            <Button
-              title="print state"
-              onPress={() => {
-                printState();
-              }}
-            />
-          </View>
-        </View>
-      </ScrollView>
+            </ImageBackground>
+          </ScrollView>
+        ) : (
+          <Text>Hello </Text>
+        )}
+      </>
     );
   }
 };
 
 export default CreateVoyageScreen;
 
+const styles2 = StyleSheet.create({
+  modalWrappeer: {
+    position: "absolute",
+    top: 0,
+    backgroundColor: "red",
+    height: vh(10),
+    width: vw(80),
+  },
+
+  imageContainerInModal: {
+    top: vh(30),
+    height: vh(40),
+    paddingLeft: vw(10),
+    backgroundColor: "transparent",
+  },
+  voyageImageInModal: {
+    height: vh(35),
+    width: vw(80),
+    marginRight: vh(1),
+    borderRadius: vh(1.5),
+    borderWidth: 2,
+    borderColor: "white",
+  },
+
+  imageContainer1: {
+    // backgroundColor: "white",
+  },
+  voyageImage1: {
+    height: vh(13),
+    width: vh(13),
+    marginRight: vh(1),
+    borderRadius: vh(1.5),
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust opacity as needed
+  },
+  carouselImage: {
+    position: "absolute",
+    top: vh(30),
+    alignSelf: "center",
+    height: vh(40),
+    width: vw(90),
+    borderRadius: vh(3),
+    borderWidth: 1.5,
+    borderColor: "white",
+  },
+  closeButtonAndText: {
+    flexDirection: "row",
+    position: "absolute",
+    height: vh(3.5),
+    width: vh(11.45),
+    backgroundColor: "white",
+    borderRadius: vh(2.5),
+    bottom: vh(24),
+    left: vw(35),
+    borderColor: "rgb(148,1,1)",
+    borderWidth: 1,
+    verticalAlign: "middle",
+  },
+  closeText1: {
+    marginLeft: vw(1),
+    fontSize: 18,
+    height: vh(3),
+    alignSelf: "center",
+    color: "rgb(148,1,1)",
+  },
+  closeText2: {
+    fontSize: 18,
+    height: vh(3),
+    alignSelf: "center",
+    color: "rgb(148,1,1)",
+  },
+  pagerView: {
+    backgroundColor: "rgba(111,1,1,0.01)",
+    height: vh(50),
+    flex: 1,
+  },
+  pagerInside: {
+    height: vh(50),
+    width: vw(100),
+  },
+});
+
 const styles = StyleSheet.create({
+  scrollview: {
+    height: vh(140),
+    top: vh(5),
+    marginBottom: vh(20),
+    backgroundColor: "rgba(10, 11, 211,0.76)",
+  },
+  overlay: {
+    backgroundColor: "rgba(10, 11, 211,0.66)",
+  },
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: vh(2),
+    marginTop: vh(1),
+    borderRadius: vh(1.5),
+  },
+  profileImage: {
+    marginLeft: vw(3),
+    marginVertical: vh(1),
+    width: vh(30),
+    height: vh(30),
+    borderRadius: vh(3),
+    borderWidth: 5,
+    borderColor: "rgba(190, 119, 234,0.6)",
+  },
+  backgroundImageMain: {
+    backgroundColor: "rgba(10, 11, 211,0.36)",
+  },
   mainCheckboxContainer: {
     padding: vh(1),
     flexDirection: "row",
@@ -449,23 +746,8 @@ const styles = StyleSheet.create({
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   formContainer: {
-    padding: 20,
+    padding: vh(2),
     top: vh(-2),
-  },
-  scrollview: {
-    height: vh(140),
-    top: vh(5),
-    marginBottom: vh(20),
-    backgroundColor: "rgba(190, 119, 234,0.16)",
-  },
-  profileImage: {
-    top: vh(3),
-    left: vw(-25),
-    width: vh(22),
-    height: vh(22),
-    borderRadius: vh(20),
-    borderWidth: 5,
-    borderColor: "rgba(190, 119, 234,0.6)",
   },
   recycle: {
     color: "purple",
@@ -474,7 +756,6 @@ const styles = StyleSheet.create({
     color: "purple",
   },
   recycleBox: {
-    top: vh(-2),
     left: vw(4),
     textAlign: "center",
     width: vw(12),
@@ -526,6 +807,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     alignSelf: "center",
   },
+  voyageImage: {
+    color: "rgba(0, 119, 234,0.9)",
+    fontSize: 13,
+    backgroundColor: "white",
+    padding: vh(1),
+    borderRadius: vh(1),
+  },
   inputDescription: {
     color: "rgba(0, 119, 234,0.9)",
     fontSize: 13,
@@ -559,7 +847,7 @@ const styles = StyleSheet.create({
   socialBox: {
     flexDirection: "row",
     backgroundColor: "white",
-    borderRadius: 20,
+    borderRadius: vh(1.5),
     marginTop: 2,
     borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",

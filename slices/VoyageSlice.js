@@ -78,7 +78,20 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       },
       // ... other configuration options
     }),
-
+    addVoyageImage: builder.mutation({
+      query: (data) => {
+        const { formData, voyageId } = data;
+        const url = `/api/Voyage/${voyageId}/AddVoyageImage`;
+        return {
+          url,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
+    }),
     sendBid: builder.mutation({
       query: (bidData) => ({
         url: "/api/Bid/createBid",
@@ -94,7 +107,8 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
   overrideExisting: true,
 });
 
-export const { useCreateVoyageMutation } = extendedApiSlice;
+export const { useCreateVoyageMutation, useAddVoyageImageMutation } =
+  extendedApiSlice;
 
 export const {
   useGetVoyagesByUserByIdQuery,
