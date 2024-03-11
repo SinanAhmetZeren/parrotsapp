@@ -19,7 +19,7 @@ import { useAddWaypointMutation } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 
 const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
-  console.log("voyageID from map component: ", voyageId);
+  // console.log("voyageID from map component: ", voyageId);
   const [addedWayPoints, setAddedWayPoints] = useState([]);
   const [markerCoords, setMarkerCoords] = useState(null);
   const [latitude, setLatitude] = useState("");
@@ -75,11 +75,11 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       name: "profileImage.jpg",
     });
 
-    console.log("lat:", latitude);
-    console.log("lng:", longitude);
-    console.log("title:", title);
-    console.log("description:", description);
-    console.log("order:", order);
+    // console.log("lat:", latitude);
+    // console.log("lng:", longitude);
+    // console.log("title:", title);
+    // console.log("description:", description);
+    // console.log("order:", order);
 
     try {
       await addWaypoint({
@@ -219,15 +219,15 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
   };
 
   const RenderWaypointFlatList = ({ addedWayPoints }) => {
-    console.log("addedWayPoints");
-    console.log(addedWayPoints);
+    // console.log("addedWayPoints");
+    // console.log(addedWayPoints);
     return (
       <FlatList
         horizontal
         data={addedWayPoints}
         keyExtractor={(item) => item.order}
         renderItem={({ item, index }) => {
-          console.log("item: ", item);
+          // console.log("item: ", item);
           return (
             <View key={index}>
               <WaypointItem

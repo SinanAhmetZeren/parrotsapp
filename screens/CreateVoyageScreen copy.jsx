@@ -624,6 +624,8 @@ const CreateVoyageScreen = () => {
                     : styles.length3
                 }
               >
+                {/* {addedVoyageImages ? <Text>hello</Text> : <Text>nothing</Text>} */}
+
                 <FlatList
                   horizontal
                   data={addedVoyageImages}
