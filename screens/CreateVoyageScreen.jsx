@@ -591,13 +591,8 @@ const CreateVoyageScreen = () => {
               <View style={styles.selectedChoice}>
                 <Text style={styles.selectedText}>Add Voyage Images</Text>
               </View>
-              <View style={styles.createVoyageButton}>
-                <Button title="print state 5" onPress={() => printState5()} />
-              </View>
 
               <View style={styles.profileContainer}>
-                {/* <Text style={styles.voyageImage}>Voyage Image</Text> */}
-
                 <TouchableOpacity onPress={pickVoyageImage}>
                   {voyageImage ? (
                     <Image
@@ -614,7 +609,6 @@ const CreateVoyageScreen = () => {
                 </TouchableOpacity>
                 {/* Your other UI elements */}
               </View>
-              {/* </View><View style={addedVoyageImages.length <= 1 ? styles.length1 : addedVoyageImages.length == 2 ? styles.length2 : addedVoyageImages.length == 3 ? styles.lenght3 }> */}
               <View
                 style={
                   addedVoyageImages.length <= 1
@@ -626,23 +620,48 @@ const CreateVoyageScreen = () => {
               >
                 <FlatList
                   horizontal
-                  data={addedVoyageImages}
+                  data={
+                    addedVoyageImages.length === 0
+                      ? [
+                          { key: "placeholder_1" },
+                          { key: "placeholder_2" },
+                          { key: "placeholder_3" },
+                        ]
+                      : addedVoyageImages.length === 1
+                      ? [
+                          ...addedVoyageImages,
+                          { key: "placeholder_2" },
+                          { key: "placeholder_3" },
+                        ]
+                      : addedVoyageImages.length === 2
+                      ? [...addedVoyageImages, { key: "placeholder_3" }]
+                      : addedVoyageImages.map((item) => ({
+                          ...item,
+                          key: item.addedVoyageImageId,
+                        }))
+                  }
                   keyExtractor={(item) => item.addedVoyageImageId}
                   renderItem={({ item, index }) => {
-                    {
-                      addedVoyageImages ? (
-                        <Text>hello</Text>
-                      ) : (
-                        <View key={index} style={styles2.imageContainer1}>
-                          <TouchableOpacity
-                            onPress={() =>
-                              handleDeleteImage(item.addedVoyageImageId)
+                    console.log("index: ", index);
+                    return (
+                      <View key={index} style={styles2.imageContainer1}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            if (item.addedVoyageImageId) {
+                              handleDeleteImage(item.addedVoyageImageId);
                             }
-                          >
-                            <Image
-                              source={{ uri: item.voyageImage }}
-                              style={styles2.voyageImage1}
-                            />
+                          }}
+                        >
+                          <Image
+                            source={
+                              item.addedVoyageImageId
+                                ? { uri: item.voyageImage }
+                                : require("../assets/placeholder.png")
+                            }
+                            style={styles2.voyageImage1}
+                          />
+
+                          {item.addedVoyageImageId && (
                             <Text style={styles.deleteAddedImage}>
                               <MaterialIcons
                                 name="cancel"
@@ -650,61 +669,22 @@ const CreateVoyageScreen = () => {
                                 color="darkred"
                               />
                             </Text>
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    }
-
-                    return (
-                      <View key={index} style={styles2.imageContainer1}>
-                        <TouchableOpacity
-                          onPress={() =>
-                            handleDeleteImage(item.addedVoyageImageId)
-                          }
-                        >
-                          <Image
-                            source={{ uri: item.voyageImage }}
-                            style={styles2.voyageImage1}
-                          />
-                          <Text style={styles.deleteAddedImage}>
-                            <MaterialIcons
-                              name="cancel"
-                              size={24}
-                              color="darkred"
-                            />
-                          </Text>
+                          )}
                         </TouchableOpacity>
                       </View>
                     );
                   }}
                 />
               </View>
+
               {voyageImage ? (
                 <View style={styles.addVoyageImageButton}>
-                  {/* <Button title="Add" onPress={() => handleUploadImage()} /> */}
                   <TouchableOpacity onPress={() => handleUploadImage()}>
                     <AntDesign name="clouduploado" size={24} color="white" />
                   </TouchableOpacity>
                 </View>
-              ) : (
-                <View style={styles.noDisplay}>
-                  <Button
-                    title="Select Voyage Image"
-                    onPress={() => {
-                      console.log("hello from select voyage");
-                    }}
-                  />
-                </View>
-              )}
-              {/* <View style={styles.saveButton}>
-                <Button title="print state" onPress={() => printState5()} />
-              </View> */}
-              {/* <View style={styles.saveButton}>
-                <Button
-                  title="Create Itinerary"
-                  onPress={() => handleNextPage()}
-                />
-              </View> */}
+              ) : null}
+
               <View style={styles.refetch}>
                 <Button
                   title="print state 2"
@@ -715,6 +695,9 @@ const CreateVoyageScreen = () => {
               </View>
             </View>
 
+            <View style={styles.addWaypoints}>
+              <Text style={styles.selectedText}>Add Waypoints</Text>
+            </View>
             <CreateVoyageMapComponent
               voyageId={voyageId}
               setCurrentStep={setCurrentStep}
@@ -758,7 +741,7 @@ const styles2 = StyleSheet.create({
   modalWrappeer: {
     position: "absolute",
     top: 0,
-    backgroundColor: "red",
+    // backgroundColor: "red",
     height: vh(10),
     width: vw(80),
   },
@@ -842,6 +825,11 @@ const styles2 = StyleSheet.create({
 
 const styles = StyleSheet.create({
   selectedChoice: {
+    marginTop: vh(1),
+    alignItems: "center",
+  },
+  addWaypoints: {
+    marginTop: vh(4),
     alignItems: "center",
   },
   selectedText: {
@@ -852,19 +840,19 @@ const styles = StyleSheet.create({
   },
   length1: {
     height: vh(13),
-    width: vw(30),
+    width: vw(90),
     alignSelf: "center",
-    backgroundColor: "green",
+    // backgroundColor: "green",
   },
   length2: {
-    width: vw(60),
+    width: vw(90),
     alignSelf: "center",
-    backgroundColor: "red",
+    // backgroundColor: "red",
   },
   length3: {
     width: vw(90),
     alignSelf: "center",
-    backgroundColor: "blue",
+    // backgroundColor: "blue",
   },
 
   deleteAddedImage: {
@@ -876,6 +864,7 @@ const styles = StyleSheet.create({
   },
   addVoyageImageButton: {
     backgroundColor: "rgb(0, 119, 234)",
+    // backgroundColor: "rgba(12,200,152,1)",
     position: "absolute",
     right: vw(10),
     top: vh(26),
@@ -916,6 +905,7 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     borderRadius: vh(1.5),
   },
+
   profileImage: {
     marginLeft: vw(3),
     marginVertical: vh(1),
