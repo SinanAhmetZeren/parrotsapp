@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     height: vh(20),
     backgroundColor: "rgba(0, 119, 234,0.071)",
     borderRadius: vh(2),
-    borderWidth: 3,
+    // borderWidth: 3,
     borderColor: "rgba(10, 119, 234,0.2)",
   },
   imageContainer: {

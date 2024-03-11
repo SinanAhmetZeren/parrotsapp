@@ -1,0 +1,310 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/prop-types */
+import React from "react";
+import { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
+import { vw, vh } from "react-native-expo-viewport-units";
+import { useSendBidMutation } from "../slices/VoyageSlice";
+
+export const CreateBidComponent = ({
+  userProfileImage,
+  userName,
+  userId,
+  voyageId,
+}) => {
+  const [visible, setVisible] = useState(false);
+  const [price, setPrice] = useState(0);
+  const [message, setMessage] = useState("");
+  const [persons, setPersons] = useState(0);
+  const textInputRef = useRef(null);
+  const [sendBid] = useSendBidMutation();
+
+  useEffect(() => {
+    if (visible && textInputRef.current) {
+      textInputRef.current.focus();
+    }
+  }, [visible]);
+
+  const handleIncrementPrice = () => {
+    setPrice(price + 1);
+  };
+
+  const handleDecrementPrice = () => {
+    if (price > 0) {
+      setPrice(price - 1);
+    }
+  };
+
+  const handleIncrementPersons = () => {
+    setPersons(persons + 1);
+  };
+
+  const handleDecrementPersons = () => {
+    if (persons > 0) {
+      setPersons(persons - 1);
+    }
+  };
+
+  const handleSendBid = (userProfileImage, userName) => {
+    console.log("from bid component, profileImage: ", userProfileImage);
+    console.log("from bid component, username: ", userName);
+    let bidData = {
+      personCount: persons,
+      message: message,
+      offerPrice: price,
+      currency: "",
+      voyageId,
+      userId,
+      userProfileImage,
+      userName,
+    };
+
+    sendBid(bidData);
+    setVisible(false);
+  };
+
+  const handleOpenModal = () => {
+    console.log("open modal for bid");
+    setVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    console.log("close modal for bid");
+    setVisible(false);
+    setPersons(0);
+    setPrice(0);
+    setMessage("");
+  };
+
+  return (
+    <View>
+      <View style={styles2.bidButtonContainer}>
+        <TouchableOpacity onPress={handleOpenModal}>
+          <Text style={styles2.createBidButton}>Create Bid</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Modal
+        visible={visible}
+        transparent
+        animationType="fade"
+        onRequestClose={handleCloseModal}
+      >
+        <View style={styles2.modalContainer}>
+          <View style={styles2.innerContainer}>
+            <Text style={styles2.title}>Enter Your Bid</Text>
+
+            {/* Bid Amount */}
+            <View style={styles2.inputMainContainer}>
+              <Text style={styles2.InputName}>Offer Price: </Text>
+
+              <View style={styles2.counterContainer}>
+                <TouchableOpacity onPress={handleDecrementPrice}>
+                  <Text style={styles2.buttonCount}>-</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  ref={textInputRef}
+                  style={styles2.bidInput}
+                  keyboardType="numeric"
+                  value={price.toString()}
+                  onChangeText={(text) => setPrice(parseInt(text) || 0)}
+                />
+
+                <TouchableOpacity onPress={handleIncrementPrice}>
+                  <Text style={styles2.buttonCount}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Person count */}
+            <View style={styles2.inputMainContainer}>
+              <Text style={styles2.InputName}>Persons: </Text>
+
+              <View style={styles2.counterContainer}>
+                <TouchableOpacity onPress={handleDecrementPersons}>
+                  <Text style={styles2.buttonCount}>-</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles2.bidInput}
+                  keyboardType="numeric"
+                  value={persons.toString()}
+                  onChangeText={(text) => setPersons(parseInt(text) || 0)}
+                />
+
+                <TouchableOpacity onPress={handleIncrementPersons}>
+                  <Text style={styles2.buttonCount}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Message */}
+            <TextInput
+              style={styles2.messageInput}
+              placeholder="Enter your message"
+              placeholderTextColor="#2ac898"
+              multiline
+              value={message}
+              onChangeText={(text) => setMessage(text)}
+            />
+
+            {/* Buttons */}
+            <View style={styles2.buttonsContainer}>
+              <TouchableOpacity
+                onPress={handleCloseModal}
+                style={styles2.buttonCancelContainer}
+              >
+                <Text style={styles2.buttonClear}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleSendBid(userProfileImage, userName)}
+                style={styles2.buttonSendBidContainer}
+              >
+                <Text style={styles2.buttonSave}>Send Bid</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
+
+const styles2 = StyleSheet.create({
+  inputMainContainer: {
+    backgroundColor: "#f4fdfa",
+    height: vh(13),
+    padding: vh(1),
+    marginBottom: vh(1),
+    borderRadius: vh(2),
+    borderColor: "#d8f7ee",
+    // borderWidth: 2,
+  },
+  bidButtonContainer: {
+    backgroundColor: "#186ff1",
+    borderRadius: vh(2),
+    borderColor: "#3c9ede",
+    // borderWidth: 3,
+    marginBottom: vh(15),
+    width: vw(60),
+    alignSelf: "center",
+    marginTop: vh(1),
+    height: vh(5),
+    justifyContent: "center",
+  },
+  createBidButton: {
+    fontSize: 22,
+    color: "white",
+    alignSelf: "center",
+    fontWeight: "700",
+    letterSpacing: 1,
+  },
+  InputName: {
+    fontSize: 18,
+    color: "#186ff1",
+    fontWeight: "700",
+    marginBottom: vh(2),
+  },
+  messageInput: {
+    fontSize: 18,
+    color: "#186ff1",
+    fontWeight: "700",
+    marginBottom: vh(2),
+    backgroundColor: "rgba(42,200,152,.1)",
+    padding: vh(1),
+    borderRadius: vh(2),
+  },
+  bidInput: {
+    color: "#2ac898",
+    fontSize: 22,
+    fontWeight: "800",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    paddingTop: vh(17),
+    paddingBottom: vh(70),
+  },
+  innerContainer: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: vw(90),
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  counterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+
+  buttonsContainer: {
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "space-around",
+  },
+
+  buttonSaveContainer: {
+    alignItems: "center",
+  },
+  buttonClearContainer: {
+    alignItems: "center",
+  },
+  buttonSave: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    backgroundColor: "#186ff1",
+    padding: 5,
+    width: vw(30),
+    borderRadius: 10,
+    marginTop: 5,
+  },
+  buttonClear: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    backgroundColor: "#2ac898",
+    padding: 5,
+    width: vw(30),
+    borderRadius: 10,
+    marginTop: 5,
+  },
+  buttonCount: {
+    fontSize: 24,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    // borderWidth: 1,
+    borderColor: "#3498db",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    width: vh(6),
+    textAlign: "center",
+    color: "#2ac898",
+    fontWeight: "800",
+  },
+  count: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+});

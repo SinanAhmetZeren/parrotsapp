@@ -9,8 +9,7 @@ import { Text, Platform, View, StyleSheet, Image } from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
 
 // Import statements for each screen
-import AddNewVehicleScreen from "./screens/AddNewVehicleScreen";
-import AddNewVoyageScreen from "./screens/AddNewVoyageScreen";
+
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
 import VehicleDetailScreen from "./screens/VehicleDetailScreen";
@@ -92,8 +91,8 @@ const ProfileStack = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
 
       <Stack.Screen
         name="ProfileScreenPublic"
@@ -128,8 +127,9 @@ const AddNewStack = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="AddNewVoyage" component={AddNewVoyageScreen} />
-      <Stack.Screen name="AddNewVehicle" component={AddNewVehicleScreen} />
+      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
+      {/* <Stack.Screen name="AddNewVoyage" component={AddNewVoyageScreen} />
+      <Stack.Screen name="AddNewVehicle" component={AddNewVehicleScreen} /> */}
     </Stack.Navigator>
   );
 };

@@ -92,15 +92,25 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
-    sendBid: builder.mutation({
-      query: (bidData) => ({
-        url: "/api/Bid/createBid",
-        method: "POST",
-        body: {
-          ...bidData,
-          dateTime: new Date().toISOString(),
-        },
+    deleteVoyageImage: builder.mutation({
+      query: (imageId) => ({
+        url: `/api/Voyage/${imageId}/deleteVoyageImage`,
+        method: "DELETE",
       }),
+    }),
+    sendBid: builder.mutation({
+      query: (bidData) => {
+        console.log("bidData: ");
+        console.log(bidData);
+        return {
+          url: "/api/Bid/createBid",
+          method: "POST",
+          body: {
+            ...bidData,
+            dateTime: new Date().toISOString(),
+          },
+        };
+      },
     }),
     addWaypoint: builder.mutation({
       query: (data) => {
@@ -153,6 +163,7 @@ export const {
   useCreateVoyageMutation,
   useAddVoyageImageMutation,
   useAddWaypointMutation,
+  useDeleteVoyageImageMutation,
 } = extendedApiSlice;
 
 export const {

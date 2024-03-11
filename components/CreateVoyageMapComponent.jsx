@@ -9,13 +9,16 @@ import {
   Button,
   TextInput,
   TouchableOpacity,
+  FlatList,
+  Modal,
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import * as ImagePicker from "expo-image-picker";
 import { useAddWaypointMutation } from "../slices/VoyageSlice";
+import { useNavigation } from "@react-navigation/native";
 
-const CreateVoyageMapComponent = ({ voyageId }) => {
+const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
   console.log("voyageID from map component: ", voyageId);
   const [addedWayPoints, setAddedWayPoints] = useState([]);
   const [markerCoords, setMarkerCoords] = useState(null);
@@ -27,8 +30,8 @@ const CreateVoyageMapComponent = ({ voyageId }) => {
   );
   const [imageUri, setImageUri] = useState(null);
   const [order, setOrder] = useState(1);
-
   const [addWaypoint] = useAddWaypointMutation();
+  const navigation = useNavigation();
 
   const WaypointComponent = ({
     description,
@@ -77,8 +80,6 @@ const CreateVoyageMapComponent = ({ voyageId }) => {
     console.log("title:", title);
     console.log("description:", description);
     console.log("order:", order);
-
-    let voyageId = 8;
 
     try {
       await addWaypoint({
@@ -217,6 +218,102 @@ const CreateVoyageMapComponent = ({ voyageId }) => {
     setMarkerCoords(event.nativeEvent.coordinate);
   };
 
+  const RenderWaypointFlatList = ({ addedWayPoints }) => {
+    console.log("addedWayPoints");
+    console.log(addedWayPoints);
+    return (
+      <FlatList
+        horizontal
+        data={addedWayPoints}
+        keyExtractor={(item) => item.order}
+        renderItem={({ item, index }) => {
+          console.log("item: ", item);
+          return (
+            <View key={index}>
+              <WaypointItem
+                order={item.order}
+                latitude={item.latitude}
+                longitude={item.longitude}
+                title={item.title}
+                description={item.description}
+                imageUri={item.imageUri}
+              />
+            </View>
+          );
+        }}
+      />
+    );
+  };
+
+  //////
+  const WaypointItem = ({
+    order,
+    title,
+    latitude,
+    longitude,
+    description,
+    imageUri,
+  }) => {
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const truncatedDescription =
+      description.length > 70 ? `${description.slice(0, 70)}...` : description;
+
+    return (
+      <View style={styles.waypointItem}>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <View style={styles.waypointImageContainer}>
+            <Image source={{ uri: imageUri }} style={styles.waypointImage} />
+          </View>
+          <Text style={styles.waypointItemTitle}>{title}</Text>
+          <Text>{truncatedDescription}</Text>
+        </TouchableOpacity>
+
+        {/* Modal for displaying the full description */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.waypointModalContainer}>
+            <View style={styles.modalContent}>
+              <View style={styles.waypointImageContainer}>
+                <Image
+                  source={{ uri: imageUri }}
+                  style={styles.waypointImageInModal}
+                />
+              </View>
+              <Text style={styles.waypointTitleInModal}>{title}</Text>
+              <Text style={styles.waypointDescriptionInModal}>
+                {description}
+              </Text>
+              <TouchableOpacity
+                style={styles.closeWaypointModalButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.closeWaypointModalButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    );
+  };
+
+  const goToProfilePage = () => {
+    setAddedWayPoints([]);
+    setMarkerCoords(null);
+    setLatitude("");
+    setLongitude("");
+    setTitle("");
+    setDescription("");
+    setImageUri(null);
+    setOrder(1);
+    setCurrentStep(1);
+    navigation.navigate("ProfileScreen");
+  };
+
   return (
     <View>
       {/* // map */}
@@ -280,10 +377,24 @@ const CreateVoyageMapComponent = ({ voyageId }) => {
             multiline={true}
           />
         </View>
+
         <Button
           title="Add Waypoint"
           onPress={() => {
             handleAddWaypoint();
+          }}
+        />
+      </View>
+
+      <View style={styles.waypointFlatlistContainer}>
+        <RenderWaypointFlatList addedWayPoints={addedWayPoints} />
+      </View>
+
+      <View style={styles.FinishButtonContainer}>
+        <Button
+          title="Complete"
+          onPress={() => {
+            goToProfilePage();
           }}
         />
       </View>
@@ -296,7 +407,7 @@ const CreateVoyageMapComponent = ({ voyageId }) => {
         }}
       >
         <Button
-          title="print state"
+          title="print state 3"
           onPress={() => {
             printState();
           }}
@@ -309,6 +420,75 @@ const CreateVoyageMapComponent = ({ voyageId }) => {
 export default CreateVoyageMapComponent;
 
 const styles = StyleSheet.create({
+  closeWaypointModalButtonText: {
+    fontWeight: "800",
+    color: "red",
+  },
+  closeWaypointModalButton: {
+    alignSelf: "flex-end",
+    bottom: vh(-5),
+    width: vw(15),
+  },
+  waypointTitleInModal: {
+    fontWeight: "700",
+    fontSize: 20,
+  },
+  waypointDescriptionInModal: {
+    fontWeight: "500",
+    fontSize: 14,
+  },
+  waypointModalContainer: {
+    borderWidth: 3,
+    borderColor: "rgba(0, 119, 234,0.19)",
+    backgroundColor: "white",
+    height: vh(50),
+    top: vh(20),
+    width: vw(75),
+    alignSelf: "center",
+    borderRadius: vh(5),
+    padding: vh(2),
+  },
+  waypointItemTitle: {
+    fontWeight: "700",
+  },
+  waypointItem: {
+    margin: vw(1),
+    width: vw(50),
+    height: vh(25),
+    alignItems: "center",
+    backgroundColor: "rgba(0, 119, 234,0.19)",
+    borderWidth: 1,
+    borderColor: "rgba(0, 119, 234,0.39)",
+    borderRadius: vh(3),
+  },
+  waypointImageContainer: {
+    marginTop: vh(1),
+    alignItems: "center",
+  },
+  waypointImage: {
+    width: vh(14),
+    height: vh(14),
+    borderRadius: vh(3),
+    borderWidth: 3,
+    borderColor: "rgba(0, 119, 234,0.3)",
+  },
+  waypointImageInModal: {
+    width: vh(30),
+    height: vh(30),
+    borderRadius: vh(3),
+  },
+  waypointFlatlistContainer: {
+    height: vh(27),
+    marginLeft: vw(3),
+  },
+  FinishButtonContainer: {
+    backgroundColor: "rgba(0, 119, 234,0.19)",
+    borderWidth: 1,
+    borderColor: "rgba(0, 119, 234,0.39)",
+    borderRadius: vh(2),
+    width: vw(95),
+    alignSelf: "center",
+  },
   ImageAndLatLng: {
     backgroundColor: "rgba(0, 119, 234,0.19)",
     borderWidth: 1,

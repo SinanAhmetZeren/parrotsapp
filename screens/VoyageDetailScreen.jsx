@@ -8,6 +8,7 @@ import {
   useGetVoyageByIdQuery,
   useSendBidMutation,
 } from "../slices/VoyageSlice";
+import { useGetUserByIdQuery } from "../slices/UserSlice";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   Feather,
@@ -17,10 +18,8 @@ import {
   FontAwesome,
   Ionicons,
   MaterialIcons,
-  MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { BackHandler } from "react-native";
 import {
   View,
   Image,
@@ -35,177 +34,40 @@ import {
 } from "react-native";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
-import { useLoginUserMutation } from "../slices/UserSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { updateAsLoggedIn, updateAsLoggedOut } from "../slices/UserSlice";
-import { format } from "date-fns";
+import { RenderBidsComponent } from "../components/RenderBidsComponent";
+import { WaypointListComponent } from "../components/WaypointListComponent";
+import { CreateBidComponent } from "../components/CreateBidComponent";
+import { RenderPolylinesComponent } from "../components/RenderPolylinesComponent";
+import { useSelector } from "react-redux";
+import { useFonts } from "expo-font";
 
 const VoyageDetailScreen = () => {
-  const route = useRoute();
-  // const { voyageId } = route.params;
-  const { voyageId } = route.params;
+  const [fontsLoaded, fontError] = useFonts({
+    RobotoMedium: require("../assets/Roboto-Medium.ttf"),
+    Madimi: require("../assets/MadimiOne-Regular.ttf"),
+    Nunito: require("../assets/Nunito-Regular.ttf"),
+    NunitoBold: require("../assets/Nunito-Bold.ttf"),
+    RobotoslabM: require("../assets/RobotoSlab-Medium.ttf"),
+    RobotoslabB: require("../assets/RobotoSlab-Bold.ttf"),
+  });
 
+  console.log(fontsLoaded);
+  const route = useRoute();
+  const { voyageId } = route.params;
+  const userId = useSelector((state) => state.users.userId);
+  const { data: userData, isSuccess: isSuccessUser } =
+    useGetUserByIdQuery(userId);
   const {
     data: VoyageData,
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
   } = useGetVoyageByIdQuery(voyageId);
-  const dispatch = useDispatch();
-
-  const [sendBid] = useSendBidMutation();
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  // const route = useRoute();
 
   const handleSeeAll = () => {
+    console.log("see all");
     setModalVisible(true);
-  };
-
-  const renderBids = (bids) => {
-    const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
-    const visibleBids = bids.slice(0, 6);
-
-    const closeModal = () => {
-      setModalVisible(false);
-    };
-
-    return (
-      <View>
-        {visibleBids.map((bid, index) => (
-          <TouchableOpacity key={index} style={styles.singleBidContainer}>
-            <Image
-              source={{
-                uri: UserImageBaseUrl + bid.userProfileImage,
-              }}
-              style={styles.bidImage}
-            />
-            <View>
-              <Text style={styles.bidUsername}>{bid.userName}</Text>
-            </View>
-            <View>
-              <Text style={styles.offerPrice}>
-                {bid.currency} {bid.offerPrice.toFixed(2)}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={modalVisible}
-          onRequestClose={closeModal}
-        >
-          <View style={{ paddingTop: vh(5) }}>
-            <FlatList
-              style={styles.BidsFlatList}
-              data={bids}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item, index }) => (
-                <View key={index} style={styles.singleBidContainer2}>
-                  <Image
-                    source={{
-                      uri: UserImageBaseUrl + item.userProfileImage,
-                    }}
-                    style={styles.bidImage2}
-                  />
-                  <View>
-                    <Text style={styles.bidUsername2}>{item.userName}</Text>
-                  </View>
-                  <View>
-                    <Text style={styles.offerPrice2}>
-                      {item.currency} {item.offerPrice.toFixed(2)}
-                    </Text>
-                  </View>
-                </View>
-              )}
-            />
-            <TouchableOpacity
-              onPress={closeModal}
-              style={styles.closeButtonInModal}
-            >
-              <Text style={styles.closeTextInModal}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </Modal>
-      </View>
-    );
-  };
-
-  const WaypointComponent = ({
-    description,
-    latitude,
-    longitude,
-    profileImage,
-    title,
-    pinColor,
-  }) => {
-    const coords = { latitude, longitude };
-
-    return (
-      <>
-        <Marker coordinate={coords} pinColor={pinColor}>
-          <Callout>
-            <View>
-              <Text>{title}</Text>
-              <Text>{description}</Text>
-              {profileImage && (
-                <Image
-                  source={{ uri: profileImage }}
-                  style={{ width: 100, height: 100 }}
-                />
-              )}
-            </View>
-          </Callout>
-        </Marker>
-      </>
-    );
-  };
-
-  const WaypointList = ({ waypoints }) => {
-    return (
-      <>
-        {waypoints.map((waypoint, index) => {
-          // let pinColor = "#cfc200";
-          let pinColor = "orange";
-          if (index === 0) {
-            pinColor = "#115500";
-          } else if (index === waypoints.length - 1) {
-            pinColor = "#610101";
-          }
-
-          return (
-            <WaypointComponent
-              key={waypoint.id}
-              description={waypoint.description}
-              latitude={waypoint.latitude}
-              longitude={waypoint.longitude}
-              profileImage={waypoint.profileImage}
-              title={waypoint.title}
-              pinColor={pinColor}
-            />
-          );
-        })}
-      </>
-    );
-  };
-
-  const renderPolylines = (waypoints) => {
-    const coordinates = waypoints.map((marker) => {
-      return { latitude: marker.latitude, longitude: marker.longitude };
-    });
-
-    return (
-      <Polyline
-        coordinates={coordinates}
-        strokeColor="#1468fb" // Change the color as needed
-        strokeWidth={3}
-        lineCap="butt"
-        lineDashPattern={[20, 7]}
-        geodesic={true}
-        lineJoin="round" // Example line join
-      />
-    );
   };
 
   const getInitialRegion = (waypoints) => {
@@ -232,164 +94,6 @@ const VoyageDetailScreen = () => {
       longitudeDelta,
     };
     return initialRegion;
-  };
-
-  const CreateBidComponent = () => {
-    const [visible, setVisible] = useState(false);
-    const [price, setPrice] = useState(0);
-    const [message, setMessage] = useState("");
-    const [persons, setPersons] = useState(0);
-    const textInputRef = useRef(null);
-
-    useEffect(() => {
-      if (visible && textInputRef.current) {
-        textInputRef.current.focus();
-      }
-    }, [visible]);
-
-    const handleIncrementPrice = () => {
-      setPrice(price + 1);
-    };
-
-    const handleDecrementPrice = () => {
-      if (price > 0) {
-        setPrice(price - 1);
-      }
-    };
-
-    const handleIncrementPersons = () => {
-      setPersons(persons + 1);
-    };
-
-    const handleDecrementPersons = () => {
-      if (persons > 0) {
-        setPersons(persons - 1);
-      }
-    };
-
-    const handleSendBid = () => {
-      //let userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
-      const userId = useSelector((state) => state.users.userId);
-      console.log("userId from voyageDetailScreen: ", userId);
-      bidData = {
-        personCount: persons,
-        message: message,
-        offerPrice: price,
-        currency: "€",
-        voyageId: 2,
-        userId,
-        userProfileImage: "string",
-        userName: "string",
-      };
-
-      sendBid(bidData);
-      setVisible(false);
-    };
-
-    const handleOpenModal = () => {
-      setVisible(true);
-    };
-
-    const handleCloseModal = () => {
-      setVisible(false);
-      setPersons(0);
-      setPrice(0);
-      setMessage("");
-    };
-
-    return (
-      <View>
-        <View style={styles.bidButtonContainer}>
-          <TouchableOpacity onPress={handleOpenModal}>
-            <Text style={styles.createBidButton}>Create Bid</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Modal
-          visible={visible}
-          transparent
-          animationType="fade"
-          onRequestClose={handleCloseModal}
-        >
-          <View style={styles2.modalContainer}>
-            <View style={styles2.innerContainer}>
-              <Text style={styles2.title}>Enter Your Bid</Text>
-
-              {/* Bid Amount */}
-              <View style={styles2.inputMainContainer}>
-                <Text style={styles2.InputName}>Offer Price: </Text>
-
-                <View style={styles2.counterContainer}>
-                  <TouchableOpacity onPress={handleDecrementPrice}>
-                    <Text style={styles2.buttonCount}>-</Text>
-                  </TouchableOpacity>
-
-                  <TextInput
-                    ref={textInputRef}
-                    style={styles2.bidInput}
-                    keyboardType="numeric"
-                    value={price.toString()}
-                    onChangeText={(text) => setPrice(parseInt(text) || 0)}
-                  />
-
-                  <TouchableOpacity onPress={handleIncrementPrice}>
-                    <Text style={styles2.buttonCount}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Person count */}
-              <View style={styles2.inputMainContainer}>
-                <Text style={styles2.InputName}>Persons: </Text>
-
-                <View style={styles2.counterContainer}>
-                  <TouchableOpacity onPress={handleDecrementPersons}>
-                    <Text style={styles2.buttonCount}>-</Text>
-                  </TouchableOpacity>
-
-                  <TextInput
-                    style={styles2.bidInput}
-                    keyboardType="numeric"
-                    value={persons.toString()}
-                    onChangeText={(text) => setPersons(parseInt(text) || 0)}
-                  />
-
-                  <TouchableOpacity onPress={handleIncrementPersons}>
-                    <Text style={styles2.buttonCount}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-
-              {/* Message */}
-              <TextInput
-                style={styles2.messageInput}
-                placeholder="Enter your message"
-                placeholderTextColor="#2ac898"
-                multiline
-                value={message}
-                onChangeText={(text) => setMessage(text)}
-              />
-
-              {/* Buttons */}
-              <View style={styles2.buttonsContainer}>
-                <TouchableOpacity
-                  onPress={handleCloseModal}
-                  style={styles2.buttonCancelContainer}
-                >
-                  <Text style={styles2.buttonClear}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleSendBid}
-                  style={styles2.buttonSendBidContainer}
-                >
-                  <Text style={styles2.buttonSave}>Send Bid</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      </View>
-    );
   };
 
   const getCurrentPageLink = () => {
@@ -420,10 +124,6 @@ const VoyageDetailScreen = () => {
   };
 
   const goToProfilePage = (userId) => {
-    console.log("--------------");
-    console.log("navigate to user profile with id: ", userId);
-    console.log("--------------");
-
     navigation.navigate("ProfileScreenPublic", {
       userId: userId,
     });
@@ -436,6 +136,8 @@ const VoyageDetailScreen = () => {
     const waypoints = VoyageData.waypoints || [];
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
+    const userProfileImage = userData.profileImageUrl;
+    const userName = userData.userName;
 
     const descriptionShortenedChars = 500;
     const displayText = showFullText
@@ -487,7 +189,6 @@ const VoyageDetailScreen = () => {
       },
     ].concat(VoyageData.voyageImages);
     const initialRegion = getInitialRegion(waypoints);
-
     const formattedStartDate = require("date-fns").format(
       VoyageData.startDate,
       "MMM d, yy"
@@ -496,7 +197,6 @@ const VoyageDetailScreen = () => {
       VoyageData.endDate,
       "MMM d, yy"
     );
-
     const formattedLastBidDate = require("date-fns").format(
       VoyageData.lastBidDate,
       "MMM d, yy"
@@ -516,31 +216,6 @@ const VoyageDetailScreen = () => {
             />
           </View>
 
-          {/* // map */}
-          {/* <View style={styles.mapAndEmojisContainer}>
-            <View style={styles.mapContainer}>
-              <MapView style={styles.map} initialRegion={initialRegion}>
-                <WaypointList waypoints={waypoints} />
-                {renderPolylines(waypoints)}
-              </MapView>
-            </View>
-            <View style={styles.heartContainer1}>
-              <Ionicons
-                name="heart"
-                size={24}
-                color="red"
-                style={styles.heartContainer2}
-              />
-            </View>
-            <View style={styles.shareContainer1}>
-              <MaterialIcons
-                name="ios-share"
-                size={24}
-                color="black"
-                style={styles.shareContainer2}
-              />
-            </View>
-          </View> */}
           <View style={styles.voyageDataWrapper}>
             <View style={styles.VoyageDataContainer}>
               {/* // VoyageName and Username */}
@@ -550,10 +225,7 @@ const VoyageDetailScreen = () => {
                   <View style={styles.OwnerAndBoat}>
                     <TouchableOpacity
                       style={styles.voyageOwner}
-                      onPress={() => {
-                        console.log("zzz: ", VoyageData.user.id);
-                        goToProfilePage(VoyageData.user.id);
-                      }}
+                      onPress={() => goToProfilePage(VoyageData.user.id)}
                     >
                       <Image
                         source={{
@@ -597,13 +269,12 @@ const VoyageDetailScreen = () => {
                   </View>
                   <View style={styles.VoyagePropsBox}>
                     <View style={styles.VoyageProps}>
-                      <Text style={styles.propTextDescription}>Between: </Text>
+                      <Text style={styles.propTextDescription}>Dates: </Text>
                       <Text style={styles.propText}>{formattedStartDate}</Text>
                       <Text style={styles.propText}> - </Text>
                       <Text style={styles.propText}>{formattedEndDate}</Text>
                     </View>
                   </View>
-
                   <View style={styles.VoyagePropsBox}>
                     {VoyageData.minPrice ? (
                       <View style={styles.VoyageProps}>
@@ -664,7 +335,7 @@ const VoyageDetailScreen = () => {
                         <MaterialIcons
                           name="expand-more"
                           size={24}
-                          color="blue"
+                          color={"#2ac898"}
                         />
                       </Text>
                     </TouchableOpacity>
@@ -676,7 +347,7 @@ const VoyageDetailScreen = () => {
                       <MaterialIcons
                         name="expand-less"
                         size={24}
-                        color="blue"
+                        color={"#2ac898"}
                       />
                     </Text>
                   </TouchableOpacity>
@@ -688,8 +359,8 @@ const VoyageDetailScreen = () => {
           <View style={styles.mapAndEmojisContainer}>
             <View style={styles.mapContainer}>
               <MapView style={styles.map} initialRegion={initialRegion}>
-                <WaypointList waypoints={waypoints} />
-                {renderPolylines(waypoints)}
+                <WaypointListComponent waypoints={waypoints} />
+                <RenderPolylinesComponent waypoints={waypoints} />
               </MapView>
             </View>
             <View style={styles.heartContainer1}>
@@ -720,20 +391,23 @@ const VoyageDetailScreen = () => {
             </View>
 
             <View style={styles.allBidsContainer}>
-              {renderBids(VoyageData.bids)}
+              <RenderBidsComponent
+                bids={bids}
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+              />
             </View>
           </View>
 
-          {/* <View>
-            <TouchableOpacity onPress={shareLink}>
-              <Text>Share</Text>
-            </TouchableOpacity>
-          </View> */}
-
           {/* // enter bid */}
 
-          <View style={{ marginBottom: vh(25) }}>
-            <CreateBidComponent />
+          <View>
+            <CreateBidComponent
+              userName={userName}
+              userProfileImage={userProfileImage}
+              voyageId={voyageId}
+              userId={userId}
+            />
           </View>
         </ScrollView>
       </>
@@ -742,118 +416,6 @@ const VoyageDetailScreen = () => {
 };
 
 export default VoyageDetailScreen;
-
-const styles2 = StyleSheet.create({
-  inputMainContainer: {
-    backgroundColor: "#f4fdfa",
-    padding: vh(1),
-    marginBottom: vh(1),
-    borderRadius: vh(2),
-    borderColor: "#d8f7ee",
-    borderWidth: 2,
-  },
-  InputName: {
-    fontSize: 18,
-    color: "#186ff1",
-    fontWeight: "700",
-    marginBottom: vh(2),
-  },
-  messageInput: {
-    fontSize: 18,
-    color: "#186ff1",
-
-    fontWeight: "700",
-    marginBottom: vh(2),
-    borderColor: "#186ff1",
-    padding: vh(1),
-    borderWidth: 1,
-    borderRadius: vh(2),
-  },
-  bidInput: {
-    color: "#2ac898",
-    fontSize: 22,
-    fontWeight: "800",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    paddingTop: vh(17),
-    paddingBottom: vh(70),
-  },
-  innerContainer: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    width: 300,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  counterContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-
-  buttonsContainer: {
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "space-around",
-  },
-
-  buttonSaveContainer: {
-    alignItems: "center",
-  },
-  buttonClearContainer: {
-    alignItems: "center",
-  },
-  buttonSave: {
-    fontSize: 18,
-    color: "white",
-    textAlign: "center",
-    backgroundColor: "#186ff1",
-    padding: 5,
-    width: vw(30),
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  buttonClear: {
-    fontSize: 18,
-    color: "white",
-    textAlign: "center",
-    backgroundColor: "#2ac898",
-    padding: 5,
-    width: vw(30),
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  buttonCount: {
-    fontSize: 24,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderWidth: 1,
-    borderColor: "#3498db",
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    width: vh(6),
-    textAlign: "center",
-    color: "#2ac898",
-    fontWeight: "800",
-  },
-  count: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
 
 const styles = StyleSheet.create({
   rectangularBox: {
@@ -865,16 +427,13 @@ const styles = StyleSheet.create({
     height: vh(29),
   },
   voyageDetailsContainer: {
-    marginTop: vh(2),
-    backgroundColor: "rgba(0, 119, 234,0.071)",
-    borderWidth: 1,
-    borderColor: "rgba(10, 119, 234,0.2)",
+    // backgroundColor: "rgba(0, 119, 234,0.071)",
     padding: 4,
     borderRadius: vh(2),
   },
   OwnerAndBoat: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-evenly",
     margin: 1,
   },
   voyageOwner: {
@@ -886,7 +445,7 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
     backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
   },
   voyageBoat: {
@@ -896,14 +455,14 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     marginHorizontal: vw(2),
     backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
   },
   VoyagePropsBox: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-evenly",
     margin: 1,
   },
   VoyageProps: {
@@ -914,19 +473,18 @@ const styles = StyleSheet.create({
     marginHorizontal: vw(1),
     borderRadius: vw(3),
     backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
   },
   propTextDescription: {
     fontSize: 14,
     fontWeight: "600",
-    color: "blue",
+    color: "#3c9dde",
   },
   propText: {
     fontSize: 14,
-    fontWeight: "600",
+    color: "#666",
   },
-
   priceInputContainer: {
     flexDirection: "row",
   },
@@ -934,8 +492,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#186ff1",
     borderRadius: vh(2),
     borderColor: "#3c9ede",
-    borderWidth: 3,
-    marginBottom: vh(35),
+    // borderWidth: 3,
     width: vw(60),
     alignSelf: "center",
     marginTop: vh(1),
@@ -973,7 +530,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 20,
     borderColor: "#93c9ed",
-    borderWidth: 3,
+    // borderWidth: 3,
   },
   map: {
     width: "100%",
@@ -1014,9 +571,12 @@ const styles = StyleSheet.create({
   },
   descriptionInnerContainer: {
     marginVertical: vh(0.2),
+    fontWeight: "500",
+    color: "#959595",
   },
   ReadMoreLess: {
-    color: "blue",
+    color: "#2ac898",
+    fontWeight: "700",
   },
   subContainer: {
     backgroundColor: "blue",
@@ -1030,14 +590,15 @@ const styles = StyleSheet.create({
   },
   voyageName: {
     fontSize: 24,
-    fontWeight: "700",
     alignSelf: "center",
+    color: "#2ac898",
+    fontFamily: "RobotoslabB",
   },
   userName: {
     fontSize: 14,
     fontWeight: "600",
     marginTop: vh(0.2),
-    color: "blue",
+    color: "#3c9dde",
   },
 
   voyageImage: {
@@ -1077,20 +638,19 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   currentBidsTitle: {
-    paddingLeft: vw(2),
-    fontSize: 25,
+    paddingLeft: vw(6),
+    fontSize: 20,
     fontWeight: "700",
-    color: "#1c71a9",
+    color: "#3c9dde",
   },
   mainBidsContainer: {
-    backgroundColor: "#f2fafa",
+    // backgroundColor: "#f2fafa",
     borderRadius: vw(5),
     marginHorizontal: vw(2),
     borderColor: "#93c9ed",
-    borderWidth: 2,
+    // borderWidth: 2,
   },
   allBidsContainer: {
-    // backgroundColor: "blue",
     margin: vh(1),
     padding: vh(0),
   },
@@ -1100,8 +660,8 @@ const styles = StyleSheet.create({
     margin: vh(0.3),
     alignItems: "center",
     borderRadius: vh(3),
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderWidth: 1,
+    backgroundColor: "rgba(0, 119, 234,0.51)",
+    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
   },
 
@@ -1112,7 +672,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#f2fafa",
     borderColor: "#bfdff4",
-    borderWidth: 2,
+    // borderWidth: 2,
     borderRadius: vh(2),
     padding: vh(1),
   },
@@ -1173,13 +733,8 @@ const styles = StyleSheet.create({
     borderRadius: vh(5),
   },
   VoyageDataContainer: {
-    // backgroundColor: "#f2fafa",
-
     borderRadius: vh(5),
     marginHorizontal: vw(2),
-    // marginBottom: vh(2),
-    // borderColor: "#93c9ed",
-    borderWidth: 2,
   },
   closeButtonInModal: {
     alignSelf: "flex-end",
@@ -1187,7 +742,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f2fafa",
     borderRadius: vw(5),
     borderColor: "#93c9ed",
-    borderWidth: 2,
+    // borderWidth: 2,
     padding: vw(1),
     paddingHorizontal: vw(3),
     marginTop: vh(1),

@@ -17,7 +17,7 @@ const data2 = [
   { label: "Item 8", value: "8" },
 ];
 
-const DropdownComponent = ({ data, label }) => {
+const DropdownComponent = ({ data, label, setVehicleId }) => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
 
@@ -55,6 +55,7 @@ const DropdownComponent = ({ data, label }) => {
         onChange={(item) => {
           setValue(item.value);
           setIsFocus(false);
+          setVehicleId(item.value);
         }}
         renderLeftIcon={() => (
           <AntDesign

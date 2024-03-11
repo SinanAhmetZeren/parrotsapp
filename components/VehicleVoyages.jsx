@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     margin: vh(0.3),
     flexDirection: "row",
     backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
     borderRadius: vh(2),
   },

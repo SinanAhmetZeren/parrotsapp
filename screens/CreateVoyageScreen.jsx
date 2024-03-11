@@ -11,23 +11,23 @@ import {
   Button,
   StyleSheet,
   ScrollView,
-  ImageBackground,
   FlatList,
 } from "react-native";
-import {
-  useGetUserByIdQuery,
-  useUpdateProfileImageMutation,
-  useUpdateBackgroundImageMutation,
-  usePatchUserMutation,
-} from "../slices/UserSlice";
+import { useGetUserByIdQuery } from "../slices/UserSlice";
 import {
   useCreateVoyageMutation,
   useAddVoyageImageMutation,
+  useDeleteVoyageImageMutation,
 } from "../slices/VoyageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
-import { FontAwesome, Entypo, Fontisto, Feather } from "@expo/vector-icons";
-import { useSelector, useDispatch } from "react-redux";
+import {
+  MaterialIcons,
+  AntDesign,
+  Fontisto,
+  Feather,
+} from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 import CalendarPicker from "react-native-calendar-picker";
 import Checkbox from "expo-checkbox";
 import DropdownComponent from "../components/DropdownComponent";
@@ -46,26 +46,41 @@ const CreateVoyageScreen = () => {
   } = useGetUserByIdQuery(userId);
   const [createVoyage] = useCreateVoyageMutation();
   const [addVoyageImage] = useAddVoyageImageMutation();
+  const [deleteVoyageImage] = useDeleteVoyageImageMutation();
 
-  const [name, setName] = useState("1");
-  const [brief, setBrief] = useState("1");
-  const [description, setDescription] = useState("1");
-  const [vacancy, setVacancy] = useState("1");
-  const [startDate, setStartDate] = useState("1");
-  const [endDate, setEndDate] = useState("1");
-  const [lastBidDate, setLastBidDate] = useState("1");
-  const [minPrice, setMinPrice] = useState("1");
-  const [maxPrice, setMaxPrice] = useState("1");
+  const [name, setName] = useState("Island Breezes Expedition");
+  const [brief, setBrief] = useState(
+    "The Island Breezes Expedition beckons, a tranquil sailboat voyage designed for camaraderie and natural wonders. Join your friends on an odyssey embracing the open seas and secluded islands. This voyage invites you to witness nature's spectacle and find serenity in the rhythmic embrace of wind and waves."
+  );
+  const voyageDes = `Embark on the "Island Breeze", a meticulously planned sailboat expedition offering a seamless blend of adventure and repose. Departing from a quaint harbor, your journey unfolds along the coastline, where the wind becomes your guide, and the sunsets paint the horizon in hues of tranquility.
+
+  Waypoints:
+  1. Harbor Haven (Starting Point): Begin your journey from Harbor Haven, a haven for sailors, echoing with tales of the sea and the promise of exploration.
+  2. Open Waters Gateway: Navigate through the Open Waters Gateway, a vast expanse offering panoramic views and the gentle embrace of the open sea.
+  3. Sunset Archipelago: Anchor at Sunset Archipelago, where islands glow with the warm hues of twilight, providing the perfect setting for shared stories under the starlit sky.
+  4. Whale Watch Cove: Sail to Whale Watch Cove, renowned for encounters with marine wonders. Marvel at playful dolphins and the majestic presence of whales.
+  5. Hidden Lagoon Oasis: Set course for the Hidden Lagoon Oasis, a secluded paradise surrounded by lush landscapes and pristine waters, inviting moments of peaceful reflection.
+  6. Island Village Exploration: Dock at an Island Village, immersing yourself in local culture and savoring authentic cuisine, forging connections with the welcoming islanders.
+  7. Trade Winds Passage: Navigate the Trade Winds Passage, allowing the winds to carry you effortlessly towards the next captivating destination, embodying a sense of boundless freedom.
+  8. Reef Guardian Sanctuary: Discover the Reef Guardian Sanctuary, an underwater haven boasting vibrant coral reefs and diverse marine life, inviting exploration beneath the surface.
+  9. Final Destination - Tranquil Harbor: Conclude your expedition at Tranquil Harbor, a serene retreat where the memories of the voyage linger, offering a final opportunity for quiet reflection.
+  `;
+
+  const [description, setDescription] = useState(voyageDes);
+  const [vacancy, setVacancy] = useState("15");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [lastBidDate, setLastBidDate] = useState("");
+  const [minPrice, setMinPrice] = useState("100");
+  const [maxPrice, setMaxPrice] = useState("120");
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
-  const [vehicleId, setVehicleId] = useState("1");
+  const [vehicleId, setVehicleId] = useState("");
   const [voyageId, setVoyageId] = useState("");
-  const x =
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/89042c38-6644-4c42-8ef6-1f40fc66434b.jpeg";
-  const [image, setImage] = useState(x);
-  const [voyageImage, setVoyageImage] = useState("");
+  const [image, setImage] = useState("");
+  const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(1);
 
   useEffect(() => {
     console.log("---");
@@ -88,6 +103,7 @@ const CreateVoyageScreen = () => {
     console.log("isFixedPrice:", isFixedPrice);
     console.log("image", image);
     console.log("voyageId", voyageId);
+    console.log("vehicleId", vehicleId);
     console.log("----------");
   };
 
@@ -95,7 +111,7 @@ const CreateVoyageScreen = () => {
     console.log("----------");
     console.log("voyage image:", voyageImage);
     console.log("added images:", addedVoyageImages);
-
+    console.log("voyage Id: ", voyageId);
     console.log("----------");
   };
 
@@ -105,7 +121,6 @@ const CreateVoyageScreen = () => {
 
   function convertDateFormat(inputDate) {
     const date = new Date(inputDate);
-
     const year = date.getUTCFullYear();
     const month = `0${date.getUTCMonth() + 1}`.slice(-2);
     const day = `0${date.getUTCDate()}`.slice(-2);
@@ -116,6 +131,7 @@ const CreateVoyageScreen = () => {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
   }
+
   function convertDateFormat_LastBidDate(inputDate) {
     const dateParts = inputDate.split("/");
     if (dateParts.length !== 3) {
@@ -171,6 +187,22 @@ const CreateVoyageScreen = () => {
       });
       const createdVoyageId = response.data.data.id;
       setVoyageId(createdVoyageId);
+
+      setDescription("");
+      setVacancy("");
+      setStartDate("");
+      setEndDate("");
+      setLastBidDate("");
+      setMinPrice("");
+      setMaxPrice("");
+      setIsAuction("");
+      setIsFixedPrice("");
+      setVehicleId("");
+      // setVoyageId("");
+      setImage("");
+      setVoyageImage("");
+      setAddedVoyageImages("");
+
       setCurrentStep(2);
     } catch (error) {
       console.error("Error uploading image", error);
@@ -181,7 +213,6 @@ const CreateVoyageScreen = () => {
     if (!voyageImage) {
       return;
     }
-    console.log("voyage image -> : ", voyageImage);
 
     const formData = new FormData();
     formData.append("imageFile", {
@@ -191,12 +222,18 @@ const CreateVoyageScreen = () => {
     });
 
     try {
-      let voyageId = 8;
-      await addVoyageImage({
+      const addedVoyageResponse = await addVoyageImage({
         formData,
         voyageId,
       });
-      setAddedVoyageImages((prevImages) => [...prevImages, voyageImage]);
+
+      const addedVoyageImageId = addedVoyageResponse.data.imagePath;
+      const newItem = {
+        addedVoyageImageId,
+        voyageImage,
+      };
+      setAddedVoyageImages((prevImages) => [...prevImages, newItem]);
+      setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
     }
@@ -264,10 +301,20 @@ const CreateVoyageScreen = () => {
     }
   };
 
+  const handleDeleteImage = (imageId) => {
+    console.log("image id to delete", imageId);
+    deleteVoyageImage(imageId);
+    setAddedVoyageImages((prevImages) =>
+      prevImages.filter((item) => item.addedVoyageImageId !== imageId)
+    );
+  };
+
+  const printState5 = () => {
+    console.log(addedVoyageImages);
+  };
+
   if (isSuccess) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
-    const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
-
     const dropdownData = userData.usersVehicles.map((vehicle) => ({
       label: vehicle.name,
       value: vehicle.id,
@@ -278,330 +325,362 @@ const CreateVoyageScreen = () => {
         <StepBar style={styles.StepBar} currentStep={currentStep} />
         {currentStep == 1 ? (
           <ScrollView style={styles.scrollview}>
-            <ImageBackground
-              source={require("../assets/sea.png")}
-              style={styles.backgroundImageMain}
-              resizeMode="repeat" // This property ensures the background image is repeated to fill the available space
-            >
-              <View style={styles.overlay}>
-                <View style={styles.profileContainer}>
-                  {/* <Text style={styles.voyageImage}>Voyage Image</Text> */}
+            <View style={styles.overlay}>
+              <View style={styles.profileContainer}>
+                {/* <Text style={styles.voyageImage}>Voyage Image</Text> */}
 
-                  <TouchableOpacity onPress={pickProfileImage}>
-                    {image ? (
-                      <Image
-                        source={{ uri: image }}
-                        style={styles.profileImage}
-                      />
-                    ) : (
-                      <Image
-                        source={{ uri: profileImageUrl }}
-                        style={styles.profileImage}
-                      />
-                    )}
-                  </TouchableOpacity>
-                  {/* Your other UI elements */}
+                <TouchableOpacity onPress={pickProfileImage}>
+                  {image ? (
+                    <Image
+                      source={{ uri: image }}
+                      style={styles.profileImage}
+                    />
+                  ) : (
+                    <Image
+                      // source={{ uri: profileImageUrl }}
+                      source={require("../assets/placeholder.png")}
+                      style={styles.profileImage}
+                    />
+                  )}
+                </TouchableOpacity>
+                {/* Your other UI elements */}
+              </View>
+
+              <View style={styles.formContainer}>
+                {/* Username */}
+
+                <View style={styles.socialBox}>
+                  <Feather
+                    style={styles.icon}
+                    name="user"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.inputDescription}>Voyage name</Text>
+
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Enter voyage name"
+                    value={name}
+                    onChangeText={(text) => setName(text)}
+                  />
                 </View>
 
-                <View style={styles.formContainer}>
-                  {/* Username */}
-
-                  <View style={styles.socialBox}>
-                    <Feather
-                      style={styles.icon}
-                      name="user"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.inputDescription}>Voyage name</Text>
-
-                    <TextInput
-                      style={styles.textInput}
-                      placeholder="Enter voyage name"
-                      value={name}
-                      onChangeText={(text) => setName(text)}
-                    />
-                  </View>
-
-                  <View style={styles.socialBox}>
-                    <Fontisto
-                      style={styles.icon}
-                      name="email"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.inputDescription}>Brief</Text>
-                    <TextInput
-                      placeholder="Enter voyage brief"
-                      value={brief}
-                      onChangeText={(text) => setBrief(text)}
-                      style={styles.textInput}
-                    />
-                  </View>
-
-                  {/* Phone Number */}
-                  <View style={styles.socialBox}>
-                    <Feather
-                      style={styles.icon}
-                      name="phone"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.inputDescription}>Description</Text>
-
-                    <TextInput
-                      style={styles.textInput}
-                      placeholder="Enter voyage description"
-                      value={description}
-                      onChangeText={(text) => setDescription(text)}
-                    />
-                  </View>
-
-                  {/* Facebook Profile */}
-                  <View style={styles.socialBox}>
-                    <Feather
-                      style={styles.icon}
-                      name="facebook"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.inputDescription}>Vacancy</Text>
-
-                    <TextInput
-                      style={styles.textInput}
-                      placeholder="Enter voyage vacancy"
-                      value={vacancy}
-                      onChangeText={(text) => setVacancy(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
-
-                  <DropdownComponent
-                    data={dropdownData}
-                    label={"Select Vehicle"}
+                <View style={styles.socialBox}>
+                  <Fontisto
+                    style={styles.icon}
+                    name="email"
+                    size={24}
+                    color="black"
                   />
+                  <Text style={styles.inputDescription}>Brief</Text>
+                  <TextInput
+                    placeholder="Enter voyage brief"
+                    value={brief}
+                    multiline
+                    numberOfLines={5}
+                    onChangeText={(text) => setBrief(text)}
+                    style={styles.textDescriptionInput}
+                  />
+                </View>
 
-                  <View style={styles.calendarContainer}>
-                    <View style={styles.voyageDatesContainer}>
-                      <Feather
-                        style={styles.icon}
-                        name="calendar"
-                        size={24}
-                        color="blue"
-                      />
-                      <Text style={styles.voyageDates}>
-                        Select Voyage Dates
-                      </Text>
-                    </View>
+                {/* Phone Number */}
+                <View style={styles.socialBox}>
+                  <Feather
+                    style={styles.icon}
+                    name="phone"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.inputDescription}>Description</Text>
 
-                    <CalendarPicker
-                      startFromMonday={true}
-                      allowRangeSelection={true}
-                      minDate={new Date()}
-                      selectedStartDate={startDate}
-                      selectedEndDate={endDate}
-                      onDateChange={onDateChange}
-                      width={300}
-                    />
-                  </View>
+                  <TextInput
+                    style={styles.textDescriptionInput}
+                    multiline
+                    placeholder="Enter voyage description"
+                    numberOfLines={8}
+                    value={description}
+                    onChangeText={(text) => setDescription(text)}
+                  />
+                </View>
 
-                  <View style={styles.socialBox}>
+                {/* Facebook Profile */}
+                <View style={styles.socialBox}>
+                  <Feather
+                    style={styles.icon}
+                    name="facebook"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.inputDescription}>Vacancy</Text>
+
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Enter voyage vacancy"
+                    value={vacancy}
+                    onChangeText={(text) => setVacancy(text)}
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                <DropdownComponent
+                  data={dropdownData}
+                  label={"Select Vehicle"}
+                  setVehicleId={setVehicleId}
+                />
+
+                <View style={styles.calendarContainer}>
+                  <View style={styles.voyageDatesContainer}>
                     <Feather
                       style={styles.icon}
                       name="calendar"
                       size={24}
                       color="blue"
                     />
-                    <Text style={styles.inputDescription}>Last Bid Date</Text>
-
-                    <TextInput
-                      style={styles.textInput}
-                      value={lastBidDate}
-                      onChangeText={handleDateChange}
-                      keyboardType="numeric"
-                      placeholder="MM/DD/YYYY" // Placeholder without hyphens
-                      maxLength={10} // Restrict length for proper date format
-                    />
+                    <Text style={styles.voyageDates}>Select Voyage Dates</Text>
                   </View>
 
-                  {/* min price */}
-                  <View style={styles.socialBox}>
-                    <Feather
-                      style={styles.icon}
-                      name="facebook"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.inputDescription}>Min Price</Text>
+                  <CalendarPicker
+                    selectedRangeStartTextStyle={styles.startEndText}
+                    selectedRangeEndTextStyle={styles.startEndText}
+                    selectedRangeStyle={styles.calendarSelected}
+                    selectedRangeStartStyle={styles.calendarEndStart}
+                    selectedRangeEndStyle={styles.calendarEndStart}
+                    selectedColor={"blue"}
+                    startFromMonday={true}
+                    allowRangeSelection={true}
+                    minDate={new Date()}
+                    selectedStartDate={startDate}
+                    selectedEndDate={endDate}
+                    onDateChange={onDateChange}
+                    width={300}
+                  />
+                </View>
 
-                    <TextInput
-                      style={styles.textInput}
-                      placeholder="Enter Min Price"
-                      value={minPrice}
-                      onChangeText={(text) => setMinPrice(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
+                <View style={styles.socialBox}>
+                  <Feather
+                    style={styles.icon}
+                    name="calendar"
+                    size={24}
+                    color="blue"
+                  />
+                  <Text style={styles.inputDescription}>Last Bid Date</Text>
 
-                  {/* max price */}
-                  <View style={styles.socialBox}>
-                    <Feather
-                      style={styles.icon}
-                      name="facebook"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.inputDescription}>Max Price</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={lastBidDate}
+                    onChangeText={handleDateChange}
+                    keyboardType="numeric"
+                    placeholder="MM/DD/YYYY" // Placeholder without hyphens
+                    maxLength={10} // Restrict length for proper date format
+                  />
+                </View>
 
-                    <TextInput
-                      style={styles.textInput}
-                      placeholder="Enter Min Price"
-                      value={maxPrice}
-                      onChangeText={(text) => setMaxPrice(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
+                {/* min price */}
+                <View style={styles.socialBox}>
+                  <Feather
+                    style={styles.icon}
+                    name="facebook"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.inputDescription}>Min Price</Text>
 
-                  <View style={styles.mainCheckboxContainer}>
-                    <View style={styles.checkboxContainer}>
-                      <Text>Auction </Text>
-                      <View>
-                        <Checkbox
-                          value={isAuction}
-                          onValueChange={setIsAuction}
-                          color={isAuction ? "#4630EB" : undefined}
-                        />
-                      </View>
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Enter Min Price"
+                    value={minPrice}
+                    onChangeText={(text) => setMinPrice(text)}
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                {/* max price */}
+                <View style={styles.socialBox}>
+                  <Feather
+                    style={styles.icon}
+                    name="facebook"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.inputDescription}>Max Price</Text>
+
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Enter Min Price"
+                    value={maxPrice}
+                    onChangeText={(text) => setMaxPrice(text)}
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                <View style={styles.mainCheckboxContainer}>
+                  <View style={styles.checkboxContainer}>
+                    <Text>Auction </Text>
+                    <View>
+                      <Checkbox
+                        value={isAuction}
+                        onValueChange={setIsAuction}
+                        color={isAuction ? "#4630EB" : undefined}
+                      />
                     </View>
+                  </View>
 
-                    <View style={styles.checkboxContainer}>
-                      <Text>FixedPrice </Text>
-                      <View>
-                        <Checkbox
-                          value={isFixedPrice}
-                          onValueChange={setIsFixedPrice}
-                          color={isFixedPrice ? "#4630EB" : undefined}
-                        />
-                      </View>
+                  <View style={styles.checkboxContainer}>
+                    <Text>FixedPrice </Text>
+                    <View>
+                      <Checkbox
+                        value={isFixedPrice}
+                        onValueChange={setIsFixedPrice}
+                        color={isFixedPrice ? "#4630EB" : undefined}
+                      />
                     </View>
-                  </View>
-
-                  {/* Save Button */}
-                  <View style={styles.saveButton}>
-                    <Button
-                      title="Create Voyage"
-                      onPress={() => handleCreateVoyage()}
-                    />
-                  </View>
-
-                  <View style={styles.refetch}>
-                    <Button
-                      title="print state"
-                      onPress={() => {
-                        printState();
-                      }}
-                    />
-                  </View>
-                  <View style={styles.refetch}>
-                    <Button
-                      title="step 1"
-                      onPress={() => {
-                        changeCurrentState(1);
-                      }}
-                    />
-                    <Button
-                      title="step 2"
-                      onPress={() => {
-                        changeCurrentState(2);
-                      }}
-                    />
-                    <Button
-                      title="step 3"
-                      onPress={() => {
-                        changeCurrentState(3);
-                      }}
-                    />
                   </View>
                 </View>
+
+                {/* Save Button */}
+                <View style={styles.createVoyageButton}>
+                  <Button
+                    title="Create Voyage"
+                    onPress={() => handleCreateVoyage()}
+                  />
+                </View>
+
+                <View style={styles.refetch}>
+                  <Button
+                    title="print state1"
+                    onPress={() => {
+                      printState();
+                    }}
+                  />
+                </View>
+                <View style={styles.step123}>
+                  <Button
+                    title="step 1"
+                    onPress={() => {
+                      changeCurrentState(1);
+                    }}
+                  />
+                  <Button
+                    title="step 2"
+                    onPress={() => {
+                      changeCurrentState(2);
+                    }}
+                  />
+                  <Button
+                    title="step 3"
+                    onPress={() => {
+                      changeCurrentState(3);
+                    }}
+                  />
+                </View>
               </View>
-            </ImageBackground>
+            </View>
           </ScrollView>
         ) : null}
 
         {currentStep === 2 ? (
           <ScrollView style={styles.scrollview}>
-            <ImageBackground
-              source={require("../assets/sea.png")}
-              style={styles.backgroundImageMain}
-              resizeMode="repeat" // This property ensures the background image is repeated to fill the available space
-            >
-              <View style={styles.overlay}>
-                <View style={styles.profileContainer}>
-                  {/* <Text style={styles.voyageImage}>Voyage Image</Text> */}
+            <View style={styles.overlay}>
+              <View style={styles.profileContainer}>
+                {/* <Text style={styles.voyageImage}>Voyage Image</Text> */}
 
-                  <TouchableOpacity onPress={pickVoyageImage}>
-                    {voyageImage ? (
-                      <Image
-                        source={{ uri: voyageImage }}
-                        style={styles.profileImage}
-                      />
-                    ) : (
-                      <Image
-                        source={{ uri: profileImageUrl }}
-                        style={styles.profileImage}
-                      />
-                    )}
-                  </TouchableOpacity>
-                  {/* Your other UI elements */}
-                </View>
+                <TouchableOpacity onPress={pickVoyageImage}>
+                  {voyageImage ? (
+                    <Image
+                      source={{ uri: voyageImage }}
+                      style={styles.profileImage}
+                    />
+                  ) : (
+                    <Image
+                      // source={{ uri: profileImageUrl }}
+                      source={require("../assets/placeholder.png")}
+                      style={styles.profileImage}
+                    />
+                  )}
+                </TouchableOpacity>
+                {/* Your other UI elements */}
+              </View>
 
+              {/* </View><View style={addedVoyageImages.length <= 1 ? styles.length1 : addedVoyageImages.length == 2 ? styles.length2 : addedVoyageImages.length == 3 ? styles.lenght3 }> */}
+              <View
+                style={
+                  addedVoyageImages.length <= 1
+                    ? styles.length1
+                    : addedVoyageImages.length === 2
+                    ? styles.length2
+                    : styles.length3
+                }
+              >
                 <FlatList
                   horizontal
                   data={addedVoyageImages}
-                  keyExtractor={(item) => item.id}
+                  keyExtractor={(item) => item.addedVoyageImageId}
                   renderItem={({ item, index }) => {
-                    console.log("item: ", item);
+                    console.log(
+                      "from flatlist item....: ",
+                      item.addedVoyageImageId
+                    );
                     return (
                       <View key={index} style={styles2.imageContainer1}>
-                        <Image
-                          source={{ uri: item }}
-                          style={styles2.voyageImage1}
-                        />
-
                         <TouchableOpacity
-                          onPress={() => handleDeleteImage(index)}
+                          onPress={() =>
+                            handleDeleteImage(item.addedVoyageImageId)
+                          }
                         >
-                          <Text style={{ backgroundColor: "green" }}>
-                            Delete
+                          <Image
+                            source={{ uri: item.voyageImage }}
+                            style={styles2.voyageImage1}
+                          />
+                          <Text style={styles.deleteAddedImage}>
+                            <MaterialIcons
+                              name="cancel"
+                              size={24}
+                              color="darkred"
+                            />
                           </Text>
                         </TouchableOpacity>
                       </View>
                     );
                   }}
                 />
+              </View>
 
-                <View style={styles.saveButton}>
-                  <Button
-                    title="Add Voyage Image"
-                    onPress={() => handleUploadImage()}
-                  />
+              {voyageImage ? (
+                <View style={styles.addVoyageImageButton}>
+                  {/* <Button title="Add" onPress={() => handleUploadImage()} /> */}
+                  <TouchableOpacity onPress={() => handleUploadImage()}>
+                    <AntDesign name="clouduploado" size={24} color="white" />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.saveButton}>
+              ) : (
+                <View style={styles.noDisplay}>
                   <Button
-                    title="Create Itinerary"
-                    onPress={() => handleNextPage()}
-                  />
-                </View>
-                <View style={styles.refetch}>
-                  <Button
-                    title="print state"
+                    title="Select Voyage Image"
                     onPress={() => {
-                      printState2();
+                      console.log("hello from select voyage");
                     }}
                   />
                 </View>
+              )}
+              <View style={styles.saveButton}>
+                <Button title="print state" onPress={() => printState5()} />
               </View>
-            </ImageBackground>
+              <View style={styles.saveButton}>
+                <Button
+                  title="Create Itinerary"
+                  onPress={() => handleNextPage()}
+                />
+              </View>
+              <View style={styles.refetch}>
+                <Button
+                  title="print state 2"
+                  onPress={() => {
+                    printState2();
+                  }}
+                />
+              </View>
+            </View>
           </ScrollView>
         ) : null}
 
@@ -617,7 +696,10 @@ const CreateVoyageScreen = () => {
                 backgroundColor: "white",
               }}
             >
-              <CreateVoyageMapComponent voyageId={voyageId} />
+              <CreateVoyageMapComponent
+                voyageId={voyageId}
+                setCurrentStep={setCurrentStep}
+              />
             </ScrollView>
           </View>
         ) : null}
@@ -721,14 +803,59 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  length1: {
+    width: vw(30),
+    alignSelf: "center",
+  },
+  length2: {
+    width: vw(60),
+    alignSelf: "center",
+  },
+  length3: {
+    width: vw(90),
+    alignSelf: "center",
+  },
+
+  deleteAddedImage: {
+    top: vh(0),
+    right: vw(2),
+    backgroundColor: "white",
+    borderRadius: vh(3),
+    position: "absolute",
+  },
+  addVoyageImageButton: {
+    backgroundColor: "rgb(0, 119, 234)",
+    position: "absolute",
+    right: vw(10),
+    top: vh(26),
+    padding: vh(1),
+    alignSelf: "center",
+    borderRadius: vh(3),
+    overflow: "hidden",
+    marginTop: vh(1),
+  },
+  noDisplay: {
+    display: "none",
+  },
+  startEndText: {
+    color: "white",
+  },
+  calendarSelected: {
+    backgroundColor: "rgba(42,200,152,0.15)",
+  },
+  calendarEndStart: {
+    backgroundColor: "rgba(12,200,152,0.9)",
+    color: "white",
+  },
+
   scrollview: {
     height: vh(140),
     top: vh(5),
-    marginBottom: vh(20),
-    backgroundColor: "rgba(10, 11, 211,0.76)",
+    marginBottom: vh(15),
+    backgroundColor: "white",
   },
   overlay: {
-    backgroundColor: "rgba(10, 11, 211,0.66)",
+    // backgroundColor: "rgba(10, 11, 211,0.16)",
   },
   profileContainer: {
     flexDirection: "row",
@@ -744,7 +871,7 @@ const styles = StyleSheet.create({
     width: vh(30),
     height: vh(30),
     borderRadius: vh(3),
-    borderWidth: 5,
+    // borderWidth: 5,
     borderColor: "rgba(190, 119, 234,0.6)",
   },
   backgroundImageMain: {
@@ -754,10 +881,11 @@ const styles = StyleSheet.create({
     padding: vh(1),
     flexDirection: "row",
     justifyContent: "space-around",
-    borderWidth: 1,
-    borderRadius: vh(3),
+    // borderWidth: 1,
+    borderRadius: vh(1),
     backgroundColor: "white",
     borderColor: "rgba(190, 119, 234,0.4)",
+    marginTop: vh(0.3),
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -765,8 +893,8 @@ const styles = StyleSheet.create({
   },
   calendarContainer: {
     backgroundColor: "white",
-    borderRadius: vh(3),
-    borderWidth: 1,
+    borderRadius: vh(1),
+    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   formContainer: {
@@ -789,7 +917,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(6),
     borderColor: "rgba(190, 119, 234,0.6)",
-    borderWidth: 2,
+    // borderWidth: 2,
   },
   recycleBoxBG: {
     top: vh(-6),
@@ -802,16 +930,27 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(6),
     borderColor: "rgba(190, 119, 234,0.6)",
-    borderWidth: 2,
+    // borderWidth: 2,
   },
   saveButton: {
     padding: 10,
     paddingHorizontal: vw(15),
   },
+  createVoyageButton: {
+    width: vw(40),
+    alignSelf: "center",
+    borderRadius: vh(2),
+    overflow: "hidden",
+    marginTop: vh(1),
+  },
   refetch: {
     padding: 3,
     paddingHorizontal: vw(15),
     borderRadius: vw(9),
+    display: "none",
+  },
+  step123: {
+    display: "none",
   },
   rectangularBox: {
     height: vh(35),
@@ -860,6 +999,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: vw(1),
   },
+  textDescriptionInput: {
+    width: vw(60),
+    flexWrap: "wrap",
+    lineHeight: 21,
+    marginVertical: 1,
+    fontSize: 14,
+    padding: vw(1),
+  },
+
   textInputBio: {
     lineHeight: 21,
     marginVertical: 5,
@@ -873,7 +1021,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(1.5),
     marginTop: 2,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   socialBoxBio: {
@@ -881,7 +1029,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
     width: vw(90),
     // backgroundColor: "red",

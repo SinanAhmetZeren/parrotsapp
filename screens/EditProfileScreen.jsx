@@ -7,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Modal,
   Button,
   StyleSheet,
   ScrollView,
@@ -20,8 +19,8 @@ import {
 } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
-import { FontAwesome, Entypo, Fontisto, Feather } from "@expo/vector-icons";
-import { useSelector, useDispatch } from "react-redux";
+import { Entypo, Fontisto, Feather } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 const EditProfileScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -52,6 +51,7 @@ const EditProfileScreen = () => {
   const [image, setImage] = useState(null);
   const [image2, setImage2] = useState(null);
 
+  /*
   useEffect(() => {
     console.log(" ************************ ");
 
@@ -68,7 +68,7 @@ const EditProfileScreen = () => {
     setImage(userData.profileImage);
     setImage2(userData.backgroundImage);
   }, [isSuccess]);
-
+*/
   const handleUploadProfile = async () => {
     if (!image) {
       return;
@@ -124,7 +124,6 @@ const EditProfileScreen = () => {
   };
 
   const pickProfileImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -138,7 +137,6 @@ const EditProfileScreen = () => {
   };
 
   const pickBackgroundImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -366,7 +364,7 @@ const styles = StyleSheet.create({
     top: vh(10),
     // paddingBottom: vh(13),
     marginBottom: vh(20),
-    backgroundColor: "rgba(190, 119, 234,0.16)",
+    backgroundColor: "rgba(190, 119, 234,0.06)",
     // backgroundColor: "green",
   },
   profileImage: {
@@ -375,7 +373,7 @@ const styles = StyleSheet.create({
     width: vh(22),
     height: vh(22),
     borderRadius: vh(20),
-    borderWidth: 5,
+    // borderWidth: 5,
     borderColor: "rgba(190, 119, 234,0.6)",
   },
   recycle: {
@@ -395,7 +393,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(6),
     borderColor: "rgba(190, 119, 234,0.6)",
-    borderWidth: 2,
+    // borderWidth: 2,
   },
   recycleBoxBG: {
     top: vh(-6),
@@ -408,7 +406,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(6),
     borderColor: "rgba(190, 119, 234,0.6)",
-    borderWidth: 2,
+    // borderWidth: 2,
   },
   saveButton: {
     padding: 10,
@@ -418,6 +416,7 @@ const styles = StyleSheet.create({
     padding: 3,
     paddingHorizontal: vw(15),
     borderRadius: vw(9),
+    display: "none",
   },
   rectangularBox: {
     height: vh(35),
@@ -463,7 +462,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   socialBoxBio: {
@@ -471,7 +470,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
     width: vw(90),
     // backgroundColor: "red",

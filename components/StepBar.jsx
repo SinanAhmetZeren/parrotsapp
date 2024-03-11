@@ -18,7 +18,7 @@ const StepBar = ({ currentStep }) => {
         ]}
       >
         <Text
-          style={[isActive ? styles.activeStepText : null, styles.stepText]}
+          style={[isActive ? styles.activeStepText : styles.inactiveStepText]}
         >
           {displayText}
         </Text>
@@ -32,11 +32,12 @@ const StepBar = ({ currentStep }) => {
     "Voyage Itinerary:\nAdd waypoints - with title, brief and image",
   ];
 
+  const displayTexts2 = ["Voyage Details", "Images & Waypoints"];
+
   return (
     <View style={styles.mainContainer}>
-      <StepBarStep displayText={displayTexts[0]} stepNumber={1} />
-      <StepBarStep displayText={displayTexts[1]} stepNumber={2} />
-      <StepBarStep displayText={displayTexts[2]} stepNumber={3} />
+      <StepBarStep displayText={displayTexts2[0]} stepNumber={1} />
+      <StepBarStep displayText={displayTexts2[1]} stepNumber={2} />
     </View>
   );
 };
@@ -47,32 +48,36 @@ const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    height: vh(10),
+    height: vh(7),
     top: vh(5),
   },
   activeStep: {
     backgroundColor: "white",
     borderColor: "rgba(110, 11, 211,0.36)",
-    borderWidth: 2,
     borderRadius: vh(1),
   },
   activeStepText: {
+    color: "rgba(91,91,255,1)",
+    fontWeight: "700",
+  },
+  inactiveStepText: {
+    color: "rgba(91,91,255,.35)",
     fontWeight: "700",
   },
   inactiveStep: {
-    backgroundColor: "rgba(110, 11, 211,0.16)",
+    // backgroundColor: "rgba(110, 11, 211,0.16)",
     borderRadius: vh(1),
-    borderWidth: 2,
-    borderColor: "rgba(110, 11, 211,0.36)",
+    backgroundColor: "white",
   },
   stepText: {
-    fontSize: 11,
+    fontSize: 16,
     textAlign: "auto",
-    color: "purple",
+    fontWeight: "700",
   },
   second: {
-    width: vw(30),
+    width: vw(45),
     marginVertical: vh(0.5),
-    padding: vh(0.3),
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
