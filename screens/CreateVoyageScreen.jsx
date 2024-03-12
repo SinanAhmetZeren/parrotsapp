@@ -68,22 +68,20 @@ const CreateVoyageScreen = () => {
 
   const [description, setDescription] = useState(voyageDes);
   const [vacancy, setVacancy] = useState("15");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [lastBidDate, setLastBidDate] = useState("");
+  const [startDate, setStartDate] = useState("2024-03-14T09:00:00.000Z");
+  const [endDate, setEndDate] = useState("2024-03-15T09:00:00.000Z");
+  const [lastBidDate, setLastBidDate] = useState("11/11/1111");
   const [minPrice, setMinPrice] = useState("100");
   const [maxPrice, setMaxPrice] = useState("120");
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
-  const [vehicleId, setVehicleId] = useState("9");
+  const [vehicleId, setVehicleId] = useState("3");
   const [voyageId, setVoyageId] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(
+    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/aad9496c-c258-4ce9-b64b-78e20f5bf2fe.jpeg"
+  );
   const [voyageImage, setVoyageImage] = useState(null);
-  const [addedVoyageImages, setAddedVoyageImages] = useState([
-    // { addedVoyageImageId: "x", voyageImage: "placeholder.png" },
-    // { addedVoyageImageId: "y", voyageImage: "placeholder.png" },
-    // { addedVoyageImageId: "z", voyageImage: "placeholder.png" },
-  ]);
+  const [addedVoyageImages, setAddedVoyageImages] = useState([]);
 
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -326,6 +324,22 @@ const CreateVoyageScreen = () => {
       value: vehicle.id,
     }));
 
+    const maxItems = 10;
+    const placeholders = Array.from({ length: maxItems }, (_, index) => ({
+      key: `placeholder_${index + 1}`,
+    }));
+
+    const data =
+      addedVoyageImages.length < maxItems
+        ? [
+            ...addedVoyageImages,
+            ...placeholders.slice(addedVoyageImages.length),
+          ]
+        : addedVoyageImages.map((item) => ({
+            ...item,
+            key: item.addedVoyageImageId,
+          }));
+
     return (
       <>
         <StepBar style={styles.StepBar} currentStep={currentStep} />
@@ -333,8 +347,6 @@ const CreateVoyageScreen = () => {
           <ScrollView style={styles.scrollview}>
             <View style={styles.overlay}>
               <View style={styles.profileContainer}>
-                {/* <Text style={styles.voyageImage}>Voyage Image</Text> */}
-
                 <TouchableOpacity onPress={pickProfileImage}>
                   {image ? (
                     <Image
@@ -602,8 +614,8 @@ const CreateVoyageScreen = () => {
                   ) : (
                     <Image
                       // source={{ uri: profileImageUrl }}
-                      source={require("../assets/placeholder.png")}
-                      style={styles.profileImage}
+                      source={require("../assets/plus-watercolor.png")}
+                      style={styles.profileImage2}
                     />
                   )}
                 </TouchableOpacity>
@@ -620,26 +632,7 @@ const CreateVoyageScreen = () => {
               >
                 <FlatList
                   horizontal
-                  data={
-                    addedVoyageImages.length === 0
-                      ? [
-                          { key: "placeholder_1" },
-                          { key: "placeholder_2" },
-                          { key: "placeholder_3" },
-                        ]
-                      : addedVoyageImages.length === 1
-                      ? [
-                          ...addedVoyageImages,
-                          { key: "placeholder_2" },
-                          { key: "placeholder_3" },
-                        ]
-                      : addedVoyageImages.length === 2
-                      ? [...addedVoyageImages, { key: "placeholder_3" }]
-                      : addedVoyageImages.map((item) => ({
-                          ...item,
-                          key: item.addedVoyageImageId,
-                        }))
-                  }
+                  data={data}
                   keyExtractor={(item) => item.addedVoyageImageId}
                   renderItem={({ item, index }) => {
                     console.log("index: ", index);
@@ -685,7 +678,8 @@ const CreateVoyageScreen = () => {
                 </View>
               ) : null}
 
-              <View style={styles.refetch}>
+              {/* <View style={styles.refetch}> */}
+              <View style={{ display: "none" }}>
                 <Button
                   title="print state 2"
                   onPress={() => {
@@ -864,15 +858,16 @@ const styles = StyleSheet.create({
   },
   addVoyageImageButton: {
     backgroundColor: "rgb(0, 119, 234)",
-    // backgroundColor: "rgba(12,200,152,1)",
     position: "absolute",
-    right: vw(10),
-    top: vh(26),
+    right: vw(22),
+    top: vh(22),
     padding: vh(1),
     alignSelf: "center",
     borderRadius: vh(3),
     overflow: "hidden",
     marginTop: vh(1),
+    borderWidth: 1,
+    borderColor: "white",
   },
   noDisplay: {
     display: "none",
@@ -909,11 +904,21 @@ const styles = StyleSheet.create({
   profileImage: {
     marginLeft: vw(3),
     marginVertical: vh(1),
-    width: vh(30),
-    height: vh(30),
+    marginBottom: vh(3),
+    width: vh(20),
+    height: vh(20),
     borderRadius: vh(3),
-    // borderWidth: 5,
     borderColor: "rgba(190, 119, 234,0.6)",
+  },
+  profileImage2: {
+    marginLeft: vw(3),
+    marginVertical: vh(1),
+    marginBottom: vh(3),
+    width: vh(20),
+    height: vh(20),
+    borderRadius: vh(3),
+    borderColor: "rgba(0, 119, 234,0.1)",
+    borderWidth: 5,
   },
   backgroundImageMain: {
     backgroundColor: "rgba(10, 11, 211,0.36)",
@@ -988,7 +993,7 @@ const styles = StyleSheet.create({
     padding: 3,
     paddingHorizontal: vw(15),
     borderRadius: vw(9),
-    display: "none",
+    // display: "none",
   },
   step123: {
     display: "none",

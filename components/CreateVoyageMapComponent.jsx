@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
@@ -17,6 +18,10 @@ import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import * as ImagePicker from "expo-image-picker";
 import { useAddWaypointMutation } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
+import {
+  RenderWaypointFlatList,
+  WaypointItem,
+} from "../components/WaypointFlatlist";
 
 const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
   // console.log("voyageID from map component: ", voyageId);
@@ -75,12 +80,6 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       name: "profileImage.jpg",
     });
 
-    // console.log("lat:", latitude);
-    // console.log("lng:", longitude);
-    // console.log("title:", title);
-    // console.log("description:", description);
-    // console.log("order:", order);
-
     try {
       await addWaypoint({
         formData,
@@ -104,6 +103,9 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
         },
       ]);
       setOrder(order + 1);
+      setImageUri(null);
+      setLatitude("");
+      setLongitude("");
     } catch (error) {
       console.error("Error uploading image", error);
     }
@@ -218,16 +220,14 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
     setMarkerCoords(event.nativeEvent.coordinate);
   };
 
+  /*
   const RenderWaypointFlatList = ({ addedWayPoints }) => {
-    // console.log("addedWayPoints");
-    // console.log(addedWayPoints);
     return (
       <FlatList
         horizontal
         data={addedWayPoints}
         keyExtractor={(item) => item.order}
         renderItem={({ item, index }) => {
-          // console.log("item: ", item);
           return (
             <View key={index}>
               <WaypointItem
@@ -244,16 +244,10 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       />
     );
   };
-
+*/
   //////
-  const WaypointItem = ({
-    order,
-    title,
-    latitude,
-    longitude,
-    description,
-    imageUri,
-  }) => {
+  /*
+  const WaypointItem = ({ title, description, imageUri }) => {
     const [modalVisible, setModalVisible] = useState(false);
 
     const truncatedDescription =
@@ -269,7 +263,6 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
           <Text>{truncatedDescription}</Text>
         </TouchableOpacity>
 
-        {/* Modal for displaying the full description */}
         <Modal
           animationType="slide"
           transparent={true}
@@ -300,7 +293,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       </View>
     );
   };
-
+*/
   const goToProfilePage = () => {
     setAddedWayPoints([]);
     setMarkerCoords(null);
@@ -339,71 +332,119 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
             {imageUri ? (
               <Image source={{ uri: imageUri }} style={styles.profileImage} />
             ) : (
-              <Image source={{ uri: imageUri }} style={styles.profileImage} />
+              <Image
+                source={require("../assets/placeholder.png")}
+                style={styles.profileImage}
+              />
             )}
           </TouchableOpacity>
 
           <View style={styles.latLng}>
-            <View style={styles.latorLng}>
-              <Text>Latitude:</Text>
-              <Text>{latitude.toString().substring(0, 20)}</Text>
+            <View style={styles.latLngNameRow}>
+              <View style={styles.latLngLabel}>
+                <Text style={styles.latorLngtxt}>Lat:</Text>
+              </View>
+              <View style={styles.latorLng}>
+                <Text
+                  style={
+                    latitude ? styles.latlngtextInput : styles.latlngtextInput2
+                  }
+                >
+                  {latitude
+                    ? latitude.toString().substring(0, 20)
+                    : "tap on map"}
+                </Text>
+              </View>
             </View>
-            <View style={styles.latorLng}>
-              <Text>Longitude:</Text>
-              <Text>{longitude.toString().substring(0, 20)}</Text>
+
+            <View style={styles.latLngNameRow}>
+              <View style={styles.latLngLabel}>
+                <Text style={styles.latorLngtxt}>Lng:</Text>
+              </View>
+              <View style={styles.latorLng}>
+                <Text
+                  style={
+                    latitude ? styles.latlngtextInput : styles.latlngtextInput2
+                  }
+                >
+                  {longitude
+                    ? longitude.toString().substring(0, 20)
+                    : "tap on map"}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.latLngNameRow}>
+              <View style={styles.latLngLabel}>
+                <Text style={styles.latorLngtxt}>Name:</Text>
+              </View>
+              <View style={styles.latorLng}>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Enter title for waypoint"
+                  value={title}
+                  multiline
+                  numberOfLines={1}
+                  onChangeText={(text) => setTitle(text)}
+                  maxLength={20}
+                />
+              </View>
             </View>
           </View>
         </View>
 
-        <View style={styles.socialBox}>
-          <Text style={styles.inputDescription}>Title</Text>
-
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter title for waypoint"
-            value={title}
-            onChangeText={(text) => setTitle(text)}
-          />
+        <View style={styles.latLngNameRow2}>
+          <View style={styles.latLngLabel2}>
+            <Text style={styles.latorLngtxt2}>Description:</Text>
+          </View>
+          <View style={styles.latorLng2}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter description for waypoint"
+              value={description}
+              multiline
+              numberOfLines={3}
+              onChangeText={(text) => setDescription(text)}
+              maxLength={200}
+            />
+          </View>
         </View>
 
-        <View style={styles.socialBox}>
-          <Text style={styles.inputDescription}>Description</Text>
-
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter description for waypoint"
-            value={description}
-            onChangeText={(text) => setDescription(text)}
-            multiline={true}
-          />
-        </View>
-
-        <Button
-          title="Add Waypoint"
-          onPress={() => {
-            handleAddWaypoint();
-          }}
-        />
+        {latitude && imageUri ? (
+          <TouchableOpacity
+            style={styles.addWaypointButtonContainer}
+            onPress={() => {
+              handleAddWaypoint();
+            }}
+          >
+            <Text style={styles.addWaypointText}> Add Waypoint </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => {}}>
+            <Text style={styles.addWaypointTextDisabled}> Add Waypoint </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.waypointFlatlistContainer}>
         <RenderWaypointFlatList addedWayPoints={addedWayPoints} />
       </View>
 
-      <View style={styles.FinishButtonContainer}>
-        <Button
-          title="Complete"
-          onPress={() => {
-            goToProfilePage();
-          }}
-        />
-      </View>
+      <TouchableOpacity
+        style={styles.FinishButtonContainer}
+        onPress={() => {
+          goToProfilePage();
+        }}
+      >
+        <Text style={styles.addWaypointText}> Complete </Text>
+      </TouchableOpacity>
 
       <View
         style={{
           marginTop: vh(2),
           marginBottom: vh(20),
           paddingBottom: vh(10),
+          display: "none",
         }}
       >
         <Button
@@ -420,6 +461,24 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
 export default CreateVoyageMapComponent;
 
 const styles = StyleSheet.create({
+  addWaypointText: {
+    alignSelf: "center",
+    padding: vh(1),
+    borderRadius: vh(2),
+    backgroundColor: "rgba(0, 119, 234,1)",
+    color: "white",
+    fontWeight: "600",
+    marginBottom: vh(2),
+  },
+  addWaypointTextDisabled: {
+    alignSelf: "center",
+    padding: vh(1),
+    borderRadius: vh(2),
+    backgroundColor: "rgba(0, 119, 234,.5)",
+    color: "white",
+    fontWeight: "600",
+    marginBottom: vh(3),
+  },
   closeWaypointModalButtonText: {
     fontWeight: "800",
     color: "red",
@@ -478,65 +537,137 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
   },
   waypointFlatlistContainer: {
-    height: vh(27),
+    height: vh(16),
     marginLeft: vw(3),
   },
   FinishButtonContainer: {
-    backgroundColor: "rgba(0, 119, 234,0.19)",
-    borderWidth: 1,
-    borderColor: "rgba(0, 119, 234,0.39)",
     borderRadius: vh(2),
     width: vw(95),
     alignSelf: "center",
+    marginBottom: vh(5),
   },
   ImageAndLatLng: {
-    backgroundColor: "rgba(0, 119, 234,0.19)",
-    borderWidth: 1,
+    // backgroundColor: "rgba(251,253,255,0.4)",
     borderColor: "rgba(0, 119, 234,0.39)",
     borderRadius: vh(2),
-    width: vw(95),
+    width: vw(99),
     alignSelf: "center",
   },
   latLng: {
-    width: vw(45),
+    width: vw(66),
+    // backgroundColor: "pink",
   },
   latorLng: {
-    // backgroundColor: "green",
-    backgroundColor: "white",
+    flexDirection: "row",
+    backgroundColor: "#fafbfc",
     marginVertical: vh(0.3),
     padding: vh(0.4),
-    borderRadius: vh(1),
+    // borderRadius: vh(3),
+    borderTopRightRadius: vh(3),
+    borderBottomRightRadius: vh(3),
+    // borderWidth: 1,
+    borderColor: "#babbbc",
+    width: vw(52),
+  },
+  latorLng2: {
+    flexDirection: "row",
+    backgroundColor: "#fafbfc",
+    marginVertical: vh(0.3),
+    padding: vh(0.4),
+    // borderWidth: 1,
+    borderColor: "#babbbc",
+    width: vw(66),
+    borderTopRightRadius: vh(3),
+    borderBottomRightRadius: vh(3),
+  },
+  latLngNameRow: {
+    flexDirection: "row",
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
+    marginBottom: vh(0.5),
+  },
+  latLngNameRow2: {
+    flexDirection: "row",
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
+    marginBottom: vh(0.5),
+    marginHorizontal: vw(2),
+  },
+  latLngLabel: {
+    justifyContent: "center",
+    backgroundColor: "#f4f5f6",
+    marginVertical: vh(0.3),
+    padding: vh(0.4),
+    borderRadius: vh(3),
+    // borderWidth: 1,
+    borderColor: "#babbbc",
+  },
+  latLngLabel2: {
+    justifyContent: "center",
+    backgroundColor: "#f4f5f6",
+    marginVertical: vh(0.3),
+    marginLeft: vw(3),
+    padding: vh(0.4),
+    borderRadius: vh(3),
+    width: vw(25),
+  },
+  latorLngtxt: {
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(12),
+    textAlign: "center",
+  },
+  latorLngtxt2: {
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(20),
+    textAlign: "center",
   },
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
-    // backgroundColor: "orange",
-    marginHorizontal: vh(2),
-    marginTop: vh(1),
+    marginRight: vh(1.5),
     borderRadius: vh(1.5),
     justifyContent: "space-between",
   },
   profileImage: {
     marginLeft: vw(3),
     marginVertical: vh(1),
-    width: vh(15),
-    height: vh(15),
+    width: vh(13),
+    height: vh(13),
     borderRadius: vh(3),
-    borderWidth: 3,
     borderColor: "rgba(0, 119, 234,0.3)",
+    backgroundColor: "white",
   },
   textInput: {
-    lineHeight: 21,
-    marginVertical: 1,
-    fontSize: 14,
-    padding: vw(1),
+    fontSize: 13,
+    paddingLeft: vw(1),
     width: "90%",
   },
+  latlngtextInput: {
+    fontSize: 13,
+    padding: vw(1),
+    width: "90%",
+    color: "#989898",
+  },
+  latlngtextInput2: {
+    fontSize: 13,
+    padding: vw(1),
+    width: "90%",
+    color: "#b1b1b1",
+  },
+  textInputDescription: {
+    fontSize: 13,
+    padding: vw(0.3),
+    width: "75%",
+  },
   inputDescription: {
-    color: "rgba(0, 119, 234,0.9)",
+    color: "#2ac898",
+    fontWeight: "500",
     fontSize: 13,
     alignSelf: "center",
-    width: vw(17),
+    width: vw(20),
+    paddingLeft: vw(1),
   },
   socialBox: {
     width: "95%",
@@ -547,6 +678,13 @@ const styles = StyleSheet.create({
     marginTop: 2,
     borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  DescriptionBox: {
+    width: "95%",
+    alignSelf: "center",
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: vh(1),
   },
   container: {
     flex: 1,
@@ -592,7 +730,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 20,
     borderColor: "#93c9ed",
-    borderWidth: 3,
+    // borderWidth: 3,
   },
   map: {
     width: "100%",
