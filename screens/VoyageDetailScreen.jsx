@@ -18,6 +18,7 @@ import {
   FontAwesome,
   Ionicons,
   MaterialIcons,
+  Entypo,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -31,6 +32,7 @@ import {
   Modal,
   TextInput,
   Share,
+  Button,
 } from "react-native";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
@@ -40,6 +42,10 @@ import { CreateBidComponent } from "../components/CreateBidComponent";
 import { RenderPolylinesComponent } from "../components/RenderPolylinesComponent";
 import { useSelector } from "react-redux";
 import { useFonts } from "expo-font";
+import {
+  WaypointFlatListVoyageDetailsScreen,
+  WaypointItem,
+} from "../components/WaypointFlatlist";
 
 const VoyageDetailScreen = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -64,6 +70,7 @@ const VoyageDetailScreen = () => {
   } = useGetVoyageByIdQuery(voyageId);
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [waypointInfoVisible, setWayPointInfoVisible] = useState(false);
 
   const handleSeeAll = () => {
     console.log("see all");
@@ -129,11 +136,40 @@ const VoyageDetailScreen = () => {
     });
   };
 
+  const toggleWaypointsInfo = () => {
+    setWayPointInfoVisible(!waypointInfoVisible);
+  };
+
+  const mapRef = useRef(null);
+
+  const focusMap = (latitude, longitude) => {
+    if (mapRef.current) {
+      // mapRef.current.animateToRegion({
+      //   latitude,
+      //   longitude,
+      //   latitudeDelta: 0.0922,
+      //   longitudeDelta: 0.0421,
+      // });
+      mapRef.current.animateCamera(
+        {
+          center: {
+            latitude,
+            longitude,
+          },
+          heading: 0,
+          pitch: 10,
+        },
+        { duration: 1000 } // Adjust the duration as needed for your desired animation speed
+      );
+    }
+  };
+
   const navigation = useNavigation();
 
   if (isSuccessVoyages) {
     const bids = VoyageData.bids || [];
     const waypoints = VoyageData.waypoints || [];
+    console.log(waypoints);
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
     const userProfileImage = userData.profileImageUrl;
@@ -301,17 +337,19 @@ const VoyageDetailScreen = () => {
                       <Text style={styles.propTextDescription}>Auction: </Text>
                       <Text style={styles.propText}>
                         {VoyageData.auction ? (
-                          <Feather name="thumbs-up" size={20} color="#123456" />
+                          <Feather name="check" size={20} color="#123456" />
                         ) : (
-                          <Feather
-                            name="thumbs-down"
-                            size={20}
-                            color="#123456"
-                          />
+                          <Entypo name="cross" size={20} color="#123456" />
                         )}
                       </Text>
                     </View>
                   </View>
+                </View>
+              </View>
+
+              <View style={styles.mainBidsContainer}>
+                <View style={styles.currentBidsAndSeeAll}>
+                  <Text style={styles.currentBidsTitle}>Voyage Images</Text>
                 </View>
               </View>
 
@@ -322,6 +360,13 @@ const VoyageDetailScreen = () => {
                 </View>
               </View>
 
+              <View style={styles.mainBidsContainer}>
+                <View style={styles.currentBidsAndSeeAll}>
+                  <Text style={styles.currentBidsTitle}>
+                    Voyage Description
+                  </Text>
+                </View>
+              </View>
               {/* // Voyage Description */}
               <View style={styles.DescriptionContainer}>
                 <Text style={styles.descriptionInnerContainer}>
@@ -332,8 +377,8 @@ const VoyageDetailScreen = () => {
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
                       <Text style={styles.ReadMoreLess}>
                         Read more...
-                        <MaterialIcons
-                          name="expand-more"
+                        <Feather
+                          name="chevron-down"
                           size={24}
                           color={"#2ac898"}
                         />
@@ -344,11 +389,7 @@ const VoyageDetailScreen = () => {
                   <TouchableOpacity onPress={() => setShowFullText(false)}>
                     <Text style={styles.ReadMoreLess}>
                       Read less...
-                      <MaterialIcons
-                        name="expand-less"
-                        size={24}
-                        color={"#2ac898"}
-                      />
+                      <Feather name="chevron-up" size={24} color={"#2ac898"} />
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -358,7 +399,11 @@ const VoyageDetailScreen = () => {
           {/* // map */}
           <View style={styles.mapAndEmojisContainer}>
             <View style={styles.mapContainer}>
-              <MapView style={styles.map} initialRegion={initialRegion}>
+              <MapView
+                ref={mapRef}
+                style={styles.map}
+                initialRegion={initialRegion}
+              >
                 <WaypointListComponent waypoints={waypoints} />
                 <RenderPolylinesComponent waypoints={waypoints} />
               </MapView>
@@ -380,6 +425,26 @@ const VoyageDetailScreen = () => {
               />
             </View>
           </View>
+          <View style={styles.mainBidsContainer}>
+            <View style={styles.WaypointsAndInfo}>
+              <Text style={styles.currentBidsTitle}>Waypoints </Text>
+              <TouchableOpacity onPress={() => toggleWaypointsInfo()}>
+                <MaterialIcons name="info-outline" size={24} color="#3c9dde" />
+              </TouchableOpacity>
+              {waypointInfoVisible ? (
+                <TouchableOpacity onPress={() => toggleWaypointsInfo()}>
+                  <Text style={styles.waypointInfoMessage}>
+                    Tap on card to focus map
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </View>
+
+          <WaypointFlatListVoyageDetailsScreen
+            focusMap={focusMap}
+            addedWayPoints={waypoints}
+          />
 
           {/* // Bids */}
           <View style={styles.mainBidsContainer}>
@@ -418,6 +483,14 @@ const VoyageDetailScreen = () => {
 export default VoyageDetailScreen;
 
 const styles = StyleSheet.create({
+  waypointInfoMessage: {
+    color: "#3c9dde",
+    paddingHorizontal: vh(2),
+    borderWidth: 1,
+    borderColor: "#3c9dde",
+    marginLeft: vh(2),
+    borderRadius: vh(2),
+  },
   rectangularBox: {
     height: vh(27),
     backgroundColor: "white",
@@ -565,9 +638,8 @@ const styles = StyleSheet.create({
     marginTop: vh(0.5),
   },
   DescriptionContainer: {
-    padding: vh(1),
+    paddingHorizontal: vh(1),
     margin: vh(0.5),
-    marginTop: vh(0.5),
   },
   descriptionInnerContainer: {
     marginVertical: vh(0.2),
@@ -638,13 +710,17 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   currentBidsTitle: {
-    paddingLeft: vw(6),
     fontSize: 20,
     fontWeight: "700",
     color: "#3c9dde",
   },
+  focusMapInfo: {
+    paddingLeft: vw(2),
+    fontSize: 13,
+    fontWeight: "800",
+    color: "#3c9dde",
+  },
   mainBidsContainer: {
-    // backgroundColor: "#f2fafa",
     borderRadius: vw(5),
     marginHorizontal: vw(2),
     borderColor: "#93c9ed",
@@ -713,15 +789,21 @@ const styles = StyleSheet.create({
   allBidsContainer2: {
     margin: vh(1),
     padding: vh(0),
-    backgroundColor: "red",
   },
   // BID FLATLIST STYLES - END
   currentBidsAndSeeAll: {
+    marginTop: vh(2),
     flexDirection: "row",
     justifyContent: "space-between",
     paddingRight: vw(10),
-    alignItems: "center",
   },
+  WaypointsAndInfo: {
+    marginTop: vh(2),
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    paddingRight: vw(10),
+  },
+
   seeAllButton: {
     color: "#3c9dde",
     fontWeight: "700",

@@ -601,7 +601,7 @@ const CreateVoyageScreen = () => {
           <ScrollView style={styles.scrollview}>
             <View style={styles.overlay}>
               <View style={styles.selectedChoice}>
-                <Text style={styles.selectedText}>Add Voyage Images</Text>
+                <Text style={styles.selectedText}>Voyage Images</Text>
               </View>
 
               <View style={styles.profileContainer}>
@@ -690,7 +690,7 @@ const CreateVoyageScreen = () => {
             </View>
 
             <View style={styles.addWaypoints}>
-              <Text style={styles.selectedText}>Add Waypoints</Text>
+              <Text style={styles.selectedText}>Waypoints</Text>
             </View>
             <CreateVoyageMapComponent
               voyageId={voyageId}

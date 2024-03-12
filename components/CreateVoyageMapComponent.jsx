@@ -18,10 +18,7 @@ import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import * as ImagePicker from "expo-image-picker";
 import { useAddWaypointMutation } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
-import {
-  RenderWaypointFlatList,
-  WaypointItem,
-} from "../components/WaypointFlatlist";
+import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
 
 const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
   // console.log("voyageID from map component: ", voyageId);
@@ -221,7 +218,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
   };
 
   /*
-  const RenderWaypointFlatList = ({ addedWayPoints }) => {
+  const WaypointFlatList = ({ addedWayPoints }) => {
     return (
       <FlatList
         horizontal
@@ -427,7 +424,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       </View>
 
       <View style={styles.waypointFlatlistContainer}>
-        <RenderWaypointFlatList addedWayPoints={addedWayPoints} />
+        <WaypointFlatList addedWayPoints={addedWayPoints} />
       </View>
 
       <TouchableOpacity
