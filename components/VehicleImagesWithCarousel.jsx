@@ -18,7 +18,6 @@ const VehicleImagesWithCarousel = ({ vehicleImages }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
 
-  console.log("--->--> -->", vehicleImages);
   useEffect(() => {
     console.log("from useEffect:", currentIndex);
   }, [currentIndex]);

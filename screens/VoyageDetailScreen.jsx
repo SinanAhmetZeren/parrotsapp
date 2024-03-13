@@ -33,6 +33,7 @@ import {
   TextInput,
   Share,
   Button,
+  ActivityIndicator,
 } from "react-native";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
@@ -162,6 +163,10 @@ const VoyageDetailScreen = () => {
   };
 
   const navigation = useNavigation();
+
+  if (isLoadingVoyages) {
+    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
+  }
 
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData.user.id;
@@ -389,7 +394,7 @@ const VoyageDetailScreen = () => {
                   !showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
                       <Text style={styles.ReadMoreLess}>
-                        Read more...
+                        Read more
                         <Feather
                           name="chevron-down"
                           size={24}
@@ -401,7 +406,7 @@ const VoyageDetailScreen = () => {
                 {showFullText && (
                   <TouchableOpacity onPress={() => setShowFullText(false)}>
                     <Text style={styles.ReadMoreLess}>
-                      Read less...
+                      Read less
                       <Feather name="chevron-up" size={24} color={"#2ac898"} />
                     </Text>
                   </TouchableOpacity>
@@ -580,32 +585,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
   },
-  priceInputContainer: {
-    flexDirection: "row",
-  },
-  bidButtonContainer: {
-    backgroundColor: "#186ff1",
-    borderRadius: vh(2),
-    borderColor: "#3c9ede",
-    // borderWidth: 3,
-    width: vw(60),
-    alignSelf: "center",
-    marginTop: vh(1),
-    height: vh(5),
-    justifyContent: "center",
-  },
-  createBidButton: {
-    fontSize: 22,
-    color: "white",
-    alignSelf: "center",
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-  bidModalContainer: {
-    backgroundColor: "#06d1d3",
-    padding: vh(4),
-    margin: vh(5),
-  },
   ScrollView: {
     backgroundColor: "white",
   },
@@ -667,9 +646,15 @@ const styles = StyleSheet.create({
     marginVertical: vh(0.2),
     fontWeight: "500",
     color: "#959595",
+    paddingBottom: vh(1),
   },
   ReadMoreLess: {
     color: "#2ac898",
+    paddingHorizontal: vw(2),
+    paddingBottom: vh(1),
+    width: vw(28),
+    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    borderRadius: vh(2),
     fontWeight: "700",
   },
   subContainer: {
@@ -736,12 +721,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#3c9dde",
   },
-  focusMapInfo: {
-    paddingLeft: vw(2),
-    fontSize: 13,
-    fontWeight: "800",
-    color: "#3c9dde",
-  },
+
   mainBidsContainer: {
     borderRadius: vw(5),
     marginHorizontal: vw(2),
@@ -768,57 +748,6 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
   },
-
-  // BID FLATLIST STYLES
-  BidsFlatList: {
-    width: vw(85),
-    height: vh(90),
-    alignSelf: "center",
-    backgroundColor: "#f2fafa",
-    borderColor: "#bfdff4",
-    // borderWidth: 2,
-    borderRadius: vh(2),
-    padding: vh(1),
-  },
-  singleBidContainer2: {
-    flexDirection: "row",
-    padding: vh(0.1),
-    margin: vh(0.3),
-    alignItems: "center",
-  },
-  bidImage2: {
-    width: vh(5),
-    height: vh(5),
-    borderRadius: vh(2.5),
-    marginRight: 8,
-    backgroundColor: "grey",
-  },
-  bidUsername2: {
-    fontSize: 17,
-    fontWeight: "700",
-    width: vw(45),
-  },
-  offerPrice2: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: "blue",
-    width: vw(25),
-    textAlign: "right",
-  },
-  currentBidsTitle2: {
-    paddingLeft: vw(2),
-    fontSize: 25,
-    fontWeight: "700",
-    color: "blue",
-  },
-  currentBidsContainer2: {
-    width: vw(90),
-  },
-  allBidsContainer2: {
-    margin: vh(1),
-    padding: vh(0),
-  },
-  // BID FLATLIST STYLES - END
   currentBidsAndSeeAll: {
     marginTop: vh(2),
     flexDirection: "row",

@@ -114,7 +114,7 @@ export const CreateBidComponent = ({
     };
 
     changeBid(bidData);
-    setVisible(false);
+    setChangeModalVisible(false);
   };
 
   const handleOpenModal = () => {

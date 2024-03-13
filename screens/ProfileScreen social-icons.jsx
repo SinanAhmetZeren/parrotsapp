@@ -115,7 +115,10 @@ export default function ProfileScreen({ navigation }) {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="blue" />
+        <Image
+          style={{ height: vh(30), width: vw(50), top: vh(15) }}
+          source={require("../assets/amazon.jpeg")}
+        />
       </View>
     );
   }

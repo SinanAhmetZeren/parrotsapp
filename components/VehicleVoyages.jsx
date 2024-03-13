@@ -72,10 +72,10 @@ const styles = StyleSheet.create({
     padding: vh(1),
     margin: vh(0.3),
     flexDirection: "row",
-    backgroundColor: "rgba(0, 119, 234,0.1)",
+    backgroundColor: "rgba(0, 119, 234,0.051)",
     // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
-    borderRadius: vh(2),
+    borderRadius: vh(3),
   },
   voyageImage: {
     height: vh(6),

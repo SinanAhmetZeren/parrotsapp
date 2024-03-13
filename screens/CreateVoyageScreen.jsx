@@ -190,7 +190,7 @@ const CreateVoyageScreen = () => {
       });
       const createdVoyageId = response.data.data.id;
       setVoyageId(createdVoyageId);
-
+      setBrief("");
       setDescription("");
       setVacancy("");
       setStartDate("");
@@ -201,7 +201,6 @@ const CreateVoyageScreen = () => {
       setIsAuction("");
       setIsFixedPrice("");
       setVehicleId("");
-      // setVoyageId("");
       setImage("");
       setVoyageImage("");
       setAddedVoyageImages("");
@@ -367,85 +366,128 @@ const CreateVoyageScreen = () => {
               <View style={styles.formContainer}>
                 {/* Username */}
 
-                <View style={styles.socialBox}>
-                  <Feather
-                    style={styles.icon}
-                    name="user"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.inputDescription}>Voyage name</Text>
-
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Enter voyage name"
-                    value={name}
-                    onChangeText={(text) => setName(text)}
-                  />
+                {/* /// name /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>
+                      <Feather
+                        style={styles.icon}
+                        name="feather"
+                        size={24}
+                        color="black"
+                      />{" "}
+                      Name:
+                    </Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      placeholder="Enter voyage name"
+                      value={name}
+                      onChangeText={(text) => setName(text)}
+                    />
+                  </View>
                 </View>
+                {/* /// name  /// */}
 
-                <View style={styles.socialBox}>
-                  <Fontisto
-                    style={styles.icon}
-                    name="email"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.inputDescription}>Brief</Text>
-                  <TextInput
-                    placeholder="Enter voyage brief"
-                    value={brief}
-                    multiline
-                    numberOfLines={5}
-                    onChangeText={(text) => setBrief(text)}
-                    style={styles.textDescriptionInput}
-                  />
+                {/* /// brief /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>
+                      <Feather
+                        style={styles.icon}
+                        name="feather"
+                        size={24}
+                        color="black"
+                      />{" "}
+                      Brief:
+                    </Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      placeholder="Enter voyage brief"
+                      value={brief}
+                      multiline
+                      numberOfLines={5}
+                      onChangeText={(text) => setBrief(text)}
+                    />
+                  </View>
                 </View>
+                {/* /// brief  /// */}
 
-                {/* Phone Number */}
-                <View style={styles.socialBox}>
-                  <Feather
-                    style={styles.icon}
-                    name="phone"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.inputDescription}>Description</Text>
-
-                  <TextInput
-                    style={styles.textDescriptionInput}
-                    multiline
-                    placeholder="Enter voyage description"
-                    numberOfLines={8}
-                    value={description}
-                    onChangeText={(text) => setDescription(text)}
-                  />
+                {/* /// DESC /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>
+                      <Feather
+                        style={styles.icon}
+                        name="feather"
+                        size={24}
+                        color="black"
+                      />{" "}
+                      Description:
+                    </Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      multiline
+                      placeholder="Enter voyage description"
+                      numberOfLines={10}
+                      value={description}
+                      onChangeText={(text) => setDescription(text)}
+                    />
+                  </View>
                 </View>
+                {/* /// DESC  /// */}
 
-                {/* Facebook Profile */}
-                <View style={styles.socialBox}>
-                  <Feather
-                    style={styles.icon}
-                    name="facebook"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.inputDescription}>Vacancy</Text>
-
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Enter voyage vacancy"
-                    value={vacancy}
-                    onChangeText={(text) => setVacancy(text)}
-                    keyboardType="numeric"
-                  />
+                {/* /// VACANCY /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>
+                      <Feather
+                        style={styles.icon}
+                        name="feather"
+                        size={24}
+                        color="black"
+                      />{" "}
+                      Vacancy:
+                    </Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      placeholder="Enter voyage vacancy"
+                      value={vacancy}
+                      onChangeText={(text) => setVacancy(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
                 </View>
+                {/* /// VACANCY /// */}
 
-                <DropdownComponent
-                  data={dropdownData}
-                  label={"Select Vehicle"}
-                  setVehicleId={setVehicleId}
-                />
+                {/* /// vehicle /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>
+                      <Feather
+                        style={styles.icon}
+                        name="feather"
+                        size={24}
+                        color="black"
+                      />{" "}
+                      Vehicle:
+                    </Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <DropdownComponent
+                      data={dropdownData}
+                      setVehicleId={setVehicleId}
+                    />
+                  </View>
+                </View>
+                {/* /// vehicle /// */}
 
                 <View style={styles.calendarContainer}>
                   <View style={styles.voyageDatesContainer}>
@@ -458,103 +500,133 @@ const CreateVoyageScreen = () => {
                     <Text style={styles.voyageDates}>Select Voyage Dates</Text>
                   </View>
 
-                  <CalendarPicker
-                    selectedRangeStartTextStyle={styles.startEndText}
-                    selectedRangeEndTextStyle={styles.startEndText}
-                    selectedRangeStyle={styles.calendarSelected}
-                    selectedRangeStartStyle={styles.calendarEndStart}
-                    selectedRangeEndStyle={styles.calendarEndStart}
-                    selectedColor={"blue"}
-                    startFromMonday={true}
-                    allowRangeSelection={true}
-                    minDate={new Date()}
-                    selectedStartDate={startDate}
-                    selectedEndDate={endDate}
-                    onDateChange={onDateChange}
-                    width={300}
-                  />
-                </View>
-
-                <View style={styles.socialBox}>
-                  <Feather
-                    style={styles.icon}
-                    name="calendar"
-                    size={24}
-                    color="blue"
-                  />
-                  <Text style={styles.inputDescription}>Last Bid Date</Text>
-
-                  <TextInput
-                    style={styles.textInput}
-                    value={lastBidDate}
-                    onChangeText={handleDateChange}
-                    keyboardType="numeric"
-                    placeholder="MM/DD/YYYY" // Placeholder without hyphens
-                    maxLength={10} // Restrict length for proper date format
-                  />
-                </View>
-
-                {/* min price */}
-                <View style={styles.socialBox}>
-                  <Feather
-                    style={styles.icon}
-                    name="facebook"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.inputDescription}>Min Price</Text>
-
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Enter Min Price"
-                    value={minPrice}
-                    onChangeText={(text) => setMinPrice(text)}
-                    keyboardType="numeric"
-                  />
-                </View>
-
-                {/* max price */}
-                <View style={styles.socialBox}>
-                  <Feather
-                    style={styles.icon}
-                    name="facebook"
-                    size={24}
-                    color="black"
-                  />
-                  <Text style={styles.inputDescription}>Max Price</Text>
-
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder="Enter Min Price"
-                    value={maxPrice}
-                    onChangeText={(text) => setMaxPrice(text)}
-                    keyboardType="numeric"
-                  />
-                </View>
-
-                <View style={styles.mainCheckboxContainer}>
-                  <View style={styles.checkboxContainer}>
-                    <Text>Auction </Text>
-                    <View>
-                      <Checkbox
-                        value={isAuction}
-                        onValueChange={setIsAuction}
-                        color={isAuction ? "#4630EB" : undefined}
-                      />
-                    </View>
-                  </View>
-
-                  <View style={styles.checkboxContainer}>
-                    <Text>FixedPrice </Text>
-                    <View>
-                      <Checkbox
-                        value={isFixedPrice}
-                        onValueChange={setIsFixedPrice}
-                        color={isFixedPrice ? "#4630EB" : undefined}
-                      />
-                    </View>
+                  <View style={styles.calendarStyle}>
+                    <CalendarPicker
+                      selectedRangeStartTextStyle={styles.startEndText}
+                      selectedRangeEndTextStyle={styles.startEndText}
+                      selectedRangeStyle={styles.calendarSelected}
+                      selectedRangeStartStyle={styles.calendarEndStart}
+                      selectedRangeEndStyle={styles.calendarEndStart}
+                      selectedColor={"blue"}
+                      startFromMonday={true}
+                      allowRangeSelection={true}
+                      minDate={new Date()}
+                      selectedStartDate={startDate}
+                      selectedEndDate={endDate}
+                      onDateChange={onDateChange}
+                      width={300}
+                    />
                   </View>
                 </View>
+
+                {/* /// LAST BID DATE /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>
+                      <Feather
+                        style={styles.icon}
+                        name="feather"
+                        size={24}
+                        color="black"
+                      />{" "}
+                      Last Bid:
+                    </Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      value={lastBidDate}
+                      onChangeText={handleDateChange}
+                      keyboardType="numeric"
+                      placeholder="MM/DD/YYYY" // Placeholder without hyphens
+                      maxLength={10} // Restrict length for proper date format
+                    />
+                  </View>
+                </View>
+                {/* /// LAST BID DATE /// */}
+
+                {/* /// MIN PRICE /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>
+                      <Feather
+                        style={styles.icon}
+                        name="feather"
+                        size={24}
+                        color="black"
+                      />{" "}
+                      Min Price:
+                    </Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      maxLength={20}
+                      placeholder="Enter Min Price"
+                      value={minPrice}
+                      onChangeText={(text) => setMinPrice(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+                {/* /// MIN PRICE /// */}
+
+                {/* /// MAX PRICE /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>
+                      <Feather
+                        style={styles.icon}
+                        name="feather"
+                        size={24}
+                        color="black"
+                      />{" "}
+                      Max Price:
+                    </Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      maxLength={20}
+                      placeholder="Enter Max Price"
+                      value={maxPrice}
+                      onChangeText={(text) => setMaxPrice(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+
+                {/* /// auction fixedprice  /// */}
+                <View style={styles.auctionFixedPrice}>
+                  <View style={styles.mainCheckboxContainer}>
+                    <View style={styles.checkboxContainer}>
+                      <Text style={styles.checkboxText}>Auction </Text>
+                      <View>
+                        <Checkbox
+                          value={isAuction}
+                          onValueChange={setIsAuction}
+                          color={
+                            isAuction ? "rgba(0, 119, 234,0.9)" : undefined
+                          }
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.checkboxContainer}>
+                      <Text style={styles.checkboxText}>FixedPrice </Text>
+                      <View>
+                        <Checkbox
+                          value={isFixedPrice}
+                          onValueChange={setIsFixedPrice}
+                          color={
+                            isFixedPrice ? "rgba(0, 119, 234,0.9)" : undefined
+                          }
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                {/* /// auction fixedprice  /// */}
 
                 {/* Save Button */}
                 <View style={styles.createVoyageButton}>
@@ -564,7 +636,7 @@ const CreateVoyageScreen = () => {
                   />
                 </View>
 
-                <View style={styles.refetch}>
+                <View style={{ display: "none" }}>
                   <Button
                     title="print state1"
                     onPress={() => {
@@ -572,6 +644,7 @@ const CreateVoyageScreen = () => {
                     }}
                   />
                 </View>
+
                 <View style={styles.step123}>
                   <Button
                     title="step 1"
@@ -725,36 +798,7 @@ const CreateVoyageScreen = () => {
 
 export default CreateVoyageScreen;
 
-const styles3 = StyleSheet.create({
-  WayPointsScreen: {
-    top: vh(5),
-    backgroundColor: "green",
-  },
-});
 const styles2 = StyleSheet.create({
-  modalWrappeer: {
-    position: "absolute",
-    top: 0,
-    // backgroundColor: "red",
-    height: vh(10),
-    width: vw(80),
-  },
-
-  imageContainerInModal: {
-    top: vh(30),
-    height: vh(40),
-    paddingLeft: vw(10),
-    backgroundColor: "transparent",
-  },
-  voyageImageInModal: {
-    height: vh(35),
-    width: vw(80),
-    marginRight: vh(1),
-    borderRadius: vh(1.5),
-    borderWidth: 2,
-    borderColor: "white",
-  },
-
   imageContainer1: {
     // backgroundColor: "white",
   },
@@ -764,60 +808,62 @@ const styles2 = StyleSheet.create({
     marginRight: vh(1),
     borderRadius: vh(1.5),
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust opacity as needed
-  },
-  carouselImage: {
-    position: "absolute",
-    top: vh(30),
-    alignSelf: "center",
-    height: vh(40),
-    width: vw(90),
-    borderRadius: vh(3),
-    borderWidth: 1.5,
-    borderColor: "white",
-  },
-  closeButtonAndText: {
-    flexDirection: "row",
-    position: "absolute",
-    height: vh(3.5),
-    width: vh(11.45),
-    backgroundColor: "white",
-    borderRadius: vh(2.5),
-    bottom: vh(24),
-    left: vw(35),
-    borderColor: "rgb(148,1,1)",
-    borderWidth: 1,
-    verticalAlign: "middle",
-  },
-  closeText1: {
-    marginLeft: vw(1),
-    fontSize: 18,
-    height: vh(3),
-    alignSelf: "center",
-    color: "rgb(148,1,1)",
-  },
-  closeText2: {
-    fontSize: 18,
-    height: vh(3),
-    alignSelf: "center",
-    color: "rgb(148,1,1)",
-  },
-  pagerView: {
-    backgroundColor: "rgba(111,1,1,0.01)",
-    height: vh(50),
-    flex: 1,
-  },
-  pagerInside: {
-    height: vh(50),
-    width: vw(100),
-  },
 });
 
 const styles = StyleSheet.create({
+  calendarStyle: {
+    backgroundColor: "white",
+    width: vw(86),
+    alignSelf: "center",
+    marginBottom: vh(1),
+    borderRadius: vh(3),
+  },
+  checkboxText: {
+    color: "#6b7f9d",
+    fontWeight: "500",
+    paddingRight: vw(2),
+  },
+  auctionFixedPrice: {
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
+  },
+  latLngNameRow: {
+    flexDirection: "row",
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
+    marginBottom: vh(0.5),
+  },
+  latLngLabel: {
+    justifyContent: "center",
+    backgroundColor: "#f4f5f6",
+    marginVertical: vh(0.3),
+    padding: vh(0.4),
+    borderRadius: vh(3),
+    borderColor: "#babbbc",
+  },
+  latorLngtxt: {
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(25),
+    textAlign: "center",
+  },
+  latorLng: {
+    flexDirection: "row",
+    backgroundColor: "#fafbfc",
+    marginVertical: vh(0.3),
+    padding: vh(0.4),
+    // borderRadius: vh(3),
+    borderTopRightRadius: vh(3),
+    borderBottomRightRadius: vh(3),
+    // borderWidth: 1,
+    borderColor: "#babbbc",
+    width: vw(64),
+  },
+  textInput5: {
+    fontSize: 13,
+    paddingLeft: vw(1),
+    width: "90%",
+  },
   selectedChoice: {
     marginTop: vh(1),
     alignItems: "center",
@@ -829,7 +875,7 @@ const styles = StyleSheet.create({
   selectedText: {
     color: "rgba(91,91,255,1)",
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: "500",
     textAlign: "center",
   },
   length1: {
@@ -869,9 +915,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
   },
-  noDisplay: {
-    display: "none",
-  },
+
   startEndText: {
     color: "white",
   },
@@ -920,28 +964,25 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 119, 234,0.1)",
     borderWidth: 5,
   },
-  backgroundImageMain: {
-    backgroundColor: "rgba(10, 11, 211,0.36)",
-  },
   mainCheckboxContainer: {
-    padding: vh(1),
+    paddingHorizontal: vh(1),
     flexDirection: "row",
     justifyContent: "space-around",
-    // borderWidth: 1,
-    borderRadius: vh(1),
-    backgroundColor: "white",
-    borderColor: "rgba(190, 119, 234,0.4)",
     marginTop: vh(0.3),
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
   },
   checkboxContainer: {
     flexDirection: "row",
     margin: vh(0.2),
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(0.5),
+    borderRadius: vh(2),
   },
   calendarContainer: {
-    backgroundColor: "white",
-    borderRadius: vh(1),
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
+    borderRadius: vh(3),
+    backgroundColor: "#f1f2f3",
+    marginBottom: vh(1),
   },
   formContainer: {
     padding: vh(2),
@@ -950,38 +991,7 @@ const styles = StyleSheet.create({
   recycle: {
     color: "purple",
   },
-  recycleBackground: {
-    color: "purple",
-  },
-  recycleBox: {
-    left: vw(4),
-    textAlign: "center",
-    width: vw(12),
-    height: vw(12),
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: vh(6),
-    borderColor: "rgba(190, 119, 234,0.6)",
-    // borderWidth: 2,
-  },
-  recycleBoxBG: {
-    top: vh(-6),
-    left: vw(85),
-    textAlign: "center",
-    width: vw(12),
-    height: vw(12),
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: vh(6),
-    borderColor: "rgba(190, 119, 234,0.6)",
-    // borderWidth: 2,
-  },
-  saveButton: {
-    padding: 10,
-    paddingHorizontal: vw(15),
-  },
+
   createVoyageButton: {
     width: vw(40),
     alignSelf: "center",
@@ -998,10 +1008,7 @@ const styles = StyleSheet.create({
   step123: {
     display: "none",
   },
-  rectangularBox: {
-    height: vh(35),
-    backgroundColor: "white",
-  },
+
   imageContainer: {
     top: vh(0),
     height: vh(35),
@@ -1033,7 +1040,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   voyageDates: {
-    color: "rgba(0, 119, 234,0.9)",
+    color: "#6b7f9d",
+    fontWeight: "500",
     fontSize: 13,
     marginVertical: vh(1),
     alignSelf: "flex-start",
@@ -1044,6 +1052,7 @@ const styles = StyleSheet.create({
     marginVertical: 1,
     fontSize: 14,
     padding: vw(1),
+    backgroundColor: "green",
   },
   textDescriptionInput: {
     width: vw(60),
@@ -1052,16 +1061,8 @@ const styles = StyleSheet.create({
     marginVertical: 1,
     fontSize: 14,
     padding: vw(1),
+    backgroundColor: "green",
   },
-
-  textInputBio: {
-    lineHeight: 21,
-    marginVertical: 5,
-    fontSize: 14,
-    flex: 1,
-    padding: vw(1),
-  },
-
   socialBox: {
     flexDirection: "row",
     backgroundColor: "white",
@@ -1069,15 +1070,5 @@ const styles = StyleSheet.create({
     marginTop: 2,
     // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  socialBoxBio: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 20,
-    marginTop: 2,
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
-    width: vw(90),
-    // backgroundColor: "red",
   },
 });

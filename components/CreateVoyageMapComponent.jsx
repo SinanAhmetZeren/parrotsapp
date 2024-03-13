@@ -666,23 +666,6 @@ const styles = StyleSheet.create({
     width: vw(20),
     paddingLeft: vw(1),
   },
-  socialBox: {
-    width: "95%",
-    alignSelf: "center",
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: vh(1),
-    marginTop: 2,
-    borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  DescriptionBox: {
-    width: "95%",
-    alignSelf: "center",
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: vh(1),
-  },
   container: {
     flex: 1,
     padding: vh(1),
@@ -690,9 +673,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "yellow",
   },
-  inputContainer: {
-    marginBottom: 10,
-  },
+
   label: {
     fontWeight: "bold",
   },

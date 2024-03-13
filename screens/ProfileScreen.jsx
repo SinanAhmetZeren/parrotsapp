@@ -11,6 +11,7 @@ import {
   Text,
   TouchableOpacity,
   Linking,
+  ActivityIndicator,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -139,11 +140,7 @@ export default function ProfileScreen({ navigation }) {
   };
 
   if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 50 }}>loading...</Text>
-      </View>
-    );
+    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
   if (isError) {
@@ -432,13 +429,6 @@ export default function ProfileScreen({ navigation }) {
                     />
                   </View>
                 ) : null)}
-
-              {/* <Button
-                title="Handle Refetch"
-                onPress={() => {
-                  handleRefetch();
-                }}
-              /> */}
             </View>
           </ScrollView>
         </View>
@@ -571,9 +561,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
 
     left: vw(-10.5),
-
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
   },
   socialBox2: {
     flexDirection: "row",
@@ -583,8 +570,6 @@ const styles = StyleSheet.create({
     marginBottom: 2,
 
     left: vw(-6),
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
   },
   icon: {
     padding: 3,
@@ -651,8 +636,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: vh(2),
     padding: vw(1),
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.5)",
   },
   logoutBox: {
     backgroundColor: "white",
@@ -664,15 +647,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: vh(2),
     padding: vw(1),
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.5)",
   },
   innerProfileContainer: {
-    // backgroundColor: "rgba(190, 119, 234,0.08)",
     alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),
-    borderColor: "rgba(190, 119, 234,0.5)",
     paddingHorizontal: vw(2),
   },
 });

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
@@ -34,35 +35,33 @@ import {
   Modal,
   TextInput,
   Share,
+  ActivityIndicator,
 } from "react-native";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
 import { useDispatch, useSelector } from "react-redux";
 import VehicleVoyages from "../components/VehicleVoyages";
+import { useFonts } from "expo-font";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
   const { vehicleId } = route.params;
-  console.log("hello from vehicle detail ", vehicleId);
-  // const {
-  //   data: VoyageData,
-  //   isSuccess: isSuccessVoyages,
-  //   isLoading: isLoadingVoyages,
-  // } = useGetVoyageByIdQuery(voyageId);
-
   const {
     data: VehicleData,
     isSuccess: isSuccessVehicles,
     isLoading: isLoadingVehicles,
     isError: isErrorVehicles,
   } = useGetVehicleByIdQuery(vehicleId);
-
-  const dispatch = useDispatch();
-
-  const [sendBid] = useSendBidMutation();
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  // const route = useRoute();
+  const [fontsLoaded, fontError] = useFonts({
+    RobotoMedium: require("../assets/Roboto-Medium.ttf"),
+    Madimi: require("../assets/MadimiOne-Regular.ttf"),
+    Nunito: require("../assets/Nunito-Regular.ttf"),
+    NunitoBold: require("../assets/Nunito-Bold.ttf"),
+    RobotoslabM: require("../assets/RobotoSlab-Medium.ttf"),
+    RobotoslabB: require("../assets/RobotoSlab-Bold.ttf"),
+  });
 
   const handleSeeAll = () => {
     setModalVisible(true);
@@ -87,10 +86,7 @@ const VehicleDetailScreen = () => {
   };
 
   const goToProfilePage = (userId) => {
-    console.log("--------------");
     console.log("navigate to user profile with id: ", userId);
-    console.log("--------------");
-
     navigation.navigate("ProfileScreenPublic", {
       userId: userId,
     });
@@ -99,11 +95,7 @@ const VehicleDetailScreen = () => {
   const navigation = useNavigation();
 
   if (isLoadingVehicles) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 50 }}>loading...</Text>
-      </View>
-    );
+    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
   if (isErrorVehicles) {
@@ -115,7 +107,6 @@ const VehicleDetailScreen = () => {
   }
 
   if (isSuccessVehicles) {
-    console.log("issuccess??", isSuccessVehicles);
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
 
@@ -176,15 +167,39 @@ const VehicleDetailScreen = () => {
 
           <View style={styles.voyageDataWrapper}>
             <View style={styles.VoyageDataContainer}>
+              <View style={styles.VoyageNameAndUsername}>
+                <Text style={styles.vehicleName}>{VehicleData.name}</Text>
+              </View>
+              {/* // Vehicle Images */}
+              <View style={styles.mainBidsContainer}>
+                <View style={styles.currentBidsAndSeeAll}>
+                  <Text style={styles.currentBidsTitle}>Vehicle Images</Text>
+                </View>
+              </View>
+              <View style={styles.ImagesMainContainer}>
+                <View style={styles.ImagesSubContainer}>
+                  <VehicleImagesWithCarousel
+                    vehicleImages={VehicleData.vehicleImages}
+                  />
+                </View>
+              </View>
+
+              {/* // Vehicle Description */}
+              <View style={styles.mainBidsContainer}>
+                <View style={styles.currentBidsAndSeeAll}>
+                  <Text style={styles.currentBidsTitle}>
+                    Vehicle Description
+                  </Text>
+                </View>
+              </View>
+
               {/* // VoyageName and Username */}
               <View style={styles.VoyageNameAndUsername}>
-                <Text style={styles.voyageName}>{VehicleData.name}</Text>
                 <View style={styles.voyageDetailsContainer}>
                   <View style={styles.OwnerAndBoat}>
                     <TouchableOpacity
                       style={styles.voyageOwner}
                       onPress={() => {
-                        console.log("zzz: ", VehicleData.user.id);
                         goToProfilePage(VehicleData.user.id);
                       }}
                     >
@@ -199,20 +214,18 @@ const VehicleDetailScreen = () => {
                         {VehicleData.user.userName}
                       </Text>
                     </TouchableOpacity>
-                  </View>
-                  {/*/////////////////////////////////////////*/}
-                  <View style={styles.VoyagePropsBox}>
-                    <View style={styles.VoyageProps}>
+
+                    <View style={styles.voyageOwner}>
                       <Text style={styles.propTextDescription}>Capacity: </Text>
                       <Text style={styles.propText}>
-                        {VehicleData.capacity}
+                        {VehicleData.capacity}{" "}
+                        <Feather name="users" size={14} color="black" />
                       </Text>
                     </View>
                   </View>
                 </View>
               </View>
 
-              {/* // Vehicle Description */}
               <View style={styles.DescriptionContainer}>
                 <Text style={styles.descriptionInnerContainer}>
                   {displayText}
@@ -221,11 +234,11 @@ const VehicleDetailScreen = () => {
                   !showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
                       <Text style={styles.ReadMoreLess}>
-                        Read more...
-                        <MaterialIcons
-                          name="expand-more"
+                        Read more
+                        <Feather
+                          name="chevron-down"
                           size={24}
-                          color="blue"
+                          color={"#2ac898"}
                         />
                       </Text>
                     </TouchableOpacity>
@@ -233,27 +246,20 @@ const VehicleDetailScreen = () => {
                 {showFullText && (
                   <TouchableOpacity onPress={() => setShowFullText(false)}>
                     <Text style={styles.ReadMoreLess}>
-                      Read less...
-                      <MaterialIcons
-                        name="expand-less"
-                        size={24}
-                        color="blue"
-                      />
+                      Read less
+                      <Feather name="chevron-up" size={24} color={"#2ac898"} />
                     </Text>
                   </TouchableOpacity>
                 )}
               </View>
 
-              {/* // Vehicle Images */}
-              <View style={styles.ImagesMainContainer}>
-                <View style={styles.ImagesSubContainer}>
-                  <VehicleImagesWithCarousel
-                    vehicleImages={VehicleData.vehicleImages}
-                  />
+              {/* // Vehicle VOYAGES */}
+              <View style={styles.mainBidsContainer}>
+                <View style={styles.currentBidsAndSeeAll}>
+                  <Text style={styles.currentBidsTitle}>Vehicle's Voyages</Text>
                 </View>
               </View>
 
-              {/* // Vehicle VOYAGES */}
               <View style={styles.VoyagesContainer}>
                 <VehicleVoyages voyages={VehicleData.voyages} />
               </View>
@@ -265,131 +271,42 @@ const VehicleDetailScreen = () => {
   }
 };
 
-// Santa Voyage on Santa Maria from Feb 02, 23 to Mar 01, 23
-//  (item.name)
-//  (item.startDate)
-//  (item.endDate)
-//  (item.vacancy)
-//  (item.profileImage)
-
 export default VehicleDetailScreen;
 
-const styles2 = StyleSheet.create({
-  inputMainContainer: {
-    backgroundColor: "#f4fdfa",
-    padding: vh(1),
-    marginBottom: vh(1),
-    borderRadius: vh(2),
-    borderColor: "#d8f7ee",
-    borderWidth: 2,
-  },
-  InputName: {
-    fontSize: 18,
-    color: "#186ff1",
-    fontWeight: "700",
+const styles = StyleSheet.create({
+  VoyageDataContainer: {
+    borderRadius: vh(5),
+    marginHorizontal: vw(2),
     marginBottom: vh(2),
   },
-  messageInput: {
-    fontSize: 18,
-    color: "#186ff1",
-
-    fontWeight: "700",
-    marginBottom: vh(2),
-    borderColor: "#186ff1",
-    padding: vh(1),
-    borderWidth: 1,
-    borderRadius: vh(2),
+  voyageDataWrapper: {
+    backgroundColor: "white",
+    paddingTop: vh(1),
+    borderRadius: vh(5),
   },
-  bidInput: {
+  vehicleName: {
+    fontSize: 24,
+    alignSelf: "center",
     color: "#2ac898",
-    fontSize: 22,
-    fontWeight: "800",
+    fontFamily: "RobotoslabB",
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    paddingTop: vh(17),
-    paddingBottom: vh(70),
+  mainBidsContainer: {
+    borderRadius: vw(5),
+    marginHorizontal: vw(2),
+    borderColor: "#93c9ed",
   },
-  innerContainer: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    width: 300,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  counterContainer: {
+  currentBidsAndSeeAll: {
+    marginTop: vh(2),
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
+    paddingRight: vw(10),
   },
-
-  buttonsContainer: {
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "space-around",
+  currentBidsTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#3c9dde",
   },
-
-  buttonSaveContainer: {
-    alignItems: "center",
-  },
-  buttonClearContainer: {
-    alignItems: "center",
-  },
-  buttonSave: {
-    fontSize: 18,
-    color: "white",
-    textAlign: "center",
-    backgroundColor: "#186ff1",
-    padding: 5,
-    width: vw(30),
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  buttonClear: {
-    fontSize: 18,
-    color: "white",
-    textAlign: "center",
-    backgroundColor: "#2ac898",
-    padding: 5,
-    width: vw(30),
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  buttonCount: {
-    fontSize: 24,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    // borderWidth: 1,
-    borderColor: "#3498db",
-    borderRadius: 10,
-    backgroundColor: "#fff",
-    width: vh(6),
-    textAlign: "center",
-    color: "#2ac898",
-    fontWeight: "800",
-  },
-  count: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-});
-
-const styles = StyleSheet.create({
-  ImagesMainContainer: {
-    // marginBottom: vh(13),
-  },
+  ImagesMainContainer: {},
   rectangularBox: {
     height: vh(27),
     backgroundColor: "white",
@@ -399,187 +316,75 @@ const styles = StyleSheet.create({
     height: vh(29),
   },
   voyageDetailsContainer: {
-    marginTop: vh(2),
-    backgroundColor: "rgba(0, 119, 234,0.071)",
-    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.2)",
-    padding: 4,
     borderRadius: vh(2),
   },
   OwnerAndBoat: {
     flexDirection: "row",
-    justifyContent: "flex-start",
     margin: 1,
   },
   voyageOwner: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: vh(5),
-    marginTop: vh(1),
     marginHorizontal: vw(2),
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
     backgroundColor: "rgba(0, 119, 234,0.1)",
-    // borderWidth: 1,
-    borderColor: "rgba(10, 119, 234,0.3)",
-  },
-  voyageBoat: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: vh(5),
-    marginTop: vh(1),
-    marginHorizontal: vw(2),
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    // borderWidth: 1,
-    borderColor: "rgba(10, 119, 234,0.3)",
-    paddingVertical: vh(0.3),
-    paddingHorizontal: vw(2),
-  },
-  VoyagePropsBox: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    margin: 1,
-  },
-  VoyageProps: {
-    flexDirection: "row",
-    paddingHorizontal: vh(0.9),
-    paddingVertical: vh(0.2),
-    marginTop: vh(0.2),
-    marginHorizontal: vw(1),
-    borderRadius: vw(3),
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
   },
   propTextDescription: {
     fontSize: 14,
     fontWeight: "600",
-    color: "blue",
+    color: "#3c9dde",
   },
   propText: {
     fontSize: 14,
     fontWeight: "600",
   },
-
   ScrollView: {
     backgroundColor: "white",
   },
-  heartContainer1: {
-    position: "absolute",
-    bottom: vh(-1),
-    right: vw(15),
-  },
-  heartContainer2: {
-    padding: vw(1),
-    width: vw(8),
-    backgroundColor: "white",
-    borderRadius: vh(5),
-  },
-  shareContainer1: {
-    position: "absolute",
-    bottom: vh(-1),
-    right: vw(5),
-  },
-  shareContainer2: {
-    padding: vw(1),
-    width: vw(8),
-    backgroundColor: "white",
-    borderRadius: vh(5),
-  },
   VoyageNameAndUsername: {
-    padding: vh(1),
-    margin: vh(0.5),
-    marginTop: vh(0.5),
-    backgroundColor: "rgba(20,24,220,0.15)",
+    marginTop: vh(1),
   },
   DescriptionContainer: {
     paddingHorizontal: vh(1),
-    margin: vh(0.5),
-    marginTop: vh(0.5),
-    backgroundColor: "rgba(20,244,22,0.15)",
+    marginHorizontal: vh(0.5),
   },
   VoyagesContainer: {
     paddingHorizontal: vh(1),
     margin: vh(0.5),
     marginTop: vh(0.5),
-    backgroundColor: "rgba(20,244,22,0.15)",
     marginBottom: vh(13),
   },
-
   descriptionInnerContainer: {
-    marginVertical: vh(0.2),
+    paddingVertical: vh(1),
   },
   ReadMoreLess: {
-    color: "blue",
-  },
-  subContainer: {
-    backgroundColor: "blue",
-    padding: vh(1),
-    margin: vh(0.5),
-    marginTop: vh(0.5),
-  },
-  innerContainer: {
-    marginVertical: vh(0.2),
-    backgroundColor: "honeydew",
-  },
-  voyageName: {
-    fontSize: 24,
+    color: "#2ac898",
+    paddingHorizontal: vw(2),
+    paddingBottom: vh(1),
+    width: vw(28),
+    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    borderRadius: vh(2),
     fontWeight: "700",
-    alignSelf: "center",
   },
   userName: {
     fontSize: 14,
     fontWeight: "600",
     marginTop: vh(0.2),
-    color: "blue",
+    color: "#3c9dde",
   },
-
   ImagesSubContainer: {
     paddingHorizontal: vh(1),
     marginTop: vh(0.5),
   },
-
   profileImage: {
     width: vh(3),
     height: vh(3),
     borderRadius: vh(2.5),
     marginRight: 8,
     backgroundColor: "grey",
-  },
-
-  seeAllButton: {
-    color: "#3c9dde",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  voyageDataWrapper: {
-    backgroundColor: "white",
-    paddingTop: vh(1),
-    borderRadius: vh(5),
-  },
-  VoyageDataContainer: {
-    // backgroundColor: "#f2fafa",
-    borderRadius: vh(5),
-    marginHorizontal: vw(2),
-    marginBottom: vh(2),
-    // borderColor: "#93c9ed",
-    // borderWidth: 2,
-  },
-  closeButtonInModal: {
-    alignSelf: "flex-end",
-    marginRight: vw(10),
-    backgroundColor: "#f2fafa",
-    borderRadius: vw(5),
-    borderColor: "#93c9ed",
-    // borderWidth: 2,
-    padding: vw(1),
-    paddingHorizontal: vw(3),
-    marginTop: vh(1),
-  },
-
-  closeTextInModal: {
-    color: "#3c9dde",
-    fontWeight: "700",
-    fontSize: 16,
   },
 });

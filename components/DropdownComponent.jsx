@@ -4,50 +4,26 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { vh } from "react-native-expo-viewport-units";
+import { vh, vw } from "react-native-expo-viewport-units";
 
-const data2 = [
-  { label: "Item 1", value: "1" },
-  { label: "Item 2", value: "2" },
-  { label: "Item 3", value: "3" },
-  { label: "Item 4", value: "4" },
-  { label: "Item 5", value: "5" },
-  { label: "Item 6", value: "6" },
-  { label: "Item 7", value: "7" },
-  { label: "Item 8", value: "8" },
-];
-
-const DropdownComponent = ({ data, label, setVehicleId }) => {
+const DropdownComponent = ({ data, setVehicleId }) => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
 
-  const renderLabel = () => {
-    if (value || isFocus) {
-      return (
-        <Text style={[styles.label, isFocus && { color: "blue" }]}>
-          {label}
-        </Text>
-      );
-    }
-    return null;
-  };
-
   return (
     <View style={styles.container}>
-      {renderLabel()}
       <Dropdown
         style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        itemTextStyle={{ fontSize: 13, color: "rgba(0, 119, 234,0.9)" }}
+        itemTextStyle={styles.itemTextStyle}
         data={data}
-        search
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder={!isFocus ? "Select Vehicle" : "..."}
+        placeholder={"Select vehicle"}
         searchPlaceholder="Search..."
         value={value}
         onFocus={() => setIsFocus(true)}
@@ -57,14 +33,6 @@ const DropdownComponent = ({ data, label, setVehicleId }) => {
           setIsFocus(false);
           setVehicleId(item.value);
         }}
-        renderLeftIcon={() => (
-          <AntDesign
-            style={styles.icon}
-            color={"rgba(0, 119, 234,0.9)"}
-            name="Safety"
-            size={20}
-          />
-        )}
       />
     </View>
   );
@@ -73,17 +41,47 @@ const DropdownComponent = ({ data, label, setVehicleId }) => {
 export default DropdownComponent;
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "pink",
-    borderRadius: 30,
-    marginVertical: 2,
+  latLngNameRow: {
+    flexDirection: "row",
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
+    marginBottom: vh(0.5),
+  },
+  latLngLabel: {
+    justifyContent: "center",
+    backgroundColor: "#f4f5f6",
+    marginVertical: vh(0.3),
+    padding: vh(0.4),
+    borderRadius: vh(3),
+    borderColor: "#babbbc",
+  },
+  latorLngtxt: {
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(25),
+    textAlign: "center",
+  },
+  latorLng: {
+    flexDirection: "row",
+    backgroundColor: "#fafbfc",
+    marginVertical: vh(0.3),
+    padding: vh(0.4),
+    borderTopRightRadius: vh(3),
+    borderBottomRightRadius: vh(3),
+    borderColor: "#babbbc",
+    width: vw(64),
+  },
+  textInput5: {
+    fontSize: 13,
+    paddingLeft: vw(1),
+    width: "90%",
   },
   dropdown: {
+    width: vw(62),
     height: vh(5),
-    borderWidth: 1,
     borderRadius: vh(3),
-    backgroundColor: "white",
-    borderColor: "rgba(190, 119, 234,0.4)",
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
     paddingHorizontal: 8,
     fontSize: 12,
   },
@@ -96,16 +94,32 @@ const styles = StyleSheet.create({
     zIndex: 0,
     paddingHorizontal: 8,
     fontSize: 12,
-    color: "rgba(0, 119, 234,0.9)",
+
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(25),
+    textAlign: "center",
   },
   placeholderStyle: {
     fontSize: 12,
-    color: "rgba(0, 119, 234,0.9)",
+    // color: "rgba(0, 119, 234,0.9)",
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(25),
   },
   selectedTextStyle: {
     fontSize: 12,
-    color: "rgba(0, 119, 234,0.9)",
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(25),
   },
+  itemTextStyle: {
+    fontSize: 12,
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(25),
+  },
+
   iconStyle: {
     width: 20,
     height: 20,
@@ -113,6 +127,9 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 30,
     fontSize: 12,
-    color: "rgba(0, 119, 234,0.9)",
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(25),
+    textAlign: "center",
   },
 });
