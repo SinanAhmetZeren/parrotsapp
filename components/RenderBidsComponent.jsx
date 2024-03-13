@@ -15,6 +15,7 @@ export const RenderBidsComponent = ({
   bids,
   modalVisible,
   setModalVisible,
+  ownVoyage,
 }) => {
   const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
   const visibleBids = bids.slice(0, 6);
@@ -26,7 +27,7 @@ export const RenderBidsComponent = ({
   return (
     <View>
       {visibleBids.map((bid, index) => (
-        <TouchableOpacity key={index} style={styles.singleBidContainer}>
+        <View key={index} style={styles.singleBidContainer}>
           <Image
             source={{
               uri: UserImageBaseUrl + bid.userProfileImage,
@@ -35,13 +36,18 @@ export const RenderBidsComponent = ({
           />
           <View>
             <Text style={styles.bidUsername}>{bid.userName}</Text>
+            <TouchableOpacity>
+              <Text style={styles.seeMessage}>
+                {ownVoyage && (bid.message ?? null)}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View>
             <Text style={styles.offerPrice}>
               {bid.currency} {bid.offerPrice.toFixed(2)}
             </Text>
           </View>
-        </TouchableOpacity>
+        </View>
       ))}
 
       <Modal
@@ -87,6 +93,13 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
+  seeMessage: {
+    backgroundColor: "rgba(10, 119, 234,.05)",
+    borderRadius: vh(2),
+    paddingLeft: vw(4),
+    paddingBottom: vh(0.2),
+    width: vw(55),
+  },
   rectangularBox: {
     height: vh(27),
     backgroundColor: "white",
@@ -303,7 +316,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "800",
     color: "#2ac898",
-    width: vw(23),
+    width: vw(20),
     textAlign: "right",
   },
   currentBidsTitle: {
@@ -367,7 +380,7 @@ const styles = StyleSheet.create({
   offerPrice2: {
     fontSize: 18,
     fontWeight: "800",
-    width: vw(25),
+    width: vw(20),
     textAlign: "right",
     color: "#2ac898",
   },

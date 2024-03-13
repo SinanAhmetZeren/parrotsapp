@@ -112,6 +112,35 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    changeBid: builder.mutation({
+      query: (bidData) => {
+        // "id": 88,
+        // "personCount": 8,
+        // "message": "sekiz",
+        // "offerPrice": 8,
+        // "currency": "eur",
+        // "dateTime": "2024-03-13T17:33:47.254Z"
+
+        const { bidId, message, offerPrice, personCount } = bidData;
+        const formattedBidData = {
+          id: bidId,
+          personCount,
+          message,
+          offerPrice,
+        };
+        console.log("biddata:", bidData);
+        console.log("formattedbiddata:", formattedBidData);
+
+        return {
+          url: "/api/Bid/changeBid",
+          method: "POST",
+          body: {
+            ...formattedBidData,
+            dateTime: new Date().toISOString(),
+          },
+        };
+      },
+    }),
     addWaypoint: builder.mutation({
       query: (data) => {
         const {
@@ -164,10 +193,8 @@ export const {
   useAddVoyageImageMutation,
   useAddWaypointMutation,
   useDeleteVoyageImageMutation,
-} = extendedApiSlice;
-
-export const {
   useGetVoyagesByUserByIdQuery,
   useGetVoyageByIdQuery,
   useSendBidMutation,
+  useChangeBidMutation,
 } = extendedApiSlice;

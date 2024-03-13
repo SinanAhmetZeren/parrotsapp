@@ -42,10 +42,7 @@ import { CreateBidComponent } from "../components/CreateBidComponent";
 import { RenderPolylinesComponent } from "../components/RenderPolylinesComponent";
 import { useSelector } from "react-redux";
 import { useFonts } from "expo-font";
-import {
-  WaypointFlatListVoyageDetailsScreen,
-  WaypointItem,
-} from "../components/WaypointFlatlist";
+import { WaypointFlatListVoyageDetailsScreen } from "../components/WaypointFlatlist";
 
 const VoyageDetailScreen = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -167,9 +164,25 @@ const VoyageDetailScreen = () => {
   const navigation = useNavigation();
 
   if (isSuccessVoyages) {
+    const ownVoyage = userId == VoyageData.user.id;
     const bids = VoyageData.bids || [];
+    console.log("bids: ", bids);
+    const hasBidWithUserId = bids.some((bid) => bid.userId === userId);
+    const userBid = bids.find((bid) => bid.userId === userId);
+    let userBidPrice = "";
+    let userBidPersons = "";
+    let userBidMessage = "";
+    let userBidId = "";
+
+    if (userBid) {
+      userBidPrice = userBid.offerPrice;
+      userBidPersons = userBid.personCount;
+      userBidMessage = userBid.message;
+      userBidId = userBid.id;
+      console.log("??? -->> ", userBidId);
+    }
+
     const waypoints = VoyageData.waypoints || [];
-    console.log(waypoints);
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
     const userProfileImage = userData.profileImageUrl;
@@ -447,22 +460,26 @@ const VoyageDetailScreen = () => {
           />
 
           {/* // Bids */}
-          <View style={styles.mainBidsContainer}>
-            <View style={styles.currentBidsAndSeeAll}>
-              <Text style={styles.currentBidsTitle}>Current Bids</Text>
-              <TouchableOpacity onPress={handleSeeAll}>
-                <Text style={styles.seeAllButton}>See All</Text>
-              </TouchableOpacity>
-            </View>
 
-            <View style={styles.allBidsContainer}>
-              <RenderBidsComponent
-                bids={bids}
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-              />
+          {bids.length !== 0 ? (
+            <View style={styles.mainBidsContainer2}>
+              <View style={styles.currentBidsAndSeeAll}>
+                <Text style={styles.currentBidsTitle}>Current Bids</Text>
+                <TouchableOpacity onPress={handleSeeAll}>
+                  <Text style={styles.seeAllButton}>See All</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.allBidsContainer}>
+                <RenderBidsComponent
+                  bids={bids}
+                  modalVisible={modalVisible}
+                  setModalVisible={setModalVisible}
+                  ownVoyage={ownVoyage}
+                />
+              </View>
             </View>
-          </View>
+          ) : null}
 
           {/* // enter bid */}
 
@@ -472,6 +489,11 @@ const VoyageDetailScreen = () => {
               userProfileImage={userProfileImage}
               voyageId={voyageId}
               userId={userId}
+              userBidId={userBidId}
+              hasBidWithUserId={hasBidWithUserId}
+              userBidPrice={userBidPrice}
+              userBidPersons={userBidPersons}
+              userBidMessage={userBidMessage}
             />
           </View>
         </ScrollView>
@@ -721,6 +743,12 @@ const styles = StyleSheet.create({
     color: "#3c9dde",
   },
   mainBidsContainer: {
+    borderRadius: vw(5),
+    marginHorizontal: vw(2),
+    borderColor: "#93c9ed",
+    // borderWidth: 2,
+  },
+  mainBidsContainer2: {
     borderRadius: vw(5),
     marginHorizontal: vw(2),
     borderColor: "#93c9ed",

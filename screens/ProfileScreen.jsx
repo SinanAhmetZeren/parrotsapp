@@ -21,7 +21,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import VoyageList from "../components/VoyageList";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
-import { useFocusEffect } from "@react-navigation/native";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";

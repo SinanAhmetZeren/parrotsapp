@@ -12,21 +12,35 @@ import {
   TextInput,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { useSendBidMutation } from "../slices/VoyageSlice";
+import {
+  useSendBidMutation,
+  useChangeBidMutation,
+} from "../slices/VoyageSlice";
 
 export const CreateBidComponent = ({
   userProfileImage,
   userName,
   userId,
   voyageId,
+  hasBidWithUserId,
+  userBidId,
+  userBidPersons,
+  userBidPrice,
+  userBidMessage,
 }) => {
   const [visible, setVisible] = useState(false);
+  const [changeModalVisible, setChangeModalVisible] = useState(false);
   const [price, setPrice] = useState(0);
+  const [existingBidPrice, setExistingBidPrice] = useState(userBidPrice);
   const [message, setMessage] = useState("");
+  const [existingMessage, setExistingMessage] = useState(userBidMessage);
   const [persons, setPersons] = useState(0);
+  const [existingPersons, setExistingPersons] = useState(userBidPersons);
   const textInputRef = useRef(null);
   const [sendBid] = useSendBidMutation();
+  const [changeBid] = useChangeBidMutation();
 
+  console.log("userBidId", userBidId);
   useEffect(() => {
     if (visible && textInputRef.current) {
       textInputRef.current.focus();
@@ -54,8 +68,6 @@ export const CreateBidComponent = ({
   };
 
   const handleSendBid = (userProfileImage, userName) => {
-    console.log("from bid component, profileImage: ", userProfileImage);
-    console.log("from bid component, username: ", userName);
     let bidData = {
       personCount: persons,
       message: message,
@@ -68,6 +80,40 @@ export const CreateBidComponent = ({
     };
 
     sendBid(bidData);
+    setVisible(false);
+  };
+
+  const handleIncrementExistingPrice = () => {
+    setExistingBidPrice(existingBidPrice + 1);
+  };
+
+  const handleDecrementExistingPrice = () => {
+    if (existingBidPrice > 0) {
+      setExistingBidPrice(existingBidPrice - 1);
+    }
+  };
+
+  const handleIncrementExistingPersons = () => {
+    setExistingPersons(existingPersons + 1);
+  };
+
+  const handleDecrementExistingPersons = () => {
+    if (existingPersons > 0) {
+      setExistingPersons(existingPersons - 1);
+    }
+  };
+
+  const handleChangeBid = (bidId) => {
+    let bidData = {
+      personCount: existingPersons,
+      message: existingMessage,
+      offerPrice: existingBidPrice,
+      voyageId,
+      userId,
+      bidId: userBidId,
+    };
+
+    changeBid(bidData);
     setVisible(false);
   };
 
@@ -84,12 +130,31 @@ export const CreateBidComponent = ({
     setMessage("");
   };
 
+  const handleOpenChangeModal = () => {
+    console.log("open change modal for bid");
+    setChangeModalVisible(true);
+  };
+
+  const handleCloseChangeModal = () => {
+    console.log("close modal for change bid");
+    setChangeModalVisible(false);
+    setPersons(0);
+    setPrice(0);
+    setMessage("");
+  };
+
   return (
     <View>
       <View style={styles2.bidButtonContainer}>
-        <TouchableOpacity onPress={handleOpenModal}>
-          <Text style={styles2.createBidButton}>Create Bid</Text>
-        </TouchableOpacity>
+        {hasBidWithUserId ? (
+          <TouchableOpacity onPress={handleOpenChangeModal}>
+            <Text style={styles2.createBidButton}>Change Bid</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={handleOpenModal}>
+            <Text style={styles2.createBidButton}>Create Bid</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <Modal
@@ -170,6 +235,94 @@ export const CreateBidComponent = ({
                 style={styles2.buttonSendBidContainer}
               >
                 <Text style={styles2.buttonSave}>Send Bid</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* ///// */}
+      <Modal
+        visible={changeModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={handleCloseChangeModal}
+      >
+        <View style={styles2.modalContainer}>
+          <View style={styles2.innerContainer}>
+            <Text style={styles2.title}>Change Your Bid</Text>
+
+            {/* Bid Amount */}
+            <View style={styles2.inputMainContainer}>
+              <Text style={styles2.InputName}>Offer Price: </Text>
+
+              <View style={styles2.counterContainer}>
+                <TouchableOpacity onPress={handleDecrementExistingPrice}>
+                  <Text style={styles2.buttonCount}>-</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  ref={textInputRef}
+                  style={styles2.bidInput}
+                  keyboardType="numeric"
+                  value={existingBidPrice.toString()}
+                  onChangeText={(text) =>
+                    setExistingBidPrice(parseInt(text) || 0)
+                  }
+                />
+
+                <TouchableOpacity onPress={handleIncrementExistingPrice}>
+                  <Text style={styles2.buttonCount}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Person count */}
+            <View style={styles2.inputMainContainer}>
+              <Text style={styles2.InputName}>Persons: </Text>
+
+              <View style={styles2.counterContainer}>
+                <TouchableOpacity onPress={handleDecrementExistingPersons}>
+                  <Text style={styles2.buttonCount}>-</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles2.bidInput}
+                  keyboardType="numeric"
+                  value={existingPersons.toString()}
+                  onChangeText={(text) =>
+                    setExistingPersons(parseInt(text) || 0)
+                  }
+                />
+
+                <TouchableOpacity onPress={handleIncrementExistingPersons}>
+                  <Text style={styles2.buttonCount}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Message */}
+            <TextInput
+              style={styles2.messageInput}
+              placeholder="Enter your message"
+              placeholderTextColor="#2ac898"
+              multiline
+              value={existingMessage}
+              onChangeText={(text) => setExistingMessage(text)}
+            />
+
+            {/* Buttons */}
+            <View style={styles2.buttonsContainer}>
+              <TouchableOpacity
+                onPress={handleCloseChangeModal}
+                style={styles2.buttonCancelContainer}
+              >
+                <Text style={styles2.buttonClear}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleChangeBid()}
+                style={styles2.buttonSendBidContainer}
+              >
+                <Text style={styles2.buttonSave}>Change Bid</Text>
               </TouchableOpacity>
             </View>
           </View>

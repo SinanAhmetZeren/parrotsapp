@@ -17,7 +17,6 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function VoyageCardProfile({
   cardHeader,
-  cardSubHeader,
   cardDescription,
   cardImage,
   vacancy,
@@ -111,7 +110,7 @@ export default function VoyageCardProfile({
           </View>
           <Text
             style={styles.cardDescription}
-            numberOfLines={8}
+            numberOfLines={5}
             ellipsizeMode="tail"
           >
             {cardDescription}
