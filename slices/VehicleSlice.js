@@ -27,10 +27,59 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    createVehicle: builder.mutation({
+      query: (data) => {
+        const { formData, name, description, userId, capacity } = data;
+        const queryParams = new URLSearchParams({
+          Name: name,
+          Description: description,
+          UserId: userId,
+          Capacity: capacity,
+        });
+        const url = `/api/Vehicle/AddVehicle?${queryParams}`;
+        console.log("url");
+        console.log(url);
+
+        return {
+          url,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
+    }),
+    addVehicleImage: builder.mutation({
+      query: (data) => {
+        console.log(data);
+        const { formData, vehicleId } = data;
+        const url = `/api/Vehicle/${vehicleId}/AddVehicleImage`;
+        return {
+          url,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
+    }),
+    deleteVehicleImage: builder.mutation({
+      query: (imageId) => ({
+        url: `/api/Vehicle/deleteVehicleImage/${imageId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 
   overrideExisting: true,
 });
 
-export const { useGetVehiclesByUserByIdQuery, useGetVehicleByIdQuery } =
-  extendedApiSlice;
+export const {
+  useGetVehiclesByUserByIdQuery,
+  useGetVehicleByIdQuery,
+  useCreateVehicleMutation,
+  useAddVehicleImageMutation,
+  useDeleteVehicleImageMutation,
+} = extendedApiSlice;

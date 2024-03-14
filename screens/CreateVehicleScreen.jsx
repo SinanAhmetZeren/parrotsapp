@@ -7,7 +7,6 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Modal,
   Button,
   StyleSheet,
   ScrollView,
@@ -15,22 +14,19 @@ import {
 } from "react-native";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
 import {
-  useCreateVoyageMutation,
-  useAddVoyageImageMutation,
-  useDeleteVoyageImageMutation,
-} from "../slices/VoyageSlice";
+  useCreateVehicleMutation,
+  useAddVehicleImageMutation,
+  useDeleteVehicleImageMutation,
+} from "../slices/VehicleSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
-import {
-  MaterialIcons,
-  AntDesign,
-  Fontisto,
-  Feather,
-} from "@expo/vector-icons";
+import { MaterialIcons, AntDesign, Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import CreateVoyageMapComponent from "../components/CreateVoyageMapComponent";
+import DropdownComponentType from "../components/DropdownComponentType";
+import StepBarVehicle from "../components/StepBarVehicle";
+import { useNavigation } from "@react-navigation/native";
 
-const CreateVehicleScreen = () => {
+export const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
   const {
     data: userData,
@@ -40,69 +36,51 @@ const CreateVehicleScreen = () => {
     isSuccess,
     refetch,
   } = useGetUserByIdQuery(userId);
-  const [createVoyage] = useCreateVoyageMutation();
-  const [addVoyageImage] = useAddVoyageImageMutation();
-  const [deleteVoyageImage] = useDeleteVoyageImageMutation();
-
-  const [name, setName] = useState("Island Breezes Expedition");
-  const [brief, setBrief] = useState(
-    "The Island Breezes Expedition beckons, a tranquil sailboat voyage designed for camaraderie and natural wonders. Join your friends on an odyssey embracing the open seas and secluded islands. This voyage invites you to witness nature's spectacle and find serenity in the rhythmic embrace of wind and waves."
-  );
+  const [createVehicle] = useCreateVehicleMutation();
+  const [addVehicleImage] = useAddVehicleImageMutation();
+  const [deleteVehicleImage] = useDeleteVehicleImageMutation();
   const voyageDes = `Embark on the "Island Breeze", a meticulously planned sailboat expedition offering a seamless blend of adventure and repose. Departing from a quaint harbor, your journey unfolds along the coastline, where the wind becomes your guide, and the sunsets paint the horizon in hues of tranquility.
-
   Waypoints:
   1. Harbor Haven (Starting Point): Begin your journey from Harbor Haven, a haven for sailors, echoing with tales of the sea and the promise of exploration.
-  2. Open Waters Gateway: Navigate through the Open Waters Gateway, a vast expanse offering panoramic views and the gentle embrace of the open sea.
-  3. Sunset Archipelago: Anchor at Sunset Archipelago, where islands glow with the warm hues of twilight, providing the perfect setting for shared stories under the starlit sky.
-  4. Whale Watch Cove: Sail to Whale Watch Cove, renowned for encounters with marine wonders. Marvel at playful dolphins and the majestic presence of whales.
-  5. Hidden Lagoon Oasis: Set course for the Hidden Lagoon Oasis, a secluded paradise surrounded by lush landscapes and pristine waters, inviting moments of peaceful reflection.
-  6. Island Village Exploration: Dock at an Island Village, immersing yourself in local culture and savoring authentic cuisine, forging connections with the welcoming islanders.
-  7. Trade Winds Passage: Navigate the Trade Winds Passage, allowing the winds to carry you effortlessly towards the next captivating destination, embodying a sense of boundless freedom.
-  8. Reef Guardian Sanctuary: Discover the Reef Guardian Sanctuary, an underwater haven boasting vibrant coral reefs and diverse marine life, inviting exploration beneath the surface.
   9. Final Destination - Tranquil Harbor: Conclude your expedition at Tranquil Harbor, a serene retreat where the memories of the voyage linger, offering a final opportunity for quiet reflection.
   `;
 
+  const [name, setName] = useState("Island Breezes Expedition");
   const [description, setDescription] = useState(voyageDes);
-  const [vacancy, setVacancy] = useState("15");
-  const [startDate, setStartDate] = useState("2024-03-14T09:00:00.000Z");
-  const [endDate, setEndDate] = useState("2024-03-15T09:00:00.000Z");
-  const [lastBidDate, setLastBidDate] = useState("11/11/1111");
-  const [minPrice, setMinPrice] = useState("100");
-  const [maxPrice, setMaxPrice] = useState("120");
-  const [isAuction, setIsAuction] = useState(true);
-  const [isFixedPrice, setIsFixedPrice] = useState(true);
-  const [vehicleId, setVehicleId] = useState("3");
-  const [voyageId, setVoyageId] = useState("");
+  const [capacity, setCapacity] = useState("15");
+  const [vehicleType, setVehicleType] = useState("");
+  const [vehicleId, setVehicleId] = useState("");
   const [image, setImage] = useState(
     "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/aad9496c-c258-4ce9-b64b-78e20f5bf2fe.jpeg"
   );
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-
   const [currentStep, setCurrentStep] = useState(1);
+  const navigation = useNavigation();
 
   useEffect(() => {
     console.log("---");
   }, [isSuccess]);
 
-  useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
-
-  const printState = () => {
-    console.log("----------");
-    console.log("name:", name);
-    console.log("brief:", brief);
-    console.log("description:", description);
-    console.log("vacancy:", vacancy);
-    console.log("startDate:", startDate);
-    console.log("endDate:", endDate);
-    console.log("----------");
-  };
-
   const changeCurrentState = (index) => {
     setCurrentStep(index);
   };
 
-  const handleCreateVoyage = async () => {
+  const goToProfilePage = () => {
+    setName("");
+    setDescription("");
+    setCapacity(0);
+    setVehicleType("");
+    setVehicleId("");
+    setImage("");
+    setVoyageImage("");
+    setAddedVoyageImages([]);
+    setCurrentStep(1);
+
+    navigation.navigate("ProfileScreen");
+  };
+
+  const handleCreateVehicle = async () => {
     if (!image) {
       return;
     }
@@ -115,44 +93,24 @@ const CreateVehicleScreen = () => {
     });
 
     try {
-      const formattedStartDate = convertDateFormat(startDate);
-      const formattedEndDate = convertDateFormat(endDate);
-      const formattedLastBidDate = convertDateFormat_LastBidDate(lastBidDate);
-
-      const response = await createVoyage({
+      const response = await createVehicle({
         formData,
         name,
-        brief,
         description,
-        vacancy,
-        formattedStartDate,
-        formattedEndDate,
-        formattedLastBidDate,
-        minPrice,
-        maxPrice,
-        isAuction,
-        isFixedPrice,
         userId,
-        vehicleId,
+        vehicleType,
+        capacity,
       });
-      const createdVoyageId = response.data.data.id;
-      setVoyageId(createdVoyageId);
-
+      const createdVehicleId = response.data.data.id;
+      console.log("response: ", response);
+      console.log("created Vehicle Id: ", createdVehicleId);
+      setVehicleId(createdVehicleId);
       setDescription("");
-      setVacancy("");
-      setStartDate("");
-      setEndDate("");
-      setLastBidDate("");
-      setMinPrice("");
-      setMaxPrice("");
-      setIsAuction("");
-      setIsFixedPrice("");
-      setVehicleId("");
-      // setVoyageId("");
+      setCapacity("");
+      setVehicleType("");
       setImage("");
       setVoyageImage("");
       setAddedVoyageImages("");
-
       setCurrentStep(2);
     } catch (error) {
       console.error("Error uploading image", error);
@@ -171,13 +129,16 @@ const CreateVehicleScreen = () => {
       name: "profileImage.jpg",
     });
 
+    console.log("formdata", formData);
+    console.log("vehicleId", vehicleId);
+
     try {
-      const addedVoyageResponse = await addVoyageImage({
+      const addedVehicleImageResponse = await addVehicleImage({
         formData,
-        voyageId,
+        vehicleId,
       });
 
-      const addedVoyageImageId = addedVoyageResponse.data.imagePath;
+      const addedVoyageImageId = addedVehicleImageResponse.data.imagePath;
       const newItem = {
         addedVoyageImageId,
         voyageImage,
@@ -216,8 +177,7 @@ const CreateVehicleScreen = () => {
   };
 
   const handleDeleteImage = (imageId) => {
-    console.log("image id to delete", imageId);
-    deleteVoyageImage(imageId);
+    deleteVehicleImage(imageId);
     setAddedVoyageImages((prevImages) =>
       prevImages.filter((item) => item.addedVoyageImageId !== imageId)
     );
@@ -225,9 +185,23 @@ const CreateVehicleScreen = () => {
 
   if (isSuccess) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
-    const dropdownData = userData.usersVehicles.map((vehicle) => ({
-      label: vehicle.name,
-      value: vehicle.id,
+
+    const VehicleTypes = {
+      Boat: "Boat",
+      Car: "Car",
+      Caravan: "Caravan",
+      Bus: "Bus",
+      Walk: "Walk",
+      Run: "Run",
+      Motorcycle: "Motorcycle",
+      Bicycle: "Bicycle",
+      TinyHouse: "TinyHouse",
+      Airplane: "Airplane",
+    };
+
+    const dropdownData = Object.keys(VehicleTypes).map((key, index) => ({
+      label: key,
+      value: key,
     }));
 
     const maxItems = 10;
@@ -248,238 +222,268 @@ const CreateVehicleScreen = () => {
 
     return (
       <>
-        <ScrollView style={styles.scrollview}>
-          <View style={styles.overlay}>
-            <View style={styles.profileContainer}>
-              <TouchableOpacity onPress={pickProfileImage}>
-                {image ? (
-                  <Image source={{ uri: image }} style={styles.profileImage} />
-                ) : (
-                  <Image
-                    // source={{ uri: profileImageUrl }}
-                    source={require("../assets/placeholder.png")}
-                    style={styles.profileImage}
-                  />
-                )}
-              </TouchableOpacity>
-              {/* Your other UI elements */}
-            </View>
-
-            <View style={styles.formContainer}>
-              {/* Username */}
-
-              <View style={styles.socialBox}>
-                <Feather
-                  style={styles.icon}
-                  name="user"
-                  size={24}
-                  color="black"
-                />
-                <Text style={styles.inputDescription}>Voyage name</Text>
-
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter voyage name"
-                  value={name}
-                  onChangeText={(text) => setName(text)}
-                />
-              </View>
-
-              <View style={styles.socialBox}>
-                <Fontisto
-                  style={styles.icon}
-                  name="email"
-                  size={24}
-                  color="black"
-                />
-                <Text style={styles.inputDescription}>Brief</Text>
-                <TextInput
-                  placeholder="Enter voyage brief"
-                  value={brief}
-                  multiline
-                  numberOfLines={5}
-                  onChangeText={(text) => setBrief(text)}
-                  style={styles.textDescriptionInput}
-                />
-              </View>
-
-              {/* Phone Number */}
-              <View style={styles.socialBox}>
-                <Feather
-                  style={styles.icon}
-                  name="phone"
-                  size={24}
-                  color="black"
-                />
-                <Text style={styles.inputDescription}>Description</Text>
-
-                <TextInput
-                  style={styles.textDescriptionInput}
-                  multiline
-                  placeholder="Enter voyage description"
-                  numberOfLines={8}
-                  value={description}
-                  onChangeText={(text) => setDescription(text)}
-                />
-              </View>
-
-              {/* Facebook Profile */}
-              <View style={styles.socialBox}>
-                <Feather
-                  style={styles.icon}
-                  name="facebook"
-                  size={24}
-                  color="black"
-                />
-                <Text style={styles.inputDescription}>Vacancy</Text>
-
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Enter voyage vacancy"
-                  value={vacancy}
-                  onChangeText={(text) => setVacancy(text)}
-                  keyboardType="numeric"
-                />
-              </View>
-
-              <View style={styles.step123}>
-                <Button
-                  title="step 1"
-                  onPress={() => {
-                    changeCurrentState(1);
-                  }}
-                />
-                <Button
-                  title="step 2"
-                  onPress={() => {
-                    changeCurrentState(2);
-                  }}
-                />
-                <Button
-                  title="step 3"
-                  onPress={() => {
-                    changeCurrentState(3);
-                  }}
-                />
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.overlay}>
-            <View style={styles.selectedChoice}>
-              <Text style={styles.selectedText}>Voyage Images</Text>
-            </View>
-
-            <View style={styles.profileContainer}>
-              <TouchableOpacity onPress={pickVoyageImage}>
-                {voyageImage ? (
-                  <Image
-                    source={{ uri: voyageImage }}
-                    style={styles.profileImage}
-                  />
-                ) : (
-                  <Image
-                    // source={{ uri: profileImageUrl }}
-                    source={require("../assets/plus-watercolor.png")}
-                    style={styles.profileImage2}
-                  />
-                )}
-              </TouchableOpacity>
-              {/* Your other UI elements */}
-            </View>
-            <View
-              style={
-                addedVoyageImages.length <= 1
-                  ? styles.length1
-                  : addedVoyageImages.length === 2
-                  ? styles.length2
-                  : styles.length3
-              }
-            >
-              <FlatList
-                horizontal
-                data={data}
-                keyExtractor={(item) => item.addedVoyageImageId}
-                renderItem={({ item, index }) => {
-                  console.log("index: ", index);
-                  return (
-                    <View key={index} style={styles2.imageContainer1}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          if (item.addedVoyageImageId) {
-                            handleDeleteImage(item.addedVoyageImageId);
-                          }
-                        }}
-                      >
-                        <Image
-                          source={
-                            item.addedVoyageImageId
-                              ? { uri: item.voyageImage }
-                              : require("../assets/placeholder.png")
-                          }
-                          style={styles2.voyageImage1}
-                        />
-
-                        {item.addedVoyageImageId && (
-                          <Text style={styles.deleteAddedImage}>
-                            <MaterialIcons
-                              name="cancel"
-                              size={24}
-                              color="darkred"
-                            />
-                          </Text>
-                        )}
-                      </TouchableOpacity>
-                    </View>
-                  );
-                }}
-              />
-            </View>
-
-            {voyageImage ? (
-              <View style={styles.addVoyageImageButton}>
-                <TouchableOpacity onPress={() => handleUploadImage()}>
-                  <AntDesign name="clouduploado" size={24} color="white" />
+        <StepBarVehicle style={styles.StepBar} currentStep={currentStep} />
+        {currentStep == 1 ? (
+          <ScrollView style={styles.scrollview}>
+            <View style={styles.overlay}>
+              <View style={styles.profileContainer}>
+                <TouchableOpacity onPress={pickProfileImage}>
+                  {image ? (
+                    <Image
+                      source={{ uri: image }}
+                      style={styles.backgroundImage}
+                    />
+                  ) : (
+                    <Image
+                      source={require("../assets/placeholder.png")}
+                      style={styles.backgroundImage}
+                    />
+                  )}
                 </TouchableOpacity>
               </View>
-            ) : null}
 
-            {/* <View style={styles.refetch}> */}
-            <View style={{ display: "none" }}>
-              <Button
-                title="print state 2"
-                onPress={() => {
-                  printState2();
-                }}
-              />
+              <View style={styles.profileImageAndSocial}>
+                <View style={styles.formContainer}>
+                  {/* /// name /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Name:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        placeholder="Enter voyage name"
+                        value={name}
+                        onChangeText={(text) => setName(text)}
+                      />
+                    </View>
+                  </View>
+                  {/* /// name  /// */}
+
+                  {/* /// type /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Type:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <DropdownComponentType
+                        data={dropdownData}
+                        setVehicleType={setVehicleType}
+                      />
+                    </View>
+                  </View>
+                  {/* /// type /// */}
+
+                  {/* /// DESC /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Description:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        multiline
+                        placeholder="Enter voyage description"
+                        numberOfLines={10}
+                        value={description}
+                        onChangeText={(text) => setDescription(text)}
+                      />
+                    </View>
+                  </View>
+                  {/* /// DESC  /// */}
+
+                  {/* /// VACANCY /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Capacity:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        placeholder="Enter vehicle capacity"
+                        value={capacity}
+                        onChangeText={(text) => setCapacity(text)}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+                  {/* /// VACANCY /// */}
+
+                  {/* Save Button */}
+                  <View style={styles.createVoyageButton}>
+                    <Button
+                      title="Create Vehicle"
+                      onPress={() => handleCreateVehicle()}
+                    />
+                  </View>
+
+                  <View style={{ display: "none" }}>
+                    <Button
+                      title="print state1"
+                      onPress={() => {
+                        printState();
+                      }}
+                    />
+                  </View>
+
+                  <View style={styles.step123}>
+                    <Button
+                      title="step 1"
+                      onPress={() => {
+                        changeCurrentState(1);
+                      }}
+                    />
+                    <Button
+                      title="step 2"
+                      onPress={() => {
+                        changeCurrentState(2);
+                      }}
+                    />
+                    <Button
+                      title="step 3"
+                      onPress={() => {
+                        changeCurrentState(3);
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
             </View>
-          </View>
+          </ScrollView>
+        ) : null}
 
-          {/* Save Button */}
-          <View style={styles.refetch}>
-            <Button
-              title="print state1"
-              onPress={() => {
-                printState();
-              }}
-            />
-          </View>
-          <View style={styles.createVehicleButton}>
-            <Button
-              title="Create Voyage"
-              onPress={() => handleCreateVoyage()}
-            />
-          </View>
-        </ScrollView>
+        {currentStep === 2 ? (
+          <ScrollView style={styles.scrollview}>
+            <View style={styles.overlay}>
+              <View style={styles.selectedChoice}>
+                <Text style={styles.selectedText}>Add Vehicle Images</Text>
+              </View>
+
+              <View style={styles.profileContainer}>
+                <TouchableOpacity onPress={pickVoyageImage}>
+                  {voyageImage ? (
+                    <Image
+                      source={{ uri: voyageImage }}
+                      style={styles.profileImage}
+                    />
+                  ) : (
+                    <Image
+                      // source={{ uri: profileImageUrl }}
+                      source={require("../assets/plus-watercolor.png")}
+                      style={styles.profileImage2}
+                    />
+                  )}
+                </TouchableOpacity>
+                {/* Your other UI elements */}
+              </View>
+              <View
+                style={
+                  addedVoyageImages.length <= 1
+                    ? styles.length1
+                    : addedVoyageImages.length === 2
+                    ? styles.length2
+                    : styles.length3
+                }
+              >
+                <FlatList
+                  horizontal
+                  data={data}
+                  // keyExtractor={(item) => item.addedVoyageImageId}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <View key={index} style={styles2.imageContainer1}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            if (item.addedVoyageImageId) {
+                              handleDeleteImage(item.addedVoyageImageId);
+                            }
+                          }}
+                        >
+                          <Image
+                            source={
+                              item.addedVoyageImageId
+                                ? { uri: item.voyageImage }
+                                : require("../assets/placeholder.png")
+                            }
+                            style={styles2.voyageImage1}
+                          />
+
+                          {item.addedVoyageImageId && (
+                            <Text style={styles.deleteAddedImage}>
+                              <MaterialIcons
+                                name="cancel"
+                                size={24}
+                                color="darkred"
+                              />
+                            </Text>
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  }}
+                />
+              </View>
+
+              {voyageImage ? (
+                <View style={styles.addVoyageImageButton}>
+                  <TouchableOpacity onPress={() => handleUploadImage()}>
+                    <AntDesign name="clouduploado" size={24} color="white" />
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+              <TouchableOpacity
+                style={styles.FinishButtonContainer}
+                onPress={() => {
+                  goToProfilePage();
+                }}
+              >
+                <Text style={styles.addWaypointText}> Complete </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        ) : null}
       </>
     );
   }
 };
 
-export default CreateVehicleScreen;
-
 const styles2 = StyleSheet.create({
-  imageContainer1: {},
+  imageContainer1: {
+    // backgroundColor: "white",
+  },
   voyageImage1: {
     height: vh(13),
     width: vh(13),
@@ -489,6 +493,87 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  addWaypointText: {
+    alignSelf: "center",
+    padding: vh(1),
+    borderRadius: vh(2),
+    backgroundColor: "rgba(0, 119, 234,1)",
+    color: "white",
+    fontWeight: "600",
+    marginBottom: vh(2),
+  },
+  FinishButtonContainer: {
+    marginTop: vh(1),
+    borderRadius: vh(2),
+    width: vw(95),
+    alignSelf: "center",
+    marginBottom: vh(5),
+  },
+  profileImageAndSocial: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderRadius: vh(5),
+    borderBottomLeftRadius: vh(0),
+    borderBottomRightRadius: vh(0),
+    width: "100%",
+    alignSelf: "center",
+    paddingBottom: vh(0.95),
+    backgroundColor: "white",
+    top: vh(-5),
+  },
+  calendarStyle: {
+    backgroundColor: "white",
+    width: vw(86),
+    alignSelf: "center",
+    marginBottom: vh(1),
+    borderRadius: vh(3),
+  },
+  checkboxText: {
+    color: "#6b7f9d",
+    fontWeight: "500",
+    paddingRight: vw(2),
+  },
+  auctionFixedPrice: {
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
+  },
+  latLngNameRow: {
+    flexDirection: "row",
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
+    marginBottom: vh(0.5),
+  },
+  latLngLabel: {
+    justifyContent: "center",
+    backgroundColor: "#f4f5f6",
+    marginVertical: vh(0.3),
+    padding: vh(0.4),
+    borderRadius: vh(3),
+    borderColor: "#babbbc",
+  },
+  latorLngtxt: {
+    color: "#6b7f9d",
+    fontWeight: "500",
+    width: vw(25),
+    textAlign: "center",
+  },
+  latorLng: {
+    flexDirection: "row",
+    backgroundColor: "#fafbfc",
+    marginVertical: vh(0.3),
+    padding: vh(0.4),
+    // borderRadius: vh(3),
+    borderTopRightRadius: vh(3),
+    borderBottomRightRadius: vh(3),
+    // borderWidth: 1,
+    borderColor: "#babbbc",
+    width: vw(64),
+  },
+  textInput5: {
+    fontSize: 13,
+    paddingLeft: vw(1),
+    width: "90%",
+  },
   selectedChoice: {
     marginTop: vh(1),
     alignItems: "center",
@@ -500,7 +585,7 @@ const styles = StyleSheet.create({
   selectedText: {
     color: "rgba(91,91,255,1)",
     fontSize: 18,
-    fontWeight: "700",
+    fontWeight: "500",
     textAlign: "center",
   },
   length1: {
@@ -559,13 +644,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   overlay: {
-    // backgroundColor: "rgba(10, 11, 211,0.16)",
+    // backgroundColor: "red",
   },
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginHorizontal: vh(2),
     marginTop: vh(1),
     borderRadius: vh(1.5),
   },
@@ -579,6 +663,10 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
     borderColor: "rgba(190, 119, 234,0.6)",
   },
+  backgroundImage: {
+    width: vw(100),
+    height: vh(30),
+  },
   profileImage2: {
     marginLeft: vw(3),
     marginVertical: vh(1),
@@ -589,42 +677,39 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 119, 234,0.1)",
     borderWidth: 5,
   },
-
   mainCheckboxContainer: {
-    padding: vh(1),
+    paddingHorizontal: vh(1),
     flexDirection: "row",
     justifyContent: "space-around",
-    // borderWidth: 1,
-    borderRadius: vh(1),
-    backgroundColor: "white",
-    borderColor: "rgba(190, 119, 234,0.4)",
     marginTop: vh(0.3),
+    backgroundColor: "#f1f2f3",
+    borderRadius: vh(3),
   },
   checkboxContainer: {
     flexDirection: "row",
     margin: vh(0.2),
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(0.5),
+    borderRadius: vh(2),
   },
   calendarContainer: {
-    backgroundColor: "white",
-    borderRadius: vh(1),
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
+    borderRadius: vh(3),
+    backgroundColor: "#f1f2f3",
+    marginBottom: vh(1),
   },
   formContainer: {
     padding: vh(2),
-    top: vh(-2),
   },
   recycle: {
     color: "purple",
   },
 
-  createVehicleButton: {
+  createVoyageButton: {
     width: vw(40),
     alignSelf: "center",
     borderRadius: vh(2),
     overflow: "hidden",
     marginTop: vh(1),
-    paddingBottom: vh(5),
   },
   refetch: {
     padding: 3,
@@ -667,7 +752,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   voyageDates: {
-    color: "rgba(0, 119, 234,0.9)",
+    color: "#6b7f9d",
+    fontWeight: "500",
     fontSize: 13,
     marginVertical: vh(1),
     alignSelf: "flex-start",
@@ -678,6 +764,7 @@ const styles = StyleSheet.create({
     marginVertical: 1,
     fontSize: 14,
     padding: vw(1),
+    // backgroundColor: "green",
   },
   textDescriptionInput: {
     width: vw(60),
@@ -686,6 +773,7 @@ const styles = StyleSheet.create({
     marginVertical: 1,
     fontSize: 14,
     padding: vw(1),
+    backgroundColor: "green",
   },
   socialBox: {
     flexDirection: "row",

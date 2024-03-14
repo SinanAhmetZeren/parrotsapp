@@ -44,7 +44,7 @@ export const RenderBidsComponent = ({
           </View>
           <View>
             <Text style={styles.offerPrice}>
-              {bid.currency} {bid.offerPrice.toFixed(2)}
+              {bid.currency} {bid.offerPrice}
             </Text>
           </View>
         </View>

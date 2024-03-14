@@ -18,7 +18,7 @@ import ProfileScreenPublic from "./screens/ProfileScreenPublic";
 import EditProfileScreen from "./screens/EditProfileScreen";
 import MyVoyagesScreen from "./screens/MyVoyagesScreen";
 import CreateVoyageScreen from "./screens/CreateVoyageScreen";
-import CreateVehicleScreen from "./screens/CreateVehicleScreen";
+import { CreateVehicleScreen } from "./screens/CreateVehicleScreen";
 import MyVehiclesScreen from "./screens/MyVehiclesScreen";
 import MyBidsScreen from "./screens/MyBidsScreen";
 import MessagesScreen from "./screens/MessagesScreen";
@@ -128,13 +128,11 @@ const AddNewStack = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
       <Stack.Screen
         name="CreateVehicleScreen"
         component={CreateVehicleScreen}
       />
-      {/* <Stack.Screen name="AddNewVoyage" component={AddNewVoyageScreen} />
-      <Stack.Screen name="AddNewVehicle" component={AddNewVehicleScreen} /> */}
+      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
     </Stack.Navigator>
   );
 };

@@ -350,320 +350,324 @@ const CreateVoyageScreen = () => {
                   {image ? (
                     <Image
                       source={{ uri: image }}
-                      style={styles.profileImage}
+                      style={styles.backgroundImage}
                     />
                   ) : (
                     <Image
                       // source={{ uri: profileImageUrl }}
                       source={require("../assets/placeholder.png")}
-                      style={styles.profileImage}
+                      style={styles.backgroundImage}
                     />
                   )}
                 </TouchableOpacity>
                 {/* Your other UI elements */}
               </View>
 
-              <View style={styles.formContainer}>
-                {/* Username */}
+              <View style={styles.profileImageAndSocial}>
+                <View style={styles.formContainer}>
+                  {/* Username */}
 
-                {/* /// name /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>
-                      <Feather
-                        style={styles.icon}
-                        name="feather"
-                        size={24}
-                        color="black"
-                      />{" "}
-                      Name:
-                    </Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Enter voyage name"
-                      value={name}
-                      onChangeText={(text) => setName(text)}
-                    />
-                  </View>
-                </View>
-                {/* /// name  /// */}
-
-                {/* /// brief /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>
-                      <Feather
-                        style={styles.icon}
-                        name="feather"
-                        size={24}
-                        color="black"
-                      />{" "}
-                      Brief:
-                    </Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Enter voyage brief"
-                      value={brief}
-                      multiline
-                      numberOfLines={5}
-                      onChangeText={(text) => setBrief(text)}
-                    />
-                  </View>
-                </View>
-                {/* /// brief  /// */}
-
-                {/* /// DESC /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>
-                      <Feather
-                        style={styles.icon}
-                        name="feather"
-                        size={24}
-                        color="black"
-                      />{" "}
-                      Description:
-                    </Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      multiline
-                      placeholder="Enter voyage description"
-                      numberOfLines={10}
-                      value={description}
-                      onChangeText={(text) => setDescription(text)}
-                    />
-                  </View>
-                </View>
-                {/* /// DESC  /// */}
-
-                {/* /// VACANCY /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>
-                      <Feather
-                        style={styles.icon}
-                        name="feather"
-                        size={24}
-                        color="black"
-                      />{" "}
-                      Vacancy:
-                    </Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Enter voyage vacancy"
-                      value={vacancy}
-                      onChangeText={(text) => setVacancy(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
-                </View>
-                {/* /// VACANCY /// */}
-
-                {/* /// vehicle /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>
-                      <Feather
-                        style={styles.icon}
-                        name="feather"
-                        size={24}
-                        color="black"
-                      />{" "}
-                      Vehicle:
-                    </Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <DropdownComponent
-                      data={dropdownData}
-                      setVehicleId={setVehicleId}
-                    />
-                  </View>
-                </View>
-                {/* /// vehicle /// */}
-
-                <View style={styles.calendarContainer}>
-                  <View style={styles.voyageDatesContainer}>
-                    <Feather
-                      style={styles.icon}
-                      name="calendar"
-                      size={24}
-                      color="blue"
-                    />
-                    <Text style={styles.voyageDates}>Select Voyage Dates</Text>
-                  </View>
-
-                  <View style={styles.calendarStyle}>
-                    <CalendarPicker
-                      selectedRangeStartTextStyle={styles.startEndText}
-                      selectedRangeEndTextStyle={styles.startEndText}
-                      selectedRangeStyle={styles.calendarSelected}
-                      selectedRangeStartStyle={styles.calendarEndStart}
-                      selectedRangeEndStyle={styles.calendarEndStart}
-                      selectedColor={"blue"}
-                      startFromMonday={true}
-                      allowRangeSelection={true}
-                      minDate={new Date()}
-                      selectedStartDate={startDate}
-                      selectedEndDate={endDate}
-                      onDateChange={onDateChange}
-                      width={300}
-                    />
-                  </View>
-                </View>
-
-                {/* /// LAST BID DATE /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>
-                      <Feather
-                        style={styles.icon}
-                        name="feather"
-                        size={24}
-                        color="black"
-                      />{" "}
-                      Last Bid:
-                    </Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      value={lastBidDate}
-                      onChangeText={handleDateChange}
-                      keyboardType="numeric"
-                      placeholder="MM/DD/YYYY" // Placeholder without hyphens
-                      maxLength={10} // Restrict length for proper date format
-                    />
-                  </View>
-                </View>
-                {/* /// LAST BID DATE /// */}
-
-                {/* /// MIN PRICE /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>
-                      <Feather
-                        style={styles.icon}
-                        name="feather"
-                        size={24}
-                        color="black"
-                      />{" "}
-                      Min Price:
-                    </Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      maxLength={20}
-                      placeholder="Enter Min Price"
-                      value={minPrice}
-                      onChangeText={(text) => setMinPrice(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
-                </View>
-                {/* /// MIN PRICE /// */}
-
-                {/* /// MAX PRICE /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>
-                      <Feather
-                        style={styles.icon}
-                        name="feather"
-                        size={24}
-                        color="black"
-                      />{" "}
-                      Max Price:
-                    </Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      maxLength={20}
-                      placeholder="Enter Max Price"
-                      value={maxPrice}
-                      onChangeText={(text) => setMaxPrice(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
-                </View>
-
-                {/* /// auction fixedprice  /// */}
-                <View style={styles.auctionFixedPrice}>
-                  <View style={styles.mainCheckboxContainer}>
-                    <View style={styles.checkboxContainer}>
-                      <Text style={styles.checkboxText}>Auction </Text>
-                      <View>
-                        <Checkbox
-                          value={isAuction}
-                          onValueChange={setIsAuction}
-                          color={
-                            isAuction ? "rgba(0, 119, 234,0.9)" : undefined
-                          }
-                        />
-                      </View>
+                  {/* /// name /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Name:
+                      </Text>
                     </View>
-
-                    <View style={styles.checkboxContainer}>
-                      <Text style={styles.checkboxText}>FixedPrice </Text>
-                      <View>
-                        <Checkbox
-                          value={isFixedPrice}
-                          onValueChange={setIsFixedPrice}
-                          color={
-                            isFixedPrice ? "rgba(0, 119, 234,0.9)" : undefined
-                          }
-                        />
-                      </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        placeholder="Enter voyage name"
+                        value={name}
+                        onChangeText={(text) => setName(text)}
+                      />
                     </View>
                   </View>
-                </View>
-                {/* /// auction fixedprice  /// */}
+                  {/* /// name  /// */}
 
-                {/* Save Button */}
-                <View style={styles.createVoyageButton}>
-                  <Button
-                    title="Create Voyage"
-                    onPress={() => handleCreateVoyage()}
-                  />
-                </View>
+                  {/* /// brief /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Brief:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        placeholder="Enter voyage brief"
+                        value={brief}
+                        multiline
+                        numberOfLines={5}
+                        onChangeText={(text) => setBrief(text)}
+                      />
+                    </View>
+                  </View>
+                  {/* /// brief  /// */}
 
-                <View style={{ display: "none" }}>
-                  <Button
-                    title="print state1"
-                    onPress={() => {
-                      printState();
-                    }}
-                  />
-                </View>
+                  {/* /// DESC /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Description:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        multiline
+                        placeholder="Enter voyage description"
+                        numberOfLines={10}
+                        value={description}
+                        onChangeText={(text) => setDescription(text)}
+                      />
+                    </View>
+                  </View>
+                  {/* /// DESC  /// */}
 
-                <View style={styles.step123}>
-                  <Button
-                    title="step 1"
-                    onPress={() => {
-                      changeCurrentState(1);
-                    }}
-                  />
-                  <Button
-                    title="step 2"
-                    onPress={() => {
-                      changeCurrentState(2);
-                    }}
-                  />
-                  <Button
-                    title="step 3"
-                    onPress={() => {
-                      changeCurrentState(3);
-                    }}
-                  />
+                  {/* /// VACANCY /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Vacancy:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        placeholder="Enter voyage vacancy"
+                        value={vacancy}
+                        onChangeText={(text) => setVacancy(text)}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+                  {/* /// VACANCY /// */}
+
+                  {/* /// vehicle /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Vehicle:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <DropdownComponent
+                        data={dropdownData}
+                        setVehicleId={setVehicleId}
+                      />
+                    </View>
+                  </View>
+                  {/* /// vehicle /// */}
+
+                  <View style={styles.calendarContainer}>
+                    <View style={styles.voyageDatesContainer}>
+                      <Feather
+                        style={styles.icon}
+                        name="calendar"
+                        size={24}
+                        color="blue"
+                      />
+                      <Text style={styles.voyageDates}>
+                        Select Voyage Dates
+                      </Text>
+                    </View>
+
+                    <View style={styles.calendarStyle}>
+                      <CalendarPicker
+                        selectedRangeStartTextStyle={styles.startEndText}
+                        selectedRangeEndTextStyle={styles.startEndText}
+                        selectedRangeStyle={styles.calendarSelected}
+                        selectedRangeStartStyle={styles.calendarEndStart}
+                        selectedRangeEndStyle={styles.calendarEndStart}
+                        selectedColor={"blue"}
+                        startFromMonday={true}
+                        allowRangeSelection={true}
+                        minDate={new Date()}
+                        selectedStartDate={startDate}
+                        selectedEndDate={endDate}
+                        onDateChange={onDateChange}
+                        width={300}
+                      />
+                    </View>
+                  </View>
+
+                  {/* /// LAST BID DATE /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Last Bid:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        value={lastBidDate}
+                        onChangeText={handleDateChange}
+                        keyboardType="numeric"
+                        placeholder="MM/DD/YYYY" // Placeholder without hyphens
+                        maxLength={10} // Restrict length for proper date format
+                      />
+                    </View>
+                  </View>
+                  {/* /// LAST BID DATE /// */}
+
+                  {/* /// MIN PRICE /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Min Price:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        maxLength={20}
+                        placeholder="Enter Min Price"
+                        value={minPrice}
+                        onChangeText={(text) => setMinPrice(text)}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+                  {/* /// MIN PRICE /// */}
+
+                  {/* /// MAX PRICE /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>
+                        <Feather
+                          style={styles.icon}
+                          name="feather"
+                          size={24}
+                          color="black"
+                        />{" "}
+                        Max Price:
+                      </Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <TextInput
+                        style={styles.textInput5}
+                        maxLength={20}
+                        placeholder="Enter Max Price"
+                        value={maxPrice}
+                        onChangeText={(text) => setMaxPrice(text)}
+                        keyboardType="numeric"
+                      />
+                    </View>
+                  </View>
+
+                  {/* /// auction fixedprice  /// */}
+                  <View style={styles.auctionFixedPrice}>
+                    <View style={styles.mainCheckboxContainer}>
+                      <View style={styles.checkboxContainer}>
+                        <Text style={styles.checkboxText}>Auction </Text>
+                        <View>
+                          <Checkbox
+                            value={isAuction}
+                            onValueChange={setIsAuction}
+                            color={
+                              isAuction ? "rgba(0, 119, 234,0.9)" : undefined
+                            }
+                          />
+                        </View>
+                      </View>
+
+                      <View style={styles.checkboxContainer}>
+                        <Text style={styles.checkboxText}>FixedPrice </Text>
+                        <View>
+                          <Checkbox
+                            value={isFixedPrice}
+                            onValueChange={setIsFixedPrice}
+                            color={
+                              isFixedPrice ? "rgba(0, 119, 234,0.9)" : undefined
+                            }
+                          />
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                  {/* /// auction fixedprice  /// */}
+
+                  {/* Save Button */}
+                  <View style={styles.createVoyageButton}>
+                    <Button
+                      title="Create Voyage"
+                      onPress={() => handleCreateVoyage()}
+                    />
+                  </View>
+
+                  <View style={{ display: "none" }}>
+                    <Button
+                      title="print state1"
+                      onPress={() => {
+                        printState();
+                      }}
+                    />
+                  </View>
+
+                  <View style={styles.step123}>
+                    <Button
+                      title="step 1"
+                      onPress={() => {
+                        changeCurrentState(1);
+                      }}
+                    />
+                    <Button
+                      title="step 2"
+                      onPress={() => {
+                        changeCurrentState(2);
+                      }}
+                    />
+                    <Button
+                      title="step 3"
+                      onPress={() => {
+                        changeCurrentState(3);
+                      }}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -674,7 +678,7 @@ const CreateVoyageScreen = () => {
           <ScrollView style={styles.scrollview}>
             <View style={styles.overlay}>
               <View style={styles.selectedChoice}>
-                <Text style={styles.selectedText}>Voyage Images</Text>
+                <Text style={styles.selectedText}>Add Voyage Images</Text>
               </View>
 
               <View style={styles.profileContainer}>
@@ -708,7 +712,6 @@ const CreateVoyageScreen = () => {
                   data={data}
                   keyExtractor={(item) => item.addedVoyageImageId}
                   renderItem={({ item, index }) => {
-                    console.log("index: ", index);
                     return (
                       <View key={index} style={styles2.imageContainer1}>
                         <TouchableOpacity
@@ -763,7 +766,7 @@ const CreateVoyageScreen = () => {
             </View>
 
             <View style={styles.addWaypoints}>
-              <Text style={styles.selectedText}>Waypoints</Text>
+              <Text style={styles.selectedText}>Add Waypoints</Text>
             </View>
             <CreateVoyageMapComponent
               voyageId={voyageId}
@@ -811,6 +814,18 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  profileImageAndSocial: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderRadius: vh(5),
+    borderBottomLeftRadius: vh(0),
+    borderBottomRightRadius: vh(0),
+    width: "100%",
+    alignSelf: "center",
+    paddingBottom: vh(0.95),
+    backgroundColor: "white",
+    top: vh(-5),
+  },
   calendarStyle: {
     backgroundColor: "white",
     width: vw(86),
@@ -986,12 +1001,14 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     padding: vh(2),
-    top: vh(-2),
   },
   recycle: {
     color: "purple",
   },
-
+  backgroundImage: {
+    width: vw(100),
+    height: vh(30),
+  },
   createVoyageButton: {
     width: vw(40),
     alignSelf: "center",
