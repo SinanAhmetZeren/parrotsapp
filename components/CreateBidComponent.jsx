@@ -40,7 +40,6 @@ export const CreateBidComponent = ({
   const [sendBid] = useSendBidMutation();
   const [changeBid] = useChangeBidMutation();
 
-  console.log("userBidId", userBidId);
   useEffect(() => {
     if (visible && textInputRef.current) {
       textInputRef.current.focus();
@@ -118,12 +117,10 @@ export const CreateBidComponent = ({
   };
 
   const handleOpenModal = () => {
-    console.log("open modal for bid");
     setVisible(true);
   };
 
   const handleCloseModal = () => {
-    console.log("close modal for bid");
     setVisible(false);
     setPersons(0);
     setPrice(0);
@@ -131,12 +128,10 @@ export const CreateBidComponent = ({
   };
 
   const handleOpenChangeModal = () => {
-    console.log("open change modal for bid");
     setChangeModalVisible(true);
   };
 
   const handleCloseChangeModal = () => {
-    console.log("close modal for change bid");
     setChangeModalVisible(false);
     setPersons(0);
     setPrice(0);

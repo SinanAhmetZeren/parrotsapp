@@ -37,8 +37,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           Capacity: capacity,
         });
         const url = `/api/Vehicle/AddVehicle?${queryParams}`;
-        console.log("url");
-        console.log(url);
 
         return {
           url,
@@ -52,7 +50,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     addVehicleImage: builder.mutation({
       query: (data) => {
-        console.log(data);
         const { formData, vehicleId } = data;
         const url = `/api/Vehicle/${vehicleId}/AddVehicleImage`;
         return {

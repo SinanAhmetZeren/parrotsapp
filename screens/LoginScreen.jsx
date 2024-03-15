@@ -52,20 +52,12 @@ const LoginScreen = ({ navigation }) => {
     setPrintoutCounter((prev) => prev + 1);
   };
 
-  useEffect(() => {
-    console.log("------");
-    console.log("state_userId: ", state_userId);
-    console.log("state_isLoggedIn: ", state_isLoggedIn);
-    console.log("printoutCounter: ", printoutCounter);
-  }, [printoutCounter, state_token, state_userId, state_isLoggedIn]);
-
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
   };
 
   const handleLogin = async () => {
     try {
-      console.log("logging in user sinanzen@gmail.com");
       const response = await loginUser({
         Email: "sinanzen@gmail.com",
         Password: 123456,

@@ -55,7 +55,6 @@ const VoyageDetailScreen = () => {
     RobotoslabB: require("../assets/RobotoSlab-Bold.ttf"),
   });
 
-  console.log(fontsLoaded);
   const route = useRoute();
   const { voyageId } = route.params;
   const userId = useSelector((state) => state.users.userId);
@@ -71,7 +70,6 @@ const VoyageDetailScreen = () => {
   const [waypointInfoVisible, setWayPointInfoVisible] = useState(false);
 
   const handleSeeAll = () => {
-    console.log("see all");
     setModalVisible(true);
   };
 
@@ -171,7 +169,6 @@ const VoyageDetailScreen = () => {
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData.user.id;
     const bids = VoyageData.bids || [];
-    console.log("bids: ", bids);
     const hasBidWithUserId = bids.some((bid) => bid.userId === userId);
     const userBid = bids.find((bid) => bid.userId === userId);
     let userBidPrice = "";
@@ -184,7 +181,6 @@ const VoyageDetailScreen = () => {
       userBidPersons = userBid.personCount;
       userBidMessage = userBid.message;
       userBidId = userBid.id;
-      console.log("??? -->> ", userBidId);
     }
 
     const waypoints = VoyageData.waypoints || [];

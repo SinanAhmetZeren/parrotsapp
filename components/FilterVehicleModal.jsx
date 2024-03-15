@@ -18,7 +18,6 @@ const FilterVehicleModal = ({ isVisible, onClose, setIsVehicleFiltered }) => {
   };
 
   const handleSave = () => {
-    console.log("selected vehicle is: ", selectedValue);
     if (selectedValue) {
       setIsVehicleFiltered(true);
     } else {

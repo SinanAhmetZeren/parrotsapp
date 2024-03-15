@@ -18,7 +18,6 @@ const FilterCountModal = ({ isVisible, onClose, setIsCountFiltered }) => {
   const handleIncrement = () => {
     setCount((count) => {
       const newCount = count + 1;
-      console.log(`New count: ${newCount}`);
       return newCount;
     });
   };
@@ -40,7 +39,6 @@ const FilterCountModal = ({ isVisible, onClose, setIsCountFiltered }) => {
     } else {
       setIsCountFiltered(true);
     }
-    console.log("saved with a count of: " + count);
   };
 
   return (

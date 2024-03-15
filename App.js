@@ -2,14 +2,20 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import * as React from "react";
+import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text, Platform, View, StyleSheet, Image } from "react-native";
+import {
+  Text,
+  Platform,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Modal,
+} from "react-native";
 import { Feather, Ionicons } from "@expo/vector-icons";
-
-// Import statements for each screen
-
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
 import VehicleDetailScreen from "./screens/VehicleDetailScreen";
@@ -18,7 +24,7 @@ import ProfileScreenPublic from "./screens/ProfileScreenPublic";
 import EditProfileScreen from "./screens/EditProfileScreen";
 import MyVoyagesScreen from "./screens/MyVoyagesScreen";
 import CreateVoyageScreen from "./screens/CreateVoyageScreen";
-import { CreateVehicleScreen } from "./screens/CreateVehicleScreen";
+import CreateVehicleScreen from "./screens/CreateVehicleScreen";
 import MyVehiclesScreen from "./screens/MyVehiclesScreen";
 import MyBidsScreen from "./screens/MyBidsScreen";
 import MessagesScreen from "./screens/MessagesScreen";
@@ -26,6 +32,8 @@ import FavoritesScreen from "./screens/FavoritesScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ResetPasswordScreen from "./screens/ResetPasswordScreen";
+import { CreateChoiceModal } from "./components/CreateChoiceModal";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   updateAsLoggedIn,
@@ -94,6 +102,10 @@ const ProfileStack = () => {
     >
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
+      <Stack.Screen
+        name="CreateVehicleScreen"
+        component={CreateVehicleScreen}
+      />
 
       <Stack.Screen
         name="ProfileScreenPublic"
@@ -128,14 +140,16 @@ const AddNewStack = () => {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
+
       <Stack.Screen
         name="CreateVehicleScreen"
         component={CreateVehicleScreen}
       />
-      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
     </Stack.Navigator>
   );
 };
+
 const AuthStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -146,201 +160,164 @@ const AuthStack = () => {
   );
 };
 const TabNavigator = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
   return (
-    <Tab.Navigator screenOptions={screenOptions}>
-      {/*       
-      <Tab.Screen
-        name="VehicleDetailScreen"
-        component={VehicleDetailScreen}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <Ionicons
-                  name="boat-outline"
-                  size={24}
-                  color={focused ? "#3aa4ff" : "#000"}
-                />
-                <Text
-                  style={
-                    focused
-                      ? {
-                          fontSize: 12,
-                          color: "#3aa4ff",
-                        }
-                      : { fontSize: 12, color: "#000" }
-                  }
+    <>
+      <Tab.Navigator screenOptions={screenOptions}>
+        <Tab.Screen
+          name="Home"
+          component={HomeStack}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
                 >
-                  Vehicle Detail
-                </Text>
-              </View>
-            );
-          },
-        }}
-      /> */}
+                  <Feather
+                    name="home"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Home
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
 
-      <Tab.Screen
-        name="ProfileStack"
-        component={ProfileStack}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <Feather
-                  name="user"
-                  size={24}
-                  color={focused ? "#3aa4ff" : "#000"}
-                />
-                <Text
-                  style={
-                    focused
-                      ? { fontSize: 12, color: "#3aa4ff" }
-                      : { fontSize: 12, color: "#000" }
-                  }
+        <Tab.Screen
+          name="ProfileStack"
+          component={ProfileStack}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
                 >
-                  Profile
-                </Text>
-              </View>
-            );
-          },
-        }}
+                  <Feather
+                    name="user"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Profile
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
+          name="Create2"
+          component={AddNewStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <TouchableOpacity onPress={toggleModal}>
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: Platform.OS === "ios" ? 50 : 60,
+                    height: Platform.OS === "ios" ? 50 : 60,
+                    top: Platform.OS === "ios" ? -10 : -20,
+                    borderRadius: Platform.OS === "ios" ? 25 : 30,
+                  }}
+                >
+                  <Image
+                    style={styles.plusSign}
+                    source={require("./assets/plus-icon.png")}
+                  />
+                </View>
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Favorites"
+          component={FavoritesScreen}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <Feather
+                    name="heart"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Favorites
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
+          name="Messages"
+          component={MessagesScreen}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <Feather
+                    name="message-square"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Messages
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+      </Tab.Navigator>
+
+      <CreateChoiceModal
+        modalVisible={modalVisible}
+        toggleModal={toggleModal}
+        setModalVisible={setModalVisible}
       />
-
-      {/* <Tab.Screen
-        name="VoyageDetail"
-        component={VoyageDetailScreen}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <MaterialIcons
-                  name="details"
-                  size={24}
-                  color={focused ? "#3aa4ff" : "#000"}
-                />
-                <Text
-                  style={
-                    focused
-                      ? { fontSize: 12, color: "#3aa4ff" }
-                      : { fontSize: 12, color: "#000" }
-                  }
-                >
-                  Voyage Detail
-                </Text>
-              </View>
-            );
-          },
-        }}
-      /> */}
-
-      <Tab.Screen
-        name="Home"
-        component={HomeStack}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <Feather
-                  name="home"
-                  size={24}
-                  color={focused ? "#3aa4ff" : "#000"}
-                />
-                <Text
-                  style={
-                    focused
-                      ? { fontSize: 12, color: "#3aa4ff" }
-                      : { fontSize: 12, color: "#000" }
-                  }
-                >
-                  Home
-                </Text>
-              </View>
-            );
-          },
-        }}
-      />
-
-      <Tab.Screen
-        name="Create"
-        component={AddNewStack}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#f21f4f",
-                  width: Platform.OS == "ios" ? 50 : 60,
-                  height: Platform.OS == "ios" ? 50 : 60,
-                  top: Platform.OS == "ios" ? -10 : -20,
-                  borderRadius: Platform.OS == "ios" ? 25 : 30,
-                }}
-              >
-                <Image
-                  style={styles.plusSign}
-                  source={require("./assets/plus-icon.png")}
-                />
-              </View>
-            );
-          },
-        }}
-      />
-
-      <Tab.Screen
-        name="Favorites"
-        component={FavoritesScreen}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <Feather
-                  name="heart"
-                  size={24}
-                  color={focused ? "#3aa4ff" : "#000"}
-                />
-                <Text
-                  style={
-                    focused
-                      ? { fontSize: 12, color: "#3aa4ff" }
-                      : { fontSize: 12, color: "#000" }
-                  }
-                >
-                  Favorites
-                </Text>
-              </View>
-            );
-          },
-        }}
-      />
-
-      <Tab.Screen
-        name="Messages"
-        component={MessagesScreen}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <Feather
-                  name="message-square"
-                  size={24}
-                  color={focused ? "#3aa4ff" : "#000"}
-                />
-                <Text
-                  style={
-                    focused
-                      ? { fontSize: 12, color: "#3aa4ff" }
-                      : { fontSize: 12, color: "#000" }
-                  }
-                >
-                  Messages
-                </Text>
-              </View>
-            );
-          },
-        }}
-      />
-    </Tab.Navigator>
+    </>
   );
 };
 function App() {

@@ -47,7 +47,6 @@ export const WaypointFlatListVoyageDetailsScreen = ({
       keyExtractor={(item) => item.order}
       renderItem={({ item, index }) => {
         let newUri = baseUrl + item.profileImage;
-        console.log("---> ", item);
         return (
           <View key={index}>
             <WaypointItemVoyageDetailScreen
@@ -82,9 +81,6 @@ export const WaypointItemVoyageDetailScreen = ({
   const handleShowModal = () => {
     setModalVisible(true);
   };
-
-  console.log("-> latitude -> ", latitude);
-  console.log("-> longitude -> ", longitude);
 
   const truncatedDescription =
     description.length > 70 ? `${description.slice(0, 70)}...` : description;
@@ -138,8 +134,6 @@ export const WaypointItemVoyageDetailScreen = ({
 
 export const WaypointItem = ({ title, description, imageUri }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  console.log("title: ", title);
-  console.log("imageuri: ", imageUri);
 
   const truncatedDescription =
     description.length > 70 ? `${description.slice(0, 70)}...` : description;

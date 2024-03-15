@@ -55,7 +55,6 @@ export default function ProfileScreen({ navigation }) {
 
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
-    console.log("logout from button");
   };
 
   const handleInstagramPress = async () => {

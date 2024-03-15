@@ -26,7 +26,7 @@ import DropdownComponentType from "../components/DropdownComponentType";
 import StepBarVehicle from "../components/StepBarVehicle";
 import { useNavigation } from "@react-navigation/native";
 
-export const CreateVehicleScreen = () => {
+const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
   const {
     data: userData,
@@ -57,10 +57,6 @@ export const CreateVehicleScreen = () => {
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const navigation = useNavigation();
-
-  useEffect(() => {
-    console.log("---");
-  }, [isSuccess]);
 
   const changeCurrentState = (index) => {
     setCurrentStep(index);
@@ -102,8 +98,7 @@ export const CreateVehicleScreen = () => {
         capacity,
       });
       const createdVehicleId = response.data.data.id;
-      console.log("response: ", response);
-      console.log("created Vehicle Id: ", createdVehicleId);
+
       setVehicleId(createdVehicleId);
       setDescription("");
       setCapacity("");
@@ -128,9 +123,6 @@ export const CreateVehicleScreen = () => {
       type: "image/jpeg",
       name: "profileImage.jpg",
     });
-
-    console.log("formdata", formData);
-    console.log("vehicleId", vehicleId);
 
     try {
       const addedVehicleImageResponse = await addVehicleImage({
@@ -222,7 +214,7 @@ export const CreateVehicleScreen = () => {
 
     return (
       <>
-        <StepBarVehicle style={styles.StepBar} currentStep={currentStep} />
+        <StepBarVehicle currentStep={currentStep} />
         {currentStep == 1 ? (
           <ScrollView style={styles.scrollview}>
             <View style={styles.overlay}>
@@ -480,6 +472,8 @@ export const CreateVehicleScreen = () => {
   }
 };
 
+export default CreateVehicleScreen;
+
 const styles2 = StyleSheet.create({
   imageContainer1: {
     // backgroundColor: "white",
@@ -578,6 +572,7 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     alignItems: "center",
   },
+
   addWaypoints: {
     marginTop: vh(4),
     alignItems: "center",

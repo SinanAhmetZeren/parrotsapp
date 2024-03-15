@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
@@ -5,7 +6,6 @@ import { StyleSheet, View } from "react-native";
 import ConversationView from "./CoversationView";
 
 export default function ConversationList({ data }) {
-  console.log(data);
   const data1 = [
     {
       id: 1,

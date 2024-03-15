@@ -11,6 +11,7 @@ import {
   ScrollView,
   Alert,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { useState } from "react";
 import MapView, { Marker } from "react-native-maps";
@@ -25,6 +26,8 @@ import VehicleFlatList from "../components/VehicleFlatList";
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
+import { useSelector } from "react-redux";
+import { useGetUserByIdQuery } from "../slices/UserSlice";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -34,12 +37,21 @@ export default function HomeScreen({ navigation }) {
   const [isDatesFiltered, setIsDatesFiltered] = useState(false);
   const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
   //   const { message } = route.params;
+
+  const userId = useSelector((state) => state.users.userId);
+  const {
+    data: userData,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+    refetch,
+  } = useGetUserByIdQuery(userId);
   const username = "Öznur";
 
   const [selected, setSelected] = useState("voyages");
 
   const handleChangeSelection = (s) => {
-    console.log(s);
     setSelected(s);
   };
 
@@ -55,152 +67,128 @@ export default function HomeScreen({ navigation }) {
     setVehicleModalVisibility(!vehicleModalVisibility);
   }
 
-  return (
-    <ScrollView style={styles.scrollview}>
-      <View style={styles.countModal}>
-        <FilterCountModal
-          isCountFiltered={isCountFiltered}
-          setIsCountFiltered={setIsCountFiltered}
-          onClose={handleCountModal}
-          isVisible={countModalVisibility}
-        />
-      </View>
-      <View style={styles.calendarModal}>
-        <FilterCalendarModal
-          isDatesFiltered={isDatesFiltered}
-          setIsDatesFiltered={setIsDatesFiltered}
-          onClose={handleCalendarModal}
-          isVisible={calendarModalVisibility}
-        />
-      </View>
-      <View style={styles.vehicleModal}>
-        <FilterVehicleModal
-          isVehicleFiltered={isVehicleFiltered}
-          setIsVehicleFiltered={setIsVehicleFiltered}
-          onClose={handleVehicleModal}
-          isVisible={vehicleModalVisibility}
-        />
-      </View>
-      <View style={{ height: vh(100) }}>
-        <View style={styles.searchAndMenu}>
-          <Feather
-            name="menu"
-            size={24}
-            color="black"
-            style={{ marginRight: 8 }}
-          />
-          <TextInput
-            style={styles.searchInput1}
-            placeholder="Search..."
-            // Add any other TextInput props you need
-          />
-          <Fontisto name="bell" size={24} color="black" />
-        </View>
-        <View style={styles.welcomeandFilters}>
-          <View style={styles.welcomebox}>
-            <Text style={styles.welcome}>Welcome to Parrots</Text>
-            <Text style={styles.username}>{username}!</Text>
-          </View>
-          <View style={styles.filterbox}>
-            <TouchableOpacity onPress={handleCountModal}>
-              <MaterialCommunityIcons
-                style={[styles.icon, isCountFiltered ? styles.filtered : null]}
-                name="human"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleCalendarModal}>
-              <AntDesign
-                style={[styles.icon, isDatesFiltered ? styles.filtered : null]}
-                name="calendar"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleVehicleModal}>
-              <Ionicons
-                style={[
-                  styles.icon,
-                  isVehicleFiltered ? styles.filtered : null,
-                ]}
-                name="car-outline"
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+  if (isLoading) {
+    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
+  }
 
-        <View style={styles.viewChoice}>
-          <View style={styles.choiceItem}>
-            <TouchableOpacity
-              onPress={() => {
-                handleChangeSelection("voyages");
-              }}
-              style={
-                selected === "voyages"
-                  ? styles.selectedChoice
-                  : styles.nonSelectedChoice
-              }
-            >
-              <Text
-                style={
-                  selected === "voyages"
-                    ? styles.selectedText
-                    : styles.nonSelectedText
-                }
-              >
-                Voyages
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.choiceItem}>
-            <TouchableOpacity
-              onPress={() => {
-                handleChangeSelection("vehicles");
-              }}
-              style={
-                selected === "vehicles"
-                  ? styles.selectedChoice
-                  : styles.nonSelectedChoice
-              }
-            >
-              <Text
-                style={
-                  selected === "vehicles"
-                    ? styles.selectedText
-                    : styles.nonSelectedText
-                }
-              >
-                Vehicles
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.mapContainer}>
-          <MapView style={styles.map} initialRegion={initialRegion}>
-            <Marker
-              coordinate={markerCoordinate1}
-              title="Bisikletle Amsterdam"
-              description="Bisiklete binip sokaklarda gezicez"
-            />
-            <Marker
-              coordinate={markerCoordinate2}
-              title="Bisikletle Amsterdam"
-              description="Bisiklete binip sokaklarda gezicez"
-            />
-          </MapView>
-        </View>
-        <View style={styles.popularBox}>
-          <Text style={styles.popular}>Popular</Text>
-          <Text style={styles.seeall}>see all</Text>
-        </View>
-        <VehicleFlatList />
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ fontSize: 50 }}>error...</Text>
       </View>
-    </ScrollView>
-  );
+    );
+  }
+
+  if (isSuccess) {
+    //console.log("xxx", userData.userName);
+    let username = userData.userName;
+
+    return (
+      <ScrollView style={styles.scrollview}>
+        <View style={styles.countModal}>
+          <FilterCountModal
+            isCountFiltered={isCountFiltered}
+            setIsCountFiltered={setIsCountFiltered}
+            onClose={handleCountModal}
+            isVisible={countModalVisibility}
+          />
+        </View>
+        <View style={styles.calendarModal}>
+          <FilterCalendarModal
+            isDatesFiltered={isDatesFiltered}
+            setIsDatesFiltered={setIsDatesFiltered}
+            onClose={handleCalendarModal}
+            isVisible={calendarModalVisibility}
+          />
+        </View>
+        <View style={styles.vehicleModal}>
+          <FilterVehicleModal
+            isVehicleFiltered={isVehicleFiltered}
+            setIsVehicleFiltered={setIsVehicleFiltered}
+            onClose={handleVehicleModal}
+            isVisible={vehicleModalVisibility}
+          />
+        </View>
+        <View style={{ height: vh(100) }}>
+          <View style={styles.searchAndMenu}>
+            <Feather
+              name="menu"
+              size={24}
+              color="black"
+              style={{ marginRight: 8 }}
+            />
+            <TextInput
+              style={styles.searchInput1}
+              placeholder="Search..."
+              // Add any other TextInput props you need
+            />
+            <Fontisto name="bell" size={24} color="black" />
+          </View>
+          <View style={styles.welcomeandFilters}>
+            <View style={styles.welcomebox}>
+              <Text style={styles.welcome}>Welcome to Parrots</Text>
+              <Text style={styles.username}>{username}!</Text>
+            </View>
+            <View style={styles.filterbox}>
+              <TouchableOpacity onPress={handleCountModal}>
+                <MaterialCommunityIcons
+                  style={[
+                    styles.icon,
+                    isCountFiltered ? styles.filtered : null,
+                  ]}
+                  name="human"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCalendarModal}>
+                <AntDesign
+                  style={[
+                    styles.icon,
+                    isDatesFiltered ? styles.filtered : null,
+                  ]}
+                  name="calendar"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleVehicleModal}>
+                <Ionicons
+                  style={[
+                    styles.icon,
+                    isVehicleFiltered ? styles.filtered : null,
+                  ]}
+                  name="car-outline"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.mapContainer}>
+            <MapView style={styles.map} initialRegion={initialRegion}>
+              <Marker
+                coordinate={markerCoordinate1}
+                title="Bisikletle Amsterdam"
+                description="Bisiklete binip sokaklarda gezicez"
+              />
+              <Marker
+                coordinate={markerCoordinate2}
+                title="Bisikletle Amsterdam"
+                description="Bisiklete binip sokaklarda gezicez"
+              />
+            </MapView>
+          </View>
+          <View style={styles.popularBox}>
+            <Text style={styles.popular}>Popular</Text>
+            <Text style={styles.seeall}>see all</Text>
+          </View>
+          <VehicleFlatList />
+        </View>
+      </ScrollView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -303,49 +291,6 @@ const styles = StyleSheet.create({
     color: "#0077ea",
     backgroundColor: "rgba(0, 119, 234,0.06)",
     borderRadius: 15,
-  },
-  choiceItem: {
-    marginHorizontal: 15,
-  },
-  choiceItemText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "grey",
-  },
-  viewChoice: {
-    padding: 10,
-    marginVertical: vh(1),
-    width: vw(100),
-    alignSelf: "center",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    // top: vh(-9),
-  },
-  selectedChoice: {
-    backgroundColor: "rgba(0, 0, 255, 0.05)",
-    paddingHorizontal: vh(6),
-    paddingVertical: vh(0.3),
-    borderRadius: vw(5),
-    borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  nonSelectedChoice: {
-    backgroundColor: "rgba(0, 0, 255, 0.05)",
-    paddingHorizontal: vh(6),
-    paddingVertical: vh(0.3),
-    borderRadius: vw(5),
-    borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  selectedText: {
-    color: "#5b5bff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  nonSelectedText: {
-    fontSize: 18,
-    fontWeight: "500",
-    color: "#9f9fff",
   },
 });
 

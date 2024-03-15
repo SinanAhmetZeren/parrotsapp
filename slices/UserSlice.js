@@ -13,9 +13,6 @@ const usersSlice = createSlice({
   },
   reducers: {
     updateAsLoggedIn: (state, action) => {
-      console.log("----------");
-      console.log("action.payload.userId:", action.payload.userId);
-      console.log("action.payload.token:", action.payload.token);
       state.isLoggedIn = true;
       state.userId = action.payload.userId;
       state.token = action.payload.token;
@@ -31,8 +28,6 @@ const usersSlice = createSlice({
       );
     },
     updateAsLoggedOut: (state) => {
-      console.log("----------");
-      console.log("from reducer: UpdateAsLoggedOut");
       state.isLoggedIn = false;
       state.userId = "";
       state.token = "";
@@ -45,7 +40,6 @@ const usersSlice = createSlice({
     },
     updateStateFromLocalStorage: (state, action) => {
       const { token, userId } = action.payload;
-      console.log("userId -->", userId);
       state.userId = userId;
       state.token = token;
       state.isLoggedIn = true;

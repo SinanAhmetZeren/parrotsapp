@@ -86,7 +86,6 @@ const VehicleDetailScreen = () => {
   };
 
   const goToProfilePage = (userId) => {
-    console.log("navigate to user profile with id: ", userId);
     navigation.navigate("ProfileScreenPublic", {
       userId: userId,
     });
@@ -254,9 +253,14 @@ const VehicleDetailScreen = () => {
               </View>
 
               {/* // Vehicle VOYAGES */}
+
               <View style={styles.mainBidsContainer}>
                 <View style={styles.currentBidsAndSeeAll}>
-                  <Text style={styles.currentBidsTitle}>Vehicle's Voyages</Text>
+                  <Text style={styles.currentBidsTitle}>
+                    {VehicleData.voyages.length == 0
+                      ? null
+                      : "Vehicle's Voyages"}
+                  </Text>
                 </View>
               </View>
 

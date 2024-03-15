@@ -32,8 +32,7 @@ import { useRoute } from "@react-navigation/native";
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
   const { userId } = route.params;
-  console.log("userId is: ");
-  console.log(userId);
+
   const {
     data: userData,
     isLoading,

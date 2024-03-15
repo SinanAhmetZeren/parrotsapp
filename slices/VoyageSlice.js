@@ -64,9 +64,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
 
         const url = `/api/Voyage/AddVoyage?${queryParams}`;
 
-        console.log("url");
-        console.log(url);
-
         return {
           url,
           method: "POST",
@@ -100,8 +97,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     sendBid: builder.mutation({
       query: (bidData) => {
-        console.log("bidData: ");
-        console.log(bidData);
         return {
           url: "/api/Bid/createBid",
           method: "POST",
@@ -114,13 +109,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     changeBid: builder.mutation({
       query: (bidData) => {
-        // "id": 88,
-        // "personCount": 8,
-        // "message": "sekiz",
-        // "offerPrice": 8,
-        // "currency": "eur",
-        // "dateTime": "2024-03-13T17:33:47.254Z"
-
         const { bidId, message, offerPrice, personCount } = bidData;
         const formattedBidData = {
           id: bidId,
@@ -128,8 +116,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           message,
           offerPrice,
         };
-        console.log("biddata:", bidData);
-        console.log("formattedbiddata:", formattedBidData);
 
         return {
           url: "/api/Bid/changeBid",
@@ -153,12 +139,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           order,
         } = data;
 
-        console.log("--> latitude:", latitude);
-        console.log("--> longitude:", longitude);
-        console.log("--> title:", title);
-        console.log("--> description:", description);
-        console.log("--> formdata:", formData);
-
         const queryParams = new URLSearchParams({
           Latitude: latitude,
           Longitude: longitude,
@@ -169,9 +149,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         });
 
         const url = `/api/Waypoint/AddWaypoint?${queryParams}`;
-
-        console.log("url");
-        console.log(url);
 
         return {
           url,

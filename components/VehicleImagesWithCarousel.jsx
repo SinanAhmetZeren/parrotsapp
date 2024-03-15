@@ -18,10 +18,6 @@ const VehicleImagesWithCarousel = ({ vehicleImages }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    console.log("from useEffect:", currentIndex);
-  }, [currentIndex]);
-
   const handleImagePress = (index) => {
     setCurrentIndex(index);
     setModalVisible(true);

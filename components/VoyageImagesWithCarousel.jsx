@@ -18,10 +18,6 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    console.log("from useEffect:", currentIndex);
-  }, [currentIndex]);
-
   const handleImagePress = (index) => {
     setCurrentIndex(index);
     setModalVisible(true);
@@ -178,7 +174,7 @@ const styles2 = StyleSheet.create({
     width: vh(11.45),
     backgroundColor: "white",
     borderRadius: vh(2.5),
-    bottom: vh(24),
+    bottom: vh(30),
     left: vw(35),
     borderColor: "rgb(148,1,1)",
     borderWidth: 1,

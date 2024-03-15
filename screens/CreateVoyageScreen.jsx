@@ -85,10 +85,6 @@ const CreateVoyageScreen = () => {
 
   const [currentStep, setCurrentStep] = useState(1);
 
-  useEffect(() => {
-    console.log("---");
-  }, [isSuccess]);
-
   useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
 
   const printState = () => {
@@ -309,11 +305,6 @@ const CreateVoyageScreen = () => {
     setAddedVoyageImages((prevImages) =>
       prevImages.filter((item) => item.addedVoyageImageId !== imageId)
     );
-  };
-
-  const printState5 = () => {
-    console.log("added voyage images: ");
-    console.log(addedVoyageImages);
   };
 
   if (isSuccess) {

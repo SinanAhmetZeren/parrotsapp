@@ -21,7 +21,6 @@ import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
 
 const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
-  // console.log("voyageID from map component: ", voyageId);
   const [addedWayPoints, setAddedWayPoints] = useState([]);
   const [markerCoords, setMarkerCoords] = useState(null);
   const [latitude, setLatitude] = useState("");

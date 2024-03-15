@@ -51,24 +51,6 @@ const EditProfileScreen = () => {
   const [image, setImage] = useState(null);
   const [image2, setImage2] = useState(null);
 
-  /*
-  useEffect(() => {
-    console.log(" ************************ ");
-
-    setProfileImage(userData.profileImage);
-    setBackgroundImage(userData.backgroundImage);
-    setInstagramProfile(userData.instagram);
-    setYoutubeProfile(userData.youtube);
-    setEmail(userData.email);
-    setPhoneNumber(userData.phoneNumber);
-    setFacebookProfile(userData.facebook);
-    setUsername(userData.userName);
-    setTitle(userData.title);
-    setBio(userData.bio);
-    setImage(userData.profileImage);
-    setImage2(userData.backgroundImage);
-  }, [isSuccess]);
-*/
   const handleUploadProfile = async () => {
     if (!image) {
       return;
@@ -87,8 +69,6 @@ const EditProfileScreen = () => {
   };
 
   const handleUploadBackground = async () => {
-    console.log("from handleUploadBackGround", userId);
-
     if (!image2) {
       return;
     }
@@ -304,7 +284,6 @@ const EditProfileScreen = () => {
             value={title}
             onChangeText={(text) => {
               setTitle(text);
-              console.log(text);
             }}
           />
         </View>

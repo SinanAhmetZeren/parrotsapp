@@ -12,7 +12,6 @@ export default function VehicleVoyages({ voyages }) {
   const navigation = useNavigation();
 
   const handleNavigateToVoyage = (voyageId) => {
-    console.log("navigate to voyage with id: ", voyageId);
     navigation.navigate("VoyageDetail", { voyageId });
   };
 

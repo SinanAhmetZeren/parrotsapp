@@ -132,7 +132,6 @@ export default function VehicleCardProfile({
 
   const navigation = useNavigation();
   const handleNavigateToVehicle = (vehicleId) => {
-    console.log(vehicleId);
     navigation.navigate("VehicleDetail", { vehicleId });
   };
 

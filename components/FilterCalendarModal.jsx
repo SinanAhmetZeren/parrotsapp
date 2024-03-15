@@ -53,13 +53,6 @@ const FilterCalendarModal = ({ isVisible, onClose, setIsDatesFiltered }) => {
     const yearEnd = dateObjectEnd.getFullYear();
     const formattedEndDate = `${monthEnd}-${dayEnd}-${yearEnd}`;
 
-    console.log(
-      "Selected date range: From",
-      formattedStartDate,
-      "to",
-      formattedEndDate
-    );
-
     if (endDate && startDate) {
       setIsDatesFiltered(true);
     } else {
