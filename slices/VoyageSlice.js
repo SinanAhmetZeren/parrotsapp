@@ -160,6 +160,16 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    getVoyagesByLocation: builder.mutation({
+      query: (data) => {
+        const { lat1, lat2, lon1, lon2 } = data;
+        return `/api/Voyage/GetVoyagesByCoords/${lat1}/${lat2}/${lon1}/${lon2}`;
+      },
+      transformResponse: (responseData) => {
+        // console.log("oh!", responseData.data[0]);
+        return responseData.data;
+      },
+    }),
   }),
 
   overrideExisting: true,
@@ -174,4 +184,5 @@ export const {
   useGetVoyageByIdQuery,
   useSendBidMutation,
   useChangeBidMutation,
+  useGetVoyagesByLocationMutation,
 } = extendedApiSlice;

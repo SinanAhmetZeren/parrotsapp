@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
+import { useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -26,8 +27,11 @@ import VehicleFlatList from "../components/VehicleFlatList";
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
+import { VoyagesFlatlistMainpage } from "../components/VoyagesFlatlistMainpage";
 import { useSelector } from "react-redux";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
+import { useGetVoyagesByLocationMutation } from "../slices/VoyageSlice";
+import * as Location from "expo-location";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -47,13 +51,44 @@ export default function HomeScreen({ navigation }) {
     isSuccess,
     refetch,
   } = useGetUserByIdQuery(userId);
-  const username = "Öznur";
+  const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [initialVoyages, setInitialVoyages] = useState([]);
 
-  const [selected, setSelected] = useState("voyages");
+  useEffect(() => {
+    async function getLocation() {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.error("Permission to access location was denied");
+          return;
+        }
+        const location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
+        setLatitude(latitude);
+        setLongitude(longitude);
+        console.log("User Location:", latitude, longitude);
+      } catch (error) {
+        console.error("Error getting user location:", error);
+      }
+    }
 
-  const handleChangeSelection = (s) => {
-    setSelected(s);
-  };
+    getLocation();
+  }, []);
+
+  useEffect(() => {
+    const getVoyages = async () => {
+      const lat1 = latitude - 50;
+      const lat2 = latitude + 50;
+      const lon1 = longitude - 50;
+      const lon2 = longitude + 50;
+
+      const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
+      setInitialVoyages(voyages.data);
+    };
+    getVoyages();
+  }, [latitude, longitude]);
 
   function handleCountModal() {
     setCountModalVisibility(!countModalVisibility);
@@ -80,8 +115,23 @@ export default function HomeScreen({ navigation }) {
   }
 
   if (isSuccess) {
-    //console.log("xxx", userData.userName);
     let username = userData.userName;
+
+    initialVoyages.forEach((obj) => {
+      console.log("ID:", obj.id);
+    });
+
+    const initialRegion = {
+      latitude: latitude,
+      longitude: longitude,
+      latitudeDelta: 0.25,
+      longitudeDelta: 0.25,
+    };
+
+    const markerCoordinate = {
+      latitude: latitude,
+      longitude: longitude,
+    };
 
     return (
       <ScrollView style={styles.scrollview}>
@@ -165,26 +215,17 @@ export default function HomeScreen({ navigation }) {
               </TouchableOpacity>
             </View>
           </View>
-
           <View style={styles.mapContainer}>
             <MapView style={styles.map} initialRegion={initialRegion}>
-              <Marker
-                coordinate={markerCoordinate1}
-                title="Bisikletle Amsterdam"
-                description="Bisiklete binip sokaklarda gezicez"
-              />
-              <Marker
-                coordinate={markerCoordinate2}
-                title="Bisikletle Amsterdam"
-                description="Bisiklete binip sokaklarda gezicez"
-              />
+              <Marker coordinate={markerCoordinate} />
             </MapView>
           </View>
           <View style={styles.popularBox}>
             <Text style={styles.popular}>Popular</Text>
             <Text style={styles.seeall}>see all</Text>
           </View>
-          <VehicleFlatList />
+          {/* <VehicleFlatList /> */}
+          <VoyagesFlatlistMainpage voyages={initialVoyages} />
         </View>
       </ScrollView>
     );
@@ -293,19 +334,3 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
 });
-
-const initialRegion = {
-  latitude: 52.362847,
-  longitude: 4.922197,
-  latitudeDelta: 0.5,
-  longitudeDelta: 0.5,
-};
-
-const markerCoordinate1 = {
-  latitude: 52.362847,
-  longitude: 4.922197,
-};
-const markerCoordinate2 = {
-  latitude: 52.392847,
-  longitude: 4.962197,
-};
