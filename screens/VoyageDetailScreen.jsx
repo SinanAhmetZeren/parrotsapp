@@ -140,12 +140,6 @@ const VoyageDetailScreen = () => {
 
   const focusMap = (latitude, longitude) => {
     if (mapRef.current) {
-      // mapRef.current.animateToRegion({
-      //   latitude,
-      //   longitude,
-      //   latitudeDelta: 0.0922,
-      //   longitudeDelta: 0.0421,
-      // });
       mapRef.current.animateCamera(
         {
           center: {
@@ -155,7 +149,7 @@ const VoyageDetailScreen = () => {
           heading: 0,
           pitch: 10,
         },
-        { duration: 1000 } // Adjust the duration as needed for your desired animation speed
+        { duration: 1000 }
       );
     }
   };

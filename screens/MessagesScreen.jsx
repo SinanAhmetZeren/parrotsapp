@@ -8,7 +8,6 @@ import ConversationList from "../components/ConversationList";
 
 export default function MessagesScreen({ navigation }) {
   //   const { message } = route.params;
-  console.log(navigation);
 
   return (
     <View style={styles.container}>

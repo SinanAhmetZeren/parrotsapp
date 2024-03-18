@@ -53,7 +53,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           Vacancy: vacancy,
           StartDate: formattedStartDate,
           EndDate: formattedEndDate,
-          LastBidDate: formattedEndDate,
+          LastBidDate: formattedLastBidDate,
           MinPrice: minPrice,
           MaxPrice: maxPrice,
           Auction: isAuction.toString(), // Assuming isAuction is a boolean
@@ -166,7 +166,47 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return `/api/Voyage/GetVoyagesByCoords/${lat1}/${lat2}/${lon1}/${lon2}`;
       },
       transformResponse: (responseData) => {
-        // console.log("oh!", responseData.data[0]);
+        return responseData.data;
+      },
+    }),
+    getFilteredVoyages: builder.mutation({
+      query: (data) => {
+        const {
+          latitude,
+          longitude,
+          count,
+          selectedVehicleType,
+          formattedStartDate,
+          formattedEndDate,
+        } = data;
+
+        // Logging parameter values for debugging
+        console.log("latitude:", latitude);
+        console.log("longitude:", longitude);
+        console.log("count:", count);
+        console.log("selectedVehicleType:", selectedVehicleType);
+
+        // Construct queryParams with dynamic values
+        const queryParams = new URLSearchParams({
+          Lat1: (latitude - 50).toString(),
+          Lat2: (latitude + 50).toString(),
+          Lon1: (longitude - 50).toString(),
+          Lon2: (longitude + 50).toString(),
+          Vacancy: count.toString(),
+          VehicleType: selectedVehicleType,
+          StartDate: formattedStartDate,
+          EndDate: formattedEndDate,
+        });
+        console.log("queryParams:", queryParams.toString());
+        const endpoint = `/api/Voyage/GetFilteredVoyages?${queryParams.toString()}`;
+
+        // 'https://localhost:7151/api/Voyage/GetFilteredVoyages?
+        //lat1=0&lat2=99&lon1=0&lon2=99&vacancy=77&startDate=2020-03-14T09%3A00%3A00.000Z
+        //&endDate=2050-03-14T09%3A00%3A00.000Z&vehicleType=Car' \
+        return endpoint;
+      },
+      transformResponse: (responseData) => {
+        console.log(responseData.data);
         return responseData.data;
       },
     }),
@@ -185,4 +225,5 @@ export const {
   useSendBidMutation,
   useChangeBidMutation,
   useGetVoyagesByLocationMutation,
+  useGetFilteredVoyagesMutation,
 } = extendedApiSlice;

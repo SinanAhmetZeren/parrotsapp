@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import VoyageList from "../components/VoyageList";
+import VoyageListVertical from "../components/VoyageListVertical";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
@@ -413,7 +413,10 @@ export default function ProfileScreen({ navigation }) {
                   <Text>Loading Voyages</Text>
                 ) : isSuccessVoyages ? (
                   <View style={styles.voyageListContainer}>
-                    <VoyageList style={styles.voyageList} data={VoyagesData} />
+                    <VoyageListVertical
+                      style={styles.voyageList}
+                      data={VoyagesData}
+                    />
                   </View>
                 ) : null)}
 

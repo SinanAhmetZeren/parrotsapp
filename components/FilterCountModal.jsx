@@ -12,9 +12,13 @@ import {
 import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const FilterCountModal = ({ isVisible, onClose, setIsCountFiltered }) => {
-  const [count, setCount] = useState(1);
-
+const FilterCountModal = ({
+  isVisible,
+  onClose,
+  setIsCountFiltered,
+  count,
+  setCount,
+}) => {
   const handleIncrement = () => {
     setCount((count) => {
       const newCount = count + 1;

@@ -15,10 +15,15 @@ import CalendarPicker from "react-native-calendar-picker";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
-const FilterCalendarModal = ({ isVisible, onClose, setIsDatesFiltered }) => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
+const FilterCalendarModal = ({
+  isVisible,
+  onClose,
+  setIsDatesFiltered,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+}) => {
   const handleDateChange = (date, type) => {
     if (type === "END_DATE") {
       setEndDate(date);

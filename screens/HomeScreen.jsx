@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -13,6 +13,8 @@ import {
   Alert,
   TextInput,
   ActivityIndicator,
+  Image,
+  Button,
 } from "react-native";
 import { useState } from "react";
 import MapView, { Marker } from "react-native-maps";
@@ -27,11 +29,14 @@ import VehicleFlatList from "../components/VehicleFlatList";
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
-import { VoyagesFlatlistMainpage } from "../components/VoyagesFlatlistMainpage";
 import { useSelector } from "react-redux";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
-import { useGetVoyagesByLocationMutation } from "../slices/VoyageSlice";
+import {
+  useGetVoyagesByLocationMutation,
+  useGetFilteredVoyagesMutation,
+} from "../slices/VoyageSlice";
 import * as Location from "expo-location";
+import VoyageListHorizontal from "../components/VoyageListHorizontal";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -40,7 +45,6 @@ export default function HomeScreen({ navigation }) {
   const [isCountFiltered, setIsCountFiltered] = useState(false);
   const [isDatesFiltered, setIsDatesFiltered] = useState(false);
   const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
-  //   const { message } = route.params;
 
   const userId = useSelector((state) => state.users.userId);
   const {
@@ -52,9 +56,15 @@ export default function HomeScreen({ navigation }) {
     refetch,
   } = useGetUserByIdQuery(userId);
   const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
-  const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
+  const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
   const [initialVoyages, setInitialVoyages] = useState([]);
+
+  const [count, setCount] = useState(1);
+  const [selectedVehicleType, setSelectedVehicleType] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
     async function getLocation() {
@@ -87,8 +97,65 @@ export default function HomeScreen({ navigation }) {
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
       setInitialVoyages(voyages.data);
     };
-    getVoyages();
+
+    if (latitude !== 0 && longitude !== 0) {
+      getVoyages();
+    }
   }, [latitude, longitude]);
+
+  const mapRef = useRef(null);
+
+  const focusMap = (latitude, longitude) => {
+    if (mapRef.current) {
+      mapRef.current.animateCamera(
+        {
+          center: {
+            latitude,
+            longitude,
+          },
+          heading: 0,
+          pitch: 10,
+        },
+        { duration: 1000 } // Adjust the duration as needed for your desired animation speed
+      );
+    }
+  };
+
+  const printState = () => {
+    console.log("count: ", count);
+    console.log("vehicle type: ", selectedVehicleType);
+    console.log("start date: ", startDate);
+    console.log("end date: ", endDate);
+  };
+
+  function convertDateFormat(inputDate) {
+    const date = new Date(inputDate);
+    const year = date.getUTCFullYear();
+    const month = `0${date.getUTCMonth() + 1}`.slice(-2);
+    const day = `0${date.getUTCDate()}`.slice(-2);
+    const hours = `0${date.getUTCHours()}`.slice(-2);
+    const minutes = `0${date.getUTCMinutes()}`.slice(-2);
+    const seconds = `0${date.getUTCSeconds()}`.slice(-2);
+    const milliseconds = `00${date.getUTCMilliseconds()}`.slice(-3);
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+  }
+
+  const filter = () => {
+    const formattedStartDate = convertDateFormat(startDate);
+    const formattedEndDate = convertDateFormat(endDate);
+
+    const data = {
+      latitude,
+      longitude,
+      count,
+      selectedVehicleType,
+      formattedStartDate,
+      formattedEndDate,
+    };
+    console.log("data: ", data);
+    getFilteredVoyages(data);
+  };
 
   function handleCountModal() {
     setCountModalVisibility(!countModalVisibility);
@@ -117,10 +184,6 @@ export default function HomeScreen({ navigation }) {
   if (isSuccess) {
     let username = userData.userName;
 
-    initialVoyages.forEach((obj) => {
-      console.log("ID:", obj.id);
-    });
-
     const initialRegion = {
       latitude: latitude,
       longitude: longitude,
@@ -141,6 +204,8 @@ export default function HomeScreen({ navigation }) {
             setIsCountFiltered={setIsCountFiltered}
             onClose={handleCountModal}
             isVisible={countModalVisibility}
+            count={count}
+            setCount={setCount}
           />
         </View>
         <View style={styles.calendarModal}>
@@ -149,6 +214,10 @@ export default function HomeScreen({ navigation }) {
             setIsDatesFiltered={setIsDatesFiltered}
             onClose={handleCalendarModal}
             isVisible={calendarModalVisibility}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
           />
         </View>
         <View style={styles.vehicleModal}>
@@ -157,10 +226,12 @@ export default function HomeScreen({ navigation }) {
             setIsVehicleFiltered={setIsVehicleFiltered}
             onClose={handleVehicleModal}
             isVisible={vehicleModalVisibility}
+            selectedVehicleType={selectedVehicleType}
+            setSelectedVehicleType={setSelectedVehicleType}
           />
         </View>
         <View style={{ height: vh(100) }}>
-          <View style={styles.searchAndMenu}>
+          {/* <View style={styles.searchAndMenu}>
             <Feather
               name="menu"
               size={24}
@@ -173,6 +244,30 @@ export default function HomeScreen({ navigation }) {
               // Add any other TextInput props you need
             />
             <Fontisto name="bell" size={24} color="black" />
+          </View> */}
+          <View
+            style={{
+              marginTop: vh(2),
+            }}
+          >
+            <Button
+              title="print state 3"
+              onPress={() => {
+                printState();
+              }}
+            />
+          </View>
+          <View
+            style={{
+              marginTop: vh(2),
+            }}
+          >
+            <Button
+              title="filter"
+              onPress={() => {
+                filter();
+              }}
+            />
           </View>
           <View style={styles.welcomeandFilters}>
             <View style={styles.welcomebox}>
@@ -216,16 +311,35 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
           <View style={styles.mapContainer}>
-            <MapView style={styles.map} initialRegion={initialRegion}>
-              <Marker coordinate={markerCoordinate} />
+            <MapView
+              style={styles.map}
+              initialRegion={initialRegion}
+              ref={mapRef}
+            >
+              {/* <Marker coordinate={markerCoordinate} /> */}
+              {initialVoyages.map((item, index) => {
+                return (
+                  <Marker
+                    key={index}
+                    pinColor={"#2ac898"}
+                    coordinate={{
+                      latitude: item.waypoints[0].latitude,
+                      longitude: item.waypoints[0].longitude,
+                    }}
+                  />
+                );
+              })}
             </MapView>
           </View>
-          <View style={styles.popularBox}>
-            <Text style={styles.popular}>Popular</Text>
-            <Text style={styles.seeall}>see all</Text>
+
+          <View style={styles.mainBidsContainer}>
+            <View style={styles.currentBidsAndSeeAll}>
+              <Text style={styles.currentBidsTitle}>Voyages</Text>
+            </View>
           </View>
+
           {/* <VehicleFlatList /> */}
-          <VoyagesFlatlistMainpage voyages={initialVoyages} />
+          <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
         </View>
       </ScrollView>
     );
@@ -233,6 +347,22 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  currentBidsTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#3c9dde",
+  },
+  mainBidsContainer: {
+    borderRadius: vw(5),
+    marginHorizontal: vw(4),
+    borderColor: "#93c9ed",
+  },
+  currentBidsAndSeeAll: {
+    marginTop: vh(2),
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingRight: vw(10),
+  },
   scrollview: {
     marginTop: vh(4),
     paddingTop: vh(2),
@@ -243,11 +373,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: 15,
     marginTop: 15,
-    backgroundColor: "white",
+    paddingBottom: vh(2),
   },
 
   mapContainer: {
-    height: "46%",
+    height: vh(43),
     marginBottom: 7,
     width: "94%",
     alignItems: "center",
@@ -258,7 +388,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white ",
   },
   flatList: {
-    // height: "40%",
     flexDirection: "row",
     backgroundColor: "white",
     marginLeft: 10,
@@ -276,9 +405,10 @@ const styles = StyleSheet.create({
   username: {
     fontSize: 26,
     fontWeight: "700",
+    color: "#2ac898",
   },
   welcomebox: {
-    // backgroundColor: "white",
+    //backgroundColor: "green",
   },
   filterbox: {
     flexDirection: "row",

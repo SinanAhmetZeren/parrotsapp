@@ -1,12 +1,28 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Ionicons } from "@expo/vector-icons";
 
-const FilterVehicleModal = ({ isVisible, onClose, setIsVehicleFiltered }) => {
-  const vehicleTypes = ["Car", "Bus", "Boat", "Bicycle"];
-  const [selectedValue, setSelectedValue] = useState(null);
+const FilterVehicleModal = ({
+  isVisible,
+  onClose,
+  setIsVehicleFiltered,
+  selectedVehicleType: selectedValue,
+  setSelectedVehicleType: setSelectedValue,
+}) => {
+  const vehicleTypes = [
+    "Boat",
+    "Car",
+    "Caravan",
+    "Bus",
+    "Walk",
+    "Run",
+    "Motorcycle",
+    "Bicycle",
+    "TinyHouse",
+    "Airplane",
+  ];
 
   const handleSelect = (value) => {
     setSelectedValue(value);
