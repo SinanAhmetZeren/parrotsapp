@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from "react";
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
@@ -11,7 +12,7 @@ const FilterVehicleModal = ({
   selectedVehicleType: selectedValue,
   setSelectedVehicleType: setSelectedValue,
 }) => {
-  const vehicleTypes = [
+  const vehicleTypes2 = [
     "Boat",
     "Car",
     "Caravan",
@@ -24,8 +25,22 @@ const FilterVehicleModal = ({
     "Airplane",
   ];
 
+  const vehicleTypes = {
+    Boat: 0,
+    Car: 1,
+    Caravan: 2,
+    Bus: 3,
+    Walk: 4,
+    Run: 5,
+    Motorcycle: 6,
+    Bicycle: 7,
+    TinyHouse: 8,
+    Airplane: 9,
+  };
+
   const handleSelect = (value) => {
     setSelectedValue(value);
+    console.log("selected value is: ", selectedValue);
   };
   const handleClear = () => {
     setSelectedValue(null);
@@ -34,7 +49,7 @@ const FilterVehicleModal = ({
   };
 
   const handleSave = () => {
-    if (selectedValue) {
+    if (selectedValue !== null && selectedValue !== undefined) {
       setIsVehicleFiltered(true);
     } else {
       setIsVehicleFiltered(false);
@@ -52,25 +67,27 @@ const FilterVehicleModal = ({
       <View style={styles.modalContainer}>
         <View style={styles.innerContainer}>
           <Text style={styles.title}>Select Vehicle Type</Text>
-          {vehicleTypes.map((type) => (
+
+          {Object.entries(vehicleTypes).map(([type, value]) => (
             <TouchableOpacity
-              key={type}
+              key={value} // Assuming values are unique
               style={[
                 styles.option,
-                selectedValue === type && styles.selectedOption,
+                selectedValue === value && styles.selectedOption,
               ]}
-              onPress={() => handleSelect(type)}
+              onPress={() => handleSelect(value)}
             >
               <Text
                 style={[
                   styles.optionText,
-                  selectedValue === type && styles.selectedOptionText,
+                  selectedValue === value && styles.selectedOptionText,
                 ]}
               >
                 {type}
               </Text>
             </TouchableOpacity>
           ))}
+
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               onPress={handleClear}

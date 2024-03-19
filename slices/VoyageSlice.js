@@ -186,27 +186,34 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         console.log("count:", count);
         console.log("selectedVehicleType:", selectedVehicleType);
 
-        // Construct queryParams with dynamic values
         const queryParams = new URLSearchParams({
           Lat1: (latitude - 50).toString(),
           Lat2: (latitude + 50).toString(),
           Lon1: (longitude - 50).toString(),
           Lon2: (longitude + 50).toString(),
           Vacancy: count.toString(),
-          VehicleType: selectedVehicleType,
-          StartDate: formattedStartDate,
-          EndDate: formattedEndDate,
         });
+
+        if (selectedVehicleType !== undefined && selectedVehicleType !== null) {
+          queryParams.append("VehicleType", selectedVehicleType);
+        }
+
+        if (formattedStartDate !== null) {
+          queryParams.append("StartDate", formattedStartDate);
+        }
+
+        if (formattedEndDate !== null) {
+          queryParams.append("EndDate", formattedEndDate);
+        }
+
         console.log("queryParams:", queryParams.toString());
         const endpoint = `/api/Voyage/GetFilteredVoyages?${queryParams.toString()}`;
 
-        // 'https://localhost:7151/api/Voyage/GetFilteredVoyages?
-        //lat1=0&lat2=99&lon1=0&lon2=99&vacancy=77&startDate=2020-03-14T09%3A00%3A00.000Z
-        //&endDate=2050-03-14T09%3A00%3A00.000Z&vehicleType=Car' \
         return endpoint;
       },
       transformResponse: (responseData) => {
-        console.log(responseData.data);
+        console.log(responseData.data.length);
+        responseData.data.forEach((v) => console.log("v id: ", v.id));
         return responseData.data;
       },
     }),

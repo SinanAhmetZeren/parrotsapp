@@ -128,7 +128,21 @@ export default function HomeScreen({ navigation }) {
     console.log("end date: ", endDate);
   };
 
-  function convertDateFormat(inputDate) {
+  const printVoyages = () => {
+    initialVoyages.forEach((v, i) => {
+      console.log(i, v.name);
+    });
+  };
+
+  function convertDateFormat(inputDate, dateType) {
+    if (inputDate === null && dateType === "endDate") {
+      return "2060-01-01 00:00:00.000";
+    }
+
+    if (inputDate === null && dateType === "startDate") {
+      return "1970-01-01 00:00:00.000";
+    }
+
     const date = new Date(inputDate);
     const year = date.getUTCFullYear();
     const month = `0${date.getUTCMonth() + 1}`.slice(-2);
@@ -141,9 +155,9 @@ export default function HomeScreen({ navigation }) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
   }
 
-  const filter = () => {
-    const formattedStartDate = convertDateFormat(startDate);
-    const formattedEndDate = convertDateFormat(endDate);
+  const applyFilter = async () => {
+    const formattedStartDate = convertDateFormat(startDate, "startDate");
+    const formattedEndDate = convertDateFormat(endDate, "endDate");
 
     const data = {
       latitude,
@@ -153,8 +167,8 @@ export default function HomeScreen({ navigation }) {
       formattedStartDate,
       formattedEndDate,
     };
-    console.log("data: ", data);
-    getFilteredVoyages(data);
+    const filteredVoyages = await getFilteredVoyages(data);
+    setInitialVoyages(filteredVoyages.data);
   };
 
   function handleCountModal() {
@@ -230,24 +244,12 @@ export default function HomeScreen({ navigation }) {
             setSelectedVehicleType={setSelectedVehicleType}
           />
         </View>
-        <View style={{ height: vh(100) }}>
-          {/* <View style={styles.searchAndMenu}>
-            <Feather
-              name="menu"
-              size={24}
-              color="black"
-              style={{ marginRight: 8 }}
-            />
-            <TextInput
-              style={styles.searchInput1}
-              placeholder="Search..."
-              // Add any other TextInput props you need
-            />
-            <Fontisto name="bell" size={24} color="black" />
-          </View> */}
+        <View style={{ height: vh(110) }}>
           <View
             style={{
               marginTop: vh(2),
+              flexDirection: "row",
+              justifyContent: "space-evenly",
             }}
           >
             <Button
@@ -256,16 +258,18 @@ export default function HomeScreen({ navigation }) {
                 printState();
               }}
             />
-          </View>
-          <View
-            style={{
-              marginTop: vh(2),
-            }}
-          >
+
+            <Button
+              title="print voyages"
+              onPress={() => {
+                printVoyages();
+              }}
+            />
+
             <Button
               title="filter"
               onPress={() => {
-                filter();
+                applyFilter();
               }}
             />
           </View>
@@ -274,40 +278,56 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.welcome}>Welcome to Parrots</Text>
               <Text style={styles.username}>{username}!</Text>
             </View>
-            <View style={styles.filterbox}>
-              <TouchableOpacity onPress={handleCountModal}>
-                <MaterialCommunityIcons
-                  style={[
-                    styles.icon,
-                    isCountFiltered ? styles.filtered : null,
-                  ]}
-                  name="human"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleCalendarModal}>
-                <AntDesign
-                  style={[
-                    styles.icon,
-                    isDatesFiltered ? styles.filtered : null,
-                  ]}
-                  name="calendar"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleVehicleModal}>
-                <Ionicons
-                  style={[
-                    styles.icon,
-                    isVehicleFiltered ? styles.filtered : null,
-                  ]}
-                  name="car-outline"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
+
+            <View style={styles.filterContainer}>
+              <View style={styles.filterbox}>
+                <TouchableOpacity onPress={handleCountModal}>
+                  <MaterialCommunityIcons
+                    style={[
+                      styles.icon,
+                      isCountFiltered ? styles.filtered : null,
+                    ]}
+                    name="human"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleCalendarModal}>
+                  <AntDesign
+                    style={[
+                      styles.icon,
+                      isDatesFiltered ? styles.filtered : null,
+                    ]}
+                    name="calendar"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleVehicleModal}>
+                  <Ionicons
+                    style={[
+                      styles.icon,
+                      isVehicleFiltered ? styles.filtered : null,
+                    ]}
+                    name="car-outline"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.filterButtonContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    applyFilter();
+                  }}
+                  style={styles.extendedAreaContainer}
+                >
+                  <View style={styles.extendedArea}>
+                    <Text style={styles.seeOnMap}>Apply Filter</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
           <View style={styles.mapContainer}>
@@ -347,6 +367,26 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  filterButtonContainer: {
+    // backgroundColor: "yellow",
+  },
+  filterContainer: {
+    // backgroundColor: "grey",
+  },
+  extendedAreaContainer: {
+    borderRadius: vh(1),
+  },
+  extendedArea: {},
+  seeOnMap: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#2ac898",
+    alignSelf: "flex-end",
+    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    borderRadius: vh(3),
+    paddingHorizontal: vh(5),
+    paddingVertical: vh(1),
+  },
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
@@ -408,19 +448,18 @@ const styles = StyleSheet.create({
     color: "#2ac898",
   },
   welcomebox: {
-    //backgroundColor: "green",
+    paddingTop: vh(2),
+    width: vw(50),
   },
   filterbox: {
     flexDirection: "row",
-    flex: 1,
-    // backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-around",
+
+    width: vw(43),
   },
   icon: {
     padding: 7,
     margin: 2,
-    // backgroundColor: "white",
     borderRadius: 20,
   },
 
