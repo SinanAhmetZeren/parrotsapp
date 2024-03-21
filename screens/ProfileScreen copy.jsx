@@ -359,35 +359,78 @@ export default function ProfileScreen({ navigation }) {
               </View>
               {/* ------- BIO ------ */}
 
-              {isLoadingVoyages ? (
-                <ActivityIndicator size="large" />
-              ) : isSuccessVoyages ? (
-                <>
-                  <View style={styles.mainBidsContainer}>
-                    <View style={styles.currentBidsAndSeeAll}>
-                      <Text style={styles.currentBidsTitle}>Vehicles</Text>
-                    </View>
-                  </View>
-                  <View style={styles.voyageListContainer}>
-                    <VehicleList
-                      style={styles.voyageList}
-                      data={VehiclesData}
-                    />
-                  </View>
+              {/* ------- CHOICE ------ */}
+              <View style={styles.viewChoice}>
+                <View style={styles.choiceItem}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleChangeSelection("voyages");
+                    }}
+                    style={
+                      selected === "voyages"
+                        ? styles.selectedChoice
+                        : styles.nonSelectedChoice
+                    }
+                  >
+                    <Text
+                      style={
+                        selected === "voyages"
+                          ? styles.selectedText
+                          : styles.nonSelectedText
+                      }
+                    >
+                      Voyages
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.choiceItem}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleChangeSelection("vehicles");
+                    }}
+                    style={
+                      selected === "vehicles"
+                        ? styles.selectedChoice
+                        : styles.nonSelectedChoice
+                    }
+                  >
+                    <Text
+                      style={
+                        selected === "vehicles"
+                          ? styles.selectedText
+                          : styles.nonSelectedText
+                      }
+                    >
+                      Vehicles
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              {/* ------- CHOICE ------ */}
 
-                  <View style={styles.mainBidsContainer}>
-                    <View style={styles.currentBidsAndSeeAll}>
-                      <Text style={styles.currentBidsTitle}>Voyages</Text>
-                    </View>
-                  </View>
+              {selected === "voyages" &&
+                (isLoadingVoyages ? (
+                  <ActivityIndicator size="large" />
+                ) : isSuccessVoyages ? (
                   <View style={styles.voyageListContainer}>
                     <VoyageListVertical
                       style={styles.voyageList}
                       data={VoyagesData}
                     />
                   </View>
-                </>
-              ) : null}
+                ) : null)}
+
+              {selected === "vehicles" &&
+                (isLoadingVehicles ? (
+                  <ActivityIndicator size="large" />
+                ) : isSuccessVehicles ? (
+                  <View style={styles.voyageListContainer}>
+                    <VehicleList
+                      style={styles.voyageList}
+                      data={VehiclesData}
+                    />
+                  </View>
+                ) : null)}
             </View>
           </ScrollView>
         </View>
@@ -397,23 +440,12 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  currentBidsTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#3c9dde",
-    paddingLeft: vw(5),
-  },
-  currentBidsAndSeeAll: {
-    marginTop: vh(2),
-    flexDirection: "row",
-    paddingRight: vw(10),
-  },
-  mainBidsContainer: {
-    borderRadius: vw(5),
-    borderColor: "#93c9ed",
-  },
+  mainContainer: {},
+  innerContainer: {},
+
   rectangularBox: {
     height: vh(35),
+    backgroundColor: "white",
   },
   imageContainer: {
     top: vh(5),
@@ -478,7 +510,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    marginBottom: vh(3),
+    // top: vh(-12),
   },
   vehicleList: {},
   blueText: {

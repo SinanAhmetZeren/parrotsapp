@@ -6,6 +6,7 @@ import { StyleSheet, View } from "react-native";
 import ConversationView from "./CoversationView";
 
 export default function ConversationList({ data }) {
+  console.log(data[0]);
   const data1 = [
     {
       id: 1,
@@ -50,14 +51,14 @@ export default function ConversationList({ data }) {
   ];
 
   const renderConversationViews = () => {
-    return data1.map((item) => (
+    return data.map((item, index) => (
       <ConversationView
-        key={item.id}
-        profileImg={item.profileImg}
-        name={item.name}
-        message={item.message}
-        time={item.time}
-        count={item.count}
+        key={index}
+        profileImg={item.userProfileImage}
+        name={item.userName}
+        message={item.text}
+        time={item.dateTime}
+        count={33}
       />
     ));
   };

@@ -174,23 +174,19 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         const {
           latitude,
           longitude,
+          latitudeDelta,
+          longitudeDelta,
           count,
           selectedVehicleType,
           formattedStartDate,
           formattedEndDate,
         } = data;
 
-        // Logging parameter values for debugging
-        console.log("latitude:", latitude);
-        console.log("longitude:", longitude);
-        console.log("count:", count);
-        console.log("selectedVehicleType:", selectedVehicleType);
-
         const queryParams = new URLSearchParams({
-          Lat1: (latitude - 50).toString(),
-          Lat2: (latitude + 50).toString(),
-          Lon1: (longitude - 50).toString(),
-          Lon2: (longitude + 50).toString(),
+          Lat1: (latitude - latitudeDelta).toString(),
+          Lat2: (latitude + latitudeDelta).toString(),
+          Lon1: (longitude - longitudeDelta).toString(),
+          Lon2: (longitude + longitudeDelta).toString(),
           Vacancy: count.toString(),
         });
 
@@ -206,14 +202,13 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           queryParams.append("EndDate", formattedEndDate);
         }
 
-        console.log("queryParams:", queryParams.toString());
         const endpoint = `/api/Voyage/GetFilteredVoyages?${queryParams.toString()}`;
 
         return endpoint;
       },
       transformResponse: (responseData) => {
         console.log(responseData.data.length);
-        responseData.data.forEach((v) => console.log("v id: ", v.id));
+        //responseData.data.forEach((v) => console.log("v id: ", v.id));
         return responseData.data;
       },
     }),

@@ -1,9 +1,21 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 
 import React from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
+
+function formatDate(timestamp) {
+  const date = new Date(timestamp);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // January is 0
+  const year = String(date.getFullYear()).slice(-2);
+
+  return [`${hours}:${minutes}`, `${day}/${month}/${year}`];
+}
 
 export default function CoversationView({
   profileImg,
@@ -19,7 +31,9 @@ export default function CoversationView({
           style={styles.profileImage}
           resizeMode="cover"
           //   source={require("../assets/parrot-looks.jpg")}
-          source={profileImg}
+          source={{
+            uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${profileImg}`,
+          }}
         />
       </View>
       <View style={styles.messagesTextContainer}>
@@ -35,11 +49,12 @@ export default function CoversationView({
       </View>
       <View style={styles.timeAndAlertContainer}>
         <View style={styles.time}>
-          <Text style={styles.timeText}>{time}</Text>
+          <Text style={styles.timeText}>{formatDate(time)[0]}</Text>
+          <Text style={styles.timeText}>{formatDate(time)[1]}</Text>
         </View>
-        <View style={styles.alert}>
+        {/* <View style={styles.alert}>
           <Text style={styles.alertText}>{count ? count : ""}</Text>
-        </View>
+        </View> */}
       </View>
     </View>
   );
@@ -62,8 +77,7 @@ const styles = StyleSheet.create({
     width: vw(50),
   },
   timeAndAlertContainer: {
-    backgroundColor: "white",
-    flex: 1,
+    // flex: 1,
   },
   name: {
     backgroundColor: "#e9e9e9",
@@ -72,11 +86,14 @@ const styles = StyleSheet.create({
   },
   message: {
     padding: 10,
-    backgroundColor: "#e9e9e9",
+    // backgroundColor: "#e9e9e9",
+    backgroundColor: "yellow",
   },
   time: {
-    padding: 10,
-    backgroundColor: "#e9e9e9",
+    padding: 1,
+    // backgroundColor: "#e9e9e9",
+    backgroundColor: "orange",
+    width: vw(35),
   },
   timeText: {
     fontWeight: "700",
@@ -92,7 +109,6 @@ const styles = StyleSheet.create({
   alertText: {
     padding: 2,
     fontWeight: "800",
-
     alignSelf: "center",
     color: "white",
   },

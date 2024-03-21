@@ -170,6 +170,35 @@ const TabNavigator = () => {
     <>
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen
+          name="Messages"
+          component={MessagesScreen}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <Feather
+                    name="message-square"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Messages
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
           name="Home"
           component={HomeStack}
           options={{
@@ -275,35 +304,6 @@ const TabNavigator = () => {
                     }
                   >
                     Favorites
-                  </Text>
-                </View>
-              );
-            },
-          }}
-        />
-
-        <Tab.Screen
-          name="Messages"
-          component={MessagesScreen}
-          options={{
-            tabBarIcon: ({ focused }) => {
-              return (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                  <Feather
-                    name="message-square"
-                    size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Messages
                   </Text>
                 </View>
               );

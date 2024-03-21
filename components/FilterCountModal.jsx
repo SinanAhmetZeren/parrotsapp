@@ -14,6 +14,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const FilterCountModal = ({
   isVisible,
+  setIsVisible,
   onClose,
   setIsCountFiltered,
   count,
@@ -34,6 +35,8 @@ const FilterCountModal = ({
 
   const handleClear = () => {
     setCount(1);
+    setIsCountFiltered(false);
+    onClose();
   };
 
   const handleSave = () => {

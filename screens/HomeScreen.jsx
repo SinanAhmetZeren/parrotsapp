@@ -57,8 +57,15 @@ export default function HomeScreen({ navigation }) {
   } = useGetUserByIdQuery(userId);
   const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
   const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
+
+  const [initialLatitude, setInitialLatitude] = useState(0);
+  const [initialLongitude, setInitialLongitude] = useState(0);
+
   const [latitude, setLatitude] = useState(0);
+  const [latitudeDelta, setLatitudeDelta] = useState(0);
   const [longitude, setLongitude] = useState(0);
+  const [longitudeDelta, setLongitudeDelta] = useState(0);
+
   const [initialVoyages, setInitialVoyages] = useState([]);
 
   const [count, setCount] = useState(1);
@@ -75,10 +82,11 @@ export default function HomeScreen({ navigation }) {
           return;
         }
         const location = await Location.getCurrentPositionAsync({});
-        const { latitude, longitude } = location.coords;
-        setLatitude(latitude);
-        setLongitude(longitude);
-        console.log("User Location:", latitude, longitude);
+        const lat = location.coords.latitude;
+        const lon = location.coords.longitude;
+        setInitialLatitude(lat);
+        setInitialLongitude(lon);
+        console.log("User Location: ", lat, lon);
       } catch (error) {
         console.error("Error getting user location:", error);
       }
@@ -89,19 +97,21 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     const getVoyages = async () => {
-      const lat1 = latitude - 50;
-      const lat2 = latitude + 50;
-      const lon1 = longitude - 50;
-      const lon2 = longitude + 50;
+      const lat1 = initialLatitude - 10;
+      const lat2 = initialLatitude + 10;
+      const lon1 = initialLongitude - 10;
+      const lon2 = initialLongitude + 10;
+      console.log("lat1: ", lat1);
 
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
       setInitialVoyages(voyages.data);
+      console.log("intial voyages->", voyages.data.length);
     };
 
-    if (latitude !== 0 && longitude !== 0) {
+    if (initialLatitude !== 0 && initialLongitude !== 0) {
       getVoyages();
     }
-  }, [latitude, longitude]);
+  }, [initialLatitude, initialLongitude]);
 
   const mapRef = useRef(null);
 
@@ -122,10 +132,12 @@ export default function HomeScreen({ navigation }) {
   };
 
   const printState = () => {
-    console.log("count: ", count);
-    console.log("vehicle type: ", selectedVehicleType);
-    console.log("start date: ", startDate);
-    console.log("end date: ", endDate);
+    // console.log("count: ", count);
+    // console.log("vehicle type: ", selectedVehicleType);
+    // console.log("start date: ", startDate);
+    // console.log("end date: ", endDate);
+    console.log("initiallatitude: ", initialLatitude);
+    console.log("initiallongitude: ", initialLongitude);
   };
 
   const printVoyages = () => {
@@ -162,12 +174,15 @@ export default function HomeScreen({ navigation }) {
     const data = {
       latitude,
       longitude,
+      latitudeDelta,
+      longitudeDelta,
       count,
       selectedVehicleType,
       formattedStartDate,
       formattedEndDate,
     };
     const filteredVoyages = await getFilteredVoyages(data);
+    console.log("applyfilter->", filteredVoyages.data.length);
     setInitialVoyages(filteredVoyages.data);
   };
 
@@ -182,6 +197,13 @@ export default function HomeScreen({ navigation }) {
   function handleVehicleModal() {
     setVehicleModalVisibility(!vehicleModalVisibility);
   }
+
+  const handleRegionChangeComplete = (newRegion) => {
+    setLatitude(newRegion.latitude);
+    setLongitude(newRegion.longitude);
+    setLatitudeDelta(newRegion.latitudeDelta);
+    setLongitudeDelta(newRegion.longitudeDelta);
+  };
 
   if (isLoading) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
@@ -199,8 +221,8 @@ export default function HomeScreen({ navigation }) {
     let username = userData.userName;
 
     const initialRegion = {
-      latitude: latitude,
-      longitude: longitude,
+      latitude: initialLatitude,
+      longitude: initialLongitude,
       latitudeDelta: 0.25,
       longitudeDelta: 0.25,
     };
@@ -244,12 +266,13 @@ export default function HomeScreen({ navigation }) {
             setSelectedVehicleType={setSelectedVehicleType}
           />
         </View>
-        <View style={{ height: vh(110) }}>
+        <View style={{ height: vh(100) }}>
           <View
             style={{
               marginTop: vh(2),
               flexDirection: "row",
               justifyContent: "space-evenly",
+              display: "none",
             }}
           >
             <Button
@@ -258,14 +281,12 @@ export default function HomeScreen({ navigation }) {
                 printState();
               }}
             />
-
             <Button
               title="print voyages"
               onPress={() => {
                 printVoyages();
               }}
             />
-
             <Button
               title="filter"
               onPress={() => {
@@ -335,8 +356,8 @@ export default function HomeScreen({ navigation }) {
               style={styles.map}
               initialRegion={initialRegion}
               ref={mapRef}
+              onRegionChangeComplete={handleRegionChangeComplete}
             >
-              {/* <Marker coordinate={markerCoordinate} /> */}
               {initialVoyages.map((item, index) => {
                 return (
                   <Marker
