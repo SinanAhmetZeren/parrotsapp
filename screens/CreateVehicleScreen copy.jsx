@@ -162,7 +162,6 @@ export const CreateVehicleScreen = () => {
       quality: 1,
     });
 
-    console.log("picked image", result.assets[0].uri);
     if (!result.canceled) {
       setProfileImage(result.assets[0].uri);
     }

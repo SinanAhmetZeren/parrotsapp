@@ -3,8 +3,10 @@
 /* eslint-disable no-undef */
 
 import React from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
+import { useNavigation } from "@react-navigation/native";
+import { MessagesComponent } from "../components/MessagesComponent";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -22,82 +24,97 @@ export default function CoversationView({
   name,
   message,
   time,
-  count,
+  userId,
 }) {
+  const navigation = useNavigation();
+
+  const handleNavigate = (conversationUserId) => {
+    navigation.navigate("ConversationDetailScreen", { conversationUserId });
+  };
+
   return (
-    <View style={styles.mainContainer}>
-      <View>
+    <TouchableOpacity
+      style={styles.mainContainer}
+      onPress={() => handleNavigate(userId)}
+    >
+      <View style={styles.profileImageContainer}>
         <Image
           style={styles.profileImage}
           resizeMode="cover"
-          //   source={require("../assets/parrot-looks.jpg")}
           source={{
             uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${profileImg}`,
           }}
         />
       </View>
-      <View style={styles.messagesTextContainer}>
-        <View>
-          {/* <Text style={styles.name}>Mango Featherwing</Text> */}
+      <View style={styles.columnContainer}>
+        <View style={styles.nameAndMessage}>
           <Text style={styles.name}>{name}</Text>
-        </View>
-        <View>
           <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
             {message}
           </Text>
         </View>
       </View>
-      <View style={styles.timeAndAlertContainer}>
+      <View style={styles.columnContainer}>
         <View style={styles.time}>
-          <Text style={styles.timeText}>{formatDate(time)[0]}</Text>
-          <Text style={styles.timeText}>{formatDate(time)[1]}</Text>
+          <Text style={styles.timeText1}>{formatDate(time)[0]}</Text>
+          <Text style={styles.timeText2}>{formatDate(time)[1]}</Text>
         </View>
-        {/* <View style={styles.alert}>
-          <Text style={styles.alertText}>{count ? count : ""}</Text>
-        </View> */}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
+  profileImageContainer: {
+    justifyContent: "center",
+  },
   mainContainer: {
     flexDirection: "row",
-    backgroundColor: "#e9e9e9",
     padding: 6,
-    marginBottom: vh(2),
+    marginBottom: vh(1),
+    backgroundColor: "#f2f6f9",
+    borderRadius: vh(3),
   },
   profileImage: {
-    height: vh(10),
-    width: vh(10),
+    height: vw(13),
+    width: vw(13),
     borderRadius: vh(10),
   },
   messagesTextContainer: {
     height: vh(10),
     width: vw(50),
+    padding: vh(0.5),
   },
-  timeAndAlertContainer: {
-    // flex: 1,
+  columnContainer: {
+    padding: vh(0.6),
+    justifyContent: "center",
   },
   name: {
-    backgroundColor: "#e9e9e9",
-    padding: 10,
-    fontWeight: "700",
-  },
-  message: {
-    padding: 10,
-    // backgroundColor: "#e9e9e9",
-    backgroundColor: "yellow",
-  },
-  time: {
-    padding: 1,
-    // backgroundColor: "#e9e9e9",
-    backgroundColor: "orange",
-    width: vw(35),
-  },
-  timeText: {
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(0.5),
     fontWeight: "700",
     color: "grey",
+  },
+  message: {
+    paddingHorizontal: vh(2),
+    fontWeight: "700",
+    color: "grey",
+  },
+  nameAndMessage: {
+    padding: 1,
+    width: vw(50),
+  },
+  time: {
+    width: vw(20),
+  },
+  timeText1: {
+    fontWeight: "700",
+    color: "darkgrey",
+    marginBottom: vh(1),
+  },
+  timeText2: {
+    fontWeight: "700",
+    color: "darkgrey",
   },
   alert: {
     padding: 7,

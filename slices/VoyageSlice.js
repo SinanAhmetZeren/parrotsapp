@@ -207,8 +207,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return endpoint;
       },
       transformResponse: (responseData) => {
-        console.log(responseData.data.length);
-        //responseData.data.forEach((v) => console.log("v id: ", v.id));
         return responseData.data;
       },
     }),

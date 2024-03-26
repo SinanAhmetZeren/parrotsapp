@@ -14,7 +14,6 @@ import { Feather } from "@expo/vector-icons";
 import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 
 export const VoyagesFlatlistMainpage = ({ voyages }) => {
-  console.log("ss", voyages[0].profileImage);
   const imageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/`;
 
   return (

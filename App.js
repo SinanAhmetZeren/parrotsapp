@@ -28,6 +28,7 @@ import CreateVehicleScreen from "./screens/CreateVehicleScreen";
 import MyVehiclesScreen from "./screens/MyVehiclesScreen";
 import MyBidsScreen from "./screens/MyBidsScreen";
 import MessagesScreen from "./screens/MessagesScreen";
+import { ConversationDetailScreen } from "./screens/ConversationDetailScreen";
 import FavoritesScreen from "./screens/FavoritesScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -120,6 +121,23 @@ const ProfileStack = () => {
     </Stack.Navigator>
   );
 };
+
+const MessageStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="MessagesScreen" component={MessagesScreen} />
+      <Stack.Screen
+        name="ConversationDetailScreen"
+        component={ConversationDetailScreen}
+      />
+    </Stack.Navigator>
+  );
+};
+
 const HomeStack = () => {
   return (
     <Stack.Navigator
@@ -171,7 +189,7 @@ const TabNavigator = () => {
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen
           name="Messages"
-          component={MessagesScreen}
+          component={MessageStack}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -228,6 +246,32 @@ const TabNavigator = () => {
         />
 
         <Tab.Screen
+          name="Create2"
+          component={AddNewStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <TouchableOpacity onPress={toggleModal}>
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: Platform.OS === "ios" ? 50 : 60,
+                    height: Platform.OS === "ios" ? 50 : 60,
+                    top: Platform.OS === "ios" ? -10 : -20,
+                    borderRadius: Platform.OS === "ios" ? 25 : 30,
+                  }}
+                >
+                  <Image
+                    style={styles.plusSign}
+                    source={require("./assets/plus-icon.png")}
+                  />
+                </View>
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        <Tab.Screen
           name="ProfileStack"
           component={ProfileStack}
           options={{
@@ -253,32 +297,6 @@ const TabNavigator = () => {
                 </View>
               );
             },
-          }}
-        />
-
-        <Tab.Screen
-          name="Create2"
-          component={AddNewStack}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TouchableOpacity onPress={toggleModal}>
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: Platform.OS === "ios" ? 50 : 60,
-                    height: Platform.OS === "ios" ? 50 : 60,
-                    top: Platform.OS === "ios" ? -10 : -20,
-                    borderRadius: Platform.OS === "ios" ? 25 : 30,
-                  }}
-                >
-                  <Image
-                    style={styles.plusSign}
-                    source={require("./assets/plus-icon.png")}
-                  />
-                </View>
-              </TouchableOpacity>
-            ),
           }}
         />
 

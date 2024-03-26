@@ -14,9 +14,16 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return responseData.data;
       },
     }),
+    getMessagesBetweenUsers: builder.query({
+      query: (users) => {
+        const { currentUserId, conversationUserId } = users;
+        return `/api/Message/getMessagesBetweenUsers/${currentUserId}/${conversationUserId}`;
+      },
+    }),
   }),
 
   overrideExisting: true,
 });
 
-export const { useGetMessagesByUserIdQuery } = extendedApiSlice;
+export const { useGetMessagesByUserIdQuery, useGetMessagesBetweenUsersQuery } =
+  extendedApiSlice;

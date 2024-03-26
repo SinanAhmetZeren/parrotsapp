@@ -40,7 +40,6 @@ const FilterVehicleModal = ({
 
   const handleSelect = (value) => {
     setSelectedValue(value);
-    console.log("selected value is: ", selectedValue);
   };
   const handleClear = () => {
     setSelectedValue(null);
