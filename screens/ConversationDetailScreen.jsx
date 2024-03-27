@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -16,16 +16,15 @@ import {
 } from "react-native";
 import { useGetMessagesBetweenUsersQuery } from "../slices/MessageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { MaterialIcons, AntDesign, Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import DropdownComponent from "../components/DropdownComponent";
 import { useRoute } from "@react-navigation/native";
 import MessagesComponent from "../components/MessagesComponent";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 export const ConversationDetailScreen = () => {
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
-  const { conversationUserId } = route.params;
+  const { conversationUserId, profileImg, name } = route.params;
   const users = { currentUserId, conversationUserId };
   const {
     data: messagesData,
@@ -35,6 +34,57 @@ export const ConversationDetailScreen = () => {
     isSuccess: isSuccessMessages,
     refetch,
   } = useGetMessagesBetweenUsersQuery(users);
+  const [message, setMessage] = useState("hi there");
+
+  const hubConnection = useMemo(() => {
+    return new HubConnectionBuilder()
+      .withUrl(
+        `https://measured-wolf-grossly.ngrok-free.app/chathub/11?userId=${currentUserId}`
+      )
+      .build();
+  }, [currentUserId]);
+
+  useEffect(() => {
+    const startHubConnection = async () => {
+      try {
+        await hubConnection.start();
+        console.log("SignalR connection started successfully.");
+      } catch (error) {
+        console.error("Failed to start SignalR connection:", error);
+      }
+    };
+    startHubConnection();
+    hubConnection.on(
+      "ReceiveMessage",
+      async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
+        setReceivedMessageData([
+          senderId,
+          content,
+          newTime,
+          senderProfileUrl,
+          senderUsername,
+        ]);
+      }
+    );
+    return () => {
+      hubConnection.stop();
+    };
+  }, []);
+
+  const handleSendMessage = () => {
+    sendMessage(message);
+  };
+
+  const sendMessage = (messageToSend) => {
+    const messageWithTimeStamp =
+      messageToSend + " - " + new Date().toLocaleString();
+    hubConnection.invoke(
+      "SendMessage",
+      currentUserId,
+      conversationUserId,
+      messageWithTimeStamp
+    );
+  };
 
   const printState = () => {
     console.log("conversationUserId: ", conversationUserId);
@@ -54,28 +104,39 @@ export const ConversationDetailScreen = () => {
           backgroundColor: "lightgreen",
         }}
       >
-        <Text style={styles.text1}>current userId: {currentUserId}</Text>
-        <Text style={styles.text1}>
-          conversation userId: {conversationUserId}
-        </Text>
+        <ScrollView style={styles.scrollViewMessages}>
+          <View style={{ padding: vh(1), backgroundColor: "lightblue" }}>
+            <TextInput
+              onChangeText={(text) => setMessage(text)}
+              style={{ paddingHorizontal: vh(2), backgroundColor: "white" }}
+            >
+              {message}
+            </TextInput>
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity
+                onPress={() => handleSendMessage()}
+                style={styles.buttonCancelContainer}
+              >
+                <Text style={styles.buttonClear}>Send Message</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-        {/* Buttons */}
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            onPress={printState}
-            style={styles.buttonCancelContainer}
-          >
-            <Text style={styles.buttonClear}>Print</Text>
-          </TouchableOpacity>
-        </View>
-
-        <MessagesComponent data={messagesData.data} />
+          <MessagesComponent
+            data={messagesData.data}
+            profileImg={profileImg}
+            name={name}
+          />
+        </ScrollView>
       </View>
     );
   }
 };
 
 const styles = StyleSheet.create({
+  scrollViewMessages: {
+    marginBottom: vh(5),
+  },
   text1: {
     justifyContent: "center",
     margin: vh(3),
@@ -93,8 +154,8 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     backgroundColor: "#2ac898",
-    padding: 5,
-    width: vw(30),
+    padding: 2,
+    width: vw(40),
     borderRadius: 10,
     marginTop: 5,
   },

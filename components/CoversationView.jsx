@@ -29,7 +29,11 @@ export default function CoversationView({
   const navigation = useNavigation();
 
   const handleNavigate = (conversationUserId) => {
-    navigation.navigate("ConversationDetailScreen", { conversationUserId });
+    navigation.navigate("ConversationDetailScreen", {
+      conversationUserId,
+      profileImg,
+      name,
+    });
   };
 
   return (

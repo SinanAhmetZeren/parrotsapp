@@ -44,17 +44,39 @@ export default function MessagesScreen({ navigation }) {
   }, [userId]);
 
   useEffect(() => {
-    hubConnection.start();
-    hubConnection.on("ReceiveMessage", async (senderId, content, newTime) => {
-      setReceivedMessageData([senderId, content, newTime]);
-      // setTransformedMessages((prevMessages) => [...prevMessages, newMessage]);
-    });
+    // hubConnection.start();
+
+    const startHubConnection = async () => {
+      try {
+        await hubConnection.start();
+        console.log("SignalR connection started successfully.");
+      } catch (error) {
+        console.error("Failed to start SignalR connection:", error);
+      }
+    };
+
+    startHubConnection();
+
+    hubConnection.on(
+      "ReceiveMessage",
+      async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
+        setReceivedMessageData([
+          senderId,
+          content,
+          newTime,
+          senderProfileUrl,
+          senderUsername,
+        ]);
+      }
+    );
     return () => {
       hubConnection.stop();
     };
   }, []);
 
   useEffect(() => {
+    console.log("...messages data from useeffect ", messagesData);
+
     setTransformedMessages(
       messagesData.map((message) => {
         const user =
@@ -75,20 +97,23 @@ export default function MessagesScreen({ navigation }) {
   }, [isSuccessMessages]);
 
   useEffect(() => {
-    // console.log("receivedMessageData... ", receivedMessageData);
-    console.log("received msg senderId:", receivedMessageData[0]);
-    console.log("received msg text:", receivedMessageData[1]);
-    console.log("received msg time:", receivedMessageData[2]);
     const newSenderId = receivedMessageData[0];
     const text = receivedMessageData[1];
     const dateTime = receivedMessageData[2];
+    const senderProfileUrl = receivedMessageData[3];
+    const senderUsername = receivedMessageData[4];
+
     const index = transformedMessages.findIndex(
       (msg) => msg.user === newSenderId
     );
     console.log("index...", index);
     console.log("msg with index", transformedMessages[index]);
 
+    if (!receivedMessageData) return;
+
     if (index !== -1) {
+      console.log("---->> ---->>");
+
       setTransformedMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
         updatedMessages[index] = {
@@ -97,6 +122,22 @@ export default function MessagesScreen({ navigation }) {
           dateTime,
         };
         return updatedMessages;
+      });
+    }
+
+    if (index == -1) {
+      console.log("hello from -1");
+
+      const newMessageFromNewUser = {
+        dateTime: dateTime,
+        text: text,
+        user: newSenderId,
+        userName: senderUsername,
+        userProfileImage: senderProfileUrl,
+      };
+
+      setTransformedMessages((prevMessages) => {
+        return [...prevMessages, newMessageFromNewUser];
       });
     }
   }, [receivedMessageData]);
@@ -136,6 +177,10 @@ export default function MessagesScreen({ navigation }) {
   };
 
   if (isSuccessMessages) {
+    console.log("success......");
+    console.log(".............");
+    console.log("..... .........");
+
     return (
       <View style={styles.container}>
         <View>
@@ -154,7 +199,7 @@ export default function MessagesScreen({ navigation }) {
           >
             <Text style={styles.buttonSave}>Send Message</Text>
           </TouchableOpacity>
-
+          {/* 
           <TouchableOpacity
             onPress={() => handlePrintState()}
             style={styles.buttonSendBidContainer}
@@ -173,8 +218,8 @@ export default function MessagesScreen({ navigation }) {
             style={styles.buttonSendBidContainer}
           >
             <Text style={styles.buttonSave}>Print Received</Text>
-          </TouchableOpacity>
-
+          </TouchableOpacity> */}
+          {/* 
           <View>
             <Text>{connectionState} </Text>
           </View>
@@ -197,7 +242,7 @@ export default function MessagesScreen({ navigation }) {
             }}
           >
             {messageSenderId}
-          </Text>
+          </Text> */}
         </View>
 
         <View style={styles.flatlist}>

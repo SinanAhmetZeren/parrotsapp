@@ -8,6 +8,7 @@ import { vh } from "react-native-expo-viewport-units";
 export default function MessagesComponent({ data }) {
   const renderMessages = () => {
     return data.map((item) => {
+      console.log("-->", item);
       return (
         <View
           style={{
