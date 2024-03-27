@@ -21,7 +21,7 @@ import { useRoute } from "@react-navigation/native";
 import MessagesComponent from "../components/MessagesComponent";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
-import { current } from "@reduxjs/toolkit";
+
 export const ConversationDetailScreen = () => {
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
@@ -43,6 +43,8 @@ export const ConversationDetailScreen = () => {
   const [message, setMessage] = useState("hi there");
   const [userProfileImage, setUserProfileImage] = useState("");
   const [userName, setUserName] = useState("");
+  const [receivedMessageData, setReceivedMessageData] = useState([]);
+  const [transformedMessages, setTransformedMessages] = useState([]);
 
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
@@ -65,6 +67,7 @@ export const ConversationDetailScreen = () => {
     hubConnection.on(
       "ReceiveMessage",
       async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
+        console.log("oh!");
         setReceivedMessageData([
           senderId,
           content,
@@ -80,6 +83,50 @@ export const ConversationDetailScreen = () => {
   }, []);
 
   useEffect(() => {
+    setTransformedMessages(messagesData.data);
+  }, [isSuccessMessages]);
+
+  useEffect(() => {
+    console.log("1", isSuccessMessages);
+    console.log("2", isSuccessUser);
+    console.log("3", receivedMessageData);
+    if (isSuccessMessages && isSuccessUser && receivedMessageData[0]) {
+      console.log("x------>", receivedMessageData);
+      /*
+      const newMessage = {
+        user: message.senderId,
+        userName: message.senderUsername || 'Unknown',
+        userProfileImage: message.senderProfileUrl || 'Default Image URL',
+        text: message.text,
+        dateTime: formatDate(message.dateTime), // Assuming formatDate function is defined
+      };
+      */
+
+      setTransformedMessages((prevMessages) => {
+        // return [...prevMessages, newMessage];
+        return [...prevMessages];
+      });
+    }
+
+    if (receivedMessageData[0]) {
+      console.log("received a message ...");
+    }
+    console.log("?");
+
+    // dateTime	:	2024-03-26T20:43:39.9403949
+    // id	:	198
+    // readByReceiver	:	false
+    // receiverId	:	1bf7d55e-7be2-49fb-99aa-93d947711e32
+    // receiverProfileUrl	:	null
+    // receiverUsername	:	null
+    // rendered	:	false
+    // senderId	:	43242342432342342342
+    // senderProfileUrl	:	null
+    // senderUsername	:	null
+    // text	:	hi dude from postman
+  }, [receivedMessageData]);
+
+  useEffect(() => {
     if (userData) {
       setUserName(userData.userName);
       setUserProfileImage(userData.profileImageUrl);
@@ -87,6 +134,7 @@ export const ConversationDetailScreen = () => {
   }, [isSuccessUser]);
 
   const handleSendMessage = () => {
+    console.log("sending message");
     sendMessage(message);
   };
 
@@ -111,6 +159,7 @@ export const ConversationDetailScreen = () => {
   }
 
   if (isSuccessMessages && isSuccessUser) {
+    console.log("-- -->>", messagesData.data);
     return (
       <View
         style={{
@@ -127,14 +176,14 @@ export const ConversationDetailScreen = () => {
             >
               {message}
             </TextInput>
-            <View style={styles.buttonsContainer}>
+            {/* <View style={styles.buttonsContainer}>
               <TouchableOpacity
                 onPress={() => handlePrintState()}
                 style={styles.buttonCancelContainer}
               >
                 <Text style={styles.buttonClear}>Print State</Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
                 onPress={() => handleSendMessage()}
@@ -146,7 +195,8 @@ export const ConversationDetailScreen = () => {
           </View>
 
           <MessagesComponent
-            data={messagesData.data}
+            // data={messagesData.data}
+            data={transformedMessages}
             currentUserId={currentUserId}
             userName={userName}
             userProfileImage={userProfileImage}

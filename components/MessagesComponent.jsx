@@ -32,18 +32,6 @@ export default function MessagesComponent({
 }) {
   const renderMessages = () => {
     return data.map((item) => {
-      console.log("----------");
-      console.log("sender id -->", item.senderId);
-      console.log("current user id -->", currentUserId);
-      console.log("date time: ....", item.dateTime);
-      /*
-      data={messagesData.data}
-      userName={userName}
-      userProfileImage={userProfileImage}
-      otherUserprofileImg={profileImg}
-      otherUserName={name}
-      */
-
       return (
         <View>
           {item.senderId === currentUserId ? (
