@@ -20,10 +20,16 @@ import { useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import MessagesComponent from "../components/MessagesComponent";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-
+import { useGetUserByIdQuery } from "../slices/UserSlice";
+import { current } from "@reduxjs/toolkit";
 export const ConversationDetailScreen = () => {
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
+  const {
+    data: userData,
+    isLoading: isLoadingUser,
+    isSuccess: isSuccessUser,
+  } = useGetUserByIdQuery(currentUserId);
   const { conversationUserId, profileImg, name } = route.params;
   const users = { currentUserId, conversationUserId };
   const {
@@ -35,6 +41,8 @@ export const ConversationDetailScreen = () => {
     refetch,
   } = useGetMessagesBetweenUsersQuery(users);
   const [message, setMessage] = useState("hi there");
+  const [userProfileImage, setUserProfileImage] = useState("");
+  const [userName, setUserName] = useState("");
 
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
@@ -48,7 +56,7 @@ export const ConversationDetailScreen = () => {
     const startHubConnection = async () => {
       try {
         await hubConnection.start();
-        console.log("SignalR connection started successfully.");
+        console.log("SignalR connection  started successfully.");
       } catch (error) {
         console.error("Failed to start SignalR connection:", error);
       }
@@ -71,6 +79,13 @@ export const ConversationDetailScreen = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (userData) {
+      setUserName(userData.userName);
+      setUserProfileImage(userData.profileImageUrl);
+    }
+  }, [isSuccessUser]);
+
   const handleSendMessage = () => {
     sendMessage(message);
   };
@@ -86,22 +101,22 @@ export const ConversationDetailScreen = () => {
     );
   };
 
-  const printState = () => {
-    console.log("conversationUserId: ", conversationUserId);
-    console.log("currentUserId: ", currentUserId);
+  const handlePrintState = () => {
+    console.log("user profile img: ", userProfileImage);
+    console.log("user name: ", userName);
   };
 
   if (isLoadingMessages) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
-  if (isSuccessMessages) {
+  if (isSuccessMessages && isSuccessUser) {
     return (
       <View
         style={{
           marginTop: vh(5),
+          backgroundColor: "white",
           padding: vh(2),
-          backgroundColor: "lightgreen",
         }}
       >
         <ScrollView style={styles.scrollViewMessages}>
@@ -114,6 +129,14 @@ export const ConversationDetailScreen = () => {
             </TextInput>
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
+                onPress={() => handlePrintState()}
+                style={styles.buttonCancelContainer}
+              >
+                <Text style={styles.buttonClear}>Print State</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity
                 onPress={() => handleSendMessage()}
                 style={styles.buttonCancelContainer}
               >
@@ -124,8 +147,11 @@ export const ConversationDetailScreen = () => {
 
           <MessagesComponent
             data={messagesData.data}
-            profileImg={profileImg}
-            name={name}
+            currentUserId={currentUserId}
+            userName={userName}
+            userProfileImage={userProfileImage}
+            otherUserProfileImg={profileImg}
+            otherUserName={name}
           />
         </ScrollView>
       </View>
@@ -135,6 +161,7 @@ export const ConversationDetailScreen = () => {
 
 const styles = StyleSheet.create({
   scrollViewMessages: {
+    backgroundColor: "white",
     marginBottom: vh(5),
   },
   text1: {
