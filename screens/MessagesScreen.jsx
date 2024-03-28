@@ -75,7 +75,7 @@ export default function MessagesScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    console.log("...messages data from useeffect ", messagesData);
+    // console.log("...messages data from useeffect ", messagesData);
 
     if (isSuccessMessages) {
       setTransformedMessages(
@@ -159,25 +159,6 @@ export default function MessagesScreen({ navigation }) {
     sendMessage(message);
   };
 
-  const handlePrintState = () => {
-    console.log("connetction state:", hubConnection.state);
-    setConnectionState(hubConnection.state);
-  };
-
-  const handlePrintReceived = () => {
-    console.log("received msg senderId:", receivedMessageData[0]);
-    console.log("received msg text:", receivedMessageData[1]);
-    console.log("received msg time:", receivedMessageData[2]);
-  };
-
-  const handlePrintMessages = () => {
-    console.log("");
-    console.log("");
-    transformedMessages.forEach((x, index) => console.log(index, ": ", x));
-    console.log("");
-    console.log("");
-  };
-
   if (isSuccessMessages) {
     console.log("success......");
 
@@ -185,64 +166,6 @@ export default function MessagesScreen({ navigation }) {
       <View style={styles.container}>
         <View>
           <Text style={styles.recentChats}>Recent Chats</Text>
-        </View>
-        <View style={{ padding: vh(4), backgroundColor: "lightblue" }}>
-          <TextInput
-            onChangeText={(text) => setMessage(text)}
-            style={{ paddingHorizontal: vh(2), backgroundColor: "white" }}
-          >
-            {message}
-          </TextInput>
-          <TouchableOpacity
-            onPress={() => handleSendMessage()}
-            style={styles.buttonSendBidContainer}
-          >
-            <Text style={styles.buttonSave}>Send Message</Text>
-          </TouchableOpacity>
-          {/* 
-          <TouchableOpacity
-            onPress={() => handlePrintState()}
-            style={styles.buttonSendBidContainer}
-          >
-            <Text style={styles.buttonSave}>How is connection</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => handlePrintMessages(transformedMessages)}
-            style={styles.buttonSendBidContainer}
-          >
-            <Text style={styles.buttonSave}>Print Messages</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handlePrintReceived()}
-            style={styles.buttonSendBidContainer}
-          >
-            <Text style={styles.buttonSave}>Print Received</Text>
-          </TouchableOpacity> */}
-          {/* 
-          <View>
-            <Text>{connectionState} </Text>
-          </View>
-
-          <Text
-            style={{
-              paddingHorizontal: vh(2),
-              backgroundColor: "white",
-              marginTop: vh(1),
-            }}
-          >
-            {receivedMessage}
-          </Text>
-
-          <Text
-            style={{
-              paddingHorizontal: vh(2),
-              backgroundColor: "white",
-              marginTop: vh(1),
-            }}
-          >
-            {messageSenderId}
-          </Text> */}
         </View>
 
         <View style={styles.flatlist}>
@@ -266,8 +189,8 @@ const styles = StyleSheet.create({
     marginTop: vh(5),
     backgroundColor: "white",
     width: vw(100),
-    justifyContent: "center",
     alignSelf: "center",
+    height: vh(95),
   },
   recentChats: {
     fontWeight: "700",
@@ -276,6 +199,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   flatlist: {
+    backgroundColor: "yellow",
+    marginTop: vh(2),
     width: vw(94),
     justifyContent: "center",
     alignSelf: "center",

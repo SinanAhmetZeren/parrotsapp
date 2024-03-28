@@ -151,13 +151,14 @@ const styles = StyleSheet.create({
   },
   userName: {
     color: "orange",
+    color: "#3c9dde",
   },
   MessageContainer: {
     flexDirection: "row",
   },
   container: {
     backgroundColor: "white",
-    marginBottom: 50,
+    marginBottom: vh(2),
   },
   voyageImage1: {
     height: vh(4),

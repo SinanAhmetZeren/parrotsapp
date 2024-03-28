@@ -32,6 +32,5 @@ export default function ConversationList({ data }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    marginBottom: 50,
   },
 });

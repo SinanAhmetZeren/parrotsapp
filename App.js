@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
+import { vh } from "react-native-expo-viewport-units";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
@@ -255,15 +256,12 @@ const TabNavigator = () => {
                   style={{
                     alignItems: "center",
                     justifyContent: "center",
-                    width: Platform.OS === "ios" ? 50 : 60,
-                    height: Platform.OS === "ios" ? 50 : 60,
-                    top: Platform.OS === "ios" ? -10 : -20,
-                    borderRadius: Platform.OS === "ios" ? 25 : 30,
+                    top: Platform.OS === "ios" ? -20 : -30,
                   }}
                 >
                   <Image
                     style={styles.plusSign}
-                    source={require("./assets/plus-icon.png")}
+                    source={require("./assets/plus-thin.png")}
                   />
                 </View>
               </TouchableOpacity>
@@ -383,7 +381,8 @@ export default App;
 
 const styles = StyleSheet.create({
   plusSign: {
-    height: 60,
-    width: 60,
+    height: vh(9),
+    width: vh(9),
+    borderRadius: vh(8),
   },
 });

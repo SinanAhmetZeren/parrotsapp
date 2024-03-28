@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.5),
     fontWeight: "700",
     color: "grey",
+    color: "#3c9dde",
   },
   message: {
     paddingHorizontal: vh(2),
