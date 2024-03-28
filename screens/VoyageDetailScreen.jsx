@@ -8,7 +8,6 @@ import {
   useGetVoyageByIdQuery,
   useSendBidMutation,
 } from "../slices/VoyageSlice";
-import { useGetUserByIdQuery } from "../slices/UserSlice";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   Feather,
@@ -28,14 +27,10 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  FlatList,
-  Modal,
-  TextInput,
   Share,
-  Button,
   ActivityIndicator,
 } from "react-native";
-import MapView, { Marker, Callout, Polyline } from "react-native-maps";
+import MapView from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
 import { RenderBidsComponent } from "../components/RenderBidsComponent";
 import { WaypointListComponent } from "../components/WaypointListComponent";
@@ -58,8 +53,9 @@ const VoyageDetailScreen = () => {
   const route = useRoute();
   const { voyageId } = route.params;
   const userId = useSelector((state) => state.users.userId);
-  const { data: userData, isSuccess: isSuccessUser } =
-    useGetUserByIdQuery(userId);
+  const userProfileImage = useSelector((state) => state.users.userProfileImage);
+  const userName = useSelector((state) => state.users.userName);
+
   const {
     data: VoyageData,
     isSuccess: isSuccessVoyages,
@@ -180,9 +176,6 @@ const VoyageDetailScreen = () => {
     const waypoints = VoyageData.waypoints || [];
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
-    const userProfileImage = userData.profileImageUrl;
-    const userName = userData.userName;
-
     const descriptionShortenedChars = 500;
     const displayText = showFullText
       ? VoyageData.description

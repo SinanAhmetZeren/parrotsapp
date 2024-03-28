@@ -45,16 +45,10 @@ export default function HomeScreen({ navigation }) {
   const [isCountFiltered, setIsCountFiltered] = useState(false);
   const [isDatesFiltered, setIsDatesFiltered] = useState(false);
   const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const userId = useSelector((state) => state.users.userId);
-  const {
-    data: userData,
-    isLoading,
-    isError,
-    error,
-    isSuccess,
-    refetch,
-  } = useGetUserByIdQuery(userId);
+  const username = useSelector((state) => state.users.userName);
+
   const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
   const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
 
@@ -92,7 +86,13 @@ export default function HomeScreen({ navigation }) {
       }
     }
 
-    getLocation();
+    const fetchLocation = async () => {
+      setIsLoading(true);
+      await getLocation();
+      setIsLoading(false);
+    };
+
+    fetchLocation();
   }, []);
 
   useEffect(() => {
@@ -101,11 +101,11 @@ export default function HomeScreen({ navigation }) {
       const lat2 = initialLatitude + 10;
       const lon1 = initialLongitude - 10;
       const lon2 = initialLongitude + 10;
-      console.log("lat1: ", lat1);
+      setIsLoading(true);
 
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
       setInitialVoyages(voyages.data);
-      console.log("intial voyages->", voyages.data.length);
+      setIsLoading(false);
     };
 
     if (initialLatitude !== 0 && initialLongitude !== 0) {
@@ -126,24 +126,9 @@ export default function HomeScreen({ navigation }) {
           heading: 0,
           pitch: 10,
         },
-        { duration: 1000 } // Adjust the duration as needed for your desired animation speed
+        { duration: 1000 }
       );
     }
-  };
-
-  const printState = () => {
-    // console.log("count: ", count);
-    // console.log("vehicle type: ", selectedVehicleType);
-    // console.log("start date: ", startDate);
-    // console.log("end date: ", endDate);
-    console.log("initiallatitude: ", initialLatitude);
-    console.log("initiallongitude: ", initialLongitude);
-  };
-
-  const printVoyages = () => {
-    initialVoyages.forEach((v, i) => {
-      console.log(i, v.name);
-    });
   };
 
   function convertDateFormat(inputDate, dateType) {
@@ -209,17 +194,15 @@ export default function HomeScreen({ navigation }) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
-  if (isError) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 50 }}>error...</Text>
-      </View>
-    );
-  }
+  // if (isError) {
+  //   return (
+  //     <View style={styles.container}>
+  //       <Text style={{ fontSize: 50 }}>error...</Text>
+  //     </View>
+  //   );
+  // }
 
-  if (isSuccess) {
-    let username = userData.userName;
-
+  if (!isLoading) {
     const initialRegion = {
       latitude: initialLatitude,
       longitude: initialLongitude,
@@ -267,33 +250,6 @@ export default function HomeScreen({ navigation }) {
           />
         </View>
         <View style={{ height: vh(100) }}>
-          <View
-            style={{
-              marginTop: vh(2),
-              flexDirection: "row",
-              justifyContent: "space-evenly",
-              display: "none",
-            }}
-          >
-            <Button
-              title="print state 3"
-              onPress={() => {
-                printState();
-              }}
-            />
-            <Button
-              title="print voyages"
-              onPress={() => {
-                printVoyages();
-              }}
-            />
-            <Button
-              title="filter"
-              onPress={() => {
-                applyFilter();
-              }}
-            />
-          </View>
           <View style={styles.welcomeandFilters}>
             <View style={styles.welcomebox}>
               <Text style={styles.welcome}>Welcome to Parrots</Text>

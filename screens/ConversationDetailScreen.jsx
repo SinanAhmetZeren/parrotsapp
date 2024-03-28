@@ -1,21 +1,15 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Image,
-  Modal,
-  Button,
   StyleSheet,
   ScrollView,
-  FlatList,
   ActivityIndicator,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  Platform,
   Keyboard,
 } from "react-native";
 import { useGetMessagesBetweenUsersQuery } from "../slices/MessageSlice";
@@ -24,20 +18,17 @@ import { useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import MessagesComponent from "../components/MessagesComponent";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import { useGetUserByIdQuery } from "../slices/UserSlice";
 import { Feather } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
-export const ConversationDetailScreen = () => {
+export const ConversationDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
-  const {
-    data: userData,
-    isLoading: isLoadingUser,
-    isSuccess: isSuccessUser,
-  } = useGetUserByIdQuery(currentUserId);
+  const currentUserName = useSelector((state) => state.users.userName);
+  const currentUserProfileImage = useSelector(
+    (state) => state.users.userProfileImage
+  );
 
-  // console.log("current user id.....->", currentUserId);
-  // console.log("issuccessuser....->", isSuccessUser);
   const { conversationUserId, profileImg, name } = route.params;
   const users = { currentUserId, conversationUserId };
   const {
@@ -49,13 +40,10 @@ export const ConversationDetailScreen = () => {
     refetch,
   } = useGetMessagesBetweenUsersQuery(users);
   const [message, setMessage] = useState("");
-  const [userProfileImage, setUserProfileImage] = useState("");
-  const [userName, setUserName] = useState("");
+
   const [receivedMessageData, setReceivedMessageData] = useState([]);
   const [transformedMessages, setTransformedMessages] = useState([]);
-  ///////// KEYBOARD ///////////
-  // const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const [textInputBottomMargin, setTextInputBottomMargin] = useState(0); // Initial margin for TextInput
+  const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
 
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
@@ -64,6 +52,24 @@ export const ConversationDetailScreen = () => {
       )
       .build();
   }, [currentUserId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          await refetch();
+        } catch (error) {
+          console.error("Error refetching messages data:", error);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetch, navigation])
+  );
 
   useEffect(() => {
     const startHubConnection = async () => {
@@ -78,12 +84,7 @@ export const ConversationDetailScreen = () => {
     hubConnection.on(
       "ReceiveMessage",
       async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-        console.log("oh !");
         if (receivedMessageData[0] === conversationUserId) {
-          console.log("aaaaa....", receivedMessageData[0]);
-          console.log("bbbbb....", conversationUserId);
-          console.log("ccccc....", transformedMessages[0]);
-
           const newMessage = {
             dateTime: newTime,
             id: newTime,
@@ -124,42 +125,17 @@ export const ConversationDetailScreen = () => {
   }, [isSuccessMessages]);
 
   useEffect(() => {
-    if (isSuccessMessages && isSuccessUser && receivedMessageData[0]) {
-      console.log("x------>", receivedMessageData);
-
-      setTransformedMessages((prevMessages) => {
-        // return [...prevMessages, newMessage];
-        return [...prevMessages];
-      });
-    }
-
-    if (receivedMessageData[0]) {
-      console.log("received a message...");
-    }
-  }, [receivedMessageData]);
-
-  useEffect(() => {
-    if (userData) {
-      setUserName(userData.userName);
-      setUserProfileImage(userData.profileImageUrl);
-    }
-  }, [isSuccessUser]);
-
-  useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       (event) => {
-        // setKeyboardHeight(event.endCoordinates.height);
         setTextInputBottomMargin(event.endCoordinates.height);
-        // console.log("--", event.endCoordinates.height);
       }
     );
 
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
       () => {
-        // setKeyboardHeight(0);
-        setTextInputBottomMargin(0); // Reset margin when keyboard hides
+        setTextInputBottomMargin(0);
       }
     );
 
@@ -173,6 +149,7 @@ export const ConversationDetailScreen = () => {
     console.log("sending message", message);
     sendMessage(message);
 
+    setMessage("");
     const currentDate = new Date();
     const formattedDate = currentDate.toISOString().split(".")[0];
 
@@ -206,17 +183,11 @@ export const ConversationDetailScreen = () => {
     );
   };
 
-  const handlePrintState = () => {
-    console.log("user profile img: ", userProfileImage);
-    console.log("user name: ", userName);
-  };
-
-  if (isLoadingMessages || isLoadingUser) {
+  if (isLoadingMessages) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
-  if (isSuccessMessages && isSuccessUser) {
-    // console.log("-- -->>", messagesData.data);
+  if (isSuccessMessages) {
     return (
       <View
         style={{
@@ -260,8 +231,8 @@ export const ConversationDetailScreen = () => {
             <MessagesComponent
               data={transformedMessages}
               currentUserId={currentUserId}
-              userName={userName}
-              userProfileImage={userProfileImage}
+              userName={currentUserName}
+              userProfileImage={currentUserProfileImage}
               otherUserProfileImg={profileImg}
               otherUserName={name}
             />

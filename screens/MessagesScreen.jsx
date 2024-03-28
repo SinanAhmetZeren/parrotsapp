@@ -2,22 +2,17 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { useState, useEffect, useMemo } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { View, StyleSheet, Text } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
+import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function MessagesScreen({ navigation }) {
-  const userId = "1bf7d55e-7be2-49fb-99aa-93d947711e32";
-
+  const userId = useSelector((state) => state.users.userId);
   const {
     data: messagesData,
     isLoading: isLoadingMessages,
@@ -26,12 +21,7 @@ export default function MessagesScreen({ navigation }) {
     isSuccess: isSuccessMessages,
     refetch,
   } = useGetMessagesByUserIdQuery(userId);
-
-  const [message, setMessage] = useState("hi there");
-  const [receivedMessage, setReceivedMessage] = useState("");
   const [receivedMessageData, setReceivedMessageData] = useState("");
-  const [connectionState, setConnectionState] = useState("");
-  const [messageSenderId, setMessageSenderId] = useState("");
   const [transformedMessages, setTransformedMessages] = useState([]);
 
   const recipientId = userId;
@@ -42,6 +32,22 @@ export default function MessagesScreen({ navigation }) {
       )
       .build();
   }, [userId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          await refetch();
+        } catch (error) {
+          console.error("Error refetching messages data:", error);
+        }
+      };
+      fetchData();
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetch, navigation])
+  );
 
   useEffect(() => {
     // hubConnection.start();
@@ -75,8 +81,6 @@ export default function MessagesScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    // console.log("...messages data from useeffect ", messagesData);
-
     if (isSuccessMessages) {
       setTransformedMessages(
         messagesData.map((message) => {
@@ -108,14 +112,10 @@ export default function MessagesScreen({ navigation }) {
     const index = transformedMessages.findIndex(
       (msg) => msg.user === newSenderId
     );
-    console.log("index...", index);
-    console.log("msg with index", transformedMessages[index]);
 
     if (!receivedMessageData) return;
 
     if (index !== -1) {
-      console.log("---->> ---->>");
-
       setTransformedMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
         updatedMessages[index] = {
@@ -128,8 +128,6 @@ export default function MessagesScreen({ navigation }) {
     }
 
     if (index == -1) {
-      console.log("hello from -1");
-
       const newMessageFromNewUser = {
         dateTime: dateTime,
         text: text,

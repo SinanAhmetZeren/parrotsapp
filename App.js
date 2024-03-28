@@ -48,6 +48,7 @@ import { store } from "./store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useGetUserByIdQuery } from "./slices/UserSlice";
+import { createContext, useContext } from "react";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -338,6 +339,17 @@ const TabNavigator = () => {
     </>
   );
 };
+
+// const ReduxContext = createContext();
+// export const useRedux = () => {
+//   return useContext(ReduxContext);
+// };
+// export const ReduxProvider = ({ children, store }) => {
+//   return (
+//     <ReduxContext.Provider value={store}>{children}</ReduxContext.Provider>
+//   );
+// };
+
 function App() {
   function RenderNavigator() {
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
@@ -375,7 +387,7 @@ function App() {
     if (isSuccessUser) {
       dispatch(
         updateUserData({
-          userProfileImage: userData.profileImageUrl,
+          image: userData.profileImageUrl,
           username: userData.userName,
         })
       );

@@ -12,7 +12,6 @@ import {
   ScrollView,
   FlatList,
 } from "react-native";
-import { useGetUserByIdQuery } from "../slices/UserSlice";
 import {
   useCreateVehicleMutation,
   useAddVehicleImageMutation,
@@ -28,14 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
-  const {
-    data: userData,
-    isLoading,
-    isError,
-    error,
-    isSuccess,
-    refetch,
-  } = useGetUserByIdQuery(userId);
+
   const [createVehicle] = useCreateVehicleMutation();
   const [addVehicleImage] = useAddVehicleImageMutation();
   const [deleteVehicleImage] = useDeleteVehicleImageMutation();
@@ -176,7 +168,7 @@ const CreateVehicleScreen = () => {
   };
 
   if (isSuccess) {
-    const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
+    //const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
 
     const VehicleTypes = {
       Boat: "Boat",
@@ -392,7 +384,6 @@ const CreateVehicleScreen = () => {
                     />
                   ) : (
                     <Image
-                      // source={{ uri: profileImageUrl }}
                       source={require("../assets/plus-watercolor.png")}
                       style={styles.profileImage2}
                     />

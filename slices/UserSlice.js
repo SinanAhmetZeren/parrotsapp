@@ -10,7 +10,7 @@ const usersSlice = createSlice({
     isLoggedIn: false,
     userId: "",
     token: "",
-    username: "",
+    userName: "",
     userProfileImage: "",
   },
   reducers: {
@@ -47,8 +47,8 @@ const usersSlice = createSlice({
       state.isLoggedIn = true;
     },
     updateUserData: (state, action) => {
-      state.username = action.username;
-      state.userProfileImage = action.userProfileImage;
+      state.userProfileImage = action.payload.image;
+      state.userName = action.payload.username;
     },
   },
 });
