@@ -13,6 +13,9 @@ import {
   ScrollView,
   FlatList,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  SafeAreaView,
+  Platform,
 } from "react-native";
 import { useGetMessagesBetweenUsersQuery } from "../slices/MessageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
@@ -21,6 +24,7 @@ import { useRoute } from "@react-navigation/native";
 import MessagesComponent from "../components/MessagesComponent";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
+import { Feather } from "@expo/vector-icons";
 
 export const ConversationDetailScreen = () => {
   const route = useRoute();
@@ -30,6 +34,9 @@ export const ConversationDetailScreen = () => {
     isLoading: isLoadingUser,
     isSuccess: isSuccessUser,
   } = useGetUserByIdQuery(currentUserId);
+
+  console.log("current user id.....->", currentUserId);
+  console.log("issuccessuser....->", isSuccessUser);
   const { conversationUserId, profileImg, name } = route.params;
   const users = { currentUserId, conversationUserId };
   const {
@@ -40,7 +47,9 @@ export const ConversationDetailScreen = () => {
     isSuccess: isSuccessMessages,
     refetch,
   } = useGetMessagesBetweenUsersQuery(users);
-  const [message, setMessage] = useState("hi there");
+  const [message, setMessage] = useState(
+    "hi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehimultilinemul tiline multiline therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehi therehimultilinemul tiline multiline"
+  );
   const [userProfileImage, setUserProfileImage] = useState("");
   const [userName, setUserName] = useState("");
   const [receivedMessageData, setReceivedMessageData] = useState([]);
@@ -83,7 +92,9 @@ export const ConversationDetailScreen = () => {
   }, []);
 
   useEffect(() => {
-    setTransformedMessages(messagesData.data);
+    if (isSuccessMessages) {
+      setTransformedMessages(messagesData.data);
+    }
   }, [isSuccessMessages]);
 
   useEffect(() => {
@@ -154,12 +165,12 @@ export const ConversationDetailScreen = () => {
     console.log("user name: ", userName);
   };
 
-  if (isLoadingMessages) {
+  if (isLoadingMessages || isLoadingUser) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
   if (isSuccessMessages && isSuccessUser) {
-    console.log("-- -->>", messagesData.data);
+    // console.log("-- -->>", messagesData.data);
     return (
       <View
         style={{
@@ -168,32 +179,20 @@ export const ConversationDetailScreen = () => {
           padding: vh(2),
         }}
       >
-        <ScrollView style={styles.scrollViewMessages}>
-          <View style={{ padding: vh(1), backgroundColor: "lightblue" }}>
-            <TextInput
-              onChangeText={(text) => setMessage(text)}
-              style={{ paddingHorizontal: vh(2), backgroundColor: "white" }}
-            >
-              {message}
-            </TextInput>
-            {/* <View style={styles.buttonsContainer}>
-              <TouchableOpacity
-                onPress={() => handlePrintState()}
-                style={styles.buttonCancelContainer}
-              >
-                <Text style={styles.buttonClear}>Print State</Text>
-              </TouchableOpacity>
-            </View> */}
-            <View style={styles.buttonsContainer}>
-              <TouchableOpacity
-                onPress={() => handleSendMessage()}
-                style={styles.buttonCancelContainer}
-              >
-                <Text style={styles.buttonClear}>Send Message</Text>
-              </TouchableOpacity>
-            </View>
+        <View style={styles.headerContainer}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={{
+                uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${profileImg}`,
+              }}
+              style={styles.profileImage}
+            />
           </View>
-
+          <View>
+            <Text style={styles.nameStyle}>{name}</Text>
+          </View>
+        </View>
+        <ScrollView style={styles.scrollViewMessages}>
           <MessagesComponent
             // data={messagesData.data}
             data={transformedMessages}
@@ -204,15 +203,77 @@ export const ConversationDetailScreen = () => {
             otherUserName={name}
           />
         </ScrollView>
+
+        <View style={styles.sendMessageContainer}>
+          <View style={styles.messageTextContainer}>
+            <View>
+              <TextInput
+                onChangeText={(text) => setMessage(text)}
+                style={styles.textinputStyle}
+                numberOfLines={3}
+                multiline
+              >
+                {message}
+              </TextInput>
+            </View>
+          </View>
+
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              onPress={() => handleSendMessage()}
+              style={styles.buttonCancelContainer}
+            >
+              <View style={styles.buttonClear}>
+                <Text style={styles.buttonText}>
+                  <Feather name="send" size={24} color="white" />
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     );
   }
 };
 
 const styles = StyleSheet.create({
+  textinputStyle: {
+    paddingHorizontal: vh(1),
+    backgroundColor: "white",
+    width: vw(75),
+    height: vh(8),
+  },
+  messageTextContainer: {
+    backgroundColor: "yellow",
+    flex: 1,
+    padding: vh(0.3),
+  },
+  sendMessageContainer: {
+    padding: vh(1),
+    flexDirection: "row",
+  },
+  nameStyle: {
+    fontWeight: "800",
+    color: "#3c9dde",
+    fontSize: 22,
+    marginTop: vh(1),
+  },
+  headerContainer: {
+    flexDirection: "row",
+  },
+  profileImage: {
+    height: vh(6),
+    width: vh(6),
+    borderRadius: vh(8),
+  },
+  imageContainer: {
+    height: vh(8),
+    width: vh(8),
+  },
   scrollViewMessages: {
     backgroundColor: "white",
     marginBottom: vh(5),
+    height: vh(60),
   },
   text1: {
     justifyContent: "center",
@@ -222,18 +283,19 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
   },
   buttonsContainer: {
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "space-around",
+    justifyContent: "center",
   },
   buttonClear: {
-    fontSize: 18,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#2ac898",
-    padding: 2,
-    width: vw(40),
-    borderRadius: 10,
-    marginTop: 5,
+    backgroundColor: "#3c9dde",
+    padding: vh(1),
+    borderRadius: vh(3),
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    top: vh(0.1),
+    right: vh(0.1),
   },
 });

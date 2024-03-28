@@ -77,23 +77,25 @@ export default function MessagesScreen({ navigation }) {
   useEffect(() => {
     console.log("...messages data from useeffect ", messagesData);
 
-    setTransformedMessages(
-      messagesData.map((message) => {
-        const user =
-          message.senderId !== userId ? message.senderId : message.receiverId;
-        const userProfileImage =
-          message.senderId !== userId
-            ? message.senderProfileUrl
-            : message.receiverProfileUrl;
-        const userName =
-          message.senderId !== userId
-            ? message.senderUsername
-            : message.receiverUsername;
-        const text = message.text;
-        const dateTime = message.dateTime;
-        return { user, userName, userProfileImage, text, dateTime };
-      })
-    );
+    if (isSuccessMessages) {
+      setTransformedMessages(
+        messagesData.map((message) => {
+          const user =
+            message.senderId !== userId ? message.senderId : message.receiverId;
+          const userProfileImage =
+            message.senderId !== userId
+              ? message.senderProfileUrl
+              : message.receiverProfileUrl;
+          const userName =
+            message.senderId !== userId
+              ? message.senderUsername
+              : message.receiverUsername;
+          const text = message.text;
+          const dateTime = message.dateTime;
+          return { user, userName, userProfileImage, text, dateTime };
+        })
+      );
+    }
   }, [isSuccessMessages]);
 
   useEffect(() => {
@@ -178,8 +180,6 @@ export default function MessagesScreen({ navigation }) {
 
   if (isSuccessMessages) {
     console.log("success......");
-    console.log(".............");
-    console.log("..... .........");
 
     return (
       <View style={styles.container}>

@@ -31,9 +31,9 @@ export default function MessagesComponent({
   currentUserId,
 }) {
   const renderMessages = () => {
-    return data.map((item) => {
+    return data.map((item, index) => {
       return (
-        <View>
+        <View key={index}>
           {item.senderId === currentUserId ? (
             <View style={styles.MessageMainContainerRight}>
               <View style={styles.MessageContainer}>
