@@ -40,12 +40,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   updateAsLoggedIn,
   updateStateFromLocalStorage,
+  updateUserData,
 } from "./slices/UserSlice";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider } from "react-redux"; // Import the Provider
 import { store } from "./store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { useGetUserByIdQuery } from "./slices/UserSlice";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -339,7 +341,13 @@ const TabNavigator = () => {
 function App() {
   function RenderNavigator() {
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+    const userId = useSelector((state) => state.users.userId);
     const dispatch = useDispatch();
+    const {
+      data: userData,
+      isLoading: isLoadingUser,
+      isSuccess: isSuccessUser,
+    } = useGetUserByIdQuery(userId);
 
     useEffect(() => {
       const checkToken = async () => {
@@ -362,7 +370,16 @@ function App() {
       };
 
       checkToken();
-    }, [dispatch]); // Include dispatch as a dependency
+    }, [dispatch]);
+
+    if (isSuccessUser) {
+      dispatch(
+        updateUserData({
+          userProfileImage: userData.profileImageUrl,
+          username: userData.userName,
+        })
+      );
+    }
 
     return isLoggedIn ? <TabNavigator /> : <AuthStack />;
   }

@@ -10,6 +10,8 @@ const usersSlice = createSlice({
     isLoggedIn: false,
     userId: "",
     token: "",
+    username: "",
+    userProfileImage: "",
   },
   reducers: {
     updateAsLoggedIn: (state, action) => {
@@ -44,6 +46,10 @@ const usersSlice = createSlice({
       state.token = token;
       state.isLoggedIn = true;
     },
+    updateUserData: (state, action) => {
+      state.username = action.username;
+      state.userProfileImage = action.userProfileImage;
+    },
   },
 });
 
@@ -51,6 +57,7 @@ export const {
   updateAsLoggedIn,
   updateAsLoggedOut,
   updateStateFromLocalStorage,
+  updateUserData,
 } = usersSlice.actions;
 
 export default usersSlice.reducer;
