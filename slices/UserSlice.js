@@ -12,6 +12,8 @@ const usersSlice = createSlice({
     token: "",
     userName: "",
     userProfileImage: "",
+    userFavoriteVoyages: [],
+    userFavoriteVehicles: [],
   },
   reducers: {
     updateAsLoggedIn: (state, action) => {
@@ -50,6 +52,10 @@ const usersSlice = createSlice({
       state.userProfileImage = action.payload.image;
       state.userName = action.payload.username;
     },
+    updateUserFavorites: (state, action) => {
+      state.userFavoriteVehicles = action.payload.favoriteVehicles;
+      state.userFavoriteVoyages = action.payload.favoriteVoyages;
+    },
   },
 });
 
@@ -58,6 +64,7 @@ export const {
   updateAsLoggedOut,
   updateStateFromLocalStorage,
   updateUserData,
+  updateUserFavorites,
 } = usersSlice.actions;
 
 export default usersSlice.reducer;
@@ -147,11 +154,27 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
 
       invalidatesTags: [],
     }),
+
+    getFavoriteVoyageIdsByUserId: builder.query({
+      query: (userId) => `/api/Favorite/getFavoriteVoyageIdsByUserId/${userId}`,
+      transformResponse: (responseData) => responseData.data,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }),
+    getFavoriteVehicleIdsByUserId: builder.query({
+      query: (userId) =>
+        `/api/Favorite/getFavoriteVehicleIdsByUserId/${userId}`,
+      transformResponse: (responseData) => responseData.data,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }),
   }),
   overrideExisting: true,
 });
 export const {
   useGetAllUsersQuery,
+  useGetFavoriteVoyageIdsByUserIdQuery,
+  useGetFavoriteVehicleIdsByUserIdQuery,
   useRegisterUserMutation,
   useLoginUserMutation,
   useGetUserByIdQuery,

@@ -39,6 +39,10 @@ import { RenderPolylinesComponent } from "../components/RenderPolylinesComponent
 import { useSelector } from "react-redux";
 import { useFonts } from "expo-font";
 import { WaypointFlatListVoyageDetailsScreen } from "../components/WaypointFlatlist";
+import {
+  useAddVoyageToFavoritesMutation,
+  useDeleteVoyageFromFavoritesMutation,
+} from "../slices/VoyageSlice";
 
 const VoyageDetailScreen = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -50,11 +54,16 @@ const VoyageDetailScreen = () => {
     RobotoslabB: require("../assets/RobotoSlab-Bold.ttf"),
   });
 
+  const [addVoyageToFavorites] = useAddVoyageToFavoritesMutation();
+  const [deleteVoyageFromFavorites] = useDeleteVoyageFromFavoritesMutation();
   const route = useRoute();
   const { voyageId } = route.params;
   const userId = useSelector((state) => state.users.userId);
   const userProfileImage = useSelector((state) => state.users.userProfileImage);
   const userName = useSelector((state) => state.users.userName);
+  const userFavoriteVoyages = useSelector(
+    (state) => state.users.userFavoriteVoyages
+  );
 
   const {
     data: VoyageData,
@@ -64,10 +73,19 @@ const VoyageDetailScreen = () => {
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [waypointInfoVisible, setWayPointInfoVisible] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   const handleSeeAll = () => {
     setModalVisible(true);
   };
+
+  useEffect(() => {
+    if (isSuccessVoyages) {
+      if (userFavoriteVoyages.includes(VoyageData.id)) {
+        setIsFavorited(true);
+      }
+    }
+  }, [isSuccessVoyages]);
 
   const getInitialRegion = (waypoints) => {
     const maxLatitude = Math.max(
@@ -148,6 +166,16 @@ const VoyageDetailScreen = () => {
         { duration: 1000 }
       );
     }
+  };
+
+  const handleAddVoyageToFavorites = () => {
+    addVoyageToFavorites({ userId, voyageId });
+    setIsFavorited(true);
+  };
+
+  const handleDeleteVoyageFromFavorites = () => {
+    deleteVoyageFromFavorites({ userId, voyageId });
+    setIsFavorited(false);
   };
 
   const navigation = useNavigation();
@@ -409,14 +437,33 @@ const VoyageDetailScreen = () => {
                 <RenderPolylinesComponent waypoints={waypoints} />
               </MapView>
             </View>
-            <View style={styles.heartContainer1}>
-              <Ionicons
-                name="heart"
-                size={24}
-                color="red"
-                style={styles.heartContainer2}
-              />
-            </View>
+
+            {isFavorited ? (
+              <TouchableOpacity
+                onPress={() => handleDeleteVoyageFromFavorites()}
+                style={styles.heartContainer1}
+              >
+                <Ionicons
+                  name="heart"
+                  size={24}
+                  color="red"
+                  style={styles.heartContainer2}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => handleAddVoyageToFavorites()}
+                style={styles.heartContainer1}
+              >
+                <Ionicons
+                  name="heart"
+                  size={24}
+                  color="orange"
+                  style={styles.heartContainer2}
+                />
+              </TouchableOpacity>
+            )}
+
             <View style={styles.shareContainer1}>
               <MaterialIcons
                 name="ios-share"

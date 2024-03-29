@@ -41,13 +41,18 @@ import {
   updateAsLoggedIn,
   updateStateFromLocalStorage,
   updateUserData,
+  updateUserFavorites,
 } from "./slices/UserSlice";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider } from "react-redux"; // Import the Provider
 import { store } from "./store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { useGetUserByIdQuery } from "./slices/UserSlice";
+import {
+  useGetUserByIdQuery,
+  useGetFavoriteVoyageIdsByUserIdQuery,
+  useGetFavoriteVehicleIdsByUserIdQuery,
+} from "./slices/UserSlice";
 import { createContext, useContext } from "react";
 
 const Stack = createNativeStackNavigator();
@@ -192,87 +197,6 @@ const TabNavigator = () => {
     <>
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen
-          name="Favorites"
-          component={FavoritesScreen}
-          options={{
-            tabBarIcon: ({ focused }) => {
-              return (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                  <Feather
-                    name="heart"
-                    size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Favorites
-                  </Text>
-                </View>
-              );
-            },
-          }}
-        />
-
-        <Tab.Screen
-          name="Messages"
-          component={MessageStack}
-          options={{
-            tabBarIcon: ({ focused }) => {
-              return (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                  <Feather
-                    name="message-square"
-                    size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Messages
-                  </Text>
-                </View>
-              );
-            },
-          }}
-        />
-
-        <Tab.Screen
-          name="Create"
-          component={AddNewStack}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TouchableOpacity onPress={toggleModal}>
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    top: Platform.OS === "ios" ? -20 : -30,
-                  }}
-                >
-                  <Image
-                    style={styles.plusSign}
-                    source={require("./assets/plus-thin.png")}
-                  />
-                </View>
-              </TouchableOpacity>
-            ),
-          }}
-        />
-
-        <Tab.Screen
           name="Home"
           component={HomeStack}
           options={{
@@ -329,6 +253,87 @@ const TabNavigator = () => {
             },
           }}
         />
+
+        <Tab.Screen
+          name="Create"
+          component={AddNewStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <TouchableOpacity onPress={toggleModal}>
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    top: Platform.OS === "ios" ? -20 : -30,
+                  }}
+                >
+                  <Image
+                    style={styles.plusSign}
+                    source={require("./assets/plus-thin.png")}
+                  />
+                </View>
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Favorites"
+          component={FavoritesScreen}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <Feather
+                    name="heart"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Favorites
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
+          name="Messages"
+          component={MessageStack}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <Feather
+                    name="message-square"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Messages
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
       </Tab.Navigator>
 
       <CreateChoiceModal
@@ -361,6 +366,17 @@ function App() {
       isSuccess: isSuccessUser,
     } = useGetUserByIdQuery(userId);
 
+    const {
+      data: favoriteVoyageData,
+      isLoading: isLoadingFavoriteVoyages,
+      isSuccess: isSuccessFavoriteVoyages,
+    } = useGetFavoriteVoyageIdsByUserIdQuery(userId);
+    const {
+      data: favoriteVehicleData,
+      isLoading: isLoadingFavoriteVehicles,
+      isSuccess: isSuccessFavoriteVehicles,
+    } = useGetFavoriteVehicleIdsByUserIdQuery(userId);
+
     useEffect(() => {
       const checkToken = async () => {
         try {
@@ -389,6 +405,17 @@ function App() {
         updateUserData({
           image: userData.profileImageUrl,
           username: userData.userName,
+        })
+      );
+    }
+
+    if (isSuccessFavoriteVehicles && isSuccessFavoriteVoyages) {
+      console.log("favoriteVehicleData", favoriteVehicleData);
+      console.log("favoriteVoyageData", favoriteVoyageData);
+      dispatch(
+        updateUserFavorites({
+          favoriteVehicles: favoriteVehicleData,
+          favoriteVoyages: favoriteVoyageData,
         })
       );
     }

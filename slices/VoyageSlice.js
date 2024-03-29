@@ -218,6 +218,35 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    addVoyageToFavorites: builder.mutation({
+      query: (data) => {
+        const { userId, voyageId } = data;
+
+        const body = {
+          userId: userId,
+          type: "voyage",
+          itemId: voyageId,
+        };
+        const url = `/api/Favorite/addFavorite`;
+        return {
+          url,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: body,
+        };
+      },
+    }),
+    deleteVoyageFromFavorites: builder.mutation({
+      query: (data) => {
+        const { userId, voyageId } = data;
+        return {
+          url: `/api/Favorite/deleteFavorite/${userId}/${voyageId}`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
 
   overrideExisting: true,
@@ -235,4 +264,6 @@ export const {
   useGetVoyagesByLocationMutation,
   useGetFilteredVoyagesMutation,
   useGetFavoriteVoyagesByUserIdQuery,
+  useAddVoyageToFavoritesMutation,
+  useDeleteVoyageFromFavoritesMutation,
 } = extendedApiSlice;
