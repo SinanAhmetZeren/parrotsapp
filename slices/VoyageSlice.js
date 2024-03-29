@@ -242,7 +242,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       query: (data) => {
         const { userId, voyageId } = data;
         return {
-          url: `/api/Favorite/deleteFavorite/${userId}/${voyageId}`,
+          url: `/api/Favorite/deleteFavoriteVoyage/${userId}/${voyageId}`,
           method: "DELETE",
         };
       },

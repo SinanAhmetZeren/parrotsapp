@@ -76,6 +76,35 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    addVehicleToFavorites: builder.mutation({
+      query: (data) => {
+        const { userId, vehicleId } = data;
+
+        const body = {
+          userId: userId,
+          type: "vehicle",
+          itemId: vehicleId,
+        };
+        const url = `/api/Favorite/addFavorite`;
+        return {
+          url,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: body,
+        };
+      },
+    }),
+    deleteVehicleFromFavorites: builder.mutation({
+      query: (data) => {
+        const { userId, vehicleId } = data;
+        return {
+          url: `/api/Favorite/deleteFavoriteVehicle/${userId}/${vehicleId}`,
+          method: "DELETE",
+        };
+      },
+    }),
   }),
 
   overrideExisting: true,
@@ -88,4 +117,6 @@ export const {
   useAddVehicleImageMutation,
   useDeleteVehicleImageMutation,
   useGetFavoriteVehiclesByUserByIdQuery,
+  useAddVehicleToFavoritesMutation,
+  useDeleteVehicleFromFavoritesMutation,
 } = extendedApiSlice;

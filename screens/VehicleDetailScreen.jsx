@@ -42,6 +42,10 @@ import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
 import { useDispatch, useSelector } from "react-redux";
 import VehicleVoyages from "../components/VehicleVoyages";
 import { useFonts } from "expo-font";
+import {
+  useAddVehicleToFavoritesMutation,
+  useDeleteVehicleFromFavoritesMutation,
+} from "../slices/VehicleSlice";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
@@ -52,6 +56,10 @@ const VehicleDetailScreen = () => {
     isLoading: isLoadingVehicles,
     isError: isErrorVehicles,
   } = useGetVehicleByIdQuery(vehicleId);
+  const userFavoriteVehicles = useSelector(
+    (state) => state.users.userFavoriteVehicles
+  );
+  const userId = useSelector((state) => state.users.userId);
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [fontsLoaded, fontError] = useFonts({
@@ -62,6 +70,9 @@ const VehicleDetailScreen = () => {
     RobotoslabM: require("../assets/RobotoSlab-Medium.ttf"),
     RobotoslabB: require("../assets/RobotoSlab-Bold.ttf"),
   });
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [addVehicleToFavorites] = useAddVehicleToFavoritesMutation();
+  const [deleteVehicleFromFavorites] = useDeleteVehicleFromFavoritesMutation();
 
   const handleSeeAll = () => {
     setModalVisible(true);
@@ -85,10 +96,28 @@ const VehicleDetailScreen = () => {
     }
   };
 
+  useEffect(() => {
+    if (isSuccessVehicles) {
+      if (userFavoriteVehicles.includes(VehicleData.id)) {
+        setIsFavorited(true);
+      }
+    }
+  }, [isSuccessVehicles]);
+
   const goToProfilePage = (userId) => {
     navigation.navigate("ProfileScreenPublic", {
       userId: userId,
     });
+  };
+
+  const handleAddVehicleToFavorites = () => {
+    addVehicleToFavorites({ userId, vehicleId });
+    setIsFavorited(true);
+  };
+
+  const handleDeleteVehicleFromFavorites = () => {
+    deleteVehicleFromFavorites({ userId, vehicleId });
+    setIsFavorited(false);
   };
 
   const navigation = useNavigation();
@@ -180,6 +209,32 @@ const VehicleDetailScreen = () => {
                   <VehicleImagesWithCarousel
                     vehicleImages={VehicleData.vehicleImages}
                   />
+
+                  {isFavorited ? (
+                    <TouchableOpacity
+                      style={styles.extendedAreaContainer}
+                      onPress={() => handleDeleteVehicleFromFavorites()}
+                    >
+                      <Ionicons
+                        name="heart"
+                        size={24}
+                        color="red"
+                        style={styles.heartContainer2}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={styles.extendedAreaContainer}
+                      onPress={() => handleAddVehicleToFavorites()}
+                    >
+                      <Ionicons
+                        name="heart"
+                        size={24}
+                        color="orange"
+                        style={styles.heartContainer2}
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
 
@@ -278,6 +333,32 @@ const VehicleDetailScreen = () => {
 export default VehicleDetailScreen;
 
 const styles = StyleSheet.create({
+  extendedAreaContainer: {
+    alignSelf: "flex-end",
+    position: "absolute",
+    bottom: vh(0.3),
+    right: vw(2),
+    borderRadius: vh(1),
+    paddingLeft: vw(5),
+    paddingRight: vw(2),
+    paddingVertical: vh(2),
+    bottom: vh(-3),
+  },
+  heartContainer1: {
+    position: "absolute",
+    backgroundColor: "#fef6e3",
+    height: vw(11),
+    width: vw(11),
+    borderRadius: vw(12),
+    justifyContent: "center",
+  },
+  heartContainer2: {
+    padding: vw(1),
+    width: vw(8),
+    backgroundColor: "#fef6e3",
+    borderRadius: vh(5),
+    alignSelf: "center",
+  },
   VoyageDataContainer: {
     borderRadius: vh(5),
     marginHorizontal: vw(2),

@@ -37,14 +37,19 @@ export default function VehicleVoyages({ voyages }) {
               />
             </View>
 
-            <View style={{ paddingHorizontal: vw(3) }}>
+            <View
+              style={{
+                paddingHorizontal: vw(3),
+                justifyContent: "center",
+              }}
+            >
               <View style={styles.nameAndVacancyContainer}>
                 <Text style={styles.boldBlack}>
                   {item.name}
                   {"  "}
                 </Text>
                 <Text style={styles.boldBlue}>{item.vacancy} </Text>
-                <Feather name="users" size={18} color="blue" />
+                <Feather name="users" size={18} color="#3c9dde" />
               </View>
               <View style={styles.betweenDates}>
                 <Text style={styles.boldBlack}>
@@ -89,7 +94,7 @@ const styles = StyleSheet.create({
   },
   boldBlue: {
     fontWeight: "500",
-    color: "blue",
+    color: "#3c9dde",
   },
   boldBlack: {
     fontWeight: "500",

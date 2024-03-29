@@ -400,25 +400,25 @@ function App() {
       checkToken();
     }, [dispatch]);
 
-    if (isSuccessUser) {
-      dispatch(
-        updateUserData({
-          image: userData.profileImageUrl,
-          username: userData.userName,
-        })
-      );
-    }
+    useEffect(() => {
+      if (isSuccessUser) {
+        dispatch(
+          updateUserData({
+            image: userData.profileImageUrl,
+            username: userData.userName,
+          })
+        );
+      }
 
-    if (isSuccessFavoriteVehicles && isSuccessFavoriteVoyages) {
-      console.log("favoriteVehicleData", favoriteVehicleData);
-      console.log("favoriteVoyageData", favoriteVoyageData);
-      dispatch(
-        updateUserFavorites({
-          favoriteVehicles: favoriteVehicleData,
-          favoriteVoyages: favoriteVoyageData,
-        })
-      );
-    }
+      if (isSuccessFavoriteVehicles && isSuccessFavoriteVoyages) {
+        dispatch(
+          updateUserFavorites({
+            favoriteVehicles: favoriteVehicleData,
+            favoriteVoyages: favoriteVoyageData,
+          })
+        );
+      }
+    }, [isSuccessUser, isSuccessFavoriteVehicles, isSuccessFavoriteVoyages]);
 
     return isLoggedIn ? <TabNavigator /> : <AuthStack />;
   }
