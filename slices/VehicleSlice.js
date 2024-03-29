@@ -68,6 +68,14 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    getFavoriteVehiclesByUserById: builder.query({
+      query: (userId) => `/api/Favorite/getFavoriteVehiclesByUserId/${userId}`,
+      transformResponse: (responseData) => {
+        return responseData.data;
+      },
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }),
   }),
 
   overrideExisting: true,
@@ -79,4 +87,5 @@ export const {
   useCreateVehicleMutation,
   useAddVehicleImageMutation,
   useDeleteVehicleImageMutation,
+  useGetFavoriteVehiclesByUserByIdQuery,
 } = extendedApiSlice;

@@ -210,6 +210,14 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return responseData.data;
       },
     }),
+    getFavoriteVoyagesByUserId: builder.query({
+      query: (userId) => `/api/Favorite/getFavoriteVoyagesByUserId/${userId}`,
+      transformResponse: (responseData) => {
+        return responseData.data;
+      },
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }),
   }),
 
   overrideExisting: true,
@@ -226,4 +234,5 @@ export const {
   useChangeBidMutation,
   useGetVoyagesByLocationMutation,
   useGetFilteredVoyagesMutation,
+  useGetFavoriteVoyagesByUserIdQuery,
 } = extendedApiSlice;

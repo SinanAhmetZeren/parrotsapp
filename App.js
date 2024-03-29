@@ -192,6 +192,35 @@ const TabNavigator = () => {
     <>
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen
+          name="Favorites"
+          component={FavoritesScreen}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <Feather
+                    name="heart"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Favorites
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
           name="Messages"
           component={MessageStack}
           options={{
@@ -217,6 +246,29 @@ const TabNavigator = () => {
                 </View>
               );
             },
+          }}
+        />
+
+        <Tab.Screen
+          name="Create"
+          component={AddNewStack}
+          options={{
+            tabBarIcon: ({ focused }) => (
+              <TouchableOpacity onPress={toggleModal}>
+                <View
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    top: Platform.OS === "ios" ? -20 : -30,
+                  }}
+                >
+                  <Image
+                    style={styles.plusSign}
+                    source={require("./assets/plus-thin.png")}
+                  />
+                </View>
+              </TouchableOpacity>
+            ),
           }}
         />
 
@@ -250,29 +302,6 @@ const TabNavigator = () => {
         />
 
         <Tab.Screen
-          name="Create2"
-          component={AddNewStack}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <TouchableOpacity onPress={toggleModal}>
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    top: Platform.OS === "ios" ? -20 : -30,
-                  }}
-                >
-                  <Image
-                    style={styles.plusSign}
-                    source={require("./assets/plus-thin.png")}
-                  />
-                </View>
-              </TouchableOpacity>
-            ),
-          }}
-        />
-
-        <Tab.Screen
           name="ProfileStack"
           component={ProfileStack}
           options={{
@@ -294,35 +323,6 @@ const TabNavigator = () => {
                     }
                   >
                     Profile
-                  </Text>
-                </View>
-              );
-            },
-          }}
-        />
-
-        <Tab.Screen
-          name="Favorites"
-          component={FavoritesScreen}
-          options={{
-            tabBarIcon: ({ focused }) => {
-              return (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                  <Feather
-                    name="heart"
-                    size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Favorites
                   </Text>
                 </View>
               );
