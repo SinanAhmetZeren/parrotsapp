@@ -11,8 +11,10 @@ import {
   Modal,
   StyleSheet,
   textInput,
+  ScrollView,
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
+import { AntDesign } from "@expo/vector-icons";
 
 export const WaypointFlatList = ({ addedWayPoints }) => {
   return (
@@ -86,11 +88,14 @@ export const WaypointItemVoyageDetailScreen = ({
     description.length > 70 ? `${description.slice(0, 70)}...` : description;
 
   return (
-    <>
+    <View style={{ marginLeft: vh(1), marginTop: vh(1) }}>
       <TouchableOpacity onPress={() => handleFocusMap()}>
         <View style={styles.waypointCard}>
           <View>
-            <Image source={{ uri: imageUri }} style={styles.profileImage} />
+            <Image
+              source={{ uri: imageUri }}
+              style={styles.waypointCardImage}
+            />
           </View>
 
           <View style={styles.titleAndDescription}>
@@ -104,31 +109,43 @@ export const WaypointItemVoyageDetailScreen = ({
       </TouchableOpacity>
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.waypointModalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.waypointImageContainer}>
-              <Image
-                source={{ uri: imageUri }}
-                style={styles.waypointImageInModal}
-              />
-            </View>
-            <Text style={styles.waypointTitleInModal}>{title}</Text>
-            <Text style={styles.waypointDescriptionInModal}>{description}</Text>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(1,1,1,0.4)",
+          }}
+        >
+          {/* // modal edited // */}
+          <View style={styles.imageContainerInModal}>
+            <Image
+              source={{ uri: imageUri }}
+              style={styles.voyageImageInModal}
+            />
+            <ScrollView style={styles.scrollView}>
+              <Text style={styles.waypointTitleInModal2}>{title}</Text>
+              <Text style={styles.waypointDescriptionInModal2}>
+                {description}
+              </Text>
+            </ScrollView>
+
             <TouchableOpacity
-              style={styles.closeWaypointModalButton}
+              style={styles.closeButtonAndText}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.closeWaypointModalButtonText}>Close</Text>
+              <View style={styles.closeText1}>
+                <AntDesign name="closecircleo" size={22} color="rgb(148,1,1)" />
+              </View>
+              <Text style={styles.closeText1}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </>
+    </View>
   );
 };
 
@@ -183,26 +200,93 @@ export const WaypointItem = ({ title, description, imageUri }) => {
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    height: vh(15),
+    top: vh(-15) - 2,
+    backgroundColor: "rgba(11,11,11,0.5)",
+    marginLeft: 2,
+    borderRadius: vh(1),
+  },
+  closeButtonAndText: {
+    flexDirection: "row",
+    height: vh(3.5),
+    width: vh(11.45),
+    backgroundColor: "white",
+    borderRadius: vh(2.5),
+    borderColor: "rgb(148,1,1)",
+    borderWidth: 1,
+    verticalAlign: "middle",
+    top: vh(-13),
+    alignSelf: "center",
+  },
+  closeText1: {
+    marginLeft: vw(1),
+    fontSize: 18,
+    height: vh(3),
+    alignSelf: "center",
+    color: "rgb(148,1,1)",
+  },
+  closeWaypointModalButton2: {
+    alignSelf: "flex-end",
+    width: vw(15),
+  },
+  waypointTitleInModal2: {
+    fontWeight: "600",
+    fontSize: 18,
+    marginTop: vh(0.5),
+    alignSelf: "center",
+    color: "white",
+  },
+  waypointDescriptionInModal2: {
+    paddingHorizontal: vw(2),
+    fontWeight: "500",
+    fontSize: 14,
+    color: "white",
+  },
+  voyageImageInModal: {
+    height: vh(40),
+    width: vh(40),
+    marginRight: vh(1),
+    borderRadius: vh(1.5),
+    borderWidth: 2,
+    borderColor: "white",
+  },
+  imageContainerInModal: {
+    top: vh(30),
+    paddingHorizontal: vw(10),
+    backgroundColor: "transparent",
+  },
+
   modalContent: {
     height: vh(47),
   },
   title: {
     fontWeight: "600",
-    paddingBottom: vh(1),
+    paddingVertical: vh(0.25),
+    backgroundColor: "rgba(0, 119, 234,.06)",
+    color: "rgba(0, 119, 234,1)",
+    width: vw(80),
+    position: "absolute",
+    left: vh(-17),
+    borderTopLeftRadius: vh(3),
+    borderTopRightRadius: vh(3),
+    textAlign: "center",
   },
   description: {
     width: vw(35),
-    marginBottom: vh(2),
+    marginTop: vh(3),
   },
   titleAndDescription: {
-    paddingVertical: vh(1),
+    paddingVertical: vh(0.5),
+    paddingHorizontal: vh(0.7),
   },
   waypointCard: {
-    width: vw(70),
+    width: vw(80),
     flexDirection: "row",
     backgroundColor: "#eff3f6",
     borderRadius: vh(3),
-    margin: vh(0.2),
+    // borderColor: "red",
+    // borderWidth: 1,
   },
   profileImage: {
     margin: vh(1),
@@ -212,6 +296,18 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 119, 234,0.3)",
     backgroundColor: "white",
   },
+  waypointCardImage: {
+    width: vh(17),
+    height: vh(17),
+    marginTop: vh(3),
+    borderRadius: vh(3),
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+    borderTopLeftRadius: 0,
+    borderColor: "rgba(0, 119, 234,0.3)",
+    backgroundColor: "white",
+  },
+
   closeWaypointModalButtonText: {
     fontWeight: "800",
     color: "purple",
@@ -222,17 +318,20 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: vw(15),
   },
+
   waypointTitleInModal: {
     fontWeight: "700",
     fontSize: 18,
     marginTop: vh(0.5),
     alignSelf: "center",
   },
+
   waypointDescriptionInModal: {
     paddingHorizontal: vw(2),
     fontWeight: "500",
     fontSize: 14,
   },
+
   waypointModalContainer: {
     borderWidth: 2,
     borderColor: "rgba(0, 119, 234,0.19)",

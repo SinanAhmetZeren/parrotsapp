@@ -58,7 +58,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={handleCloseModal}
-        style={{ flex: 1, backgroundColor: "rgba(1,1,1,0.1)", height: vh(50) }}
+        // style={{ flex: 1, backgroundColor: "rgba(1,1,1,0.1)", height: vh(50) }}
       >
         <View
           style={{
@@ -71,21 +71,9 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
           <FlatList
             ref={flatListRef}
             horizontal
-            data={
-              voyageImages
-                .slice(currentIndex)
-                .concat(voyageImages.slice(0, currentIndex))
-              //   .concat(
-              //     voyageImages
-              //       .slice(currentIndex)
-              //       .concat(voyageImages.slice(0, currentIndex))
-              //   )
-              //   .concat(
-              //     voyageImages
-              //       .slice(currentIndex)
-              //       .concat(voyageImages.slice(0, currentIndex))
-              //   )
-            }
+            data={voyageImages
+              .slice(currentIndex)
+              .concat(voyageImages.slice(0, currentIndex))}
             initialScrollIndex={0}
             onScrollToIndexFailed={(error) => {
               return null;
