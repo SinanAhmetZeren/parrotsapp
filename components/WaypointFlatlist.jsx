@@ -138,7 +138,7 @@ export const WaypointItemVoyageDetailScreen = ({
               onPress={() => setModalVisible(false)}
             >
               <View style={styles.closeText1}>
-                <AntDesign name="closecircleo" size={22} color="rgb(148,1,1)" />
+                <AntDesign name="closecircleo" size={22} color="#3aa4ff" />
               </View>
               <Text style={styles.closeText1}>Close</Text>
             </TouchableOpacity>
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     width: vh(11.45),
     backgroundColor: "white",
     borderRadius: vh(2.5),
-    borderColor: "rgb(148,1,1)",
+    borderColor: "#3aa4ff",
     borderWidth: 1,
     verticalAlign: "middle",
     top: vh(-13),
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: vh(3),
     alignSelf: "center",
-    color: "rgb(148,1,1)",
+    color: "#3aa4ff",
   },
   closeWaypointModalButton2: {
     alignSelf: "flex-end",

@@ -109,7 +109,7 @@ const VehicleImagesWithCarousel = ({ vehicleImages }) => {
           onPress={handleCloseModal}
         >
           <View style={styles2.closeText1}>
-            <AntDesign name="closecircleo" size={22} color="rgb(148,1,1)" />
+            <AntDesign name="closecircleo" size={22} color="#3aa4ff" />
           </View>
           <Text style={styles2.closeText1}>Close</Text>
         </TouchableOpacity>
@@ -176,7 +176,7 @@ const styles2 = StyleSheet.create({
     borderRadius: vh(2.5),
     bottom: vh(30),
     left: vw(35),
-    borderColor: "rgb(148,1,1)",
+    borderColor: "#3aa4ff",
     borderWidth: 1,
     verticalAlign: "middle",
   },
@@ -185,13 +185,13 @@ const styles2 = StyleSheet.create({
     fontSize: 18,
     height: vh(3),
     alignSelf: "center",
-    color: "rgb(148,1,1)",
+    color: "#3aa4ff",
   },
   closeText2: {
     fontSize: 18,
     height: vh(3),
     alignSelf: "center",
-    color: "rgb(148,1,1)",
+    color: "#3aa4ff",
   },
   pagerView: {
     backgroundColor: "rgba(111,1,1,0.01)",
