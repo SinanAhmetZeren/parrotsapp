@@ -1,0 +1,46 @@
+
+Screens:
+    profile page
+        - social media conditional rendering 
+        - go to public profile link
+
+    public profile page
+        - share
+
+    voyage detail page
+        - add vehicle link
+        - share
+        - accept bid -> message functionality
+        - see all bids -> add details
+        - see all bids -> decrease height
+        - change bid -> change display
+
+    vehicle detail page
+        - share
+
+    messages
+        accept bids -> group message
+        update messages page on focus
+
+    conversation
+        - scroll to bottom
+        - refresh page on focus
+
+    create vehicle / voyage
+        - no navigation
+        - isSuccess not defined
+
+    login / register
+        - forgot my password
+        - auth
+        - 
+
+    main page
+        - filter icons when pressed
+        - date filter - failed prop type label of type object
+        - tapping on pin -> ?
+
+    top bar
+        - black / white 
+
+
