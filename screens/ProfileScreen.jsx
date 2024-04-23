@@ -15,9 +15,7 @@ import {
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { Ionicons } from "@expo/vector-icons";
-import { Fontisto } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
+import { Ionicons, Feather, MaterialIcons, Fontisto } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import VoyageListVertical from "../components/VoyageListVertical";
 import VehicleList from "../components/VehicleList";
@@ -32,7 +30,6 @@ import { SocialRenderComponent } from "../components/SocialRenderComponent";
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
   const dispatch = useDispatch();
-  const [socialCount, setSocialCount] = useState(0);
 
   const {
     data: userData,
@@ -57,6 +54,10 @@ export default function ProfileScreen({ navigation }) {
 
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
+  };
+
+  const handlePublicProfile = () => {
+    console.log("hello");
   };
 
   const handleInstagramPress = async () => {
@@ -169,59 +170,98 @@ export default function ProfileScreen({ navigation }) {
                 />
               </View>
 
-              <TouchableOpacity
-                onPress={() => {
-                  console.log("logout");
-                  handleLogout();
-                }}
-                activeOpacity={0.8}
-              >
-                <View style={styles.logoutBox}>
-                  <View style={styles.innerProfileContainer}>
-                    <MaterialCommunityIcons
-                      name="account-edit-outline"
-                      size={18}
-                      color="rgba(0, 119, 234,0.9)"
-                    />
-                    <Text
-                      style={{
-                        lineHeight: 22,
-                        marginLeft: vw(2),
-                        fontSize: 11,
-                      }}
-                    >
-                      Logout
-                    </Text>
+              <View style={styles.buttonsContainer}>
+                {/* ///// PUBLIC PROFILE BUTTON /////// */}
+                <TouchableOpacity
+                  style={styles.publicProfileBox}
+                  onPress={() => {
+                    console.log("navigate to public profile");
+                    navigation.navigate("ProfileScreenPublic", {
+                      userId: userId,
+                    });
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <View>
+                    <View style={styles.innerProfileContainer}>
+                      <MaterialIcons
+                        name="public"
+                        size={18}
+                        color="rgba(0, 119, 234,0.9)"
+                      />
+                      <Text
+                        style={{
+                          lineHeight: 22,
+                          marginLeft: vw(2),
+                          fontSize: 11,
+                        }}
+                      >
+                        Public Profile
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+                {/* ///// PUBLIC PROFILE BUTTON /////// */}
 
-              <TouchableOpacity
-                onPress={() => {
-                  console.log("navigate to edit profile");
-                  navigation.navigate("EditProfile");
-                }}
-                activeOpacity={0.8}
-              >
-                <View style={styles.editProfileBox}>
-                  <View style={styles.innerProfileContainer}>
-                    <MaterialCommunityIcons
-                      name="account-edit-outline"
-                      size={18}
-                      color="rgba(0, 119, 234,0.9)"
-                    />
-                    <Text
-                      style={{
-                        lineHeight: 22,
-                        marginLeft: vw(2),
-                        fontSize: 11,
-                      }}
-                    >
-                      Edit Profile
-                    </Text>
+                {/* ///// LOGOUT BUTTON /////// */}
+                <TouchableOpacity
+                  style={styles.logoutBox}
+                  onPress={() => {
+                    handleLogout();
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <View>
+                    <View style={styles.innerProfileContainer}>
+                      <MaterialCommunityIcons
+                        name="logout"
+                        size={18}
+                        color="rgba(0, 119, 234,0.9)"
+                      />
+                      <Text
+                        style={{
+                          lineHeight: 22,
+                          marginLeft: vw(2),
+                          fontSize: 11,
+                        }}
+                      >
+                        Logout
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
+                {/* ///// LOGOUT BUTTON /////// */}
+
+                {/* ///// EDIT PROFILE BUTTON /////// */}
+                <TouchableOpacity
+                  style={styles.editProfileBox}
+                  onPress={() => {
+                    console.log("navigate to edit profile");
+                    navigation.navigate("EditProfile");
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <View>
+                    <View style={styles.innerProfileContainer}>
+                      <MaterialCommunityIcons
+                        name="account-edit-outline"
+                        size={18}
+                        color="rgba(0, 119, 234,0.9)"
+                      />
+                      <Text
+                        style={{
+                          lineHeight: 22,
+                          marginLeft: vw(2),
+                          fontSize: 11,
+                        }}
+                      >
+                        Edit Profile
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                {/* ///// EDIT PROFILE BUTTON /////// */}
+              </View>
 
               <View style={styles.profileImageAndSocial}>
                 <View style={styles.profileImageAndName}>
@@ -515,25 +555,35 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(190, 119, 234,0.7)",
   },
   editProfileBox: {
+    marginTop: vh(0.5),
     backgroundColor: "white",
-    top: vh(-0.5),
     width: vw(30),
-    left: vw(-4),
-    alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),
     padding: vw(1),
   },
   logoutBox: {
+    marginTop: vh(0.5),
     backgroundColor: "white",
-    position: "absolute",
-    top: vh(-5),
     width: vw(30),
-    right: vw(4),
-    alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),
     padding: vw(1),
+    zIndex: 100,
+  },
+  publicProfileBox: {
+    backgroundColor: "white",
+    width: vw(30),
+    flexDirection: "row",
+    borderRadius: vh(2),
+    padding: vw(1),
+    zIndex: 100,
+  },
+  buttonsContainer: {
+    position: "absolute",
+    top: vh(22),
+    right: vw(2),
+    flexDirection: "column",
   },
   innerProfileContainer: {
     alignSelf: "flex-end",

@@ -33,12 +33,17 @@ export const SocialRenderComponent = ({
   }
 
   const renderAllItems = () => {
-    if (contactDataArray.length === 5) {
+    if (contactDataArray.length > 0 && contactDataArray.length <= 5) {
       return contactDataArray.map((x, index) => {
+        const baseStyle =
+          styles[`social_${contactDataArray.length}_${index}`] ||
+          styles.social_default;
+
         switch (x[1]) {
           case 0:
             return (
               <EmailItem
+                style={baseStyle}
                 key={index}
                 email={userData.email}
                 handleEmailPress={handleEmailPress}
@@ -47,6 +52,7 @@ export const SocialRenderComponent = ({
           case 1:
             return (
               <InstagramItem
+                style={baseStyle}
                 key={index}
                 instagram={userData.instagram}
                 handleInstagramPress={handleInstagramPress}
@@ -55,6 +61,7 @@ export const SocialRenderComponent = ({
           case 2:
             return (
               <YoutubeItem
+                style={baseStyle}
                 key={index}
                 youtube={userData.youtube}
                 handleYoutubePress={handleYoutubePress}
@@ -63,6 +70,7 @@ export const SocialRenderComponent = ({
           case 3:
             return (
               <FacebookItem
+                style={baseStyle}
                 key={index}
                 facebook={userData.facebook}
                 handleFacebookPress={handleFacebookPress}
@@ -71,6 +79,7 @@ export const SocialRenderComponent = ({
           case 4:
             return (
               <PhoneItem
+                style={baseStyle}
                 key={index}
                 phoneNumber={userData.phoneNumber}
                 handlePhonePress={handlePhonePress}
@@ -80,23 +89,21 @@ export const SocialRenderComponent = ({
             return null;
         }
       });
-    } else {
-      return null; // Handle case where contactDataArray length is not 5
     }
   };
+
   return (
     <>
-      <View style={styles.social}>{renderAllItems()}</View>
+      <View style={styles[`social_Main_${contactDataArray.length}`]}>
+        {renderAllItems()}
+      </View>
     </>
   );
 };
 
-const EmailItem = ({ email, handleEmailPress }) => {
+const EmailItem = ({ email, handleEmailPress, style }) => {
   return (
-    <TouchableOpacity
-      style={styles.socialBox1}
-      onPress={() => handleEmailPress()}
-    >
+    <TouchableOpacity style={style} onPress={() => handleEmailPress()}>
       <Fontisto style={styles.icon} name="email" size={24} color="black" />
       <Text style={styles.iconText}>
         {email.length > 20 ? `${email.substring(0, 20)}...` : email}
@@ -105,12 +112,9 @@ const EmailItem = ({ email, handleEmailPress }) => {
   );
 };
 
-const InstagramItem = ({ instagram, handleInstagramPress }) => {
+const InstagramItem = ({ instagram, handleInstagramPress, style }) => {
   return (
-    <TouchableOpacity
-      style={styles.socialBox2}
-      onPress={() => handleInstagramPress()}
-    >
+    <TouchableOpacity style={style} onPress={() => handleInstagramPress()}>
       <Ionicons
         style={styles.icon}
         name="logo-instagram"
@@ -124,12 +128,9 @@ const InstagramItem = ({ instagram, handleInstagramPress }) => {
   );
 };
 
-const YoutubeItem = ({ youtube, handleYoutubePress }) => {
+const YoutubeItem = ({ youtube, handleYoutubePress, style }) => {
   return (
-    <TouchableOpacity
-      style={styles.socialBox}
-      onPress={() => handleYoutubePress()}
-    >
+    <TouchableOpacity style={style} onPress={() => handleYoutubePress()}>
       <Feather style={styles.icon} name="youtube" size={24} color="black" />
       <Text style={styles.iconText}>
         {youtube.length > 20 ? `${youtube.substring(0, 20)}...` : youtube}
@@ -138,12 +139,9 @@ const YoutubeItem = ({ youtube, handleYoutubePress }) => {
   );
 };
 
-const FacebookItem = ({ facebook, handleFacebookPress }) => {
+const FacebookItem = ({ facebook, handleFacebookPress, style }) => {
   return (
-    <TouchableOpacity
-      style={styles.socialBox2}
-      onPress={() => handleFacebookPress()}
-    >
+    <TouchableOpacity style={style} onPress={() => handleFacebookPress()}>
       <Feather style={styles.icon} name="facebook" size={24} color="black" />
       <Text style={styles.iconText}>
         {facebook.length > 20 ? `${facebook.substring(0, 20)}...` : facebook}
@@ -152,12 +150,9 @@ const FacebookItem = ({ facebook, handleFacebookPress }) => {
   );
 };
 
-const PhoneItem = ({ phoneNumber, handlePhonePress }) => {
+const PhoneItem = ({ phoneNumber, handlePhonePress, style }) => {
   return (
-    <TouchableOpacity
-      style={styles.socialBox1}
-      onPress={() => handlePhonePress()}
-    >
+    <TouchableOpacity style={style} onPress={() => handlePhonePress()}>
       <Feather style={styles.icon} name="phone" size={24} color="black" />
       <Text style={styles.iconText}>
         {phoneNumber.length > 20
@@ -169,16 +164,48 @@ const PhoneItem = ({ phoneNumber, handlePhonePress }) => {
 };
 
 const styles = StyleSheet.create({
-  socialBox: {
-    flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
-    left: vw(-4),
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
+  social_Main_5: {
+    flexDirection: "column",
+    width: vw(50),
+    zIndex: 100,
+    paddingRight: 20,
+    paddingTop: 0,
+    top: vh(1),
   },
-  socialBox1: {
+  social_Main_4: {
+    flexDirection: "column",
+    width: vw(50),
+    zIndex: 100,
+    paddingRight: 20,
+    paddingTop: vh(2),
+    top: vh(1),
+  },
+  social_Main_3: {
+    flexDirection: "column",
+    width: vw(50),
+    zIndex: 100,
+    paddingRight: 20,
+    paddingTop: vh(4),
+    top: vh(1),
+  },
+  social_Main_2: {
+    flexDirection: "column",
+    width: vw(50),
+    zIndex: 100,
+    paddingRight: 20,
+    paddingTop: vh(6),
+    top: vh(1),
+  },
+  social_Main_1: {
+    flexDirection: "column",
+    width: vw(50),
+    zIndex: 100,
+    paddingRight: 20,
+    paddingTop: vh(8),
+    top: vh(1),
+  },
+
+  social_5_0: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
     borderRadius: 20,
@@ -187,7 +214,7 @@ const styles = StyleSheet.create({
     left: vw(-10.5),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
-  socialBox2: {
+  social_5_1: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
     borderRadius: 20,
@@ -196,6 +223,129 @@ const styles = StyleSheet.create({
     left: vw(-6),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
+  social_5_2: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    left: vw(-4),
+    borderRadius: 20,
+    marginTop: 2,
+    marginBottom: 2,
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  social_5_3: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: 2,
+    marginBottom: 2,
+    left: vw(-6),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  social_5_4: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: 2,
+    marginBottom: 2,
+    left: vw(-10.5),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  //////
+  social_4_0: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: 2,
+    marginBottom: 2,
+    left: vw(-7),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  social_4_1: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: vh(0.5),
+    marginBottom: 2,
+    left: vw(-4),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  social_4_2: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    left: vw(-4),
+    borderRadius: 20,
+    marginTop: vh(0.5),
+    marginBottom: 2,
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  social_4_3: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: vh(0.5),
+    marginBottom: 2,
+    left: vw(-7),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  //////
+  social_3_0: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: 2,
+    marginBottom: 2,
+    left: vw(-6),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  social_3_1: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: vh(0.8),
+    marginBottom: 2,
+    left: vw(-4),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  social_3_2: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    left: vw(-6),
+    borderRadius: 20,
+    marginTop: vh(0.8),
+    marginBottom: 2,
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  //////
+  social_2_0: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: 2,
+    marginBottom: 2,
+    left: vw(-4),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  social_2_1: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: vh(1),
+    marginBottom: 2,
+    left: vw(-4),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  //////
+  social_1_0: {
+    flexDirection: "row",
+    backgroundColor: "rgba(190, 119, 234,0.1)",
+    borderRadius: 20,
+    marginTop: 2,
+    marginBottom: 2,
+    left: vw(-4),
+    borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  ///////
+
   icon: {
     padding: 3,
     margin: 2,
@@ -219,15 +369,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingBottom: vh(0.95),
     backgroundColor: "white",
-  },
-  social: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: 0,
-    top: vh(1),
-    backgroundColor: "pink",
   },
 });
 

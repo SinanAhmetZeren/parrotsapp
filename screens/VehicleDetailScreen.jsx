@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   extendedAreaContainer: {
     alignSelf: "flex-end",
     position: "absolute",
-    bottom: vh(0.3),
+    // bottom: vh(0.3),
     right: vw(2),
     borderRadius: vh(1),
     paddingLeft: vw(5),

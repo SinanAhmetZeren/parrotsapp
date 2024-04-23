@@ -28,6 +28,7 @@ import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
+import { SocialRenderComponent } from "../components/SocialRenderComponent";
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
@@ -163,6 +164,37 @@ export default function ProfileScreenPublic({ navigation }) {
                 />
               </View>
 
+              <View style={styles.buttonsContainer}>
+                {/* ///// EDIT PROFILE BUTTON /////// */}
+                <TouchableOpacity
+                  style={styles.editProfileBox}
+                  onPress={() => {
+                    console.log("send message");
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <View>
+                    <View style={styles.innerProfileContainer}>
+                      <Feather
+                        name="send"
+                        size={18}
+                        color="rgba(0, 119, 234,0.9)"
+                      />
+                      <Text
+                        style={{
+                          lineHeight: 22,
+                          marginLeft: vw(1),
+                          fontSize: 11,
+                        }}
+                      >
+                        Send Message
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                {/* ///// EDIT PROFILE BUTTON /////// */}
+              </View>
+
               <View style={styles.profileImageAndSocial}>
                 <View style={styles.profileImageAndName}>
                   <View style={styles.solidCircleProfile}>
@@ -174,99 +206,15 @@ export default function ProfileScreenPublic({ navigation }) {
                     />
                   </View>
                 </View>
-                {/* ------- PROFILE AND SOCIAL ------ */}
-                <View style={styles.social}>
-                  {/* -----------EMAIL------------- */}
-                  <TouchableOpacity
-                    style={styles.socialBox1}
-                    onPress={() => handleEmailPress()}
-                  >
-                    <Fontisto
-                      style={styles.icon}
-                      name="email"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.email.length > 20
-                        ? `${userData.email.substring(0, 20)}...`
-                        : userData.email}
-                    </Text>
-                  </TouchableOpacity>
 
-                  {/* --------------INSTAGRAM---------- */}
-                  <TouchableOpacity
-                    style={styles.socialBox2}
-                    onPress={() => handleInstagramPress()}
-                  >
-                    <Ionicons
-                      style={styles.icon}
-                      name="logo-instagram"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.instagram.length > 20
-                        ? `${userData.instagram.substring(0, 20)}...`
-                        : userData.instagram}
-                    </Text>
-                  </TouchableOpacity>
-
-                  {/* --------------YOUTUBE---------- */}
-
-                  <TouchableOpacity
-                    style={styles.socialBox}
-                    onPress={() => handleYoutubePress()}
-                  >
-                    <Feather
-                      style={styles.icon}
-                      name="youtube"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.youtube.length > 20
-                        ? `${userData.youtube.substring(0, 20)}...`
-                        : userData.youtube}
-                    </Text>
-                  </TouchableOpacity>
-                  {/* --------------FACEBOOK---------- */}
-
-                  <TouchableOpacity
-                    style={styles.socialBox2}
-                    onPress={() => handleFacebookPress()}
-                  >
-                    <Feather
-                      style={styles.icon}
-                      name="facebook"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.facebook.length > 20
-                        ? `${userData.facebook.substring(0, 20)}...`
-                        : userData.facebook}
-                    </Text>
-                  </TouchableOpacity>
-                  {/* --------------PHONE---------- */}
-                  <TouchableOpacity
-                    style={styles.socialBox1}
-                    onPress={() => handlePhonePress()}
-                  >
-                    <Feather
-                      style={styles.icon}
-                      name="phone"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.phoneNumber.length > 20
-                        ? `${userData.phoneNumber.substring(0, 20)}...`
-                        : userData.phoneNumber}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                {/* ------- PROFILE AND SOCIAL ------ */}
+                <SocialRenderComponent
+                  userData={userData}
+                  handleEmailPress={handleEmailPress}
+                  handleInstagramPress={handleInstagramPress}
+                  handleYoutubePress={handleYoutubePress}
+                  handleFacebookPress={handleFacebookPress}
+                  handlePhonePress={handlePhonePress}
+                />
               </View>
 
               {/* ------- BIO ------ */}
@@ -388,8 +336,12 @@ export default function ProfileScreenPublic({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {},
-  innerContainer: {},
+  buttonsContainer: {
+    position: "absolute",
+    top: vh(30),
+    right: vw(2),
+    flexDirection: "column",
+  },
 
   rectangularBox: {
     height: vh(35),
@@ -612,15 +564,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: vh(2),
     padding: vw(1),
-    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.5)",
   },
   innerProfileContainer: {
-    // backgroundColor: "rgba(190, 119, 234,0.08)",
     alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),
     borderColor: "rgba(190, 119, 234,0.5)",
-    paddingHorizontal: vw(2),
+    paddingHorizontal: vw(1),
   },
 });
