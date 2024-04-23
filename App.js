@@ -54,6 +54,7 @@ import {
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
 import { createContext, useContext } from "react";
+import { isLoading } from "expo-font";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -197,35 +198,6 @@ const TabNavigator = () => {
     <>
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen
-          name="Home"
-          component={HomeStack}
-          options={{
-            tabBarIcon: ({ focused }) => {
-              return (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                  <Feather
-                    name="home"
-                    size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Home
-                  </Text>
-                </View>
-              );
-            },
-          }}
-        />
-
-        <Tab.Screen
           name="ProfileStack"
           component={ProfileStack}
           options={{
@@ -247,6 +219,35 @@ const TabNavigator = () => {
                     }
                   >
                     Profile
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
+          name="Home"
+          component={HomeStack}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <Feather
+                    name="home"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Home
                   </Text>
                 </View>
               );
@@ -345,32 +346,23 @@ const TabNavigator = () => {
   );
 };
 
-// const ReduxContext = createContext();
-// export const useRedux = () => {
-//   return useContext(ReduxContext);
-// };
-// export const ReduxProvider = ({ children, store }) => {
-//   return (
-//     <ReduxContext.Provider value={store}>{children}</ReduxContext.Provider>
-//   );
-// };
-
 function App() {
   function RenderNavigator() {
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
     const userId = useSelector((state) => state.users.userId);
     const dispatch = useDispatch();
+
     const {
       data: userData,
       isLoading: isLoadingUser,
       isSuccess: isSuccessUser,
     } = useGetUserByIdQuery(userId);
-
     const {
       data: favoriteVoyageData,
       isLoading: isLoadingFavoriteVoyages,
       isSuccess: isSuccessFavoriteVoyages,
     } = useGetFavoriteVoyageIdsByUserIdQuery(userId);
+
     const {
       data: favoriteVehicleData,
       isLoading: isLoadingFavoriteVehicles,
@@ -420,7 +412,7 @@ function App() {
       }
     }, [isSuccessUser, isSuccessFavoriteVehicles, isSuccessFavoriteVoyages]);
 
-    return isLoggedIn ? <TabNavigator /> : <AuthStack />;
+    return isLoggedIn ? <TabNavigator isLoading={isLoading} /> : <AuthStack />;
   }
 
   return (

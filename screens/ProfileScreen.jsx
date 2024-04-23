@@ -27,10 +27,12 @@ import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { updateAsLoggedOut } from "../slices/UserSlice";
+import { SocialRenderComponent } from "../components/SocialRenderComponent";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
   const dispatch = useDispatch();
+  const [socialCount, setSocialCount] = useState(0);
 
   const {
     data: userData,
@@ -232,99 +234,15 @@ export default function ProfileScreen({ navigation }) {
                     />
                   </View>
                 </View>
-                {/* ------- PROFILE AND SOCIAL ------ */}
-                <View style={styles.social}>
-                  {/* -----------EMAIL------------- */}
-                  <TouchableOpacity
-                    style={styles.socialBox1}
-                    onPress={() => handleEmailPress()}
-                  >
-                    <Fontisto
-                      style={styles.icon}
-                      name="email"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.email.length > 20
-                        ? `${userData.email.substring(0, 20)}...`
-                        : userData.email}
-                    </Text>
-                  </TouchableOpacity>
 
-                  {/* --------------INSTAGRAM---------- */}
-                  <TouchableOpacity
-                    style={styles.socialBox2}
-                    onPress={() => handleInstagramPress()}
-                  >
-                    <Ionicons
-                      style={styles.icon}
-                      name="logo-instagram"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.instagram.length > 20
-                        ? `${userData.instagram.substring(0, 20)}...`
-                        : userData.instagram}
-                    </Text>
-                  </TouchableOpacity>
-
-                  {/* --------------YOUTUBE---------- */}
-
-                  <TouchableOpacity
-                    style={styles.socialBox}
-                    onPress={() => handleYoutubePress()}
-                  >
-                    <Feather
-                      style={styles.icon}
-                      name="youtube"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.youtube.length > 20
-                        ? `${userData.youtube.substring(0, 20)}...`
-                        : userData.youtube}
-                    </Text>
-                  </TouchableOpacity>
-                  {/* --------------FACEBOOK---------- */}
-
-                  <TouchableOpacity
-                    style={styles.socialBox2}
-                    onPress={() => handleFacebookPress()}
-                  >
-                    <Feather
-                      style={styles.icon}
-                      name="facebook"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.facebook.length > 20
-                        ? `${userData.facebook.substring(0, 20)}...`
-                        : userData.facebook}
-                    </Text>
-                  </TouchableOpacity>
-                  {/* --------------PHONE---------- */}
-                  <TouchableOpacity
-                    style={styles.socialBox1}
-                    onPress={() => handlePhonePress()}
-                  >
-                    <Feather
-                      style={styles.icon}
-                      name="phone"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.iconText}>
-                      {userData.phoneNumber.length > 20
-                        ? `${userData.phoneNumber.substring(0, 20)}...`
-                        : userData.phoneNumber}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                {/* ------- PROFILE AND SOCIAL ------ */}
+                <SocialRenderComponent
+                  userData={userData}
+                  handleEmailPress={handleEmailPress}
+                  handleInstagramPress={handleInstagramPress}
+                  handleYoutubePress={handleYoutubePress}
+                  handleFacebookPress={handleFacebookPress}
+                  handlePhonePress={handlePhonePress}
+                />
               </View>
 
               {/* ------- BIO ------ */}
@@ -515,12 +433,10 @@ const styles = StyleSheet.create({
   socialBox: {
     flexDirection: "row",
     backgroundColor: "rgba(190, 119, 234,0.1)",
-
     left: vw(-4),
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   socialBox1: {
@@ -529,8 +445,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-
     left: vw(-10.5),
+    borderColor: "rgba(190, 119, 234,0.4)",
   },
   socialBox2: {
     flexDirection: "row",
@@ -538,8 +454,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-
     left: vw(-6),
+    borderColor: "rgba(190, 119, 234,0.4)",
   },
   icon: {
     padding: 3,
@@ -576,6 +492,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: 0,
     top: vh(1),
+    backgroundColor: "pink",
   },
   //container of image and name
   profileImageAndName: {

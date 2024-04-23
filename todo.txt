@@ -1,46 +1,76 @@
 
-Screens:
-    profile page
-        - social media conditional rendering 
-        - go to public profile link
+ngrok http --domain=measured-wolf-grossly.ngrok-free.app https://localhost:7151
+------------------------------------------------------------------------------
 
-    public profile page
-        - share
++ profile page
+    - social media conditional rendering
+    - go to public profile link
 
-    voyage detail page
-        - add vehicle link
-        - share
-        - accept bid -> message functionality
-        - see all bids -> add details
-        - see all bids -> decrease height
-        - change bid -> change display
++ public profile page
+    - share 
+    - send message
 
-    vehicle detail page
-        - share
++ voyage detail page
+    - add vehicle link
+    - share
+    - accept bid -> message functionality
+    - see all bids -> add details
+    - see all bids -> decrease height
+    - change bid -> change display
+    - waypoints flatlist add right margin
 
-    messages
-        accept bids -> group message
-        update messages page on focus
++ vehicle detail page
+    - share
 
-    conversation
-        - scroll to bottom
-        - refresh page on focus
++ messages
+    accept bid -> add user to group message
+    update messages page on focus
 
-    create vehicle / voyage
-        - no navigation
-        - isSuccess not defined
++ conversation
+    - scroll to bottom
+    - refresh page on focus
 
-    login / register
-        - forgot my password
-        - auth
-        - 
++ create vehicle / voyage
+    - no navigation
+    - isSuccess not defined
 
-    main page
-        - filter icons when pressed
-        - date filter - failed prop type label of type object
-        - tapping on pin -> ?
++ login / register
+    - forgot my password
+    - auth
+    - confirmation link with email
+    - google login
+    - Ahmet'in auth'u
 
-    top bar
-        - black / white 
++ main page
+    - how to refresh data without pressing "apply filter"
+    - what to display when no voyages on selected area
+    - filter icons when pressed
+    - date filter - failed prop type label of type object
+    - tapping on pin -> voyage card in modal
+
++ favorites page
+    - bottom margin 
+
++ top bar
+    - black / white 
+
++ RTK Query -  providesTags & invalidatesTags
+
++ Edit Vehicle & Delete Vehicle
+
++ Delete Voyage
 
 
+--------------------
+
+0 0 0 1 1  
+0 1 1 1 1  
+1 1 1 1 1
+0 0 1 1 1
+0 0 0 0 1
+
+email -> 1, 2 ,3 
+instagram -> 
+youtube
+facebook
+telefon
