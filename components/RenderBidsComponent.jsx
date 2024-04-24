@@ -51,12 +51,12 @@ export const RenderBidsComponent = ({
       ))}
 
       <Modal
-        animationType="slide"
-        transparent={false}
+        animationType="fade"
+        transparent={true}
         visible={modalVisible}
         onRequestClose={closeModal}
       >
-        <View style={{ paddingTop: vh(5) }}>
+        <View style={styles.flatlistContainer}>
           <FlatList
             style={styles.BidsFlatList}
             data={bids}
@@ -71,6 +71,11 @@ export const RenderBidsComponent = ({
                 />
                 <View>
                   <Text style={styles.bidUsername2}>{item.userName}</Text>
+                  <TouchableOpacity>
+                    <Text style={styles.seeMessage}>
+                      {ownVoyage && (item.message ?? null)}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
                 <View>
                   <Text style={styles.offerPrice2}>
@@ -94,7 +99,8 @@ export const RenderBidsComponent = ({
 
 const styles = StyleSheet.create({
   seeMessage: {
-    backgroundColor: "rgba(10, 119, 234,.05)",
+    // backgroundColor: "rgba(10, 119, 234,.05)",
+    // backgroundColor: "rgba(255,255,255,0.8)",
     borderRadius: vh(2),
     paddingLeft: vw(4),
     paddingBottom: vh(0.2),
@@ -151,9 +157,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#1c71a9",
   },
-
   allBidsContainer: {
-    // backgroundColor: "blue",
     margin: vh(1),
     padding: vh(0),
   },
@@ -164,17 +168,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: vh(3),
     backgroundColor: "rgba(0, 119, 234,0.05)",
-    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
   },
-
+  flatlistContainer: {
+    backgroundColor: "rgba(1,1,1,0.4)",
+    height: vh(100),
+  },
   BidsFlatList: {
-    width: vw(85),
-    height: vh(90),
+    width: vw(95),
+    height: vh(50),
+    marginTop: vh(15),
     alignSelf: "center",
     backgroundColor: "#f2fafa",
     borderColor: "#bfdff4",
-    // borderWidth: 2,
     borderRadius: vh(2),
     padding: vh(1),
   },
@@ -203,19 +209,17 @@ const styles = StyleSheet.create({
     textAlign: "right",
     color: "#2ac898",
   },
-
   closeButtonInModal: {
     alignSelf: "flex-end",
     marginRight: vw(10),
     backgroundColor: "#f2fafa",
     borderRadius: vw(5),
     borderColor: "#93c9ed",
-    // borderWidth: 2,
     padding: vw(1),
     paddingHorizontal: vw(3),
     marginTop: vh(1),
+    marginBottom: vh(15),
   },
-
   closeTextInModal: {
     color: "#3c9dde",
     fontWeight: "700",

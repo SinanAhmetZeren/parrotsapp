@@ -4,10 +4,7 @@
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import { useRoute } from "@react-navigation/native";
-import {
-  useGetVoyageByIdQuery,
-  useSendBidMutation,
-} from "../slices/VoyageSlice";
+import { useGetVoyageByIdQuery } from "../slices/VoyageSlice";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   Feather,
@@ -64,11 +61,19 @@ const VoyageDetailScreen = () => {
   const userFavoriteVoyages = useSelector(
     (state) => state.users.userFavoriteVoyages
   );
+  const [bids, setBids] = useState([]);
+  const [hasBidWithUserId, setHasBidWithUserId] = useState(false);
+  const [userBid, setUserBid] = useState("");
+  const [userBidId, setUserBidId] = useState("");
+  const [userBidPrice, setUserBidPrice] = useState("");
+  const [userBidPersons, setUserBidPersons] = useState("");
+  const [userBidMessage, setUserBidMessage] = useState("");
 
   const {
     data: VoyageData,
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
+    refetch,
   } = useGetVoyageByIdQuery(voyageId);
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -84,8 +89,29 @@ const VoyageDetailScreen = () => {
       if (userFavoriteVoyages.includes(VoyageData.id)) {
         setIsFavorited(true);
       }
+
+      if (VoyageData.bids) {
+        setBids(VoyageData.bids);
+        let bids = VoyageData.bids;
+        setHasBidWithUserId(bids.some((bid) => bid.userId === userId));
+        setUserBid(bids.find((bid) => bid.userId === userId));
+
+        if (bids.some((bid) => bid.userId === userId)) {
+          let userBid = bids.find((bid) => bid.userId === userId);
+          setUserBidPrice(userBid.offerPrice);
+          setUserBidPersons(userBid.personCount);
+          setUserBidMessage(userBid.message);
+          setUserBidId(userBid.id);
+        }
+      }
     }
-  }, [isSuccessVoyages]);
+  }, [isSuccessVoyages, VoyageData]);
+
+  useEffect(() => {
+    console.log("userBidMessage ", userBidMessage);
+    console.log("userBidPrice ", userBidPrice);
+    console.log("userBidPersons ", userBidPersons);
+  }, [userBidMessage, userBidPersons, userBidPrice]);
 
   const getInitialRegion = (waypoints) => {
     const maxLatitude = Math.max(
@@ -146,6 +172,11 @@ const VoyageDetailScreen = () => {
     });
   };
 
+  const goToVehiclePage = (vehicleId) => {
+    console.log(vehicleId);
+    navigation.navigate("VehicleDetail", { vehicleId });
+  };
+
   const toggleWaypointsInfo = () => {
     setWayPointInfoVisible(!waypointInfoVisible);
   };
@@ -186,20 +217,13 @@ const VoyageDetailScreen = () => {
 
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData.user.id;
-    const bids = VoyageData.bids || [];
-    const hasBidWithUserId = bids.some((bid) => bid.userId === userId);
-    const userBid = bids.find((bid) => bid.userId === userId);
-    let userBidPrice = "";
-    let userBidPersons = "";
-    let userBidMessage = "";
-    let userBidId = "";
-
-    if (userBid) {
-      userBidPrice = userBid.offerPrice;
-      userBidPersons = userBid.personCount;
-      userBidMessage = userBid.message;
-      userBidId = userBid.id;
-    }
+    // const bids2 = VoyageData.bids || [];
+    // const hasBidWithUserId2 = bids.some((bid) => bid.userId === userId);
+    // const userBid2 = bids.find((bid) => bid.userId === userId);
+    // let userBidPrice = "";
+    // let userBidPersons = "";
+    // let userBidMessage = "";
+    // let userBidId = "";
 
     const waypoints = VoyageData.waypoints || [];
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
@@ -208,43 +232,6 @@ const VoyageDetailScreen = () => {
     const displayText = showFullText
       ? VoyageData.description
       : VoyageData.description.slice(0, descriptionShortenedChars) + "...";
-
-    let icon;
-    switch (VoyageData.vehicle.type) {
-      case 0:
-        icon = <FontAwesome6 name="sailboat" size={12} color="blue" />;
-        break;
-      case 1:
-        icon = <AntDesign name="car" size={12} color="blue" />;
-        break;
-      case 2:
-        icon = <FontAwesome5 name="caravan" size={12} color="blue" />;
-        break;
-      case 3:
-        icon = <Ionicons name="bus-outline" size={12} color="blue" />;
-        break;
-      case 4:
-        icon = <FontAwesome5 name="walking" size={12} color="blue" />;
-        break;
-      case 5:
-        icon = <FontAwesome5 name="running" size={12} color="blue" />;
-        break;
-      case 6:
-        icon = <FontAwesome name="motorcycle" size={12} color="blue" />;
-        break;
-      case 7:
-        icon = <FontAwesome name="bicycle" size={12} color="blue" />;
-        break;
-      case 8:
-        icon = <FontAwesome6 name="house" size={12} color="blue" />;
-        break;
-      case 9:
-        icon = <Ionicons name="airplane-outline" size={12} color="blue" />;
-        break;
-      default:
-        icon = "help-circle";
-        break;
-    }
 
     let allVoyageImages = [
       {
@@ -303,7 +290,12 @@ const VoyageDetailScreen = () => {
                         {VoyageData.user.userName}
                       </Text>
                     </TouchableOpacity>
-                    <View style={styles.voyageBoat}>
+                    <TouchableOpacity
+                      style={styles.voyageBoat}
+                      onPress={() => {
+                        goToVehiclePage(VoyageData.vehicle.id);
+                      }}
+                    >
                       <Image
                         source={{
                           uri:
@@ -315,7 +307,7 @@ const VoyageDetailScreen = () => {
                       <Text style={styles.userName}>
                         {VoyageData.vehicle.name}
                       </Text>
-                    </View>
+                    </TouchableOpacity>
                   </View>
                   {/*/////////////////////////////////////////*/}
                   <View style={styles.VoyagePropsBox}>
@@ -489,10 +481,12 @@ const VoyageDetailScreen = () => {
             </View>
           </View>
 
-          <WaypointFlatListVoyageDetailsScreen
-            focusMap={focusMap}
-            addedWayPoints={waypoints}
-          />
+          <View style={styles.waypointFlatlistContainer}>
+            <WaypointFlatListVoyageDetailsScreen
+              focusMap={focusMap}
+              addedWayPoints={waypoints}
+            />
+          </View>
 
           {/* // Bids */}
 
@@ -529,6 +523,7 @@ const VoyageDetailScreen = () => {
               userBidPrice={userBidPrice}
               userBidPersons={userBidPersons}
               userBidMessage={userBidMessage}
+              refetch={refetch}
             />
           </View>
         </ScrollView>
@@ -540,6 +535,9 @@ const VoyageDetailScreen = () => {
 export default VoyageDetailScreen;
 
 const styles = StyleSheet.create({
+  waypointFlatlistContainer: {
+    marginRight: vw(3),
+  },
   waypointInfoMessage: {
     color: "#3c9dde",
     paddingHorizontal: vh(2),
@@ -823,3 +821,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+/*let icon;
+switch (VoyageData.vehicle.type) {
+  case 0:
+    icon = <FontAwesome6 name="sailboat" size={12} color="blue" />;
+    break;
+  case 1:
+    icon = <AntDesign name="car" size={12} color="blue" />;
+    break;
+  case 2:
+    icon = <FontAwesome5 name="caravan" size={12} color="blue" />;
+    break;
+  case 3:
+    icon = <Ionicons name="bus-outline" size={12} color="blue" />;
+    break;
+  case 4:
+    icon = <FontAwesome5 name="walking" size={12} color="blue" />;
+    break;
+  case 5:
+    icon = <FontAwesome5 name="running" size={12} color="blue" />;
+    break;
+  case 6:
+    icon = <FontAwesome name="motorcycle" size={12} color="blue" />;
+    break;
+  case 7:
+    icon = <FontAwesome name="bicycle" size={12} color="blue" />;
+    break;
+  case 8:
+    icon = <FontAwesome6 name="house" size={12} color="blue" />;
+    break;
+  case 9:
+    icon = <Ionicons name="airplane-outline" size={12} color="blue" />;
+    break;
+  default:
+    icon = "help-circle";
+    break;
+}
+*/

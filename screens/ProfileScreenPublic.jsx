@@ -170,6 +170,12 @@ export default function ProfileScreenPublic({ navigation }) {
                   style={styles.editProfileBox}
                   onPress={() => {
                     console.log("send message");
+
+                    navigation.navigate("ConversationDetailScreen", {
+                      conversationUserId: userId,
+                      profileImg: userData.profileImageUrl,
+                      name: userData.userName,
+                    });
                   }}
                   activeOpacity={0.8}
                 >

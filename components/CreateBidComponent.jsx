@@ -27,6 +27,7 @@ export const CreateBidComponent = ({
   userBidPersons,
   userBidPrice,
   userBidMessage,
+  refetch,
 }) => {
   const [visible, setVisible] = useState(false);
   const [changeModalVisible, setChangeModalVisible] = useState(false);
@@ -39,6 +40,12 @@ export const CreateBidComponent = ({
   const textInputRef = useRef(null);
   const [sendBid] = useSendBidMutation();
   const [changeBid] = useChangeBidMutation();
+
+  useEffect(() => {
+    setExistingBidPrice(userBidPrice);
+    setExistingMessage(userBidMessage);
+    setExistingPersons(userBidPersons);
+  }, [userBidPersons, userBidPrice, userBidMessage]);
 
   useEffect(() => {
     if (visible && textInputRef.current) {
@@ -80,6 +87,7 @@ export const CreateBidComponent = ({
 
     sendBid(bidData);
     setVisible(false);
+    refetch();
   };
 
   const handleIncrementExistingPrice = () => {
@@ -102,7 +110,7 @@ export const CreateBidComponent = ({
     }
   };
 
-  const handleChangeBid = (bidId) => {
+  const handleChangeBid = () => {
     let bidData = {
       personCount: existingPersons,
       message: existingMessage,
@@ -114,6 +122,7 @@ export const CreateBidComponent = ({
 
     changeBid(bidData);
     setChangeModalVisible(false);
+    refetch();
   };
 
   const handleOpenModal = () => {
