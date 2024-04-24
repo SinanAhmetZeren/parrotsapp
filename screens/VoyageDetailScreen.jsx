@@ -505,6 +505,9 @@ const VoyageDetailScreen = () => {
                   modalVisible={modalVisible}
                   setModalVisible={setModalVisible}
                   ownVoyage={ownVoyage}
+                  voyageName={VoyageData.name}
+                  currentUserId={userId}
+                  refetch={refetch}
                 />
               </View>
             </View>

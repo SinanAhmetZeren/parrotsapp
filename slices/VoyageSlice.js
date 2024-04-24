@@ -127,6 +127,13 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    acceptBid: builder.mutation({
+      query: (bidId) => ({
+        url: `/api/Bid/acceptbid?bidId=${bidId}`,
+        method: "POST",
+        body: { bidId },
+      }),
+    }),
     addWaypoint: builder.mutation({
       query: (data) => {
         const {
@@ -261,6 +268,7 @@ export const {
   useGetVoyageByIdQuery,
   useSendBidMutation,
   useChangeBidMutation,
+  useAcceptBidMutation,
   useGetVoyagesByLocationMutation,
   useGetFilteredVoyagesMutation,
   useGetFavoriteVoyagesByUserIdQuery,

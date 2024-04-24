@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Image,
@@ -10,18 +11,48 @@ import {
   StyleSheet,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
+import { useAcceptBidMutation } from "../slices/VoyageSlice";
+import { Ionicons } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 
 export const RenderBidsComponent = ({
   bids,
   modalVisible,
   setModalVisible,
   ownVoyage,
+  voyageName,
+  currentUserId,
+  refetch,
 }) => {
   const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
   const visibleBids = bids.slice(0, 6);
-
+  const [acceptBid] = useAcceptBidMutation();
+  // console.log("--xxx>>>", bids);
   const closeModal = () => {
     setModalVisible(false);
+  };
+
+  const handleAcceptBid = ({ bidId, bidUserId }) => {
+    const text = `Welcome on board to ${voyageName}`;
+    const senderId = currentUserId;
+    const receiverId = bidUserId;
+
+    acceptBid(bidId);
+    Toast.show({
+      type: "success",
+      text1: "Bid Accepted",
+      text2: "Message sent to participant",
+      visibilityTime: 1000,
+      topOffset: 150,
+    });
+    refetch();
+    console.log("----------");
+    console.log("ReceiverId: ", receiverId);
+    console.log("SenderId: ", senderId);
+    console.log("Text: ", text);
+
+    // SEND MESSAGE
+    // CHANGE BID TO ACCEPTED
   };
 
   return (
@@ -36,11 +67,11 @@ export const RenderBidsComponent = ({
           />
           <View>
             <Text style={styles.bidUsername}>{bid.userName}</Text>
-            <TouchableOpacity>
+            <View>
               <Text style={styles.seeMessage}>
                 {ownVoyage && (bid.message ?? null)}
               </Text>
-            </TouchableOpacity>
+            </View>
           </View>
           <View>
             <Text style={styles.offerPrice}>
@@ -61,29 +92,61 @@ export const RenderBidsComponent = ({
             style={styles.BidsFlatList}
             data={bids}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <View key={index} style={styles.singleBidContainer2}>
-                <Image
-                  source={{
-                    uri: UserImageBaseUrl + item.userProfileImage,
-                  }}
-                  style={styles.bidImage2}
-                />
-                <View>
-                  <Text style={styles.bidUsername2}>{item.userName}</Text>
-                  <TouchableOpacity>
-                    <Text style={styles.seeMessage}>
-                      {ownVoyage && (item.message ?? null)}
+            renderItem={({ item, index }) => {
+              console.log(item);
+              return (
+                <View key={index} style={styles.singleBidContainer2}>
+                  <Image
+                    source={{
+                      uri: UserImageBaseUrl + item.userProfileImage,
+                    }}
+                    style={styles.bidImage2}
+                  />
+                  <View>
+                    <View style={styles.nameAndMessage}>
+                      <Text style={styles.bidUsername2}>{item.userName}</Text>
+                      <Text style={styles.seeMessage}>
+                        {ownVoyage && (item.message ?? null)}
+                      </Text>
+                    </View>
+                  </View>
+                  <View>
+                    <Text style={styles.offerPrice2}>
+                      {item.currency} {item.offerPrice.toFixed(2)}
                     </Text>
-                  </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.acceptedButton}>
+                    {item.accepted ? (
+                      <Text>
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={24}
+                          color="#2ac898"
+                        />
+                      </Text>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleAcceptBid({
+                            bidId: item.id,
+                            bidUserId: item.userId,
+                          })
+                        }
+                      >
+                        <Text>
+                          <Ionicons
+                            name="checkmark-circle-outline"
+                            size={24}
+                            color="#2ac898"
+                          />
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 </View>
-                <View>
-                  <Text style={styles.offerPrice2}>
-                    {item.currency} {item.offerPrice.toFixed(2)}
-                  </Text>
-                </View>
-              </View>
-            )}
+              );
+            }}
           />
           <TouchableOpacity
             onPress={closeModal}
@@ -98,6 +161,12 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
+  acceptedButton: {
+    paddingLeft: vw(3),
+  },
+  nameAndMessage: {
+    width: vw(45),
+  },
   seeMessage: {
     // backgroundColor: "rgba(10, 119, 234,.05)",
     // backgroundColor: "rgba(255,255,255,0.8)",
@@ -177,7 +246,7 @@ const styles = StyleSheet.create({
   BidsFlatList: {
     width: vw(95),
     height: vh(50),
-    marginTop: vh(15),
+    marginTop: vh(30),
     alignSelf: "center",
     backgroundColor: "#f2fafa",
     borderColor: "#bfdff4",
@@ -186,9 +255,11 @@ const styles = StyleSheet.create({
   },
   singleBidContainer2: {
     flexDirection: "row",
-    padding: vh(0.1),
+    padding: vh(0.2),
     margin: vh(0.3),
     alignItems: "center",
+    backgroundColor: "rgba(220,238,249,0.4)",
+    borderRadius: vh(5),
   },
   bidImage2: {
     width: vh(5),
@@ -210,7 +281,7 @@ const styles = StyleSheet.create({
     color: "#2ac898",
   },
   closeButtonInModal: {
-    alignSelf: "flex-end",
+    alignSelf: "center",
     marginRight: vw(10),
     backgroundColor: "#f2fafa",
     borderRadius: vw(5),
