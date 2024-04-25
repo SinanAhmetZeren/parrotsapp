@@ -29,6 +29,7 @@ import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import { SocialRenderComponent } from "../components/SocialRenderComponent";
+import VoyageListVertical from "../components/VoyageListVertical";
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
@@ -257,82 +258,35 @@ export default function ProfileScreenPublic({ navigation }) {
               </View>
               {/* ------- BIO ------ */}
 
-              {/* ------- CHOICE ------ */}
-              <View style={styles.viewChoice}>
-                <View style={styles.choiceItem}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleChangeSelection("voyages");
-                    }}
-                    style={
-                      selected === "voyages"
-                        ? styles.selectedChoice
-                        : styles.nonSelectedChoice
-                    }
-                  >
-                    <Text
-                      style={
-                        selected === "voyages"
-                          ? styles.selectedText
-                          : styles.nonSelectedText
-                      }
-                    >
-                      Voyages
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.choiceItem}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handleChangeSelection("vehicles");
-                    }}
-                    style={
-                      selected === "vehicles"
-                        ? styles.selectedChoice
-                        : styles.nonSelectedChoice
-                    }
-                  >
-                    <Text
-                      style={
-                        selected === "vehicles"
-                          ? styles.selectedText
-                          : styles.nonSelectedText
-                      }
-                    >
-                      Vehicles
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              {/* ------- CHOICE ------ */}
-
-              {selected === "voyages" &&
-                (isLoadingVoyages ? (
-                  <Text>Loading Voyages</Text>
-                ) : isSuccessVoyages ? (
-                  <View style={styles.voyageListContainer}>
-                    <VoyageList style={styles.voyageList} data={VoyagesData} />
+              {isLoadingVoyages ? (
+                <ActivityIndicator size="large" />
+              ) : isSuccessVoyages ? (
+                <>
+                  <View style={styles.mainBidsContainer}>
+                    <View style={styles.currentBidsAndSeeAll}>
+                      <Text style={styles.currentBidsTitle}>Vehicles</Text>
+                    </View>
                   </View>
-                ) : null)}
-
-              {selected === "vehicles" &&
-                (isLoadingVehicles ? (
-                  <Text>Loading vehicles</Text>
-                ) : isSuccessVehicles ? (
                   <View style={styles.voyageListContainer}>
                     <VehicleList
                       style={styles.voyageList}
                       data={VehiclesData}
                     />
                   </View>
-                ) : null)}
 
-              {/* <Button
-                title="Handle Refetch"
-                onPress={() => {
-                  handleRefetch();
-                }}
-              /> */}
+                  <View style={styles.mainBidsContainer}>
+                    <View style={styles.currentBidsAndSeeAll}>
+                      <Text style={styles.currentBidsTitle}>Voyages</Text>
+                    </View>
+                  </View>
+                  <View style={styles.voyageListContainer}>
+                    <VoyageListVertical
+                      style={styles.voyageList}
+                      data={VoyagesData}
+                    />
+                  </View>
+                </>
+              ) : null}
             </View>
           </ScrollView>
         </View>
@@ -342,6 +296,21 @@ export default function ProfileScreenPublic({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  currentBidsTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#3c9dde",
+    paddingLeft: vw(5),
+  },
+  currentBidsAndSeeAll: {
+    marginTop: vh(2),
+    flexDirection: "row",
+    paddingRight: vw(10),
+  },
+  mainBidsContainer: {
+    borderRadius: vw(5),
+    borderColor: "#93c9ed",
+  },
   buttonsContainer: {
     position: "absolute",
     top: vh(30),

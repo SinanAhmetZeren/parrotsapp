@@ -50,8 +50,9 @@ export default function MessagesScreen({ navigation }) {
     }, [refetch, navigation])
   );
 
-  // SIGNALR
   useEffect(() => {
+    // hubConnection.start();
+
     const startHubConnection = async () => {
       try {
         await hubConnection.start();
@@ -73,16 +74,72 @@ export default function MessagesScreen({ navigation }) {
         ]);
       }
     );
-
-    hubConnection.on("ReceiveMessageRefetch", async () => {
-      refetch();
-      console.log("refetch1");
-    });
-
     return () => {
       // hubConnection.stop();
     };
   }, []);
+
+  useEffect(() => {
+    if (isSuccessMessages) {
+      setTransformedMessages(
+        messagesData.map((message) => {
+          const user =
+            message.senderId !== userId ? message.senderId : message.receiverId;
+          const userProfileImage =
+            message.senderId !== userId
+              ? message.senderProfileUrl
+              : message.receiverProfileUrl;
+          const userName =
+            message.senderId !== userId
+              ? message.senderUsername
+              : message.receiverUsername;
+          const text = message.text;
+          const dateTime = message.dateTime;
+          return { user, userName, userProfileImage, text, dateTime };
+        })
+      );
+    }
+  }, [isSuccessMessages]);
+
+  useEffect(() => {
+    const newSenderId = receivedMessageData[0];
+    const text = receivedMessageData[1];
+    const dateTime = receivedMessageData[2];
+    const senderProfileUrl = receivedMessageData[3];
+    const senderUsername = receivedMessageData[4];
+
+    const index = transformedMessages.findIndex(
+      (msg) => msg.user === newSenderId
+    );
+
+    if (!receivedMessageData) return;
+
+    if (index !== -1) {
+      setTransformedMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages];
+        updatedMessages[index] = {
+          ...updatedMessages[index],
+          text,
+          dateTime,
+        };
+        return updatedMessages;
+      });
+    }
+
+    if (index == -1) {
+      const newMessageFromNewUser = {
+        dateTime: dateTime,
+        text: text,
+        user: newSenderId,
+        userName: senderUsername,
+        userProfileImage: senderProfileUrl,
+      };
+
+      setTransformedMessages((prevMessages) => {
+        return [...prevMessages, newMessageFromNewUser];
+      });
+    }
+  }, [receivedMessageData]);
 
   const sendMessage = (messageToSend) => {
     const messageWithTimeStamp =
@@ -110,6 +167,8 @@ export default function MessagesScreen({ navigation }) {
   };
 
   if (isSuccessMessages) {
+    console.log("success......");
+
     return (
       <View style={styles.container}>
         <View>
@@ -117,16 +176,16 @@ export default function MessagesScreen({ navigation }) {
         </View>
 
         <View style={styles.flatlist}>
-          <ConversationList data={messagesData} userId={userId} />
+          <ConversationList data={transformedMessages} />
         </View>
-        {/* 
+
         <TouchableOpacity onPress={() => printConnectionState()}>
           <Text>Print Connection State</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => printMessages()}>
           <Text>Print Messages</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
     );
   }

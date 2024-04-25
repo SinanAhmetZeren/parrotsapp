@@ -31,75 +31,78 @@ export default function MessagesComponent({
   currentUserId,
 }) {
   const renderMessages = () => {
-    return data.map((item, index) => {
-      return (
-        <View key={index}>
-          {item.senderId === currentUserId ? (
-            <View style={styles.MessageMainContainerRight}>
-              <View style={styles.MessageContainer}>
-                <View style={styles.imageContainer1}>
-                  <Image
-                    source={{
-                      uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userProfileImage}`,
-                    }}
-                    style={styles.voyageImage1}
-                  />
-                </View>
-
-                <View>
-                  <Text style={styles.userName}>{userName}</Text>
-
-                  <View style={styles.messageBox}>
-                    <Text style={styles.messageText}>{item.text}</Text>
+    if (data) {
+      return data.map((item, index) => {
+        return (
+          <View key={index}>
+            {item.senderId === currentUserId ? (
+              <View style={styles.MessageMainContainerRight}>
+                <View style={styles.MessageContainer}>
+                  <View style={styles.imageContainer1}>
+                    <Image
+                      source={{
+                        uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userProfileImage}`,
+                      }}
+                      style={styles.voyageImage1}
+                    />
                   </View>
 
-                  <View style={styles.dateBox}>
-                    <Text style={styles.timeDisplay}>
-                      {formatDate(item.dateTime)[0]}
-                      {"  "}
-                    </Text>
-                    <Text style={styles.dateDisplay}>
-                      {formatDate(item.dateTime)[1]}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-          ) : (
-            <View style={styles.MessageMainContainer}>
-              <View style={styles.MessageContainer}>
-                <View style={styles.imageContainer1}>
-                  <Image
-                    source={{
-                      uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${otherUserProfileImg}`,
-                    }}
-                    style={styles.voyageImage1}
-                  />
-                </View>
+                  <View>
+                    <Text style={styles.userName}>{userName}</Text>
 
-                <View>
-                  <Text style={styles.userName}>{otherUserName}</Text>
+                    <View style={styles.messageBox}>
+                      <Text style={styles.messageText}>{item.text}</Text>
+                    </View>
 
-                  <View style={styles.messageBox}>
-                    <Text style={styles.messageText}>{item.text}</Text>
-                  </View>
-
-                  <View style={styles.dateBox}>
-                    <Text style={styles.timeDisplay}>
-                      {formatDate(item.dateTime)[0]}
-                      {"  "}
-                    </Text>
-                    <Text style={styles.dateDisplay}>
-                      {formatDate(item.dateTime)[1]}
-                    </Text>
+                    <View style={styles.dateBox}>
+                      <Text style={styles.timeDisplay}>
+                        {formatDate(item.dateTime)[0]}
+                        {"  "}
+                      </Text>
+                      <Text style={styles.dateDisplay}>
+                        {formatDate(item.dateTime)[1]}
+                      </Text>
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
-          )}
-        </View>
-      );
-    });
+            ) : (
+              <View style={styles.MessageMainContainer}>
+                <View style={styles.MessageContainer}>
+                  <View style={styles.imageContainer1}>
+                    <Image
+                      source={{
+                        uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${otherUserProfileImg}`,
+                      }}
+                      style={styles.voyageImage1}
+                    />
+                  </View>
+
+                  <View>
+                    <Text style={styles.userName}>{otherUserName}</Text>
+
+                    <View style={styles.messageBox}>
+                      <Text style={styles.messageText}>{item.text}</Text>
+                    </View>
+
+                    <View style={styles.dateBox}>
+                      <Text style={styles.timeDisplay}>
+                        {formatDate(item.dateTime)[0]}
+                        {"  "}
+                      </Text>
+                      <Text style={styles.dateDisplay}>
+                        {formatDate(item.dateTime)[1]}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            )}
+          </View>
+        );
+      });
+    }
+    return null;
   };
 
   return <View style={styles.container}>{renderMessages()}</View>;

@@ -22,7 +22,6 @@ import MessagesComponent from "../components/MessagesComponent";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { current } from "@reduxjs/toolkit";
 
 export const ConversationDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -43,7 +42,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
     refetch,
   } = useGetMessagesBetweenUsersQuery(users);
   const [message, setMessage] = useState("");
-  const [messagesToDisplay, setMessagesToDisplay] = useState([]);
+
+  const [receivedMessageData, setReceivedMessageData] = useState([]);
+  const [transformedMessages, setTransformedMessages] = useState([]);
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
 
   const hubConnection = useMemo(() => {
@@ -85,21 +86,46 @@ export const ConversationDetailScreen = ({ navigation }) => {
     hubConnection.on(
       "ReceiveMessage",
       async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-        console.log("received a message: ", content);
+        if (receivedMessageData[0] === conversationUserId) {
+          const newMessage = {
+            dateTime: newTime,
+            id: newTime,
+            readByReceiver: "false",
+            receiverId: currentUserId,
+            receiverProfileUrl: null,
+            receiverUsername: null,
+            rendered: false,
+            senderId: conversationUserId,
+            senderProfileUrl: null,
+            senderUsername: null,
+            text: content,
+          };
+
+          setTransformedMessages((prevMessages) => {
+            return [...prevMessages, newMessage];
+          });
+        }
+
+        setReceivedMessageData([
+          senderId,
+          content,
+          newTime,
+          senderProfileUrl,
+          senderUsername,
+        ]);
       }
     );
-
-    hubConnection.on("ReceiveMessageRefetch", () => {
-      refetch();
-      console.log("oh!");
-    });
-
     return () => {
       // hubConnection.stop();
     };
   }, []);
 
-  // KEYBOARD SHOW AND HIDE
+  useEffect(() => {
+    if (isSuccessMessages) {
+      setTransformedMessages(messagesData.data);
+    }
+  }, [isSuccessMessages]);
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -121,49 +147,46 @@ export const ConversationDetailScreen = ({ navigation }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (messagesData) setMessagesToDisplay(messagesData.data);
-    // console.log("0: ", messagesData.data[0]);
-  }, [messagesData]);
-
   const handleSendMessage = () => {
-    const messageWithTimeStamp = message + " - " + new Date().toLocaleString();
+    console.log("sending message", message);
+    sendMessage(message);
+
+    setMessage("");
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split(".")[0];
+
+    const newMessage = {
+      dateTime: formattedDate,
+      id: formattedDate,
+      readByReceiver: "false",
+      receiverId: conversationUserId,
+      receiverProfileUrl: null,
+      receiverUsername: null,
+      rendered: false,
+      senderId: currentUserId,
+      senderProfileUrl: null,
+      senderUsername: null,
+      text: message,
+    };
+
+    setTransformedMessages((prevMessages) => {
+      return [...prevMessages, newMessage];
+    });
+  };
+
+  const sendMessage = (messageToSend) => {
+    const messageWithTimeStamp =
+      messageToSend + " - " + new Date().toLocaleString();
     hubConnection.invoke(
       "SendMessage",
       currentUserId,
       conversationUserId,
       messageWithTimeStamp
     );
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
-    const day = String(currentDate.getDate()).padStart(2, "0");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const seconds = String(currentDate.getSeconds()).padStart(2, "0");
-    const milliseconds = String(currentDate.getMilliseconds()).padStart(3, "0");
-    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
-
-    const sentMessage = {
-      dateTime: formattedDateTime,
-      receiverId: conversationUserId,
-      senderId: currentUserId,
-      text: message,
-    };
-    console.log("sent message: ", sentMessage);
-    console.log("messages to display: ->", messagesToDisplay);
-    setMessagesToDisplay((prevMessages) => {
-      return [...prevMessages, sentMessage];
-    });
-    setMessage("");
   };
 
-  const printMessages = () => {
-    console.log("messages: ");
-    console.log(messagesData);
-    messagesData.data.forEach((message) => {
-      console.log(message.text);
-    });
+  const printConnectionState = () => {
+    console.log(hubConnection._connectionState);
   };
 
   if (isLoadingMessages) {
@@ -210,13 +233,13 @@ export const ConversationDetailScreen = ({ navigation }) => {
                 }
           }
         >
-          <TouchableOpacity onPress={() => printMessages()}>
-            <Text>Print </Text>
-          </TouchableOpacity>
+          {/* <TouchableOpacity onPress={() => printConnectionState()}>
+            <Text>Print Connection State</Text>
+          </TouchableOpacity> */}
 
           <ScrollView style={styles.scrollViewMessages}>
             <MessagesComponent
-              data={messagesToDisplay}
+              data={transformedMessages}
               currentUserId={currentUserId}
               userName={currentUserName}
               userProfileImage={currentUserProfileImage}

@@ -5,26 +5,11 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import ConversationView from "./CoversationView";
 
-export default function ConversationList({ data, userId }) {
+export default function ConversationList({ data }) {
   // console.log(data[0]);
-  const transformedMessages = data.map((message) => {
-    const user =
-      message.senderId !== userId ? message.senderId : message.receiverId;
-    const userProfileImage =
-      message.senderId !== userId
-        ? message.senderProfileUrl
-        : message.receiverProfileUrl;
-    const userName =
-      message.senderId !== userId
-        ? message.senderUsername
-        : message.receiverUsername;
-    const text = message.text;
-    const dateTime = message.dateTime;
-    return { user, userName, userProfileImage, text, dateTime };
-  });
 
   const renderConversationViews = () => {
-    const sortedData = [...transformedMessages].sort((a, b) => {
+    const sortedData = [...data].sort((a, b) => {
       return new Date(b.dateTime) - new Date(a.dateTime);
     });
 

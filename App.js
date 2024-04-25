@@ -128,6 +128,10 @@ const ProfileStack = () => {
       <Stack.Screen name="MyBids" component={MyBidsScreen} />
       <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
       <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
+      <Stack.Screen
+        name="ConversationDetailScreen"
+        component={ConversationDetailScreen}
+      />
     </Stack.Navigator>
   );
 };
