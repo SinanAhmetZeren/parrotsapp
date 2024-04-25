@@ -22,7 +22,6 @@ import MessagesComponent from "../components/MessagesComponent";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { current } from "@reduxjs/toolkit";
 
 export const ConversationDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -91,19 +90,16 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
     hubConnection.on("ReceiveMessageRefetch", () => {
       refetch();
-      console.log("oh!");
     });
 
-    return () => {
-      // hubConnection.stop();
-    };
+    return () => {};
   }, []);
 
-  // KEYBOARD SHOW AND HIDE
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       (event) => {
+        console.log(event.endCoordinates.height);
         setTextInputBottomMargin(event.endCoordinates.height);
       }
     );
@@ -123,16 +119,14 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (messagesData) setMessagesToDisplay(messagesData.data);
-    // console.log("0: ", messagesData.data[0]);
   }, [messagesData]);
 
   const handleSendMessage = () => {
-    const messageWithTimeStamp = message + " - " + new Date().toLocaleString();
     hubConnection.invoke(
       "SendMessage",
       currentUserId,
       conversationUserId,
-      messageWithTimeStamp
+      message
     );
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -150,20 +144,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
       senderId: currentUserId,
       text: message,
     };
-    console.log("sent message: ", sentMessage);
-    console.log("messages to display: ->", messagesToDisplay);
+
     setMessagesToDisplay((prevMessages) => {
       return [...prevMessages, sentMessage];
     });
     setMessage("");
-  };
-
-  const printMessages = () => {
-    console.log("messages: ");
-    console.log(messagesData);
-    messagesData.data.forEach((message) => {
-      console.log(message.text);
-    });
   };
 
   if (isLoadingMessages) {
@@ -201,20 +186,16 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
         {/* // MESSAGES COMPONENT // */}
         <View
-          style={
-            textInputBottomMargin === 0
-              ? {}
-              : {
-                  zIndex: 50,
-                  height: vh(66) - textInputBottomMargin,
-                }
-          }
+        // style={
+        //   textInputBottomMargin === 0
+        //     ? {}
+        //     : {
+        //         zIndex: 50,
+        //         height: vh(66) - textInputBottomMargin,
+        //       }
+        // }
         >
-          <TouchableOpacity onPress={() => printMessages()}>
-            <Text>Print </Text>
-          </TouchableOpacity>
-
-          <ScrollView style={styles.scrollViewMessages}>
+          <View style={styles.scrollViewMessages}>
             <MessagesComponent
               data={messagesToDisplay}
               currentUserId={currentUserId}
@@ -223,12 +204,25 @@ export const ConversationDetailScreen = ({ navigation }) => {
               otherUserProfileImg={profileImg}
               otherUserName={name}
             />
-          </ScrollView>
+          </View>
         </View>
         {/* // MESSAGES COMPONENT // */}
 
         {/* // SEND MESSAGE COMPONENT // */}
-        <View>
+        <View
+          style={
+            textInputBottomMargin === 0
+              ? {
+                  zIndex: 100,
+                  backgroundColor: "white",
+                }
+              : {
+                  top: vh(0) - textInputBottomMargin,
+                  zIndex: 100,
+                  backgroundColor: "white",
+                }
+          }
+        >
           <View style={styles.sendMessageContainer}>
             <View style={styles.messageTextContainer}>
               <View>
@@ -247,10 +241,15 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
+                disabled={message ? false : true}
                 onPress={() => handleSendMessage()}
                 style={styles.buttonCancelContainer}
               >
-                <View style={styles.buttonClear}>
+                <View
+                  style={
+                    message ? styles.buttonClear : styles.buttonClearDisabled
+                  }
+                >
                   <Text style={styles.buttonText}>
                     <Feather name="send" size={24} color="white" />
                   </Text>
@@ -324,6 +323,14 @@ const styles = StyleSheet.create({
     padding: vh(1),
     borderRadius: vh(3),
   },
+  buttonClearDisabled: {
+    color: "white",
+    textAlign: "center",
+    backgroundColor: "rgba(60,157,222,.3)",
+    padding: vh(1),
+    borderRadius: vh(3),
+  },
+
   buttonText: {
     color: "white",
     textAlign: "center",

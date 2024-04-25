@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useGetVoyageByIdQuery } from "../slices/VoyageSlice";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -40,6 +40,7 @@ import {
   useAddVoyageToFavoritesMutation,
   useDeleteVoyageFromFavoritesMutation,
 } from "../slices/VoyageSlice";
+import { useFocusEffect } from "@react-navigation/native";
 
 const VoyageDetailScreen = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -79,6 +80,24 @@ const VoyageDetailScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [waypointInfoVisible, setWayPointInfoVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          await refetch();
+        } catch (error) {
+          console.error("Error refetching messages data:", error);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetch, navigation])
+  );
 
   const handleSeeAll = () => {
     setModalVisible(true);
@@ -217,14 +236,6 @@ const VoyageDetailScreen = () => {
 
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData.user.id;
-    // const bids2 = VoyageData.bids || [];
-    // const hasBidWithUserId2 = bids.some((bid) => bid.userId === userId);
-    // const userBid2 = bids.find((bid) => bid.userId === userId);
-    // let userBidPrice = "";
-    // let userBidPersons = "";
-    // let userBidMessage = "";
-    // let userBidId = "";
-
     const waypoints = VoyageData.waypoints || [];
     const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;

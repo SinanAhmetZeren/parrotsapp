@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -13,7 +13,7 @@ import {
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useAcceptBidMutation } from "../slices/VoyageSlice";
 import { Ionicons } from "@expo/vector-icons";
-import { HubConnectionBuilder } from "@microsoft/signalr";
+import Toast from "react-native-toast-message";
 
 export const RenderBidsComponent = ({
   bids,
@@ -30,35 +30,40 @@ export const RenderBidsComponent = ({
   const closeModal = () => {
     setModalVisible(false);
   };
+  const [acceptBidModalVisible, setAcceptBidModalVisible] = useState(false);
 
-  const hubConnection = useMemo(() => {
-    return new HubConnectionBuilder()
-      .withUrl(
-        `https://measured-wolf-grossly.ngrok-free.app/chathub/11?userId=${currentUserId}`
-      )
-      .build();
-  }, [currentUserId]);
+  const toggleAcceptBidModal = () => {
+    setAcceptBidModalVisible(true);
+  };
 
-  useEffect(() => {
-    const startHubConnection = async () => {
-      try {
-        await hubConnection.start();
-        console.log("SignalR connection  started successfully.");
-      } catch (error) {
-        console.error("Failed to start SignalR connection:", error);
-      }
-    };
-    startHubConnection();
-    return () => {};
-  }, []);
+  /*
+    handleAcceptBid({
+    bidId: item.id,
+    bidUserId: item.userId,
+  }); 
+  */
 
   const handleAcceptBid = ({ bidId, bidUserId }) => {
-    const text = `Hi there! Welcome on board to ${voyageName}`;
-
-    hubConnection.invoke("SendMessage", currentUserId, bidUserId, text);
+    const text = `Welcome on board to ${voyageName}`;
+    const senderId = currentUserId;
+    const receiverId = bidUserId;
 
     acceptBid(bidId);
+    Toast.show({
+      type: "success",
+      text1: "Bid Accepted",
+      text2: "Message sent to participant",
+      visibilityTime: 1000,
+      topOffset: 150,
+    });
     refetch();
+    console.log("----------");
+    console.log("ReceiverId: ", receiverId);
+    console.log("SenderId: ", senderId);
+    console.log("Text: ", text);
+
+    // SEND MESSAGE
+    // CHANGE BID TO ACCEPTED
   };
 
   return (
@@ -99,38 +104,64 @@ export const RenderBidsComponent = ({
             data={bids}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => {
+              console.log(item);
               return (
-                <View key={index} style={styles.singleBidContainer2}>
-                  <Image
-                    source={{
-                      uri: UserImageBaseUrl + item.userProfileImage,
-                    }}
-                    style={styles.bidImage2}
-                  />
-                  <View>
-                    <View style={styles.nameAndMessage}>
-                      <Text style={styles.bidUsername2}>{item.userName}</Text>
-                      <Text style={styles.seeMessage}>
-                        {ownVoyage && (item.message ?? null)}
+                <>
+                  <View key={index} style={styles.singleBidContainer2}>
+                    <Image
+                      source={{
+                        uri: UserImageBaseUrl + item.userProfileImage,
+                      }}
+                      style={styles.bidImage2}
+                    />
+                    <View>
+                      <View style={styles.nameAndMessage}>
+                        <Text style={styles.bidUsername2}>{item.userName}</Text>
+                        <Text style={styles.seeMessage}>
+                          {ownVoyage && (item.message ?? null)}
+                        </Text>
+                      </View>
+                    </View>
+                    <View>
+                      <Text style={styles.offerPrice2}>
+                        {item.currency} {item.offerPrice.toFixed(2)}
                       </Text>
                     </View>
-                  </View>
-                  <View>
-                    <Text style={styles.offerPrice2}>
-                      {item.currency} {item.offerPrice.toFixed(2)}
-                    </Text>
+
+                    <View style={styles.acceptedButton}>
+                      {item.accepted ? (
+                        <Text>
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={24}
+                            color="#3c9dde"
+                          />
+                        </Text>
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() => {
+                            toggleAcceptBidModal();
+                          }}
+                        >
+                          <Text>
+                            <Ionicons
+                              name="checkmark-circle-outline"
+                              size={24}
+                              color="#93c9ed"
+                            />
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
                   </View>
 
-                  <View style={styles.acceptedButton}>
-                    {item.accepted ? (
-                      <Text>
-                        <Ionicons
-                          name="checkmark-circle"
-                          size={24}
-                          color="#3c9dde"
-                        />
-                      </Text>
-                    ) : (
+                  <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={acceptBidModalVisible}
+                    onRequestClose={closeModal}
+                  >
+                    <View style={styles.acceptBidModal}>
                       <TouchableOpacity
                         onPress={() =>
                           handleAcceptBid({
@@ -139,17 +170,16 @@ export const RenderBidsComponent = ({
                           })
                         }
                       >
-                        <Text>
-                          <Ionicons
-                            name="checkmark-circle-outline"
-                            size={24}
-                            color="#93c9ed"
-                          />
-                        </Text>
+                        <Text style={styles.bidOptionAccept}>Accept</Text>
                       </TouchableOpacity>
-                    )}
-                  </View>
-                </View>
+                      <TouchableOpacity
+                        onPress={() => setAcceptBidModalVisible(false)}
+                      >
+                        <Text style={styles.bidOptionCancel}>Cancel</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </Modal>
+                </>
               );
             }}
           />
@@ -166,6 +196,36 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
+  bidOptionAccept: {
+    padding: vw(3),
+    backgroundColor: "green",
+    width: vw(25),
+    alignSelf: "center",
+    margin: vw(2),
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  bidOptionCancel: {
+    padding: vw(3),
+    backgroundColor: "red",
+    width: vw(25),
+    alignSelf: "center",
+    margin: vw(2),
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  acceptBidModal: {
+    top: vh(50),
+    flexDirection: "row",
+    backgroundColor: "white",
+    alignSelf: "center",
+    padding: vh(1.5),
+    borderRadius: vh(3),
+  },
   acceptedButton: {
     paddingLeft: vw(3),
   },

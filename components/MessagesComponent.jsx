@@ -2,7 +2,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { useRef, useEffect } from "react";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Image } from "react-native-elements";
 
@@ -104,8 +105,21 @@ export default function MessagesComponent({
     }
     return null;
   };
+  const scrollViewRef = useRef();
 
-  return <View style={styles.container}>{renderMessages()}</View>;
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      requestAnimationFrame(() => {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      });
+    }
+  }, [scrollViewRef.current]);
+
+  return (
+    <ScrollView ref={scrollViewRef} style={styles.container}>
+      {renderMessages()}
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
