@@ -146,8 +146,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
     };
 
     setMessagesToDisplay((prevMessages) => {
-      return [...prevMessages, sentMessage];
+      return [...(prevMessages ?? []), sentMessage];
     });
+
     setMessage("");
   };
 

@@ -208,7 +208,10 @@ const TabNavigator = () => {
             tabBarIcon: ({ focused }) => {
               return (
                 <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
+                  style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
                   <Feather
                     name="user"

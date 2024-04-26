@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
@@ -167,7 +168,7 @@ const CreateVehicleScreen = () => {
     );
   };
 
-  if (isSuccess) {
+  if (true) {
     //const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
 
     const VehicleTypes = {
