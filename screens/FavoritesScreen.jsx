@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
   StyleSheet,
@@ -25,14 +26,34 @@ export default function FavoritesScreen({ navigation }) {
     isError: isErrorVoyages,
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
+    refetch: refetchVoyages,
   } = useGetFavoriteVoyagesByUserIdQuery(userId);
   const {
     data: VehiclesData,
     isError: isErrorVehicles,
     isSuccess: isSuccessVehicles,
     isLoading: isLoadingVehicles,
+    refetch: refetchVehicles,
   } = useGetFavoriteVehiclesByUserByIdQuery(userId);
-  const [selected, setSelected] = useState("voyages");
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          await refetchVehicles();
+          await refetchVoyages();
+        } catch (error) {
+          console.error("Error refetching messages data:", error);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetchVehicles, refetchVoyages, navigation])
+  );
 
   if (isLoadingVoyages || isLoadingVehicles) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
@@ -93,7 +114,7 @@ export default function FavoritesScreen({ navigation }) {
                     </>
                   ) : null}
 
-                  {!(VoyagesData && VehiclesData) ? (
+                  {!(VoyagesData || VehiclesData) ? (
                     <View style={styles.mainBidsContainer2}>
                       <View style={styles.currentBidsAndSeeAll2}>
                         <Image

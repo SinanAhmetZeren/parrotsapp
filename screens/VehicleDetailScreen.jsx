@@ -19,11 +19,8 @@ import {
   FontAwesome5,
   FontAwesome,
   Ionicons,
-  MaterialIcons,
-  MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { BackHandler } from "react-native";
 import {
   View,
   Image,
@@ -46,6 +43,10 @@ import {
   useAddVehicleToFavoritesMutation,
   useDeleteVehicleFromFavoritesMutation,
 } from "../slices/VehicleSlice";
+import {
+  addVehicleToUserFavorites,
+  removeVehicleFromUserFavorites,
+} from "../slices/UserSlice";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
@@ -73,6 +74,7 @@ const VehicleDetailScreen = () => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [addVehicleToFavorites] = useAddVehicleToFavoritesMutation();
   const [deleteVehicleFromFavorites] = useDeleteVehicleFromFavoritesMutation();
+  const dispatch = useDispatch();
 
   const handleSeeAll = () => {
     setModalVisible(true);
@@ -97,7 +99,7 @@ const VehicleDetailScreen = () => {
   };
 
   useEffect(() => {
-    if (isSuccessVehicles) {
+    if (isSuccessVehicles && userFavoriteVehicles) {
       if (userFavoriteVehicles.includes(VehicleData.id)) {
         setIsFavorited(true);
       }
@@ -113,11 +115,21 @@ const VehicleDetailScreen = () => {
   const handleAddVehicleToFavorites = () => {
     addVehicleToFavorites({ userId, vehicleId });
     setIsFavorited(true);
+    dispatch(
+      addVehicleToUserFavorites({
+        favoriteVehicle: vehicleId,
+      })
+    );
   };
 
   const handleDeleteVehicleFromFavorites = () => {
     deleteVehicleFromFavorites({ userId, vehicleId });
     setIsFavorited(false);
+    dispatch(
+      removeVehicleFromUserFavorites({
+        favoriteVehicle: vehicleId,
+      })
+    );
   };
 
   const navigation = useNavigation();

@@ -407,12 +407,21 @@ function App() {
       }
 
       if (isSuccessFavoriteVehicles && isSuccessFavoriteVoyages) {
-        dispatch(
-          updateUserFavorites({
-            favoriteVehicles: favoriteVehicleData,
-            favoriteVoyages: favoriteVoyageData,
-          })
-        );
+        if (favoriteVehicleData === null || favoriteVoyageData === null) {
+          dispatch(
+            updateUserFavorites({
+              favoriteVehicles: [],
+              favoriteVoyages: [],
+            })
+          );
+        } else {
+          dispatch(
+            updateUserFavorites({
+              favoriteVehicles: favoriteVehicleData,
+              favoriteVoyages: favoriteVoyageData,
+            })
+          );
+        }
       }
     }, [isSuccessUser, isSuccessFavoriteVehicles, isSuccessFavoriteVoyages]);
 

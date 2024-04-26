@@ -96,6 +96,10 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
+    applyFilter();
+  }, [latitude, longitude, latitudeDelta, longitudeDelta]);
+
+  useEffect(() => {
     const getVoyages = async () => {
       const lat1 = initialLatitude - 10;
       const lat2 = initialLatitude + 10;
@@ -188,6 +192,7 @@ export default function HomeScreen({ navigation }) {
     setLongitude(newRegion.longitude);
     setLatitudeDelta(newRegion.latitudeDelta);
     setLongitudeDelta(newRegion.longitudeDelta);
+    console.log(newRegion);
   };
 
   if (isLoading) {
@@ -293,12 +298,11 @@ export default function HomeScreen({ navigation }) {
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.filterButtonContainer}>
+              <View>
                 <TouchableOpacity
                   onPress={() => {
                     applyFilter();
                   }}
-                  style={styles.extendedAreaContainer}
                 >
                   <View style={styles.extendedArea}>
                     <Text style={styles.seeOnMap}>Apply Filter</Text>
@@ -308,6 +312,18 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
           <View style={styles.mapContainer}>
+            {/* <View style={styles.filterButtonContaineronMap}>
+              <TouchableOpacity
+                onPress={() => {
+                  applyFilter();
+                }}
+              >
+                <View>
+                  <Text style={styles.seeOnMapRefresh}>Refresh</Text>
+                </View>
+              </TouchableOpacity>
+            </View> */}
+
             <MapView
               style={styles.map}
               initialRegion={initialRegion}
@@ -344,16 +360,19 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  filterButtonContainer: {
-    // backgroundColor: "yellow",
+  filterButtonContaineronMap: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    margin: vh(0.4),
+    zIndex: 100,
+    borderRadius: vh(4),
+    backgroundColor: "white",
   },
   filterContainer: {
     // backgroundColor: "grey",
   },
-  extendedAreaContainer: {
-    borderRadius: vh(1),
-  },
-  extendedArea: {},
+
   seeOnMap: {
     fontSize: 14,
     fontWeight: "700",
@@ -363,6 +382,18 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
     paddingHorizontal: vh(5),
     paddingVertical: vh(1),
+  },
+  seeOnMapRefresh: {
+    fontSize: 14,
+    fontWeight: "700",
+    // color: "#2ac898",
+    color: "white",
+    alignSelf: "flex-end",
+    // backgroundColor: "rgba(42, 200, 152, 0.1)",
+    backgroundColor: "rgba(0, 119, 234,0.7)",
+    borderRadius: vh(3),
+    paddingHorizontal: vh(3),
+    paddingVertical: vh(0.5),
   },
   currentBidsTitle: {
     fontSize: 20,

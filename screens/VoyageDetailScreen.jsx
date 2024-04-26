@@ -33,7 +33,7 @@ import { RenderBidsComponent } from "../components/RenderBidsComponent";
 import { WaypointListComponent } from "../components/WaypointListComponent";
 import { CreateBidComponent } from "../components/CreateBidComponent";
 import { RenderPolylinesComponent } from "../components/RenderPolylinesComponent";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useFonts } from "expo-font";
 import { WaypointFlatListVoyageDetailsScreen } from "../components/WaypointFlatlist";
 import {
@@ -41,6 +41,10 @@ import {
   useDeleteVoyageFromFavoritesMutation,
 } from "../slices/VoyageSlice";
 import { useFocusEffect } from "@react-navigation/native";
+import {
+  addVoyageToUserFavorites,
+  removeVoyageFromUserFavorites,
+} from "../slices/UserSlice";
 
 const VoyageDetailScreen = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -80,6 +84,7 @@ const VoyageDetailScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [waypointInfoVisible, setWayPointInfoVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const dispatch = useDispatch();
 
   useFocusEffect(
     useCallback(() => {
@@ -90,12 +95,7 @@ const VoyageDetailScreen = () => {
           console.error("Error refetching messages data:", error);
         }
       };
-
       fetchData();
-
-      return () => {
-        // Cleanup function if needed
-      };
     }, [refetch, navigation])
   );
 
@@ -104,7 +104,7 @@ const VoyageDetailScreen = () => {
   };
 
   useEffect(() => {
-    if (isSuccessVoyages) {
+    if (isSuccessVoyages && userFavoriteVoyages) {
       if (userFavoriteVoyages.includes(VoyageData.id)) {
         setIsFavorited(true);
       }
@@ -221,11 +221,21 @@ const VoyageDetailScreen = () => {
   const handleAddVoyageToFavorites = () => {
     addVoyageToFavorites({ userId, voyageId });
     setIsFavorited(true);
+    dispatch(
+      addVoyageToUserFavorites({
+        favoriteVoyage: voyageId,
+      })
+    );
   };
 
   const handleDeleteVoyageFromFavorites = () => {
     deleteVoyageFromFavorites({ userId, voyageId });
     setIsFavorited(false);
+    dispatch(
+      removeVoyageFromUserFavorites({
+        favoriteVoyage: voyageId,
+      })
+    );
   };
 
   const navigation = useNavigation();
