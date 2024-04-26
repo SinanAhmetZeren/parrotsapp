@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -21,8 +22,9 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
 import { Entypo, Fontisto, Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
-const EditProfileScreen = () => {
+const EditProfileScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
 
   const {
@@ -50,6 +52,24 @@ const EditProfileScreen = () => {
   const [bio, setBio] = useState("");
   const [image, setImage] = useState(null);
   const [image2, setImage2] = useState(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          await refetch();
+        } catch (error) {
+          console.error("Error refetching messages data:", error);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetch])
+  );
 
   const handleUploadProfile = async () => {
     if (!image) {
@@ -86,6 +106,7 @@ const EditProfileScreen = () => {
   };
 
   const handlePathcUser = async () => {
+    console.log("username: ", username);
     const patchDoc = [
       { op: "replace", path: "/userName", value: username },
       { op: "replace", path: "/email", value: email },
@@ -129,230 +150,287 @@ const EditProfileScreen = () => {
     }
   };
 
-  const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
-  const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
+  useEffect(() => {
+    if (isSuccess && userData) {
+      setProfileImage(userData.profileImageUrl);
+      setBackgroundImage(userData.backgroundImageUrl);
+      setInstagramProfile(userData.instagram);
+      setYoutubeProfile(userData.youtube);
+      setEmail(userData.email);
+      setPhoneNumber(userData.phoneNumber);
+      setFacebookProfile(userData.facebook);
+      setUsername(userData.userName);
+      setTitle(userData.title);
+      setBio(userData.bio);
+    }
+  }, [isSuccess, userData]);
 
-  return (
-    <ScrollView style={styles.scrollview}>
-      <TouchableOpacity onPress={pickBackgroundImage}>
-        <View style={styles.rectangularBox}>
-          {image2 ? (
-            <Image
-              style={styles.imageContainer}
-              resizeMode="cover"
-              source={{ uri: image2 }}
-            />
-          ) : (
-            <Image
-              style={styles.imageContainer}
-              resizeMode="cover"
-              source={{ uri: backgroundImageUrl }}
-            />
-          )}
-        </View>
-        <View style={styles.recycleBoxBG}>
-          <Entypo
-            name="image"
-            size={24}
-            color="black"
-            style={styles.recycleBackground}
-          />
-        </View>
-      </TouchableOpacity>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <TouchableOpacity onPress={pickProfileImage}>
-          {image ? (
-            <Image source={{ uri: image }} style={styles.profileImage} />
-          ) : (
-            <Image
-              source={{ uri: profileImageUrl }}
-              style={styles.profileImage}
-            />
-          )}
-          <View style={styles.recycleBox}>
+  if (isSuccess) {
+    const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
+    const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
+
+    return (
+      <ScrollView style={styles.scrollview}>
+        <TouchableOpacity onPress={pickBackgroundImage}>
+          <View style={styles.rectangularBox}>
+            {image2 ? (
+              <Image
+                style={styles.imageContainer}
+                resizeMode="cover"
+                source={{ uri: image2 }}
+              />
+            ) : (
+              <Image
+                style={styles.imageContainer}
+                resizeMode="cover"
+                source={{ uri: backgroundImageUrl }}
+              />
+            )}
+          </View>
+          <View style={styles.recycleBoxBG}>
             <Entypo
               name="image"
               size={24}
               color="black"
-              style={styles.recycle}
+              style={styles.recycleBackground}
             />
           </View>
         </TouchableOpacity>
-        {/* Your other UI elements */}
-      </View>
-
-      <View style={{ padding: 20, top: vh(-15) }}>
-        {/* Username */}
-        <View style={styles.socialBox}>
-          <Feather style={styles.icon} name="user" size={24} color="black" />
-          <Text style={styles.inputDescription}>Username</Text>
-
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your username"
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-          />
+        <View style={styles.profileBackGround}>
+          <TouchableOpacity onPress={pickProfileImage}>
+            {image ? (
+              <Image source={{ uri: image }} style={styles.profileImage} />
+            ) : (
+              <Image
+                source={{ uri: profileImageUrl }}
+                style={styles.profileImage}
+              />
+            )}
+            <View style={styles.recycleBox}>
+              <Entypo
+                name="image"
+                size={24}
+                color="black"
+                style={styles.recycle}
+              />
+            </View>
+          </TouchableOpacity>
+          {/* Your other UI elements */}
         </View>
 
-        <View style={styles.socialBox}>
-          <Fontisto style={styles.icon} name="email" size={24} color="black" />
-          <Text style={styles.inputDescription}>Email</Text>
-          <TextInput
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-            style={styles.textInput}
-          />
+        <View style={styles.profileImageContainer}>
+          {/* Username */}
+          <View style={styles.socialBox}>
+            <Feather style={styles.icon} name="user" size={24} color="black" />
+            <Text style={styles.inputDescription}>Username</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your username"
+              value={username}
+              onChangeText={(text) => setUsername(text)}
+            />
+          </View>
+
+          <View style={styles.socialBox}>
+            <Fontisto
+              style={styles.icon}
+              name="email"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Email</Text>
+            <TextInput
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              style={styles.textInput}
+            />
+          </View>
+
+          {/* Phone Number */}
+          <View style={styles.socialBox}>
+            <Feather style={styles.icon} name="phone" size={24} color="black" />
+            <Text style={styles.inputDescription}>Phone</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your phone number"
+              value={phoneNumber}
+              onChangeText={(text) => setPhoneNumber(text)}
+            />
+          </View>
+
+          {/* Facebook Profile */}
+          <View style={styles.socialBox}>
+            <Feather
+              style={styles.icon}
+              name="facebook"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Facebook</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your Facebook profile"
+              value={facebookProfile}
+              onChangeText={(text) => setFacebookProfile(text)}
+            />
+          </View>
+
+          {/* Instagram Profile */}
+          <View style={styles.socialBox}>
+            <Feather
+              style={styles.icon}
+              name="instagram"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Instagram</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your Instagram profile"
+              value={instagramProfile}
+              onChangeText={(text) => setInstagramProfile(text)}
+            />
+          </View>
+
+          {/* Youtube Profile */}
+          <View style={styles.socialBox}>
+            <Feather
+              style={styles.icon}
+              name="youtube"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Youtube</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your Youtube profile"
+              value={youtubeProfile}
+              onChangeText={(text) => setYoutubeProfile(text)}
+            />
+          </View>
+
+          {/* Title */}
+          <View style={styles.socialBox}>
+            <Feather
+              style={styles.icon}
+              name="pen-tool"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Title</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your title"
+              value={title}
+              onChangeText={(text) => {
+                setTitle(text);
+              }}
+            />
+          </View>
+
+          {/* Bio */}
+          <View style={styles.socialBoxBio}>
+            <Feather
+              style={styles.icon}
+              name="pen-tool"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Bio</Text>
+            <TextInput
+              style={styles.textInputBio}
+              placeholder="Enter your bio"
+              value={bio}
+              onChangeText={(text) => setBio(text)}
+              multiline
+            />
+          </View>
+
+          <View style={styles.modalView}>
+            <TouchableOpacity
+              style={styles.selection}
+              onPress={() => {
+                {
+                  image ? handleUploadProfile() : null;
+                }
+                {
+                  image2 ? handleUploadBackground() : null;
+                }
+                handlePathcUser();
+                navigation.navigate("ProfileScreen");
+              }}
+            >
+              <Text style={styles.choiceText}>Save Changes</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.refetch}>
+            <Button
+              title="refetch"
+              onPress={() => {
+                refetch();
+              }}
+            />
+          </View>
         </View>
-
-        {/* Phone Number */}
-        <View style={styles.socialBox}>
-          <Feather style={styles.icon} name="phone" size={24} color="black" />
-          <Text style={styles.inputDescription}>Phone</Text>
-
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your phone number"
-            value={phoneNumber}
-            onChangeText={(text) => setPhoneNumber(text)}
-          />
-        </View>
-
-        {/* Facebook Profile */}
-        <View style={styles.socialBox}>
-          <Feather
-            style={styles.icon}
-            name="facebook"
-            size={24}
-            color="black"
-          />
-          <Text style={styles.inputDescription}>Facebook</Text>
-
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your Facebook profile"
-            value={facebookProfile}
-            onChangeText={(text) => setFacebookProfile(text)}
-          />
-        </View>
-
-        {/* Instagram Profile */}
-        <View style={styles.socialBox}>
-          <Feather
-            style={styles.icon}
-            name="instagram"
-            size={24}
-            color="black"
-          />
-          <Text style={styles.inputDescription}>Instagram</Text>
-
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your Instagram profile"
-            value={instagramProfile}
-            onChangeText={(text) => setInstagramProfile(text)}
-          />
-        </View>
-
-        {/* Youtube Profile */}
-        <View style={styles.socialBox}>
-          <Feather style={styles.icon} name="youtube" size={24} color="black" />
-          <Text style={styles.inputDescription}>Youtube</Text>
-
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your Youtube profile"
-            value={youtubeProfile}
-            onChangeText={(text) => setYoutubeProfile(text)}
-          />
-        </View>
-
-        {/* Title */}
-        <View style={styles.socialBox}>
-          <Feather
-            style={styles.icon}
-            name="pen-tool"
-            size={24}
-            color="black"
-          />
-          <Text style={styles.inputDescription}>Title</Text>
-
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter your title"
-            value={title}
-            onChangeText={(text) => {
-              setTitle(text);
-            }}
-          />
-        </View>
-
-        {/* Bio */}
-        <View style={styles.socialBoxBio}>
-          <Feather
-            style={styles.icon}
-            name="pen-tool"
-            size={24}
-            color="black"
-          />
-          <Text style={styles.inputDescription}>Bio</Text>
-          <TextInput
-            style={styles.textInputBio}
-            placeholder="Enter your bio"
-            value={bio}
-            onChangeText={(text) => setBio(text)}
-            multiline
-          />
-        </View>
-
-        {/* Save Button */}
-        <View style={styles.saveButton}>
-          <Button
-            title="Save Changes"
-            onPress={() => {
-              {
-                image ? handleUploadProfile() : null;
-              }
-              {
-                image2 ? handleUploadBackground() : null;
-              }
-              handlePathcUser();
-            }}
-          />
-        </View>
-
-        <View style={styles.refetch}>
-          <Button
-            title="refetch"
-            onPress={() => {
-              refetch();
-            }}
-          />
-        </View>
-      </View>
-    </ScrollView>
-  );
+      </ScrollView>
+    );
+  }
 };
 
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
+  profileBackGround: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgb(183, 220, 255)",
+    top: vh(-6),
+    borderRadius: vh(3),
+  },
+  profileImageContainer: {
+    padding: 20,
+    top: vh(-20),
+  },
+  selection: {
+    marginHorizontal: vh(0.5),
+    marginVertical: vh(0.5),
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(1),
+    backgroundColor: "#15537d",
+    borderRadius: vh(2.5),
+  },
+  choiceText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "white",
+  },
+  modalView: {
+    backgroundColor: "#2184c6",
+    borderRadius: vh(3),
+    borderWidth: 2,
+    borderColor: "#76bae8",
+    bottom: vh(-2.5),
+    alignSelf: "center",
+    left: vw(4),
+  },
   scrollview: {
     height: vh(140),
-    top: vh(10),
-    // paddingBottom: vh(13),
-    marginBottom: vh(20),
-    backgroundColor: "rgba(190, 119, 234,0.06)",
-    // backgroundColor: "green",
+    backgroundColor: "rgb(183, 220, 255)",
   },
   profileImage: {
-    top: vh(-10),
+    top: vh(-8),
     left: vw(-25),
     width: vh(22),
     height: vh(22),
     borderRadius: vh(20),
-    // borderWidth: 5,
     borderColor: "rgba(190, 119, 234,0.6)",
   },
   recycle: {
@@ -362,8 +440,8 @@ const styles = StyleSheet.create({
     color: "purple",
   },
   recycleBox: {
-    top: vh(-15),
-    left: vw(4),
+    top: vh(-14),
+    left: vw(10),
     textAlign: "center",
     width: vw(12),
     height: vw(12),
@@ -372,7 +450,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(6),
     borderColor: "rgba(190, 119, 234,0.6)",
-    // borderWidth: 2,
   },
   recycleBoxBG: {
     top: vh(-6),
@@ -385,7 +462,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(6),
     borderColor: "rgba(190, 119, 234,0.6)",
-    // borderWidth: 2,
   },
   saveButton: {
     padding: 10,
@@ -403,7 +479,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     top: vh(0),
-    height: vh(35),
+    height: vh(38),
     width: vw(100),
   },
   icon: {
@@ -435,13 +511,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: vw(1),
   },
-
   socialBox: {
     flexDirection: "row",
     backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   socialBoxBio: {
@@ -449,9 +523,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    // borderWidth: 1,
     borderColor: "rgba(190, 119, 234,0.4)",
     width: vw(90),
-    // backgroundColor: "red",
   },
 });

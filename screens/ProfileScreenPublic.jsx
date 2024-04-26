@@ -2,6 +2,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React, { useState } from "react";
+import { useEffect, useCallback } from "react";
+
 import {
   View,
   Image,
@@ -61,6 +63,24 @@ export default function ProfileScreenPublic({ navigation }) {
       Linking.openURL(instagramProfile);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          await refetch();
+        } catch (error) {
+          console.error("Error refetching messages data:", error);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetch])
+  );
 
   const handleFacebookPress = async () => {
     const facebookPageID = `${userData.facebook}`;

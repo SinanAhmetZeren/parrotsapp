@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React, { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import {
   View,
   Image,
@@ -26,6 +26,7 @@ import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { updateAsLoggedOut } from "../slices/UserSlice";
 import { SocialRenderComponent } from "../components/SocialRenderComponent";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -55,6 +56,24 @@ export default function ProfileScreen({ navigation }) {
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          await refetch();
+        } catch (error) {
+          console.error("Error refetching messages data:", error);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetch])
+  );
 
   const handlePublicProfile = () => {
     console.log("hello");
