@@ -89,6 +89,9 @@ const FilterCalendarModal = ({
               selectedDayColor="#2ac898"
               selectedDayTextColor="white"
               textStyle={{ fontWeight: "700", color: "#333333" }}
+              previousTitle="⬅️"
+              nextTitle="➡️"
+              /*
               previousTitle={
                 <Ionicons
                   name="arrow-back-circle-outline"
@@ -103,8 +106,8 @@ const FilterCalendarModal = ({
                   color="blue"
                 />
               }
+              */
               width={300}
-              // height={500}
             />
 
             {startDate || endDate ? (
@@ -131,14 +134,14 @@ const FilterCalendarModal = ({
               </TouchableOpacity>
             )}
           </View>
-          <View style={styles.floatingIcon}>
+          {/* <View style={styles.floatingIcon}>
             <AntDesign
               style={styles.icon}
               name="calendar"
               size={24}
               color="black"
             />
-          </View>
+          </View> */}
         </View>
       </Modal>
     </>

@@ -69,7 +69,7 @@ export default function FavoritesScreen({ navigation }) {
 
   if (isSuccessVehicles && isSuccessVoyages) {
     return (
-      <>
+      <View>
         <View style={styles.mainContainer}>
           <ScrollView style={styles.scrollView}>
             <View style={styles.innerContainer}>
@@ -133,7 +133,7 @@ export default function FavoritesScreen({ navigation }) {
             </View>
           </ScrollView>
         </View>
-      </>
+      </View>
     );
   }
 }
@@ -189,9 +189,10 @@ const styles = StyleSheet.create({
     width: vw(100),
   },
   scrollView: {
-    height: vh(95),
+    height: vh(90),
     borderRadius: vh(4),
     marginTop: vh(5),
+    marginBottom: vh(20),
   },
   bioBox: {
     paddingHorizontal: 10,

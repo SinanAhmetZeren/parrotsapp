@@ -389,7 +389,7 @@ const VoyageDetailScreen = () => {
                 </View>
               </View>
 
-              <View style={styles.mainBidsContainer}>
+              <View style={styles.TitleContainerVoyageImages}>
                 <View style={styles.currentBidsAndSeeAll}>
                   <Text style={styles.currentBidsTitle}>Voyage Images</Text>
                 </View>
@@ -402,7 +402,7 @@ const VoyageDetailScreen = () => {
                 </View>
               </View>
 
-              <View style={styles.mainBidsContainer}>
+              <View style={styles.TitleContainerVoyageDescription}>
                 <View style={styles.currentBidsAndSeeAll}>
                   <Text style={styles.currentBidsTitle}>
                     Voyage Description
@@ -439,6 +439,13 @@ const VoyageDetailScreen = () => {
             </View>
           </View>
           {/* // map */}
+
+          <View style={styles.TitleContainerVoyageRoute}>
+            <View style={styles.currentBidsAndSeeAll}>
+              <Text style={styles.currentBidsTitle}>Voyage Route</Text>
+            </View>
+          </View>
+
           <View style={styles.mapAndEmojisContainer}>
             <View style={styles.mapContainer}>
               <MapView
@@ -486,7 +493,7 @@ const VoyageDetailScreen = () => {
               />
             </View>
           </View>
-          <View style={styles.mainBidsContainer}>
+          <View style={styles.waypointsContainer}>
             <View style={styles.WaypointsAndInfo}>
               <Text style={styles.currentBidsTitle}>Waypoints </Text>
               <TouchableOpacity onPress={() => toggleWaypointsInfo()}>
@@ -579,7 +586,6 @@ const styles = StyleSheet.create({
     height: vh(29),
   },
   voyageDetailsContainer: {
-    // backgroundColor: "rgba(0, 119, 234,0.071)",
     padding: 4,
     borderRadius: vh(2),
   },
@@ -597,7 +603,6 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
     backgroundColor: "rgba(0, 119, 234,0.1)",
-    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
   },
   voyageBoat: {
@@ -607,7 +612,6 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     marginHorizontal: vw(2),
     backgroundColor: "rgba(0, 119, 234,0.1)",
-    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
@@ -625,7 +629,6 @@ const styles = StyleSheet.create({
     marginHorizontal: vw(1),
     borderRadius: vw(3),
     backgroundColor: "rgba(0, 119, 234,0.1)",
-    // borderWidth: 1,
     borderColor: "rgba(10, 119, 234,0.3)",
   },
   propTextDescription: {
@@ -648,7 +651,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     marginBottom: vh(2),
-    marginTop: vh(5),
+    marginTop: vh(1),
   },
   mapContainer: {
     width: "100%",
@@ -656,7 +659,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 20,
     borderColor: "#93c9ed",
-    // borderWidth: 3,
   },
   map: {
     width: "100%",
@@ -731,7 +733,6 @@ const styles = StyleSheet.create({
     marginTop: vh(0.2),
     color: "#3c9dde",
   },
-
   voyageImage: {
     height: vh(13),
     width: vh(13),
@@ -740,7 +741,7 @@ const styles = StyleSheet.create({
   },
   ImagesSubContainer: {
     paddingHorizontal: vh(1),
-    marginTop: vh(0.5),
+    marginTop: vh(1.5),
   },
   bidImage: {
     width: vh(5),
@@ -773,21 +774,42 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#3c9dde",
   },
-
   mainBidsContainer: {
     borderRadius: vw(5),
     marginHorizontal: vw(2),
-    borderColor: "#93c9ed",
-    // borderWidth: 2,
+  },
+  TitleContainerVoyageImages: {
+    marginHorizontal: vw(2),
+  },
+  TitleContainerVoyageDescription: {
+    marginHorizontal: vw(2),
+    marginTop: vh(2),
+  },
+  TitleContainerVoyageRoute: {
+    marginTop: vh(2),
+    marginHorizontal: vw(4),
+  },
+  waypointsContainer: {
+    borderRadius: vw(5),
+    marginHorizontal: vw(4),
   },
   mainBidsContainer2: {
     borderRadius: vw(5),
-    marginHorizontal: vw(2),
-    borderColor: "#93c9ed",
-    // borderWidth: 2,
+    marginHorizontal: vw(4),
+    marginTop: vh(2),
   },
+  voyageDescriptionTitle: {
+    borderRadius: vw(5),
+    marginHorizontal: vw(4),
+    marginTop: vh(2),
+  },
+  voyageRoute: {
+    borderRadius: vw(5),
+    marginHorizontal: vw(4),
+  },
+
   allBidsContainer: {
-    margin: vh(1),
+    marginTop: vh(1),
     padding: vh(0),
   },
   singleBidContainer: {

@@ -275,10 +275,12 @@ const TabNavigator = () => {
                     top: Platform.OS === "ios" ? -20 : -30,
                   }}
                 >
-                  <Image
-                    style={styles.plusSign}
-                    source={require("./assets/plus-thin.png")}
-                  />
+                  <View style={styles.plusContainer}>
+                    <Image
+                      style={styles.plusSign}
+                      source={require("./assets/plus-thin.png")}
+                    />
+                  </View>
                 </View>
               </TouchableOpacity>
             ),
@@ -448,5 +450,16 @@ const styles = StyleSheet.create({
     height: vh(9),
     width: vh(9),
     borderRadius: vh(8),
+    borderWidth: 3,
+    borderColor: "#2184c6",
+  },
+  plusContainer: {
+    backgroundColor: "#76bae8",
+    padding: vh(0.35),
+    borderRadius: vh(10),
   },
 });
+
+// #15537d
+// #2184c6
+// #76bae8

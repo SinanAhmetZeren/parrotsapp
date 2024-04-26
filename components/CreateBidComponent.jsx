@@ -151,13 +151,23 @@ export const CreateBidComponent = ({
     <View>
       <View style={styles2.bidButtonContainer}>
         {hasBidWithUserId ? (
-          <TouchableOpacity onPress={handleOpenChangeModal}>
-            <Text style={styles2.createBidButton}>Change Bid</Text>
-          </TouchableOpacity>
+          <View style={styles2.modalView2}>
+            <TouchableOpacity
+              style={styles2.selection2}
+              onPress={handleOpenChangeModal}
+            >
+              <Text style={styles2.choiceText}>Change Bid</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
-          <TouchableOpacity onPress={handleOpenModal}>
-            <Text style={styles2.createBidButton}>Create Bid</Text>
-          </TouchableOpacity>
+          <View style={styles2.modalView2}>
+            <TouchableOpacity
+              style={styles2.selection2}
+              onPress={handleOpenChangeModal}
+            >
+              <Text style={styles2.choiceText}>Create Bid</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </View>
 
@@ -337,6 +347,29 @@ export const CreateBidComponent = ({
 };
 
 const styles2 = StyleSheet.create({
+  choiceText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "white",
+  },
+  selection2: {
+    marginHorizontal: vh(0.5),
+    marginVertical: vh(0.5),
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(1),
+    backgroundColor: "#15537d",
+    borderRadius: vh(2.5),
+  },
+  modalView2: {
+    backgroundColor: "#2184c6",
+    borderRadius: vh(3),
+    borderWidth: 2,
+    borderColor: "#76bae8",
+    width: vw(40),
+    position: "absolute",
+    alignSelf: "center",
+    bottom: vh(-4),
+  },
   inputMainContainer: {
     backgroundColor: "#f4fdfa",
     height: vh(13),
@@ -344,13 +377,12 @@ const styles2 = StyleSheet.create({
     marginBottom: vh(1),
     borderRadius: vh(2),
     borderColor: "#d8f7ee",
-    // borderWidth: 2,
   },
   bidButtonContainer: {
-    backgroundColor: "#186ff1",
+    // backgroundColor: "#186ff1",
     borderRadius: vh(2),
     borderColor: "#3c9ede",
-    marginBottom: vh(15),
+    marginBottom: vh(18),
     width: vw(40),
     alignSelf: "center",
     marginTop: vh(1),

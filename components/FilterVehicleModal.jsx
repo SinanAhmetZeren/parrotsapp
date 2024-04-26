@@ -102,14 +102,14 @@ const FilterVehicleModal = ({
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.floatingIcon}>
+        {/* <View style={styles.floatingIcon}>
           <Ionicons
             style={styles.icon}
             name="car-outline"
             size={24}
             color="black"
           />
-        </View>
+        </View> */}
       </View>
     </Modal>
   );

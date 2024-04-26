@@ -312,18 +312,6 @@ export default function HomeScreen({ navigation }) {
             </View>
           </View>
           <View style={styles.mapContainer}>
-            {/* <View style={styles.filterButtonContaineronMap}>
-              <TouchableOpacity
-                onPress={() => {
-                  applyFilter();
-                }}
-              >
-                <View>
-                  <Text style={styles.seeOnMapRefresh}>Refresh</Text>
-                </View>
-              </TouchableOpacity>
-            </View> */}
-
             <MapView
               style={styles.map}
               initialRegion={initialRegion}
@@ -345,11 +333,15 @@ export default function HomeScreen({ navigation }) {
             </MapView>
           </View>
 
-          <View style={styles.mainBidsContainer}>
-            <View style={styles.currentBidsAndSeeAll}>
-              <Text style={styles.currentBidsTitle}>Voyages</Text>
+          {initialVoyages.length === 0 ? (
+            <Text></Text>
+          ) : (
+            <View style={styles.mainBidsContainer}>
+              <View style={styles.currentBidsAndSeeAll}>
+                <Text style={styles.currentBidsTitle}>Voyages</Text>
+              </View>
             </View>
-          </View>
+          )}
 
           {/* <VehicleFlatList /> */}
           <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />

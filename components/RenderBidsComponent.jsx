@@ -173,8 +173,6 @@ const styles = StyleSheet.create({
     width: vw(45),
   },
   seeMessage: {
-    // backgroundColor: "rgba(10, 119, 234,.05)",
-    // backgroundColor: "rgba(255,255,255,0.8)",
     borderRadius: vh(2),
     paddingLeft: vw(4),
     paddingBottom: vh(0.2),
@@ -242,7 +240,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: vh(3),
     backgroundColor: "rgba(0, 119, 234,0.05)",
-    borderColor: "rgba(10, 119, 234,0.3)",
   },
   flatlistContainer: {
     backgroundColor: "rgba(1,1,1,0.4)",

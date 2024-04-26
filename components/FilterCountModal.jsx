@@ -87,14 +87,14 @@ const FilterCountModal = ({
               </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.floatingIcon}>
+          {/* <View style={styles.floatingIcon}>
             <MaterialCommunityIcons
               style={styles.icon}
               name="human"
               size={24}
               color="black"
             />
-          </View>
+          </View> */}
         </View>
       </Modal>
     </>

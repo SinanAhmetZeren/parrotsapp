@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
   },
   profileImageContainer: {
-    padding: 20,
+    padding: vh(2),
     top: vh(-20),
   },
   selection: {
@@ -422,7 +422,6 @@ const styles = StyleSheet.create({
     left: vw(4),
   },
   scrollview: {
-    height: vh(140),
     backgroundColor: "rgb(183, 220, 255)",
   },
   profileImage: {
