@@ -107,12 +107,18 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     patchVehicle: builder.mutation({
       query: ({ currentVehicleId, patchDoc }) => {
-        console.log("patchdoc: ", patchDoc);
         return {
           url: `/api/Vehicle/PatchVehicle/${currentVehicleId}`,
           method: "PATCH",
           body: patchDoc,
         };
+      },
+    }),
+    getVehicleImagesByVehicleId: builder.query({
+      query: (vehicleId) =>
+        `/api/Vehicle/GetVehiclesImagesByVehicleId/${vehicleId}`,
+      transformResponse: (responseData) => {
+        return responseData.data;
       },
     }),
   }),
@@ -130,4 +136,5 @@ export const {
   useAddVehicleToFavoritesMutation,
   useDeleteVehicleFromFavoritesMutation,
   usePatchVehicleMutation,
+  useGetVehicleImagesByVehicleIdQuery,
 } = extendedApiSlice;

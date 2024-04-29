@@ -90,12 +90,15 @@ const EditVehicleScreen = () => {
       setVehicleType(vehicleTypeFromHook);
       setName(vehicleData.name);
       setDescription(vehicleData.description);
+      console.log("capacity: ", vehicleData.capacity.toString());
       setCapacity(vehicleData.capacity.toString());
+      console.log("hello: ", vehicleTypeFromHook);
     }
   }, [isSuccessVehicleData]);
 
   useEffect(() => {
     if (vehicleImagesData) {
+      console.log("vehicle images: ", vehicleImagesData);
       setAddedVoyageImages(vehicleImagesData);
     }
   }, [isSuccessVehicleImagesData]);
@@ -107,7 +110,7 @@ const EditVehicleScreen = () => {
   const goToProfilePage = () => {
     setName("");
     setDescription("");
-    setCapacity("0");
+    setCapacity(0);
     setVehicleType("");
     setVehicleId("");
     setImage("");
@@ -148,18 +151,16 @@ const EditVehicleScreen = () => {
     });
 
     try {
-      console.log("formdata uri: ", formData);
-      const vehicleId = currentVehicleId;
       const addedVehicleImageResponse = await addVehicleImage({
         formData,
         vehicleId,
       });
+
       const addedVoyageImageId = addedVehicleImageResponse.data.imagePath;
       const newItem = {
-        id: addedVoyageImageId,
-        vehicleImagePath: voyageImage,
+        addedVoyageImageId,
+        voyageImage,
       };
-      console.log("new item: ", newItem);
       setAddedVoyageImages((prevImages) => [...prevImages, newItem]);
       setVoyageImage(null);
     } catch (error) {
@@ -196,11 +197,13 @@ const EditVehicleScreen = () => {
   const handleDeleteImage = (imageId) => {
     deleteVehicleImage(imageId);
     setAddedVoyageImages((prevImages) =>
-      prevImages.filter((item) => item.id !== imageId)
+      prevImages.filter((item) => item.addedVoyageImageId !== imageId)
     );
   };
 
   if (true) {
+    //const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
+
     const dropdownData = Object.keys(VehicleTypes).map((key, index) => ({
       label: key,
       value: key,
@@ -354,6 +357,36 @@ const EditVehicleScreen = () => {
                       }}
                     />
                   </View>
+
+                  <View style={{ display: "none" }}>
+                    <Button
+                      title="print state1"
+                      onPress={() => {
+                        printState();
+                      }}
+                    />
+                  </View>
+
+                  <View style={styles.step123}>
+                    <Button
+                      title="step 1"
+                      onPress={() => {
+                        changeCurrentState(1);
+                      }}
+                    />
+                    <Button
+                      title="step 2"
+                      onPress={() => {
+                        changeCurrentState(2);
+                      }}
+                    />
+                    <Button
+                      title="step 3"
+                      onPress={() => {
+                        changeCurrentState(3);
+                      }}
+                    />
+                  </View>
                 </View>
               </View>
             </View>
@@ -398,39 +431,26 @@ const EditVehicleScreen = () => {
                   // keyExtractor={(item) => item.addedVoyageImageId}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => {
-                    console.log("item: ", item);
+                    console.log(item);
                     return (
                       <View key={index} style={styles2.imageContainer1}>
                         <TouchableOpacity
                           onPress={() => {
-                            if (item.id) {
-                              handleDeleteImage(item.id);
+                            if (item.addedVoyageImageId) {
+                              handleDeleteImage(item.addedVoyageImageId);
                             }
                           }}
                         >
                           <Image
-                            // source={
-                            //   item.id
-                            //     ? {
-                            //         uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/${item.vehicleImagePath}`,
-                            //       }
-                            //     : require("../assets/placeholder.png")
-                            // }
-
                             source={
-                              item.vehicleImagePath &&
-                              item.vehicleImagePath.startsWith("file://")
-                                ? { uri: item.vehicleImagePath }
-                                : item.id
-                                ? {
-                                    uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/${item.vehicleImagePath}`,
-                                  }
+                              item.addedVoyageImageId
+                                ? { uri: item.voyageImage }
                                 : require("../assets/placeholder.png")
                             }
                             style={styles2.voyageImage1}
                           />
 
-                          {item.id && (
+                          {item.addedVoyageImageId && (
                             <Text style={styles.deleteAddedImage}>
                               <MaterialIcons
                                 name="cancel"
