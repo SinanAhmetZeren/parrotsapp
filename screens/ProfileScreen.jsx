@@ -172,7 +172,7 @@ export default function ProfileScreen({ navigation }) {
     );
   }
 
-  if (isSuccess) {
+  if (isSuccess && isSuccessVehicles && isSuccessVoyages) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
     const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
 

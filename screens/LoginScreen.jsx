@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Image,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import { useLoginUserMutation } from "../slices/UserSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,6 +18,7 @@ import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { updateAsLoggedIn, updateAsLoggedOut } from "../slices/UserSlice";
 import { useEffect } from "react";
+import { vh, vw } from "react-native-expo-viewport-units";
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -31,8 +33,6 @@ const LoginScreen = ({ navigation }) => {
   const [loginUser, { isLoading, isSuccess }] = useLoginUserMutation();
   const imageUrl =
     "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
-
-  let x = 1;
 
   const handleEmailChange = (text) => {
     setEmail(text);
@@ -59,8 +59,10 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       const response = await loginUser({
-        Email: "sinanzen@gmail.com",
-        Password: 123456,
+        // Email: "sinanzen@gmail.com",
+        // Password: 123456,
+        Email: email,
+        Password: password,
       }).unwrap();
 
       setEmail("");
@@ -80,85 +82,83 @@ const LoginScreen = ({ navigation }) => {
         type: "success",
         text1: "Could not log in",
         text2: "Please check your credentials ",
-        visibilityTime: 5000,
-        topOffset: 350,
+        visibilityTime: 1200,
+        topOffset: 100,
       });
     }
   };
 
   return (
     <View style={styles.container}>
-      {x == 0 ? (
-        <View style={styles.output}>
-          <Text style={styles.successMessage}>Login successful!{"\n"}</Text>
-          <Text style={styles.successMessage}>
-            Email from token:{"\n"}
-            {responseEmail}
-            {"\n"}
-          </Text>
-          <Text style={styles.successMessage}>
-            UserName from token:{"\n"}
-            {responseUsername}
-            {"\n"}
-          </Text>
-          <Text style={styles.successMessage}>
-            userId from token:{"\n"}
-            {userId}
-            {"\n"}
-          </Text>
-          <Button
-            title="Printout"
-            onPress={handlePrintout}
-            disabled={isLoading}
-          />
-          <Button title="Logout" onPress={handleLogout} disabled={isLoading} />
+      <View style={styles.formContainer}>
+        <View style={styles.imagecontainer}>
+          <Image source={{ uri: imageUrl }} style={styles.image} />
         </View>
-      ) : (
-        <View style={styles.formContainer}>
-          <View style={styles.imagecontainer}>
-            <Image source={{ uri: imageUrl }} style={styles.image} />
-          </View>
-          <View style={styles.welcomeBox}>
-            <Text style={styles.welcomeText}>Welcome to Parrots</Text>
-          </View>
+        <View style={styles.welcomeBox}>
+          <Text style={styles.welcomeText}>Welcome to Parrots</Text>
+        </View>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={(text) => handleEmailChange(text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry
-            value={password}
-            onChangeText={(text) => handlePasswordChange(text)}
-          />
-          <Button title="Login" onPress={handleLogin} disabled={isLoading} />
-          <Button
-            title="Printout"
-            onPress={handlePrintout}
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={(text) => handleEmailChange(text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={(text) => handlePasswordChange(text)}
+        />
+        {/* <Button title="Login" onPress={handleLogin} disabled={isLoading} /> */}
+
+        <View style={styles.modalView2}>
+          <TouchableOpacity
+            style={styles.selection2}
+            onPress={handleLogin}
             disabled={isLoading}
-          />
-          <Button title="Logout" onPress={handleLogout} disabled={isLoading} />
+          >
+            <Text style={styles.choiceText}>Login</Text>
+          </TouchableOpacity>
         </View>
-      )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  choiceText: {
+    fontSize: 20,
+    fontWeight: "500",
+    color: "white",
+  },
+  selection2: {
+    marginHorizontal: vh(0.5),
+    marginVertical: vh(0.5),
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(1),
+    backgroundColor: "#2184c6",
+    borderRadius: vh(2.5),
+  },
+  modalView2: {
+    backgroundColor: "#76bae8",
+    borderRadius: vh(3),
+    borderWidth: 2,
+    borderColor: "#15537d",
+    width: vw(25),
+    alignSelf: "center",
+  },
   container: {
     flexDirection: "row",
-    backgroundColor: "#186ff1",
     flex: 1,
+    backgroundColor: "#186ff1",
     justifyContent: "center",
     padding: 16,
   },
   formContainer: {
-    marginTop: 50,
-    width: "80%",
+    height: vh(60),
+    marginTop: vh(15),
   },
   input: {
     backgroundColor: "white",
@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     padding: 8,
     width: "100%",
+    borderRadius: vh(2),
   },
   imagecontainer: {
     flexDirection: "row",
@@ -177,17 +178,6 @@ const styles = StyleSheet.create({
     height: 200,
     alignSelf: "center",
     marginBottom: 20,
-    ...Platform.select({
-      ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
   },
   image: {
     width: 200,
@@ -206,7 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     fontSize: 30,
-    fontWeight: "900",
+    fontWeight: "500",
     color: "white",
   },
 });
