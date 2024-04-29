@@ -38,18 +38,20 @@ export default function ProfileScreen({ navigation }) {
     isError,
     error,
     isSuccess,
-    refetch,
+    refetch: refetchUserData,
   } = useGetUserByIdQuery(userId);
 
   const {
     data: VoyagesData,
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
+    refetch: refetchVoyageData,
   } = useGetVoyagesByUserByIdQuery(userId);
   const {
     data: VehiclesData,
     isSuccess: isSuccessVehicles,
     isLoading: isLoadingVehicles,
+    refetch: refetchVehicleData,
   } = useGetVehiclesByUserByIdQuery(userId);
   const [selected, setSelected] = useState("voyages");
 
@@ -61,7 +63,9 @@ export default function ProfileScreen({ navigation }) {
     useCallback(() => {
       const fetchData = async () => {
         try {
-          await refetch();
+          await refetchVehicleData();
+          await refetchVoyageData();
+          await refetchUserData();
         } catch (error) {
           console.error("Error refetching messages data:", error);
         }
@@ -72,12 +76,8 @@ export default function ProfileScreen({ navigation }) {
       return () => {
         // Cleanup function if needed
       };
-    }, [refetch])
+    }, [refetchVehicleData, refetchVoyageData, refetchUserData, navigation])
   );
-
-  const handlePublicProfile = () => {
-    console.log("hello");
-  };
 
   const handleInstagramPress = async () => {
     if (userData.instagram) {

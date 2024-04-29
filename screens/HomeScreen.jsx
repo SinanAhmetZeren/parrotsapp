@@ -13,8 +13,7 @@ import {
   Alert,
   TextInput,
   ActivityIndicator,
-  Image,
-  Button,
+  Modal,
 } from "react-native";
 import { useState } from "react";
 import MapView, { Marker } from "react-native-maps";
@@ -37,6 +36,7 @@ import {
 } from "../slices/VoyageSlice";
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
+import VoyageCardProfileHorizontal from "../components/VoyageCardProfileHorizontal";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -80,7 +80,6 @@ export default function HomeScreen({ navigation }) {
         const lon = location.coords.longitude;
         setInitialLatitude(lat);
         setInitialLongitude(lon);
-        console.log("User Location: ", lat, lon);
       } catch (error) {
         console.error("Error getting user location:", error);
       }
@@ -171,7 +170,6 @@ export default function HomeScreen({ navigation }) {
       formattedEndDate,
     };
     const filteredVoyages = await getFilteredVoyages(data);
-    console.log("applyfilter->", filteredVoyages.data.length);
     setInitialVoyages(filteredVoyages.data);
   };
 
@@ -192,7 +190,6 @@ export default function HomeScreen({ navigation }) {
     setLongitude(newRegion.longitude);
     setLatitudeDelta(newRegion.latitudeDelta);
     setLongitudeDelta(newRegion.longitudeDelta);
-    console.log(newRegion);
   };
 
   if (isLoading) {
@@ -321,11 +318,14 @@ export default function HomeScreen({ navigation }) {
               {initialVoyages.map((item, index) => {
                 return (
                   <Marker
-                    key={index}
+                    key={item.id}
                     pinColor={"#2ac898"}
                     coordinate={{
                       latitude: item.waypoints[0].latitude,
                       longitude: item.waypoints[0].longitude,
+                    }}
+                    onPress={() => {
+                      console.log("hi there from marker ", index);
                     }}
                   />
                 );
@@ -346,6 +346,23 @@ export default function HomeScreen({ navigation }) {
           {/* <VehicleFlatList /> */}
           <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
         </View>
+        <Modal>
+          {/* <VoyageCardProfileHorizontal
+            key={item.id}
+            voyageId={item.id}
+            cardHeader={item.name}
+            cardDescription={item.brief}
+            cardImage={item.profileImage}
+            vacancy={item.vacancy}
+            startdate={item.startDate}
+            enddate={item.endDate}
+            vehiclename={item.vehicle.name}
+            vehicletype={item.vehicle.type}
+            latitude={item.waypoints[0].latitude}
+            longitude={item.waypoints[0].longitude}
+            focusMap={focusMap}
+          /> */}
+        </Modal>
       </ScrollView>
     );
   }

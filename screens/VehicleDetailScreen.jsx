@@ -10,6 +10,7 @@ import {
   useSendBidMutation,
 } from "../slices/VoyageSlice";
 import { useGetVehicleByIdQuery } from "../slices/VehicleSlice";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
@@ -205,6 +206,37 @@ const VehicleDetailScreen = () => {
             />
           </View>
 
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              style={styles.editProfileBox}
+              onPress={() => {
+                navigation.navigate("EditVehicleScreen", {
+                  currentVehicleId: vehicleId,
+                });
+              }}
+              activeOpacity={0.8}
+            >
+              <View>
+                <View style={styles.innerProfileContainer}>
+                  <MaterialCommunityIcons
+                    name="account-edit-outline"
+                    size={18}
+                    color="rgba(0, 119, 234,0.9)"
+                  />
+                  <Text
+                    style={{
+                      lineHeight: 22,
+                      marginLeft: vw(2),
+                      fontSize: 11,
+                    }}
+                  >
+                    Edit Vehicle
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.voyageDataWrapper}>
             <View style={styles.VoyageDataContainer}>
               <View style={styles.VoyageNameAndUsername}>
@@ -345,6 +377,26 @@ const VehicleDetailScreen = () => {
 export default VehicleDetailScreen;
 
 const styles = StyleSheet.create({
+  buttonsContainer: {
+    position: "absolute",
+    top: vh(22),
+    right: vw(2),
+    flexDirection: "column",
+  },
+  innerProfileContainer: {
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    borderRadius: vh(2),
+    paddingHorizontal: vw(2),
+  },
+  editProfileBox: {
+    marginTop: vh(0.5),
+    backgroundColor: "white",
+    width: vw(30),
+    flexDirection: "row",
+    borderRadius: vh(2),
+    padding: vw(1),
+  },
   extendedAreaContainer: {
     alignSelf: "flex-end",
     position: "absolute",

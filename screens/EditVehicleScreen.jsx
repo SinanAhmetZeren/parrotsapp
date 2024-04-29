@@ -12,6 +12,7 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
+  Modal,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import {
@@ -20,6 +21,8 @@ import {
   useDeleteVehicleImageMutation,
   usePatchVehicleMutation,
   useGetVehicleImagesByVehicleIdQuery,
+  useDeleteVehicleMutation,
+  useUpdateVehicleProfileImageMutation,
 } from "../slices/VehicleSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
@@ -28,12 +31,13 @@ import { useSelector } from "react-redux";
 import DropdownComponentType from "../components/DropdownComponentType";
 import StepBarVehicle from "../components/StepBarVehicle";
 import { useNavigation } from "@react-navigation/native";
+import { Entypo } from "@expo/vector-icons";
 
 const EditVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
   const route = useRoute();
-  // const { currentVehicleId } = route.params;
-  const currentVehicleId = 1;
+  const { currentVehicleId } = route.params;
+  // const currentVehicleId = 1;
   const {
     data: vehicleData,
     isLoading,
@@ -52,21 +56,22 @@ const EditVehicleScreen = () => {
     refetch: refetchVehicleImages,
   } = useGetVehicleImagesByVehicleIdQuery(currentVehicleId);
 
+  const [updateVehicleProfileImage] = useUpdateVehicleProfileImageMutation();
+  const [deleteVehicle] = useDeleteVehicleMutation();
   const [patchVehicle] = usePatchVehicleMutation();
   const [addVehicleImage] = useAddVehicleImageMutation();
   const [deleteVehicleImage] = useDeleteVehicleImageMutation();
-  const voyageDes = `Embark on the "Island Breeze", a meticulously planned sailboat expedition offering a seamless blend of adventure and repose. Departing from a quaint harbor, your journey unfolds along the coastline, where the wind becomes your guide, and the sunsets paint the horizon in hues of tranquility`;
-  const [name, setName] = useState("Island Breezes Expedition");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [capacity, setCapacity] = useState("");
   const [vehicleType, setVehicleType] = useState("");
   const [vehicleId, setVehicleId] = useState("");
-  const [image, setImage] = useState(
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/aad9496c-c258-4ce9-b64b-78e20f5bf2fe.jpeg"
-  );
+  const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+
   const navigation = useNavigation();
 
   const VehicleTypes = {
@@ -91,6 +96,11 @@ const EditVehicleScreen = () => {
       setName(vehicleData.name);
       setDescription(vehicleData.description);
       setCapacity(vehicleData.capacity.toString());
+      setImage(
+        `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/` +
+          vehicleData.profileImageUrl
+      );
+      console.log("image: ", vehicleData.profileImageUrl);
     }
   }, [isSuccessVehicleData]);
 
@@ -99,10 +109,6 @@ const EditVehicleScreen = () => {
       setAddedVoyageImages(vehicleImagesData);
     }
   }, [isSuccessVehicleImagesData]);
-
-  const changeCurrentState = (index) => {
-    setCurrentStep(index);
-  };
 
   const goToProfilePage = () => {
     setName("");
@@ -125,16 +131,12 @@ const EditVehicleScreen = () => {
       { op: "replace", path: "/capacity", value: capacity },
     ];
     try {
-      console.log("-------");
-      console.log("name: ", name);
-      console.log("description: ", description);
-      console.log("capacity: ", capacity);
-
       const response = await patchVehicle({ patchDoc, currentVehicleId });
     } catch (error) {
       console.error("Error", error);
     }
   };
+
   const handleUploadImage = async () => {
     if (!voyageImage) {
       return;
@@ -162,6 +164,33 @@ const EditVehicleScreen = () => {
       console.log("new item: ", newItem);
       setAddedVoyageImages((prevImages) => [...prevImages, newItem]);
       setVoyageImage(null);
+    } catch (error) {
+      console.error("Error uploading image", error);
+    }
+  };
+
+  const handleUpdateVehicleProfileImage = async () => {
+    console.log("image to upload ", image);
+
+    if (!image) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("imageFile", {
+      uri: image,
+      type: "image/jpeg",
+      name: "profileImage.jpg",
+    });
+
+    try {
+      const vehicleId = currentVehicleId;
+      const addedVehicleImageResponse = await updateVehicleProfileImage({
+        formData,
+        vehicleId,
+      });
+
+      setImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
     }
@@ -200,6 +229,19 @@ const EditVehicleScreen = () => {
     );
   };
 
+  const handleOpenDeleteVehicleModal = () => {
+    setDeleteModalVisible(true);
+  };
+  const handleCloseDeleteVehicleModal = () => {
+    setDeleteModalVisible(false);
+  };
+
+  const HandleDeleteVehicle = () => {
+    console.log("delete");
+    deleteVehicle(currentVehicleId);
+    navigation.navigate("ProfileScreen");
+  };
+
   if (true) {
     const dropdownData = Object.keys(VehicleTypes).map((key, index) => ({
       label: key,
@@ -230,6 +272,15 @@ const EditVehicleScreen = () => {
             <View style={styles.overlay}>
               <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={pickProfileImage}>
+                  <View style={styles2.recycleBoxBG}>
+                    <Entypo
+                      name="image"
+                      size={24}
+                      color="black"
+                      style={styles2.recycleBackground}
+                    />
+                  </View>
+
                   {image ? (
                     <Image
                       source={{ uri: image }}
@@ -345,14 +396,30 @@ const EditVehicleScreen = () => {
                   {/* /// VACANCY /// */}
 
                   {/* Save Button */}
-                  <View style={styles.createVoyageButton}>
-                    <Button
-                      title="Update Vehicle"
-                      onPress={() => {
-                        handlePatchVehicle();
-                        setCurrentStep(2);
-                      }}
-                    />
+                  <View style={styles2.buttonContainer}>
+                    <View style={styles2.modalView}>
+                      <TouchableOpacity
+                        style={styles2.selection}
+                        onPress={() => {
+                          handlePatchVehicle();
+                          handleUpdateVehicleProfileImage();
+                          setCurrentStep(2);
+                        }}
+                      >
+                        <Text style={styles2.choiceText}>Save Changes</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={styles2.modalViewRed}>
+                      <TouchableOpacity
+                        style={styles2.selectionRed}
+                        onPress={() => {
+                          handleOpenDeleteVehicleModal();
+                        }}
+                      >
+                        <Text style={styles2.choiceText}>Delete Vehicle</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -395,10 +462,8 @@ const EditVehicleScreen = () => {
                 <FlatList
                   horizontal
                   data={data}
-                  // keyExtractor={(item) => item.addedVoyageImageId}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => {
-                    console.log("item: ", item);
                     return (
                       <View key={index} style={styles2.imageContainer1}>
                         <TouchableOpacity
@@ -464,6 +529,55 @@ const EditVehicleScreen = () => {
             </View>
           </ScrollView>
         ) : null}
+
+        <View>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPressOut={() => handlePressOut()} // Close modal when touched outside
+          >
+            <Modal
+              animationType="none"
+              transparent={true}
+              visible={deleteModalVisible}
+              onRequestClose={() => {
+                setModalVisible(!deleteModalVisible);
+              }}
+            >
+              <TouchableOpacity
+                style={{ flex: 1, justifyContent: "center" }}
+                onPressOut={() => setDeleteModalVisible(false)}
+              >
+                <View>
+                  <View style={styles2.modalView2}>
+                    <View style={styles2.modalViewRed2}>
+                      <TouchableOpacity
+                        style={styles2.selectionRed}
+                        onPress={() => {
+                          HandleDeleteVehicle();
+                        }}
+                      >
+                        <Text style={styles2.choiceText}>
+                          Yes, Delete Vehicle
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={styles2.modalViewRed3}>
+                      <TouchableOpacity
+                        style={styles2.selectionGreen}
+                        onPress={() => {
+                          handleCloseDeleteVehicleModal();
+                        }}
+                      >
+                        <Text style={styles2.choiceText}>Cancel</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Modal>
+          </TouchableOpacity>
+        </View>
       </>
     );
   }
@@ -472,6 +586,120 @@ const EditVehicleScreen = () => {
 export default EditVehicleScreen;
 
 const styles2 = StyleSheet.create({
+  recycle: {
+    color: "purple",
+  },
+  recycleBackground: {
+    color: "purple",
+  },
+  recycleBox: {
+    left: vw(4),
+    textAlign: "center",
+    width: vw(12),
+    height: vw(12),
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: vh(6),
+    borderColor: "rgba(190, 119, 234,0.6)",
+    // borderWidth: 2,
+  },
+  recycleBoxBG: {
+    zIndex: 100,
+    position: "absolute",
+    bottom: vh(5),
+    right: vw(2),
+    textAlign: "center",
+    width: vw(12),
+    height: vw(12),
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: vh(6),
+    borderColor: "rgba(190, 119, 234,0.6)",
+    borderWidth: 2,
+  },
+  modalView2: {
+    backgroundColor: "rgba(255, 255, 0,.31)",
+    height: vh(20),
+    marginHorizontal: vw(10),
+    borderRadius: vh(5),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalViewRed2: {
+    backgroundColor: "red",
+    borderRadius: vh(3),
+    borderWidth: 2,
+    borderColor: "orange",
+    width: vw(60),
+  },
+
+  modalViewRed3: {
+    backgroundColor: "green",
+    borderRadius: vh(3),
+    borderWidth: 2,
+    borderColor: "lightgreen",
+    width: vw(60),
+  },
+
+  centeredView: {
+    width: vw(100),
+    height: vh(100),
+    paddingHorizontal: vh(0.2),
+    paddingVertical: vh(0.2),
+    position: "absolute",
+    alignSelf: "center",
+    // backgroundColor: "pink",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    marginTop: vh(2),
+  },
+  choiceText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "white",
+  },
+  selection: {
+    marginHorizontal: vh(0.5),
+    marginVertical: vh(0.5),
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(1),
+    backgroundColor: "#15537d",
+    borderRadius: vh(2.5),
+  },
+  selectionRed: {
+    marginHorizontal: vh(0.5),
+    marginVertical: vh(0.5),
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(1),
+    backgroundColor: "tomato",
+    borderRadius: vh(2.5),
+  },
+  selectionGreen: {
+    marginHorizontal: vh(0.5),
+    marginVertical: vh(0.5),
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(1),
+    backgroundColor: "yellowgreen",
+    borderRadius: vh(2.5),
+  },
+  modalView: {
+    backgroundColor: "#2184c6",
+    borderRadius: vh(3),
+    borderWidth: 2,
+    borderColor: "#76bae8",
+    width: vw(45),
+  },
+  modalViewRed: {
+    backgroundColor: "red",
+    borderRadius: vh(3),
+    borderWidth: 2,
+    borderColor: "orange",
+    width: vw(45),
+  },
+
   imageContainer1: {
     // backgroundColor: "white",
   },
@@ -584,12 +812,10 @@ const styles = StyleSheet.create({
     height: vh(13),
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "green",
   },
   length2: {
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "red",
   },
   length3: {
     width: vw(90),
@@ -703,6 +929,13 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     marginTop: vh(1),
   },
+  deleteVehicleButton: {
+    width: vw(40),
+    alignSelf: "center",
+    borderRadius: vh(2),
+    overflow: "hidden",
+    marginTop: vh(1),
+  },
   refetch: {
     padding: 3,
     paddingHorizontal: vw(15),
@@ -756,7 +989,6 @@ const styles = StyleSheet.create({
     marginVertical: 1,
     fontSize: 14,
     padding: vw(1),
-    // backgroundColor: "green",
   },
   textDescriptionInput: {
     width: vw(60),

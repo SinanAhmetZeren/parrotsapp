@@ -62,6 +62,20 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    updateVehicleProfileImage: builder.mutation({
+      query: (data) => {
+        const { formData, vehicleId } = data;
+        const url = `/api/Vehicle/${vehicleId}/updateProfileImage`;
+        return {
+          url,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
+    }),
     deleteVehicleImage: builder.mutation({
       query: (imageId) => ({
         url: `/api/Vehicle/deleteVehicleImage/${imageId}`,
@@ -121,6 +135,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return responseData.data;
       },
     }),
+    deleteVehicle: builder.mutation({
+      query: (vehicleId) => ({
+        url: `/api/Vehicle/deleteVehicle/${vehicleId}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 
   overrideExisting: true,
@@ -131,10 +151,12 @@ export const {
   useGetVehicleByIdQuery,
   useCreateVehicleMutation,
   useAddVehicleImageMutation,
+  useUpdateVehicleProfileImageMutation,
   useDeleteVehicleImageMutation,
   useGetFavoriteVehiclesByUserByIdQuery,
   useAddVehicleToFavoritesMutation,
   useDeleteVehicleFromFavoritesMutation,
   usePatchVehicleMutation,
   useGetVehicleImagesByVehicleIdQuery,
+  useDeleteVehicleMutation,
 } = extendedApiSlice;

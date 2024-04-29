@@ -111,7 +111,6 @@ const ProfileStack = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="EditVehicleScreen" component={EditVehicleScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
       <Stack.Screen
@@ -128,6 +127,7 @@ const ProfileStack = () => {
       <Stack.Screen name="MyVehicles" component={MyVehiclesScreen} />
       <Stack.Screen name="MyBids" component={MyBidsScreen} />
       <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
+      <Stack.Screen name="EditVehicleScreen" component={EditVehicleScreen} />
       <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
       <Stack.Screen
         name="ConversationDetailScreen"

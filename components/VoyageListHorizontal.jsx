@@ -7,6 +7,7 @@ import VoyageCardProfileHorizontal from "./VoyageCardProfileHorizontal";
 import { vh, vw } from "react-native-expo-viewport-units";
 
 export default function VoyageListHorizontal({ data, focusMap }) {
+  // console.log("data:", data);
   const renderItem = ({ item }) => {
     return (
       <VoyageCardProfileHorizontal
