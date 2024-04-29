@@ -105,6 +105,16 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    patchVehicle: builder.mutation({
+      query: ({ currentVehicleId, patchDoc }) => {
+        console.log("patchdoc: ", patchDoc);
+        return {
+          url: `/api/Vehicle/PatchVehicle/${currentVehicleId}`,
+          method: "PATCH",
+          body: patchDoc,
+        };
+      },
+    }),
   }),
 
   overrideExisting: true,
@@ -119,4 +129,5 @@ export const {
   useGetFavoriteVehiclesByUserByIdQuery,
   useAddVehicleToFavoritesMutation,
   useDeleteVehicleFromFavoritesMutation,
+  usePatchVehicleMutation,
 } = extendedApiSlice;

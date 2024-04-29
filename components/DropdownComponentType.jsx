@@ -6,8 +6,7 @@ import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { vh, vw } from "react-native-expo-viewport-units";
 
-const DropdownComponentType = ({ data, setVehicleType }) => {
-  const [value, setValue] = useState(null);
+const DropdownComponentType = ({ data, setVehicleType, selected }) => {
   const [isFocus, setIsFocus] = useState(false);
 
   return (
@@ -20,16 +19,15 @@ const DropdownComponentType = ({ data, setVehicleType }) => {
         iconStyle={styles.iconStyle}
         itemTextStyle={styles.itemTextStyle}
         data={data}
+        value={selected}
         maxHeight={300}
         labelField="label"
         valueField="value"
         placeholder={"Select vehicle type"}
         searchPlaceholder="Search..."
-        value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item) => {
-          setValue(item.value);
           setIsFocus(false);
           setVehicleType(item.value);
         }}

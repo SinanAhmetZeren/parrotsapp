@@ -105,7 +105,7 @@ const EditProfileScreen = ({ navigation }) => {
     }
   };
 
-  const handlePathcUser = async () => {
+  const handlePatchUser = async () => {
     console.log("username: ", username);
     const patchDoc = [
       { op: "replace", path: "/userName", value: username },
@@ -363,7 +363,7 @@ const EditProfileScreen = ({ navigation }) => {
                 {
                   image2 ? handleUploadBackground() : null;
                 }
-                handlePathcUser();
+                handlePatchUser();
                 navigation.navigate("ProfileScreen");
               }}
             >

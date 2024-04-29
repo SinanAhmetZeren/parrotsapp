@@ -150,7 +150,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
-
     updateProfileImage: builder.mutation({
       query: (data) => {
         const { formData, userId } = data;
@@ -190,10 +189,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           body: patchDoc,
         };
       },
-
-      invalidatesTags: [],
     }),
-
     getFavoriteVoyageIdsByUserId: builder.query({
       query: (userId) => `/api/Favorite/getFavoriteVoyageIdsByUserId/${userId}`,
       transformResponse: (responseData) => responseData.data,

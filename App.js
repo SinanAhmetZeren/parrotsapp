@@ -23,6 +23,7 @@ import VehicleDetailScreen from "./screens/VehicleDetailScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import ProfileScreenPublic from "./screens/ProfileScreenPublic";
 import EditProfileScreen from "./screens/EditProfileScreen";
+import EditVehicleScreen from "./screens/EditVehicleScreen";
 import MyVoyagesScreen from "./screens/MyVoyagesScreen";
 import CreateVoyageScreen from "./screens/CreateVoyageScreen";
 import CreateVehicleScreen from "./screens/CreateVehicleScreen";
@@ -53,7 +54,6 @@ import {
   useGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
-import { createContext, useContext } from "react";
 import { isLoading } from "expo-font";
 
 const Stack = createNativeStackNavigator();
@@ -111,6 +111,7 @@ const ProfileStack = () => {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="EditVehicleScreen" component={EditVehicleScreen} />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
       <Stack.Screen
