@@ -36,7 +36,8 @@ import {
 } from "../slices/VoyageSlice";
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
-import VoyageCardProfileHorizontal from "../components/VoyageCardProfileHorizontal";
+// import VoyageCardProfileHorizontal from "../components/VoyageCardProfileHorizontal";
+import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -66,6 +67,21 @@ export default function HomeScreen({ navigation }) {
   const [selectedVehicleType, setSelectedVehicleType] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  const [cardHeaderM, setCardHeaderM] = useState("");
+  const [cardDescriptionM, setCardDescriptionM] = useState("");
+  const [cardImageM, setCardImageM] = useState("");
+  const [vacancyM, setVacancyM] = useState(0);
+  const [startDateM, setStartDateM] = useState("2024-03-14T09:00:00");
+  const [endDateM, setEndDateM] = useState("2024-03-14T09:00:00");
+  const [vehicleNameM, setVehicleNameM] = useState("");
+  const [vehicleTypeM, setVehicleTypeM] = useState("");
+  const [voyageIdM, setVoyageIdM] = useState("");
+  const [latitudeM, setLatitudeM] = useState(0);
+  const [longitudeM, setLongitudeM] = useState(0);
+  const [focusMapM, setFocusMapM] = useState(false);
+  const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
+    useState(false);
 
   useEffect(() => {
     async function getLocation() {
@@ -115,6 +131,21 @@ export default function HomeScreen({ navigation }) {
       getVoyages();
     }
   }, [initialLatitude, initialLongitude]);
+
+  const updateSelectedVoyageData = (item) => {
+    setVoyageIdM(item.id);
+    setCardHeaderM(item.name);
+    setCardDescriptionM(item.brief);
+    setCardImageM(item.profileImage);
+    setVacancyM(item.vacancy);
+    setStartDateM(item.startDate);
+    setEndDateM(item.endDate);
+    setVehicleNameM(item.vehicle.name);
+    setVehicleTypeM(item.vehicle.type);
+    setLatitudeM(item.waypoints[0].latitude);
+    setLongitudeM(item.waypoints[0].longitude);
+    setSelectedVoyageModalVisible(true);
+  };
 
   const mapRef = useRef(null);
 
@@ -325,7 +356,7 @@ export default function HomeScreen({ navigation }) {
                       longitude: item.waypoints[0].longitude,
                     }}
                     onPress={() => {
-                      console.log("hi there from marker ", index);
+                      updateSelectedVoyageData(item);
                     }}
                   />
                 );
@@ -346,29 +377,103 @@ export default function HomeScreen({ navigation }) {
           {/* <VehicleFlatList /> */}
           <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
         </View>
-        <Modal>
-          {/* <VoyageCardProfileHorizontal
-            key={item.id}
-            voyageId={item.id}
-            cardHeader={item.name}
-            cardDescription={item.brief}
-            cardImage={item.profileImage}
-            vacancy={item.vacancy}
-            startdate={item.startDate}
-            enddate={item.endDate}
-            vehiclename={item.vehicle.name}
-            vehicletype={item.vehicle.type}
-            latitude={item.waypoints[0].latitude}
-            longitude={item.waypoints[0].longitude}
-            focusMap={focusMap}
-          /> */}
-        </Modal>
+        <View>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={selectedVoyageModalVisible}
+            onRequestClose={() => setSelectedVoyageModalVisible(false)}
+          >
+            <TouchableOpacity
+              onPress={() => setSelectedVoyageModalVisible(false)}
+              style={{
+                flex: 1,
+                backgroundColor: "rgba(1,1,1,0.14)",
+              }}
+            >
+              <View style={styles.imageContainerInModal}>
+                <VoyageCardProfileHorizontalModal
+                  key={voyageIdM}
+                  voyageId={voyageIdM}
+                  cardHeader={cardHeaderM}
+                  cardDescription={cardDescriptionM}
+                  cardImage={cardImageM}
+                  vacancy={vacancyM}
+                  startdate={startDateM}
+                  enddate={endDateM}
+                  vehiclename={vehicleNameM}
+                  vehicletype={vehicleTypeM}
+                  latitude={latitudeM}
+                  longitude={longitudeM}
+                  focusMap={() => {}}
+                  setSelectedVoyageModalVisible={setSelectedVoyageModalVisible}
+                />
+                <TouchableOpacity
+                  style={styles.closeButtonAndText}
+                  onPress={() => setSelectedVoyageModalVisible(false)}
+                >
+                  <View style={styles.closeText1}>
+                    <AntDesign name="closecircleo" size={22} color="#3aa4ff" />
+                  </View>
+                  <Text style={styles.closeText1}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </Modal>
+        </View>
       </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  imageContainerInModal: {
+    top: vh(35),
+    width: vw(90),
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    height: vh(20),
+    borderRadius: vh(2),
+    borderColor: "rgba(10, 119, 234,0.2)",
+  },
+  closeButtonAndText: {
+    flexDirection: "row",
+    height: vh(3.5),
+    width: vh(11.45),
+    backgroundColor: "white",
+    borderRadius: vh(2.5),
+    borderColor: "#3aa4ff",
+    borderWidth: 1,
+    verticalAlign: "middle",
+    alignSelf: "center",
+    position: "absolute",
+    bottom: vh(-5),
+  },
+  closeText1: {
+    marginLeft: vw(1),
+    fontSize: 18,
+    height: vh(3),
+    alignSelf: "center",
+    color: "#3aa4ff",
+  },
+  closeTextInModal: {
+    color: "#3c9dde",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  closeButtonInModal: {
+    alignSelf: "center",
+    marginRight: vw(10),
+    backgroundColor: "#f2fafa",
+    borderRadius: vw(5),
+    borderColor: "#93c9ed",
+    padding: vw(1),
+    paddingHorizontal: vw(3),
+    marginTop: vh(1),
+    marginBottom: vh(15),
+  },
   filterButtonContaineronMap: {
     position: "absolute",
     bottom: 0,
