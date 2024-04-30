@@ -20,6 +20,7 @@ const usersSlice = createSlice({
       state.isLoggedIn = true;
       state.userId = action.payload.userId;
       state.token = action.payload.token;
+      state.userName = action.payload.userName;
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
           console.error("Error setting storedToken ", error);
@@ -35,6 +36,7 @@ const usersSlice = createSlice({
       state.isLoggedIn = false;
       state.userId = "";
       state.token = "";
+      state.userName = "";
       AsyncStorage.removeItem("storedToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedToken:", error);
       });

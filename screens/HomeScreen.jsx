@@ -48,8 +48,6 @@ export default function HomeScreen({ navigation }) {
   const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const username = useSelector((state) => state.users.userName);
-
   const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
   const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
 
@@ -82,6 +80,8 @@ export default function HomeScreen({ navigation }) {
   const [focusMapM, setFocusMapM] = useState(false);
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
+
+  const username = useSelector((state) => state.users.userName);
 
   const dispatch = useDispatch();
   const handleLogout = async () => {

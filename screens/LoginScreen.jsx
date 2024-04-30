@@ -57,10 +57,6 @@ const LoginScreen = ({ navigation }) => {
   const imageUrl =
     "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
 
-  useEffect(() => {
-    console.log("loginorregister: ", loginOrRegister);
-  }, [loginOrRegister]);
-
   const handleEmailChange = (text) => {
     setEmail(text);
   };
@@ -69,40 +65,23 @@ const LoginScreen = ({ navigation }) => {
     setPassword(text);
   };
 
-  const state_token = useSelector((state) => state.users.token);
-  const state_userId = useSelector((state) => state.users.userId);
-  const state_isLoggedIn = useSelector((state) => state.users.isLoggedIn);
-
-  const [printoutCounter, setPrintoutCounter] = useState(0);
-
-  const handlePrintout = () => {
-    setPrintoutCounter((prev) => prev + 1);
-  };
-
-  const handleLogout = async () => {
-    dispatch(updateAsLoggedOut());
-  };
-
   const handleLogin = async () => {
     try {
-      const response = await loginUser({
-        // Email: "sinanzen@gmail.com",
-        // Password: 123456,
+      const loginResponse = await loginUser({
         Email: email,
         Password: password,
       }).unwrap();
-
       setEmail("");
       setPassword("");
-      setToken(response.token);
-      setResponseEmail(response.email);
-      setResponseUsername(response.userName);
-      setUserId(response.userId);
-
-      console.log("login response: ", response);
-      if (response.token) {
+      console.log("login response: ", loginResponse);
+      if (loginResponse.token) {
+        console.log("login response userName: ", loginResponse.userName);
         dispatch(
-          updateAsLoggedIn({ userId: response.userId, token: response.token })
+          updateAsLoggedIn({
+            userId: loginResponse.userId,
+            token: loginResponse.token,
+            userName: loginResponse.userName,
+          })
         );
       }
     } catch (err) {
@@ -118,26 +97,24 @@ const LoginScreen = ({ navigation }) => {
 
   const handleRegister = async () => {
     try {
-      const response = await registerUser({
+      const registerResponse = await registerUser({
         Email: emailR,
         UserName: userNameR,
         Password: passwordR,
       }).unwrap();
+
       setUserNameR("");
       setEmailR("");
       setPasswordR("");
       setPasswordR2("");
-      console.log("register  response: ", response);
-      // navigation.navigate("Homepage");
-
-      setToken(response.token);
-      setResponseEmail(response.email);
-      setResponseUsername(response.userName);
-      setUserId(response.userId);
-
-      if (response.token) {
+      console.log("register  response: ", registerResponse);
+      if (registerResponse.token) {
         dispatch(
-          updateAsLoggedIn({ userId: response.userId, token: response.token })
+          updateAsLoggedIn({
+            userId: registerResponse.userId,
+            token: registerResponse.token,
+            userName: registerResponse.userName,
+          })
         );
       }
     } catch (err) {
