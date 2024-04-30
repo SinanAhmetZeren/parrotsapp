@@ -28,7 +28,7 @@ import VehicleFlatList from "../components/VehicleFlatList";
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
 import {
   useGetVoyagesByLocationMutation,
@@ -36,8 +36,8 @@ import {
 } from "../slices/VoyageSlice";
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
-// import VoyageCardProfileHorizontal from "../components/VoyageCardProfileHorizontal";
 import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
+import { updateAsLoggedOut } from "../slices/UserSlice";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -82,6 +82,11 @@ export default function HomeScreen({ navigation }) {
   const [focusMapM, setFocusMapM] = useState(false);
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
+
+  const dispatch = useDispatch();
+  const handleLogout = async () => {
+    dispatch(updateAsLoggedOut());
+  };
 
   useEffect(() => {
     async function getLocation() {
@@ -250,6 +255,33 @@ export default function HomeScreen({ navigation }) {
 
     return (
       <ScrollView style={styles.scrollview}>
+        <TouchableOpacity
+          style={styles.logoutBox}
+          onPress={() => {
+            handleLogout();
+          }}
+          activeOpacity={0.8}
+        >
+          <View>
+            <View style={styles.innerProfileContainer}>
+              <MaterialCommunityIcons
+                name="logout"
+                size={18}
+                color="rgba(0, 119, 234,0.9)"
+              />
+              <Text
+                style={{
+                  lineHeight: 22,
+                  marginLeft: vw(2),
+                  fontSize: 11,
+                }}
+              >
+                Logout
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
         <View style={styles.countModal}>
           <FilterCountModal
             isCountFiltered={isCountFiltered}
@@ -427,6 +459,21 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  innerProfileContainer: {
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    borderRadius: vh(2),
+    paddingHorizontal: vw(2),
+  },
+  logoutBox: {
+    marginTop: vh(0.5),
+    backgroundColor: "white",
+    width: vw(30),
+    flexDirection: "row",
+    borderRadius: vh(2),
+    padding: vw(1),
+    zIndex: 100,
+  },
   imageContainerInModal: {
     top: vh(35),
     width: vw(90),

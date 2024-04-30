@@ -111,6 +111,8 @@ const ProfileStack = () => {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
       <Stack.Screen

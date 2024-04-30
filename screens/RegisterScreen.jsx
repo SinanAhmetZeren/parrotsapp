@@ -6,66 +6,66 @@ import { useRegisterUserMutation } from "../slices/UserSlice";
 import { TouchableOpacity } from "react-native";
 
 const RegisterScreen = () => {
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [userNameR, setUserNameR] = useState("");
+  const [emailR, setEmailR] = useState("");
+  const [passwordR, setPasswordR] = useState("");
 
   const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
   const imageUrl =
     "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
 
-  const handleEmailChange = (text) => {
-    setEmail(text);
+  const handleEmailRChange = (text) => {
+    setEmailR(text);
   };
-  const handleUserNameChange = (text) => {
-    setUserName(text);
+  const handleUserNameRChange = (text) => {
+    setUserNameR(text);
   };
-  const handlePasswordChange = (text) => {
-    setPassword(text);
+  const handlePasswordRChange = (text) => {
+    setPasswordR(text);
   };
 
   const handleRegister = async () => {
     try {
       await registerUser({
-        Email: email,
-        UserName: userName,
-        Password: password,
+        Email: emailR,
+        UserName: userNameR,
+        Password: passwordR,
       }).unwrap();
-      setUserName("");
-      setEmail("");
-      setPassword("");
+      setUserNameR("");
+      setEmailR("");
+      setPasswordR("");
     } catch (err) {
       console.error("Failed to register user", err);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles2.container}>
       {isSuccess ? (
-        <Text style={styles.successMessage}>Registration successful!</Text>
+        <Text style={styles2.successMessage}>Registration successful!</Text>
       ) : (
-        <View style={styles.formContainer}>
-          <View style={styles.imagecontainer}>
-            <Image source={{ uri: imageUrl }} style={styles.image} />
+        <View style={styles2.formContainer}>
+          <View style={styles2.imagecontainer}>
+            <Image source={{ uri: imageUrl }} style={styles2.image} />
           </View>
           <TextInput
-            style={styles.input}
+            style={styles2.input}
             placeholder="Username"
-            value={userName}
-            onChangeText={(text) => handleUserNameChange(text)}
+            value={userNameR}
+            onChangeText={(text) => handleUserNameRChange(text)}
           />
           <TextInput
-            style={styles.input}
+            style={styles2.input}
             placeholder="Email"
-            value={email}
-            onChangeText={(text) => handleEmailChange(text)}
+            value={emailR}
+            onChangeText={(text) => handleEmailRChange(text)}
           />
           <TextInput
-            style={styles.input}
+            style={styles2.input}
             placeholder="Password"
             secureTextEntry
-            value={password}
-            onChangeText={(text) => handlePasswordChange(text)}
+            value={passwordR}
+            onChangeText={(text) => handlePasswordRChange(text)}
           />
           <Button
             title="Register"
@@ -78,7 +78,7 @@ const RegisterScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles2 = StyleSheet.create({
   container: {
     flexDirection: "row",
     backgroundColor: "pink",
