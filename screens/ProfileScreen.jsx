@@ -205,7 +205,6 @@ export default function ProfileScreen({ navigation }) {
                 <TouchableOpacity
                   style={styles.publicProfileBox}
                   onPress={() => {
-                    console.log("navigate to public profile");
                     navigation.navigate("ProfileScreenPublic", {
                       userId: userId,
                     });
@@ -266,7 +265,6 @@ export default function ProfileScreen({ navigation }) {
                 <TouchableOpacity
                   style={styles.editProfileBox}
                   onPress={() => {
-                    console.log("navigate to edit profile");
                     navigation.navigate("EditProfile");
                   }}
                   activeOpacity={0.8}
@@ -614,18 +612,18 @@ const styles = StyleSheet.create({
   },
   profileImage: {
     position: "absolute",
-    top: vh(0.1),
-    left: vh(0.1),
+    top: vh(1),
+    left: vh(1),
     height: vh(18),
     width: vh(18),
     borderRadius: vh(9),
     zIndex: 100,
   },
   solidCircleProfile: {
-    height: vh(18.2),
-    width: vh(18.2),
-    borderRadius: vh(10),
-    backgroundColor: "rgba(190, 119, 234,0.7)",
+    height: vh(20),
+    width: vh(20),
+    borderRadius: vh(15),
+    backgroundColor: "rgba(11, 111, 234,0.22)",
   },
   editProfileBox: {
     marginTop: vh(0.5),

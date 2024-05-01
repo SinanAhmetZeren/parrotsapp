@@ -82,39 +82,11 @@ export default function HomeScreen({ navigation }) {
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
 
-  /*
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          console.log();
-        } catch (error) {
-          console.error("Error refetching messages data:", error);
-        }
-      };
-      fetchData();
-    }, [username])
-  );
-  */
-
   const username = useSelector((state) => state.users.userName);
 
   const dispatch = useDispatch();
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
-  };
-
-  const handlePrint = () => {
-    console.log(username);
-  };
-
-  const handlePrintLocal = async () => {
-    const storedToken = await AsyncStorage.getItem("storedToken");
-    const storedUserId = await AsyncStorage.getItem("storedUserId");
-    console.log(".....");
-    console.log("stored user id: ", storedUserId);
-    console.log("storedToken: ", storedToken?.substring(0, 10) + "...");
-    console.log("username: ", username);
   };
 
   useEffect(() => {
@@ -284,88 +256,6 @@ export default function HomeScreen({ navigation }) {
 
     return (
       <ScrollView style={styles.scrollview}>
-        {/*         
-        <TouchableOpacity
-          style={styles.logoutBox}
-          onPress={() => {
-            handleLogout();
-          }}
-          activeOpacity={0.8}
-        >
-          <View>
-            <View style={styles.innerProfileContainer}>
-              <MaterialCommunityIcons
-                name="logout"
-                size={18}
-                color="rgba(0, 119, 234,0.9)"
-              />
-              <Text
-                style={{
-                  lineHeight: 22,
-                  marginLeft: vw(2),
-                  fontSize: 11,
-                }}
-              >
-                Logout
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.logoutBox}
-          onPress={() => {
-            handlePrint();
-          }}
-          activeOpacity={0.8}
-        >
-          <View>
-            <View style={styles.innerProfileContainer}>
-              <MaterialCommunityIcons
-                name="logout"
-                size={18}
-                color="rgba(0, 119, 234,0.9)"
-              />
-              <Text
-                style={{
-                  lineHeight: 22,
-                  marginLeft: vw(2),
-                  fontSize: 11,
-                }}
-              >
-                Print
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.logoutBox}
-          onPress={() => {
-            handlePrintLocal();
-          }}
-          activeOpacity={0.8}
-        >
-          <View>
-            <View style={styles.innerProfileContainer}>
-              <MaterialCommunityIcons
-                name="logout"
-                size={18}
-                color="rgba(0, 119, 234,0.9)"
-              />
-              <Text
-                style={{
-                  lineHeight: 22,
-                  marginLeft: vw(2),
-                  fontSize: 11,
-                }}
-              >
-                Print Local
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity> */}
-
         <View style={styles.countModal}>
           <FilterCountModal
             isCountFiltered={isCountFiltered}

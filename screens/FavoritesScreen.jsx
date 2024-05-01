@@ -194,7 +194,6 @@ const styles = StyleSheet.create({
     height: vh(90),
     borderRadius: vh(4),
     marginTop: vh(5),
-    marginBottom: vh(20),
     backgroundColor: "white",
   },
   bioBox: {

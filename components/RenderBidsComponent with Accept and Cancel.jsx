@@ -36,13 +36,6 @@ export const RenderBidsComponent = ({
     setAcceptBidModalVisible(true);
   };
 
-  /*
-    handleAcceptBid({
-    bidId: item.id,
-    bidUserId: item.userId,
-  }); 
-  */
-
   const handleAcceptBid = ({ bidId, bidUserId }) => {
     const text = `Welcome on board to ${voyageName}`;
     const senderId = currentUserId;
@@ -57,10 +50,6 @@ export const RenderBidsComponent = ({
       topOffset: 150,
     });
     refetch();
-    console.log("----------");
-    console.log("ReceiverId: ", receiverId);
-    console.log("SenderId: ", senderId);
-    console.log("Text: ", text);
 
     // SEND MESSAGE
     // CHANGE BID TO ACCEPTED
@@ -104,7 +93,6 @@ export const RenderBidsComponent = ({
             data={bids}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => {
-              console.log(item);
               return (
                 <>
                   <View key={index} style={styles.singleBidContainer2}>

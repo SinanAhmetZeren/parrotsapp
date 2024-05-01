@@ -83,9 +83,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
     startHubConnection();
     hubConnection.on(
       "ReceiveMessage",
-      async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-        console.log("received a message: ", content);
-      }
+      async (senderId, content, newTime, senderProfileUrl, senderUsername) => {}
     );
 
     hubConnection.on("ReceiveMessageRefetch", () => {
@@ -99,7 +97,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       (event) => {
-        console.log(event.endCoordinates.height);
         setTextInputBottomMargin(event.endCoordinates.height);
       }
     );

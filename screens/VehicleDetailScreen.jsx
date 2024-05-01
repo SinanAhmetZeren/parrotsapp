@@ -105,7 +105,7 @@ const VehicleDetailScreen = () => {
         setIsFavorited(true);
       }
     }
-  }, [isSuccessVehicles]);
+  }, [isSuccessVehicles, userFavoriteVehicles]);
 
   const goToProfilePage = (userId) => {
     navigation.navigate("ProfileScreenPublic", {

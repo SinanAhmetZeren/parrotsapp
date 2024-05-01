@@ -183,8 +183,6 @@ const AddNewStack = () => {
   );
 };
 const AuthStack = () => {
-  console.log("loading authstack");
-
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
@@ -416,15 +414,6 @@ function App() {
     }, [dispatch]);
 
     useEffect(() => {
-      // if (isSuccessUser) {
-      //   console.log();
-      //   dispatch(
-      //     updateUserData({
-      //       image: userData.profileImageUrl,
-      //     })
-      //   );
-      // }
-
       if (isSuccessFavoriteVehicles && isSuccessFavoriteVoyages) {
         if (favoriteVehicleData === null || favoriteVoyageData === null) {
           dispatch(
@@ -444,7 +433,12 @@ function App() {
       }
     }, [isSuccessUser, isSuccessFavoriteVehicles, isSuccessFavoriteVoyages]);
 
-    if (isInitialLoading) {
+    if (
+      isInitialLoading ||
+      isLoadingFavoriteVehicles ||
+      isLoadingFavoriteVoyages ||
+      isLoadingUser
+    ) {
       return (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}

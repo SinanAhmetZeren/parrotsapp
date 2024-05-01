@@ -85,35 +85,24 @@ const usersSlice = createSlice({
       state.userFavoriteVoyages = action.payload.favoriteVoyages;
     },
     addVoyageToUserFavorites: (state, action) => {
-      console.log("state: ", state);
-      console.log("action: ", action);
-
       state.userFavoriteVoyages = [
         ...state.userFavoriteVoyages,
         action.payload.favoriteVoyage,
       ];
     },
     removeVoyageFromUserFavorites: (state, action) => {
-      console.log("action: ", action);
-      console.log("state: ", state);
       const voyageToRemove = action.payload.favoriteVoyage;
       state.userFavoriteVoyages = state.userFavoriteVoyages.filter(
         (voyage) => voyage !== voyageToRemove
       );
     },
     addVehicleToUserFavorites: (state, action) => {
-      console.log("action: ", action);
-      console.log("state: ", state);
-
       state.userFavoriteVehicles = [
         ...state.userFavoriteVehicles,
         action.payload.favoriteVehicle,
       ];
     },
     removeVehicleFromUserFavorites: (state, action) => {
-      console.log("action: ", action);
-      console.log("state: ", state);
-
       const vehicleToRemove = action.payload.favoriteVehicle;
       state.userFavoriteVehicles = state.userFavoriteVehicles.filter(
         (vehicle) => vehicle !== vehicleToRemove

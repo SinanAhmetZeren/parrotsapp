@@ -192,7 +192,6 @@ const VoyageDetailScreen = () => {
   };
 
   const goToVehiclePage = (vehicleId) => {
-    console.log(vehicleId);
     navigation.navigate("VehicleDetail", { vehicleId });
   };
 

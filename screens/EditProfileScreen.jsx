@@ -106,7 +106,6 @@ const EditProfileScreen = ({ navigation }) => {
   };
 
   const handlePatchUser = async () => {
-    console.log("username: ", username);
     const patchDoc = [
       { op: "replace", path: "/userName", value: username },
       { op: "replace", path: "/email", value: email },

@@ -6,7 +6,6 @@ import { StyleSheet, View } from "react-native";
 import ConversationView from "./CoversationView";
 
 export default function ConversationList({ data, userId }) {
-  // console.log(data[0]);
   let transformedMessages = [];
   if (data) {
     transformedMessages = data.map((message) => {
@@ -25,7 +24,7 @@ export default function ConversationList({ data, userId }) {
       return { user, userName, userProfileImage, text, dateTime };
     });
   } else {
-    console.log("Data is null."); // or handle this case as needed
+    console.log("Data is null.");
   }
 
   /*

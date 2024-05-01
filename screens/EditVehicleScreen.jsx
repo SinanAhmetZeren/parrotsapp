@@ -100,7 +100,6 @@ const EditVehicleScreen = () => {
         `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/` +
           vehicleData.profileImageUrl
       );
-      console.log("image: ", vehicleData.profileImageUrl);
     }
   }, [isSuccessVehicleData]);
 
@@ -150,7 +149,6 @@ const EditVehicleScreen = () => {
     });
 
     try {
-      console.log("formdata uri: ", formData);
       const vehicleId = currentVehicleId;
       const addedVehicleImageResponse = await addVehicleImage({
         formData,
@@ -161,7 +159,6 @@ const EditVehicleScreen = () => {
         id: addedVoyageImageId,
         vehicleImagePath: voyageImage,
       };
-      console.log("new item: ", newItem);
       setAddedVoyageImages((prevImages) => [...prevImages, newItem]);
       setVoyageImage(null);
     } catch (error) {
@@ -170,8 +167,6 @@ const EditVehicleScreen = () => {
   };
 
   const handleUpdateVehicleProfileImage = async () => {
-    console.log("image to upload ", image);
-
     if (!image) {
       return;
     }
@@ -237,7 +232,6 @@ const EditVehicleScreen = () => {
   };
 
   const HandleDeleteVehicle = () => {
-    console.log("delete");
     deleteVehicle(currentVehicleId);
     navigation.navigate("ProfileScreen");
   };

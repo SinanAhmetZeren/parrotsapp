@@ -7,7 +7,6 @@ import VehicleCardProfile from "./VehicleCardProfile";
 import { vh } from "react-native-expo-viewport-units";
 
 export default function VehicleList({ data }) {
-  console.log(data[0] === undefined);
   const renderVehicleCards = () => {
     return data.map((item) => {
       return (

@@ -198,19 +198,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
     longitudeDelta: 0.0421,
   };
 
-  const printState = () => {
-    console.log("----------");
-    console.log("latitude:", latitude);
-    console.log("longitude:", longitude);
-    console.log("title:", title);
-    console.log("description:", description);
-    console.log("imageUri:", imageUri);
-    console.log("order:", order);
-    console.log("added waypoints: ", addedWayPoints);
-  };
-
   const handleMapPress = (event) => {
-    // console.log("Tapped Location:", event.nativeEvent.coordinate);
     setLatitude(event.nativeEvent.coordinate.latitude);
     setLongitude(event.nativeEvent.coordinate.longitude);
     setMarkerCoords(event.nativeEvent.coordinate);
@@ -434,22 +422,6 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       >
         <Text style={styles.addWaypointText}> Complete </Text>
       </TouchableOpacity>
-
-      <View
-        style={{
-          marginTop: vh(2),
-          marginBottom: vh(20),
-          paddingBottom: vh(10),
-          display: "none",
-        }}
-      >
-        <Button
-          title="print state 3"
-          onPress={() => {
-            printState();
-          }}
-        />
-      </View>
     </View>
   );
 };

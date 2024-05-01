@@ -87,33 +87,6 @@ const CreateVoyageScreen = () => {
 
   useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
 
-  const printState = () => {
-    console.log("----------");
-    console.log("name:", name);
-    console.log("brief:", brief);
-    console.log("description:", description);
-    console.log("vacancy:", vacancy);
-    console.log("startDate:", startDate);
-    console.log("endDate:", endDate);
-    console.log("lastBidDate:", lastBidDate);
-    console.log("minPrice:", minPrice);
-    console.log("maxPrice:", maxPrice);
-    console.log("isAuction:", isAuction);
-    console.log("isFixedPrice:", isFixedPrice);
-    console.log("image", image);
-    console.log("voyageId", voyageId);
-    console.log("vehicleId", vehicleId);
-    console.log("----------");
-  };
-
-  const printState2 = () => {
-    console.log("----------");
-    console.log("voyage image:", voyageImage);
-    console.log("added images:", addedVoyageImages);
-    console.log("voyage Id: ", voyageId);
-    console.log("----------");
-  };
-
   const changeCurrentState = (index) => {
     setCurrentStep(index);
   };
@@ -300,7 +273,6 @@ const CreateVoyageScreen = () => {
   };
 
   const handleDeleteImage = (imageId) => {
-    console.log("image id to delete", imageId);
     deleteVoyageImage(imageId);
     setAddedVoyageImages((prevImages) =>
       prevImages.filter((item) => item.addedVoyageImageId !== imageId)
@@ -630,15 +602,6 @@ const CreateVoyageScreen = () => {
                     />
                   </View>
 
-                  <View style={{ display: "none" }}>
-                    <Button
-                      title="print state1"
-                      onPress={() => {
-                        printState();
-                      }}
-                    />
-                  </View>
-
                   <View style={styles.step123}>
                     <Button
                       title="step 1"
@@ -744,16 +707,6 @@ const CreateVoyageScreen = () => {
                   </TouchableOpacity>
                 </View>
               ) : null}
-
-              {/* <View style={styles.refetch}> */}
-              <View style={{ display: "none" }}>
-                <Button
-                  title="print state 2"
-                  onPress={() => {
-                    printState2();
-                  }}
-                />
-              </View>
             </View>
 
             <View style={styles.addWaypoints}>

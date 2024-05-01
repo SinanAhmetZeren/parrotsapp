@@ -43,7 +43,6 @@ export default function MessagesScreen({ navigation }) {
         }
       };
       fetchData();
-      console.log("messages data: ", messagesData);
       return () => {
         // Cleanup function if needed
       };
@@ -84,7 +83,6 @@ export default function MessagesScreen({ navigation }) {
   }, []);
 
   if (isSuccessMessages) {
-    console.log("...", messagesData);
     return (
       <View style={styles.container}>
         {messagesData ? (
