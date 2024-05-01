@@ -1,7 +1,8 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
@@ -109,7 +110,13 @@ export const SocialRenderComponent = ({
 const EmailItem = ({ email, handleEmailPress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handleEmailPress()}>
-      <Fontisto style={styles.icon} name="email" size={24} color="black" />
+      {/* <Fontisto style={styles.icon} name="email" size={24} color="black" /> */}
+
+      <Image
+        style={styles.iconLogo}
+        source={require("../assets/email_logo.png")}
+      />
+
       <Text style={styles.iconText}>
         {email.length > 20 ? `${email.substring(0, 20)}...` : email}
       </Text>
@@ -120,11 +127,16 @@ const EmailItem = ({ email, handleEmailPress, style }) => {
 const InstagramItem = ({ instagram, handleInstagramPress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handleInstagramPress()}>
-      <Ionicons
+      {/* <Ionicons
         style={styles.icon}
         name="logo-instagram"
         size={24}
         color="black"
+      /> */}
+
+      <Image
+        style={styles.iconLogo}
+        source={require("../assets/instagram_icon.png")}
       />
       <Text style={styles.iconText}>
         {instagram.length > 20 ? `${instagram.substring(0, 20)}...` : instagram}
@@ -136,7 +148,11 @@ const InstagramItem = ({ instagram, handleInstagramPress, style }) => {
 const YoutubeItem = ({ youtube, handleYoutubePress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handleYoutubePress()}>
-      <Feather style={styles.icon} name="youtube" size={24} color="black" />
+      {/* <Feather style={styles.icon} name="youtube" size={24} color="black" /> */}
+      <Image
+        style={styles.iconLogo}
+        source={require("../assets/youtube_icon.png")}
+      />
       <Text style={styles.iconText}>
         {youtube.length > 20 ? `${youtube.substring(0, 20)}...` : youtube}
       </Text>
@@ -147,7 +163,11 @@ const YoutubeItem = ({ youtube, handleYoutubePress, style }) => {
 const FacebookItem = ({ facebook, handleFacebookPress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handleFacebookPress()}>
-      <Feather style={styles.icon} name="facebook" size={24} color="black" />
+      {/* <Feather style={styles.icon} name="facebook" size={24} color="black" /> */}
+      <Image
+        style={styles.iconLogo}
+        source={require("../assets/facebook_logo.png")}
+      />
       <Text style={styles.iconText}>
         {facebook.length > 20 ? `${facebook.substring(0, 20)}...` : facebook}
       </Text>
@@ -158,7 +178,12 @@ const FacebookItem = ({ facebook, handleFacebookPress, style }) => {
 const PhoneItem = ({ phoneNumber, handlePhonePress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handlePhonePress()}>
-      <Feather style={styles.icon} name="phone" size={24} color="black" />
+      {/* <Feather style={styles.icon} name="phone" size={24} color="black" /> */}
+
+      <Image
+        style={styles.iconLogo}
+        source={require("../assets/phone_logo.jpeg")}
+      />
       <Text style={styles.iconText}>
         {phoneNumber.length > 20
           ? `${phoneNumber.substring(0, 20)}...`
@@ -169,6 +194,12 @@ const PhoneItem = ({ phoneNumber, handlePhonePress, style }) => {
 };
 
 const styles = StyleSheet.create({
+  iconLogo: {
+    height: vh(4),
+    width: vh(4),
+    borderRadius: vh(2),
+    marginRight: vh(1),
+  },
   social_Main_5: {
     flexDirection: "column",
     width: vw(50),
@@ -363,8 +394,9 @@ const styles = StyleSheet.create({
   },
   iconText: {
     lineHeight: 22,
-    marginVertical: 1,
-    fontSize: 11,
+    marginTop: vh(0.4),
+    fontSize: 13,
+    color: "#3c9dde",
   },
   profileImageAndSocial: {
     flexDirection: "row",
