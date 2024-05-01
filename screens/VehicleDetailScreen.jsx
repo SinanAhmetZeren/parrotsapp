@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
 import {
   useGetVoyageByIdQuery,
@@ -29,13 +29,9 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  FlatList,
-  Modal,
-  TextInput,
   Share,
   ActivityIndicator,
 } from "react-native";
-import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
 import { useDispatch, useSelector } from "react-redux";
 import VehicleVoyages from "../components/VehicleVoyages";
@@ -48,6 +44,7 @@ import {
   addVehicleToUserFavorites,
   removeVehicleFromUserFavorites,
 } from "../slices/UserSlice";
+import { useFocusEffect } from "@react-navigation/native";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
@@ -57,6 +54,7 @@ const VehicleDetailScreen = () => {
     isSuccess: isSuccessVehicles,
     isLoading: isLoadingVehicles,
     isError: isErrorVehicles,
+    refetch,
   } = useGetVehicleByIdQuery(vehicleId);
   const userFavoriteVehicles = useSelector(
     (state) => state.users.userFavoriteVehicles
@@ -80,6 +78,24 @@ const VehicleDetailScreen = () => {
   const handleSeeAll = () => {
     setModalVisible(true);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          await refetch();
+        } catch (error) {
+          console.error("Error refetching messages data:", error);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetch, navigation])
+  );
 
   const shareLink = async () => {
     const currentScreenLink = getCurrentPageLink();
