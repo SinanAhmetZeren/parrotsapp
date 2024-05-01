@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   //container of image and name
   profileImageAndName: {
     left: vw(6),
-    top: vh(2),
+    top: vh(3),
   },
   profileImage: {
     position: "absolute",
