@@ -265,7 +265,7 @@ export default function ProfileScreenPublic({ navigation }) {
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
                 <View style={styles.nameContainer}>
-                  <Text style={styles.name}>
+                  <Text style={styles.UserNameProfile}>
                     {userData.userName.length <= 30 ? (
                       userData.userName
                     ) : (
@@ -279,7 +279,7 @@ export default function ProfileScreenPublic({ navigation }) {
                   </Text>
                 </View>
                 <View>
-                  <Text style={styles.title}>
+                  <Text style={styles.TitleProfile}>
                     {userData.title?.length <= 35 ? (
                       userData.title
                     ) : (
@@ -346,6 +346,16 @@ export default function ProfileScreenPublic({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  UserNameProfile: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#3c9dde",
+  },
+  TitleProfile: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#68b3e5",
+  },
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
@@ -547,9 +557,8 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     top: vh(1),
   },
-  //container of image and name
   profileImageAndName: {
-    left: vw(4),
+    left: vw(6),
     top: vh(2),
   },
   profileImage: {

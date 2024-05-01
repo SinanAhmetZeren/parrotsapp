@@ -89,8 +89,10 @@ export default function MessagesScreen({ navigation }) {
       <View style={styles.container}>
         {messagesData ? (
           <>
-            <View>
-              <Text style={styles.recentChats}>Recent Chats</Text>
+            <View style={styles.mainBidsContainer}>
+              <View style={styles.currentBidsAndSeeAll}>
+                <Text style={styles.currentBidsTitle}>Recent Chats</Text>
+              </View>
             </View>
 
             <View style={styles.flatlist}>
@@ -117,6 +119,22 @@ export default function MessagesScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  currentBidsTitle: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#3c9dde",
+    paddingLeft: vw(5),
+  },
+
+  currentBidsAndSeeAll: {
+    marginTop: vh(2),
+    flexDirection: "row",
+    paddingRight: vw(10),
+  },
+  mainBidsContainer: {
+    borderRadius: vw(5),
+    borderColor: "#93c9ed",
+  },
   currentBidsTitle2: {
     fontSize: 20,
     fontWeight: "700",

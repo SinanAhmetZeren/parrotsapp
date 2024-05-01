@@ -305,20 +305,22 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </View>
 
-                <SocialRenderComponent
-                  userData={userData}
-                  handleEmailPress={handleEmailPress}
-                  handleInstagramPress={handleInstagramPress}
-                  handleYoutubePress={handleYoutubePress}
-                  handleFacebookPress={handleFacebookPress}
-                  handlePhonePress={handlePhonePress}
-                />
+                <View>
+                  <SocialRenderComponent
+                    userData={userData}
+                    handleEmailPress={handleEmailPress}
+                    handleInstagramPress={handleInstagramPress}
+                    handleYoutubePress={handleYoutubePress}
+                    handleFacebookPress={handleFacebookPress}
+                    handlePhonePress={handlePhonePress}
+                  />
+                </View>
               </View>
 
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
                 <View style={styles.nameContainer}>
-                  <Text style={styles.name}>
+                  <Text style={styles.UserNameProfile}>
                     {userData.userName.length <= 30 ? (
                       userData.userName
                     ) : (
@@ -332,7 +334,7 @@ export default function ProfileScreen({ navigation }) {
                   </Text>
                 </View>
                 <View>
-                  <Text style={styles.title}>
+                  <Text style={styles.TitleProfile}>
                     {userData.title?.length <= 35 ? (
                       userData.title
                     ) : (
@@ -421,6 +423,16 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#3c9dde",
     paddingLeft: vw(5),
+  },
+  UserNameProfile: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#3c9dde",
+  },
+  TitleProfile: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#68b3e5",
   },
   currentBidsAndSeeAll: {
     marginTop: vh(2),
@@ -597,7 +609,7 @@ const styles = StyleSheet.create({
   },
   //container of image and name
   profileImageAndName: {
-    left: vw(4),
+    left: vw(6),
     top: vh(2),
   },
   profileImage: {

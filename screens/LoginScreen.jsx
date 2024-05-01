@@ -81,6 +81,7 @@ const LoginScreen = ({ navigation }) => {
             userId: loginResponse.userId,
             token: loginResponse.token,
             userName: loginResponse.userName,
+            profileImageUrl: loginResponse.profileImageUrl,
           })
         );
       }
@@ -114,6 +115,7 @@ const LoginScreen = ({ navigation }) => {
             userId: registerResponse.userId,
             token: registerResponse.token,
             userName: registerResponse.userName,
+            profileImageUrl: loginResponse.profileImageUrl,
           })
         );
       }

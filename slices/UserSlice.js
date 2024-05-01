@@ -21,7 +21,7 @@ const usersSlice = createSlice({
       state.userId = action.payload.userId;
       state.token = action.payload.token;
       state.userName = action.payload.userName;
-      console.log("--> ", action.payload);
+      state.userProfileImage = action.payload.profileImageUrl;
 
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
@@ -38,12 +38,19 @@ const usersSlice = createSlice({
           console.error("Error setting storedUserName:", error);
         }
       );
+      AsyncStorage.setItem(
+        "storedProfileImageUrl",
+        action.payload.profileImageUrl
+      ).catch((error) => {
+        console.error("Error setting storedProfileImageUrl:", error);
+      });
     },
     updateAsLoggedOut: (state) => {
       state.isLoggedIn = false;
       state.userId = "";
       state.token = "";
       state.userName = "";
+      state.userProfileImage = "";
       AsyncStorage.removeItem("storedToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedToken:", error);
       });
@@ -53,17 +60,25 @@ const usersSlice = createSlice({
       AsyncStorage.removeItem("storedUserName").catch((error) => {
         console.error("Error clearing AsyncStorage storedUserName:", error);
       });
+      AsyncStorage.removeItem("storedProfileImageUrl").catch((error) => {
+        console.error(
+          "Error clearing AsyncStorage storedProfileImageUrl:",
+          error
+        );
+      });
     },
     updateStateFromLocalStorage: (state, action) => {
-      const { token, userId, userName } = action.payload;
+      const { token, userId, userName, profileImageUrl } = action.payload;
+
       state.userId = userId;
       state.token = token;
       state.userName = userName;
+      state.userProfileImage = profileImageUrl;
       state.isLoggedIn = true;
     },
     updateUserData: (state, action) => {
       state.userProfileImage = action.payload.image;
-      state.userName = action.payload.username;
+      // state.userName = action.payload.username;
     },
     updateUserFavorites: (state, action) => {
       state.userFavoriteVehicles = action.payload.favoriteVehicles;

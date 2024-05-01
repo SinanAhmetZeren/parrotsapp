@@ -389,6 +389,9 @@ function App() {
           const storedToken = await AsyncStorage.getItem("storedToken");
           const storedUserId = await AsyncStorage.getItem("storedUserId");
           const storedUserName = await AsyncStorage.getItem("storedUserName");
+          const storedProfileImageUrl = await AsyncStorage.getItem(
+            "storedProfileImageUrl"
+          );
 
           if (storedToken) {
             dispatch(
@@ -396,6 +399,7 @@ function App() {
                 token: storedToken,
                 userId: storedUserId,
                 userName: storedUserName,
+                profileImageUrl: storedProfileImageUrl,
               })
             );
           } else {
@@ -412,15 +416,14 @@ function App() {
     }, [dispatch]);
 
     useEffect(() => {
-      if (isSuccessUser) {
-        console.log();
-        // dispatch(
-        //   updateUserData({
-        //     image: userData.profileImageUrl,
-        //     username: userData.userName,
-        //   })
-        // );
-      }
+      // if (isSuccessUser) {
+      //   console.log();
+      //   dispatch(
+      //     updateUserData({
+      //       image: userData.profileImageUrl,
+      //     })
+      //   );
+      // }
 
       if (isSuccessFavoriteVehicles && isSuccessFavoriteVoyages) {
         if (favoriteVehicleData === null || favoriteVoyageData === null) {

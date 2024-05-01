@@ -94,7 +94,12 @@ export const SocialRenderComponent = ({
 
   return (
     <>
-      <View style={styles[`social_Main_${contactDataArray.length}`]}>
+      <View
+        style={[
+          styles[`social_Main_${contactDataArray.length}`],
+          { marginLeft: vh(8) },
+        ]}
+      >
         {renderAllItems()}
       </View>
     </>
@@ -207,7 +212,7 @@ const styles = StyleSheet.create({
 
   social_5_0: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -216,7 +221,7 @@ const styles = StyleSheet.create({
   },
   social_5_1: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -225,7 +230,7 @@ const styles = StyleSheet.create({
   },
   social_5_2: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     left: vw(-4),
     borderRadius: 20,
     marginTop: 2,
@@ -234,7 +239,7 @@ const styles = StyleSheet.create({
   },
   social_5_3: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -243,7 +248,7 @@ const styles = StyleSheet.create({
   },
   social_5_4: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -253,7 +258,7 @@ const styles = StyleSheet.create({
   //////
   social_4_0: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -262,7 +267,7 @@ const styles = StyleSheet.create({
   },
   social_4_1: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: vh(0.5),
     marginBottom: 2,
@@ -271,7 +276,7 @@ const styles = StyleSheet.create({
   },
   social_4_2: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     left: vw(-4),
     borderRadius: 20,
     marginTop: vh(0.5),
@@ -280,7 +285,7 @@ const styles = StyleSheet.create({
   },
   social_4_3: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: vh(0.5),
     marginBottom: 2,
@@ -290,7 +295,7 @@ const styles = StyleSheet.create({
   //////
   social_3_0: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -299,7 +304,7 @@ const styles = StyleSheet.create({
   },
   social_3_1: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: vh(0.8),
     marginBottom: 2,
@@ -308,7 +313,7 @@ const styles = StyleSheet.create({
   },
   social_3_2: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     left: vw(-6),
     borderRadius: 20,
     marginTop: vh(0.8),
@@ -318,7 +323,7 @@ const styles = StyleSheet.create({
   //////
   social_2_0: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -327,7 +332,7 @@ const styles = StyleSheet.create({
   },
   social_2_1: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: vh(1),
     marginBottom: 2,
@@ -337,7 +342,7 @@ const styles = StyleSheet.create({
   //////
   social_1_0: {
     flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -351,7 +356,9 @@ const styles = StyleSheet.create({
     margin: 2,
     marginLeft: 8,
     borderRadius: 20,
-    color: "rgba(0, 119, 234,0.9)",
+    // color: "rgba(0, 119, 234,0.9)",
+    color: "#3c9dde",
+
     fontSize: 18,
   },
   iconText: {
@@ -371,24 +378,3 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
-
-{
-  /* 
-        <EmailItem email={userData.email} handleEmailPress={handleEmailPress} />
-        <InstagramItem
-          instagram={userData.instagram}
-          handleInstagramPress={handleInstagramPress}
-        />
-        <YoutubeItem
-          youtube={userData.youtube}
-          handleYoutubePress={handleYoutubePress}
-        />
-        <FacebookItem
-          facebook={userData.facebook}
-          handleFacebookPress={handleFacebookPress}
-        />
-        <PhoneItem
-          phoneNumber={userData.phoneNumber}
-          handlePhonePress={handlePhonePress}
-        /> */
-}
