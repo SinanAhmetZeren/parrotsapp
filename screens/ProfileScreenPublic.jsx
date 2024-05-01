@@ -134,6 +134,10 @@ export default function ProfileScreenPublic({ navigation }) {
   };
 
   const BlueHashTagText = ({ originalText }) => {
+    if (!originalText) {
+      return null;
+    }
+
     const words = originalText.split(" ");
     return (
       <Text style={styles.container}>
@@ -178,11 +182,25 @@ export default function ProfileScreenPublic({ navigation }) {
           <ScrollView style={styles.scrollView}>
             <View style={styles.innerContainer}>
               <View style={styles.rectangularBox}>
-                <Image
+                {/* <Image
                   style={styles.imageContainer}
                   resizeMode="cover"
                   source={{ uri: backgroundImageUrl }}
-                />
+                /> */}
+
+                {!userData.backgroundImageUrl ? (
+                  <Image
+                    style={styles.imageContainer}
+                    resizeMode="cover"
+                    source={require("../assets/amazonForest.jpg")}
+                  />
+                ) : (
+                  <Image
+                    style={styles.imageContainer}
+                    resizeMode="cover"
+                    source={{ uri: backgroundImageUrl }}
+                  />
+                )}
               </View>
 
               <View style={styles.buttonsContainer}>
@@ -253,19 +271,23 @@ export default function ProfileScreenPublic({ navigation }) {
                     ) : (
                       <>
                         <Text>{userData.userName.slice(0, 30)}</Text>
-                        <Text style={styles.clickableText}>...</Text>
+                        {userData.userName.length > 30 ? (
+                          <Text style={styles.clickableText}>...</Text>
+                        ) : null}
                       </>
                     )}
                   </Text>
                 </View>
                 <View>
                   <Text style={styles.title}>
-                    {userData.title.length <= 35 ? (
+                    {userData.title?.length <= 35 ? (
                       userData.title
                     ) : (
                       <>
-                        <Text>{userData.title.slice(0, 3)}</Text>
-                        <Text style={styles.clickableText}>...</Text>
+                        <Text>{userData.title?.slice(0, 3)}</Text>
+                        {userData.title?.length > 30 ? (
+                          <Text style={styles.clickableText}>...</Text>
+                        ) : null}
                       </>
                     )}
                   </Text>
@@ -282,29 +304,37 @@ export default function ProfileScreenPublic({ navigation }) {
                 <ActivityIndicator size="large" />
               ) : isSuccessVoyages ? (
                 <>
-                  <View style={styles.mainBidsContainer}>
-                    <View style={styles.currentBidsAndSeeAll}>
-                      <Text style={styles.currentBidsTitle}>Vehicles</Text>
-                    </View>
-                  </View>
-                  <View style={styles.voyageListContainer}>
-                    <VehicleList
-                      style={styles.voyageList}
-                      data={VehiclesData}
-                    />
-                  </View>
+                  {VehiclesData[0] !== undefined ? (
+                    <>
+                      <View style={styles.mainBidsContainer}>
+                        <View style={styles.currentBidsAndSeeAll}>
+                          <Text style={styles.currentBidsTitle}>Vehicles</Text>
+                        </View>
+                      </View>
+                      <View style={styles.voyageListContainer}>
+                        <VehicleList
+                          style={styles.voyageList}
+                          data={VehiclesData}
+                        />
+                      </View>
+                    </>
+                  ) : null}
 
-                  <View style={styles.mainBidsContainer}>
-                    <View style={styles.currentBidsAndSeeAll}>
-                      <Text style={styles.currentBidsTitle}>Voyages</Text>
-                    </View>
-                  </View>
-                  <View style={styles.voyageListContainer}>
-                    <VoyageListVertical
-                      style={styles.voyageList}
-                      data={VoyagesData}
-                    />
-                  </View>
+                  {VoyagesData !== null ? (
+                    <>
+                      <View style={styles.mainBidsContainer}>
+                        <View style={styles.currentBidsAndSeeAll}>
+                          <Text style={styles.currentBidsTitle}>Voyages</Text>
+                        </View>
+                      </View>
+                      <View style={styles.voyageListContainer}>
+                        <VoyageListVertical
+                          style={styles.voyageList}
+                          data={VoyagesData}
+                        />
+                      </View>
+                    </>
+                  ) : null}
                 </>
               ) : null}
             </View>

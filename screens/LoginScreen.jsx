@@ -35,8 +35,8 @@ const LoginScreen = ({ navigation }) => {
   const [responseUsername, setResponseUsername] = useState("");
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
   const [isFocusedPassword, setIsFocusedPassword] = useState(false);
-  const [isPasswordHidden, setIsPasswordHidden] = useState(false);
-  const [isPasswordHidden2, setIsPasswordHidden2] = useState(false);
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
+  const [isPasswordHidden2, setIsPasswordHidden2] = useState(true);
   const [loginOrRegister, setLoginOrRegister] = useState("Login");
   const [loginUser, { isLoading, isSuccess }] = useLoginUserMutation();
   const logoImageUrl =
@@ -76,7 +76,7 @@ const LoginScreen = ({ navigation }) => {
       console.log("login response: ", loginResponse);
       if (loginResponse.token) {
         console.log("login response userName: ", loginResponse.userName);
-        dispatch(
+        await dispatch(
           updateAsLoggedIn({
             userId: loginResponse.userId,
             token: loginResponse.token,
@@ -109,7 +109,7 @@ const LoginScreen = ({ navigation }) => {
       setPasswordR2("");
       console.log("register  response: ", registerResponse);
       if (registerResponse.token) {
-        dispatch(
+        await dispatch(
           updateAsLoggedIn({
             userId: registerResponse.userId,
             token: registerResponse.token,
@@ -141,6 +141,21 @@ const LoginScreen = ({ navigation }) => {
     setPasswordR2(text);
   };
 
+  const username = useSelector((state) => state.users.userName);
+
+  const handlePrint = () => {
+    console.log(username);
+  };
+
+  const handlePrintLocal = async () => {
+    const storedToken = await AsyncStorage.getItem("storedToken");
+    const storedUserId = await AsyncStorage.getItem("storedUserId");
+    console.log(".....");
+    console.log("stored user id: ", storedUserId);
+    console.log("storedToken: ", storedToken?.substring(0, 10) + "...");
+    console.log("username: ", username);
+  };
+
   return (
     <>
       <View style={{ backgroundColor: "white" }}>
@@ -151,6 +166,63 @@ const LoginScreen = ({ navigation }) => {
           <Text style={styles.parrotsText}>Welcome to Parrots</Text>
         </View>
       </View>
+
+      {/* <TouchableOpacity
+        style={[
+          styles.logoutBox,
+          { marginHorizontal: vh(3), backgroundColor: "lightblue" },
+        ]}
+        onPress={() => {
+          handlePrint();
+        }}
+        activeOpacity={0.2}
+      >
+        <View>
+          <View style={styles.innerProfileContainer}>
+            <Text
+              style={{
+                lineHeight: 22,
+                marginLeft: vw(2),
+                fontSize: 15,
+                padding: vh(2),
+              }}
+            >
+              Print
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[
+          styles.logoutBox,
+          {
+            marginHorizontal: vh(3),
+            marginTop: vh(1),
+            backgroundColor: "lightgreen",
+          },
+        ]}
+        onPress={() => {
+          handlePrintLocal();
+        }}
+        activeOpacity={0.2}
+      >
+        <View>
+          <View style={styles.innerProfileContainer}>
+            <Text
+              style={{
+                lineHeight: 22,
+                marginLeft: vw(2),
+                fontSize: 15,
+                padding: vh(2),
+              }}
+            >
+              Print Local
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity> */}
+
       {loginOrRegister === "Login" ? (
         <View style={styles.container}>
           <View style={styles.formContainer}>

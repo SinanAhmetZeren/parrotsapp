@@ -14,6 +14,7 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import { vh } from "react-native-expo-viewport-units";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -54,7 +55,6 @@ import {
   useGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
-import { isLoading } from "expo-font";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -111,7 +111,7 @@ const ProfileStack = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      {/* <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
 
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
@@ -138,7 +138,6 @@ const ProfileStack = () => {
     </Stack.Navigator>
   );
 };
-
 const MessageStack = () => {
   return (
     <Stack.Navigator
@@ -154,7 +153,6 @@ const MessageStack = () => {
     </Stack.Navigator>
   );
 };
-
 const HomeStack = () => {
   return (
     <Stack.Navigator
@@ -184,8 +182,9 @@ const AddNewStack = () => {
     </Stack.Navigator>
   );
 };
-
 const AuthStack = () => {
+  console.log("loading authstack");
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
@@ -362,6 +361,9 @@ function App() {
   function RenderNavigator() {
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
     const userId = useSelector((state) => state.users.userId);
+    const userName = useSelector((state) => state.users.userName);
+
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
     const dispatch = useDispatch();
 
     const {
@@ -386,11 +388,14 @@ function App() {
         try {
           const storedToken = await AsyncStorage.getItem("storedToken");
           const storedUserId = await AsyncStorage.getItem("storedUserId");
+          const storedUserName = await AsyncStorage.getItem("storedUserName");
+
           if (storedToken) {
             dispatch(
               updateStateFromLocalStorage({
                 token: storedToken,
                 userId: storedUserId,
+                userName: storedUserName,
               })
             );
           } else {
@@ -398,6 +403,8 @@ function App() {
           }
         } catch (error) {
           console.log("Error retrieving token: ", error);
+        } finally {
+          setIsInitialLoading(false);
         }
       };
 
@@ -406,12 +413,13 @@ function App() {
 
     useEffect(() => {
       if (isSuccessUser) {
-        dispatch(
-          updateUserData({
-            image: userData.profileImageUrl,
-            username: userData.userName,
-          })
-        );
+        console.log();
+        // dispatch(
+        //   updateUserData({
+        //     image: userData.profileImageUrl,
+        //     username: userData.userName,
+        //   })
+        // );
       }
 
       if (isSuccessFavoriteVehicles && isSuccessFavoriteVoyages) {
@@ -433,7 +441,21 @@ function App() {
       }
     }, [isSuccessUser, isSuccessFavoriteVehicles, isSuccessFavoriteVoyages]);
 
-    return isLoggedIn ? <TabNavigator isLoading={isLoading} /> : <AuthStack />;
+    if (isInitialLoading) {
+      return (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    }
+
+    return isLoggedIn ? (
+      <TabNavigator isLoading={isLoadingUser} />
+    ) : (
+      <AuthStack />
+    );
   }
 
   return (

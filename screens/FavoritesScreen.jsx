@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(10),
   },
   currentBidsTitle: {
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: "700",
     color: "#3c9dde",
     paddingLeft: vw(5),
@@ -157,6 +157,8 @@ const styles = StyleSheet.create({
     paddingRight: vw(10),
   },
   mainBidsContainer2: {
+    backgroundColor: "white",
+
     borderRadius: vw(5),
     padding: vh(5),
   },
@@ -193,6 +195,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(4),
     marginTop: vh(5),
     marginBottom: vh(20),
+    backgroundColor: "white",
   },
   bioBox: {
     paddingHorizontal: 10,

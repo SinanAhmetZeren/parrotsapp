@@ -138,6 +138,9 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const BlueHashTagText = ({ originalText }) => {
+    if (!originalText) {
+      return null;
+    }
     const words = originalText.split(" ");
     return (
       <Text style={styles.container}>
@@ -182,11 +185,19 @@ export default function ProfileScreen({ navigation }) {
           <ScrollView style={styles.scrollView}>
             <View style={styles.innerContainer}>
               <View style={styles.rectangularBox}>
-                <Image
-                  style={styles.imageContainer}
-                  resizeMode="cover"
-                  source={{ uri: backgroundImageUrl }}
-                />
+                {!userData.backgroundImageUrl ? (
+                  <Image
+                    style={styles.imageContainer}
+                    resizeMode="cover"
+                    source={require("../assets/amazonForest.jpg")}
+                  />
+                ) : (
+                  <Image
+                    style={styles.imageContainer}
+                    resizeMode="cover"
+                    source={{ uri: backgroundImageUrl }}
+                  />
+                )}
               </View>
 
               <View style={styles.buttonsContainer}>
@@ -313,19 +324,23 @@ export default function ProfileScreen({ navigation }) {
                     ) : (
                       <>
                         <Text>{userData.userName.slice(0, 30)}</Text>
-                        <Text style={styles.clickableText}>...</Text>
+                        {userData.userName?.length > 30 ? (
+                          <Text style={styles.clickableText}>...</Text>
+                        ) : null}
                       </>
                     )}
                   </Text>
                 </View>
                 <View>
                   <Text style={styles.title}>
-                    {userData.title.length <= 35 ? (
+                    {userData.title?.length <= 35 ? (
                       userData.title
                     ) : (
                       <>
-                        <Text>{userData.title.slice(0, 3)}</Text>
-                        <Text style={styles.clickableText}>...</Text>
+                        <Text>{userData.title?.slice(0, 3)}</Text>
+                        {userData.title?.length > 30 ? (
+                          <Text style={styles.clickableText}>...</Text>
+                        ) : null}
                       </>
                     )}
                   </Text>
@@ -345,24 +360,39 @@ export default function ProfileScreen({ navigation }) {
                       <Text style={styles.currentBidsTitle}>Vehicles</Text>
                     </View>
                   </View>
-                  <View style={styles.voyageListContainer}>
-                    <VehicleList
-                      style={styles.voyageList}
-                      data={VehiclesData}
-                    />
-                  </View>
-
+                  {VehiclesData[0] !== undefined ? (
+                    <View style={styles.voyageListContainer}>
+                      <VehicleList
+                        style={styles.voyageList}
+                        data={VehiclesData}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.notCreated}>
+                      <Text style={styles.notCreatedText}>
+                        No vehicles created yet
+                      </Text>
+                    </View>
+                  )}
                   <View style={styles.mainBidsContainer}>
                     <View style={styles.currentBidsAndSeeAll}>
                       <Text style={styles.currentBidsTitle}>Voyages</Text>
                     </View>
                   </View>
-                  <View style={styles.voyageListContainer}>
-                    <VoyageListVertical
-                      style={styles.voyageList}
-                      data={VoyagesData}
-                    />
-                  </View>
+                  {VoyagesData !== null ? (
+                    <View style={styles.voyageListContainer}>
+                      <VoyageListVertical
+                        style={styles.voyageList}
+                        data={VoyagesData}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.notCreated}>
+                      <Text style={styles.notCreatedText}>
+                        No voyages created yet
+                      </Text>
+                    </View>
+                  )}
                 </>
               ) : null}
             </View>
@@ -374,6 +404,18 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  notCreated: {
+    paddingVertical: vh(2),
+    paddingHorizontal: vh(3),
+    backgroundColor: "#f2f2f2",
+    marginHorizontal: vh(3),
+    borderRadius: vh(2),
+    marginTop: vh(1),
+  },
+  notCreatedText: {
+    fontSize: 16,
+    color: "#9a9a9a",
+  },
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",

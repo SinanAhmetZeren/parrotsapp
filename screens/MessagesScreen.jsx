@@ -3,7 +3,7 @@
 /* eslint-disable no-undef */
 import React from "react";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
 import { HubConnectionBuilder } from "@microsoft/signalr";
@@ -76,7 +76,6 @@ export default function MessagesScreen({ navigation }) {
 
     hubConnection.on("ReceiveMessageRefetch", async () => {
       refetch();
-      console.log("refetch1");
     });
 
     return () => {
@@ -84,55 +83,60 @@ export default function MessagesScreen({ navigation }) {
     };
   }, []);
 
-  const sendMessage = (messageToSend) => {
-    const messageWithTimeStamp =
-      messageToSend + " - " + new Date().toLocaleString();
-    hubConnection.invoke(
-      "SendMessage",
-      userId,
-      recipientId,
-      messageWithTimeStamp
-    );
-  };
-
-  const handleSendMessage = () => {
-    sendMessage(message);
-  };
-
-  const printConnectionState = () => {
-    console.log(hubConnection._connectionState);
-  };
-  const printMessages = () => {
-    console.log(messagesData);
-    messagesData.forEach((message) => {
-      console.log(message.text);
-    });
-  };
-
   if (isSuccessMessages) {
+    console.log("...", messagesData);
     return (
       <View style={styles.container}>
-        <View>
-          <Text style={styles.recentChats}>Recent Chats</Text>
-        </View>
+        {messagesData ? (
+          <>
+            <View>
+              <Text style={styles.recentChats}>Recent Chats</Text>
+            </View>
 
-        <View style={styles.flatlist}>
-          <ConversationList data={messagesData} userId={userId} />
-        </View>
-        {/* 
-        <TouchableOpacity onPress={() => printConnectionState()}>
-          <Text>Print Connection State</Text>
-        </TouchableOpacity>
+            <View style={styles.flatlist}>
+              <ConversationList data={messagesData} userId={userId} />
+            </View>
+          </>
+        ) : (
+          <>
+            <View style={styles.mainBidsContainer2}>
+              <View style={styles.currentBidsAndSeeAll2}>
+                <Image
+                  source={require("../assets/parrots-logo.jpg")}
+                  style={styles.logoImage}
+                />
 
-        <TouchableOpacity onPress={() => printMessages()}>
-          <Text>Print Messages</Text>
-        </TouchableOpacity> */}
+                <Text style={styles.currentBidsTitle2}>No messages yet...</Text>
+              </View>
+            </View>
+          </>
+        )}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  currentBidsTitle2: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#3c9dde",
+    paddingTop: vh(3),
+  },
+  logoImage: {
+    height: vh(20),
+    width: vh(20),
+    borderRadius: vh(10),
+  },
+  currentBidsAndSeeAll2: {
+    marginTop: vh(2),
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  mainBidsContainer2: {
+    marginTop: vh(7.5),
+    borderRadius: vw(5),
+  },
   buttonSave: {
     fontSize: 14,
     color: "white",

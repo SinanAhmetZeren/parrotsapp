@@ -21,6 +21,7 @@ export default function VoyageList({ data, direction }) {
       vehicletype={item.vehicle.type}
     />
   );
+  if (!data) return null;
 
   if (direction === "horizontal") {
     return (

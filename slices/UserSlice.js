@@ -21,6 +21,8 @@ const usersSlice = createSlice({
       state.userId = action.payload.userId;
       state.token = action.payload.token;
       state.userName = action.payload.userName;
+      console.log("--> ", action.payload);
+
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
           console.error("Error setting storedToken ", error);
@@ -29,6 +31,11 @@ const usersSlice = createSlice({
       AsyncStorage.setItem("storedUserId", action.payload.userId).catch(
         (error) => {
           console.error("Error setting storedUserId:", error);
+        }
+      );
+      AsyncStorage.setItem("storedUserName", action.payload.userName).catch(
+        (error) => {
+          console.error("Error setting storedUserName:", error);
         }
       );
     },
@@ -43,11 +50,15 @@ const usersSlice = createSlice({
       AsyncStorage.removeItem("storedUserId").catch((error) => {
         console.error("Error clearing AsyncStorage storedUserId:", error);
       });
+      AsyncStorage.removeItem("storedUserName").catch((error) => {
+        console.error("Error clearing AsyncStorage storedUserName:", error);
+      });
     },
     updateStateFromLocalStorage: (state, action) => {
-      const { token, userId } = action.payload;
+      const { token, userId, userName } = action.payload;
       state.userId = userId;
       state.token = token;
+      state.userName = userName;
       state.isLoggedIn = true;
     },
     updateUserData: (state, action) => {

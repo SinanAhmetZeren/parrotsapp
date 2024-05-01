@@ -7,6 +7,28 @@ import ConversationView from "./CoversationView";
 
 export default function ConversationList({ data, userId }) {
   // console.log(data[0]);
+  let transformedMessages = [];
+  if (data) {
+    transformedMessages = data.map((message) => {
+      const user =
+        message.senderId !== userId ? message.senderId : message.receiverId;
+      const userProfileImage =
+        message.senderId !== userId
+          ? message.senderProfileUrl
+          : message.receiverProfileUrl;
+      const userName =
+        message.senderId !== userId
+          ? message.senderUsername
+          : message.receiverUsername;
+      const text = message.text;
+      const dateTime = message.dateTime;
+      return { user, userName, userProfileImage, text, dateTime };
+    });
+  } else {
+    console.log("Data is null."); // or handle this case as needed
+  }
+
+  /*
   const transformedMessages = data.map((message) => {
     const user =
       message.senderId !== userId ? message.senderId : message.receiverId;
@@ -22,6 +44,7 @@ export default function ConversationList({ data, userId }) {
     const dateTime = message.dateTime;
     return { user, userName, userProfileImage, text, dateTime };
   });
+*/
 
   const renderConversationViews = () => {
     const sortedData = [...transformedMessages].sort((a, b) => {
