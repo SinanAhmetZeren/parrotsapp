@@ -133,20 +133,15 @@ const usersAdapter = createEntityAdapter({});
 const initialState = usersAdapter.getInitialState({});
 export const extendedApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getAllUsers: builder.query({
-      query: () => "/api/user/getAllUsers",
-      transformResponse: (responseData) => {
-        const { data } = responseData;
-        const newState = usersAdapter.setAll({}, data);
-        return newState;
+    getUsersByUsername: builder.query({
+      query: (username) => {
+        if (username) {
+          return `/api/User/searchUsers/${username}`;
+        } else {
+          return "";
+        }
       },
-      providesTags: (result, error, arg) => {
-        const userTags = result.data?.ids ?? [];
-        return [
-          { type: "User", id: "LIST" },
-          ...userTags.map((id) => ({ type: "User", id })),
-        ];
-      },
+      transformResponse: (responseData) => responseData.data,
     }),
     registerUser: builder.mutation({
       query: (userData) => ({
@@ -154,7 +149,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: userData,
       }),
-      invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
     loginUser: builder.mutation({
       query: (userData) => ({
@@ -162,10 +156,15 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: userData,
       }),
-      invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
     getUserById: builder.query({
-      query: (userId) => `/api/User/getUserById/${userId}`,
+      query: (userId) => {
+        if (userId) {
+          return `/api/User/getUserById/${userId}`;
+        } else {
+          return "";
+        }
+      },
       transformResponse: (responseData) => responseData.data,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
@@ -211,14 +210,25 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       },
     }),
     getFavoriteVoyageIdsByUserId: builder.query({
-      query: (userId) => `/api/Favorite/getFavoriteVoyageIdsByUserId/${userId}`,
+      query: (userId) => {
+        if (userId) {
+          return `/api/Favorite/getFavoriteVoyageIdsByUserId/${userId}`;
+        } else {
+          return "";
+        }
+      },
       transformResponse: (responseData) => responseData.data,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
     getFavoriteVehicleIdsByUserId: builder.query({
-      query: (userId) =>
-        `/api/Favorite/getFavoriteVehicleIdsByUserId/${userId}`,
+      query: (userId) => {
+        if (userId) {
+          return `/api/Favorite/getFavoriteVehicleIdsByUserId/${userId}`;
+        } else {
+          return "";
+        }
+      },
       transformResponse: (responseData) => responseData.data,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
@@ -227,7 +237,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
   overrideExisting: true,
 });
 export const {
-  useGetAllUsersQuery,
+  useGetUsersByUsernameQuery,
   useGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
   useRegisterUserMutation,
@@ -237,17 +247,3 @@ export const {
   useUpdateBackgroundImageMutation,
   usePatchUserMutation,
 } = extendedApiSlice;
-export const selectUsersResult =
-  extendedApiSlice.endpoints.getAllUsers.select();
-
-export const selectUsersData = createSelector(
-  selectUsersResult,
-  (usersResult) => usersResult.data
-);
-export const {
-  selectAll: selectAllUsers,
-  selectById: selectUserById,
-  selectIds: selectUserIds,
-} = usersAdapter.getSelectors(
-  (state) => selectUsersData(state) ?? initialState
-);

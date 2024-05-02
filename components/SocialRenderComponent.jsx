@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: 0,
     top: vh(1),
+    height: vh(22.5),
   },
   social_Main_4: {
     flexDirection: "column",
@@ -215,6 +216,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: vh(2),
     top: vh(1),
+    height: vh(22.5),
   },
   social_Main_3: {
     flexDirection: "column",
@@ -223,6 +225,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: vh(4),
     top: vh(1),
+    height: vh(22.5),
   },
   social_Main_2: {
     flexDirection: "column",
@@ -231,6 +234,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: vh(6),
     top: vh(1),
+    height: vh(22.5),
   },
   social_Main_1: {
     flexDirection: "column",
@@ -239,6 +243,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: vh(8),
     top: vh(1),
+    height: vh(22.5),
   },
 
   social_5_0: {

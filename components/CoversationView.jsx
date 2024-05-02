@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.5),
     fontWeight: "700",
-    color: "grey",
+    // color: "grey",
     color: "#3c9dde",
   },
   message: {

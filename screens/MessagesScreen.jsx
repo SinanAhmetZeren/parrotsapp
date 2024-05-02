@@ -3,26 +3,51 @@
 /* eslint-disable no-undef */
 import React from "react";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
+import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
+
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import { ConnectSelectionComponent } from "../components/ConnectSelectionComponent";
+import { SearchUsersComponent } from "../components/SearchUsersComponent";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function MessagesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
+  const [searchText, setSearchText] = useState("");
+  const [username, setUsername] = useState("");
+
   const {
     data: messagesData,
     isLoading: isLoadingMessages,
-    isError,
-    error,
+    isError: isErrorMessages,
+    error: errorMessages,
     isSuccess: isSuccessMessages,
     refetch,
   } = useGetMessagesByUserIdQuery(userId);
+
+  const {
+    data: usersData,
+    isLoading: isLoadingUsers,
+    isError: isErrorUsers,
+    error: errorUser,
+    isSuccess: isSuccessUsers,
+    refetch: refetchUsers,
+  } = useGetUsersByUsernameQuery(username);
+
   const [receivedMessageData, setReceivedMessageData] = useState("");
-  const [transformedMessages, setTransformedMessages] = useState([]);
+  const [selectedFunction, setSelectedFunction] = useState(1);
 
   const recipientId = userId;
   const hubConnection = useMemo(() => {
@@ -49,7 +74,6 @@ export default function MessagesScreen({ navigation }) {
     }, [refetch, navigation])
   );
 
-  // SIGNALR
   useEffect(() => {
     const startHubConnection = async () => {
       try {
@@ -82,48 +106,149 @@ export default function MessagesScreen({ navigation }) {
     };
   }, []);
 
+  const handleSearchUsers = async () => {
+    // console.log("currently: ", usersData);
+    setUsername(searchText);
+    try {
+      await refetchUsers();
+      console.log("refetching: ", usersData);
+    } catch (error) {
+      console.error("Error refetching users data:", error);
+    }
+  };
+
   if (isSuccessMessages) {
     return (
-      <View style={styles.container}>
-        {messagesData ? (
-          <>
-            <View style={styles.mainBidsContainer}>
-              <View style={styles.currentBidsAndSeeAll}>
-                <Text style={styles.currentBidsTitle}>Recent Chats</Text>
-              </View>
-            </View>
-
-            <View style={styles.flatlist}>
-              <ConversationList data={messagesData} userId={userId} />
-            </View>
-          </>
-        ) : (
-          <>
-            <View style={styles.mainBidsContainer2}>
-              <View style={styles.currentBidsAndSeeAll2}>
-                <Image
-                  source={require("../assets/parrots-logo.jpg")}
-                  style={styles.logoImage}
+      <>
+        {selectedFunction === 1 ? (
+          <View style={styles.container}>
+            {messagesData ? (
+              <>
+                <ConnectSelectionComponent
+                  selectedFunction={selectedFunction}
+                  setSelectedFunction={setSelectedFunction}
                 />
 
-                <Text style={styles.currentBidsTitle2}>No messages yet...</Text>
-              </View>
-            </View>
-          </>
+                <View style={styles.flatlist}>
+                  <ConversationList data={messagesData} userId={userId} />
+                </View>
+              </>
+            ) : (
+              <>
+                <ConnectSelectionComponent
+                  selectedFunction={selectedFunction}
+                  setSelectedFunction={setSelectedFunction}
+                />
+
+                <View style={styles.mainBidsContainer2}>
+                  <View style={styles.currentBidsAndSeeAll2}>
+                    <Image
+                      source={require("../assets/parrots-logo.jpg")}
+                      style={styles.logoImage}
+                    />
+
+                    <Text style={styles.currentBidsTitle2}>
+                      No messages yet...
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )}
+          </View>
+        ) : (
+          <View style={styles.container}>
+            {
+              <>
+                <ConnectSelectionComponent
+                  selectedFunction={selectedFunction}
+                  setSelectedFunction={setSelectedFunction}
+                />
+
+                <View style={styles.messageTextContainer}>
+                  <View style={styles.searchBar}>
+                    <TextInput
+                      onChangeText={(text) => {
+                        setSearchText(text);
+                      }}
+                      style={styles.textinputStyle}
+                      numberOfLines={1}
+                      placeholder="Type username "
+                      placeholderTextColor="#a3b4c5"
+                    >
+                      {searchText}
+                    </TextInput>
+                    <TouchableOpacity
+                      onPress={handleSearchUsers}
+                      style={styles.magnifier}
+                    >
+                      {searchText.length > 2 ? (
+                        <FontAwesome name="search" size={24} color="#3c9dde" />
+                      ) : (
+                        <FontAwesome
+                          name="search"
+                          size={24}
+                          color="rgba(118, 186, 232,0.35)"
+                        />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+
+                  <SearchUsersComponent searchResults={usersData} />
+                </View>
+              </>
+            }
+          </View>
         )}
-      </View>
+      </>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  magnifier: {
+    alignSelf: "center",
+    padding: vw(3),
+    backgroundColor: "rgba(118, 186, 232,0.15)",
+    borderRadius: vw(10),
+  },
+
+  searchBar: {
+    flexDirection: "row",
+    paddingLeft: vh(2),
+    backgroundColor: "#fefdfd",
+    marginHorizontal: vw(2),
+    borderRadius: vh(3),
+  },
+  textinputStyle: {
+    padding: vh(1),
+    margin: vh(1),
+    alignSelf: "center",
+    backgroundColor: "#f9f5f1",
+    width: vw(75),
+    height: vh(5),
+    borderRadius: vh(2),
+  },
+  selectionContainer: {
+    flexDirection: "row",
+  },
   currentBidsTitle: {
     fontSize: 26,
     fontWeight: "700",
     color: "#3c9dde",
     paddingLeft: vw(5),
   },
-
+  selectedTitle: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#3c9dde",
+    paddingLeft: vw(5),
+  },
+  nonSelectedTitle: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "rgba(118, 186, 232,0.5)",
+    paddingLeft: vw(5),
+  },
   currentBidsAndSeeAll: {
     marginTop: vh(2),
     flexDirection: "row",
@@ -132,6 +257,17 @@ const styles = StyleSheet.create({
   mainBidsContainer: {
     borderRadius: vw(5),
     borderColor: "#93c9ed",
+  },
+  mainBidsContainer3: {
+    borderRadius: vw(5),
+    borderColor: "#93c9ed",
+    width: vw(55),
+    alignItems: "center",
+  },
+  mainBidsContainer4: {
+    borderRadius: vw(5),
+    borderColor: "#93c9ed",
+    width: vw(40),
   },
   currentBidsTitle2: {
     fontSize: 20,

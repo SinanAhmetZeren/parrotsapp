@@ -151,6 +151,10 @@ const MessageStack = () => {
         name="ConversationDetailScreen"
         component={ConversationDetailScreen}
       />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublic}
+      />
     </Stack.Navigator>
   );
 };
@@ -338,7 +342,7 @@ const TabNavigator = () => {
                         : { fontSize: 12, color: "#000" }
                     }
                   >
-                    Messages
+                    Connect
                   </Text>
                 </View>
               );

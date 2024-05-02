@@ -166,7 +166,14 @@ export const ConversationDetailScreen = ({ navigation }) => {
         <View
           style={textInputBottomMargin === 0 ? {} : { top: 0, zIndex: 100 }}
         >
-          <View style={styles.headerContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("ProfileScreenPublic", {
+                userId: conversationUserId,
+              });
+            }}
+            style={styles.headerContainer}
+          >
             <View style={styles.imageContainer}>
               <Image
                 source={{
@@ -178,7 +185,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
             <View>
               <Text style={styles.nameStyle}>{name}</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
         {/* // HEADER // */}
 
