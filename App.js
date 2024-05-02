@@ -68,7 +68,8 @@ const screenOptions = {
     right: 0,
     left: 0,
     elevation: 0,
-    height: 120,
+    // height: 120,
+    height: vh(14),
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     backgroundColor: "#fff6ec",
@@ -202,6 +203,35 @@ const TabNavigator = () => {
     <>
       <Tab.Navigator screenOptions={screenOptions}>
         <Tab.Screen
+          name="Home"
+          component={HomeStack}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <Feather
+                    name="home"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? { fontSize: 12, color: "#3aa4ff" }
+                        : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Home
+                  </Text>
+                </View>
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
           name="ProfileStack"
           component={ProfileStack}
           options={{
@@ -226,35 +256,6 @@ const TabNavigator = () => {
                     }
                   >
                     Profile
-                  </Text>
-                </View>
-              );
-            },
-          }}
-        />
-
-        <Tab.Screen
-          name="Home"
-          component={HomeStack}
-          options={{
-            tabBarIcon: ({ focused }) => {
-              return (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                  <Feather
-                    name="home"
-                    size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Home
                   </Text>
                 </View>
               );
@@ -414,24 +415,32 @@ function App() {
     }, [dispatch]);
 
     useEffect(() => {
-      if (isSuccessFavoriteVehicles && isSuccessFavoriteVoyages) {
-        if (favoriteVehicleData === null || favoriteVoyageData === null) {
-          dispatch(
-            updateUserFavorites({
-              favoriteVehicles: [],
-              favoriteVoyages: [],
-            })
-          );
-        } else {
-          dispatch(
-            updateUserFavorites({
-              favoriteVehicles: favoriteVehicleData,
-              favoriteVoyages: favoriteVoyageData,
-            })
-          );
-        }
+      if (
+        isSuccessUser &&
+        isSuccessFavoriteVehicles &&
+        isSuccessFavoriteVoyages
+      ) {
+        console.log("userid:", userId);
+        console.log("userdata: ", userData.userId);
+        console.log("fav vehicles: ", favoriteVehicleData);
+        console.log("fav voyages: ", favoriteVoyageData);
+        console.log("issuccessuser: ", isSuccessUser);
+        dispatch(
+          updateUserFavorites({
+            favoriteVehicles: favoriteVehicleData ? favoriteVehicleData : [0],
+            favoriteVoyages: favoriteVoyageData ? favoriteVoyageData : [0],
+          })
+        );
       }
-    }, [isSuccessUser, isSuccessFavoriteVehicles, isSuccessFavoriteVoyages]);
+    }, [
+      dispatch,
+      isSuccessUser,
+      isSuccessFavoriteVehicles,
+      isSuccessFavoriteVoyages,
+      favoriteVehicleData,
+      favoriteVoyageData,
+      userData,
+    ]);
 
     if (
       isInitialLoading ||

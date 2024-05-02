@@ -105,6 +105,7 @@ const VoyageDetailScreen = () => {
 
   useEffect(() => {
     if (isSuccessVoyages && userFavoriteVoyages) {
+      console.log("user favorite voyages: ", userFavoriteVoyages);
       if (userFavoriteVoyages.includes(VoyageData.id)) {
         setIsFavorited(true);
       }
@@ -124,13 +125,7 @@ const VoyageDetailScreen = () => {
         }
       }
     }
-  }, [isSuccessVoyages, VoyageData]);
-
-  useEffect(() => {
-    console.log("userBidMessage ", userBidMessage);
-    console.log("userBidPrice ", userBidPrice);
-    console.log("userBidPersons ", userBidPersons);
-  }, [userBidMessage, userBidPersons, userBidPrice]);
+  }, [isSuccessVoyages, VoyageData, isFavorited]);
 
   const getInitialRegion = (waypoints) => {
     const maxLatitude = Math.max(

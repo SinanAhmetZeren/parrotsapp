@@ -22,7 +22,6 @@ const usersSlice = createSlice({
       state.token = action.payload.token;
       state.userName = action.payload.userName;
       state.userProfileImage = action.payload.profileImageUrl;
-
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
           console.error("Error setting storedToken ", error);
@@ -85,6 +84,7 @@ const usersSlice = createSlice({
       state.userFavoriteVoyages = action.payload.favoriteVoyages;
     },
     addVoyageToUserFavorites: (state, action) => {
+      console.log("voyage to add: ", action.payload.favoriteVoyage);
       state.userFavoriteVoyages = [
         ...state.userFavoriteVoyages,
         action.payload.favoriteVoyage,
@@ -92,11 +92,13 @@ const usersSlice = createSlice({
     },
     removeVoyageFromUserFavorites: (state, action) => {
       const voyageToRemove = action.payload.favoriteVoyage;
+      console.log("voyage to remove: ", voyageToRemove);
       state.userFavoriteVoyages = state.userFavoriteVoyages.filter(
         (voyage) => voyage !== voyageToRemove
       );
     },
     addVehicleToUserFavorites: (state, action) => {
+      console.log("vehicle to add: ", action.payload.favoriteVehicle);
       state.userFavoriteVehicles = [
         ...state.userFavoriteVehicles,
         action.payload.favoriteVehicle,
@@ -104,6 +106,7 @@ const usersSlice = createSlice({
     },
     removeVehicleFromUserFavorites: (state, action) => {
       const vehicleToRemove = action.payload.favoriteVehicle;
+      console.log("vehicle to remove: ", vehicleToRemove);
       state.userFavoriteVehicles = state.userFavoriteVehicles.filter(
         (vehicle) => vehicle !== vehicleToRemove
       );

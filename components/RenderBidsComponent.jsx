@@ -53,7 +53,7 @@ export const RenderBidsComponent = ({
   }, []);
 
   const handleAcceptBid = ({ bidId, bidUserId }) => {
-    const text = `Hi there! Welcome on board to ${voyageName}`;
+    const text = `Hi there! 👋 Welcome on board to "${voyageName}" 🎉`;
 
     hubConnection.invoke("SendMessage", currentUserId, bidUserId, text);
 

@@ -115,7 +115,7 @@ const LoginScreen = ({ navigation }) => {
             userId: registerResponse.userId,
             token: registerResponse.token,
             userName: registerResponse.userName,
-            profileImageUrl: loginResponse.profileImageUrl,
+            profileImageUrl: registerResponse.profileImageUrl,
           })
         );
       }

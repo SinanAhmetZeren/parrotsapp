@@ -98,7 +98,7 @@ export const SocialRenderComponent = ({
       <View
         style={[
           styles[`social_Main_${contactDataArray.length}`],
-          { marginLeft: vh(8) },
+          { marginLeft: vh(8), marginTop: vh(0.8) },
         ]}
       >
         {renderAllItems()}
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    left: vw(-10.5),
+    left: vw(-12),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   social_5_1: {
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    left: vw(-10.5),
+    left: vw(-12),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   //////
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    left: vw(-7),
+    left: vw(-8.5),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   social_4_1: {
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: vh(0.5),
     marginBottom: 2,
-    left: vw(-7),
+    left: vw(-8.5),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   //////
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    left: vw(-4),
+    left: vw(-4.5),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   social_2_1: {
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "rgba(162, 208, 239,0.2)",
     borderRadius: 20,
-    marginTop: 2,
+    marginTop: vh(1),
     marginBottom: 2,
     left: vw(-4),
     borderColor: "rgba(190, 119, 234,0.4)",

@@ -334,15 +334,6 @@ const CreateVehicleScreen = () => {
                     />
                   </View>
 
-                  <View style={{ display: "none" }}>
-                    <Button
-                      title="print state1"
-                      onPress={() => {
-                        printState();
-                      }}
-                    />
-                  </View>
-
                   <View style={styles.step123}>
                     <Button
                       title="step 1"

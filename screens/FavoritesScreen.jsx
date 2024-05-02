@@ -10,6 +10,7 @@ import {
   Text,
   ActivityIndicator,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import VoyageListVertical from "../components/VoyageListVertical";
