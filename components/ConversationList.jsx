@@ -2,8 +2,9 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import ConversationView from "./CoversationView";
+import { vh } from "react-native-expo-viewport-units";
 
 export default function ConversationList({ data, userId }) {
   let transformedMessages = [];
@@ -27,24 +28,6 @@ export default function ConversationList({ data, userId }) {
     console.log("Data is null.");
   }
 
-  /*
-  const transformedMessages = data.map((message) => {
-    const user =
-      message.senderId !== userId ? message.senderId : message.receiverId;
-    const userProfileImage =
-      message.senderId !== userId
-        ? message.senderProfileUrl
-        : message.receiverProfileUrl;
-    const userName =
-      message.senderId !== userId
-        ? message.senderUsername
-        : message.receiverUsername;
-    const text = message.text;
-    const dateTime = message.dateTime;
-    return { user, userName, userProfileImage, text, dateTime };
-  });
-*/
-
   const renderConversationViews = () => {
     const sortedData = [...transformedMessages].sort((a, b) => {
       return new Date(b.dateTime) - new Date(a.dateTime);
@@ -63,12 +46,16 @@ export default function ConversationList({ data, userId }) {
     ));
   };
 
-  return <View style={styles.container}>{renderConversationViews()}</View>;
+  return (
+    <ScrollView style={styles.container}>
+      {renderConversationViews()}
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    
+    height: vh(80),
   },
 });
