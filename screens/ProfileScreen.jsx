@@ -96,7 +96,6 @@ export default function ProfileScreen({ navigation }) {
   const handleEmailPress = async () => {
     if (userData.email) {
       let emailStr = userData.email;
-
       try {
         await Clipboard.setStringAsync(emailStr);
         Toast.show({
@@ -452,7 +451,8 @@ const styles = StyleSheet.create({
   scrollView: {
     height: vh(95),
     borderRadius: vh(4),
-    backgroundColor: "white",
+    // backgroundColor: "white",
+    backgroundColor: "#fff6f0",
   },
   bioBox: {
     paddingHorizontal: 10,
@@ -592,7 +592,9 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     paddingBottom: vh(0.95),
-    backgroundColor: "white",
+    // backgroundColor: "white",
+    backgroundColor: "#fff6f0",
+
     // top: vh(-9),
   },
   //container of social

@@ -7,6 +7,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { vh, vw } from "react-native-expo-viewport-units";
 
 const DropdownComponent = ({ data, setVehicleId }) => {
+  console.log("vehicles are: ", data);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
 

@@ -8,7 +8,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 
 const DropdownComponentType = ({ data, setVehicleType, selected }) => {
   const [isFocus, setIsFocus] = useState(false);
-
+  console.log("dropdown component selected: ", selected);
   return (
     <View style={styles.container}>
       <Dropdown

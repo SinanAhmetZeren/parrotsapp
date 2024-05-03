@@ -29,15 +29,17 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     createVehicle: builder.mutation({
       query: (data) => {
-        const { formData, name, description, userId, capacity } = data;
+        const { formData, name, description, userId, capacity, vehicleType } =
+          data;
         const queryParams = new URLSearchParams({
           Name: name,
           Description: description,
           UserId: userId,
           Capacity: capacity,
+          Type: vehicleType,
         });
         const url = `/api/Vehicle/AddVehicle?${queryParams}`;
-
+        console.log("url: ", url);
         return {
           url,
           method: "POST",

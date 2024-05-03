@@ -424,11 +424,6 @@ function App() {
         isSuccessFavoriteVehicles &&
         isSuccessFavoriteVoyages
       ) {
-        console.log("userid:", userId);
-        console.log("userdata: ", userData.userId);
-        console.log("fav vehicles: ", favoriteVehicleData);
-        console.log("fav voyages: ", favoriteVoyageData);
-        console.log("issuccessuser: ", isSuccessUser);
         dispatch(
           updateUserFavorites({
             favoriteVehicles: favoriteVehicleData ? favoriteVehicleData : [0],

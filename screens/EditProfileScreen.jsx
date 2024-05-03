@@ -12,6 +12,8 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import Checkbox from "expo-checkbox";
+
 import {
   useGetUserByIdQuery,
   useUpdateProfileImageMutation,
@@ -52,6 +54,7 @@ const EditProfileScreen = ({ navigation }) => {
   const [bio, setBio] = useState("");
   const [image, setImage] = useState(null);
   const [image2, setImage2] = useState(null);
+  const [emailHidden, setEmailHidden] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
@@ -115,6 +118,7 @@ const EditProfileScreen = ({ navigation }) => {
       { op: "replace", path: "/youtube", value: youtubeProfile },
       { op: "replace", path: "/title", value: title },
       { op: "replace", path: "/bio", value: bio },
+      { op: "replace", path: "/emailVisible", value: !emailHidden },
     ];
     try {
       const response = await patchUser({ patchDoc, userId });
@@ -161,6 +165,7 @@ const EditProfileScreen = ({ navigation }) => {
       setUsername(userData.userName);
       setTitle(userData.title);
       setBio(userData.bio);
+      setEmailHidden(!userData.emailVisible);
     }
   }, [isSuccess, userData]);
 
@@ -245,6 +250,23 @@ const EditProfileScreen = ({ navigation }) => {
               onChangeText={(text) => setEmail(text)}
               style={styles.textInput}
             />
+          </View>
+
+          <View style={styles.socialBoxCheckbox}>
+            <Fontisto
+              style={styles.icon}
+              name="email"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Hide Email</Text>
+            <View style={styles.checkboxContainer}>
+              <Checkbox
+                value={emailHidden}
+                onValueChange={setEmailHidden}
+                color={emailHidden ? "rgba(0, 119, 234,0.9)" : undefined}
+              />
+            </View>
           </View>
 
           {/* Phone Number */}
@@ -387,10 +409,15 @@ const EditProfileScreen = ({ navigation }) => {
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
+  checkboxContainer: {
+    justifyContent: "center",
+    paddingLeft: vw(2),
+  },
   profileBackGround: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgb(183, 220, 255)",
+    // backgroundColor: "rgb(183, 220, 255)",
+    backgroundColor: "#fff6f0",
     top: vh(-6),
     borderRadius: vh(3),
   },
@@ -421,7 +448,8 @@ const styles = StyleSheet.create({
     left: vw(4),
   },
   scrollview: {
-    backgroundColor: "rgb(183, 220, 255)",
+    // backgroundColor: "rgb(183, 220, 255)",
+    backgroundColor: "#fff6f0",
   },
   profileImage: {
     top: vh(-8),
@@ -515,6 +543,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     borderColor: "rgba(190, 119, 234,0.4)",
+  },
+  socialBoxCheckbox: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 20,
+    marginTop: 2,
+    borderColor: "rgba(190, 119, 234,0.4)",
+    paddingVertical: vh(0.4),
   },
   socialBoxBio: {
     flexDirection: "row",

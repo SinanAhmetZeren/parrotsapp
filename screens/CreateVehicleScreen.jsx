@@ -38,7 +38,16 @@ const CreateVehicleScreen = () => {
   9. Final Destination - Tranquil Harbor: Conclude your expedition at Tranquil Harbor, a serene retreat where the memories of the voyage linger, offering a final opportunity for quiet reflection.
   `;
 
-  const [name, setName] = useState("Island Breezes Expedition");
+  const currentDate = new Date();
+  const hours = currentDate.getHours();
+  const minutes = currentDate.getMinutes();
+  const seconds = currentDate.getSeconds();
+  const formattedHours = hours < 10 ? `0${hours}` : hours.toString();
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
+  const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+  const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
+
+  const [name, setName] = useState(timeString);
   const [description, setDescription] = useState(voyageDes);
   const [capacity, setCapacity] = useState("15");
   const [vehicleType, setVehicleType] = useState("");
@@ -54,6 +63,8 @@ const CreateVehicleScreen = () => {
   const changeCurrentState = (index) => {
     setCurrentStep(index);
   };
+
+  console.log("vehicle type: ", vehicleType);
 
   const goToProfilePage = () => {
     setName("");
@@ -171,22 +182,22 @@ const CreateVehicleScreen = () => {
   if (true) {
     //const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
 
-    const VehicleTypes = {
-      Boat: "Boat",
-      Car: "Car",
-      Caravan: "Caravan",
-      Bus: "Bus",
-      Walk: "Walk",
-      Run: "Run",
-      Motorcycle: "Motorcycle",
-      Bicycle: "Bicycle",
-      TinyHouse: "TinyHouse",
-      Airplane: "Airplane",
-    };
+    const VehicleTypes = [
+      "Boat",
+      "Car",
+      "Caravan",
+      "Bus",
+      "Walk",
+      "Run",
+      "Motorcycle",
+      "Bicycle",
+      "TinyHouse",
+      "Airplane",
+    ];
 
-    const dropdownData = Object.keys(VehicleTypes).map((key, index) => ({
-      label: key,
-      value: key,
+    const dropdownData = VehicleTypes.map((type) => ({
+      label: type,
+      value: type,
     }));
 
     const maxItems = 10;
@@ -252,7 +263,6 @@ const CreateVehicleScreen = () => {
                     </View>
                   </View>
                   {/* /// name  /// */}
-
                   {/* /// type /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
@@ -270,11 +280,11 @@ const CreateVehicleScreen = () => {
                       <DropdownComponentType
                         data={dropdownData}
                         setVehicleType={setVehicleType}
+                        selected={vehicleType}
                       />
                     </View>
                   </View>
                   {/* /// type /// */}
-
                   {/* /// DESC /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
@@ -300,7 +310,6 @@ const CreateVehicleScreen = () => {
                     </View>
                   </View>
                   {/* /// DESC  /// */}
-
                   {/* /// VACANCY /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
@@ -325,34 +334,14 @@ const CreateVehicleScreen = () => {
                     </View>
                   </View>
                   {/* /// VACANCY /// */}
-
                   {/* Save Button */}
-                  <View style={styles.createVoyageButton}>
-                    <Button
-                      title="Create Vehicle"
+                  <View style={styles2.modalView}>
+                    <TouchableOpacity
+                      style={styles2.selection}
                       onPress={() => handleCreateVehicle()}
-                    />
-                  </View>
-
-                  <View style={styles.step123}>
-                    <Button
-                      title="step 1"
-                      onPress={() => {
-                        changeCurrentState(1);
-                      }}
-                    />
-                    <Button
-                      title="step 2"
-                      onPress={() => {
-                        changeCurrentState(2);
-                      }}
-                    />
-                    <Button
-                      title="step 3"
-                      onPress={() => {
-                        changeCurrentState(3);
-                      }}
-                    />
+                    >
+                      <Text style={styles2.choiceText}>Create Vehicle</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
@@ -458,6 +447,27 @@ const CreateVehicleScreen = () => {
 export default CreateVehicleScreen;
 
 const styles2 = StyleSheet.create({
+  modalView: {
+    backgroundColor: "#2184c6",
+    borderRadius: vh(3),
+    borderWidth: 2,
+    borderColor: "#76bae8",
+    alignSelf: "center",
+    marginTop: vh(0.8),
+  },
+  selection: {
+    marginHorizontal: vh(0.5),
+    marginVertical: vh(0.5),
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(1),
+    backgroundColor: "#15537d",
+    borderRadius: vh(2.5),
+  },
+  choiceText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "white",
+  },
   imageContainer1: {
     // backgroundColor: "white",
   },

@@ -45,6 +45,7 @@ import {
   addVoyageToUserFavorites,
   removeVoyageFromUserFavorites,
 } from "../slices/UserSlice";
+import { current } from "@reduxjs/toolkit";
 
 const VoyageDetailScreen = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -155,16 +156,16 @@ const VoyageDetailScreen = () => {
 
   const getCurrentPageLink = () => {
     if (route) {
-      // Replace 'YourScreen' with the name of the screen you want to share
-      const currentScreenLink = `https://measured-wolf-grossly.ngrok-free.app/${route.name}`;
+      const currentScreenLink = `https://measured-wolf-grossly.ngrok-free.app/${route.name}/${voyageId}`;
       return currentScreenLink;
     }
     return null;
   };
 
-  const shareLink = async () => {
+  const handleShare = async () => {
     const currentScreenLink = getCurrentPageLink();
 
+    console.log("currentScreenLink ", currentScreenLink);
     if (currentScreenLink) {
       try {
         const result = await Share.share({
@@ -478,14 +479,17 @@ const VoyageDetailScreen = () => {
               </TouchableOpacity>
             )}
 
-            <View style={styles.shareContainer1}>
+            <TouchableOpacity
+              onPress={() => handleShare()}
+              style={styles.shareContainer1}
+            >
               <MaterialIcons
                 name="ios-share"
                 size={24}
                 color="black"
                 style={styles.shareContainer2}
               />
-            </View>
+            </TouchableOpacity>
           </View>
           <View style={styles.waypointsContainer}>
             <View style={styles.WaypointsAndInfo}>

@@ -17,7 +17,7 @@ export const SocialRenderComponent = ({
   handlePhonePress,
 }) => {
   let contactDataArray = [];
-  if (userData.email !== null) {
+  if (userData.email !== null && userData.emailVisible === true) {
     contactDataArray.push([userData.email, 0]);
   }
   if (userData.instagram !== null) {
