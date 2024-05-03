@@ -283,7 +283,7 @@ const TabNavigator = () => {
                   <View style={styles.plusContainer}>
                     <Image
                       style={styles.plusSign}
-                      source={require("./assets/plus-thin.png")}
+                      source={require("./assets/plus-thin2.png")}
                     />
                   </View>
                 </View>

@@ -48,7 +48,16 @@ const CreateVoyageScreen = () => {
   const [addVoyageImage] = useAddVoyageImageMutation();
   const [deleteVoyageImage] = useDeleteVoyageImageMutation();
 
-  const [name, setName] = useState("Island Breezes Expedition");
+  const currentDate = new Date();
+  const hours = currentDate.getHours();
+  const minutes = currentDate.getMinutes();
+  const seconds = currentDate.getSeconds();
+  const formattedHours = hours < 10 ? `0${hours}` : hours.toString();
+  const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
+  const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
+  const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
+
+  const [name, setName] = useState("Voyage " + timeString);
   const [brief, setBrief] = useState(
     "The Island Breezes Expedition beckons, a tranquil sailboat voyage designed for camaraderie and natural wonders. Join your friends on an odyssey embracing the open seas and secluded islands. This voyage invites you to witness nature's spectacle and find serenity in the rhythmic embrace of wind and waves."
   );
@@ -57,14 +66,7 @@ const CreateVoyageScreen = () => {
   Waypoints:
   1. Harbor Haven (Starting Point): Begin your journey from Harbor Haven, a haven for sailors, echoing with tales of the sea and the promise of exploration.
   2. Open Waters Gateway: Navigate through the Open Waters Gateway, a vast expanse offering panoramic views and the gentle embrace of the open sea.
-  3. Sunset Archipelago: Anchor at Sunset Archipelago, where islands glow with the warm hues of twilight, providing the perfect setting for shared stories under the starlit sky.
-  4. Whale Watch Cove: Sail to Whale Watch Cove, renowned for encounters with marine wonders. Marvel at playful dolphins and the majestic presence of whales.
-  5. Hidden Lagoon Oasis: Set course for the Hidden Lagoon Oasis, a secluded paradise surrounded by lush landscapes and pristine waters, inviting moments of peaceful reflection.
-  6. Island Village Exploration: Dock at an Island Village, immersing yourself in local culture and savoring authentic cuisine, forging connections with the welcoming islanders.
-  7. Trade Winds Passage: Navigate the Trade Winds Passage, allowing the winds to carry you effortlessly towards the next captivating destination, embodying a sense of boundless freedom.
-  8. Reef Guardian Sanctuary: Discover the Reef Guardian Sanctuary, an underwater haven boasting vibrant coral reefs and diverse marine life, inviting exploration beneath the surface.
-  9. Final Destination - Tranquil Harbor: Conclude your expedition at Tranquil Harbor, a serene retreat where the memories of the voyage linger, offering a final opportunity for quiet reflection.
-  `;
+ `;
 
   const [description, setDescription] = useState(voyageDes);
   const [vacancy, setVacancy] = useState("15");
@@ -281,10 +283,16 @@ const CreateVoyageScreen = () => {
 
   if (isSuccess) {
     const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
-    const dropdownData = userData.usersVehicles.map((vehicle) => ({
-      label: vehicle.name,
-      value: vehicle.id,
-    }));
+
+    const dropdownData = [
+      { label: "Walk", value: 63 },
+      { label: "Run", value: 64 },
+    ].concat(
+      userData.usersVehicles.map((vehicle) => ({
+        label: vehicle.name,
+        value: vehicle.id,
+      }))
+    );
 
     const maxItems = 10;
     const placeholders = Array.from({ length: maxItems }, (_, index) => ({

@@ -309,17 +309,39 @@ const VoyageDetailScreen = () => {
                     <TouchableOpacity
                       style={styles.voyageBoat}
                       onPress={() => {
-                        goToVehiclePage(VoyageData.vehicle.id);
+                        if (
+                          VoyageData.vehicleType !== 4 &&
+                          VoyageData.vehicleType !== 5
+                        ) {
+                          goToVehiclePage(VoyageData.vehicle.id);
+                        }
                       }}
                     >
-                      <Image
-                        source={{
-                          uri:
-                            VehicleImageBaseUrl +
-                            VoyageData.vehicle.profileImageUrl,
-                        }}
-                        style={styles.profileImage}
-                      />
+                      {VoyageData.vehicleType === 4 ? (
+                        <FontAwesome5
+                          name="walking"
+                          size={16}
+                          color="rgba(10, 119, 234,1)"
+                          style={[styles.icon, { paddingHorizontal: vh(1) }]}
+                        />
+                      ) : VoyageData.vehicleType === 5 ? (
+                        <FontAwesome5
+                          name="running"
+                          size={16}
+                          color="rgba(10, 119, 234,1)"
+                          style={[styles.icon, { paddingHorizontal: vh(1) }]}
+                        />
+                      ) : (
+                        <Image
+                          source={{
+                            uri:
+                              VehicleImageBaseUrl +
+                              VoyageData.vehicle.profileImageUrl,
+                          }}
+                          style={styles.profileImage}
+                        />
+                      )}
+
                       <Text style={styles.userName}>
                         {VoyageData.vehicle.name}
                       </Text>

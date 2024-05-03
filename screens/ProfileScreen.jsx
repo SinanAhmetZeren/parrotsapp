@@ -63,11 +63,19 @@ export default function ProfileScreen({ navigation }) {
     useCallback(() => {
       const fetchData = async () => {
         try {
-          await refetchVehicleData();
-          await refetchVoyageData();
+          // if (refetchVehicleData.started) {
+          // }
+
+          // if (refetchVoyageData.started) {
+          // }
+
+          // if (refetchUserData.started) {
+          // }
           await refetchUserData();
+          await refetchVoyageData();
+          await refetchVehicleData();
         } catch (error) {
-          console.error("Error refetching messages data:", error);
+          console.error("Error refetching data:", error);
         }
       };
 

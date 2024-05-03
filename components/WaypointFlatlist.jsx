@@ -137,10 +137,12 @@ export const WaypointItemVoyageDetailScreen = ({
               style={styles.closeButtonAndText}
               onPress={() => setModalVisible(false)}
             >
-              <View style={styles.closeText1}>
-                <AntDesign name="closecircleo" size={22} color="#3aa4ff" />
+              <View style={styles.closeButtonInModal2}>
+                <Image
+                  style={styles.logo}
+                  source={require("../assets/close-icon.png")}
+                />
               </View>
-              <Text style={styles.closeText1}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -176,6 +178,40 @@ export const WaypointItem = ({ title, description, imageUri }) => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(1,1,1,0.4)",
+          }}
+        >
+          {/* // modal edited // */}
+          <View style={styles.imageContainerInModal}>
+            <Image
+              source={{ uri: imageUri }}
+              style={styles.voyageImageInModal}
+            />
+            <ScrollView style={styles.scrollView}>
+              <Text style={styles.waypointTitleInModal2}>{title}</Text>
+              <Text style={styles.waypointDescriptionInModal2}>
+                {description}
+              </Text>
+            </ScrollView>
+
+            <TouchableOpacity
+              style={styles.closeButtonAndText}
+              onPress={() => setModalVisible(false)}
+            >
+              <View style={styles.closeButtonInModal2}>
+                <Image
+                  style={styles.logo}
+                  source={require("../assets/close-icon.png")}
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* 
         <View style={styles.waypointModalContainer}>
           <View style={styles.modalContent}>
             <View style={styles.waypointImageContainer}>
@@ -190,16 +226,30 @@ export const WaypointItem = ({ title, description, imageUri }) => {
               style={styles.closeWaypointModalButton}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={styles.closeWaypointModalButtonText}>Close</Text>
+              <Text style={styles.closeWaypointModalButtonText}>Cl ose</Text>
+
+              {/ ///// TODO ///// 
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
       </Modal>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  logo: {
+    height: vh(5),
+    width: vh(5),
+    borderRadius: vh(10),
+  },
+  closeButtonInModal2: {
+    alignSelf: "center",
+    backgroundColor: "rgba(217, 241, 241,.75)",
+    borderRadius: vh(10),
+    padding: vh(1.5),
+    borderColor: "#93c9ed",
+  },
   scrollView: {
     height: vh(15),
     top: vh(-15) - 2,
@@ -209,14 +259,9 @@ const styles = StyleSheet.create({
   },
   closeButtonAndText: {
     flexDirection: "row",
-    height: vh(3.5),
-    width: vh(11.45),
-    backgroundColor: "white",
     borderRadius: vh(2.5),
     borderColor: "#3aa4ff",
-    borderWidth: 1,
-    verticalAlign: "middle",
-    top: vh(-13),
+    top: vh(-14),
     alignSelf: "center",
   },
   closeText1: {

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useMemo } from "react";
@@ -155,9 +156,12 @@ export const RenderBidsComponent = ({
           />
           <TouchableOpacity
             onPress={closeModal}
-            style={styles.closeButtonInModal}
+            style={styles.closeButtonInModal2}
           >
-            <Text style={styles.closeTextInModal}>Close</Text>
+            <Image
+              style={styles.logo}
+              source={require("../assets/close-icon.png")}
+            />
           </TouchableOpacity>
         </View>
       </Modal>
@@ -166,6 +170,20 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
+  logo: {
+    height: vh(5),
+    width: vh(5),
+    borderRadius: vh(10),
+  },
+  closeButtonInModal2: {
+    alignSelf: "center",
+    backgroundColor: "rgba(217, 241, 241,.75)",
+    borderRadius: vh(10),
+    padding: vh(1.5),
+    borderColor: "#93c9ed",
+    marginTop: vh(1),
+    marginBottom: vh(15),
+  },
   acceptedButton: {
     paddingLeft: vw(3),
   },
@@ -293,6 +311,7 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     marginBottom: vh(15),
   },
+
   closeTextInModal: {
     color: "#3c9dde",
     fontWeight: "700",
