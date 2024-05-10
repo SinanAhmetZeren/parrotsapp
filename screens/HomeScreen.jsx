@@ -6,12 +6,9 @@ import { useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
-  SafeAreaView,
   Text,
   TouchableOpacity,
   ScrollView,
-  Alert,
-  TextInput,
   ActivityIndicator,
   Modal,
 } from "react-native";
@@ -20,16 +17,12 @@ import MapView, { Marker } from "react-native-maps";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { Fontisto } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
-import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
+import { vw, vh } from "react-native-expo-viewport-units";
 
-import VehicleFlatList from "../components/VehicleFlatList";
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
 import { useSelector, useDispatch } from "react-redux";
-import { useGetUserByIdQuery } from "../slices/UserSlice";
 import {
   useGetVoyagesByLocationMutation,
   useGetFilteredVoyagesMutation,
@@ -37,8 +30,6 @@ import {
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
 import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
-import { updateAsLoggedOut } from "../slices/UserSlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -48,25 +39,19 @@ export default function HomeScreen({ navigation }) {
   const [isDatesFiltered, setIsDatesFiltered] = useState(false);
   const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
   const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
-
   const [initialLatitude, setInitialLatitude] = useState(0);
   const [initialLongitude, setInitialLongitude] = useState(0);
-
   const [latitude, setLatitude] = useState(0);
   const [latitudeDelta, setLatitudeDelta] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [longitudeDelta, setLongitudeDelta] = useState(0);
-
   const [initialVoyages, setInitialVoyages] = useState([]);
-
   const [count, setCount] = useState(1);
   const [selectedVehicleType, setSelectedVehicleType] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
   const [cardHeaderM, setCardHeaderM] = useState("");
   const [cardDescriptionM, setCardDescriptionM] = useState("");
   const [cardImageM, setCardImageM] = useState("");
@@ -78,16 +63,15 @@ export default function HomeScreen({ navigation }) {
   const [voyageIdM, setVoyageIdM] = useState("");
   const [latitudeM, setLatitudeM] = useState(0);
   const [longitudeM, setLongitudeM] = useState(0);
-  const [focusMapM, setFocusMapM] = useState(false);
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
 
   const username = useSelector((state) => state.users.userName);
+  const printUsername = () => {
+    console.log(username);
+  };
 
   const dispatch = useDispatch();
-  const handleLogout = async () => {
-    dispatch(updateAsLoggedOut());
-  };
 
   useEffect(() => {
     async function getLocation() {
@@ -340,6 +324,17 @@ export default function HomeScreen({ navigation }) {
                 >
                   <View style={styles.extendedArea}>
                     <Text style={styles.seeOnMap}>Apply Filter</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <View>
+                <TouchableOpacity
+                  onPress={() => {
+                    printUsername();
+                  }}
+                >
+                  <View style={styles.extendedArea}>
+                    <Text style={styles.seeOnMap}>Print username</Text>
                   </View>
                 </TouchableOpacity>
               </View>

@@ -37,9 +37,7 @@ import { CreateChoiceModal } from "./components/CreateChoiceModal";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  updateAsLoggedIn,
   updateStateFromLocalStorage,
-  updateUserData,
   updateUserFavorites,
 } from "./slices/UserSlice";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";

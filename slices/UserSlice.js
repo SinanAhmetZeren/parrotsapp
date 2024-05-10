@@ -77,7 +77,9 @@ const usersSlice = createSlice({
     },
     updateUserData: (state, action) => {
       state.userProfileImage = action.payload.image;
-      // state.userName = action.payload.username;
+    },
+    updateUserName: (state, action) => {
+      state.userName = action.payload.username;
     },
     updateUserFavorites: (state, action) => {
       state.userFavoriteVehicles = action.payload.favoriteVehicles;
@@ -119,6 +121,7 @@ export const {
   updateAsLoggedOut,
   updateStateFromLocalStorage,
   updateUserData,
+  updateUserName,
   updateUserFavorites,
   addVoyageToUserFavorites,
   removeVoyageFromUserFavorites,

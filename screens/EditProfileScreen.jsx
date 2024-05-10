@@ -19,16 +19,19 @@ import {
   useUpdateProfileImageMutation,
   useUpdateBackgroundImageMutation,
   usePatchUserMutation,
+  updateUserName,
 } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
 import { Entypo, Fontisto, Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 
 const EditProfileScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
 
+  const dispatch = useDispatch();
   const {
     data: userData,
     isLoading,
@@ -122,6 +125,11 @@ const EditProfileScreen = ({ navigation }) => {
     ];
     try {
       const response = await patchUser({ patchDoc, userId });
+      dispatch(
+        updateUserName({
+          username,
+        })
+      );
     } catch (error) {
       console.error("Error uploading image", error);
     }
