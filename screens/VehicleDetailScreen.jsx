@@ -62,14 +62,7 @@ const VehicleDetailScreen = () => {
   const userId = useSelector((state) => state.users.userId);
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [fontsLoaded, fontError] = useFonts({
-    RobotoMedium: require("../assets/Roboto-Medium.ttf"),
-    Madimi: require("../assets/MadimiOne-Regular.ttf"),
-    Nunito: require("../assets/Nunito-Regular.ttf"),
-    NunitoBold: require("../assets/Nunito-Bold.ttf"),
-    RobotoslabM: require("../assets/RobotoSlab-Medium.ttf"),
-    RobotoslabB: require("../assets/RobotoSlab-Bold.ttf"),
-  });
+
   const [isFavorited, setIsFavorited] = useState(false);
   const [addVehicleToFavorites] = useAddVehicleToFavoritesMutation();
   const [deleteVehicleFromFavorites] = useDeleteVehicleFromFavoritesMutation();
@@ -453,7 +446,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     alignSelf: "center",
     color: "#2ac898",
-    fontFamily: "RobotoslabB",
   },
   mainBidsContainer: {
     borderRadius: vw(5),

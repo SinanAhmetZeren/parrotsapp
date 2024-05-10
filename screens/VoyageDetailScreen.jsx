@@ -48,15 +48,6 @@ import {
 import { current } from "@reduxjs/toolkit";
 
 const VoyageDetailScreen = () => {
-  const [fontsLoaded, fontError] = useFonts({
-    RobotoMedium: require("../assets/Roboto-Medium.ttf"),
-    Madimi: require("../assets/MadimiOne-Regular.ttf"),
-    Nunito: require("../assets/Nunito-Regular.ttf"),
-    NunitoBold: require("../assets/Nunito-Bold.ttf"),
-    RobotoslabM: require("../assets/RobotoSlab-Medium.ttf"),
-    RobotoslabB: require("../assets/RobotoSlab-Bold.ttf"),
-  });
-
   const [addVoyageToFavorites] = useAddVoyageToFavoritesMutation();
   const [deleteVoyageFromFavorites] = useDeleteVoyageFromFavoritesMutation();
   const route = useRoute();
@@ -745,7 +736,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     alignSelf: "center",
     color: "#2ac898",
-    fontFamily: "RobotoslabB",
   },
   userName: {
     fontSize: 14,

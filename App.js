@@ -17,7 +17,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { vh } from "react-native-expo-viewport-units";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, FontAwesome6, AntDesign } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
 import VehicleDetailScreen from "./screens/VehicleDetailScreen";
@@ -25,11 +25,8 @@ import ProfileScreen from "./screens/ProfileScreen";
 import ProfileScreenPublic from "./screens/ProfileScreenPublic";
 import EditProfileScreen from "./screens/EditProfileScreen";
 import EditVehicleScreen from "./screens/EditVehicleScreen";
-import MyVoyagesScreen from "./screens/MyVoyagesScreen";
 import CreateVoyageScreen from "./screens/CreateVoyageScreen";
 import CreateVehicleScreen from "./screens/CreateVehicleScreen";
-import MyVehiclesScreen from "./screens/MyVehiclesScreen";
-import MyBidsScreen from "./screens/MyBidsScreen";
 import MessagesScreen from "./screens/MessagesScreen";
 import { ConversationDetailScreen } from "./screens/ConversationDetailScreen";
 import FavoritesScreen from "./screens/FavoritesScreen";
@@ -68,7 +65,6 @@ const screenOptions = {
     right: 0,
     left: 0,
     elevation: 0,
-    // height: 120,
     height: vh(14),
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
@@ -126,9 +122,6 @@ const ProfileStack = () => {
         component={ProfileScreenPublic}
       />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-      <Stack.Screen name="MyVoyages" component={MyVoyagesScreen} />
-      <Stack.Screen name="MyVehicles" component={MyVehiclesScreen} />
-      <Stack.Screen name="MyBids" component={MyBidsScreen} />
       <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
       <Stack.Screen name="EditVehicleScreen" component={EditVehicleScreen} />
       <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
@@ -330,11 +323,23 @@ const TabNavigator = () => {
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
-                  <Feather
-                    name="message-square"
+                  {/* <Feather
+                    name="users"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  /> */}
+                  {/* <FontAwesome6
+                    name="connectdevelop"
+                    size={24}
+                    color={focused ? "#3aa4ff" : "#000"}
+                  /> */}
+
+                  <AntDesign
+                    name="sharealt"
                     size={24}
                     color={focused ? "#3aa4ff" : "#000"}
                   />
+
                   <Text
                     style={
                       focused
@@ -362,30 +367,6 @@ const TabNavigator = () => {
 
 function App() {
   function RenderNavigator() {
-    const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
-    const userId = useSelector((state) => state.users.userId);
-    const userName = useSelector((state) => state.users.userName);
-
-    const [isInitialLoading, setIsInitialLoading] = useState(true);
-    const dispatch = useDispatch();
-
-    const {
-      data: userData,
-      isLoading: isLoadingUser,
-      isSuccess: isSuccessUser,
-    } = useGetUserByIdQuery(userId);
-    const {
-      data: favoriteVoyageData,
-      isLoading: isLoadingFavoriteVoyages,
-      isSuccess: isSuccessFavoriteVoyages,
-    } = useGetFavoriteVoyageIdsByUserIdQuery(userId);
-
-    const {
-      data: favoriteVehicleData,
-      isLoading: isLoadingFavoriteVehicles,
-      isSuccess: isSuccessFavoriteVehicles,
-    } = useGetFavoriteVehicleIdsByUserIdQuery(userId);
-
     useEffect(() => {
       const checkToken = async () => {
         try {
@@ -417,6 +398,31 @@ function App() {
 
       checkToken();
     }, [dispatch]);
+
+    const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+    const userId = useSelector((state) => state.users.userId);
+
+    console.log("user id. ", userId);
+
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const dispatch = useDispatch();
+
+    const {
+      data: userData,
+      isLoading: isLoadingUser,
+      isSuccess: isSuccessUser,
+    } = useGetUserByIdQuery(userId);
+    const {
+      data: favoriteVoyageData,
+      isLoading: isLoadingFavoriteVoyages,
+      isSuccess: isSuccessFavoriteVoyages,
+    } = useGetFavoriteVoyageIdsByUserIdQuery(userId);
+
+    const {
+      data: favoriteVehicleData,
+      isLoading: isLoadingFavoriteVehicles,
+      isSuccess: isSuccessFavoriteVehicles,
+    } = useGetFavoriteVehicleIdsByUserIdQuery(userId);
 
     useEffect(() => {
       if (

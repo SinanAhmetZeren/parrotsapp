@@ -12,6 +12,7 @@ import {
   FontAwesome5,
   FontAwesome,
   Ionicons,
+  MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
@@ -132,7 +133,7 @@ export default function VoyageCardProfileHorizontal({
           style={styles.extendedAreaContainer}
         >
           <View style={styles.extendedArea}>
-            <Text style={styles.seeOnMap}>see on map</Text>
+            <Text style={styles.seeOnMap}>View on map</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -161,14 +162,16 @@ const styles = StyleSheet.create({
   seeOnMap: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#2ac898",
+    color: "rgba(0, 119, 234,.51)",
     alignSelf: "flex-end",
     position: "absolute",
-    bottom: vh(0.3),
-    right: vw(2),
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
-    borderRadius: vh(1),
+    bottom: vh(0),
+    right: vw(0),
+    backgroundColor: "rgba(0, 119, 234,0.051)",
+    borderRadius: vh(2),
     paddingHorizontal: vw(2),
+    borderWidth: 1,
+    borderColor: "white",
   },
   cardContainer: {
     marginHorizontal: vw(2),

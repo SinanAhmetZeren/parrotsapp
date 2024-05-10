@@ -62,10 +62,11 @@ export default function MessagesScreen({ navigation }) {
     useCallback(() => {
       const fetchData = async () => {
         try {
-          await refetch();
+          await Promise.all([refetch()]);
         } catch (error) {
           console.error("Error refetching messages data:", error);
         }
+        await refetch();
       };
       fetchData();
       return () => {
@@ -143,7 +144,7 @@ export default function MessagesScreen({ navigation }) {
                 <View style={styles.mainBidsContainer2}>
                   <View style={styles.currentBidsAndSeeAll2}>
                     <Image
-                      source={require("../assets/parrots-logo.jpg")}
+                      source={require("../assets/parrots-logo-new8.jpeg")}
                       style={styles.logoImage}
                     />
 

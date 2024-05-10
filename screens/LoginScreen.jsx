@@ -2,24 +2,20 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-// RegisterPage.js
 import React, { useState } from "react";
 import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
   Image,
-  Platform,
   TouchableOpacity,
 } from "react-native";
 import { useLoginUserMutation } from "../slices/UserSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { updateAsLoggedIn, updateAsLoggedOut } from "../slices/UserSlice";
-import { useEffect } from "react";
+import { updateAsLoggedIn } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Feather } from "@expo/vector-icons";
 import { useRegisterUserMutation } from "../slices/UserSlice";
@@ -29,23 +25,18 @@ const LoginScreen = ({ navigation }) => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
-  const [responseEmail, setResponseEmail] = useState("");
-  const [responseUsername, setResponseUsername] = useState("");
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
   const [isFocusedPassword, setIsFocusedPassword] = useState(false);
+  const [isFocusedCode, setIsFocusedCode] = useState(false);
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
   const [isPasswordHidden2, setIsPasswordHidden2] = useState(true);
   const [loginOrRegister, setLoginOrRegister] = useState("Login");
   const [loginUser, { isLoading, isSuccess }] = useLoginUserMutation();
-  const logoImageUrl =
-    "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
-
   const [userNameR, setUserNameR] = useState("");
   const [emailR, setEmailR] = useState("");
   const [passwordR, setPasswordR] = useState("");
   const [passwordR2, setPasswordR2] = useState("");
+  const [registerCode, setRegisterCode] = useState("");
   const [isFocusedEmailR, setIsFocusedEmailR] = useState(false);
   const [isFocusedPasswordR, setIsFocusedPasswordR] = useState(false);
   const [isFocusedPasswordR2, setIsFocusedPasswordR2] = useState(false);
@@ -54,8 +45,6 @@ const LoginScreen = ({ navigation }) => {
     registerUser,
     { isLoading: isLoadingRegisterUser, isSuccess: isSuccessRegisterUser },
   ] = useRegisterUserMutation();
-  const imageUrl =
-    "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo.jpg";
 
   const handleEmailChange = (text) => {
     setEmail(text);
@@ -63,6 +52,10 @@ const LoginScreen = ({ navigation }) => {
 
   const handlePasswordChange = (text) => {
     setPassword(text);
+  };
+
+  const handleRegisterCodeChange = (text) => {
+    setRegisterCode(text);
   };
 
   const handleLogin = async () => {
@@ -75,7 +68,7 @@ const LoginScreen = ({ navigation }) => {
       setPassword("");
       console.log("login response: ", loginResponse);
       if (loginResponse.token) {
-        console.log("login response userName: ", loginResponse.userName);
+        console.log("login response userName : ", loginResponse.userName);
         await dispatch(
           updateAsLoggedIn({
             userId: loginResponse.userId,
@@ -108,8 +101,18 @@ const LoginScreen = ({ navigation }) => {
       setEmailR("");
       setPasswordR("");
       setPasswordR2("");
-      console.log("register  response: ", registerResponse);
+      console.log("hello aaaaa");
+      console.log("register  response ax: ", registerResponse);
+
+      // if registration response is 200
+      // go to Registration-2
+
+      // if ConfirmCode returns token etc
+      // then updateasLoggedIn
+
       if (registerResponse.token) {
+        setLoginOrRegister("Register2");
+        /*
         await dispatch(
           updateAsLoggedIn({
             userId: registerResponse.userId,
@@ -118,8 +121,10 @@ const LoginScreen = ({ navigation }) => {
             profileImageUrl: registerResponse.profileImageUrl,
           })
         );
+        */
       }
     } catch (err) {
+      console.log(err);
       Toast.show({
         type: "success",
         text1: "Could not register",
@@ -145,10 +150,6 @@ const LoginScreen = ({ navigation }) => {
 
   const username = useSelector((state) => state.users.userName);
 
-  const handlePrint = () => {
-    console.log(username);
-  };
-
   const handlePrintLocal = async () => {
     const storedToken = await AsyncStorage.getItem("storedToken");
     const storedUserId = await AsyncStorage.getItem("storedUserId");
@@ -162,7 +163,10 @@ const LoginScreen = ({ navigation }) => {
     <>
       <View style={{ backgroundColor: "white" }}>
         <View style={styles.imagecontainer}>
-          <Image source={{ uri: logoImageUrl }} style={styles.image} />
+          <Image
+            style={styles.image}
+            source={require("../assets/parrots-logo-new8.jpeg")}
+          />
         </View>
         <View style={styles.parrotsTextContainer}>
           <Text style={styles.parrotsText}>Welcome to Parrots</Text>
@@ -226,6 +230,7 @@ const LoginScreen = ({ navigation }) => {
       </TouchableOpacity> */}
 
       {loginOrRegister === "Login" ? (
+        // login screen
         <View style={styles.container}>
           <View style={styles.formContainer}>
             <View style={styles.inputsContainer}>
@@ -289,7 +294,7 @@ const LoginScreen = ({ navigation }) => {
               style={styles.noAccount}
               onPress={() => {
                 console.log("no account");
-                setLoginOrRegister("Register");
+                setLoginOrRegister("Register1");
               }}
             >
               <Text style={{ fontWeight: "500", color: "#939393" }}>
@@ -301,7 +306,8 @@ const LoginScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      ) : (
+      ) : loginOrRegister === "Register1" ? (
+        // register screen - 1
         <View style={styles2.container}>
           {/* {isSuccessRegisterUser ? (
             <Text style={styles2.successMessage}>Registration successful!</Text>
@@ -425,6 +431,69 @@ const LoginScreen = ({ navigation }) => {
             </View>
           </View>
         </View>
+      ) : (
+        // register screen - 2
+        <View style={styles2.container}>
+          <View style={styles2.formContainer}>
+            <TextInput
+              style={[styles.input, isFocusedCode && styles.inputFocused]}
+              onFocus={() => setIsFocusedCode(true)}
+              onBlur={() => setIsFocusedCode(false)}
+              placeholderTextColor="#c3c3c3"
+              placeholder="Enter 6 Digit Code"
+              value={registerCode}
+              onChangeText={(text) => handleRegisterCodeChange(text)}
+            />
+
+            <View style={styles.loginContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.selection2,
+                  isLoadingRegisterUser || passwordR === "" || passwordR2 === ""
+                    ? styles.disabled
+                    : null,
+                ]}
+                // onPress={handleRegister}
+                onPress={() => {
+                  // console.log("passwordr:", passwordR);
+                  // console.log("passwordr2: ", passwordR2);
+                  // console.log("is equal: ", passwordR2 === passwordR);
+                  if (passwordR !== passwordR2) {
+                    Toast.show({
+                      type: "success",
+                      text1: "Passwords do not match",
+                      text2: "Please try again.",
+                      visibilityTime: 1200,
+                      topOffset: 100,
+                    });
+                  }
+                  if (passwordR === passwordR2) {
+                    handleRegister();
+                  }
+                }}
+                disabled={
+                  isLoadingRegisterUser || passwordR === "" || passwordR2 === ""
+                }
+              >
+                <Text style={styles.choiceText}>Register</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.noAccount}
+                onPress={() => {
+                  setLoginOrRegister("Login");
+                }}
+              >
+                <Text style={{ fontWeight: "500", color: "#939393" }}>
+                  Back to{" "}
+                </Text>
+                <Text style={{ fontWeight: "700", color: "#777777" }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       )}
     </>
   );
@@ -442,7 +511,8 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "800",
     fontStyle: "italic",
-    color: "#2184c6",
+    // color: "#2184c6",
+    color: "rgba(74, 165, 225,0.75)",
   },
   loginContainer: {
     marginTop: vh(2),
@@ -521,8 +591,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignSelf: "center",
-    backgroundColor: "rgba(74, 165, 225,0.5)",
-    padding: vh(0.6),
+    backgroundColor: "rgba(74, 165, 225,0.15)",
+    padding: vh(1),
     borderRadius: vh(10),
   },
   image: {

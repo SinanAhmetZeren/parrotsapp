@@ -63,27 +63,20 @@ export default function ProfileScreen({ navigation }) {
     useCallback(() => {
       const fetchData = async () => {
         try {
-          // if (refetchVehicleData.started) {
-          // }
-
-          // if (refetchVoyageData.started) {
-          // }
-
-          // if (refetchUserData.started) {
-          // }
-          await refetchUserData();
-          await refetchVoyageData();
-          await refetchVehicleData();
+          if (userData) {
+            await refetchUserData();
+          }
+          if (VoyagesData) {
+            await refetchVoyageData();
+          }
+          if (VehiclesData) {
+            await refetchVehicleData();
+          }
         } catch (error) {
-          console.error("Error refetching data:", error);
+          console.error("Error fetching or refetching data:", error);
         }
       };
-
       fetchData();
-
-      return () => {
-        // Cleanup function if needed
-      };
     }, [refetchVehicleData, refetchVoyageData, refetchUserData, navigation])
   );
 
