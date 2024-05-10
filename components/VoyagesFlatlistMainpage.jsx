@@ -33,7 +33,7 @@ const VoyageItem = ({ item, index }) => {
   return (
     <View key={index} style={styles.singleBidContainer2}>
       <Image
-        // source={require("../assets/parrots-logo-new8.jpeg")}
+        // source={require("../assets/parrots-logo-new11.jpeg")}
         source={{ uri: imageBaseUrl + item.profileImage }}
         style={styles.bidImage2}
       />
@@ -103,7 +103,7 @@ const a = (item, index) => (
   <View key={index} style={styles.singleBidContainer2}>
     <View>
       <Image
-        // source={require("../assets/parrots-logo-new8.jpeg")}
+        // source={require("../assets/parrots-logo-new11.jpeg")}
         source={{ uri: item.profileImage }}
         style={styles.bidImage2}
       />

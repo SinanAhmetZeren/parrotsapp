@@ -12,7 +12,7 @@ const RegisterScreen = () => {
 
   const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
   const imageUrl =
-    "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo-new8.jpeg";
+    "https://measured-wolf-grossly.ngrok-free.app/Uploads/assets/parrots-logo-new11.jpeg";
 
   const handleEmailRChange = (text) => {
     setEmailR(text);

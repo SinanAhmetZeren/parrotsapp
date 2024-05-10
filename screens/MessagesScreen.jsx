@@ -144,7 +144,7 @@ export default function MessagesScreen({ navigation }) {
                 <View style={styles.mainBidsContainer2}>
                   <View style={styles.currentBidsAndSeeAll2}>
                     <Image
-                      source={require("../assets/parrots-logo-new8.jpeg")}
+                      source={require("../assets/parrots-logo-new11.jpeg")}
                       style={styles.logoImage}
                     />
 
@@ -182,15 +182,21 @@ export default function MessagesScreen({ navigation }) {
                       onPress={handleSearchUsers}
                       style={styles.magnifier}
                     >
-                      {searchText.length > 2 ? (
-                        <FontAwesome name="search" size={24} color="#3c9dde" />
-                      ) : (
-                        <FontAwesome
-                          name="search"
-                          size={24}
-                          color="rgba(118, 186, 232,0.35)"
-                        />
-                      )}
+                      <Text>
+                        {searchText.length > 2 ? (
+                          <FontAwesome
+                            name="search"
+                            size={24}
+                            color="#3c9dde"
+                          />
+                        ) : (
+                          <FontAwesome
+                            name="search"
+                            size={24}
+                            color="rgba(118, 186, 232,0.35)"
+                          />
+                        )}
+                      </Text>
                     </TouchableOpacity>
                   </View>
 

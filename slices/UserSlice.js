@@ -153,6 +153,26 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         body: userData,
       }),
     }),
+    confirmUser: builder.mutation({
+      query: (confirmData) => ({
+        url: "/api/account/confirmCode",
+        method: "POST",
+        body: confirmData,
+      }),
+    }),
+    requestCode: builder.mutation({
+      query: (email) => ({
+        url: `/api/account/sendCode/${email}`,
+        method: "POST",
+      }),
+    }),
+    resetPassword: builder.mutation({
+      query: (resetPasswordData) => ({
+        url: `/api/account/resetPassword`,
+        method: "POST",
+        body: resetPasswordData,
+      }),
+    }),
     loginUser: builder.mutation({
       query: (userData) => ({
         url: "/api/account/login",
@@ -244,7 +264,10 @@ export const {
   useGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
   useRegisterUserMutation,
+  useRequestCodeMutation,
+  useConfirmUserMutation,
   useLoginUserMutation,
+  useResetPasswordMutation,
   useGetUserByIdQuery,
   useUpdateProfileImageMutation,
   useUpdateBackgroundImageMutation,

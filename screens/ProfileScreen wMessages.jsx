@@ -355,37 +355,44 @@ export default function ProfileScreen({ navigation }) {
                 <ActivityIndicator size="large" />
               ) : isSuccessVoyages ? (
                 <>
+                  <View style={styles.mainBidsContainer}>
+                    <View style={styles.currentBidsAndSeeAll}>
+                      <Text style={styles.currentBidsTitle}>Vehicles</Text>
+                    </View>
+                  </View>
                   {VehiclesData[0] !== undefined ? (
-                    <>
-                      <View style={styles.mainBidsContainer}>
-                        <View style={styles.currentBidsAndSeeAll}>
-                          <Text style={styles.currentBidsTitle}>Vehicles</Text>
-                        </View>
-                      </View>
-                      <View style={styles.voyageListContainer}>
-                        <VehicleList
-                          style={styles.voyageList}
-                          data={VehiclesData}
-                        />
-                      </View>
-                    </>
-                  ) : null}
-
+                    <View style={styles.voyageListContainer}>
+                      <VehicleList
+                        style={styles.voyageList}
+                        data={VehiclesData}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.notCreated}>
+                      <Text style={styles.notCreatedText}>
+                        No vehicles created yet
+                      </Text>
+                    </View>
+                  )}
+                  <View style={styles.mainBidsContainer}>
+                    <View style={styles.currentBidsAndSeeAll}>
+                      <Text style={styles.currentBidsTitle}>Voyages</Text>
+                    </View>
+                  </View>
                   {VoyagesData !== null ? (
-                    <>
-                      <View style={styles.mainBidsContainer}>
-                        <View style={styles.currentBidsAndSeeAll}>
-                          <Text style={styles.currentBidsTitle}>Voyages</Text>
-                        </View>
-                      </View>
-                      <View style={styles.voyageListContainer}>
-                        <VoyageListVertical
-                          style={styles.voyageList}
-                          data={VoyagesData}
-                        />
-                      </View>
-                    </>
-                  ) : null}
+                    <View style={styles.voyageListContainer}>
+                      <VoyageListVertical
+                        style={styles.voyageList}
+                        data={VoyagesData}
+                      />
+                    </View>
+                  ) : (
+                    <View style={styles.notCreated}>
+                      <Text style={styles.notCreatedText}>
+                        No voyages created yet
+                      </Text>
+                    </View>
+                  )}
                 </>
               ) : null}
             </View>

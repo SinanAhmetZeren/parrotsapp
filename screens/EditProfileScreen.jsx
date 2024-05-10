@@ -257,6 +257,7 @@ const EditProfileScreen = ({ navigation }) => {
               value={email}
               onChangeText={(text) => setEmail(text)}
               style={styles.textInput}
+              editable={false}
             />
           </View>
 
@@ -358,6 +359,8 @@ const EditProfileScreen = ({ navigation }) => {
               style={styles.textInput}
               placeholder="Enter your title"
               value={title}
+              maxLength={30}
+              multiline
               onChangeText={(text) => {
                 setTitle(text);
               }}

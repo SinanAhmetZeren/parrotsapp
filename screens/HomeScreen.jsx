@@ -67,9 +67,6 @@ export default function HomeScreen({ navigation }) {
     useState(false);
 
   const username = useSelector((state) => state.users.userName);
-  const printUsername = () => {
-    console.log(username);
-  };
 
   const dispatch = useDispatch();
 
@@ -327,17 +324,6 @@ export default function HomeScreen({ navigation }) {
                   </View>
                 </TouchableOpacity>
               </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    printUsername();
-                  }}
-                >
-                  <View style={styles.extendedArea}>
-                    <Text style={styles.seeOnMap}>Print username</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
             </View>
           </View>
           <View style={styles.mapContainer}>
@@ -549,13 +535,15 @@ const styles = StyleSheet.create({
   },
   welcomeandFilters: {
     flexDirection: "row",
-    paddingHorizontal: 15,
-    marginTop: 15,
+    // paddingHorizontal: 15,
+    paddingHorizontal: vh(2),
+
+    marginTop: 0,
     paddingBottom: vh(2),
   },
 
   mapContainer: {
-    height: vh(43),
+    height: vh(47),
     marginBottom: 7,
     width: "94%",
     alignItems: "center",
@@ -579,6 +567,8 @@ const styles = StyleSheet.create({
   },
   welcome: {
     fontSize: 18,
+    color: "rgba(10, 119, 234,0.75)",
+    fontWeight: "500",
   },
   username: {
     fontSize: 26,
