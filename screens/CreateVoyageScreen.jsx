@@ -57,34 +57,22 @@ const CreateVoyageScreen = () => {
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
 
-  const [name, setName] = useState("Voyage " + timeString);
-  const [brief, setBrief] = useState(
-    "The Island Breezes Expedition beckons, a tranquil sailboat voyage designed for camaraderie and natural wonders. Join your friends on an odyssey embracing the open seas and secluded islands. This voyage invites you to witness nature's spectacle and find serenity in the rhythmic embrace of wind and waves."
-  );
-  const voyageDes = `Embark on the "Island Breeze", a meticulously planned sailboat expedition offering a seamless blend of adventure and repose. Departing from a quaint harbor, your journey unfolds along the coastline, where the wind becomes your guide, and the sunsets paint the horizon in hues of tranquility.
-
-  Waypoints:
-  1. Harbor Haven (Starting Point): Begin your journey from Harbor Haven, a haven for sailors, echoing with tales of the sea and the promise of exploration.
-  2. Open Waters Gateway: Navigate through the Open Waters Gateway, a vast expanse offering panoramic views and the gentle embrace of the open sea.
- `;
-
-  const [description, setDescription] = useState(voyageDes);
-  const [vacancy, setVacancy] = useState("15");
+  const [name, setName] = useState("Aaa");
+  const [brief, setBrief] = useState("Aaa");
+  const [description, setDescription] = useState("Aaa");
+  const [vacancy, setVacancy] = useState("10");
   const [startDate, setStartDate] = useState("2024-03-14T09:00:00.000Z");
   const [endDate, setEndDate] = useState("2024-03-15T09:00:00.000Z");
   const [lastBidDate, setLastBidDate] = useState("11/11/1111");
-  const [minPrice, setMinPrice] = useState("100");
-  const [maxPrice, setMaxPrice] = useState("120");
+  const [minPrice, setMinPrice] = useState("11");
+  const [maxPrice, setMaxPrice] = useState("11");
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
-  const [vehicleId, setVehicleId] = useState("3");
+  const [vehicleId, setVehicleId] = useState("");
   const [voyageId, setVoyageId] = useState("");
-  const [image, setImage] = useState(
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/aad9496c-c258-4ce9-b64b-78e20f5bf2fe.jpeg"
-  );
+  const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-
   const [currentStep, setCurrentStep] = useState(1);
 
   useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
@@ -326,8 +314,8 @@ const CreateVoyageScreen = () => {
                   ) : (
                     <Image
                       // source={{ uri: profileImageUrl }}
-                      source={require("../assets/placeholder.png")}
-                      style={styles.backgroundImage}
+                      source={require("../assets/ParrotsWhiteBgPlus.png")}
+                      style={styles.backgroundImagePlaceholder}
                     />
                   )}
                 </TouchableOpacity>
@@ -341,20 +329,13 @@ const CreateVoyageScreen = () => {
                   {/* /// name /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Name:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Name:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter voyage name"
+                        placeholderTextColor="#c3c3c3"
                         value={name}
                         onChangeText={(text) => setName(text)}
                       />
@@ -365,20 +346,13 @@ const CreateVoyageScreen = () => {
                   {/* /// brief /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Brief:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Brief:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter voyage brief"
+                        placeholderTextColor="#c3c3c3"
                         value={brief}
                         multiline
                         numberOfLines={5}
@@ -391,21 +365,14 @@ const CreateVoyageScreen = () => {
                   {/* /// DESC /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Description:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Description:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         multiline
                         placeholder="Enter voyage description"
+                        placeholderTextColor="#c3c3c3"
                         numberOfLines={10}
                         value={description}
                         onChangeText={(text) => setDescription(text)}
@@ -417,20 +384,13 @@ const CreateVoyageScreen = () => {
                   {/* /// VACANCY /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Vacancy:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Vacancy:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter voyage vacancy"
+                        placeholderTextColor="#c3c3c3"
                         value={vacancy}
                         onChangeText={(text) => setVacancy(text)}
                         keyboardType="numeric"
@@ -442,15 +402,7 @@ const CreateVoyageScreen = () => {
                   {/* /// vehicle /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Vehicle:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Vehicle:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <DropdownComponent
@@ -496,15 +448,7 @@ const CreateVoyageScreen = () => {
                   {/* /// LAST BID DATE /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Last Bid:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Last Bid:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
@@ -512,8 +456,9 @@ const CreateVoyageScreen = () => {
                         value={lastBidDate}
                         onChangeText={handleDateChange}
                         keyboardType="numeric"
-                        placeholder="MM/DD/YYYY" // Placeholder without hyphens
-                        maxLength={10} // Restrict length for proper date format
+                        placeholder="MM/DD/YYYY"
+                        placeholderTextColor="#c3c3c3"
+                        maxLength={10}
                       />
                     </View>
                   </View>
@@ -522,21 +467,14 @@ const CreateVoyageScreen = () => {
                   {/* /// MIN PRICE /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Min Price:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Min Price:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         maxLength={20}
                         placeholder="Enter Min Price"
+                        placeholderTextColor="#c3c3c3"
                         value={minPrice}
                         onChangeText={(text) => setMinPrice(text)}
                         keyboardType="numeric"
@@ -548,21 +486,14 @@ const CreateVoyageScreen = () => {
                   {/* /// MAX PRICE /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Max Price:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Max Price:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         maxLength={20}
                         placeholder="Enter Max Price"
+                        placeholderTextColor="#c3c3c3"
                         value={maxPrice}
                         onChangeText={(text) => setMaxPrice(text)}
                         keyboardType="numeric"
@@ -602,12 +533,28 @@ const CreateVoyageScreen = () => {
                   </View>
                   {/* /// auction fixedprice  /// */}
 
-                  {/* Save Button */}
-                  <View style={styles.createVoyageButton}>
-                    <Button
-                      title="Create Voyage"
+                  <View style={styles.loginContainer}>
+                    <TouchableOpacity
                       onPress={() => handleCreateVoyage()}
-                    />
+                      style={
+                        image === "" ||
+                        name === "" ||
+                        brief === "" ||
+                        description === "" ||
+                        vacancy === "" ||
+                        vehicleId === "" ||
+                        startDate === "" ||
+                        endDate === "" ||
+                        lastBidDate === "" ||
+                        minPrice === "" ||
+                        maxPrice === ""
+                          ? styles.selection2Disabled
+                          : styles.selection2
+                      }
+                      disabled={false}
+                    >
+                      <Text style={styles.loginText}>Create Voyage</Text>
+                    </TouchableOpacity>
                   </View>
 
                   <View style={styles.step123}>
@@ -653,7 +600,7 @@ const CreateVoyageScreen = () => {
                   ) : (
                     <Image
                       // source={{ uri: profileImageUrl }}
-                      source={require("../assets/plus-watercolor.png")}
+                      source={require("../assets/ParrotsWhiteBgPlus.png")}
                       style={styles.profileImage2}
                     />
                   )}
@@ -766,6 +713,37 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  loginContainer: {
+    alignSelf: "center",
+    marginTop: vh(1),
+  },
+
+  selection2: {
+    marginHorizontal: vh(0.25),
+    marginVertical: vh(0.25),
+    paddingVertical: vh(1),
+    backgroundColor: "rgb(24,111,241)",
+    borderRadius: vh(1.5),
+    width: vw(50),
+  },
+  selection2Disabled: {
+    marginHorizontal: vh(0.25),
+    marginVertical: vh(0.25),
+    paddingVertical: vh(1),
+    backgroundColor: "rgba(24,111,241,.3)",
+    borderRadius: vh(1.5),
+    width: vw(50),
+  },
+  loginText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "white",
+    textAlign: "center",
+  },
+  backgroundImagePlaceholder: {
+    width: vw(50),
+    height: vh(30),
+  },
   profileImageAndSocial: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -840,9 +818,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedText: {
-    color: "rgba(91,91,255,1)",
+    color: "rgba(24,111,241,0.5)",
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "700",
     textAlign: "center",
   },
   length1: {
@@ -929,7 +907,7 @@ const styles = StyleSheet.create({
     height: vh(20),
     borderRadius: vh(3),
     borderColor: "rgba(0, 119, 234,0.1)",
-    borderWidth: 5,
+    // borderWidth: 5,
   },
   mainCheckboxContainer: {
     paddingHorizontal: vh(1),

@@ -161,9 +161,13 @@ const VehicleDetailScreen = () => {
     const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
 
     const descriptionShortenedChars = 500;
+
     const displayText = showFullText
       ? VehicleData.description
-      : VehicleData.description.slice(0, descriptionShortenedChars) + "...";
+      : VehicleData.description.slice(0, descriptionShortenedChars) +
+        (VehicleData.description.length > descriptionShortenedChars
+          ? "..."
+          : "");
 
     let icon;
     switch (VehicleData.type) {

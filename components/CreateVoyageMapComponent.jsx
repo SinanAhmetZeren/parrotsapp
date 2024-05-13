@@ -243,7 +243,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
               <Image source={{ uri: imageUri }} style={styles.profileImage} />
             ) : (
               <Image
-                source={require("../assets/placeholder.png")}
+                source={require("../assets/ParrotsWhiteBgPlus.png")}
                 style={styles.profileImage}
               />
             )}
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
   },
   waypointFlatlistContainer: {
-    height: vh(16),
+    height: vh(32),
     marginLeft: vw(3),
   },
   FinishButtonContainer: {

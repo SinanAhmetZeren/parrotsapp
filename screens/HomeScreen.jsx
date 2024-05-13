@@ -11,6 +11,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Modal,
+  Image,
 } from "react-native";
 import { useState, useCallback } from "react";
 import MapView, { Marker } from "react-native-maps";
@@ -299,6 +300,18 @@ export default function HomeScreen({ navigation }) {
                     size={24}
                     color="black"
                   />
+                  {/*                   
+                  {isDatesFiltered ? (
+                    <Image
+                      style={styles.plusSign}
+                      source={require("../assets/calendarIconF.png")}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.plusSign}
+                      source={require("../assets/calendarIconF.png")}
+                    />
+                  )} */}
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleVehicleModal}>
                   <Ionicons

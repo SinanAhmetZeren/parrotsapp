@@ -152,31 +152,32 @@ export const WaypointItemVoyageDetailScreen = ({
 };
 
 export const WaypointItem = ({ title, description, imageUri }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleX, setModalVisibleX] = useState(false);
 
   const truncatedDescription =
-    description.length > 70 ? `${description.slice(0, 70)}...` : description;
+    description.length > 150 ? `${description.slice(0, 150)}...` : description;
 
   return (
     <>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <View style={styles.waypointCard}>
-          <View>
-            <Image source={{ uri: imageUri }} style={styles.profileImage} />
-          </View>
-
-          <View style={styles.titleAndDescription}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>{truncatedDescription}</Text>
-          </View>
-        </View>
+      <TouchableOpacity
+        onPress={() => {
+          setModalVisibleX(true);
+        }}
+      >
+        <Image source={{ uri: imageUri }} style={styles.voyageImageInModalX} />
+        <ScrollView style={styles.scrollViewX}>
+          <Text style={styles.waypointTitleInModal2}>{title}</Text>
+          <Text style={styles.waypointDescriptionInModal2}>
+            {truncatedDescription}
+          </Text>
+        </ScrollView>
       </TouchableOpacity>
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
+        visible={modalVisibleX}
+        onRequestClose={() => setModalVisibleX(false)}
       >
         <View
           style={{
@@ -199,7 +200,7 @@ export const WaypointItem = ({ title, description, imageUri }) => {
 
             <TouchableOpacity
               style={styles.closeButtonAndText}
-              onPress={() => setModalVisible(false)}
+              onPress={() => setModalVisibleX(false)}
             >
               <View style={styles.closeButtonInModal2}>
                 <Image
@@ -210,32 +211,12 @@ export const WaypointItem = ({ title, description, imageUri }) => {
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* 
-        <View style={styles.waypointModalContainer}>
-          <View style={styles.modalContent}>
-            <View style={styles.waypointImageContainer}>
-              <Image
-                source={{ uri: imageUri }}
-                style={styles.waypointImageInModal}
-              />
-            </View>
-            <Text style={styles.waypointTitleInModal}>{title}</Text>
-            <Text style={styles.waypointDescriptionInModal}>{description}</Text>
-            <TouchableOpacity
-              style={styles.closeWaypointModalButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.closeWaypointModalButtonText}>Cl ose</Text>
-
-              {/ ///// TODO ///// 
-            </TouchableOpacity>
-          </View>
-        </View> */}
       </Modal>
     </>
   );
 };
+
+const stylesX = StyleSheet.create({});
 
 const styles = StyleSheet.create({
   logo: {
@@ -254,8 +235,17 @@ const styles = StyleSheet.create({
     height: vh(15),
     top: vh(-15) - 2,
     backgroundColor: "rgba(11,11,11,0.5)",
+    //backgroundColor: "rgba(217, 241, 241,.75)",
     marginLeft: 2,
     borderRadius: vh(1),
+  },
+  scrollViewX: {
+    height: vh(12),
+    top: vh(-12) - 4,
+    width: vw(78),
+    marginLeft: 4,
+    borderRadius: vh(1),
+    backgroundColor: "rgba(11,11,11,0.5)",
   },
   closeButtonAndText: {
     flexDirection: "row",
@@ -296,6 +286,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "white",
   },
+  voyageImageInModalX: {
+    height: vh(30),
+    width: vw(80),
+    marginRight: vh(1),
+    borderRadius: vh(1.5),
+    borderWidth: 2,
+    borderColor: "white",
+  },
   imageContainerInModal: {
     top: vh(30),
     paddingHorizontal: vw(10),
@@ -330,8 +328,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#eff3f6",
     borderRadius: vh(3),
-    // borderColor: "red",
-    // borderWidth: 1,
   },
   profileImage: {
     margin: vh(1),

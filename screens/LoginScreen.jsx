@@ -65,6 +65,14 @@ const LoginScreen = ({ navigation }) => {
     setEmail(text);
   };
 
+  const togglePasswordVisibility = () => {
+    setIsPasswordHidden((prevState) => !prevState);
+  };
+
+  const togglePasswordVisibility2 = () => {
+    setIsPasswordHidden2((prevState) => !prevState);
+  };
+
   const handlePasswordChange = (text) => {
     setPassword(text);
   };
@@ -77,9 +85,21 @@ const LoginScreen = ({ navigation }) => {
     setRegisterCode2(text);
   };
 
+  const handleFocusAll = () => {
+    setIsFocusedEmail(false);
+    setIsFocusedEmailR(false);
+    setIsFocusedCode(false);
+    setIsFocusedCode2(false);
+    setIsFocusedPassword(false);
+    setIsFocusedPasswordR(false);
+    setIsFocusedPasswordR2(false);
+    setIsFocusedUserNameR(false);
+  };
+
   const handleSendResetCode = async () => {
     requestCode(emailR);
     setLoginOrRegister("UpdatePassword");
+    handleFocusAll();
   };
 
   const handleResetPassword = async () => {
@@ -171,6 +191,7 @@ const LoginScreen = ({ navigation }) => {
 
       if (registerResponse.token) {
         setLoginOrRegister("Register2");
+        handleFocusAll();
         /*
         await dispatch(
           updateAsLoggedIn({
@@ -209,6 +230,7 @@ const LoginScreen = ({ navigation }) => {
 
       if (confirmResponse.token) {
         setLoginOrRegister("Login");
+        handleFocusAll();
 
         await dispatch(
           updateAsLoggedIn({
@@ -257,18 +279,6 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <>
-      <View style={{ backgroundColor: "white" }}>
-        <View style={styles.imagecontainer}>
-          <Image
-            style={styles.image}
-            source={require("../assets/parrots-logo-new11.jpeg")}
-          />
-        </View>
-        <View style={styles.parrotsTextContainer}>
-          <Text style={styles.parrotsText}>Welcome to Parrots</Text>
-        </View>
-      </View>
-
       {/* <TouchableOpacity
         style={[
           styles.logoutBox,
@@ -326,412 +336,476 @@ const LoginScreen = ({ navigation }) => {
       </TouchableOpacity> */}
 
       {loginOrRegister === "Login" ? (
-        <View style={styles.container}>
-          <View style={styles.formContainer}>
-            <View style={styles.inputsContainer}>
-              <TextInput
-                onFocus={() => setIsFocusedEmail(true)}
-                onBlur={() => setIsFocusedEmail(false)}
-                style={[styles.input, isFocusedEmail && styles.inputFocused]}
-                placeholder="Email"
-                placeholderTextColor="#c3c3c3"
-                value={email}
-                onChangeText={(text) => handleEmailChange(text)}
+        <>
+          <View style={{ backgroundColor: "white" }}>
+            <View style={styles.imagecontainer}>
+              <Image
+                style={styles.image}
+                source={require("../assets/welcomeBack.png")}
               />
+            </View>
+          </View>
+
+          <View style={styles.container}>
+            <View style={styles.formContainer}>
+              <View style={styles.inputsContainer}>
+                <TextInput
+                  onFocus={() => setIsFocusedEmail(true)}
+                  onBlur={() => setIsFocusedEmail(false)}
+                  style={[styles.input, isFocusedEmail && styles.inputFocused]}
+                  placeholder="Email"
+                  placeholderTextColor="#c3c3c3"
+                  value={email}
+                  onChangeText={(text) => handleEmailChange(text)}
+                />
+                <View>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      isFocusedPassword && styles.inputFocused,
+                    ]}
+                    onFocus={() => setIsFocusedPassword(true)}
+                    onBlur={() => setIsFocusedPassword(false)}
+                    placeholder="Password"
+                    placeholderTextColor="#c3c3c3"
+                    secureTextEntry={isPasswordHidden}
+                    value={password}
+                    onChangeText={(text) => handlePasswordChange(text)}
+                  />
+                  <TouchableOpacity
+                    style={styles.eyeIcon}
+                    onPressIn={() => togglePasswordVisibility()}
+                    // onPressOut={() => setIsPasswordHidden(true)}
+                  >
+                    <Text>
+                      <Feather name="eye" size={24} color="#c3c3c3" />
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                style={styles.forgotPassword}
+                onPress={() => {
+                  console.log("forgot password");
+                  setLoginOrRegister("ForgotPassword");
+                  handleFocusAll();
+                }}
+              >
+                <Text style={{ fontWeight: "500", color: "#939393" }}>
+                  Forgot password?
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.loginContainer}>
+                <TouchableOpacity
+                  style={styles.selection2}
+                  onPress={handleLogin}
+                  disabled={isLoading}
+                >
+                  <Text style={styles.choiceText}>Login</Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                style={styles.noAccount}
+                onPress={() => {
+                  console.log("no account");
+                  setLoginOrRegister("Register1");
+                  handleFocusAll();
+                }}
+              >
+                <Text style={{ fontWeight: "500", color: "#939393" }}>
+                  Don't have an account?{" "}
+                </Text>
+                <Text style={{ fontWeight: "700", color: "#777777" }}>
+                  Sign up
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </>
+      ) : loginOrRegister === "Register1" ? (
+        // register screen - 1
+        <>
+          <View style={{ backgroundColor: "white" }}>
+            <View style={styles.imagecontainer}>
+              <Image
+                style={styles.imageLetsStart}
+                source={require("../assets/letsStart.png")}
+              />
+            </View>
+          </View>
+          <View style={styles2.container}>
+            {/* {isSuccessRegisterUser ? (
+            <Text style={styles2.successMessage}>Registration successful!</Text>
+          ) : ( */}
+            <View style={styles2.formContainer}>
+              <TextInput
+                style={[
+                  styles.input,
+                  isFocusedUserNameR && styles.inputFocused,
+                ]}
+                onFocus={() => setIsFocusedUserNameR(true)}
+                onBlur={() => setIsFocusedUserNameR(false)}
+                placeholderTextColor="#c3c3c3"
+                placeholder="Username"
+                value={userNameR}
+                onChangeText={(text) => handleUserNameRChange(text)}
+              />
+              <TextInput
+                style={[styles.input, isFocusedEmailR && styles.inputFocused]}
+                onFocus={() => setIsFocusedEmailR(true)}
+                onBlur={() => setIsFocusedEmailR(false)}
+                placeholderTextColor="#c3c3c3"
+                placeholder="Email"
+                value={emailR}
+                onChangeText={(text) => handleEmailRChange(text)}
+              />
+
               <View>
                 <TextInput
                   style={[
                     styles.input,
-                    isFocusedPassword && styles.inputFocused,
+                    isFocusedPasswordR && styles.inputFocused,
                   ]}
-                  onFocus={() => setIsFocusedPassword(true)}
-                  onBlur={() => setIsFocusedPassword(false)}
-                  placeholder="Password"
+                  onFocus={() => setIsFocusedPasswordR(true)}
+                  onBlur={() => setIsFocusedPasswordR(false)}
                   placeholderTextColor="#c3c3c3"
+                  placeholder="Enter Password"
                   secureTextEntry={isPasswordHidden}
-                  value={password}
-                  onChangeText={(text) => handlePasswordChange(text)}
+                  value={passwordR}
+                  onChangeText={(text) => handlePasswordRChange(text)}
                 />
                 <TouchableOpacity
                   style={styles.eyeIcon}
-                  onPressIn={() => setIsPasswordHidden(false)}
-                  onPressOut={() => setIsPasswordHidden(true)}
+                  onPressIn={() => togglePasswordVisibility()}
                 >
                   <Text>
                     <Feather name="eye" size={24} color="#c3c3c3" />
                   </Text>
                 </TouchableOpacity>
               </View>
-            </View>
 
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={() => {
-                console.log("forgot password");
-                setLoginOrRegister("ForgotPassword");
-              }}
-            >
-              <Text style={{ fontWeight: "500", color: "#939393" }}>
-                Forgot password?
-              </Text>
-            </TouchableOpacity>
+              <View>
+                <TextInput
+                  style={[
+                    styles.input,
+                    isFocusedPasswordR2 && styles.inputFocused,
+                  ]}
+                  onFocus={() => setIsFocusedPasswordR2(true)}
+                  onBlur={() => setIsFocusedPasswordR2(false)}
+                  placeholderTextColor="#c3c3c3"
+                  placeholder="Re-enter Password"
+                  secureTextEntry={isPasswordHidden2}
+                  value={passwordR2}
+                  onChangeText={(text) => handlePasswordR2Change(text)}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPressIn={() => togglePasswordVisibility2()}
+                >
+                  <Text>
+                    <Feather name="eye" size={24} color="#c3c3c3" />
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-            <View style={styles.loginContainer}>
-              <TouchableOpacity
-                style={styles.selection2}
-                onPress={handleLogin}
-                disabled={isLoading}
-              >
-                <Text style={styles.choiceText}>Login</Text>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              style={styles.noAccount}
-              onPress={() => {
-                console.log("no account");
-                setLoginOrRegister("Register1");
-              }}
-            >
-              <Text style={{ fontWeight: "500", color: "#939393" }}>
-                Don't have an account?{" "}
-              </Text>
-              <Text style={{ fontWeight: "700", color: "#777777" }}>
-                Sign up
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      ) : loginOrRegister === "Register1" ? (
-        // register screen - 1
-        <View style={styles2.container}>
-          {/* {isSuccessRegisterUser ? (
-            <Text style={styles2.successMessage}>Registration successful!</Text>
-          ) : ( */}
-          <View style={styles2.formContainer}>
-            <TextInput
-              style={[styles.input, isFocusedUserNameR && styles.inputFocused]}
-              onFocus={() => setIsFocusedUserNameR(true)}
-              onBlur={() => setIsFocusedUserNameR(false)}
-              placeholderTextColor="#c3c3c3"
-              placeholder="Username"
-              value={userNameR}
-              onChangeText={(text) => handleUserNameRChange(text)}
-            />
-            <TextInput
-              style={[styles.input, isFocusedEmailR && styles.inputFocused]}
-              onFocus={() => setIsFocusedEmailR(true)}
-              onBlur={() => setIsFocusedEmailR(false)}
-              placeholderTextColor="#c3c3c3"
-              placeholder="Email"
-              value={emailR}
-              onChangeText={(text) => handleEmailRChange(text)}
-            />
-
-            <View>
-              <TextInput
-                style={[
-                  styles.input,
-                  isFocusedPasswordR && styles.inputFocused,
-                ]}
-                onFocus={() => setIsFocusedPasswordR(true)}
-                onBlur={() => setIsFocusedPasswordR(false)}
-                placeholderTextColor="#c3c3c3"
-                placeholder="Enter Password"
-                secureTextEntry={isPasswordHidden}
-                value={passwordR}
-                onChangeText={(text) => handlePasswordRChange(text)}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPressIn={() => setIsPasswordHidden(false)}
-                onPressOut={() => setIsPasswordHidden(true)}
-              >
-                <Text>
-                  <Feather name="eye" size={24} color="#c3c3c3" />
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <View>
-              <TextInput
-                style={[
-                  styles.input,
-                  isFocusedPasswordR2 && styles.inputFocused,
-                ]}
-                onFocus={() => setIsFocusedPasswordR2(true)}
-                onBlur={() => setIsFocusedPasswordR2(false)}
-                placeholderTextColor="#c3c3c3"
-                placeholder="Re-enter Password"
-                secureTextEntry={isPasswordHidden2}
-                value={passwordR2}
-                onChangeText={(text) => handlePasswordR2Change(text)}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPressIn={() => setIsPasswordHidden2(false)}
-                onPressOut={() => setIsPasswordHidden2(true)}
-              >
-                <Text>
-                  <Feather name="eye" size={24} color="#c3c3c3" />
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.loginContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.selection2,
-                  isLoadingRegisterUser || passwordR === "" || passwordR2 === ""
-                    ? styles.disabled
-                    : null,
-                ]}
-                // onPress={handleRegister}
-                onPress={() => {
-                  // console.log("passwordr:", passwordR);
-                  // console.log("passwordr2: ", passwordR2);
-                  // console.log("is equal: ", passwordR2 === passwordR);
-                  if (passwordR !== passwordR2) {
-                    Toast.show({
-                      type: "success",
-                      text1: "Passwords do not match",
-                      text2: "Please try again.",
-                      visibilityTime: 1200,
-                      topOffset: 100,
-                    });
+              <View style={styles.loginContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.selection2,
+                    isLoadingRegisterUser ||
+                    passwordR === "" ||
+                    passwordR2 === ""
+                      ? styles.disabled
+                      : null,
+                  ]}
+                  // onPress={handleRegister}
+                  onPress={() => {
+                    // console.log("passwordr:", passwordR);
+                    // console.log("passwordr2: ", passwordR2);
+                    // console.log("is equal: ", passwordR2 === passwordR);
+                    if (passwordR !== passwordR2) {
+                      Toast.show({
+                        type: "success",
+                        text1: "Passwords do not match",
+                        text2: "Please try again.",
+                        visibilityTime: 1200,
+                        topOffset: 100,
+                      });
+                    }
+                    if (passwordR === passwordR2) {
+                      handleRegister();
+                    }
+                  }}
+                  disabled={
+                    isLoadingRegisterUser ||
+                    passwordR === "" ||
+                    passwordR2 === ""
                   }
-                  if (passwordR === passwordR2) {
-                    handleRegister();
-                  }
-                }}
-                disabled={
-                  isLoadingRegisterUser || passwordR === "" || passwordR2 === ""
-                }
-              >
-                <Text style={styles.choiceText}>Register</Text>
-              </TouchableOpacity>
+                >
+                  <Text style={styles.choiceText}>Register</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.noAccount}
-                onPress={() => {
-                  setLoginOrRegister("Login");
-                }}
-              >
-                <Text style={{ fontWeight: "500", color: "#939393" }}>
-                  Back to{" "}
-                </Text>
-                <Text style={{ fontWeight: "700", color: "#777777" }}>
-                  Login
-                </Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.noAccount}
+                  onPress={() => {
+                    setLoginOrRegister("Login");
+                    handleFocusAll();
+                  }}
+                >
+                  <Text style={{ fontWeight: "500", color: "#939393" }}>
+                    Back to{" "}
+                  </Text>
+                  <Text style={{ fontWeight: "700", color: "#777777" }}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </>
       ) : loginOrRegister === "Register2" ? (
-        <View style={styles2.container}>
-          <View style={styles2.formContainer}>
-            <TextInput
-              style={[styles.input, isFocusedCode && styles.inputFocused]}
-              onFocus={() => setIsFocusedCode(true)}
-              onBlur={() => setIsFocusedCode(false)}
-              placeholderTextColor="#c3c3c3"
-              placeholder="Enter 6 Digit Code"
-              value={registerCode}
-              onChangeText={(text) => handleRegisterCodeChange(text)}
-            />
-
-            <View style={styles.loginContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.selection2,
-                  isLoadingConfirmUser || registerCode === ""
-                    ? styles.disabled
-                    : null,
-                ]}
-                onPress={() => {
-                  if (passwordR !== passwordR2) {
-                    Toast.show({
-                      type: "success",
-                      text1: "Passwords do not match",
-                      text2: "Please try again.",
-                      visibilityTime: 1200,
-                      topOffset: 100,
-                    });
-                  }
-                  handleConfirm();
-                }}
-                disabled={isLoadingConfirmUser || registerCode === ""}
-              >
-                <Text style={styles.choiceText}>Confirm</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.noAccount}
-                onPress={() => {
-                  setLoginOrRegister("Login");
-                }}
-              >
-                <Text style={{ fontWeight: "500", color: "#939393" }}>
-                  Back to{" "}
-                </Text>
-                <Text style={{ fontWeight: "700", color: "#777777" }}>
-                  Login
-                </Text>
-              </TouchableOpacity>
+        <>
+          <View style={{ backgroundColor: "white" }}>
+            <View style={styles.imagecontainer}>
+              <Image
+                style={styles.imageLetsStart}
+                source={require("../assets/letsStart.png")}
+              />
             </View>
           </View>
-        </View>
+
+          <View style={styles2.container}>
+            <View style={styles2.formContainer}>
+              <TextInput
+                style={[styles.input, isFocusedCode && styles.inputFocused]}
+                onFocus={() => setIsFocusedCode(true)}
+                onBlur={() => setIsFocusedCode(false)}
+                placeholderTextColor="#c3c3c3"
+                placeholder="Enter 6 Digit Code"
+                value={registerCode}
+                onChangeText={(text) => handleRegisterCodeChange(text)}
+              />
+
+              <View style={styles.loginContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.selection2,
+                    isLoadingConfirmUser || registerCode === ""
+                      ? styles.disabled
+                      : null,
+                  ]}
+                  onPress={() => {
+                    if (passwordR !== passwordR2) {
+                      Toast.show({
+                        type: "success",
+                        text1: "Passwords do not match",
+                        text2: "Please try again.",
+                        visibilityTime: 1200,
+                        topOffset: 100,
+                      });
+                    }
+                    handleConfirm();
+                  }}
+                  disabled={isLoadingConfirmUser || registerCode === ""}
+                >
+                  <Text style={styles.choiceText}>Confirm</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.noAccount}
+                  onPress={() => {
+                    setLoginOrRegister("Login");
+                    handleFocusAll();
+                  }}
+                >
+                  <Text style={{ fontWeight: "500", color: "#939393" }}>
+                    Back to{" "}
+                  </Text>
+                  <Text style={{ fontWeight: "700", color: "#777777" }}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </>
       ) : loginOrRegister === "ForgotPassword" ? (
-        <View style={styles2.container}>
-          <View style={styles2.formContainer}>
-            <TextInput
-              style={[styles.input, isFocusedEmailR && styles.inputFocused]}
-              onFocus={() => setIsFocusedEmailR(true)}
-              onBlur={() => setIsFocusedEmailR(false)}
-              placeholderTextColor="#c3c3c3"
-              placeholder="Email"
-              value={emailR}
-              onChangeText={(text) => handleEmailRChange(text)}
-            />
-
-            <View style={styles.loginContainer}>
-              <TouchableOpacity
-                style={styles.selection2}
-                onPress={() => {
-                  console.log("send my code");
-                  handleSendResetCode();
-                }}
-              >
-                <Text style={styles.choiceText}>Send Reset Code</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.noAccount}
-                onPress={() => {
-                  setLoginOrRegister("Login");
-                }}
-              >
-                <Text style={{ fontWeight: "500", color: "#939393" }}>
-                  Back to{" "}
-                </Text>
-                <Text style={{ fontWeight: "700", color: "#777777" }}>
-                  Login
-                </Text>
-              </TouchableOpacity>
+        <>
+          <View style={{ backgroundColor: "white" }}>
+            <View style={styles.imagecontainer}>
+              <Image
+                style={styles.image}
+                source={require("../assets/welcomeBack.png")}
+              />
             </View>
           </View>
-        </View>
+
+          <View style={styles2.container}>
+            <View style={styles2.formContainer}>
+              <TextInput
+                style={[styles.input, isFocusedEmailR && styles.inputFocused]}
+                onFocus={() => setIsFocusedEmailR(true)}
+                onBlur={() => setIsFocusedEmailR(false)}
+                placeholderTextColor="#c3c3c3"
+                placeholder="Email"
+                value={emailR}
+                onChangeText={(text) => handleEmailRChange(text)}
+              />
+
+              <View style={styles.loginContainer}>
+                <TouchableOpacity
+                  style={styles.selection2}
+                  onPress={() => {
+                    handleSendResetCode();
+                  }}
+                >
+                  <Text style={styles.choiceText}>Send Reset Code</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.noAccount}
+                  onPress={() => {
+                    setLoginOrRegister("Login");
+                    handleFocusAll();
+                  }}
+                >
+                  <Text style={{ fontWeight: "500", color: "#939393" }}>
+                    Back to{" "}
+                  </Text>
+                  <Text style={{ fontWeight: "700", color: "#777777" }}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </>
       ) : loginOrRegister === "UpdatePassword" ? (
-        <View style={styles2.container}>
-          <View style={styles2.formContainer}>
-            <View>
-              <TextInput
-                style={[
-                  styles.input,
-                  isFocusedPasswordR && styles.inputFocused,
-                ]}
-                onFocus={() => setIsFocusedPasswordR(true)}
-                onBlur={() => setIsFocusedPasswordR(false)}
-                placeholderTextColor="#c3c3c3"
-                placeholder="Enter Password"
-                secureTextEntry={isPasswordHidden}
-                value={passwordR}
-                onChangeText={(text) => handlePasswordRChange(text)}
+        <>
+          <View style={{ backgroundColor: "white" }}>
+            <View style={styles.imagecontainer}>
+              <Image
+                style={styles.image}
+                source={require("../assets/welcomeBack.png")}
               />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPressIn={() => setIsPasswordHidden(false)}
-                onPressOut={() => setIsPasswordHidden(true)}
-              >
-                <Text>
-                  <Feather name="eye" size={24} color="#c3c3c3" />
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <View>
-              <TextInput
-                style={[
-                  styles.input,
-                  isFocusedPasswordR2 && styles.inputFocused,
-                ]}
-                onFocus={() => setIsFocusedPasswordR2(true)}
-                onBlur={() => setIsFocusedPasswordR2(false)}
-                placeholderTextColor="#c3c3c3"
-                placeholder="Re-enter Password"
-                secureTextEntry={isPasswordHidden2}
-                value={passwordR2}
-                onChangeText={(text) => handlePasswordR2Change(text)}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPressIn={() => setIsPasswordHidden2(false)}
-                onPressOut={() => setIsPasswordHidden2(true)}
-              >
-                <Text>
-                  <Feather name="eye" size={24} color="#c3c3c3" />
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <TextInput
-              style={[styles.input, isFocusedCode && styles.inputFocused]}
-              onFocus={() => setIsFocusedCode2(true)}
-              onBlur={() => setIsFocusedCode2(false)}
-              placeholderTextColor="#c3c3c3"
-              placeholder="Enter 6 Digit Code"
-              value={registerCode2}
-              onChangeText={(text) => handleRegisterCode2Change(text)}
-            />
-
-            <View style={styles.loginContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.selection2,
-                  isLoadingRegisterUser ||
-                  passwordR === "" ||
-                  passwordR2 === "" ||
-                  registerCode2 === ""
-                    ? styles.disabled
-                    : null,
-                ]}
-                onPress={() => {
-                  if (passwordR !== passwordR2) {
-                    Toast.show({
-                      type: "success",
-                      text1: "Passwords do not match",
-                      text2: "Please try again.",
-                      visibilityTime: 1200,
-                      topOffset: 100,
-                    });
-                  }
-                  if (passwordR === passwordR2) {
-                    handleResetPassword();
-                  }
-                }}
-                disabled={
-                  passwordR === "" || passwordR2 === "" || registerCode2 === ""
-                }
-              >
-                <Text style={styles.choiceText}>Update Password</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.noAccount}
-                onPress={() => {
-                  setLoginOrRegister("Login");
-                }}
-              >
-                <Text style={{ fontWeight: "500", color: "#939393" }}>
-                  Back to{" "}
-                </Text>
-                <Text style={{ fontWeight: "700", color: "#777777" }}>
-                  Login
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
-        </View>
+
+          <View style={styles2.container}>
+            <View style={styles2.formContainer}>
+              <View>
+                <TextInput
+                  style={[
+                    styles.input,
+                    isFocusedPasswordR && styles.inputFocused,
+                  ]}
+                  onFocus={() => setIsFocusedPasswordR(true)}
+                  onBlur={() => setIsFocusedPasswordR(false)}
+                  placeholderTextColor="#c3c3c3"
+                  placeholder="Enter Password"
+                  secureTextEntry={isPasswordHidden}
+                  value={passwordR}
+                  onChangeText={(text) => handlePasswordRChange(text)}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPressIn={() => togglePasswordVisibility()}
+                >
+                  <Text>
+                    <Feather name="eye" size={24} color="#c3c3c3" />
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View>
+                <TextInput
+                  style={[
+                    styles.input,
+                    isFocusedPasswordR2 && styles.inputFocused,
+                  ]}
+                  onFocus={() => setIsFocusedPasswordR2(true)}
+                  onBlur={() => setIsFocusedPasswordR2(false)}
+                  placeholderTextColor="#c3c3c3"
+                  placeholder="Re-enter Password"
+                  secureTextEntry={isPasswordHidden2}
+                  value={passwordR2}
+                  onChangeText={(text) => handlePasswordR2Change(text)}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPressIn={() => togglePasswordVisibility2()}
+                >
+                  <Text>
+                    <Feather name="eye" size={24} color="#c3c3c3" />
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <TextInput
+                style={[styles.input, isFocusedCode2 && styles.inputFocused]}
+                onFocus={() => setIsFocusedCode2(true)}
+                onBlur={() => setIsFocusedCode2(false)}
+                placeholderTextColor="#c3c3c3"
+                placeholder="Enter 6 Digit Code"
+                value={registerCode2}
+                onChangeText={(text) => handleRegisterCode2Change(text)}
+              />
+
+              <View style={styles.loginContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.selection2,
+                    isLoadingRegisterUser ||
+                    passwordR === "" ||
+                    passwordR2 === "" ||
+                    registerCode2 === ""
+                      ? styles.disabled
+                      : null,
+                  ]}
+                  onPress={() => {
+                    if (passwordR !== passwordR2) {
+                      Toast.show({
+                        type: "success",
+                        text1: "Passwords do not match",
+                        text2: "Please try again.",
+                        visibilityTime: 1200,
+                        topOffset: 100,
+                      });
+                    }
+                    if (passwordR === passwordR2) {
+                      handleResetPassword();
+                    }
+                  }}
+                  disabled={
+                    passwordR === "" ||
+                    passwordR2 === "" ||
+                    registerCode2 === ""
+                  }
+                >
+                  <Text style={styles.choiceText}>Update Password</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.noAccount}
+                  onPress={() => {
+                    setLoginOrRegister("Login");
+                    handleFocusAll();
+                  }}
+                >
+                  <Text style={{ fontWeight: "500", color: "#939393" }}>
+                    Back to{" "}
+                  </Text>
+                  <Text style={{ fontWeight: "700", color: "#777777" }}>
+                    Login
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </>
       ) : null}
     </>
   );
@@ -806,7 +880,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     height: vh(60),
-    marginTop: vh(8),
+    marginTop: vh(2),
     width: vw(80),
     alignItems: "center",
   },
@@ -825,18 +899,21 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   imagecontainer: {
-    marginTop: vh(5),
+    marginTop: vh(10),
     flexDirection: "row",
     justifyContent: "center",
     alignSelf: "center",
-    backgroundColor: "rgba(74, 165, 225,0.15)",
-    padding: vh(1),
-    borderRadius: vh(10),
+    // backgroundColor: "rgba(74, 165, 225,0.15)",
+    // padding: vh(1),
+    // borderRadius: vh(10),
   },
   image: {
-    width: vh(15),
+    width: vw(70),
     height: vh(15),
-    borderRadius: vh(20),
+  },
+  imageLetsStart: {
+    width: vw(72),
+    height: vh(7),
   },
   welcomeText: {
     justifyContent: "center",

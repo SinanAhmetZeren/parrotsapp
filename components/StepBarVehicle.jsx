@@ -44,24 +44,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     height: vh(7),
     top: vh(5),
+    backgroundColor: "white",
   },
   activeStep: {
-    backgroundColor: "white",
-    borderColor: "rgba(110, 11, 211,0.36)",
+    backgroundColor: "#3c9dde",
     borderRadius: vh(1),
   },
   activeStepText: {
-    color: "rgba(91,91,255,1)",
+    color: "white",
     fontWeight: "700",
   },
   inactiveStepText: {
-    color: "rgba(91,91,255,.35)",
+    color: "#3c9dde",
     fontWeight: "700",
   },
   inactiveStep: {
-    // backgroundColor: "rgba(110, 11, 211,0.16)",
     borderRadius: vh(1),
-    backgroundColor: "white",
+    backgroundColor: "rgba(24,111,241,0.05)",
   },
   stepText: {
     fontSize: 16,

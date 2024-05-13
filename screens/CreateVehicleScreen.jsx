@@ -47,13 +47,16 @@ const CreateVehicleScreen = () => {
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
 
-  const [name, setName] = useState(timeString);
-  const [description, setDescription] = useState(voyageDes);
-  const [capacity, setCapacity] = useState("15");
+  // const [name, setName] = useState(timeString);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [capacity, setCapacity] = useState("");
   const [vehicleType, setVehicleType] = useState("");
   const [vehicleId, setVehicleId] = useState("");
   const [image, setImage] = useState(
-    "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/aad9496c-c258-4ce9-b64b-78e20f5bf2fe.jpeg"
+    // "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/aad9496c-c258-4ce9-b64b-78e20f5bf2fe.jpeg"
+
+    ""
   );
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
@@ -63,8 +66,6 @@ const CreateVehicleScreen = () => {
   const changeCurrentState = (index) => {
     setCurrentStep(index);
   };
-
-  console.log("vehicle type: ", vehicleType);
 
   const goToProfilePage = () => {
     setName("");
@@ -231,8 +232,9 @@ const CreateVehicleScreen = () => {
                     />
                   ) : (
                     <Image
-                      source={require("../assets/placeholder.png")}
-                      style={styles.backgroundImage}
+                      // source={require("../assets/placeholder.png")}
+                      source={require("../assets/ParrotsWhiteBgPlus.png")}
+                      style={styles.backgroundImagePlaceholder}
                     />
                   )}
                 </TouchableOpacity>
@@ -243,20 +245,13 @@ const CreateVehicleScreen = () => {
                   {/* /// name /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Name:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Name:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
-                        placeholder="Enter voyage name"
+                        placeholder="Enter Vehicle Name"
+                        placeholderTextColor="#c3c3c3"
                         value={name}
                         onChangeText={(text) => setName(text)}
                       />
@@ -266,15 +261,7 @@ const CreateVehicleScreen = () => {
                   {/* /// type /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Type:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Type:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <DropdownComponentType
@@ -288,21 +275,14 @@ const CreateVehicleScreen = () => {
                   {/* /// DESC /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Description:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Description:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         multiline
-                        placeholder="Enter voyage description"
+                        placeholder="Describe Your Vehicle"
+                        placeholderTextColor="#c3c3c3"
                         numberOfLines={10}
                         value={description}
                         onChangeText={(text) => setDescription(text)}
@@ -313,20 +293,13 @@ const CreateVehicleScreen = () => {
                   {/* /// VACANCY /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Capacity:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Capacity:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
-                        placeholder="Enter vehicle capacity"
+                        placeholder="Enter Vehicle Capacity"
+                        placeholderTextColor="#c3c3c3"
                         value={capacity}
                         onChangeText={(text) => setCapacity(text)}
                         keyboardType="numeric"
@@ -335,13 +308,35 @@ const CreateVehicleScreen = () => {
                   </View>
                   {/* /// VACANCY /// */}
                   {/* Save Button */}
-                  <View style={styles2.modalView}>
-                    <TouchableOpacity
+                  <View style={styles2.modalViewLogin}>
+                    {/* <TouchableOpacity
                       style={styles2.selection}
                       onPress={() => handleCreateVehicle()}
                     >
                       <Text style={styles2.choiceText}>Create Vehicle</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
+
+                    <View style={styles.loginContainer}>
+                      <TouchableOpacity
+                        onPress={() => handleCreateVehicle()}
+                        style={
+                          name === "" ||
+                          description === "" ||
+                          capacity === "" ||
+                          vehicleType === ""
+                            ? styles.selection2Disabled
+                            : styles.selection2
+                        }
+                        disabled={
+                          name === "" ||
+                          description === "" ||
+                          capacity === "" ||
+                          vehicleType === ""
+                        }
+                      >
+                        <Text style={styles.loginText}>Create Vehicle</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -365,13 +360,14 @@ const CreateVehicleScreen = () => {
                     />
                   ) : (
                     <Image
-                      source={require("../assets/plus-watercolor.png")}
+                      source={require("../assets/ParrotsWhiteBgPlus.png")}
                       style={styles.profileImage2}
                     />
                   )}
                 </TouchableOpacity>
                 {/* Your other UI elements */}
               </View>
+
               <View
                 style={
                   addedVoyageImages.length <= 1
@@ -428,14 +424,30 @@ const CreateVehicleScreen = () => {
                   </TouchableOpacity>
                 </View>
               ) : null}
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.FinishButtonContainer}
                 onPress={() => {
                   goToProfilePage();
                 }}
               >
                 <Text style={styles.addWaypointText}> Complete </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+
+              <View style={styles.completeContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    goToProfilePage();
+                  }}
+                  style={
+                    data[0].key === "placeholder_1"
+                      ? styles.selection2Disabled
+                      : styles.selection2
+                  }
+                  disabled={data[0].key === "placeholder_1"}
+                >
+                  <Text style={styles.loginText}>Complete</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </ScrollView>
         ) : null}
@@ -451,6 +463,11 @@ const styles2 = StyleSheet.create({
     backgroundColor: "#2184c6",
     borderRadius: vh(3),
     borderWidth: 2,
+    borderColor: "#76bae8",
+    alignSelf: "center",
+    marginTop: vh(0.8),
+  },
+  modalViewLogin: {
     borderColor: "#76bae8",
     alignSelf: "center",
     marginTop: vh(0.8),
@@ -480,6 +497,38 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  completeContainer: {
+    alignSelf: "center",
+    marginTop: vh(2),
+  },
+  loginText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "white",
+    textAlign: "center",
+  },
+  choiceText: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "white",
+    textAlign: "center",
+  },
+  selection2: {
+    marginHorizontal: vh(0.25),
+    marginVertical: vh(0.25),
+    paddingVertical: vh(1),
+    backgroundColor: "rgb(24,111,241)",
+    borderRadius: vh(1.5),
+    width: vw(50),
+  },
+  selection2Disabled: {
+    marginHorizontal: vh(0.25),
+    marginVertical: vh(0.25),
+    paddingVertical: vh(1),
+    backgroundColor: "rgba(24,111,241,.3)",
+    borderRadius: vh(1.5),
+    width: vw(50),
+  },
   addWaypointText: {
     alignSelf: "center",
     padding: vh(1),
@@ -549,10 +598,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafbfc",
     marginVertical: vh(0.3),
     padding: vh(0.4),
-    // borderRadius: vh(3),
     borderTopRightRadius: vh(3),
     borderBottomRightRadius: vh(3),
-    // borderWidth: 1,
     borderColor: "#babbbc",
     width: vw(64),
   },
@@ -565,32 +612,28 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     alignItems: "center",
   },
-
   addWaypoints: {
     marginTop: vh(4),
     alignItems: "center",
   },
   selectedText: {
-    color: "rgba(91,91,255,1)",
+    color: "rgba(24,111,241,0.5)",
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "700",
     textAlign: "center",
   },
   length1: {
     height: vh(13),
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "green",
   },
   length2: {
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "red",
   },
   length3: {
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "blue",
   },
 
   deleteAddedImage: {
@@ -632,13 +675,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   overlay: {
-    // backgroundColor: "red",
+    marginTop: vh(7),
   },
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     marginTop: vh(1),
+    marginBottom: vh(1),
     borderRadius: vh(1.5),
   },
 
@@ -655,6 +699,10 @@ const styles = StyleSheet.create({
     width: vw(100),
     height: vh(30),
   },
+  backgroundImagePlaceholder: {
+    width: vw(50),
+    height: vh(30),
+  },
   profileImage2: {
     marginLeft: vw(3),
     marginVertical: vh(1),
@@ -663,7 +711,7 @@ const styles = StyleSheet.create({
     height: vh(20),
     borderRadius: vh(3),
     borderColor: "rgba(0, 119, 234,0.1)",
-    borderWidth: 5,
+    // borderWidth: 5,
   },
   mainCheckboxContainer: {
     paddingHorizontal: vh(1),

@@ -144,7 +144,7 @@ export default function MessagesScreen({ navigation }) {
                 <View style={styles.mainBidsContainer2}>
                   <View style={styles.currentBidsAndSeeAll2}>
                     <Image
-                      source={require("../assets/parrots-logo-new11.jpeg")}
+                      source={require("../assets/ParrotsWhiteBg.png")}
                       style={styles.logoImage}
                     />
 
