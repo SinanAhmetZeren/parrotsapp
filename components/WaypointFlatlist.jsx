@@ -235,18 +235,20 @@ const styles = StyleSheet.create({
     height: vh(15),
     top: vh(-15) - 2,
     backgroundColor: "rgba(11,11,11,0.5)",
-    //backgroundColor: "rgba(217, 241, 241,.75)",
     marginLeft: 2,
     borderRadius: vh(1),
   },
   scrollViewX: {
     height: vh(12),
-    top: vh(-12) - 4,
+    top: vh(-12) - 2,
     width: vw(78),
     marginLeft: 4,
     borderRadius: vh(1),
     backgroundColor: "rgba(11,11,11,0.5)",
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
+
   closeButtonAndText: {
     flexDirection: "row",
     borderRadius: vh(2.5),

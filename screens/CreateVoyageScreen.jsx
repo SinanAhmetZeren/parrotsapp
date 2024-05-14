@@ -743,6 +743,7 @@ const styles = StyleSheet.create({
   backgroundImagePlaceholder: {
     width: vw(50),
     height: vh(30),
+    marginBottom: vh(5),
   },
   profileImageAndSocial: {
     flexDirection: "row",

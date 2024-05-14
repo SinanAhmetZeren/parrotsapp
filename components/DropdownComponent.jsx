@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
     zIndex: 0,
     paddingHorizontal: 8,
     fontSize: 12,
-
     color: "#6b7f9d",
     fontWeight: "500",
     width: vw(25),
@@ -103,8 +102,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 12,
-    // color: "rgba(0, 119, 234,0.9)",
-    color: "#6b7f9d",
+    color: "#c3c3c3",
     fontWeight: "500",
     width: vw(25),
   },

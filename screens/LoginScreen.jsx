@@ -449,7 +449,7 @@ const LoginScreen = ({ navigation }) => {
                 onFocus={() => setIsFocusedUserNameR(true)}
                 onBlur={() => setIsFocusedUserNameR(false)}
                 placeholderTextColor="#c3c3c3"
-                placeholder="Username"
+                placeholder="Username (max 25 characters)"
                 value={userNameR}
                 onChangeText={(text) => handleUserNameRChange(text)}
               />

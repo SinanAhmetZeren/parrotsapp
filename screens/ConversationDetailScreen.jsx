@@ -168,8 +168,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
         >
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("ProfileScreenPublic", {
-                userId: conversationUserId,
+              navigation.navigate("Create", {
+                screen: "ProfileScreenPublic",
+                params: { userId: userId },
               });
             }}
             style={styles.headerContainer}

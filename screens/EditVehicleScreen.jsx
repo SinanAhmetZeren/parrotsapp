@@ -120,7 +120,7 @@ const EditVehicleScreen = () => {
     setAddedVoyageImages([]);
     setCurrentStep(1);
 
-    navigation.navigate("ProfileScreen");
+    navigation.navigate("Home", { screen: "HomeScreen" });
   };
 
   const handlePatchVehicle = async () => {
@@ -294,20 +294,13 @@ const EditVehicleScreen = () => {
                   {/* /// name /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Name:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Name:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter voyage name"
+                        placeholderStyle={styles.placeholderStyle}
                         value={name}
                         onChangeText={(text) => setName(text)}
                       />
@@ -318,15 +311,7 @@ const EditVehicleScreen = () => {
                   {/* /// type /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Type:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Type:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <DropdownComponentType
@@ -341,21 +326,14 @@ const EditVehicleScreen = () => {
                   {/* /// DESC /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Description:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Description:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         multiline
                         placeholder="Enter voyage description"
+                        placeholderStyle={styles.placeholderStyle}
                         numberOfLines={10}
                         value={description}
                         onChangeText={(text) => setDescription(text)}
@@ -367,20 +345,13 @@ const EditVehicleScreen = () => {
                   {/* /// VACANCY /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>
-                        <Feather
-                          style={styles.icon}
-                          name="feather"
-                          size={24}
-                          color="black"
-                        />{" "}
-                        Capacity:
-                      </Text>
+                      <Text style={styles.latorLngtxt}>Capacity:</Text>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter vehicle capacity"
+                        placeholderStyle={styles.placeholderStyle}
                         value={capacity}
                         onChangeText={(text) => setCapacity(text)}
                         keyboardType="numeric"
@@ -437,7 +408,7 @@ const EditVehicleScreen = () => {
                     />
                   ) : (
                     <Image
-                      source={require("../assets/plus-watercolor.png")}
+                      source={require("../assets/ParrotsWhiteBgPlus.png")}
                       style={styles.profileImage2}
                     />
                   )}
@@ -580,6 +551,13 @@ const EditVehicleScreen = () => {
 export default EditVehicleScreen;
 
 const styles2 = StyleSheet.create({
+  placeholderStyle: {
+    fontSize: 12,
+    color: "#c3c3c3",
+    fontWeight: "500",
+    width: vw(25),
+    left: vw(-1),
+  },
   recycle: {
     color: "purple",
   },
@@ -797,9 +775,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedText: {
-    color: "rgba(91,91,255,1)",
+    color: "rgba(24,111,241,0.5)",
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "700",
     textAlign: "center",
   },
   length1: {
@@ -887,7 +865,6 @@ const styles = StyleSheet.create({
     height: vh(20),
     borderRadius: vh(3),
     borderColor: "rgba(0, 119, 234,0.1)",
-    borderWidth: 5,
   },
   mainCheckboxContainer: {
     paddingHorizontal: vh(1),

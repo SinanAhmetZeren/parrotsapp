@@ -173,13 +173,17 @@ const VoyageDetailScreen = () => {
   };
 
   const goToProfilePage = (userId) => {
-    navigation.navigate("ProfileScreenPublic", {
-      userId: userId,
+    navigation.navigate("Create", {
+      screen: "ProfileScreenPublic",
+      params: { userId: userId },
     });
   };
 
   const goToVehiclePage = (vehicleId) => {
-    navigation.navigate("VehicleDetail", { vehicleId });
+    navigation.navigate("Create", {
+      screen: "VehicleDetail",
+      params: { vehicleId: vehicleId },
+    });
   };
 
   const toggleWaypointsInfo = () => {
@@ -736,6 +740,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     alignSelf: "center",
     color: "#2ac898",
+    fontWeight: "800",
+    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(0.5),
+    borderRadius: vh(1),
   },
   userName: {
     fontSize: 14,

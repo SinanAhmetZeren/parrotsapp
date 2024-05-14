@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { useState, useCallback } from "react";
 import MapView, { Marker } from "react-native-maps";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -274,7 +274,21 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.welcomeandFilters}>
             <View style={styles.welcomebox}>
               <Text style={styles.welcome}>Welcome to Parrots</Text>
-              <Text style={styles.username}>{username}!</Text>
+              {username.length > 10 ? (
+                username.length > 12 ? (
+                  <View style={{ flexDirection: "row" }}>
+                    <Text style={styles.username}>
+                      {username.substring(0, 7)}
+                    </Text>
+                    <Text style={styles.usernameSmall}>{"..."}</Text>
+                    <Text style={styles.username}>!</Text>
+                  </View>
+                ) : (
+                  <Text style={styles.username}>{username}!</Text>
+                )
+              ) : (
+                <Text style={styles.username}>{username}!</Text>
+              )}
             </View>
 
             <View style={styles.filterContainer}>
@@ -285,43 +299,31 @@ export default function HomeScreen({ navigation }) {
                       styles.icon,
                       isCountFiltered ? styles.filtered : null,
                     ]}
-                    name="human"
+                    name="human-handsup"
                     size={24}
-                    color="black"
+                    color="#c3c3c3"
                   />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleCalendarModal}>
-                  <AntDesign
+                  <Ionicons
                     style={[
                       styles.icon,
                       isDatesFiltered ? styles.filtered : null,
                     ]}
-                    name="calendar"
+                    name="calendar-outline"
                     size={24}
-                    color="black"
+                    color="#c3c3c3"
                   />
-                  {/*                   
-                  {isDatesFiltered ? (
-                    <Image
-                      style={styles.plusSign}
-                      source={require("../assets/calendarIconF.png")}
-                    />
-                  ) : (
-                    <Image
-                      style={styles.plusSign}
-                      source={require("../assets/calendarIconF.png")}
-                    />
-                  )} */}
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleVehicleModal}>
-                  <Ionicons
+                  <MaterialCommunityIcons
                     style={[
                       styles.icon,
                       isVehicleFiltered ? styles.filtered : null,
                     ]}
-                    name="car-outline"
+                    name="car-side"
                     size={24}
-                    color="black"
+                    color="#c3c3c3"
                   />
                 </TouchableOpacity>
               </View>
@@ -332,7 +334,7 @@ export default function HomeScreen({ navigation }) {
                     applyFilter();
                   }}
                 >
-                  <View style={styles.extendedArea}>
+                  <View>
                     <Text style={styles.seeOnMap}>Apply Filter</Text>
                   </View>
                 </TouchableOpacity>
@@ -374,7 +376,6 @@ export default function HomeScreen({ navigation }) {
             </View>
           )}
 
-          {/* <VehicleFlatList /> */}
           <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
         </View>
         <View>
@@ -499,7 +500,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   filterContainer: {
-    // backgroundColor: "grey",
+    //backgroundColor: "grey",
   },
 
   seeOnMap: {
@@ -548,13 +549,10 @@ const styles = StyleSheet.create({
   },
   welcomeandFilters: {
     flexDirection: "row",
-    // paddingHorizontal: 15,
     paddingHorizontal: vh(2),
-
     marginTop: 0,
     paddingBottom: vh(2),
   },
-
   mapContainer: {
     height: vh(47),
     marginBottom: 7,
@@ -580,22 +578,32 @@ const styles = StyleSheet.create({
   },
   welcome: {
     fontSize: 18,
-    color: "rgba(10, 119, 234,0.75)",
-    fontWeight: "500",
+    color: "rgba(10, 119, 234,0.55)",
+    fontWeight: "900",
   },
   username: {
     fontSize: 26,
     fontWeight: "700",
     color: "#2ac898",
   },
+  usernameLong: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#2ac898",
+  },
+  usernameSmall: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#2ac898",
+    alignSelf: "flex-end",
+  },
   welcomebox: {
-    paddingTop: vh(2),
+    paddingTop: vh(1),
     width: vw(50),
   },
   filterbox: {
     flexDirection: "row",
     justifyContent: "space-around",
-
     width: vw(43),
   },
   icon: {
@@ -603,7 +611,6 @@ const styles = StyleSheet.create({
     margin: 2,
     borderRadius: 20,
   },
-
   searchAndMenu: {
     flexDirection: "row",
     alignItems: "center",

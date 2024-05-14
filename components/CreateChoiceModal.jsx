@@ -14,11 +14,11 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
   };
   const handleAddVehicle = () => {
     setModalVisible(false);
-    navigation.navigate("CreateVehicleScreen");
+    navigation.navigate("Create", { screen: "CreateVehicleScreen" });
   };
   const handleAddVoyage = () => {
     setModalVisible(false);
-    navigation.navigate("CreateVoyageScreen");
+    navigation.navigate("Create", { screen: "CreateVoyageScreen" });
   };
 
   return (

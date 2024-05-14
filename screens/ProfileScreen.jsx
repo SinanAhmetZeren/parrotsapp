@@ -205,8 +205,9 @@ export default function ProfileScreen({ navigation }) {
                 <TouchableOpacity
                   style={styles.publicProfileBox}
                   onPress={() => {
-                    navigation.navigate("ProfileScreenPublic", {
-                      userId: userId,
+                    navigation.navigate("Create", {
+                      screen: "ProfileScreenPublic",
+                      params: { userId: userId },
                     });
                   }}
                   activeOpacity={0.8}

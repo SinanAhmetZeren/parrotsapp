@@ -700,6 +700,7 @@ const styles = StyleSheet.create({
     height: vh(30),
   },
   backgroundImagePlaceholder: {
+    marginBottom: vh(3),
     width: vw(50),
     height: vh(30),
   },

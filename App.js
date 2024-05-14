@@ -106,27 +106,8 @@ const ProfileStack = () => {
         headerShown: false,
       }}
     >
-      {/* <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
-
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
-      <Stack.Screen
-        name="CreateVehicleScreen"
-        component={CreateVehicleScreen}
-      />
-
-      <Stack.Screen
-        name="ProfileScreenPublic"
-        component={ProfileScreenPublic}
-      />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-      <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
-      <Stack.Screen name="EditVehicleScreen" component={EditVehicleScreen} />
-      <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
-      <Stack.Screen
-        name="ConversationDetailScreen"
-        component={ConversationDetailScreen}
-      />
     </Stack.Navigator>
   );
 };
@@ -142,10 +123,6 @@ const MessageStack = () => {
         name="ConversationDetailScreen"
         component={ConversationDetailScreen}
       />
-      <Stack.Screen
-        name="ProfileScreenPublic"
-        component={ProfileScreenPublic}
-      />
     </Stack.Navigator>
   );
 };
@@ -157,8 +134,6 @@ const HomeStack = () => {
       }}
     >
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
-      <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
     </Stack.Navigator>
   );
 };
@@ -170,10 +145,16 @@ const AddNewStack = () => {
       }}
     >
       <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
-
       <Stack.Screen
         name="CreateVehicleScreen"
         component={CreateVehicleScreen}
+      />
+      <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
+      <Stack.Screen name="EditVehicleScreen" component={EditVehicleScreen} />
+      <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublic}
       />
     </Stack.Navigator>
   );
@@ -182,8 +163,6 @@ const AuthStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
     </Stack.Navigator>
   );
 };

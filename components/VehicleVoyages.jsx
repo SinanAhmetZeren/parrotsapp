@@ -12,7 +12,12 @@ export default function VehicleVoyages({ voyages }) {
   const navigation = useNavigation();
 
   const handleNavigateToVoyage = (voyageId) => {
-    navigation.navigate("VoyageDetail", { voyageId });
+    // navigation.navigate("VoyageDetail", { voyageId });
+
+    navigation.navigate("Create", {
+      screen: "VoyageDetail",
+      params: { voyageId: voyageId },
+    });
   };
 
   const VoyageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/`;

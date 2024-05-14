@@ -16,8 +16,9 @@ export const SearchUsersComponent = ({ searchResults }) => {
             return (
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("ProfileScreenPublic", {
-                    userId: item.id,
+                  navigation.navigate("Create", {
+                    screen: "ProfileScreenPublic",
+                    params: { userId: userId },
                   });
                 }}
                 key={index}

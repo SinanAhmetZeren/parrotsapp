@@ -36,7 +36,12 @@ export default function VoyageCardProfileHorizontalModal({
   const navigation = useNavigation();
 
   const handleNavigation = (voyageId) => {
-    navigation.navigate("VoyageDetail", { voyageId });
+    // navigation.navigate("VoyageDetail", { voyageId });
+
+    navigation.navigate("Create", {
+      screen: "VoyageDetail",
+      params: { voyageId: voyageId },
+    });
   };
 
   let icon;

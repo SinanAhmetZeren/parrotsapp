@@ -8,7 +8,6 @@ import { vh, vw } from "react-native-expo-viewport-units";
 
 const DropdownComponentType = ({ data, setVehicleType, selected }) => {
   const [isFocus, setIsFocus] = useState(false);
-  console.log("dropdown component selected: ", selected);
   return (
     <View style={styles.container}>
       <Dropdown
@@ -100,10 +99,10 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 12,
-    // color: "rgba(0, 119, 234,0.9)",
-    color: "#6b7f9d",
+    color: "#c3c3c3",
     fontWeight: "500",
     width: vw(25),
+    left: vw(-1),
   },
   selectedTextStyle: {
     fontSize: 12,

@@ -5,10 +5,7 @@
 import React from "react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
-import {
-  useGetVoyageByIdQuery,
-  useSendBidMutation,
-} from "../slices/VoyageSlice";
+
 import { useGetVehicleByIdQuery } from "../slices/VehicleSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -35,7 +32,6 @@ import {
 import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
 import { useDispatch, useSelector } from "react-redux";
 import VehicleVoyages from "../components/VehicleVoyages";
-import { useFonts } from "expo-font";
 import {
   useAddVehicleToFavoritesMutation,
   useDeleteVehicleFromFavoritesMutation,
@@ -117,8 +113,9 @@ const VehicleDetailScreen = () => {
   }, [isSuccessVehicles, userFavoriteVehicles]);
 
   const goToProfilePage = (userId) => {
-    navigation.navigate("ProfileScreenPublic", {
-      userId: userId,
+    navigation.navigate("Create", {
+      screen: "ProfileScreenPublic",
+      params: { userId: userId },
     });
   };
 
@@ -219,36 +216,38 @@ const VehicleDetailScreen = () => {
             />
           </View>
 
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              style={styles.editProfileBox}
-              onPress={() => {
-                navigation.navigate("EditVehicleScreen", {
-                  currentVehicleId: vehicleId,
-                });
-              }}
-              activeOpacity={0.8}
-            >
-              <View>
-                <View style={styles.innerProfileContainer}>
-                  <MaterialCommunityIcons
-                    name="account-edit-outline"
-                    size={18}
-                    color="rgba(0, 119, 234,0.9)"
-                  />
-                  <Text
-                    style={{
-                      lineHeight: 22,
-                      marginLeft: vw(2),
-                      fontSize: 11,
-                    }}
-                  >
-                    Edit Vehicle
-                  </Text>
+          {userId === VehicleData.userId ? (
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity
+                style={styles.editProfileBox}
+                onPress={() => {
+                  navigation.navigate("EditVehicleScreen", {
+                    currentVehicleId: vehicleId,
+                  });
+                }}
+                activeOpacity={0.8}
+              >
+                <View>
+                  <View style={styles.innerProfileContainer}>
+                    <MaterialCommunityIcons
+                      name="account-edit-outline"
+                      size={18}
+                      color="rgba(0, 119, 234,0.9)"
+                    />
+                    <Text
+                      style={{
+                        lineHeight: 22,
+                        marginLeft: vw(2),
+                        fontSize: 11,
+                      }}
+                    >
+                      Edit Vehicle
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          </View>
+              </TouchableOpacity>
+            </View>
+          ) : null}
 
           <View style={styles.voyageDataWrapper}>
             <View style={styles.VoyageDataContainer}>
@@ -322,7 +321,29 @@ const VehicleDetailScreen = () => {
                         style={styles.profileImage}
                       />
                       <Text style={styles.userName}>
-                        {VehicleData.user.userName}
+                        {/* {VehicleData.user.userName} */}
+
+                        {VehicleData.user.userName.length > 10 ? (
+                          VehicleData.user.userName.length > 12 ? (
+                            <View style={{ flexDirection: "row" }}>
+                              <Text style={styles.username}>
+                                {VehicleData.user.userName.substring(0, 7)}
+                              </Text>
+                              <Text style={styles.usernameSmall}>{"..."}</Text>
+                              <Text style={styles.username}>!</Text>
+                            </View>
+                          ) : (
+                            <Text style={styles.username}>
+                              {VehicleData.user.userName}!
+                            </Text>
+                          )
+                        ) : (
+                          <Text style={styles.username}>
+                            {VehicleData.user.userName}!
+                          </Text>
+                        )}
+
+                        {/* //// XXXXXXX //// */}
                       </Text>
                     </TouchableOpacity>
 
@@ -450,6 +471,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     alignSelf: "center",
     color: "#2ac898",
+    fontWeight: "800",
+
+    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(0.5),
+    borderRadius: vh(1),
   },
   mainBidsContainer: {
     borderRadius: vw(5),

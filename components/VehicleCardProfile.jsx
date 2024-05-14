@@ -132,7 +132,12 @@ export default function VehicleCardProfile({
 
   const navigation = useNavigation();
   const handleNavigateToVehicle = (vehicleId) => {
-    navigation.navigate("VehicleDetail", { vehicleId });
+    // navigation.navigate("VehicleDetail", { vehicleId });
+
+    navigation.navigate("Create", {
+      screen: "VehicleDetail",
+      params: { vehicleId: vehicleId },
+    });
   };
 
   return (
