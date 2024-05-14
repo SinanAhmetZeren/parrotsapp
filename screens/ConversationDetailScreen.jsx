@@ -170,7 +170,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
             onPress={() => {
               navigation.navigate("Create", {
                 screen: "ProfileScreenPublic",
-                params: { userId: userId },
+                params: { userId: conversationUserId },
               });
             }}
             style={styles.headerContainer}

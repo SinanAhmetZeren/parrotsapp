@@ -137,6 +137,7 @@ const HomeStack = () => {
     </Stack.Navigator>
   );
 };
+
 const AddNewStack = () => {
   return (
     <Stack.Navigator
@@ -144,21 +145,64 @@ const AddNewStack = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="CreateVoyageScreen" component={CreateVoyageScreen} />
+      <Stack.Screen
+        name="CreateVoyageScreen"
+        component={CreateVoyageScreen}
+        options={
+          {
+            // unmountOnBlur: true,
+          }
+        }
+      />
       <Stack.Screen
         name="CreateVehicleScreen"
         component={CreateVehicleScreen}
+        options={
+          {
+            // unmountOnBlur: true,
+          }
+        }
       />
-      <Stack.Screen name="VoyageDetail" component={VoyageDetailScreen} />
-      <Stack.Screen name="EditVehicleScreen" component={EditVehicleScreen} />
-      <Stack.Screen name="VehicleDetail" component={VehicleDetailScreen} />
+      <Stack.Screen
+        name="VoyageDetail"
+        component={VoyageDetailScreen}
+        options={
+          {
+            // unmountOnBlur: true,
+          }
+        }
+      />
+      <Stack.Screen
+        name="EditVehicleScreen"
+        component={EditVehicleScreen}
+        options={
+          {
+            // unmountOnBlur: true,
+          }
+        }
+      />
+      <Stack.Screen
+        name="VehicleDetail"
+        component={VehicleDetailScreen}
+        options={
+          {
+            // unmountOnBlur: true,
+          }
+        }
+      />
       <Stack.Screen
         name="ProfileScreenPublic"
         component={ProfileScreenPublic}
+        options={
+          {
+            // unmountOnBlur: true,
+          }
+        }
       />
     </Stack.Navigator>
   );
 };
+
 const AuthStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

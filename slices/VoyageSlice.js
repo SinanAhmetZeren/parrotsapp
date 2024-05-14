@@ -16,9 +16,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
-    providesTags: (result, error, arg) => [
-      ...result.ids.map((id) => ({ type: "Voyage", id })),
-    ],
     getVoyageById: builder.query({
       query: (voyageId) => `/api/Voyage/GetVoyageById/${voyageId}`,
       transformResponse: (responseData) => {
