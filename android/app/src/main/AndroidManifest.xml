@@ -20,8 +20,8 @@
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
     
         <meta-data
-            android:name="com.google.android.geo.AIzaSyDx-XWFvstloEQjvYzUZDpSc5ZscKfBWGs"
-            android:value="AIzaSyDx-XWFvstloEQjvYzUZDpSc5ZscKfBWGs"/>
+            android:name="com.google.android.geo."
+            android:value=""/>
 
     <activity android:name=".MainActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.App.SplashScreen" android:exported="true" android:screenOrientation="portrait">
       <intent-filter>
