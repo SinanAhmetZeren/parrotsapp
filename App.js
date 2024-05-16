@@ -1,3 +1,5 @@
+// android 938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com
+
 /* eslint-disable react/display-name */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -14,6 +16,7 @@ import {
   Image,
   TouchableOpacity,
   Modal,
+  Button,
   ActivityIndicator,
 } from "react-native";
 import { vh } from "react-native-expo-viewport-units";
@@ -31,10 +34,7 @@ import MessagesScreen from "./screens/MessagesScreen";
 import { ConversationDetailScreen } from "./screens/ConversationDetailScreen";
 import FavoritesScreen from "./screens/FavoritesScreen";
 import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import { CreateChoiceModal } from "./components/CreateChoiceModal";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   updateStateFromLocalStorage,
@@ -50,6 +50,12 @@ import {
   useGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
+
+// import {
+//   GoogleSignin,
+//   GoogleSigninButton,
+//   statusCodes,
+// } from "@react-native-google-signin/google-signin";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -137,7 +143,6 @@ const HomeStack = () => {
     </Stack.Navigator>
   );
 };
-
 const AddNewStack = () => {
   return (
     <Stack.Navigator
@@ -202,7 +207,6 @@ const AddNewStack = () => {
     </Stack.Navigator>
   );
 };
-
 const AuthStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -422,9 +426,6 @@ function App() {
 
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
     const userId = useSelector((state) => state.users.userId);
-
-    console.log("user id. ", userId);
-
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const dispatch = useDispatch();
 
@@ -486,7 +487,9 @@ function App() {
     return isLoggedIn ? (
       <TabNavigator isLoading={isLoadingUser} />
     ) : (
-      <AuthStack />
+      <>
+        <AuthStack />
+      </>
     );
   }
 

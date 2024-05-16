@@ -2,10 +2,10 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { StyleSheet, View, Text, ScrollView, Image } from "react-native";
 import { useRef, useEffect } from "react";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { Image } from "react-native-elements";
+// import { Image } from "react-native-elements";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);

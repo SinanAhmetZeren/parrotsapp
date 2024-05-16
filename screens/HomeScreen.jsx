@@ -111,7 +111,8 @@ export default function HomeScreen({ navigation }) {
       setIsLoading(true);
 
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
-      setInitialVoyages(voyages.data);
+      // setInitialVoyages(voyages.data);
+      setInitialVoyages(voyages.data || []);
       setIsLoading(false);
     };
 
@@ -130,8 +131,8 @@ export default function HomeScreen({ navigation }) {
     setEndDateM(item.endDate);
     setVehicleNameM(item.vehicle.name);
     setVehicleTypeM(item.vehicle.type);
-    setLatitudeM(item.waypoints[0].latitude);
-    setLongitudeM(item.waypoints[0].longitude);
+    setLatitudeM(item.waypoints[0]?.latitude);
+    setLongitudeM(item.waypoints[0]?.longitude);
     setSelectedVoyageModalVisible(true);
   };
 
@@ -189,7 +190,7 @@ export default function HomeScreen({ navigation }) {
       formattedEndDate,
     };
     const filteredVoyages = await getFilteredVoyages(data);
-    setInitialVoyages(filteredVoyages.data);
+    setInitialVoyages(filteredVoyages.data || []);
   };
 
   function handleCountModal() {

@@ -11,9 +11,7 @@ import {
   StyleSheet,
   Text,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
 import { vw, vh } from "react-native-expo-viewport-units";
-import PagerView from "react-native-pager-view";
 
 const VoyageImagesWithCarousel = ({ voyageImages }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
