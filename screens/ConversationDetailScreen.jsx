@@ -157,7 +157,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
     return (
       <View
         style={{
-          marginTop: vh(5),
+          //marginTop: vh(5),
           backgroundColor: "white",
           padding: vh(2),
         }}

@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     height: vh(35),
   },
   imageContainer: {
-    top: vh(5),
+    // top: vh(5),
     height: vh(40),
     width: vw(100),
   },

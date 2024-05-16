@@ -410,7 +410,7 @@ export default function HomeScreen({ navigation }) {
                   focusMap={() => {}}
                   setSelectedVoyageModalVisible={setSelectedVoyageModalVisible}
                 />
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   style={styles.closeButtonAndText}
                   onPress={() => setSelectedVoyageModalVisible(false)}
                 >
@@ -418,6 +418,18 @@ export default function HomeScreen({ navigation }) {
                     <AntDesign name="closecircleo" size={22} color="#3aa4ff" />
                   </View>
                   <Text style={styles.closeText1}>Close</Text>
+                </TouchableOpacity> */}
+
+                <TouchableOpacity
+                  style={styles.closeButtonAndText2}
+                  onPress={() => setSelectedVoyageModalVisible(false)}
+                >
+                  <View style={styles.closeButtonInModal2}>
+                    <Image
+                      style={styles.logo}
+                      source={require("../assets/close-icon.png")}
+                    />
+                  </View>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -429,6 +441,19 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  logo: {
+    height: vh(5),
+    width: vh(5),
+    borderRadius: vh(10),
+  },
+  closeButtonInModal2: {
+    alignSelf: "center",
+    backgroundColor: "rgba(217, 241, 241,.75)",
+    borderRadius: vh(10),
+    padding: vh(1.5),
+    borderColor: "#93c9ed",
+    marginTop: vh(1),
+  },
   innerProfileContainer: {
     alignSelf: "flex-end",
     flexDirection: "row",
@@ -468,6 +493,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: vh(-5),
   },
+
+  closeButtonAndText2: {
+    flexDirection: "row",
+    position: "absolute",
+    height: vh(3.5),
+    width: vh(11.45),
+    borderRadius: vh(2.5),
+    bottom: vh(-6),
+    alignSelf: "center",
+  },
+
   closeText1: {
     marginLeft: vw(1),
     fontSize: 18,
@@ -543,7 +579,7 @@ const styles = StyleSheet.create({
     paddingRight: vw(10),
   },
   scrollview: {
-    marginTop: vh(4),
+    // marginTop: vh(4),
     paddingTop: vh(2),
     marginBottom: vh(5),
     backgroundColor: "white",

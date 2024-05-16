@@ -51,11 +51,13 @@ import {
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
 
-// import {
-//   GoogleSignin,
-//   GoogleSigninButton,
-//   statusCodes,
-// } from "@react-native-google-signin/google-signin";
+/*
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+*/
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   imageContainer: {
-    top: vh(5),
+    // top: vh(5),
     height: vh(40),
     width: vw(100),
   },

@@ -15,13 +15,19 @@
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": ["android.permission.RECORD_AUDIO"],
-      "package": "com.zenforest.parrots"
+      "package": "com.zenforest.parrots",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDfohzxRf-sDVUb2mS3m68XlTSH2MFbCI0"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
