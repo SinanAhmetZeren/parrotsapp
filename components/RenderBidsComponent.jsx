@@ -131,7 +131,7 @@ export const RenderBidsComponent = ({
                           color="#3c9dde"
                         />
                       </Text>
-                    ) : (
+                    ) : ownVoyage ? (
                       <TouchableOpacity
                         onPress={() =>
                           handleAcceptBid({
@@ -148,6 +148,14 @@ export const RenderBidsComponent = ({
                           />
                         </Text>
                       </TouchableOpacity>
+                    ) : (
+                      <Text>
+                        <Ionicons
+                          name="checkmark-circle-outline"
+                          size={24}
+                          color="#93c9ed"
+                        />
+                      </Text>
                     )}
                   </View>
                 </View>

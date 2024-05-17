@@ -455,7 +455,7 @@ const TabNavigator = () => {
                           }
                     }
                   >
-                    Connect
+                    Social
                   </Text>
                 </View>
               );
