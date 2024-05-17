@@ -15,15 +15,10 @@
     </intent>
   </queries>
   <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="true" android:theme="@style/AppTheme">
-    <meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/google_maps_api_key" />
+    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyC1SVBntHovN2qYAZxGm89A2T2QcTFHqZ8"/>
     <meta-data android:name="expo.modules.updates.ENABLED" android:value="false"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
-    
-        <meta-data
-            android:name="com.google.android.geo.AIzaSyDx-XWFvstloEQjvYzUZDpSc5ZscKfBWGs"
-            android:value="AIzaSyDx-XWFvstloEQjvYzUZDpSc5ZscKfBWGs"/>
-
     <activity android:name=".MainActivity" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:theme="@style/Theme.App.SplashScreen" android:exported="true" android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>

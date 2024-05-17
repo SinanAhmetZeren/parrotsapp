@@ -75,6 +75,7 @@ const screenOptions = {
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     backgroundColor: "#fff6ec",
+    // backgroundColor: "#ecf6fc",
   },
 };
 const toastConfig = {
@@ -232,6 +233,7 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
+                /*
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
@@ -250,6 +252,26 @@ const TabNavigator = () => {
                     Home
                   </Text>
                 </View>
+                */
+                <View>
+                  <Image
+                    style={styles.bottomIcon}
+                    source={require("./assets/homeIcon5.png")}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? {
+                            fontSize: 12,
+                            color: "#3aa4ff",
+                            textAlign: "center",
+                          }
+                        : { fontSize: 12, color: "#000", textAlign: "center" }
+                    }
+                  >
+                    Home
+                  </Text>
+                </View>
               );
             },
           }}
@@ -261,6 +283,7 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
+                /*
                 <View
                   style={{
                     alignItems: "center",
@@ -277,6 +300,26 @@ const TabNavigator = () => {
                       focused
                         ? { fontSize: 12, color: "#3aa4ff" }
                         : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Profile
+                  </Text>
+                </View>
+                */
+                <View>
+                  <Image
+                    style={styles.bottomIcon}
+                    source={require("./assets/profileIcon5.png")}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? {
+                            fontSize: 12,
+                            color: "#3aa4ff",
+                            textAlign: "center",
+                          }
+                        : { fontSize: 12, color: "#000", textAlign: "center" }
                     }
                   >
                     Profile
@@ -318,6 +361,7 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
+                /*
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
@@ -336,6 +380,28 @@ const TabNavigator = () => {
                     Favorites
                   </Text>
                 </View>
+                */
+
+                <View>
+                  <Image
+                    style={styles.bottomIcon}
+                    source={require("./assets/favoritesIcon5.png")}
+                  />
+
+                  <Text
+                    style={
+                      focused
+                        ? {
+                            fontSize: 12,
+                            color: "#3aa4ff",
+                            textAlign: "center",
+                          }
+                        : { fontSize: 12, color: "#000", textAlign: "center" }
+                    }
+                  >
+                    Favorites
+                  </Text>
+                </View>
               );
             },
           }}
@@ -347,19 +413,10 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
+                /*
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
-                  {/* <Feather
-                    name="users"
-                    size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
-                  /> */}
-                  {/* <FontAwesome6
-                    name="connectdevelop"
-                    size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
-                  /> */}
 
                   <AntDesign
                     name="sharealt"
@@ -372,6 +429,30 @@ const TabNavigator = () => {
                       focused
                         ? { fontSize: 12, color: "#3aa4ff" }
                         : { fontSize: 12, color: "#000" }
+                    }
+                  >
+                    Connect
+                  </Text>
+                </View>
+                */
+                <View>
+                  <Image
+                    style={styles.bottomIcon}
+                    source={require("./assets/connectIcon5.png")}
+                  />
+                  <Text
+                    style={
+                      focused
+                        ? {
+                            fontSize: 12,
+                            color: "#3aa4ff",
+                            textAlign: "center",
+                          }
+                        : {
+                            fontSize: 12,
+                            color: "#000",
+                            textAlign: "center",
+                          }
                     }
                   >
                     Connect
@@ -508,6 +589,12 @@ function App() {
 export default App;
 
 const styles = StyleSheet.create({
+  bottomIcon: {
+    height: vh(5),
+    width: vh(5),
+    borderRadius: vh(5),
+    alignSelf: "center",
+  },
   plusSign: {
     height: vh(9),
     width: vh(9),

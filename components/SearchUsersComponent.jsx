@@ -13,12 +13,13 @@ export const SearchUsersComponent = ({ searchResults }) => {
     <>
       {searchResults
         ? searchResults.map((item, index) => {
+            console.log("item: ", item.id);
             return (
               <TouchableOpacity
                 onPress={() => {
                   navigation.navigate("Create", {
                     screen: "ProfileScreenPublic",
-                    params: { userId: userId },
+                    params: { userId: item.id },
                   });
                 }}
                 key={index}

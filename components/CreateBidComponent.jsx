@@ -10,6 +10,7 @@ import {
   Modal,
   TouchableOpacity,
   TextInput,
+  Image,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
@@ -29,17 +30,20 @@ export const CreateBidComponent = ({
   userBidMessage,
   refetch,
 }) => {
-  const [visible, setVisible] = useState(false);
-  const [changeModalVisible, setChangeModalVisible] = useState(false);
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+  const [isChangeModalVisible, setIsChangeModalVisible] = useState(false);
   const [price, setPrice] = useState(0);
   const [existingBidPrice, setExistingBidPrice] = useState(userBidPrice);
   const [message, setMessage] = useState("");
   const [existingMessage, setExistingMessage] = useState(userBidMessage);
   const [persons, setPersons] = useState(0);
   const [existingPersons, setExistingPersons] = useState(userBidPersons);
-  const textInputRef = useRef(null);
+  const createBidTextInputRef = useRef(null);
+  const changeBidTextInputRef = useRef(null);
   const [sendBid] = useSendBidMutation();
   const [changeBid] = useChangeBidMutation();
+
+  console.log("hasBidWithUserId:...", hasBidWithUserId);
 
   useEffect(() => {
     setExistingBidPrice(userBidPrice);
@@ -48,10 +52,16 @@ export const CreateBidComponent = ({
   }, [userBidPersons, userBidPrice, userBidMessage]);
 
   useEffect(() => {
-    if (visible && textInputRef.current) {
-      textInputRef.current.focus();
+    if (isCreateModalVisible && createBidTextInputRef.current) {
+      createBidTextInputRef.current.focus();
     }
-  }, [visible]);
+  }, [isCreateModalVisible]);
+
+  useEffect(() => {
+    if (isChangeModalVisible && changeBidTextInputRef.current) {
+      changeBidTextInputRef.current.focus();
+    }
+  }, [isChangeModalVisible]);
 
   const handleIncrementPrice = () => {
     setPrice(price + 1);
@@ -86,7 +96,7 @@ export const CreateBidComponent = ({
     };
 
     sendBid(bidData);
-    setVisible(false);
+    setIsCreateModalVisible(false);
     refetch();
   };
 
@@ -119,29 +129,28 @@ export const CreateBidComponent = ({
       userId,
       bidId: userBidId,
     };
-
     changeBid(bidData);
-    setChangeModalVisible(false);
+    setIsChangeModalVisible(false);
     refetch();
   };
 
-  const handleOpenModal = () => {
-    setVisible(true);
+  const handleOpenChangeModal = () => {
+    setIsChangeModalVisible(true);
   };
 
-  const handleCloseModal = () => {
-    setVisible(false);
+  const handleOpenCreateModal = () => {
+    setIsCreateModalVisible(true);
+  };
+
+  const handleCloseChangeModal = () => {
+    setIsChangeModalVisible(false);
     setPersons(0);
     setPrice(0);
     setMessage("");
   };
 
-  const handleOpenChangeModal = () => {
-    setChangeModalVisible(true);
-  };
-
-  const handleCloseChangeModal = () => {
-    setChangeModalVisible(false);
+  const handleCloseCreateModal = () => {
+    setIsCreateModalVisible(false);
     setPersons(0);
     setPrice(0);
     setMessage("");
@@ -153,29 +162,30 @@ export const CreateBidComponent = ({
         {hasBidWithUserId ? (
           <View style={styles2.modalView2}>
             <TouchableOpacity
-              style={styles2.selection2}
+              style={styles2.buttonSendBidContainer}
               onPress={handleOpenChangeModal}
             >
-              <Text style={styles2.choiceText}>Change Bid</Text>
+              <Text style={styles2.buttonSave}>Change Bid</Text>
             </TouchableOpacity>
           </View>
         ) : (
           <View style={styles2.modalView2}>
             <TouchableOpacity
-              style={styles2.selection2}
-              onPress={handleOpenChangeModal}
+              style={styles2.buttonSendBidContainer}
+              onPress={handleOpenCreateModal}
             >
-              <Text style={styles2.choiceText}>Create Bid</Text>
+              <Text style={styles2.buttonSave}>Create Bid</Text>
             </TouchableOpacity>
           </View>
         )}
       </View>
 
+      {/* NEW BID MODAL */}
       <Modal
-        visible={visible}
+        visible={isCreateModalVisible}
         transparent
         animationType="fade"
-        onRequestClose={handleCloseModal}
+        onRequestClose={handleCloseCreateModal}
       >
         <View style={styles2.modalContainer}>
           <View style={styles2.innerContainer}>
@@ -191,7 +201,7 @@ export const CreateBidComponent = ({
                 </TouchableOpacity>
 
                 <TextInput
-                  ref={textInputRef}
+                  ref={createBidTextInputRef}
                   style={styles2.bidInput}
                   keyboardType="numeric"
                   value={price.toString()}
@@ -239,7 +249,7 @@ export const CreateBidComponent = ({
             {/* Buttons */}
             <View style={styles2.buttonsContainer}>
               <TouchableOpacity
-                onPress={handleCloseModal}
+                onPress={handleCloseCreateModal}
                 style={styles2.buttonCancelContainer}
               >
                 <Text style={styles2.buttonClear}>Cancel</Text>
@@ -254,9 +264,10 @@ export const CreateBidComponent = ({
           </View>
         </View>
       </Modal>
-      {/* ///// */}
+
+      {/* CHANGE BID MODAL */}
       <Modal
-        visible={changeModalVisible}
+        visible={isChangeModalVisible}
         transparent
         animationType="fade"
         onRequestClose={handleCloseChangeModal}
@@ -275,7 +286,7 @@ export const CreateBidComponent = ({
                 </TouchableOpacity>
 
                 <TextInput
-                  ref={textInputRef}
+                  ref={changeBidTextInputRef}
                   style={styles2.bidInput}
                   keyboardType="numeric"
                   value={existingBidPrice.toString()}
@@ -347,6 +358,11 @@ export const CreateBidComponent = ({
 };
 
 const styles2 = StyleSheet.create({
+  createBidImage: {
+    height: vh(5.3),
+    width: vh(20),
+    borderRadius: vh(5),
+  },
   choiceText: {
     fontSize: 20,
     fontWeight: "700",
@@ -361,14 +377,8 @@ const styles2 = StyleSheet.create({
     borderRadius: vh(2.5),
   },
   modalView2: {
-    backgroundColor: "#2184c6",
-    borderRadius: vh(3),
-    borderWidth: 2,
-    borderColor: "#76bae8",
-    width: vw(40),
     position: "absolute",
     alignSelf: "center",
-    bottom: vh(-4),
   },
   inputMainContainer: {
     backgroundColor: "#f4fdfa",
@@ -379,9 +389,6 @@ const styles2 = StyleSheet.create({
     borderColor: "#d8f7ee",
   },
   bidButtonContainer: {
-    // backgroundColor: "#186ff1",
-    borderRadius: vh(2),
-    borderColor: "#3c9ede",
     marginBottom: vh(18),
     width: vw(40),
     alignSelf: "center",
