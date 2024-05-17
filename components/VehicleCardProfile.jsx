@@ -203,7 +203,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(0.5),
   },
   header: {
-    // marginTop: 2,
+    //margintop
+
+    marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
     color: "rgba(10, 119, 234,1)",

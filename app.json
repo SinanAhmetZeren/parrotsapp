@@ -21,11 +21,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
       "package": "com.zenforest.parrots",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyDfohzxRf-sDVUb2mS3m68XlTSH2MFbCI0"
+          "apiKey": ""
         }
       }
     },

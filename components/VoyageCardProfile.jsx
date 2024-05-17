@@ -155,7 +155,9 @@ const styles = StyleSheet.create({
     padding: vh(0.2),
   },
   header: {
-    // marginTop: 2,
+    //margintop
+
+    marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
     color: "rgba(0, 119, 234,1)",
