@@ -74,8 +74,8 @@ const screenOptions = {
     height: vh(14),
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    backgroundColor: "#fff6ec",
-    // backgroundColor: "#ecf6fc",
+    //backgroundColor: "#fff6ec",
+    backgroundColor: "#ffeedb",
   },
 };
 const toastConfig = {
