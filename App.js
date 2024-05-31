@@ -20,7 +20,14 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { vh } from "react-native-expo-viewport-units";
-import { Feather, Ionicons, FontAwesome6, AntDesign } from "@expo/vector-icons";
+import {
+  Feather,
+  Ionicons,
+  FontAwesome5,
+  FontAwesome6,
+  AntDesign,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
 import VehicleDetailScreen from "./screens/VehicleDetailScreen";
@@ -51,14 +58,6 @@ import {
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
 
-/*
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes,
-} from "@react-native-google-signin/google-signin";
-*/
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -67,15 +66,15 @@ const screenOptions = {
   headerShown: false,
   tabBarStyle: {
     position: "absolute",
-    bottom: -20,
+    bottom: vh(-1.5),
     right: 0,
     left: 0,
     elevation: 0,
-    height: vh(14),
+    height: vh(10),
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    //backgroundColor: "#fff6ec",
-    backgroundColor: "#ffeedb",
+    backgroundColor: "#fff6ec",
+    //backgroundColor: "#ffeedb",
   },
 };
 const toastConfig = {
@@ -233,40 +232,17 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                /*
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
+                <View style={styles.tabIconStyle}>
                   <Feather
                     name="home"
                     size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
+                    color={focused && !modalVisible ? "#3aa4ff" : "#000"}
                   />
                   <Text
                     style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Home
-                  </Text>
-                </View>
-                */
-                <View>
-                  <Image
-                    style={styles.bottomIcon}
-                    source={require("./assets/homeIcon5.png")}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? {
-                            fontSize: 12,
-                            color: "#3aa4ff",
-                            textAlign: "center",
-                          }
-                        : { fontSize: 12, color: "#000", textAlign: "center" }
+                      focused && !modalVisible
+                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
+                        : { fontSize: 12, color: "#000", fontWeight: "600" }
                     }
                   >
                     Home
@@ -283,43 +259,17 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                /*
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
+                <View style={styles.tabIconStyle}>
                   <Feather
                     name="user"
                     size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
+                    color={focused && !modalVisible ? "#3aa4ff" : "#000"}
                   />
                   <Text
                     style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Profile
-                  </Text>
-                </View>
-                */
-                <View>
-                  <Image
-                    style={styles.bottomIcon}
-                    source={require("./assets/profileIcon5.png")}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? {
-                            fontSize: 12,
-                            color: "#3aa4ff",
-                            textAlign: "center",
-                          }
-                        : { fontSize: 12, color: "#000", textAlign: "center" }
+                      focused && !modalVisible
+                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
+                        : { fontSize: 12, color: "#000", fontWeight: "600" }
                     }
                   >
                     Profile
@@ -340,15 +290,24 @@ const TabNavigator = () => {
                   style={{
                     alignItems: "center",
                     justifyContent: "center",
-                    top: Platform.OS === "ios" ? -20 : -30,
                   }}
                 >
-                  <View style={styles.plusContainer}>
-                    <Image
-                      style={styles.plusSign}
-                      source={require("./assets/plus-thin2.png")}
-                    />
-                  </View>
+                  <Ionicons
+                    name="rocket-outline"
+                    //name="add-circle-outline"
+                    size={24}
+                    color={!modalVisible ? "black" : "#3aa4ff"}
+                  />
+
+                  <Text
+                    style={
+                      modalVisible
+                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
+                        : { fontSize: 12, color: "#000", fontWeight: "600" }
+                    }
+                  >
+                    Voyage
+                  </Text>
                 </View>
               </TouchableOpacity>
             ),
@@ -361,42 +320,19 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                /*
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
                   <Feather
                     name="heart"
                     size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
+                    color={focused && !modalVisible ? "#3aa4ff" : "#000"}
                   />
                   <Text
                     style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
-                    }
-                  >
-                    Favorites
-                  </Text>
-                </View>
-                */
-
-                <View>
-                  <Image
-                    style={styles.bottomIcon}
-                    source={require("./assets/favoritesIcon5.png")}
-                  />
-
-                  <Text
-                    style={
-                      focused
-                        ? {
-                            fontSize: 12,
-                            color: "#3aa4ff",
-                            textAlign: "center",
-                          }
-                        : { fontSize: 12, color: "#000", textAlign: "center" }
+                      focused && !modalVisible
+                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
+                        : { fontSize: 12, color: "#000", fontWeight: "600" }
                     }
                   >
                     Favorites
@@ -413,49 +349,23 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                /*
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
-
                   <AntDesign
                     name="sharealt"
                     size={24}
-                    color={focused ? "#3aa4ff" : "#000"}
+                    color={focused && !modalVisible ? "#3aa4ff" : "#000"}
                   />
 
                   <Text
                     style={
-                      focused
-                        ? { fontSize: 12, color: "#3aa4ff" }
-                        : { fontSize: 12, color: "#000" }
+                      focused && !modalVisible
+                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
+                        : { fontSize: 12, color: "#000", fontWeight: "600" }
                     }
                   >
                     Connect
-                  </Text>
-                </View>
-                */
-                <View>
-                  <Image
-                    style={styles.bottomIcon}
-                    source={require("./assets/connectIcon5.png")}
-                  />
-                  <Text
-                    style={
-                      focused
-                        ? {
-                            fontSize: 12,
-                            color: "#3aa4ff",
-                            textAlign: "center",
-                          }
-                        : {
-                            fontSize: 12,
-                            color: "#000",
-                            textAlign: "center",
-                          }
-                    }
-                  >
-                    Social
                   </Text>
                 </View>
               );
@@ -589,6 +499,10 @@ function App() {
 export default App;
 
 const styles = StyleSheet.create({
+  tabIconStyle: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
   bottomIcon: {
     height: vh(5),
     width: vh(5),

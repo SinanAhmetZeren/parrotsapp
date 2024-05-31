@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  StatusBar,
+  Button,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
@@ -24,10 +26,17 @@ import {
   useRequestCodeMutation,
   useResetPasswordMutation,
 } from "../slices/UserSlice";
+// import {
+//   GoogleSignin,
+//   GoogleSigninButton,
+//   statusCodes,
+// } from "@react-native-google-signin/google-signin";
+// import * as AuthSession from "expo-auth-session";
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-
+  const [error, setError] = useState("");
+  const [userInfo, setUserInfo] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
@@ -50,16 +59,49 @@ const LoginScreen = ({ navigation }) => {
   const [isFocusedPasswordR, setIsFocusedPasswordR] = useState(false);
   const [isFocusedPasswordR2, setIsFocusedPasswordR2] = useState(false);
   const [isFocusedUserNameR, setIsFocusedUserNameR] = useState(false);
-
   const [
     registerUser,
     { isLoading: isLoadingRegisterUser, isSuccess: isSuccessRegisterUser },
   ] = useRegisterUserMutation();
-
   const [
     confirmUser,
     { isLoading: isLoadingConfirmUser, isSuccess: isSuccessConfirmUser },
   ] = useConfirmUserMutation();
+
+  const configureGoogleSignIn = () => {
+    GoogleSignin.configure({
+      webClientId:
+        "938579686654-99cii7dblv837klmb8kkmg09d80ehf4k.apps.googleusercontent.com",
+      androidClientId:
+        "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
+      iosClientId:
+        "938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq.apps.googleusercontent.com",
+    });
+  };
+
+  useEffect(() => {
+    // configureGoogleSignIn();
+  });
+
+  const signInGoogle = async () => {
+    console.log("Pressed sign in");
+
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      setUserInfo(userInfo);
+      console.log(userInfo);
+      setError("");
+    } catch (e) {
+      setError(e);
+    }
+  };
+
+  const logout = () => {
+    setUserInfo(undefined);
+    GoogleSignin.revokeAccess();
+    GoogleSignin.signOut();
+  };
 
   const handleEmailChange = (text) => {
     setEmail(text);
@@ -83,6 +125,17 @@ const LoginScreen = ({ navigation }) => {
 
   const handleRegisterCode2Change = (text) => {
     setRegisterCode2(text);
+  };
+
+  const handleGoogleLogin = () => {
+    GoogleSignin.signIn()
+      .then((userInfo) => {
+        console.log("User signed in successfully:", userInfo);
+        // ...
+      })
+      .catch((error) => {
+        console.error("Error signing in:", error);
+      });
   };
 
   const handleFocusAll = () => {
@@ -279,62 +332,6 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <>
-      {/* <TouchableOpacity
-        style={[
-          styles.logoutBox,
-          { marginHorizontal: vh(3), backgroundColor: "lightblue" },
-        ]}
-        onPress={() => {
-          handlePrint();
-        }}
-        activeOpacity={0.2}
-      >
-        <View>
-          <View style={styles.innerProfileContainer}>
-            <Text
-              style={{
-                lineHeight: 22,
-                marginLeft: vw(2),
-                fontSize: 15,
-                padding: vh(2),
-              }}
-            >
-              Print
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={[
-          styles.logoutBox,
-          {
-            marginHorizontal: vh(3),
-            marginTop: vh(1),
-            backgroundColor: "lightgreen",
-          },
-        ]}
-        onPress={() => {
-          handlePrintLocal();
-        }}
-        activeOpacity={0.2}
-      >
-        <View>
-          <View style={styles.innerProfileContainer}>
-            <Text
-              style={{
-                lineHeight: 22,
-                marginLeft: vw(2),
-                fontSize: 15,
-                padding: vh(2),
-              }}
-            >
-              Print Local
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity> */}
-
       {loginOrRegister === "Login" ? (
         <>
           <View style={{ backgroundColor: "white" }}>
@@ -422,6 +419,43 @@ const LoginScreen = ({ navigation }) => {
                   Sign up
                 </Text>
               </TouchableOpacity>
+
+              <View>
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor: "black",
+                    marginVertical: vh(5),
+                  }}
+                />
+
+                <View style={styles.container2}>
+                  <Text>{JSON.stringify(error)}</Text>
+                  {userInfo && (
+                    <>
+                      <Text>{JSON.stringify(userInfo.user.email)}</Text>
+                      <Text>{JSON.stringify(userInfo.user.id)}</Text>
+                      <Text>{JSON.stringify(userInfo.user.photo)}</Text>
+                    </>
+                  )}
+
+                  {/* 
+                  {userInfo ? (
+                    <Button title="Logout" onPress={logout} />
+                  ) : (
+                    <GoogleSigninButton
+                      size={GoogleSigninButton.Size.Standard}
+                      color={GoogleSigninButton.Color.Dark}
+                      onPress={signInGoogle}
+
+                      />
+                  )}
+
+                   */}
+
+                  <StatusBar style="auto" />
+                </View>
+              </View>
             </View>
           </View>
         </>
@@ -812,6 +846,12 @@ const LoginScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  container2: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   disabled: {
     backgroundColor: "rgba(24,111,241,0.3)",
   },
