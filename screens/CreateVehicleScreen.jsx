@@ -12,6 +12,7 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import {
   useCreateVehicleMutation,
@@ -32,12 +33,6 @@ const CreateVehicleScreen = () => {
   const [createVehicle] = useCreateVehicleMutation();
   const [addVehicleImage] = useAddVehicleImageMutation();
   const [deleteVehicleImage] = useDeleteVehicleImageMutation();
-  const voyageDes = `Embark on the "Island Breeze", a meticulously planned sailboat expedition offering a seamless blend of adventure and repose. Departing from a quaint harbor, your journey unfolds along the coastline, where the wind becomes your guide, and the sunsets paint the horizon in hues of tranquility.
-  Waypoints:
-  1. Harbor Haven (Starting Point): Begin your journey from Harbor Haven, a haven for sailors, echoing with tales of the sea and the promise of exploration.
-  9. Final Destination - Tranquil Harbor: Conclude your expedition at Tranquil Harbor, a serene retreat where the memories of the voyage linger, offering a final opportunity for quiet reflection.
-  `;
-
   const currentDate = new Date();
   const hours = currentDate.getHours();
   const minutes = currentDate.getMinutes();
@@ -46,26 +41,18 @@ const CreateVehicleScreen = () => {
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
-
-  // const [name, setName] = useState(timeString);
-  const [name, setName] = useState("");
+  const [name, setName] = useState("a");
   const [description, setDescription] = useState("");
-  const [capacity, setCapacity] = useState("");
-  const [vehicleType, setVehicleType] = useState("");
+  const [capacity, setCapacity] = useState(11);
+  const [vehicleType, setVehicleType] = useState(1);
   const [vehicleId, setVehicleId] = useState("");
-  const [image, setImage] = useState(
-    // "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540anonymous%252Fparrots-11d9acbc-8e32-4b9c-b537-94d439bcffb0/ImagePicker/aad9496c-c258-4ce9-b64b-78e20f5bf2fe.jpeg"
-
-    ""
-  );
+  const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isCreatingVehicle, setIsCreatingVehicle] = useState(false);
   const navigation = useNavigation();
-
-  const changeCurrentState = (index) => {
-    setCurrentStep(index);
-  };
 
   const goToProfilePage = () => {
     setName("");
@@ -78,7 +65,7 @@ const CreateVehicleScreen = () => {
     setAddedVoyageImages([]);
     setCurrentStep(1);
 
-    navigation.navigate("ProfileScreen");
+    navigation.navigate("Home");
   };
 
   const handleCreateVehicle = async () => {
@@ -93,6 +80,7 @@ const CreateVehicleScreen = () => {
       name: "profileImage.jpg",
     });
 
+    setIsCreatingVehicle(true);
     try {
       const response = await createVehicle({
         formData,
@@ -115,6 +103,8 @@ const CreateVehicleScreen = () => {
     } catch (error) {
       console.error("Error uploading image", error);
     }
+
+    setIsCreatingVehicle(false);
   };
 
   const handleUploadImage = async () => {
@@ -129,6 +119,7 @@ const CreateVehicleScreen = () => {
       name: "profileImage.jpg",
     });
 
+    setIsUploadingImage(true);
     try {
       const addedVehicleImageResponse = await addVehicleImage({
         formData,
@@ -145,6 +136,7 @@ const CreateVehicleScreen = () => {
     } catch (error) {
       console.error("Error uploading image", error);
     }
+    setIsUploadingImage(false);
   };
 
   const pickProfileImage = async () => {
@@ -180,50 +172,49 @@ const CreateVehicleScreen = () => {
     );
   };
 
-  if (true) {
-    //const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
+  const VehicleTypes = [
+    "Boat",
+    "Car",
+    "Caravan",
+    "Bus",
+    "Walk",
+    "Run",
+    "Motorcycle",
+    "Bicycle",
+    "TinyHouse",
+    "Airplane",
+  ];
 
-    const VehicleTypes = [
-      "Boat",
-      "Car",
-      "Caravan",
-      "Bus",
-      "Walk",
-      "Run",
-      "Motorcycle",
-      "Bicycle",
-      "TinyHouse",
-      "Airplane",
-    ];
+  const dropdownData = VehicleTypes.map((type) => ({
+    label: type,
+    value: type,
+  }));
 
-    const dropdownData = VehicleTypes.map((type) => ({
-      label: type,
-      value: type,
-    }));
+  const maxItems = 10;
+  const placeholders = Array.from({ length: maxItems }, (_, index) => ({
+    key: `placeholder_${index + 1}`,
+  }));
 
-    const maxItems = 10;
-    const placeholders = Array.from({ length: maxItems }, (_, index) => ({
-      key: `placeholder_${index + 1}`,
-    }));
+  const data =
+    addedVoyageImages.length < maxItems
+      ? [...addedVoyageImages, ...placeholders.slice(addedVoyageImages.length)]
+      : addedVoyageImages.map((item) => ({
+          ...item,
+          key: item.addedVoyageImageId,
+        }));
 
-    const data =
-      addedVoyageImages.length < maxItems
-        ? [
-            ...addedVoyageImages,
-            ...placeholders.slice(addedVoyageImages.length),
-          ]
-        : addedVoyageImages.map((item) => ({
-            ...item,
-            key: item.addedVoyageImageId,
-          }));
-
-    return (
-      <>
-        <StepBarVehicle currentStep={currentStep} />
-        {currentStep == 1 ? (
-          <ScrollView style={styles.scrollview}>
-            <View style={styles.overlay}>
-              <View style={styles.profileContainer}>
+  return (
+    <>
+      <StepBarVehicle currentStep={currentStep} />
+      {currentStep == 1 ? (
+        <ScrollView style={styles.scrollview}>
+          <View style={styles.overlay}>
+            <View style={styles.profileContainer}>
+              {isCreatingVehicle ? (
+                <View style={styles.backgroundImage}>
+                  <ActivityIndicator size="large" style={{ top: vh(14) }} />
+                </View>
+              ) : (
                 <TouchableOpacity onPress={pickProfileImage}>
                   {image ? (
                     <Image
@@ -238,120 +229,119 @@ const CreateVehicleScreen = () => {
                     />
                   )}
                 </TouchableOpacity>
-              </View>
+              )}
+            </View>
 
-              <View style={styles.profileImageAndSocial}>
-                <View style={styles.formContainer}>
-                  {/* /// name /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Name:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        placeholder="Enter Vehicle Name"
-                        placeholderTextColor="#c3c3c3"
-                        value={name}
-                        onChangeText={(text) => setName(text)}
-                      />
-                    </View>
+            <View style={styles.profileImageAndSocial}>
+              <View style={styles.formContainer}>
+                {/* /// name /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Name:</Text>
                   </View>
-                  {/* /// name  /// */}
-                  {/* /// type /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Type:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <DropdownComponentType
-                        data={dropdownData}
-                        setVehicleType={setVehicleType}
-                        selected={vehicleType}
-                      />
-                    </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      placeholder="Enter Vehicle Name"
+                      placeholderTextColor="#c3c3c3"
+                      value={name}
+                      onChangeText={(text) => setName(text)}
+                    />
                   </View>
-                  {/* /// type /// */}
-                  {/* /// DESC /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Description:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        multiline
-                        placeholder="Describe Your Vehicle"
-                        placeholderTextColor="#c3c3c3"
-                        numberOfLines={10}
-                        value={description}
-                        onChangeText={(text) => setDescription(text)}
-                      />
-                    </View>
+                </View>
+                {/* /// name  /// */}
+                {/* /// type /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Type:</Text>
                   </View>
-                  {/* /// DESC  /// */}
-                  {/* /// VACANCY /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Capacity:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        placeholder="Enter Vehicle Capacity"
-                        placeholderTextColor="#c3c3c3"
-                        value={capacity}
-                        onChangeText={(text) => setCapacity(text)}
-                        keyboardType="numeric"
-                      />
-                    </View>
+                  <View style={styles.latorLng}>
+                    <DropdownComponentType
+                      data={dropdownData}
+                      setVehicleType={setVehicleType}
+                      selected={vehicleType}
+                    />
                   </View>
-                  {/* /// VACANCY /// */}
-                  {/* Save Button */}
-                  <View style={styles2.modalViewLogin}>
-                    {/* <TouchableOpacity
-                      style={styles2.selection}
+                </View>
+                {/* /// type /// */}
+                {/* /// DESC /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Description:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      multiline
+                      placeholder="Describe Your Vehicle"
+                      placeholderTextColor="#c3c3c3"
+                      numberOfLines={10}
+                      value={description}
+                      onChangeText={(text) => setDescription(text)}
+                    />
+                  </View>
+                </View>
+                {/* /// DESC  /// */}
+                {/* /// VACANCY /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Capacity:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      placeholder="Enter Vehicle Capacity"
+                      placeholderTextColor="#c3c3c3"
+                      value={capacity}
+                      onChangeText={(text) => setCapacity(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+                {/* /// VACANCY /// */}
+                {/* Save Button */}
+                <View style={styles2.modalViewLogin}>
+                  <View style={styles.loginContainer}>
+                    <TouchableOpacity
                       onPress={() => handleCreateVehicle()}
+                      style={
+                        name === "" ||
+                        description === "" ||
+                        capacity === "" ||
+                        vehicleType === ""
+                          ? styles.selection2Disabled
+                          : styles.selection2
+                      }
+                      disabled={
+                        name === "" ||
+                        description === "" ||
+                        capacity === "" ||
+                        vehicleType === ""
+                      }
                     >
-                      <Text style={styles2.choiceText}>Create Vehicle</Text>
-                    </TouchableOpacity> */}
-
-                    <View style={styles.loginContainer}>
-                      <TouchableOpacity
-                        onPress={() => handleCreateVehicle()}
-                        style={
-                          name === "" ||
-                          description === "" ||
-                          capacity === "" ||
-                          vehicleType === ""
-                            ? styles.selection2Disabled
-                            : styles.selection2
-                        }
-                        disabled={
-                          name === "" ||
-                          description === "" ||
-                          capacity === "" ||
-                          vehicleType === ""
-                        }
-                      >
-                        <Text style={styles.loginText}>Create Vehicle</Text>
-                      </TouchableOpacity>
-                    </View>
+                      <Text style={styles.loginText}>Create Vehicle</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
             </View>
-          </ScrollView>
-        ) : null}
+          </View>
+        </ScrollView>
+      ) : null}
 
-        {currentStep === 2 ? (
-          <ScrollView style={styles.scrollview}>
-            <View style={styles.overlay}>
-              <View style={styles.selectedChoice}>
-                <Text style={styles.selectedText}>Add Vehicle Images</Text>
-              </View>
+      {currentStep === 2 ? (
+        <ScrollView style={styles.scrollview}>
+          <View style={styles.overlay}>
+            <View style={styles.selectedChoice}>
+              <Text style={styles.selectedText}>Add Vehicle Images</Text>
+            </View>
 
-              <View style={styles.profileContainer}>
+            <View style={styles.profileContainer}>
+              {isUploadingImage ? (
+                <View style={styles.profileImage}>
+                  <ActivityIndicator size="large" style={{ top: vh(8) }} />
+                </View>
+              ) : (
                 <TouchableOpacity onPress={pickVoyageImage}>
                   {voyageImage ? (
                     <Image
@@ -365,66 +355,68 @@ const CreateVehicleScreen = () => {
                     />
                   )}
                 </TouchableOpacity>
-                {/* Your other UI elements */}
+              )}
+
+              {/* Your other UI elements */}
+            </View>
+
+            <View
+              style={
+                addedVoyageImages.length <= 1
+                  ? styles.length1
+                  : addedVoyageImages.length === 2
+                  ? styles.length2
+                  : styles.length3
+              }
+            >
+              <FlatList
+                horizontal
+                data={data}
+                // keyExtractor={(item) => item.addedVoyageImageId}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => {
+                  return (
+                    <View key={index} style={styles2.imageContainer1}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          if (item.addedVoyageImageId) {
+                            handleDeleteImage(item.addedVoyageImageId);
+                          }
+                        }}
+                      >
+                        <Image
+                          source={
+                            item.addedVoyageImageId
+                              ? { uri: item.voyageImage }
+                              : require("../assets/placeholder.png")
+                          }
+                          style={styles2.voyageImage1}
+                        />
+
+                        {item.addedVoyageImageId && (
+                          <Text style={styles.deleteAddedImage}>
+                            <MaterialIcons
+                              name="cancel"
+                              size={24}
+                              color="darkred"
+                            />
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }}
+              />
+            </View>
+
+            {voyageImage ? (
+              <View style={styles.addVoyageImageButton}>
+                <TouchableOpacity onPress={() => handleUploadImage()}>
+                  <AntDesign name="clouduploado" size={24} color="white" />
+                </TouchableOpacity>
               </View>
-
-              <View
-                style={
-                  addedVoyageImages.length <= 1
-                    ? styles.length1
-                    : addedVoyageImages.length === 2
-                    ? styles.length2
-                    : styles.length3
-                }
-              >
-                <FlatList
-                  horizontal
-                  data={data}
-                  // keyExtractor={(item) => item.addedVoyageImageId}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item, index }) => {
-                    return (
-                      <View key={index} style={styles2.imageContainer1}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            if (item.addedVoyageImageId) {
-                              handleDeleteImage(item.addedVoyageImageId);
-                            }
-                          }}
-                        >
-                          <Image
-                            source={
-                              item.addedVoyageImageId
-                                ? { uri: item.voyageImage }
-                                : require("../assets/placeholder.png")
-                            }
-                            style={styles2.voyageImage1}
-                          />
-
-                          {item.addedVoyageImageId && (
-                            <Text style={styles.deleteAddedImage}>
-                              <MaterialIcons
-                                name="cancel"
-                                size={24}
-                                color="darkred"
-                              />
-                            </Text>
-                          )}
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  }}
-                />
-              </View>
-
-              {voyageImage ? (
-                <View style={styles.addVoyageImageButton}>
-                  <TouchableOpacity onPress={() => handleUploadImage()}>
-                    <AntDesign name="clouduploado" size={24} color="white" />
-                  </TouchableOpacity>
-                </View>
-              ) : null}
-              {/* <TouchableOpacity
+            ) : null}
+            {/* <TouchableOpacity
                 style={styles.FinishButtonContainer}
                 onPress={() => {
                   goToProfilePage();
@@ -433,27 +425,26 @@ const CreateVehicleScreen = () => {
                 <Text style={styles.addWaypointText}> Complete </Text>
               </TouchableOpacity> */}
 
-              <View style={styles.completeContainer}>
-                <TouchableOpacity
-                  onPress={() => {
-                    goToProfilePage();
-                  }}
-                  style={
-                    data[0].key === "placeholder_1"
-                      ? styles.selection2Disabled
-                      : styles.selection2
-                  }
-                  disabled={data[0].key === "placeholder_1"}
-                >
-                  <Text style={styles.loginText}>Complete</Text>
-                </TouchableOpacity>
-              </View>
+            <View style={styles.completeContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  goToProfilePage();
+                }}
+                style={
+                  data[0].key === "placeholder_1"
+                    ? styles.selection2Disabled
+                    : styles.selection2
+                }
+                disabled={data[0].key === "placeholder_1"}
+              >
+                <Text style={styles.loginText}>Complete</Text>
+              </TouchableOpacity>
             </View>
-          </ScrollView>
-        ) : null}
-      </>
-    );
-  }
+          </View>
+        </ScrollView>
+      ) : null}
+    </>
+  );
 };
 
 export default CreateVehicleScreen;
@@ -671,11 +662,11 @@ const styles = StyleSheet.create({
   scrollview: {
     height: vh(140),
     top: vh(5),
-    marginBottom: vh(15),
+    marginBottom: vh(10),
     backgroundColor: "white",
   },
   overlay: {
-    marginTop: vh(7),
+    marginTop: vh(0),
   },
   profileContainer: {
     flexDirection: "row",
@@ -697,12 +688,12 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     width: vw(100),
-    height: vh(30),
+    height: vh(35),
   },
   backgroundImagePlaceholder: {
     marginBottom: vh(3),
-    width: vw(50),
-    height: vh(30),
+    width: vw(70),
+    height: vh(35),
   },
   profileImage2: {
     marginLeft: vw(3),

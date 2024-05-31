@@ -12,6 +12,7 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
 import {
@@ -74,6 +75,9 @@ const CreateVoyageScreen = () => {
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
+  const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
 
   useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
 
@@ -128,9 +132,12 @@ const CreateVoyageScreen = () => {
 
     try {
       const formattedStartDate = convertDateFormat(startDate);
-      const formattedEndDate = convertDateFormat(endDate);
+      const formattedEndDate = endDate
+        ? convertDateFormat(endDate)
+        : convertDateFormat(startDate);
       const formattedLastBidDate = convertDateFormat_LastBidDate(lastBidDate);
 
+      setIsCreatingVoyage(true);
       const response = await createVoyage({
         formData,
         name,
@@ -149,6 +156,7 @@ const CreateVoyageScreen = () => {
       });
       const createdVoyageId = response.data.data.id;
       setVoyageId(createdVoyageId);
+      setName("");
       setBrief("");
       setDescription("");
       setVacancy("");
@@ -168,6 +176,7 @@ const CreateVoyageScreen = () => {
     } catch (error) {
       console.error("Error uploading image", error);
     }
+    setIsCreatingVoyage(false);
   };
 
   const handleUploadImage = async () => {
@@ -181,7 +190,7 @@ const CreateVoyageScreen = () => {
       type: "image/jpeg",
       name: "profileImage.jpg",
     });
-
+    setIsUploadingImage(true);
     try {
       const addedVoyageResponse = await addVoyageImage({
         formData,
@@ -198,10 +207,7 @@ const CreateVoyageScreen = () => {
     } catch (error) {
       console.error("Error uploading image", error);
     }
-  };
-
-  const handleNextPage = () => {
-    setCurrentStep(3);
+    setIsUploadingImage(false);
   };
 
   const pickProfileImage = async () => {
@@ -252,14 +258,22 @@ const CreateVoyageScreen = () => {
     if (!startDate || (startDate && endDate)) {
       setStartDate(date);
       setEndDate(null);
+      setCalendarRangeAllowed(false);
     } else {
       if (date >= startDate) {
+        setCalendarRangeAllowed(true);
         setEndDate(date);
       } else {
         setStartDate(date);
         setEndDate(null);
       }
     }
+  };
+
+  const printDates = () => {
+    console.log("start: ", startDate);
+    console.log("  end: ", endDate);
+    console.log("-----");
   };
 
   const handleDeleteImage = (imageId) => {
@@ -313,13 +327,11 @@ const CreateVoyageScreen = () => {
                     />
                   ) : (
                     <Image
-                      // source={{ uri: profileImageUrl }}
                       source={require("../assets/ParrotsWhiteBgPlus.png")}
                       style={styles.backgroundImagePlaceholder}
                     />
                   )}
                 </TouchableOpacity>
-                {/* Your other UI elements */}
               </View>
 
               <View style={styles.profileImageAndSocial}>
@@ -435,13 +447,21 @@ const CreateVoyageScreen = () => {
                         selectedRangeEndStyle={styles.calendarEndStart}
                         selectedColor={"blue"}
                         startFromMonday={true}
-                        allowRangeSelection={true}
+                        allowRangeSelection={calendarRangeAllowed}
                         minDate={new Date()}
                         selectedStartDate={startDate}
                         selectedEndDate={endDate}
                         onDateChange={onDateChange}
                         width={300}
                       />
+
+                      <TouchableOpacity
+                        onPress={() => printDates()}
+                        style={{ backgroundColor: "red" }}
+                        disabled={false}
+                      >
+                        <Text style={styles.loginText}>dates</Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
 
@@ -534,27 +554,36 @@ const CreateVoyageScreen = () => {
                   {/* /// auction fixedprice  /// */}
 
                   <View style={styles.loginContainer}>
-                    <TouchableOpacity
-                      onPress={() => handleCreateVoyage()}
-                      style={
-                        image === "" ||
-                        name === "" ||
-                        brief === "" ||
-                        description === "" ||
-                        vacancy === "" ||
-                        vehicleId === "" ||
-                        startDate === "" ||
-                        endDate === "" ||
-                        lastBidDate === "" ||
-                        minPrice === "" ||
-                        maxPrice === ""
-                          ? styles.selection2Disabled
-                          : styles.selection2
-                      }
-                      disabled={false}
-                    >
-                      <Text style={styles.loginText}>Create Voyage</Text>
-                    </TouchableOpacity>
+                    {isCreatingVoyage ? (
+                      <View>
+                        <ActivityIndicator
+                          size="large"
+                          style={{ top: vh(2) }}
+                        />
+                      </View>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={() => handleCreateVoyage()}
+                        style={
+                          image === "" ||
+                          name === "" ||
+                          brief === "" ||
+                          description === "" ||
+                          vacancy === "" ||
+                          vehicleId === "" ||
+                          startDate === "" ||
+                          endDate === "" ||
+                          lastBidDate === "" ||
+                          minPrice === "" ||
+                          maxPrice === ""
+                            ? styles.selection2Disabled
+                            : styles.selection2
+                        }
+                        disabled={false}
+                      >
+                        <Text style={styles.loginText}>Create Voyage</Text>
+                      </TouchableOpacity>
+                    )}
                   </View>
 
                   <View style={styles.step123}>
@@ -591,21 +620,25 @@ const CreateVoyageScreen = () => {
               </View>
 
               <View style={styles.profileContainer}>
-                <TouchableOpacity onPress={pickVoyageImage}>
-                  {voyageImage ? (
-                    <Image
-                      source={{ uri: voyageImage }}
-                      style={styles.profileImage}
-                    />
-                  ) : (
-                    <Image
-                      // source={{ uri: profileImageUrl }}
-                      source={require("../assets/ParrotsWhiteBgPlus.png")}
-                      style={styles.profileImage2}
-                    />
-                  )}
-                </TouchableOpacity>
-                {/* Your other UI elements */}
+                {isUploadingImage ? (
+                  <View style={styles.profileImage}>
+                    <ActivityIndicator size="large" style={{ top: vh(8) }} />
+                  </View>
+                ) : (
+                  <TouchableOpacity onPress={pickVoyageImage}>
+                    {voyageImage ? (
+                      <Image
+                        source={{ uri: voyageImage }}
+                        style={styles.profileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={require("../assets/ParrotsWhiteBgPlus.png")}
+                        style={styles.profileImage2}
+                      />
+                    )}
+                  </TouchableOpacity>
+                )}
               </View>
               <View
                 style={
@@ -876,7 +909,7 @@ const styles = StyleSheet.create({
   scrollview: {
     height: vh(140),
     top: vh(5),
-    marginBottom: vh(15),
+    marginBottom: vh(10),
     backgroundColor: "white",
   },
   overlay: {

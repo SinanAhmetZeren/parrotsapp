@@ -275,6 +275,7 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.welcomeandFilters}>
             <View style={styles.welcomebox}>
               <Text style={styles.welcome}>Welcome to Parrots</Text>
+
               {username.length > 10 ? (
                 username.length > 12 ? (
                   <View style={{ flexDirection: "row" }}>
@@ -390,7 +391,7 @@ export default function HomeScreen({ navigation }) {
               onPress={() => setSelectedVoyageModalVisible(false)}
               style={{
                 flex: 1,
-                backgroundColor: "rgba(1,1,1,0.14)",
+                backgroundColor: "rgba(1,1,1,0.3)",
               }}
             >
               <View style={styles.imageContainerInModal}>
@@ -410,15 +411,6 @@ export default function HomeScreen({ navigation }) {
                   focusMap={() => {}}
                   setSelectedVoyageModalVisible={setSelectedVoyageModalVisible}
                 />
-                {/* <TouchableOpacity
-                  style={styles.closeButtonAndText}
-                  onPress={() => setSelectedVoyageModalVisible(false)}
-                >
-                  <View style={styles.closeText1}>
-                    <AntDesign name="closecircleo" size={22} color="#3aa4ff" />
-                  </View>
-                  <Text style={styles.closeText1}>Close</Text>
-                </TouchableOpacity> */}
 
                 <TouchableOpacity
                   style={styles.closeButtonAndText2}
@@ -444,6 +436,11 @@ const styles = StyleSheet.create({
   logo: {
     height: vh(5),
     width: vh(5),
+    borderRadius: vh(10),
+  },
+  appLogo: {
+    height: vh(7),
+    width: vh(7),
     borderRadius: vh(10),
   },
   closeButtonInModal2: {
@@ -478,7 +475,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: vh(20),
     borderRadius: vh(2),
-    borderColor: "rgba(10, 119, 234,0.2)",
+    borderColor: "rgba(10, 119, 234,0.9)",
   },
   closeButtonAndText: {
     flexDirection: "row",
@@ -579,11 +576,9 @@ const styles = StyleSheet.create({
     paddingRight: vw(10),
   },
   scrollview: {
-    //margintop
-
     marginTop: vh(4),
     paddingTop: vh(2),
-    marginBottom: vh(5),
+    marginBottom: vh(1),
     backgroundColor: "white",
   },
   welcomeandFilters: {
@@ -620,6 +615,7 @@ const styles = StyleSheet.create({
     color: "rgba(10, 119, 234,0.55)",
     fontWeight: "900",
   },
+
   username: {
     fontSize: 26,
     fontWeight: "700",

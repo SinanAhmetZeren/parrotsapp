@@ -741,7 +741,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: "#2ac898",
     fontWeight: "800",
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    // backgroundColor: "rgba(42, 200, 152, 0.1)",
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.5),
     borderRadius: vh(1),

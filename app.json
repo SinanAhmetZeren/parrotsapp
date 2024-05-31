@@ -13,9 +13,18 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.zenforest.parrots",
+      "supportsTablet": true,
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq"
+            ]
+          }
+        ]
+      }
     },
-
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -28,7 +37,7 @@
       "package": "com.zenforest.parrots",
       "config": {
         "googleMaps": {
-          "apiKey": ""
+          "apiKey": "AIzaSyCUD-Kmpu_6En3uwKZprZHtCziqNwyl8XU"
         }
       }
     },
@@ -42,6 +51,7 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
+      "@react-native-google-signin/google-signin",
       "expo-font"
     ]
   }

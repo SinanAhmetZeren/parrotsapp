@@ -11,6 +11,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
   Modal,
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
@@ -33,6 +34,8 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
   const [order, setOrder] = useState(1);
   const [addWaypoint] = useAddWaypointMutation();
   const navigation = useNavigation();
+  const [isUploadingWaypointImage, setIsUploadingWaypointImage] =
+    useState(false);
 
   const WaypointComponent = ({
     description,
@@ -76,6 +79,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       name: "profileImage.jpg",
     });
 
+    setIsUploadingWaypointImage(true);
     try {
       await addWaypoint({
         formData,
@@ -105,6 +109,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
     } catch (error) {
       console.error("Error uploading image", error);
     }
+    setIsUploadingWaypointImage(false);
   };
 
   const renderPolylines = (waypoints) => {
@@ -204,7 +209,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
     setMarkerCoords(event.nativeEvent.coordinate);
   };
 
-  const goToProfilePage = () => {
+  const goToHomePage = () => {
     setAddedWayPoints([]);
     setMarkerCoords(null);
     setLatitude("");
@@ -214,7 +219,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
     setImageUri(null);
     setOrder(1);
     setCurrentStep(1);
-    navigation.navigate("ProfileScreen");
+    navigation.navigate("Home");
   };
 
   return (
@@ -238,16 +243,22 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
 
       <View style={styles.ImageAndLatLng}>
         <View style={styles.profileContainer}>
-          <TouchableOpacity onPress={pickVoyageImage}>
-            {imageUri ? (
-              <Image source={{ uri: imageUri }} style={styles.profileImage} />
-            ) : (
-              <Image
-                source={require("../assets/ParrotsWhiteBgPlus.png")}
-                style={styles.profileImage}
-              />
-            )}
-          </TouchableOpacity>
+          {isUploadingWaypointImage ? (
+            <View style={styles.profileImage}>
+              <ActivityIndicator size="large" style={{ top: vh(4) }} />
+            </View>
+          ) : (
+            <TouchableOpacity onPress={pickVoyageImage}>
+              {imageUri ? (
+                <Image source={{ uri: imageUri }} style={styles.profileImage} />
+              ) : (
+                <Image
+                  source={require("../assets/ParrotsWhiteBgPlus.png")}
+                  style={styles.profileImage}
+                />
+              )}
+            </TouchableOpacity>
+          )}
 
           <View style={styles.latLng}>
             <View style={styles.latLngNameRow}>
@@ -343,7 +354,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       <TouchableOpacity
         style={styles.FinishButtonContainer}
         onPress={() => {
-          goToProfilePage();
+          goToHomePage();
         }}
       >
         <Text style={styles.addWaypointText}> Complete </Text>

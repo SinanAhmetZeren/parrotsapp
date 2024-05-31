@@ -233,7 +233,7 @@ const EditVehicleScreen = () => {
 
   const HandleDeleteVehicle = () => {
     deleteVehicle(currentVehicleId);
-    navigation.navigate("ProfileScreen");
+    navigation.navigate("Home");
   };
 
   if (true) {

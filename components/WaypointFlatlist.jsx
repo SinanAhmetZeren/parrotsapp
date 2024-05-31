@@ -85,7 +85,7 @@ export const WaypointItemVoyageDetailScreen = ({
   };
 
   const truncatedDescription =
-    description.length > 70 ? `${description.slice(0, 70)}...` : description;
+    description.length > 100 ? `${description.slice(0, 100)}..` : description;
 
   return (
     <View style={{ marginLeft: vh(1), marginTop: vh(1) }}>
@@ -318,8 +318,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   description: {
-    width: vw(35),
+    width: vw(42),
     marginTop: vh(3),
+    paddingLeft: vw(2),
   },
   titleAndDescription: {
     paddingVertical: vh(0.5),
