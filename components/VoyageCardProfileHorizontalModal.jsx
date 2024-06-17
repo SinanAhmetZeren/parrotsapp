@@ -14,6 +14,7 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 export default function VoyageCardProfileHorizontalModal({
   cardHeader,
@@ -30,7 +31,7 @@ export default function VoyageCardProfileHorizontalModal({
   focusMap,
   setSelectedVoyageModalVisible,
 }) {
-  const cardImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/${cardImage}`;
+  const cardImageUrl = `${API_URL}/Uploads/VoyageImages/${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
   const formattedEndDate = require("date-fns").format(enddate, "MMM d, yy");
   const navigation = useNavigation();

@@ -15,6 +15,7 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import { useAcceptBidMutation } from "../slices/VoyageSlice";
 import { Ionicons } from "@expo/vector-icons";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import { API_URL } from "@env";
 
 export const RenderBidsComponent = ({
   bids,
@@ -25,7 +26,7 @@ export const RenderBidsComponent = ({
   currentUserId,
   refetch,
 }) => {
-  const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
+  const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
   const visibleBids = bids.slice(0, 6);
   const [acceptBid] = useAcceptBidMutation();
   const closeModal = () => {
@@ -34,9 +35,7 @@ export const RenderBidsComponent = ({
 
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
-      .withUrl(
-        `https://measured-wolf-grossly.ngrok-free.app/chathub/11?userId=${currentUserId}`
-      )
+      .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
       .build();
   }, [currentUserId]);
 

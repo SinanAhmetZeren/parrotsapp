@@ -2,19 +2,13 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { useEffect } from "react";
 import { View, Text, Image, FlatList, StyleSheet } from "react-native";
-import { useState } from "react";
-import MapView, { Marker } from "react-native-maps";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { Fontisto } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
-import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
+
+import { vw, vh } from "react-native-expo-viewport-units";
+import { API_URL } from "@env";
 
 export const VoyagesFlatlistMainpage = ({ voyages }) => {
-  const imageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/`;
+  const imageBaseUrl = `${API_URL}/Uploads/VoyageImages/`;
 
   return (
     <FlatList
@@ -28,7 +22,7 @@ export const VoyagesFlatlistMainpage = ({ voyages }) => {
 };
 
 const VoyageItem = ({ item, index }) => {
-  const imageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/`;
+  const imageBaseUrl = `${API_URL}/Uploads/VoyageImages/`;
 
   return (
     <View key={index} style={styles.singleBidContainer2}>

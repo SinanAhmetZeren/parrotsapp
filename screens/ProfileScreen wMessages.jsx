@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateAsLoggedOut } from "../slices/UserSlice";
 import { SocialRenderComponent } from "../components/SocialRenderComponent";
 import { useFocusEffect } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -176,8 +177,8 @@ export default function ProfileScreen({ navigation }) {
   }
 
   if (isSuccess && isSuccessVehicles && isSuccessVoyages) {
-    const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
-    const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
+    const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
+    const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
     return (
       <>

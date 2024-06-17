@@ -34,6 +34,7 @@ import Checkbox from "expo-checkbox";
 import DropdownComponent from "../components/DropdownComponent";
 import StepBar from "../components/StepBar";
 import CreateVoyageMapComponent from "../components/CreateVoyageMapComponent";
+import { API_URL } from "@env";
 
 const CreateVoyageScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -284,7 +285,7 @@ const CreateVoyageScreen = () => {
   };
 
   if (isSuccess) {
-    const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
+    const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
 
     const dropdownData = [
       { label: "Walk", value: 63 },

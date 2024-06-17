@@ -22,6 +22,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ConnectSelectionComponent } from "../components/ConnectSelectionComponent";
 import { SearchUsersComponent } from "../components/SearchUsersComponent";
 import { FontAwesome } from "@expo/vector-icons";
+import { API_URL } from "@env";
 
 export default function MessagesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -52,9 +53,7 @@ export default function MessagesScreen({ navigation }) {
   const recipientId = userId;
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
-      .withUrl(
-        `https://measured-wolf-grossly.ngrok-free.app/chathub/11?userId=${userId}`
-      )
+      .withUrl(`${API_URL}/chathub/11?userId=${userId}`)
       .build();
   }, [userId]);
 

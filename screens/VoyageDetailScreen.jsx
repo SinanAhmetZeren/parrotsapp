@@ -45,7 +45,7 @@ import {
   addVoyageToUserFavorites,
   removeVoyageFromUserFavorites,
 } from "../slices/UserSlice";
-import { current } from "@reduxjs/toolkit";
+import { API_URL } from "@env";
 
 const VoyageDetailScreen = () => {
   const [addVoyageToFavorites] = useAddVoyageToFavoritesMutation();
@@ -147,7 +147,7 @@ const VoyageDetailScreen = () => {
 
   const getCurrentPageLink = () => {
     if (route) {
-      const currentScreenLink = `https://measured-wolf-grossly.ngrok-free.app/${route.name}/${voyageId}`;
+      const currentScreenLink = `${API_URL}/${route.name}/${voyageId}`;
       return currentScreenLink;
     }
     return null;
@@ -237,8 +237,8 @@ const VoyageDetailScreen = () => {
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData.user.id;
     const waypoints = VoyageData.waypoints || [];
-    const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
-    const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
+    const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
+    const VehicleImageBaseUrl = `${API_URL}/Uploads/VehicleImages/`;
     const descriptionShortenedChars = 500;
     const displayText = showFullText
       ? VoyageData.description
@@ -265,7 +265,7 @@ const VoyageDetailScreen = () => {
       "MMM d, yy"
     );
 
-    const baseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/`;
+    const baseUrl = `${API_URL}/Uploads/VoyageImages/`;
     const imageUrl = baseUrl + VoyageData.profileImage;
 
     return (

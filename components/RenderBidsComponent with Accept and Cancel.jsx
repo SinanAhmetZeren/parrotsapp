@@ -14,6 +14,7 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import { useAcceptBidMutation } from "../slices/VoyageSlice";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
+import { API_URL } from "@env";
 
 export const RenderBidsComponent = ({
   bids,
@@ -24,7 +25,7 @@ export const RenderBidsComponent = ({
   currentUserId,
   refetch,
 }) => {
-  const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
+  const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
   const visibleBids = bids.slice(0, 6);
   const [acceptBid] = useAcceptBidMutation();
   const closeModal = () => {

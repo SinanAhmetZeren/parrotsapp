@@ -7,6 +7,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 export default function VehicleVoyages({ voyages }) {
   const navigation = useNavigation();
@@ -20,7 +21,7 @@ export default function VehicleVoyages({ voyages }) {
     });
   };
 
-  const VoyageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/`;
+  const VoyageBaseUrl = `${API_URL}/Uploads/VoyageImages/`;
 
   const renderVehicleVoyages = () => {
     return voyages.map((item) => {

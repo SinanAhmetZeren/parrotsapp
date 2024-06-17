@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 export const SearchUsersComponent = ({ searchResults }) => {
   const navigation = useNavigation();
@@ -27,7 +28,7 @@ export const SearchUsersComponent = ({ searchResults }) => {
               >
                 <Image
                   source={{
-                    uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${item.profileImageUrl}`,
+                    uri: `${API_URL}/Uploads/UserImages/${item.profileImageUrl}`,
                   }}
                   style={styles.userImage}
                 />

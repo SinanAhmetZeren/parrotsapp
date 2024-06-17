@@ -32,12 +32,13 @@
       },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.zenforest.parrots",
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCUD-Kmpu_6En3uwKZprZHtCziqNwyl8XU"
+          "apiKey": "AIzaSyAsqIXNMISkZ0eprGc2iTLbiQk0QBtgq0c"
         }
       }
     },
@@ -52,7 +53,13 @@
         }
       ],
       "@react-native-google-signin/google-signin",
-      "expo-font"
-    ]
+      "expo-font",
+      "expo-build-properties"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5f4ee090-1e51-4228-b36b-23715333bcc4"
+      }
+    }
   }
 }

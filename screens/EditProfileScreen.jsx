@@ -27,6 +27,7 @@ import { Entypo, Fontisto, Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
+import { API_URL } from "@env";
 
 const EditProfileScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -178,8 +179,8 @@ const EditProfileScreen = ({ navigation }) => {
   }, [isSuccess, userData]);
 
   if (isSuccess) {
-    const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
-    const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
+    const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
+    const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
     return (
       <ScrollView style={styles.scrollview}>

@@ -80,8 +80,10 @@ export default function HomeScreen({ navigation }) {
           return;
         }
         const location = await Location.getCurrentPositionAsync({});
-        const lat = location.coords.latitude;
-        const lon = location.coords.longitude;
+        //const lat = location.coords.latitude;
+        //const lon = location.coords.longitude;
+        const lat = 52.2;
+        const lon = 0.13;
         setInitialLatitude(lat);
         setInitialLongitude(lon);
       } catch (error) {

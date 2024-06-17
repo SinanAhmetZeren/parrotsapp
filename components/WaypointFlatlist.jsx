@@ -14,7 +14,7 @@ import {
   ScrollView,
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { AntDesign } from "@expo/vector-icons";
+import { API_URL } from "@env";
 
 export const WaypointFlatList = ({ addedWayPoints }) => {
   return (
@@ -41,7 +41,7 @@ export const WaypointFlatListVoyageDetailsScreen = ({
   addedWayPoints,
   focusMap,
 }) => {
-  let baseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/WaypointImages/`;
+  let baseUrl = `${API_URL}/Uploads/WaypointImages/`;
   return (
     <FlatList
       horizontal
