@@ -32,6 +32,7 @@ import DropdownComponentType from "../components/DropdownComponentType";
 import StepBarVehicle from "../components/StepBarVehicle";
 import { useNavigation } from "@react-navigation/native";
 import { Entypo } from "@expo/vector-icons";
+import { API_URL } from "@env";
 
 const EditVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -97,8 +98,7 @@ const EditVehicleScreen = () => {
       setDescription(vehicleData.description);
       setCapacity(vehicleData.capacity.toString());
       setImage(
-        `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/` +
-          vehicleData.profileImageUrl
+        `${API_URL}/Uploads/VehicleImages/` + vehicleData.profileImageUrl
       );
     }
   }, [isSuccessVehicleData]);
@@ -442,7 +442,7 @@ const EditVehicleScreen = () => {
                             // source={
                             //   item.id
                             //     ? {
-                            //         uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/${item.vehicleImagePath}`,
+                            //         uri: `${API_URL}/Uploads/VehicleImages/${item.vehicleImagePath}`,
                             //       }
                             //     : require("../assets/placeholder.png")
                             // }
@@ -453,7 +453,7 @@ const EditVehicleScreen = () => {
                                 ? { uri: item.vehicleImagePath }
                                 : item.id
                                 ? {
-                                    uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/${item.vehicleImagePath}`,
+                                    uri: `${API_URL}/Uploads/VehicleImages/${item.vehicleImagePath}`,
                                   }
                                 : require("../assets/placeholder.png")
                             }

@@ -13,6 +13,7 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 export default function VehicleCardProfile({
   vehicleId,
@@ -22,7 +23,7 @@ export default function VehicleCardProfile({
   vehicletype,
   capacity,
 }) {
-  const cardImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/${cardImage}`;
+  const cardImageUrl = `${API_URL}/Uploads/VehicleImages/${cardImage}`;
   let icon;
   switch (vehicletype) {
     case 0:

@@ -7,6 +7,7 @@ import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { MessagesComponent } from "../components/MessagesComponent";
+import { API_URL } from "@env";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -46,7 +47,7 @@ export default function CoversationView({
           style={styles.profileImage}
           resizeMode="cover"
           source={{
-            uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${profileImg}`,
+            uri: `${API_URL}/Uploads/UserImages/${profileImg}`,
           }}
         />
       </View>

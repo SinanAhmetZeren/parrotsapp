@@ -5,7 +5,7 @@ import React from "react";
 import { StyleSheet, View, Text, ScrollView, Image } from "react-native";
 import { useRef, useEffect } from "react";
 import { vh, vw } from "react-native-expo-viewport-units";
-// import { Image } from "react-native-elements";
+import { API_URL } from "@env";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -42,7 +42,7 @@ export default function MessagesComponent({
                   <View style={styles.imageContainer1}>
                     <Image
                       source={{
-                        uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userProfileImage}`,
+                        uri: `${API_URL}/Uploads/UserImages/${userProfileImage}`,
                       }}
                       style={styles.voyageImage1}
                     />
@@ -73,7 +73,7 @@ export default function MessagesComponent({
                   <View style={styles.imageContainer1}>
                     <Image
                       source={{
-                        uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${otherUserProfileImg}`,
+                        uri: `${API_URL}/Uploads/UserImages/${otherUserProfileImg}`,
                       }}
                       style={styles.voyageImage1}
                     />

@@ -32,6 +32,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import { SocialRenderComponent } from "../components/SocialRenderComponent";
 import VoyageListVertical from "../components/VoyageListVertical";
+import { API_URL } from "@env";
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
@@ -173,8 +174,8 @@ export default function ProfileScreenPublic({ navigation }) {
   }
 
   if (isSuccess) {
-    const profileImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.profileImageUrl}`;
-    const backgroundImageUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${userData.backgroundImageUrl}`;
+    const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
+    const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
     return (
       <>

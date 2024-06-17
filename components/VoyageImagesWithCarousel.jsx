@@ -12,6 +12,7 @@ import {
   Text,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
+import { API_URL } from "@env";
 
 const VoyageImagesWithCarousel = ({ voyageImages }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -43,7 +44,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
             <View style={styles2.imageContainer1}>
               <Image
                 source={{
-                  uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/${item.voyageImagePath}`,
+                  uri: `${API_URL}/Uploads/VoyageImages/${item.voyageImagePath}`,
                 }}
                 style={styles2.voyageImage1}
               />
@@ -81,7 +82,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
               <View style={styles2.imageContainerInModal}>
                 <Image
                   source={{
-                    uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/VoyageImages/${item.voyageImagePath}`,
+                    uri: `${API_URL}/Uploads/VoyageImages/${item.voyageImagePath}`,
                   }}
                   style={styles2.voyageImageInModal}
                 />

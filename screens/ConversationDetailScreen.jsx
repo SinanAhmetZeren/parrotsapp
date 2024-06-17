@@ -22,6 +22,7 @@ import MessagesComponent from "../components/MessagesComponent";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 export const ConversationDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -47,9 +48,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
-      .withUrl(
-        `https://measured-wolf-grossly.ngrok-free.app/chathub/11?userId=${currentUserId}`
-      )
+      .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
       .build();
   }, [currentUserId]);
 
@@ -178,7 +177,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
             <View style={styles.imageContainer}>
               <Image
                 source={{
-                  uri: `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/${profileImg}`,
+                  uri: `${API_URL}/Uploads/UserImages/${profileImg}`,
                 }}
                 style={styles.profileImage}
               />

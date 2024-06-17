@@ -41,6 +41,7 @@ import {
   removeVehicleFromUserFavorites,
 } from "../slices/UserSlice";
 import { useFocusEffect } from "@react-navigation/native";
+import { API_URL } from "@env";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
@@ -154,8 +155,8 @@ const VehicleDetailScreen = () => {
   }
 
   if (isSuccessVehicles) {
-    const UserImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/UserImages/`;
-    const VehicleImageBaseUrl = `https://measured-wolf-grossly.ngrok-free.app/Uploads/VehicleImages/`;
+    const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
+    const VehicleImageBaseUrl = `${API_URL}/Uploads/VehicleImages/`;
 
     const descriptionShortenedChars = 500;
 
