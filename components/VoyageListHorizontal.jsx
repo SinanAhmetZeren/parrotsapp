@@ -47,9 +47,12 @@ export default function VoyageListHorizontal({ data, focusMap }) {
   if (data)
     return (
       <FlatList
+        key={data}
         data={data}
+        extraData={data}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        // keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         horizontal
         contentContainerStyle={styles.containerHorizontal}
       />

@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
+
 import * as ImagePicker from "expo-image-picker";
 import { useAddWaypointMutation } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
@@ -161,7 +162,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      // aspect: [4, 3],
       quality: 1,
     });
 
