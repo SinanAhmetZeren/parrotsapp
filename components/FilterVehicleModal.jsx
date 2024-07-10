@@ -154,7 +154,9 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
-    color: "#333",
+    fontWeight: "700",
+    color: "grey",
+    marginLeft: vw(5),
   },
   buttonsContainer: {
     flexDirection: "row",

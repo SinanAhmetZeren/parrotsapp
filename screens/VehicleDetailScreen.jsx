@@ -331,16 +331,15 @@ const VehicleDetailScreen = () => {
                                 {VehicleData.user.userName.substring(0, 7)}
                               </Text>
                               <Text style={styles.usernameSmall}>{"..."}</Text>
-                              <Text style={styles.username}>!</Text>
                             </View>
                           ) : (
                             <Text style={styles.username}>
-                              {VehicleData.user.userName}!
+                              {VehicleData.user.userName}
                             </Text>
                           )
                         ) : (
                           <Text style={styles.username}>
-                            {VehicleData.user.userName}!
+                            {VehicleData.user.userName}
                           </Text>
                         )}
 
@@ -473,11 +472,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: "#2ac898",
     fontWeight: "800",
-
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
-    paddingHorizontal: vh(2),
-    paddingVertical: vh(0.5),
-    borderRadius: vh(1),
+    borderRadius: vh(3),
   },
   mainBidsContainer: {
     borderRadius: vw(5),
@@ -495,7 +490,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#3c9dde",
   },
-  ImagesMainContainer: {},
+  ImagesMainContainer: {
+    marginTop: vh(1),
+  },
   rectangularBox: {
     height: vh(27),
     backgroundColor: "white",

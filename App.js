@@ -155,29 +155,23 @@ const AddNewStack = () => {
       <Stack.Screen
         name="CreateVoyageScreen"
         component={CreateVoyageScreen}
-        options={
-          {
-            // unmountOnBlur: true,
-          }
-        }
+        options={{
+          unmountOnBlur: true,
+        }}
       />
       <Stack.Screen
         name="CreateVehicleScreen"
         component={CreateVehicleScreen}
-        options={
-          {
-            // unmountOnBlur: true,
-          }
-        }
+        options={{
+          unmountOnBlur: true,
+        }}
       />
       <Stack.Screen
         name="VoyageDetail"
         component={VoyageDetailScreen}
-        options={
-          {
-            // unmountOnBlur: true,
-          }
-        }
+        options={{
+          unmountOnBlur: true,
+        }}
       />
       <Stack.Screen
         name="EditVehicleScreen"
@@ -191,20 +185,16 @@ const AddNewStack = () => {
       <Stack.Screen
         name="VehicleDetail"
         component={VehicleDetailScreen}
-        options={
-          {
-            // unmountOnBlur: true,
-          }
-        }
+        options={{
+          unmountOnBlur: true,
+        }}
       />
       <Stack.Screen
         name="ProfileScreenPublic"
         component={ProfileScreenPublic}
-        options={
-          {
-            // unmountOnBlur: true,
-          }
-        }
+        options={{
+          unmountOnBlur: true,
+        }}
       />
     </Stack.Navigator>
   );

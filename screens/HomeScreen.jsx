@@ -15,15 +15,15 @@ import {
 } from "react-native";
 import { useState, useCallback } from "react";
 import MapView, { Marker } from "react-native-maps";
+
 import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { vw, vh } from "react-native-expo-viewport-units";
 
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   useGetVoyagesByLocationMutation,
   useGetFilteredVoyagesMutation,
@@ -31,6 +31,7 @@ import {
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
 import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -40,8 +41,6 @@ export default function HomeScreen({ navigation }) {
   const [isDatesFiltered, setIsDatesFiltered] = useState(false);
   const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
-  const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
   const [initialLatitude, setInitialLatitude] = useState(0);
   const [initialLongitude, setInitialLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
@@ -67,10 +66,49 @@ export default function HomeScreen({ navigation }) {
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
 
+  const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
+  const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
+  //const [isError] = useGetFilteredVoyagesMutation();
+
   const username = useSelector((state) => state.users.userName);
 
-  const dispatch = useDispatch();
+  /*
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          if (initialVoyages) {
+            const formattedStartDate = convertDateFormat(
+              startDate,
+              "startDate"
+            );
+            const formattedEndDate = convertDateFormat(endDate, "endDate");
 
+            console.log("usefocuseffect...");
+            const data = {
+              latitude,
+              longitude,
+              latitudeDelta,
+              longitudeDelta,
+              count,
+              selectedVehicleType,
+              formattedStartDate,
+              formattedEndDate,
+            };
+
+            console.log("data... ", data);
+            // await getFilteredVoyages(data);
+          }
+        } catch (error) {
+          console.error("Error fetching or refetching data:", error);
+        }
+      };
+      fetchData();
+    }, [navigation])
+  );
+  */
+
+  // 1. GET LOCATION //
   useEffect(() => {
     async function getLocation() {
       try {
@@ -80,10 +118,10 @@ export default function HomeScreen({ navigation }) {
           return;
         }
         const location = await Location.getCurrentPositionAsync({});
-        //const lat = location.coords.latitude;
-        //const lon = location.coords.longitude;
-        const lat = 52.2;
-        const lon = 0.13;
+        const lat = location.coords.latitude;
+        const lon = location.coords.longitude;
+        //const lat = 52.2;  // cambridge
+        //const lon = 0.13;  // cambridge
         setInitialLatitude(lat);
         setInitialLongitude(lon);
       } catch (error) {
@@ -106,14 +144,23 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     const getVoyages = async () => {
-      const lat1 = initialLatitude - 10;
-      const lat2 = initialLatitude + 10;
-      const lon1 = initialLongitude - 10;
-      const lon2 = initialLongitude + 10;
+      const lat1 = initialLatitude - 0.15;
+      const lat2 = initialLatitude + 0.15;
+      const lon1 = initialLongitude - 0.2;
+      const lon2 = initialLongitude + 0.2;
+
       setIsLoading(true);
 
+      /*console.log(
+        "getting voyages by location: ",
+        "lon: ",
+        lon1,
+        lon2,
+        "lat: ",
+        lat1,
+        lat2
+      );*/
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
-      // setInitialVoyages(voyages.data);
       setInitialVoyages(voyages.data || []);
       setIsLoading(false);
     };
@@ -191,6 +238,12 @@ export default function HomeScreen({ navigation }) {
       formattedStartDate,
       formattedEndDate,
     };
+    console.log(
+      "applyfilter function x-delta: ",
+      data.longitudeDelta,
+      " y-delta: ",
+      data.latitudeDelta
+    );
     const filteredVoyages = await getFilteredVoyages(data);
     setInitialVoyages(filteredVoyages.data || []);
   };
@@ -218,13 +271,15 @@ export default function HomeScreen({ navigation }) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
-  // if (isError) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text style={{ fontSize: 50 }}>error...</Text>
-  //     </View>
-  //   );
-  // }
+  /*
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ fontSize: 50, padding: vh(10) }}>error...</Text>
+      </View>
+    );
+  }
+*/
 
   if (!isLoading) {
     const initialRegion = {
@@ -232,11 +287,6 @@ export default function HomeScreen({ navigation }) {
       longitude: initialLongitude,
       latitudeDelta: 0.25,
       longitudeDelta: 0.25,
-    };
-
-    const markerCoordinate = {
-      latitude: latitude,
-      longitude: longitude,
     };
 
     return (

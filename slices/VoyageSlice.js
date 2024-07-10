@@ -187,10 +187,10 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         } = data;
 
         const queryParams = new URLSearchParams({
-          Lat1: (latitude - latitudeDelta).toString(),
-          Lat2: (latitude + latitudeDelta).toString(),
-          Lon1: (longitude - longitudeDelta).toString(),
-          Lon2: (longitude + longitudeDelta).toString(),
+          Lat1: (latitude - latitudeDelta / 2).toString(),
+          Lat2: (latitude + latitudeDelta / 2).toString(),
+          Lon1: (longitude - longitudeDelta / 2).toString(),
+          Lon2: (longitude + longitudeDelta / 2).toString(),
           Vacancy: count.toString(),
         });
 

@@ -63,6 +63,7 @@ export default function ProfileScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
+        console.log("profile screen useFocusEffect");
         try {
           if (userData) {
             await refetchUserData();

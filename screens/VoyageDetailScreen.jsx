@@ -8,7 +8,6 @@ import { useGetVoyageByIdQuery } from "../slices/VoyageSlice";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   Feather,
-  FontAwesome6,
   AntDesign,
   FontAwesome5,
   FontAwesome,
@@ -34,7 +33,6 @@ import { WaypointListComponent } from "../components/WaypointListComponent";
 import { CreateBidComponent } from "../components/CreateBidComponent";
 import { RenderPolylinesComponent } from "../components/RenderPolylinesComponent";
 import { useSelector, useDispatch } from "react-redux";
-import { useFonts } from "expo-font";
 import { WaypointFlatListVoyageDetailsScreen } from "../components/WaypointFlatlist";
 import {
   useAddVoyageToFavoritesMutation,
