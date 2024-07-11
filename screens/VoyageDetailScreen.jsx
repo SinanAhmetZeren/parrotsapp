@@ -63,7 +63,6 @@ const VoyageDetailScreen = () => {
   const [userBidPrice, setUserBidPrice] = useState("");
   const [userBidPersons, setUserBidPersons] = useState("");
   const [userBidMessage, setUserBidMessage] = useState("");
-
   const {
     data: VoyageData,
     isSuccess: isSuccessVoyages,
@@ -95,7 +94,6 @@ const VoyageDetailScreen = () => {
 
   useEffect(() => {
     if (isSuccessVoyages && userFavoriteVoyages) {
-      console.log("user favorite voyages: ", userFavoriteVoyages);
       if (userFavoriteVoyages.includes(VoyageData.id)) {
         setIsFavorited(true);
       }
@@ -250,6 +248,7 @@ const VoyageDetailScreen = () => {
       },
     ].concat(VoyageData.voyageImages);
     const initialRegion = getInitialRegion(waypoints);
+    console.log("---> ", initialRegion);
     const formattedStartDate = require("date-fns").format(
       VoyageData.startDate,
       "MMM d, yy"
@@ -458,11 +457,7 @@ const VoyageDetailScreen = () => {
 
           <View style={styles.mapAndEmojisContainer}>
             <View style={styles.mapContainer}>
-              <MapView
-                ref={mapRef}
-                style={styles.map}
-                initialRegion={initialRegion}
-              >
+              <MapView ref={mapRef} style={styles.map} region={initialRegion}>
                 <WaypointListComponent waypoints={waypoints} />
                 <RenderPolylinesComponent waypoints={waypoints} />
               </MapView>
