@@ -79,7 +79,16 @@ export default function ProfileScreen({ navigation }) {
         }
       };
       fetchData();
-    }, [refetchVehicleData, refetchVoyageData, refetchUserData, navigation])
+      // }, [refetchVehicleData, refetchVoyageData, refetchUserData, navigation])
+    }, [
+      refetchVehicleData,
+      refetchVoyageData,
+      refetchUserData,
+      navigation,
+      VoyagesData,
+      VehiclesData,
+      userData,
+    ])
   );
 
   const handleInstagramPress = async () => {
