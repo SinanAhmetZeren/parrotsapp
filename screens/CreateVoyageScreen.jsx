@@ -435,7 +435,7 @@ const CreateVoyageScreen = () => {
                         color="blue"
                       />
                       <Text style={styles.voyageDates}>
-                        Select Voyage Dates
+                        Select Voyage Date(s)
                       </Text>
                     </View>
 
@@ -455,14 +455,6 @@ const CreateVoyageScreen = () => {
                         onDateChange={onDateChange}
                         width={300}
                       />
-
-                      <TouchableOpacity
-                        onPress={() => printDates()}
-                        style={{ backgroundColor: "red" }}
-                        disabled={false}
-                      >
-                        <Text style={styles.loginText}>dates</Text>
-                      </TouchableOpacity>
                     </View>
                   </View>
 

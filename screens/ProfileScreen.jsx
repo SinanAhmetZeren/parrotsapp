@@ -54,7 +54,6 @@ export default function ProfileScreen({ navigation }) {
     isLoading: isLoadingVehicles,
     refetch: refetchVehicleData,
   } = useGetVehiclesByUserByIdQuery(userId);
-  const [selected, setSelected] = useState("voyages");
 
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
@@ -100,7 +99,6 @@ export default function ProfileScreen({ navigation }) {
 
   const handleFacebookPress = async () => {
     const facebookPageID = `${userData.facebook}`;
-    //const facebookPageID = `marcos.cezar.948`;
     const fallbackUrl = `https://www.facebook.com/${facebookPageID}`;
     Linking.openURL(fallbackUrl);
   };
@@ -142,10 +140,6 @@ export default function ProfileScreen({ navigation }) {
       const youtubeUrl = `https://www.youtube.com/@${userData.youtube}`;
       Linking.openURL(youtubeUrl);
     }
-  };
-
-  const handleChangeSelection = (s) => {
-    setSelected(s);
   };
 
   const BlueHashTagText = ({ originalText }) => {

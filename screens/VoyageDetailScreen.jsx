@@ -46,10 +46,11 @@ import {
 import { API_URL } from "@env";
 
 const VoyageDetailScreen = () => {
-  const [addVoyageToFavorites] = useAddVoyageToFavoritesMutation();
-  const [deleteVoyageFromFavorites] = useDeleteVoyageFromFavoritesMutation();
   const route = useRoute();
   const { voyageId } = route.params;
+
+  const [addVoyageToFavorites] = useAddVoyageToFavoritesMutation();
+  const [deleteVoyageFromFavorites] = useDeleteVoyageFromFavoritesMutation();
   const userId = useSelector((state) => state.users.userId);
   const userProfileImage = useSelector((state) => state.users.userProfileImage);
   const userName = useSelector((state) => state.users.userName);
@@ -176,7 +177,7 @@ const VoyageDetailScreen = () => {
   };
 
   const goToVehiclePage = (vehicleId) => {
-    navigation.navigate("Create", {
+    navigation.navigate("ProfileStack", {
       screen: "VehicleDetail",
       params: { vehicleId: vehicleId },
     });

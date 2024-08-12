@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -13,7 +13,6 @@ import {
   Modal,
   Image,
 } from "react-native";
-import { useState, useCallback } from "react";
 import MapView, { Marker } from "react-native-maps";
 
 import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
@@ -31,7 +30,7 @@ import {
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
 import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
-import { useFocusEffect } from "@react-navigation/native";
+import { CommonActions } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);

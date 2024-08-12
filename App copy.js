@@ -116,27 +116,6 @@ const ProfileStack = () => {
     >
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-      <Stack.Screen
-        name="VehicleDetail"
-        component={VehicleDetailScreen}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name="VoyageDetail"
-        component={VoyageDetailScreen}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name="ProfileScreenPublic"
-        component={ProfileScreenPublic}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
     </Stack.Navigator>
   );
 };
@@ -167,32 +146,6 @@ const HomeStack = () => {
   );
 };
 
-const FavoritesStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
-      <Stack.Screen
-        name="VehicleDetail"
-        component={VehicleDetailScreen}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name="VoyageDetail"
-        component={VoyageDetailScreen}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
 const AddNewStack = () => {
   return (
     <Stack.Navigator
@@ -218,6 +171,27 @@ const AddNewStack = () => {
       <Stack.Screen
         name="EditVehicleScreen"
         component={EditVehicleScreen}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="VehicleDetail"
+        component={VehicleDetailScreen}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="VoyageDetail"
+        component={VoyageDetailScreen}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublic}
         options={{
           unmountOnBlur: true,
         }}
@@ -275,9 +249,6 @@ const TabNavigator = () => {
           component={ProfileStack}
           options={{
             tabBarIcon: ({ focused }) => {
-              console.log(
-                `hello there ${new Date().toISOString().slice(-8, -3)}`
-              );
               return (
                 <View style={styles.tabIconStyle}>
                   <Feather
@@ -336,12 +307,9 @@ const TabNavigator = () => {
 
         <Tab.Screen
           name="Favorites"
-          component={FavoritesStack}
+          component={FavoritesScreen}
           options={{
             tabBarIcon: ({ focused }) => {
-              console.log(
-                `hello there ${new Date().toISOString().slice(-8, -3)}`
-              );
               return (
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
