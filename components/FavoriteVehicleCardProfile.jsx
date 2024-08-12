@@ -15,7 +15,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 
-export default function VehicleCardProfile({
+export default function FavoriteVehicleCardProfile({
   vehicleId,
   vehiclename,
   description,
@@ -135,7 +135,7 @@ export default function VehicleCardProfile({
   const handleNavigateToVehicle = (vehicleId) => {
     // navigation.navigate("VehicleDetail", { vehicleId });
 
-    navigation.navigate("ProfileStack", {
+    navigation.navigate("Favorites", {
       screen: "VehicleDetail",
       params: { vehicleId: vehicleId },
     });

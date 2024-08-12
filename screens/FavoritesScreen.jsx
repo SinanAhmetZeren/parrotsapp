@@ -13,8 +13,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import VoyageListVertical from "../components/VoyageListVertical";
-import VehicleList from "../components/VehicleList";
+import FavoriteVoyageListVertical from "../components/FavoriteVoyageListVertical";
+// import VehicleList from "../components/VehicleList";
+import FavoriteVehicleList from "../components/FavoriteVehicleList";
 import { useGetFavoriteVoyagesByUserIdQuery } from "../slices/VoyageSlice";
 import { useGetFavoriteVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useSelector } from "react-redux";
@@ -89,7 +90,7 @@ export default function FavoritesScreen({ navigation }) {
                       </View>
 
                       <View style={styles.voyageListContainer}>
-                        <VehicleList
+                        <FavoriteVehicleList
                           style={styles.voyageList}
                           data={VehiclesData}
                         />
@@ -107,7 +108,7 @@ export default function FavoritesScreen({ navigation }) {
                         </View>
                       </View>
                       <View style={styles.voyageListContainer}>
-                        <VoyageListVertical
+                        <FavoriteVoyageListVertical
                           style={styles.voyageList}
                           data={VoyagesData}
                         />

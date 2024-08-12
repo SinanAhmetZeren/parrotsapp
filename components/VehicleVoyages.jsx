@@ -15,7 +15,7 @@ export default function VehicleVoyages({ voyages }) {
   const handleNavigateToVoyage = (voyageId) => {
     // navigation.navigate("VoyageDetail", { voyageId });
 
-    navigation.navigate("Create", {
+    navigation.navigate("ProfileStack", {
       screen: "VoyageDetail",
       params: { voyageId: voyageId },
     });

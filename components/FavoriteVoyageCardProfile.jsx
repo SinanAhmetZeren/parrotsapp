@@ -16,7 +16,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 
-export default function VoyageCardProfileHorizontalModal({
+export default function FavoriteVoyageCardProfile({
   cardHeader,
   cardDescription,
   cardImage,
@@ -26,10 +26,6 @@ export default function VoyageCardProfileHorizontalModal({
   vehiclename,
   vehicletype,
   voyageId,
-  latitude,
-  longitude,
-  focusMap,
-  setSelectedVoyageModalVisible,
 }) {
   const cardImageUrl = `${API_URL}/Uploads/VoyageImages/${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
@@ -37,9 +33,7 @@ export default function VoyageCardProfileHorizontalModal({
   const navigation = useNavigation();
 
   const handleNavigation = (voyageId) => {
-    // navigation.navigate("VoyageDetail", { voyageId });
-
-    navigation.navigate("ProfileStack", {
+    navigation.navigate("Favorites", {
       screen: "VoyageDetail",
       params: { voyageId: voyageId },
     });
@@ -82,55 +76,49 @@ export default function VoyageCardProfileHorizontalModal({
       break;
   }
 
+  // let x = "1234567890123456789012345";
   return (
-    <TouchableOpacity
-      onPress={() => {
-        setSelectedVoyageModalVisible(false);
-        handleNavigation(voyageId);
-      }}
-    >
+    <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
       <View style={styles.cardContainer}>
         <View style={styles.shadow}>
           <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
         </View>
 
-        <View style={styles.containerContainer}>
-          <View style={styles.textContainer}>
-            <Text style={styles.header}>{cardHeader}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>{cardHeader}</Text>
 
-            <View style={styles.vacancyAndVehicle}>
-              <View>
-                <Text style={styles.subHeader}>
-                  {/* {vehiclename + "111 "} */}
-                  {vehiclename.length > 21
-                    ? vehiclename.substring(0, 21) + "..."
-                    : vehiclename}
-                  {"  "}
-                  {icon}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.vacancyAndVehicle}>
-              <View>
-                <Text style={styles.subHeader2}>
-                  {vacancy + " "}
-                  <Feather name="users" size={12} color="blue" />
-                </Text>
-              </View>
-              <Text style={styles.subHeader3}>
-                {formattedStartDate + " - " + formattedEndDate + "  "}
-                <AntDesign name="calendar" size={12} color="blue" />
+          <View style={styles.vacancyAndVehicle}>
+            <View>
+              <Text style={styles.subHeader}>
+                {/* {vehiclename + "111 "} */}
+                {vehiclename.length > 21
+                  ? vehiclename.substring(0, 21) + "..."
+                  : vehiclename}
+                {"  "}
+                {icon}
               </Text>
             </View>
-            <Text
-              style={styles.cardDescription}
-              numberOfLines={5}
-              ellipsizeMode="tail"
-            >
-              {cardDescription}
+          </View>
+
+          <View style={styles.vacancyAndVehicle}>
+            <View>
+              <Text style={styles.subHeader2}>
+                {vacancy + " "}
+                <Feather name="users" size={12} color="blue" />
+              </Text>
+            </View>
+            <Text style={styles.subHeader3}>
+              {formattedStartDate + " - " + formattedEndDate + "  "}
+              <AntDesign name="calendar" size={12} color="blue" />
             </Text>
           </View>
+          <Text
+            style={styles.cardDescription}
+            numberOfLines={5}
+            ellipsizeMode="tail"
+          >
+            {cardDescription}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -138,51 +126,23 @@ export default function VoyageCardProfileHorizontalModal({
 }
 
 const styles = StyleSheet.create({
-  containerContainer: {
-    height: vh(22),
-    top: 0,
-  },
-  extendedAreaContainer: {
-    alignSelf: "flex-end",
-    position: "absolute",
-    bottom: vh(0.3),
-    right: vw(2),
-    borderRadius: vh(1),
-    paddingLeft: vw(5),
-    paddingRight: vw(2),
-  },
-  extendedArea: {
-    paddingHorizontal: vh(8),
-    paddingVertical: vh(3),
-  },
-  seeOnMap: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#2ac898",
-    alignSelf: "flex-end",
-    position: "absolute",
-    bottom: vh(0.3),
-    right: vw(2),
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
-    borderRadius: vh(1),
-    paddingHorizontal: vw(2),
-  },
   cardContainer: {
-    marginHorizontal: vw(2),
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+    marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
     backgroundColor: "rgba(0, 119, 234,0.03)",
     borderRadius: vh(2),
+    // borderWidth: 3,
     borderColor: "rgba(10, 119, 234,0.2)",
   },
   imageContainer: {
     backgroundColor: "white",
   },
   cardImage: {
-    width: vw(38),
+    width: vw(42),
     height: vh(20),
     marginRight: vh(0.5),
     borderRadius: vh(2),
@@ -190,9 +150,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: vh(0),
   },
   textContainer: {
-    marginTop: vh(1),
     width: vw(50),
-    height: vh(18),
     padding: vh(0.2),
   },
   header: {

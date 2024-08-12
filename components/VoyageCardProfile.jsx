@@ -33,9 +33,7 @@ export default function VoyageCardProfile({
   const navigation = useNavigation();
 
   const handleNavigation = (voyageId) => {
-    // navigation.navigate("VoyageDetail", { voyageId });
-
-    navigation.navigate("Create", {
+    navigation.navigate("ProfileStack", {
       screen: "VoyageDetail",
       params: { voyageId: voyageId },
     });

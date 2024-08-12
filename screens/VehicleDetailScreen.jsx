@@ -46,6 +46,7 @@ import { API_URL } from "@env";
 const VehicleDetailScreen = () => {
   const route = useRoute();
   const { vehicleId } = route.params;
+
   const {
     data: VehicleData,
     isSuccess: isSuccessVehicles,
@@ -58,16 +59,11 @@ const VehicleDetailScreen = () => {
   );
   const userId = useSelector((state) => state.users.userId);
   const [showFullText, setShowFullText] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const [isFavorited, setIsFavorited] = useState(false);
   const [addVehicleToFavorites] = useAddVehicleToFavoritesMutation();
   const [deleteVehicleFromFavorites] = useDeleteVehicleFromFavoritesMutation();
   const dispatch = useDispatch();
-
-  const handleSeeAll = () => {
-    setModalVisible(true);
-  };
 
   useFocusEffect(
     useCallback(() => {

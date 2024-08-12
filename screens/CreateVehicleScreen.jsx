@@ -8,7 +8,6 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Button,
   StyleSheet,
   ScrollView,
   FlatList,
@@ -143,7 +142,6 @@ const CreateVehicleScreen = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -308,7 +306,8 @@ const CreateVehicleScreen = () => {
                         name === "" ||
                         description === "" ||
                         capacity === "" ||
-                        vehicleType === ""
+                        vehicleType === "" ||
+                        image === ""
                           ? styles.selection2Disabled
                           : styles.selection2
                       }
@@ -316,7 +315,8 @@ const CreateVehicleScreen = () => {
                         name === "" ||
                         description === "" ||
                         capacity === "" ||
-                        vehicleType === ""
+                        vehicleType === "" ||
+                        image === ""
                       }
                     >
                       <Text style={styles.loginText}>Create Vehicle</Text>
