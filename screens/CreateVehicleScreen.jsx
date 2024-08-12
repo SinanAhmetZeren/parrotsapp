@@ -25,6 +25,8 @@ import { useSelector } from "react-redux";
 import DropdownComponentType from "../components/DropdownComponentType";
 import StepBarVehicle from "../components/StepBarVehicle";
 import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+import { BackHandler } from "react-native";
 
 const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -52,6 +54,23 @@ const CreateVehicleScreen = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVehicle, setIsCreatingVehicle] = useState(false);
   const navigation = useNavigation();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const backAction = () => {
+        navigation.navigate("Home");
+
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => backHandler.remove();
+    }, [navigation])
+  );
 
   const goToProfilePage = () => {
     setName("");

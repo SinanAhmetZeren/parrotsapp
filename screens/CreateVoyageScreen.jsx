@@ -35,8 +35,10 @@ import DropdownComponent from "../components/DropdownComponent";
 import StepBar from "../components/StepBar";
 import CreateVoyageMapComponent from "../components/CreateVoyageMapComponent";
 import { API_URL } from "@env";
+import { BackHandler } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
-const CreateVoyageScreen = () => {
+const CreateVoyageScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
   const {
     data: userData,
@@ -81,6 +83,23 @@ const CreateVoyageScreen = () => {
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
 
   useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const backAction = () => {
+        navigation.navigate("Home");
+
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        "hardwareBackPress",
+        backAction
+      );
+
+      return () => backHandler.remove();
+    }, [navigation])
+  );
 
   const changeCurrentState = (index) => {
     setCurrentStep(index);

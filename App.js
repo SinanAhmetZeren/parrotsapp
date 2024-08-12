@@ -275,9 +275,9 @@ const TabNavigator = () => {
           component={ProfileStack}
           options={{
             tabBarIcon: ({ focused }) => {
-              console.log(
-                `hello there ${new Date().toISOString().slice(-8, -3)}`
-              );
+              // console.log(
+              //   `hello there ${new Date().toISOString().slice(-8, -3)}`
+              // );
               return (
                 <View style={styles.tabIconStyle}>
                   <Feather
@@ -339,9 +339,9 @@ const TabNavigator = () => {
           component={FavoritesStack}
           options={{
             tabBarIcon: ({ focused }) => {
-              console.log(
-                `hello there ${new Date().toISOString().slice(-8, -3)}`
-              );
+              // console.log(
+              //   `hello there ${new Date().toISOString().slice(-8, -3)}`
+              // );
               return (
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
