@@ -237,12 +237,7 @@ export default function HomeScreen({ navigation }) {
       formattedStartDate,
       formattedEndDate,
     };
-    console.log(
-      "applyfilter function x-delta: ",
-      data.longitudeDelta,
-      " y-delta: ",
-      data.latitudeDelta
-    );
+
     const filteredVoyages = await getFilteredVoyages(data);
     setInitialVoyages(filteredVoyages.data || []);
   };

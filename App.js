@@ -30,7 +30,11 @@ import {
 } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
+import VoyageDetailScreenHome from "./screens/VoyageDetailScreenHome";
+import VoyageDetailScreenFavorites from "./screens/VoyageDetailScreenFavorites";
 import VehicleDetailScreen from "./screens/VehicleDetailScreen";
+import VehicleDetailScreenHome from "./screens/VehicleDetailScreenHome";
+import VehicleDetailScreenFavorites from "./screens/VehicleDetailScreenFavorites";
 import ProfileScreen from "./screens/ProfileScreen";
 import ProfileScreenPublic from "./screens/ProfileScreenPublic";
 import EditProfileScreen from "./screens/EditProfileScreen";
@@ -163,6 +167,20 @@ const HomeStack = () => {
       }}
     >
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen
+        name="VehicleDetail"
+        component={VehicleDetailScreenHome}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="VoyageDetail"
+        component={VoyageDetailScreenHome}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -177,14 +195,14 @@ const FavoritesStack = () => {
       <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
       <Stack.Screen
         name="VehicleDetail"
-        component={VehicleDetailScreen}
+        component={VehicleDetailScreenFavorites}
         options={{
           unmountOnBlur: true,
         }}
       />
       <Stack.Screen
         name="VoyageDetail"
-        component={VoyageDetailScreen}
+        component={VoyageDetailScreenFavorites}
         options={{
           unmountOnBlur: true,
         }}
