@@ -79,7 +79,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -636,6 +636,10 @@ const CreateVoyageScreen = ({ navigation }) => {
               </View>
 
               <View style={styles2.voyageImagesContainer2}>
+                {/* <View style={styles.selectedChoice}>
+                  <Text style={styles.selectedText}>Add Voyage Images</Text>
+                </View> */}
+
                 <View style={styles.profileContainer2}>
                   {isUploadingImage ? (
                     <View style={styles.profileImage}>
@@ -762,7 +766,7 @@ const styles2 = StyleSheet.create({
   voyageImagesContainer2: {
     // backgroundColor: "rgba(248, 248, 248,1)",
     backgroundColor: "rgba(240, 241, 242,.7)",
-    marginTop: vh(1),
+    marginTop: vh(2),
     paddingBottom: vh(1),
     width: vw(94),
     alignSelf: "center",
@@ -805,8 +809,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   backgroundImagePlaceholder: {
-    width: vw(50),
     height: vh(30),
+    width: vw(50),
     marginBottom: vh(5),
   },
   profileImageAndSocial: {
@@ -879,14 +883,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addWaypoints: {
-    marginTop: vh(2),
+    marginTop: vh(3),
     alignItems: "center",
   },
   selectedText: {
-    color: "rgba(24,111,241,0.5)",
+    color: "rgba(24,111,241,1)",
     fontSize: 18,
     fontWeight: "700",
     textAlign: "center",
+    backgroundColor: "white",
+    // paddingHorizontal: vh(3),
+    paddingVertical: vh(0.5),
+    borderRadius: vh(1.5),
+    width: vw(50),
   },
   length1: {
     height: vh(13),
@@ -959,7 +968,7 @@ const styles = StyleSheet.create({
 
   profileImage: {
     marginLeft: vw(3),
-    marginVertical: vh(1),
+    marginRight: vh(1),
     marginBottom: vh(3),
     width: vh(20),
     height: vh(20),
@@ -967,9 +976,9 @@ const styles = StyleSheet.create({
     borderColor: "rgba(190, 119, 234,0.6)",
   },
   profileImage2: {
-    marginLeft: vw(3),
-    marginVertical: vh(1),
-    marginBottom: vh(3),
+    // marginLeft: vw(3),
+    // marginVertical: vh(1),
+    marginBottom: vh(2),
     width: vh(20),
     height: vh(20),
     borderRadius: vh(3),
@@ -1005,6 +1014,7 @@ const styles = StyleSheet.create({
   backgroundImage: {
     width: vw(100),
     height: vh(30),
+    marginBottom: vh(5),
   },
   createVoyageButton: {
     width: vw(40),

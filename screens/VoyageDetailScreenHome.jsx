@@ -587,12 +587,12 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
   },
   rectangularBox: {
-    height: vh(27),
+    height: vh(37),
     backgroundColor: "white",
   },
   imageContainer: {
     top: vh(5),
-    height: vh(29),
+    height: vh(34),
   },
   voyageDetailsContainer: {
     padding: 4,
