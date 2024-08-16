@@ -79,7 +79,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -735,26 +735,6 @@ const CreateVoyageScreen = ({ navigation }) => {
             />
           </ScrollView>
         ) : null}
-
-        {/* {currentStep == 3 ? (
-          <View
-            style={{
-              top: vh(5),
-              backgroundColor: "purple",
-            }}
-          >
-            <ScrollView
-              style={{
-                backgroundColor: "white",
-              }}
-            >
-              <CreateVoyageMapComponent
-                voyageId={voyageId}
-                setCurrentStep={setCurrentStep}
-              />
-            </ScrollView>
-          </View>
-        ) : null} */}
       </>
     );
   }
@@ -892,7 +872,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
     backgroundColor: "white",
-    // paddingHorizontal: vh(3),
     paddingVertical: vh(0.5),
     borderRadius: vh(1.5),
     width: vw(50),
