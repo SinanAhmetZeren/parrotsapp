@@ -337,6 +337,7 @@ const TabNavigator = () => {
                   style={{
                     alignItems: "center",
                     justifyContent: "center",
+                    // marginBottom: vh(6),
                   }}
                 >
                   <Ionicons
@@ -344,6 +345,11 @@ const TabNavigator = () => {
                     size={24}
                     color={!modalVisible ? "black" : "#3aa4ff"}
                   />
+
+                  {/* <Image
+                    source={require("./assets/parrots-logo-mini.png")}
+                    style={styles.miniLogo}
+                  /> */}
 
                   <Text
                     style={
@@ -548,6 +554,10 @@ function App() {
 export default App;
 
 const styles = StyleSheet.create({
+  miniLogo: {
+    height: vh(8),
+    width: vh(8),
+  },
   tabIconStyle: {
     alignItems: "center",
     justifyContent: "center",
