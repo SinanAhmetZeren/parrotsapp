@@ -409,7 +409,7 @@ export default VehicleDetailScreenHome;
 const styles = StyleSheet.create({
   buttonsContainer: {
     position: "absolute",
-    top: vh(22),
+    top: vh(40),
     right: vw(2),
     flexDirection: "column",
   },
@@ -490,12 +490,12 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
   },
   rectangularBox: {
-    height: vh(27),
+    height: vh(45),
     backgroundColor: "white",
   },
   imageContainer: {
     top: vh(5),
-    height: vh(29),
+    height: vh(47),
   },
   voyageDetailsContainer: {
     borderColor: "rgba(10, 119, 234,0.2)",
