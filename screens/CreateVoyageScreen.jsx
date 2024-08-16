@@ -19,6 +19,7 @@ import {
   useCreateVoyageMutation,
   useAddVoyageImageMutation,
   useDeleteVoyageImageMutation,
+  useCheckAndDeleteVoyageMutation,
 } from "../slices/VoyageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
@@ -51,6 +52,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [createVoyage] = useCreateVoyageMutation();
   const [addVoyageImage] = useAddVoyageImageMutation();
   const [deleteVoyageImage] = useDeleteVoyageImageMutation();
+  const [checkAndDeleteVoyage] = useCheckAndDeleteVoyageMutation();
 
   const currentDate = new Date();
   const hours = currentDate.getHours();
@@ -65,8 +67,8 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [brief, setBrief] = useState("Aaa");
   const [description, setDescription] = useState("Aaa");
   const [vacancy, setVacancy] = useState("10");
-  const [startDate, setStartDate] = useState("2024-03-14T09:00:00.000Z");
-  const [endDate, setEndDate] = useState("2024-03-15T09:00:00.000Z");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [lastBidDate, setLastBidDate] = useState("11/11/1111");
   const [minPrice, setMinPrice] = useState("11");
   const [maxPrice, setMaxPrice] = useState("11");
@@ -77,7 +79,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -99,6 +101,25 @@ const CreateVoyageScreen = ({ navigation }) => {
 
       return () => backHandler.remove();
     }, [navigation])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("----");
+      console.log("hello from create voyage");
+      console.log("----");
+
+      return () => {
+        console.log("goodbye from create voyage");
+        console.log("voyage id ", voyageId);
+        if (voyageId) {
+          checkAndDeleteVoyage(voyageId);
+          console.log("checking to delete voyage with id ", voyageId);
+          setCurrentStep(1);
+          setName("");
+        }
+      };
+    }, [voyageId])
   );
 
   const changeCurrentState = (index) => {
@@ -279,13 +300,16 @@ const CreateVoyageScreen = ({ navigation }) => {
       setStartDate(date);
       setEndDate(null);
       setCalendarRangeAllowed(false);
+      console.log("calendar 1 ");
     } else {
       if (date >= startDate) {
         setCalendarRangeAllowed(true);
         setEndDate(date);
+        console.log("calendar 2 ");
       } else {
         setStartDate(date);
         setEndDate(null);
+        console.log("calendar 3 ");
       }
     }
   };
@@ -337,7 +361,7 @@ const CreateVoyageScreen = ({ navigation }) => {
         <StepBar style={styles.StepBar} currentStep={currentStep} />
         {currentStep == 1 ? (
           <ScrollView style={styles.scrollview}>
-            <View style={styles.overlay}>
+            <View>
               <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={pickProfileImage}>
                   {image ? (
@@ -465,6 +489,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                         selectedRangeStyle={styles.calendarSelected}
                         selectedRangeStartStyle={styles.calendarEndStart}
                         selectedRangeEndStyle={styles.calendarEndStart}
+                        selectedDayStyle={styles.calendarEndStart}
                         selectedColor={"blue"}
                         startFromMonday={true}
                         allowRangeSelection={calendarRangeAllowed}
@@ -597,27 +622,6 @@ const CreateVoyageScreen = ({ navigation }) => {
                       </TouchableOpacity>
                     )}
                   </View>
-
-                  <View style={styles.step123}>
-                    <Button
-                      title="step 1"
-                      onPress={() => {
-                        changeCurrentState(1);
-                      }}
-                    />
-                    <Button
-                      title="step 2"
-                      onPress={() => {
-                        changeCurrentState(2);
-                      }}
-                    />
-                    <Button
-                      title="step 3"
-                      onPress={() => {
-                        changeCurrentState(3);
-                      }}
-                    />
-                  </View>
                 </View>
               </View>
             </View>
@@ -626,78 +630,86 @@ const CreateVoyageScreen = ({ navigation }) => {
 
         {currentStep === 2 ? (
           <ScrollView style={styles.scrollview}>
-            <View style={styles.overlay}>
+            <View>
               <View style={styles.selectedChoice}>
                 <Text style={styles.selectedText}>Add Voyage Images</Text>
               </View>
 
-              <View style={styles.profileContainer}>
-                {isUploadingImage ? (
-                  <View style={styles.profileImage}>
-                    <ActivityIndicator size="large" style={{ top: vh(8) }} />
-                  </View>
-                ) : (
-                  <TouchableOpacity onPress={pickVoyageImage}>
-                    {voyageImage ? (
-                      <Image
-                        source={{ uri: voyageImage }}
-                        style={styles.profileImage}
-                      />
-                    ) : (
-                      <Image
-                        source={require("../assets/ParrotsWhiteBgPlus.png")}
-                        style={styles.profileImage2}
-                      />
-                    )}
-                  </TouchableOpacity>
-                )}
-              </View>
-              <View
-                style={
-                  addedVoyageImages.length <= 1
-                    ? styles.length1
-                    : addedVoyageImages.length === 2
-                    ? styles.length2
-                    : styles.length3
-                }
-              >
-                <FlatList
-                  horizontal
-                  data={data}
-                  keyExtractor={(item) => item.addedVoyageImageId}
-                  renderItem={({ item, index }) => {
-                    return (
-                      <View key={index} style={styles2.imageContainer1}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            if (item.addedVoyageImageId) {
-                              handleDeleteImage(item.addedVoyageImageId);
-                            }
-                          }}
-                        >
-                          <Image
-                            source={
-                              item.addedVoyageImageId
-                                ? { uri: item.voyageImage }
-                                : require("../assets/placeholder.png")
-                            }
-                            style={styles2.voyageImage1}
-                          />
+              <View style={styles2.voyageImagesContainer2}>
+                <View style={styles.profileContainer2}>
+                  {isUploadingImage ? (
+                    <View style={styles.profileImage}>
+                      <ActivityIndicator size="large" style={{ top: vh(8) }} />
+                    </View>
+                  ) : (
+                    <TouchableOpacity onPress={pickVoyageImage}>
+                      {voyageImage ? (
+                        <Image
+                          source={{ uri: voyageImage }}
+                          style={styles.profileImage}
+                        />
+                      ) : (
+                        <Image
+                          source={require("../assets/ParrotsWhiteBgPlus.png")}
+                          style={styles.profileImage2}
+                        />
+                      )}
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <View
+                  style={
+                    addedVoyageImages.length <= 1
+                      ? styles.length1
+                      : addedVoyageImages.length === 2
+                      ? styles.length2
+                      : styles.length3
+                  }
+                >
+                  <FlatList
+                    horizontal
+                    data={data}
+                    //keyExtractor={(item) => item.addedVoyageImageId}
+                    //keyExtractor={(item) => item.addedVoyageImageId.toString()}
+                    keyExtractor={(item, index) =>
+                      item.addedVoyageImageId
+                        ? item.addedVoyageImageId.toString()
+                        : index.toString()
+                    }
+                    renderItem={({ item, index }) => {
+                      return (
+                        <View key={index}>
+                          <TouchableOpacity
+                            onPress={() => {
+                              if (item.addedVoyageImageId) {
+                                handleDeleteImage(item.addedVoyageImageId);
+                              }
+                            }}
+                          >
+                            <Image
+                              source={
+                                item.addedVoyageImageId
+                                  ? { uri: item.voyageImage }
+                                  : require("../assets/placeholder.png")
+                              }
+                              style={styles2.voyageImage1}
+                            />
 
-                          {item.addedVoyageImageId && (
-                            <Text style={styles.deleteAddedImage}>
-                              <MaterialIcons
-                                name="cancel"
-                                size={24}
-                                color="darkred"
-                              />
-                            </Text>
-                          )}
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  }}
-                />
+                            {item.addedVoyageImageId && (
+                              <Text style={styles.deleteAddedImage}>
+                                <MaterialIcons
+                                  name="cancel"
+                                  size={24}
+                                  color="darkred"
+                                />
+                              </Text>
+                            )}
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    }}
+                  />
+                </View>
               </View>
 
               {voyageImage ? (
@@ -715,11 +727,12 @@ const CreateVoyageScreen = ({ navigation }) => {
             <CreateVoyageMapComponent
               voyageId={voyageId}
               setCurrentStep={setCurrentStep}
+              imagesAdded={addedVoyageImages.length}
             />
           </ScrollView>
         ) : null}
 
-        {currentStep == 3 ? (
+        {/* {currentStep == 3 ? (
           <View
             style={{
               top: vh(5),
@@ -737,7 +750,7 @@ const CreateVoyageScreen = ({ navigation }) => {
               />
             </ScrollView>
           </View>
-        ) : null}
+        ) : null} */}
       </>
     );
   }
@@ -746,8 +759,14 @@ const CreateVoyageScreen = ({ navigation }) => {
 export default CreateVoyageScreen;
 
 const styles2 = StyleSheet.create({
-  imageContainer1: {
-    // backgroundColor: "white",
+  voyageImagesContainer2: {
+    // backgroundColor: "rgba(248, 248, 248,1)",
+    backgroundColor: "rgba(240, 241, 242,.7)",
+    marginTop: vh(1),
+    paddingBottom: vh(1),
+    width: vw(94),
+    alignSelf: "center",
+    borderRadius: vh(2),
   },
   voyageImage1: {
     height: vh(13),
@@ -860,7 +879,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addWaypoints: {
-    marginTop: vh(4),
+    marginTop: vh(2),
     alignItems: "center",
   },
   selectedText: {
@@ -873,17 +892,14 @@ const styles = StyleSheet.create({
     height: vh(13),
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "green",
   },
   length2: {
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "red",
   },
   length3: {
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "blue",
   },
 
   deleteAddedImage: {
@@ -924,10 +940,15 @@ const styles = StyleSheet.create({
     marginBottom: vh(10),
     backgroundColor: "white",
   },
-  overlay: {
-    // backgroundColor: "rgba(10, 11, 211,0.16)",
-  },
   profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: vh(2),
+    marginTop: vh(1),
+    borderRadius: vh(1.5),
+  },
+  profileContainer2: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -997,9 +1018,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: vw(15),
     borderRadius: vw(9),
     // display: "none",
-  },
-  step123: {
-    display: "none",
   },
 
   imageContainer: {

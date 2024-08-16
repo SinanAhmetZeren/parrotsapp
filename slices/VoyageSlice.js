@@ -72,6 +72,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       },
       // ... other configuration options
     }),
+    checkAndDeleteVoyage: builder.mutation({
+      query: (voyageId) => ({
+        url: `/api/Voyage/checkAndDeleteVoyage/${voyageId}`,
+        method: "DELETE",
+      }),
+    }),
     addVoyageImage: builder.mutation({
       query: (data) => {
         const { formData, voyageId } = data;
@@ -261,6 +267,7 @@ export const {
   useAddVoyageImageMutation,
   useAddWaypointMutation,
   useDeleteVoyageImageMutation,
+  useCheckAndDeleteVoyageMutation,
   useGetVoyagesByUserByIdQuery,
   useGetVoyageByIdQuery,
   useSendBidMutation,

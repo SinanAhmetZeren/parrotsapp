@@ -62,7 +62,6 @@ export default function ProfileScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
-        console.log("profile screen useFocusEffect");
         try {
           if (userData) {
             await refetchUserData();
@@ -210,7 +209,7 @@ export default function ProfileScreen({ navigation }) {
                 <TouchableOpacity
                   style={styles.publicProfileBox}
                   onPress={() => {
-                    navigation.navigate("Create", {
+                    navigation.navigate("ProfileStack", {
                       screen: "ProfileScreenPublic",
                       params: { userId: userId },
                     });

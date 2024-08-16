@@ -7,12 +7,9 @@ import {
   Text,
   View,
   Image,
-  Button,
   TextInput,
   TouchableOpacity,
-  FlatList,
   ActivityIndicator,
-  Modal,
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
@@ -22,7 +19,12 @@ import { useAddWaypointMutation } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
 
-const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
+const CreateVoyageMapComponent = ({
+  voyageId,
+  setCurrentStep,
+  imagesAdded,
+}) => {
+  console.log("images added: ", imagesAdded);
   const [addedWayPoints, setAddedWayPoints] = useState([]);
   const [markerCoords, setMarkerCoords] = useState(null);
   const [latitude, setLatitude] = useState("");
@@ -208,9 +210,12 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
     setLatitude(event.nativeEvent.coordinate.latitude);
     setLongitude(event.nativeEvent.coordinate.longitude);
     setMarkerCoords(event.nativeEvent.coordinate);
+    console.log("tap coordinates: ", event.nativeEvent.coordinate);
+    console.log("tap coordinates: ", event);
   };
 
   const goToHomePage = () => {
+    console.log("pressed");
     setAddedWayPoints([]);
     setMarkerCoords(null);
     setLatitude("");
@@ -226,6 +231,7 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
   return (
     <View>
       {/* // map */}
+
       <View style={styles.mapAndEmojisContainer}>
         <View style={styles.mapContainer}>
           <MapView
@@ -355,10 +361,22 @@ const CreateVoyageMapComponent = ({ voyageId, setCurrentStep }) => {
       <TouchableOpacity
         style={styles.FinishButtonContainer}
         onPress={() => {
-          goToHomePage();
+          if (addedWayPoints.length > 0 && imagesAdded > 0) {
+            goToHomePage();
+          }
         }}
+        disabled={!(addedWayPoints.length > 0 && imagesAdded > 0)}
       >
-        <Text style={styles.addWaypointText}> Complete </Text>
+        <Text
+          style={[
+            styles.addWaypointText,
+            addedWayPoints.length > 0 && imagesAdded > 0
+              ? { backgroundColor: "rgba(0, 119, 234,1)" }
+              : { backgroundColor: "rgba(0, 119, 234,.2)" },
+          ]}
+        >
+          Complete
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -374,7 +392,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 119, 234,1)",
     color: "white",
     fontWeight: "600",
-    marginBottom: vh(2),
+    marginBottom: vh(1),
   },
   addWaypointTextDisabled: {
     alignSelf: "center",
@@ -383,7 +401,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 119, 234,.5)",
     color: "white",
     fontWeight: "600",
-    marginBottom: vh(3),
+    marginBottom: vh(1),
   },
   closeWaypointModalButtonText: {
     fontWeight: "800",
@@ -453,26 +471,23 @@ const styles = StyleSheet.create({
     marginBottom: vh(5),
   },
   ImageAndLatLng: {
-    // backgroundColor: "rgba(251,253,255,0.4)",
-    borderColor: "rgba(0, 119, 234,0.39)",
+    backgroundColor: "rgba(240, 241, 242,.7)",
+    borderColor: "rgba(230, 231, 232,1)",
     borderRadius: vh(2),
-    width: vw(99),
+    width: vw(97),
     alignSelf: "center",
   },
   latLng: {
     width: vw(66),
-    // backgroundColor: "pink",
+    marginTop: vh(1),
   },
   latorLng: {
     flexDirection: "row",
-    backgroundColor: "#fafbfc",
+    backgroundColor: "white",
     marginVertical: vh(0.3),
     padding: vh(0.4),
-    // borderRadius: vh(3),
     borderTopRightRadius: vh(3),
     borderBottomRightRadius: vh(3),
-    // borderWidth: 1,
-    borderColor: "#babbbc",
     width: vw(52),
   },
   latorLng2: {
@@ -501,20 +516,23 @@ const styles = StyleSheet.create({
   },
   latLngLabel: {
     justifyContent: "center",
-    backgroundColor: "#f4f5f6",
+    backgroundColor: "#f8f9fa",
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderRadius: vh(3),
-    // borderWidth: 1,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
     borderColor: "#babbbc",
   },
   latLngLabel2: {
     justifyContent: "center",
-    backgroundColor: "#f4f5f6",
+    backgroundColor: "#f8f9fa",
     marginVertical: vh(0.3),
     marginLeft: vw(3),
     padding: vh(0.4),
     borderRadius: vh(3),
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
     width: vw(25),
   },
   latorLngtxt: {
@@ -562,19 +580,7 @@ const styles = StyleSheet.create({
     width: "90%",
     color: "#b1b1b1",
   },
-  textInputDescription: {
-    fontSize: 13,
-    padding: vw(0.3),
-    width: "75%",
-  },
-  inputDescription: {
-    color: "#2ac898",
-    fontWeight: "500",
-    fontSize: 13,
-    alignSelf: "center",
-    width: vw(20),
-    paddingLeft: vw(1),
-  },
+
   container: {
     flex: 1,
     padding: vh(1),
@@ -608,14 +614,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     marginBottom: vh(0.2),
-    marginTop: vh(1),
-    // backgroundColor: "orange",
   },
   mapContainer: {
     width: "100%",
     height: "100%",
     overflow: "hidden",
-    borderRadius: 20,
+    borderRadius: vh(3),
     borderColor: "#93c9ed",
     // borderWidth: 3,
   },
