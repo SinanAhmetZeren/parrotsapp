@@ -110,7 +110,7 @@ const VehicleDetailScreen = () => {
   }, [isSuccessVehicles, userFavoriteVehicles]);
 
   const goToProfilePage = (userId) => {
-    navigation.navigate("Create", {
+    navigation.navigate("ProfileStack", {
       screen: "ProfileScreenPublic",
       params: { userId: userId },
     });

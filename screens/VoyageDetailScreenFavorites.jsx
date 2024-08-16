@@ -46,7 +46,6 @@ import {
 import { API_URL } from "@env";
 
 const VoyageDetailScreenFavorites = () => {
-  console.log("hello from VoyageDetailScreen in Favorites");
   const route = useRoute();
   const { voyageId } = route.params;
 
@@ -171,7 +170,7 @@ const VoyageDetailScreenFavorites = () => {
   };
 
   const goToProfilePage = (userId) => {
-    navigation.navigate("Create", {
+    navigation.navigate("Favorites", {
       screen: "ProfileScreenPublic",
       params: { userId: userId },
     });

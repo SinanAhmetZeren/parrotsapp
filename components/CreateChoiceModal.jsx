@@ -67,13 +67,13 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
 const styles = StyleSheet.create({
   centeredView: {
     width: vw(95),
-    height: vh(9),
+    height: vh(8.5),
     paddingHorizontal: vh(0.2),
     paddingVertical: vh(0.2),
     position: "absolute",
     bottom: vh(10),
     alignSelf: "center",
-    backgroundColor: "rgba(205,230,247,.8)",
+    backgroundColor: "rgba(205,230,247,1)",
     borderRadius: vh(4),
   },
   modalView: {

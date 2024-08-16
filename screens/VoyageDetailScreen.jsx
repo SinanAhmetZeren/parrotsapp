@@ -170,7 +170,7 @@ const VoyageDetailScreen = () => {
   };
 
   const goToProfilePage = (userId) => {
-    navigation.navigate("Create", {
+    navigation.navigate("ProfileStack", {
       screen: "ProfileScreenPublic",
       params: { userId: userId },
     });
@@ -880,41 +880,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-/*let icon;
-switch (VoyageData.vehicle.type) {
-  case 0:
-    icon = <FontAwesome6 name="sailboat" size={12} color="blue" />;
-    break;
-  case 1:
-    icon = <AntDesign name="car" size={12} color="blue" />;
-    break;
-  case 2:
-    icon = <FontAwesome5 name="caravan" size={12} color="blue" />;
-    break;
-  case 3:
-    icon = <Ionicons name="bus-outline" size={12} color="blue" />;
-    break;
-  case 4:
-    icon = <FontAwesome5 name="walking" size={12} color="blue" />;
-    break;
-  case 5:
-    icon = <FontAwesome5 name="running" size={12} color="blue" />;
-    break;
-  case 6:
-    icon = <FontAwesome name="motorcycle" size={12} color="blue" />;
-    break;
-  case 7:
-    icon = <FontAwesome name="bicycle" size={12} color="blue" />;
-    break;
-  case 8:
-    icon = <FontAwesome6 name="house" size={12} color="blue" />;
-    break;
-  case 9:
-    icon = <Ionicons name="airplane-outline" size={12} color="blue" />;
-    break;
-  default:
-    icon = "help-circle";
-    break;
-}
-*/
