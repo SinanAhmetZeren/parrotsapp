@@ -136,8 +136,8 @@ const VoyageDetailScreenFavorites = () => {
     const initialRegion = {
       latitude: centerLatitude + (maxLatitude - minLatitude) * 0.1,
       longitude: centerLongitude,
-      latitudeDelta,
-      longitudeDelta,
+      latitudeDelta: latitudeDelta == 0 ? 0.15 : latitudeDelta,
+      longitudeDelta: longitudeDelta == 0 ? 0.15 : longitudeDelta,
     };
     return initialRegion;
   };

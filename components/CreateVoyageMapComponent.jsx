@@ -248,7 +248,30 @@ const CreateVoyageMapComponent = ({
         </View>
       </View>
 
+      {/* <View style={styles.warningTextContainer}>
+        <Image
+          source={require("../assets/parrots-logo-mini.png")}
+          style={styles.miniLogo}
+        />
+        <Text style={styles.warningText}>
+          Tap to pick your spot. If a city name is in the way, zoom in closer.
+        </Text>
+      </View> */}
+
       <View style={styles.ImageAndLatLng}>
+        <View style={styles.warningTextContainer}>
+          <Image
+            source={require("../assets/parrots-logo-mini.png")}
+            style={styles.miniLogo}
+          />
+          <Image
+            source={require("../assets/messagebubble.png")}
+            style={styles.messageBubble}
+          />
+          {/* <Text style={styles.warningText}>
+            Tap to pick your spot. If a city name is in the way, zoom in closer.
+          </Text> */}
+        </View>
         <View style={styles.profileContainer}>
           {isUploadingWaypointImage ? (
             <View style={styles.profileImage}>
@@ -385,6 +408,30 @@ const CreateVoyageMapComponent = ({
 export default CreateVoyageMapComponent;
 
 const styles = StyleSheet.create({
+  messageBubble: {
+    width: vw(63),
+    height: vh(5.2),
+    marginTop: vh(0.7),
+  },
+  warningTextContainer: {
+    alignSelf: "center",
+    justifyContent: "center",
+    width: vw(80),
+    height: vh(7),
+    flexDirection: "row",
+    marginTop: vh(1),
+    borderRadius: vh(2),
+  },
+  warningText: {
+    width: vw(60),
+    marginLeft: vw(4),
+  },
+  miniLogo: {
+    height: vh(4),
+    width: vh(4),
+    alignSelf: "center",
+  },
+
   addWaypointText: {
     alignSelf: "center",
     padding: vh(1),
