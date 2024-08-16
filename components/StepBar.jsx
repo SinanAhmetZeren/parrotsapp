@@ -26,12 +26,6 @@ const StepBar = ({ currentStep }) => {
     );
   };
 
-  const displayTexts = [
-    "Voyage Details: Name, brief, description, vacancy, dates, price ",
-    "Voyage Images:\nAdd images of the voyage",
-    "Voyage Itinerary:\nAdd waypoints - with title, brief and image",
-  ];
-
   const displayTexts2 = ["Voyage Details", "Images & Waypoints"];
 
   return (
@@ -50,21 +44,26 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     height: vh(7),
     top: vh(5),
+    backgroundColor: "white",
   },
   activeStep: {
-    backgroundColor: "#3c9dde",
-    borderRadius: vh(1),
+    backgroundColor: "rgba(0, 119, 234,1)",
+    borderRadius: vh(3),
   },
   activeStepText: {
     color: "white",
     fontWeight: "700",
   },
   inactiveStepText: {
-    color: "#3c9dde",
+    color: "rgba(0, 119, 234,1)",
     fontWeight: "700",
   },
+
+  //backgroundColor: "rgba(0, 119, 234,1)"
+  //backgroundColor: "rgba(0, 119, 234,.2)"
+
   inactiveStep: {
-    borderRadius: vh(1),
+    borderRadius: vh(3),
     // backgroundColor: "white",
     backgroundColor: "rgba(24,111,241,0.05)",
   },

@@ -64,6 +64,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    checkAndDeleteVehicle: builder.mutation({
+      query: (vehicleId) => ({
+        url: `/api/Vehicle/checkAndDeleteVehicle/${vehicleId}`,
+        method: "DELETE",
+      }),
+    }),
     updateVehicleProfileImage: builder.mutation({
       query: (data) => {
         const { formData, vehicleId } = data;
@@ -155,6 +161,7 @@ export const {
   useAddVehicleImageMutation,
   useUpdateVehicleProfileImageMutation,
   useDeleteVehicleImageMutation,
+  useCheckAndDeleteVehicleMutation,
   useGetFavoriteVehiclesByUserByIdQuery,
   useAddVehicleToFavoritesMutation,
   useDeleteVehicleFromFavoritesMutation,

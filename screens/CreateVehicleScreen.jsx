@@ -1,7 +1,7 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ import {
   useCreateVehicleMutation,
   useAddVehicleImageMutation,
   useDeleteVehicleImageMutation,
+  useCheckAndDeleteVehicleMutation,
 } from "../slices/VehicleSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
@@ -34,6 +35,7 @@ const CreateVehicleScreen = () => {
   const [createVehicle] = useCreateVehicleMutation();
   const [addVehicleImage] = useAddVehicleImageMutation();
   const [deleteVehicleImage] = useDeleteVehicleImageMutation();
+  const [checkAndDeleteVehicle] = useCheckAndDeleteVehicleMutation();
   const currentDate = new Date();
   const hours = currentDate.getHours();
   const minutes = currentDate.getMinutes();
@@ -42,14 +44,15 @@ const CreateVehicleScreen = () => {
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
-  const [name, setName] = useState("a");
-  const [description, setDescription] = useState("");
-  const [capacity, setCapacity] = useState(11);
   const [vehicleType, setVehicleType] = useState(1);
+
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [capacity, setCapacity] = useState(null);
   const [vehicleId, setVehicleId] = useState("");
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
-  const [addedVoyageImages, setAddedVoyageImages] = useState([]);
+  const [addedVehicleImages, setAddedVehicleImages] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVehicle, setIsCreatingVehicle] = useState(false);
@@ -72,6 +75,22 @@ const CreateVehicleScreen = () => {
     }, [navigation])
   );
 
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("----");
+      console.log("hello from create vehicle");
+      console.log("----");
+
+      return () => {
+        console.log("goodbye from create vehicle");
+        checkAndDeleteVehicle(vehicleId);
+        console.log("deleting vehicle with id ", vehicleId);
+        setCurrentStep(1);
+        setName("");
+      };
+    }, [vehicleId])
+  );
+
   const goToProfilePage = () => {
     setName("");
     setDescription("");
@@ -80,7 +99,7 @@ const CreateVehicleScreen = () => {
     setVehicleId("");
     setImage("");
     setVoyageImage("");
-    setAddedVoyageImages([]);
+    setAddedVehicleImages([]);
     setCurrentStep(1);
 
     navigation.navigate("Home");
@@ -116,7 +135,7 @@ const CreateVehicleScreen = () => {
       setVehicleType("");
       setImage("");
       setVoyageImage("");
-      setAddedVoyageImages("");
+      setAddedVehicleImages("");
       setCurrentStep(2);
     } catch (error) {
       console.error("Error uploading image", error);
@@ -149,7 +168,7 @@ const CreateVehicleScreen = () => {
         addedVoyageImageId,
         voyageImage,
       };
-      setAddedVoyageImages((prevImages) => [...prevImages, newItem]);
+      setAddedVehicleImages((prevImages) => [...prevImages, newItem]);
       setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
@@ -184,7 +203,7 @@ const CreateVehicleScreen = () => {
 
   const handleDeleteImage = (imageId) => {
     deleteVehicleImage(imageId);
-    setAddedVoyageImages((prevImages) =>
+    setAddedVehicleImages((prevImages) =>
       prevImages.filter((item) => item.addedVoyageImageId !== imageId)
     );
   };
@@ -213,9 +232,12 @@ const CreateVehicleScreen = () => {
   }));
 
   const data =
-    addedVoyageImages.length < maxItems
-      ? [...addedVoyageImages, ...placeholders.slice(addedVoyageImages.length)]
-      : addedVoyageImages.map((item) => ({
+    addedVehicleImages.length < maxItems
+      ? [
+          ...addedVehicleImages,
+          ...placeholders.slice(addedVehicleImages.length),
+        ]
+      : addedVehicleImages.map((item) => ({
           ...item,
           key: item.addedVoyageImageId,
         }));
@@ -381,9 +403,9 @@ const CreateVehicleScreen = () => {
 
             <View
               style={
-                addedVoyageImages.length <= 1
+                addedVehicleImages.length <= 1
                   ? styles.length1
-                  : addedVoyageImages.length === 2
+                  : addedVehicleImages.length === 2
                   ? styles.length2
                   : styles.length3
               }
