@@ -170,7 +170,7 @@ const VoyageDetailScreenHome = () => {
   };
 
   const goToProfilePage = (userId) => {
-    navigation.navigate("Create", {
+    navigation.navigate("Home", {
       screen: "ProfileScreenPublic",
       params: { userId: userId },
     });

@@ -20,14 +20,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { vh } from "react-native-expo-viewport-units";
-import {
-  Feather,
-  Ionicons,
-  FontAwesome5,
-  FontAwesome6,
-  AntDesign,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
 import VoyageDetailScreenHome from "./screens/VoyageDetailScreenHome";
@@ -37,6 +30,8 @@ import VehicleDetailScreenHome from "./screens/VehicleDetailScreenHome";
 import VehicleDetailScreenFavorites from "./screens/VehicleDetailScreenFavorites";
 import ProfileScreen from "./screens/ProfileScreen";
 import ProfileScreenPublic from "./screens/ProfileScreenPublic";
+import ProfileScreenPublicHome from "./screens/ProfileScreenPublicHome";
+import ProfileScreenPublicFavorites from "./screens/ProfileScreenPublicFavorites";
 import EditProfileScreen from "./screens/EditProfileScreen";
 import EditVehicleScreen from "./screens/EditVehicleScreen";
 import CreateVoyageScreen from "./screens/CreateVoyageScreen";
@@ -181,6 +176,13 @@ const HomeStack = () => {
           unmountOnBlur: true,
         }}
       />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublicHome}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -203,6 +205,13 @@ const FavoritesStack = () => {
       <Stack.Screen
         name="VoyageDetail"
         component={VoyageDetailScreenFavorites}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublicFavorites}
         options={{
           unmountOnBlur: true,
         }}
@@ -332,7 +341,6 @@ const TabNavigator = () => {
                 >
                   <Ionicons
                     name="rocket-outline"
-                    //name="add-circle-outline"
                     size={24}
                     color={!modalVisible ? "black" : "#3aa4ff"}
                   />

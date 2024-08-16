@@ -31,7 +31,7 @@ import {
 } from "react-native";
 import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
 import { useDispatch, useSelector } from "react-redux";
-import VehicleVoyages from "../components/VehicleVoyages";
+import VehicleVoyagesHome from "../components/VehicleVoyagesHome";
 import {
   useAddVehicleToFavoritesMutation,
   useDeleteVehicleFromFavoritesMutation,
@@ -110,7 +110,7 @@ const VehicleDetailScreenHome = () => {
   }, [isSuccessVehicles, userFavoriteVehicles]);
 
   const goToProfilePage = (userId) => {
-    navigation.navigate("Create", {
+    navigation.navigate("Home", {
       screen: "ProfileScreenPublic",
       params: { userId: userId },
     });
@@ -394,7 +394,7 @@ const VehicleDetailScreenHome = () => {
               </View>
 
               <View style={styles.VoyagesContainer}>
-                <VehicleVoyages voyages={VehicleData.voyages} />
+                <VehicleVoyagesHome voyages={VehicleData.voyages} />
               </View>
             </View>
           </View>
