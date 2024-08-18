@@ -43,8 +43,6 @@ export const CreateBidComponent = ({
   const [sendBid] = useSendBidMutation();
   const [changeBid] = useChangeBidMutation();
 
-  console.log("hasBidWithUserId:...", hasBidWithUserId);
-
   useEffect(() => {
     setExistingBidPrice(userBidPrice);
     setExistingMessage(userBidMessage);

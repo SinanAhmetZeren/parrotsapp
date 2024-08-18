@@ -45,7 +45,7 @@ import {
 } from "../slices/UserSlice";
 import { API_URL } from "@env";
 
-const VoyageDetailScreen = () => {
+const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const { voyageId } = route.params;
 
@@ -170,15 +170,61 @@ const VoyageDetailScreen = () => {
     }
   };
 
+  // const goToProfilePage = (userId) => {
+  //   navigation.navigate("Home", {
+  //     screen: "ProfileScreenPublic",
+  //     params: { userId: userId },
+  //   });
+  // };
+
   const goToProfilePage = (userId) => {
-    navigation.navigate("ProfileStack", {
+    const parentScreen = navigation.getState().routes[0].name;
+
+    let targetScreen;
+    switch (parentScreen) {
+      case "HomeScreen":
+        targetScreen = "Home";
+        break;
+      case "ProfileScreen":
+        targetScreen = "ProfileStack";
+        break;
+      case "FavoritesScreen":
+        targetScreen = "Favorites";
+        break;
+      default:
+        targetScreen = "Home";
+    }
+
+    navigation.navigate(targetScreen, {
       screen: "ProfileScreenPublic",
       params: { userId: userId },
     });
   };
 
+  console.log(
+    "getparent from voyage detail:",
+    navigation.getState().routes[0].name
+  );
+
   const goToVehiclePage = (vehicleId) => {
-    navigation.navigate("ProfileStack", {
+    const parentScreen = navigation.getState().routes[0].name;
+
+    let targetScreen;
+    switch (parentScreen) {
+      case "HomeScreen":
+        targetScreen = "Home";
+        break;
+      case "ProfileScreen":
+        targetScreen = "ProfileStack";
+        break;
+      case "FavoritesScreen":
+        targetScreen = "Favorites";
+        break;
+      default:
+        targetScreen = "Home"; // Fallback in case none match
+    }
+
+    navigation.navigate(targetScreen, {
       screen: "VehicleDetail",
       params: { vehicleId: vehicleId },
     });
@@ -226,7 +272,7 @@ const VoyageDetailScreen = () => {
     );
   };
 
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   if (isLoadingVoyages) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
@@ -250,7 +296,6 @@ const VoyageDetailScreen = () => {
       },
     ].concat(VoyageData.voyageImages);
     const initialRegion = getInitialRegion(waypoints);
-    console.log("---> ", initialRegion);
     const formattedStartDate = require("date-fns").format(
       VoyageData.startDate,
       "MMM d, yy"

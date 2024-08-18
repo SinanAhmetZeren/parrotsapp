@@ -13,9 +13,24 @@ export default function VehicleVoyages({ voyages }) {
   const navigation = useNavigation();
 
   const handleNavigateToVoyage = (voyageId) => {
-    // navigation.navigate("VoyageDetail", { voyageId });
+    const parentScreen = navigation.getState().routes[0].name;
 
-    navigation.navigate("ProfileStack", {
+    let targetScreen;
+    switch (parentScreen) {
+      case "HomeScreen":
+        targetScreen = "Home";
+        break;
+      case "ProfileScreen":
+        targetScreen = "ProfileStack";
+        break;
+      case "FavoritesScreen":
+        targetScreen = "Favorites";
+        break;
+      default:
+        targetScreen = "Home";
+    }
+
+    navigation.navigate(targetScreen, {
       screen: "VoyageDetail",
       params: { voyageId: voyageId },
     });

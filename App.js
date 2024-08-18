@@ -10,28 +10,19 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   Text,
-  Platform,
   View,
   StyleSheet,
-  Image,
   TouchableOpacity,
-  Modal,
-  Button,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 import { vh } from "react-native-expo-viewport-units";
 import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
-import VoyageDetailScreenHome from "./screens/VoyageDetailScreenHome";
-import VoyageDetailScreenFavorites from "./screens/VoyageDetailScreenFavorites";
 import VehicleDetailScreen from "./screens/VehicleDetailScreen";
-import VehicleDetailScreenHome from "./screens/VehicleDetailScreenHome";
-import VehicleDetailScreenFavorites from "./screens/VehicleDetailScreenFavorites";
 import ProfileScreen from "./screens/ProfileScreen";
 import ProfileScreenPublic from "./screens/ProfileScreenPublic";
-import ProfileScreenPublicHome from "./screens/ProfileScreenPublicHome";
-import ProfileScreenPublicFavorites from "./screens/ProfileScreenPublicFavorites";
 import EditProfileScreen from "./screens/EditProfileScreen";
 import EditVehicleScreen from "./screens/EditVehicleScreen";
 import CreateVoyageScreen from "./screens/CreateVoyageScreen";
@@ -106,6 +97,38 @@ const toastConfig = {
     />
   ),
 };
+const HomeStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen
+        name="VehicleDetail"
+        component={VehicleDetailScreen}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="VoyageDetail"
+        component={VoyageDetailScreen}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublic}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
 const ProfileStack = () => {
   return (
     <Stack.Navigator
@@ -139,87 +162,6 @@ const ProfileStack = () => {
     </Stack.Navigator>
   );
 };
-const MessageStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="MessagesScreen" component={MessagesScreen} />
-      <Stack.Screen
-        name="ConversationDetailScreen"
-        component={ConversationDetailScreen}
-      />
-    </Stack.Navigator>
-  );
-};
-const HomeStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      <Stack.Screen
-        name="VehicleDetail"
-        component={VehicleDetailScreenHome}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name="VoyageDetail"
-        component={VoyageDetailScreenHome}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name="ProfileScreenPublic"
-        component={ProfileScreenPublicHome}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const FavoritesStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
-      <Stack.Screen
-        name="VehicleDetail"
-        component={VehicleDetailScreenFavorites}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name="VoyageDetail"
-        component={VoyageDetailScreenFavorites}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-      <Stack.Screen
-        name="ProfileScreenPublic"
-        component={ProfileScreenPublicFavorites}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
 const AddNewStack = () => {
   return (
     <Stack.Navigator
@@ -248,6 +190,55 @@ const AddNewStack = () => {
         options={{
           unmountOnBlur: true,
         }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const FavoritesStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
+      <Stack.Screen
+        name="VehicleDetail"
+        component={VehicleDetailScreen}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="VoyageDetail"
+        component={VoyageDetailScreen}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublic}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const MessageStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="MessagesScreen" component={MessagesScreen} />
+      <Stack.Screen
+        name="ConversationDetailScreen"
+        component={ConversationDetailScreen}
       />
     </Stack.Navigator>
   );
@@ -345,11 +336,6 @@ const TabNavigator = () => {
                     size={24}
                     color={!modalVisible ? "black" : "#3aa4ff"}
                   />
-
-                  {/* <Image
-                    source={require("./assets/parrots-logo-mini.png")}
-                    style={styles.miniLogo}
-                  /> */}
 
                   <Text
                     style={
@@ -542,12 +528,14 @@ function App() {
   }
 
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <RenderNavigator />
-        <Toast config={toastConfig} />
-      </NavigationContainer>
-    </Provider>
+    <SafeAreaView style={{ flex: 1, paddingTop: vh(5) }}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <RenderNavigator />
+          <Toast config={toastConfig} />
+        </NavigationContainer>
+      </Provider>
+    </SafeAreaView>
   );
 }
 

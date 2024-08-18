@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     paddingLeft: vw(5),
   },
   currentBidsAndSeeAll: {
-    marginTop: vh(2),
+    // marginTop: vh(2),
     flexDirection: "row",
     paddingRight: vw(10),
   },

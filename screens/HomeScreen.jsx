@@ -67,45 +67,8 @@ export default function HomeScreen({ navigation }) {
 
   const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
   const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
-  //const [isError] = useGetFilteredVoyagesMutation();
 
   const username = useSelector((state) => state.users.userName);
-
-  /*
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          if (initialVoyages) {
-            const formattedStartDate = convertDateFormat(
-              startDate,
-              "startDate"
-            );
-            const formattedEndDate = convertDateFormat(endDate, "endDate");
-
-            console.log("usefocuseffect...");
-            const data = {
-              latitude,
-              longitude,
-              latitudeDelta,
-              longitudeDelta,
-              count,
-              selectedVehicleType,
-              formattedStartDate,
-              formattedEndDate,
-            };
-
-            console.log("data... ", data);
-            // await getFilteredVoyages(data);
-          }
-        } catch (error) {
-          console.error("Error fetching or refetching data:", error);
-        }
-      };
-      fetchData();
-    }, [navigation])
-  );
-  */
 
   // 1. GET LOCATION //
   useEffect(() => {
@@ -150,15 +113,6 @@ export default function HomeScreen({ navigation }) {
 
       setIsLoading(true);
 
-      /*console.log(
-        "getting voyages by location: ",
-        "lon: ",
-        lon1,
-        lon2,
-        "lat: ",
-        lat1,
-        lat2
-      );*/
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
       setInitialVoyages(voyages.data || []);
       setIsLoading(false);
@@ -622,8 +576,8 @@ const styles = StyleSheet.create({
     paddingRight: vw(10),
   },
   scrollview: {
-    marginTop: vh(4),
-    paddingTop: vh(2),
+    // marginTop: vh(4),
+    // paddingTop: vh(2),
     marginBottom: vh(1),
     backgroundColor: "white",
   },

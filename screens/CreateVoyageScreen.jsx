@@ -86,6 +86,11 @@ const CreateVoyageScreen = ({ navigation }) => {
 
   useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
 
+  console.log(
+    "getparent from create voyage:",
+    navigation.getState().routes[0].name
+  );
+
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
@@ -105,13 +110,7 @@ const CreateVoyageScreen = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("----");
-      console.log("hello from create voyage");
-      console.log("----");
-
       return () => {
-        console.log("goodbye from create voyage");
-        console.log("voyage id ", voyageId);
         if (voyageId) {
           checkAndDeleteVoyage(voyageId);
           console.log("checking to delete voyage with id ", voyageId);
