@@ -6,7 +6,7 @@ import { StyleSheet, View, FlatList } from "react-native";
 import VoyageCardProfile from "./VoyageCardProfile";
 import { vh, vw } from "react-native-expo-viewport-units";
 
-export default function VoyageList({ data, direction }) {
+export default function VoyageListVertical({ data, direction }) {
   const renderItem = ({ item }) => (
     <VoyageCardProfile
       key={item.id}

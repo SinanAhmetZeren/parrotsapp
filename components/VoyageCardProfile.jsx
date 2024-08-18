@@ -33,7 +33,24 @@ export default function VoyageCardProfile({
   const navigation = useNavigation();
 
   const handleNavigation = (voyageId) => {
-    navigation.navigate("ProfileStack", {
+    const parentScreen = navigation.getState().routes[0].name;
+
+    let targetScreen;
+    switch (parentScreen) {
+      case "HomeScreen":
+        targetScreen = "Home";
+        break;
+      case "ProfileScreen":
+        targetScreen = "ProfileStack";
+        break;
+      case "FavoritesScreen":
+        targetScreen = "Favorites";
+        break;
+      default:
+        targetScreen = "Home";
+    }
+
+    navigation.navigate(targetScreen, {
       screen: "VoyageDetail",
       params: { voyageId: voyageId },
     });

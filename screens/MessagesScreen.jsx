@@ -128,7 +128,6 @@ export default function MessagesScreen({ navigation }) {
                   selectedFunction={selectedFunction}
                   setSelectedFunction={setSelectedFunction}
                 />
-
                 <View style={styles.flatlist}>
                   <ConversationList data={messagesData} userId={userId} />
                 </View>
@@ -304,9 +303,7 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.5),
   },
   container: {
-    //margintop
-
-    marginTop: vh(5),
+    //marginTop: vh(5),
     backgroundColor: "white",
     width: vw(100),
     alignSelf: "center",

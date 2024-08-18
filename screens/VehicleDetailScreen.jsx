@@ -109,8 +109,31 @@ const VehicleDetailScreen = () => {
     }
   }, [isSuccessVehicles, userFavoriteVehicles]);
 
+  const navigation = useNavigation();
+  console.log(
+    "getparent from vehicle detail:",
+    navigation.getState().routes[0].name
+  );
+
   const goToProfilePage = (userId) => {
-    navigation.navigate("ProfileStack", {
+    const parentScreen = navigation.getState().routes[0].name;
+
+    let targetScreen;
+    switch (parentScreen) {
+      case "HomeScreen":
+        targetScreen = "Home";
+        break;
+      case "ProfileScreen":
+        targetScreen = "ProfileStack";
+        break;
+      case "FavoritesScreen":
+        targetScreen = "Favorites";
+        break;
+      default:
+        targetScreen = "Home";
+    }
+
+    navigation.navigate(targetScreen, {
       screen: "ProfileScreenPublic",
       params: { userId: userId },
     });
@@ -135,8 +158,6 @@ const VehicleDetailScreen = () => {
       })
     );
   };
-
-  const navigation = useNavigation();
 
   if (isLoadingVehicles) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
@@ -320,19 +341,13 @@ const VehicleDetailScreen = () => {
                       <Text style={styles.userName}>
                         {/* {VehicleData.user.userName} */}
 
-                        {VehicleData.user.userName.length > 10 ? (
-                          VehicleData.user.userName.length > 12 ? (
-                            <View style={{ flexDirection: "row" }}>
-                              <Text style={styles.username}>
-                                {VehicleData.user.userName.substring(0, 7)}
-                              </Text>
-                              <Text style={styles.usernameSmall}>{"..."}</Text>
-                            </View>
-                          ) : (
+                        {VehicleData.user.userName.length > 20 ? (
+                          <View style={{ flexDirection: "row" }}>
                             <Text style={styles.username}>
-                              {VehicleData.user.userName}
+                              {VehicleData.user.userName.substring(0, 17)}
                             </Text>
-                          )
+                            <Text style={styles.usernameSmall}>{"..."}</Text>
+                          </View>
                         ) : (
                           <Text style={styles.username}>
                             {VehicleData.user.userName}

@@ -37,7 +37,6 @@ export default function VoyageCardProfileHorizontal({
   const navigation = useNavigation();
 
   const handleNavigation = (voyageId) => {
-    // navigation.navigate("VoyageDetail", { voyageId });
     navigation.navigate("Home", {
       screen: "VoyageDetail",
       params: { voyageId: voyageId },

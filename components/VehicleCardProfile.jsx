@@ -132,8 +132,30 @@ export default function VehicleCardProfile({
   }
 
   const navigation = useNavigation();
+
+  const currentPage = navigation.getState().routes[0].name;
+
+  console.log("get State VCP: ", currentPage);
+
   const handleNavigateToVehicle = (vehicleId) => {
-    navigation.navigate("ProfileStack", {
+    const parentScreen = navigation.getState().routes[0].name;
+
+    let targetScreen;
+    switch (parentScreen) {
+      case "HomeScreen":
+        targetScreen = "Home";
+        break;
+      case "ProfileScreen":
+        targetScreen = "ProfileStack";
+        break;
+      case "FavoritesScreen":
+        targetScreen = "Favorites";
+        break;
+      default:
+        targetScreen = "Home";
+    }
+
+    navigation.navigate(targetScreen, {
       screen: "VehicleDetail",
       params: { vehicleId: vehicleId },
     });

@@ -13,22 +13,16 @@ import {
   TouchableOpacity,
   Linking,
   ActivityIndicator,
-  Button,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { Ionicons } from "@expo/vector-icons";
-import { Fontisto } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import VoyageList from "../components/VoyageList";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
 import { useFocusEffect } from "@react-navigation/native";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import { SocialRenderComponent } from "../components/SocialRenderComponent";
 import VoyageListVertical from "../components/VoyageListVertical";
@@ -208,11 +202,23 @@ export default function ProfileScreenPublic({ navigation }) {
                 {/* ///// EDIT PROFILE BUTTON /////// */}
                 <TouchableOpacity
                   style={styles.editProfileBox}
+                  /*
                   onPress={() => {
                     navigation.navigate("ConversationDetailScreen", {
                       conversationUserId: userId,
                       profileImg: userData.profileImageUrl,
                       name: userData.userName,
+                    });
+                  }}
+*/
+                  onPress={() => {
+                    navigation.navigate("Messages", {
+                      screen: "ConversationDetailScreen",
+                      params: {
+                        conversationUserId: userId,
+                        profileImg: userData.profileImageUrl,
+                        name: userData.userName,
+                      },
                     });
                   }}
                   activeOpacity={0.8}
@@ -292,9 +298,7 @@ export default function ProfileScreenPublic({ navigation }) {
                   </Text>
                 </View>
                 <View>
-                  <BlueHashTagText
-                    originalText={userData.bio}
-                  ></BlueHashTagText>
+                  <BlueHashTagText originalText={userData.bio} />
                 </View>
               </View>
               {/* ------- BIO ------ */}
