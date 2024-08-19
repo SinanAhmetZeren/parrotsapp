@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   scrollView: {
     //marginBottom: vh(30),
     // top: vh(-5),
-    height: vh(95),
+    height: vh(90),
     borderRadius: vh(4),
     // backgroundColor: "white",
     backgroundColor: "#fff6f0",
@@ -491,40 +491,6 @@ const styles = StyleSheet.create({
   bio: {
     paddingTop: 5,
   },
-  socialBox: {
-    flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
-
-    left: vw(-4),
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  socialBox1: {
-    flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-
-    left: vw(-10.5),
-
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  socialBox2: {
-    flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-
-    left: vw(-6),
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
   icon: {
     padding: 3,
     margin: 2,
@@ -533,7 +499,6 @@ const styles = StyleSheet.create({
     color: "rgba(0, 119, 234,0.9)",
     fontSize: 18,
   },
-
   iconText: {
     lineHeight: 22,
     marginVertical: 1,
@@ -551,8 +516,6 @@ const styles = StyleSheet.create({
     paddingBottom: vh(0.95),
     // backgroundColor: "white",
     backgroundColor: "#fff6f0",
-
-    // top: vh(-9),
   },
   //container of social
   social: {
