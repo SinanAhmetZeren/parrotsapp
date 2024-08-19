@@ -4,9 +4,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { Ionicons } from "@expo/vector-icons";
-import { Fontisto } from "@expo/vector-icons";
-import { Feather } from "@expo/vector-icons";
 
 export const SocialRenderComponent = ({
   userData,
@@ -110,15 +107,13 @@ export const SocialRenderComponent = ({
 const EmailItem = ({ email, handleEmailPress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handleEmailPress()}>
-      {/* <Fontisto style={styles.icon} name="email" size={24} color="black" /> */}
-
       <Image
         style={styles.iconLogo}
         source={require("../assets/email_logo.png")}
       />
 
       <Text style={styles.iconText}>
-        {email.length > 20 ? `${email.substring(0, 20)}...` : email}
+        {email.length > 17 ? `${email.substring(0, 14)}...` : email}
       </Text>
     </TouchableOpacity>
   );
@@ -127,19 +122,12 @@ const EmailItem = ({ email, handleEmailPress, style }) => {
 const InstagramItem = ({ instagram, handleInstagramPress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handleInstagramPress()}>
-      {/* <Ionicons
-        style={styles.icon}
-        name="logo-instagram"
-        size={24}
-        color="black"
-      /> */}
-
       <Image
         style={styles.iconLogo}
         source={require("../assets/instagram_icon.png")}
       />
       <Text style={styles.iconText}>
-        {instagram.length > 20 ? `${instagram.substring(0, 20)}...` : instagram}
+        {instagram.length > 17 ? `${instagram.substring(0, 14)}...` : instagram}
       </Text>
     </TouchableOpacity>
   );
@@ -148,13 +136,12 @@ const InstagramItem = ({ instagram, handleInstagramPress, style }) => {
 const YoutubeItem = ({ youtube, handleYoutubePress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handleYoutubePress()}>
-      {/* <Feather style={styles.icon} name="youtube" size={24} color="black" /> */}
       <Image
         style={styles.iconLogo}
         source={require("../assets/youtube_icon.png")}
       />
       <Text style={styles.iconText}>
-        {youtube.length > 20 ? `${youtube.substring(0, 20)}...` : youtube}
+        {youtube.length > 17 ? `${youtube.substring(0, 14)}...` : youtube}
       </Text>
     </TouchableOpacity>
   );
@@ -163,13 +150,12 @@ const YoutubeItem = ({ youtube, handleYoutubePress, style }) => {
 const FacebookItem = ({ facebook, handleFacebookPress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handleFacebookPress()}>
-      {/* <Feather style={styles.icon} name="facebook" size={24} color="black" /> */}
       <Image
         style={styles.iconLogo}
         source={require("../assets/facebook_logo.png")}
       />
       <Text style={styles.iconText}>
-        {facebook.length > 20 ? `${facebook.substring(0, 20)}...` : facebook}
+        {facebook.length > 17 ? `${facebook.substring(0, 14)}...` : facebook}
       </Text>
     </TouchableOpacity>
   );
@@ -178,15 +164,13 @@ const FacebookItem = ({ facebook, handleFacebookPress, style }) => {
 const PhoneItem = ({ phoneNumber, handlePhonePress, style }) => {
   return (
     <TouchableOpacity style={style} onPress={() => handlePhonePress()}>
-      {/* <Feather style={styles.icon} name="phone" size={24} color="black" /> */}
-
       <Image
         style={styles.iconLogo}
         source={require("../assets/phone_logo.jpeg")}
       />
       <Text style={styles.iconText}>
-        {phoneNumber.length > 20
-          ? `${phoneNumber.substring(0, 20)}...`
+        {phoneNumber.length > 17
+          ? `${phoneNumber.substring(0, 14)}...`
           : phoneNumber}
       </Text>
     </TouchableOpacity>

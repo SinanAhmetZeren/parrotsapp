@@ -273,6 +273,15 @@ export default function HomeScreen({ navigation }) {
         </View>
         <View style={{ height: vh(100) }}>
           <View style={styles.welcomeandFilters}>
+            <Image
+              source={require("../assets/parrots-logo-mini.png")}
+              style={styles.miniLogo}
+            />
+            {/* <Image
+              source={require("../assets/parrotBubble.png")}
+              style={styles.parrotBubble}
+            /> */}
+
             <View style={styles.welcomebox}>
               <Text style={styles.welcome}>Welcome to Parrots</Text>
 
@@ -337,7 +346,7 @@ export default function HomeScreen({ navigation }) {
                   }}
                 >
                   <View>
-                    <Text style={styles.seeOnMap}>Apply Filter</Text>
+                    <Text style={styles.applyFilter}>Apply Filter</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -433,6 +442,21 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  // parrotBubble: {
+  //   height: vh(10),
+  //   width: vw(50),
+  //   zIndex: 0,
+  //   position: "absolute",
+  //   left: vw(12),
+  // },
+  miniLogo: {
+    height: vh(6),
+    width: vh(6),
+    alignSelf: "center",
+    marginLeft: vw(-2),
+    marginRight: vw(2),
+    zIndex: 1,
+  },
   logo: {
     height: vh(5),
     width: vh(5),
@@ -533,19 +557,16 @@ const styles = StyleSheet.create({
     borderRadius: vh(4),
     backgroundColor: "white",
   },
-  filterContainer: {
-    //backgroundColor: "grey",
-  },
-
-  seeOnMap: {
+  filterContainer: {},
+  applyFilter: {
     fontSize: 14,
     fontWeight: "700",
     color: "#2ac898",
     alignSelf: "flex-end",
     backgroundColor: "rgba(42, 200, 152, 0.1)",
     borderRadius: vh(3),
-    paddingHorizontal: vh(5),
-    paddingVertical: vh(1),
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(0.7),
   },
   seeOnMapRefresh: {
     fontSize: 14,
@@ -576,8 +597,6 @@ const styles = StyleSheet.create({
     paddingRight: vw(10),
   },
   scrollview: {
-    // marginTop: vh(4),
-    // paddingTop: vh(2),
     marginBottom: vh(1),
     backgroundColor: "white",
   },
@@ -633,13 +652,19 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
   welcomebox: {
-    paddingTop: vh(1),
     width: vw(50),
+    justifyContent: "center",
+    // alignItems: "center",
+    // borderWidth: 2,
+    // borderColor: "rgba(10, 119, 234, 0.06)",
+    // borderRadius: vh(2),
+    // marginRight: vw(2),
+    //backgroundColor: "rgba(10, 119, 234, 0.13)",
   },
   filterbox: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    width: vw(43),
+    justifyContent: "space-between",
+    width: vw(30),
   },
   icon: {
     padding: 7,
