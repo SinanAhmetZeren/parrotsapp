@@ -302,7 +302,7 @@ export default function HomeScreen({ navigation }) {
               )}
             </View>
 
-            <View style={styles.filterContainer}>
+            <View>
               <View style={styles.filterbox}>
                 <TouchableOpacity onPress={handleCountModal}>
                   <MaterialCommunityIcons
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     height: vh(6),
     width: vh(6),
     alignSelf: "center",
-    marginLeft: vw(-2),
+    marginLeft: vw(-1),
     marginRight: vw(2),
     zIndex: 1,
   },
@@ -557,7 +557,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(4),
     backgroundColor: "white",
   },
-  filterContainer: {},
   applyFilter: {
     fontSize: 14,
     fontWeight: "700",
