@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     width: vw(20),
     textAlign: "right",
     color: "#2ac898",
-    backgroundColor: "pink",
+    // backgroundColor: "pink",
   },
   closeButtonInModal: {
     alignSelf: "center",

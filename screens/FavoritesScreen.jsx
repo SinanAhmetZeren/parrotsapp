@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   scrollView: {
     height: vh(90),
     // marginTop: vh(5),
-    backgroundColor: "pink",
+    // backgroundColor: "pink",
   },
   choiceItem: {
     marginHorizontal: 15,

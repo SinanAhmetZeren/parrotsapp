@@ -75,7 +75,12 @@ export const RenderBidsComponent = ({
             <Text style={styles.bidUsername}>{bid.userName}</Text>
             <View>
               <Text style={styles.seeMessage}>
-                {ownVoyage && (bid.message ?? null)}
+                {ownVoyage &&
+                  (bid.message
+                    ? bid.message.length > 50
+                      ? `${bid.message.substring(0, 47)}...`
+                      : bid.message.substring(0, 50)
+                    : null)}
               </Text>
             </View>
           </View>

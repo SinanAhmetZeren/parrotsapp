@@ -443,7 +443,6 @@ const styles = StyleSheet.create({
     height: vh(35),
   },
   imageContainer: {
-    // top: vh(5),
     height: vh(40),
     width: vw(100),
   },
@@ -540,33 +539,6 @@ const styles = StyleSheet.create({
   bio: {
     paddingTop: 5,
   },
-  socialBox: {
-    flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
-    left: vw(-4),
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  socialBox1: {
-    flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-10.5),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  socialBox2: {
-    flexDirection: "row",
-    backgroundColor: "rgba(190, 119, 234,0.1)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-6),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
   icon: {
     padding: 3,
     margin: 2,
@@ -604,7 +576,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: 0,
     top: vh(1),
-    backgroundColor: "pink",
+    // backgroundColor: "pink",
   },
   //container of image and name
   profileImageAndName: {

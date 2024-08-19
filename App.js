@@ -240,6 +240,13 @@ const MessageStack = () => {
         name="ConversationDetailScreen"
         component={ConversationDetailScreen}
       />
+      <Stack.Screen
+        name="ProfileScreenPublic"
+        component={ProfileScreenPublic}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
     </Stack.Navigator>
   );
 };
