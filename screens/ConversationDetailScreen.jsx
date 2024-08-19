@@ -234,13 +234,13 @@ export const ConversationDetailScreen = ({ navigation }) => {
                 <TextInput
                   onChangeText={(text) => setMessage(text)}
                   style={styles.textinputStyle}
-                  numberOfLines={3}
                   multiline
                   placeholder="Write a message"
                   placeholderTextColor="#a3b4c5"
-                >
-                  {message}
-                </TextInput>
+                  value={message}
+                  numberOfLines={1}
+                  maxLength={500}
+                />
               </View>
             </View>
 
@@ -271,15 +271,14 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   textinputStyle: {
-    paddingHorizontal: vh(1),
     backgroundColor: "#f9f5f1",
     width: vw(75),
-    height: vh(8),
-    padding: vh(1),
+    maxHeight: vh(12),
+    paddingLeft: vh(1.5),
+    paddingVertical: vh(0.5),
     borderRadius: vh(2),
   },
   messageTextContainer: {
-    // backgroundColor: "yellow",
     flex: 1,
     padding: vh(0.3),
   },
@@ -308,7 +307,7 @@ const styles = StyleSheet.create({
     width: vh(8),
   },
   scrollViewMessages: {
-    height: vh(66),
+    height: vh(74),
     backgroundColor: "white",
   },
   text1: {
