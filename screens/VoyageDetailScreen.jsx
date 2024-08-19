@@ -221,7 +221,7 @@ const VoyageDetailScreen = ({ navigation }) => {
         targetScreen = "Favorites";
         break;
       default:
-        targetScreen = "Home"; // Fallback in case none match
+        targetScreen = "Home";
     }
 
     navigation.navigate(targetScreen, {

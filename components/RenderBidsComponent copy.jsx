@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useAcceptBidMutation } from "../slices/VoyageSlice";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { API_URL } from "@env";
 
@@ -101,16 +101,12 @@ export const RenderBidsComponent = ({
             renderItem={({ item, index }) => {
               return (
                 <View key={index} style={styles.singleBidContainer2}>
-                  {/* <View style={{ backgroundColor: "red" }}> */}
-                  <View>
-                    <Image
-                      source={{
-                        uri: UserImageBaseUrl + item.userProfileImage,
-                      }}
-                      style={styles.bidImage2}
-                    />
-                  </View>
-                  {/* <View style={{ backgroundColor: "green" }}> */}
+                  <Image
+                    source={{
+                      uri: UserImageBaseUrl + item.userProfileImage,
+                    }}
+                    style={styles.bidImage2}
+                  />
                   <View>
                     <View style={styles.nameAndMessage}>
                       <Text style={styles.bidUsername2}>{item.userName}</Text>
@@ -120,52 +116,47 @@ export const RenderBidsComponent = ({
                     </View>
                   </View>
 
-                  <View style={{ flexDirection: "row" }}>
+                  <View>
                     <Text style={styles.offerPrice2}>
                       {item.currency} {item.offerPrice.toFixed(2)}
                     </Text>
+                  </View>
 
-                    <View style={styles.acceptedButton}>
-                      {item.accepted ? (
-                        <Text>
-                          <Ionicons
-                            name="checkmark-circle"
-                            size={28}
-                            color="#2ac898"
-                          />
-                        </Text>
-                      ) : ownVoyage ? (
-                        <TouchableOpacity
-                          onPress={() =>
-                            handleAcceptBid({
-                              bidId: item.id,
-                              bidUserId: item.userId,
-                            })
-                          }
-                          style={styles.thumbsUpCircle}
-                        >
-                          <Text
-                            style={{
-                              padding: vw(0.9),
-                            }}
-                          >
-                            <FontAwesome
-                              name="thumbs-up"
-                              size={16}
-                              color="#2ac898"
-                            />
-                          </Text>
-                        </TouchableOpacity>
-                      ) : (
+                  <View style={styles.acceptedButton}>
+                    {item.accepted ? (
+                      <Text>
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={24}
+                          color="#3c9dde"
+                        />
+                      </Text>
+                    ) : ownVoyage ? (
+                      <TouchableOpacity
+                        onPress={() =>
+                          handleAcceptBid({
+                            bidId: item.id,
+                            bidUserId: item.userId,
+                          })
+                        }
+                      >
                         <Text>
                           <Ionicons
                             name="checkmark-circle-outline"
-                            size={28}
-                            color="#2ac898"
+                            size={24}
+                            color="#93c9ed"
                           />
                         </Text>
-                      )}
-                    </View>
+                      </TouchableOpacity>
+                    ) : (
+                      <Text>
+                        <Ionicons
+                          name="checkmark-circle-outline"
+                          size={24}
+                          color="#93c9ed"
+                        />
+                      </Text>
+                    )}
                   </View>
                 </View>
               );
@@ -187,22 +178,6 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
-  thumbsUpCircle: {
-    borderWidth: 2,
-    borderRadius: vh(3),
-    borderColor: "#2ac898",
-    backgroundColor: "white",
-  },
-  acceptedBidText: {
-    color: "#66a9ff",
-    fontWeight: "900",
-    fontSize: 13,
-  },
-  acceptedBid: {
-    borderWidth: 1,
-    borderColor: "#71aeff",
-  },
-
   logo: {
     height: vh(5),
     width: vh(5),
@@ -218,20 +193,17 @@ const styles = StyleSheet.create({
     marginBottom: vh(15),
   },
   acceptedButton: {
-    marginTop: vh(0.5),
-    marginLeft: vw(2),
-    alignItems: "center",
-    // backgroundColor: "pink",
+    paddingLeft: vw(3),
   },
   nameAndMessage: {
-    width: vw(52),
+    width: vw(45),
   },
   seeMessage: {
     borderRadius: vh(2),
     paddingLeft: vw(4),
     paddingBottom: vh(0.2),
-    width: vw(50),
-    // backgroundColor: "orange",
+    width: vw(55),
+    backgroundColor: "orange",
   },
   map: {
     width: "100%",
@@ -307,21 +279,17 @@ const styles = StyleSheet.create({
     marginTop: vh(30),
     alignSelf: "center",
     backgroundColor: "#f2fafa",
-    // backgroundColor: "yellow",
     borderColor: "#bfdff4",
     borderRadius: vh(2),
-    // padding: vh(1),
-    paddingLeft: vh(0.5),
+    padding: vh(1),
   },
   singleBidContainer2: {
     flexDirection: "row",
-    // padding: vh(0.2),
-    paddingVertical: vh(0.2),
-    marginVertical: vh(0.3),
+    padding: vh(0.2),
+    margin: vh(0.3),
     alignItems: "center",
     backgroundColor: "rgba(220,238,249,0.4)",
-    // backgroundColor: "red",
-    borderRadius: vh(2),
+    borderRadius: vh(5),
   },
   bidImage2: {
     width: vh(5),
@@ -334,16 +302,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     width: vw(40),
-    // backgroundColor: "yellow",
+    backgroundColor: "yellow",
   },
   offerPrice2: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "800",
-    width: vw(19),
+    width: vw(20),
     textAlign: "right",
-    color: "#3c9dde",
-    // backgroundColor: "red",
-    alignSelf: "center",
+    color: "#2ac898",
+    backgroundColor: "pink",
   },
   closeButtonInModal: {
     alignSelf: "center",
