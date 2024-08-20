@@ -23,7 +23,7 @@ import {
 } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
-import { Entypo, Fontisto, Feather } from "@expo/vector-icons";
+import { Entypo, Fontisto, Feather, FontAwesome5 } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
@@ -49,6 +49,9 @@ const EditProfileScreen = ({ navigation }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [instagramProfile, setInstagramProfile] = useState("");
+  const [twitterProfile, setTwitterProfile] = useState("");
+  const [tiktokProfile, setTiktokProfile] = useState("");
+  const [linkedinProfile, setLinkedinProfile] = useState("");
   const [youtubeProfile, setYoutubeProfile] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -119,6 +122,9 @@ const EditProfileScreen = ({ navigation }) => {
       { op: "replace", path: "/phonenumber", value: phoneNumber },
       { op: "replace", path: "/facebook", value: facebookProfile },
       { op: "replace", path: "/instagram", value: instagramProfile },
+      { op: "replace", path: "/twitter", value: twitterProfile },
+      { op: "replace", path: "/tiktok", value: tiktokProfile },
+      { op: "replace", path: "/linkedin", value: linkedinProfile },
       { op: "replace", path: "/youtube", value: youtubeProfile },
       { op: "replace", path: "/title", value: title },
       { op: "replace", path: "/bio", value: bio },
@@ -167,6 +173,9 @@ const EditProfileScreen = ({ navigation }) => {
       setProfileImage(userData.profileImageUrl);
       setBackgroundImage(userData.backgroundImageUrl);
       setInstagramProfile(userData.instagram);
+      setTwitterProfile(userData.twitter);
+      setTiktokProfile(userData.tiktok);
+      setLinkedinProfile(userData.linkedin);
       setYoutubeProfile(userData.youtube);
       setEmail(userData.email);
       setPhoneNumber(userData.phoneNumber);
@@ -343,6 +352,60 @@ const EditProfileScreen = ({ navigation }) => {
               placeholder="Enter your Youtube profile"
               value={youtubeProfile}
               onChangeText={(text) => setYoutubeProfile(text)}
+            />
+          </View>
+
+          {/* Twitter Profile */}
+          <View style={styles.socialBox}>
+            <Feather
+              style={styles.icon}
+              name="twitter"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Twitter</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your Twitter profile"
+              value={twitterProfile}
+              onChangeText={(text) => setTwitterProfile(text)}
+            />
+          </View>
+
+          {/* Tiktok Profile */}
+          <View style={styles.socialBox}>
+            <FontAwesome5
+              style={styles.icon}
+              name="tiktok"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Tiktok</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your Tiktok profile"
+              value={tiktokProfile}
+              onChangeText={(text) => setTiktokProfile(text)}
+            />
+          </View>
+
+          {/* Linkedin Profile */}
+          <View style={styles.socialBox}>
+            <Feather
+              style={styles.icon}
+              name="linkedin"
+              size={24}
+              color="black"
+            />
+            <Text style={styles.inputDescription}>Linkedin</Text>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter your Linkedin profile"
+              value={linkedinProfile}
+              onChangeText={(text) => setLinkedinProfile(text)}
             />
           </View>
 

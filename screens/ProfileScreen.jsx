@@ -77,7 +77,6 @@ export default function ProfileScreen({ navigation }) {
         }
       };
       fetchData();
-      // }, [refetchVehicleData, refetchVoyageData, refetchUserData, navigation])
     }, [
       refetchVehicleData,
       refetchVoyageData,
@@ -138,6 +137,72 @@ export default function ProfileScreen({ navigation }) {
     if (userData.youtube) {
       const youtubeUrl = `https://www.youtube.com/@${userData.youtube}`;
       Linking.openURL(youtubeUrl);
+    }
+  };
+
+  const handleTwitterPress = async () => {
+    if (userData.twitter) {
+      let twitterStr = userData.twitter;
+      try {
+        await Clipboard.setStringAsync(twitterStr);
+        Toast.show({
+          type: "success",
+          text1: "twitter copied to clipboard",
+          text2: twitterStr,
+          visibilityTime: 5000,
+          topOffset: 150,
+        });
+      } catch (error) {
+        console.error("Error copying to clipboard", error);
+        Toast.show({
+          type: "error",
+          text1: "Failed to copy twitter to clipboard",
+        });
+      }
+    }
+  };
+
+  const handleTiktokPress = async () => {
+    if (userData.tiktok) {
+      let tiktokStr = userData.tiktok;
+      try {
+        await Clipboard.setStringAsync(tiktokStr);
+        Toast.show({
+          type: "success",
+          text1: "tiktok copied to clipboard",
+          text2: tiktokStr,
+          visibilityTime: 5000,
+          topOffset: 150,
+        });
+      } catch (error) {
+        console.error("Error copying to clipboard", error);
+        Toast.show({
+          type: "error",
+          text1: "Failed to copy tiktok to clipboard",
+        });
+      }
+    }
+  };
+
+  const handleLinkedinPress = async () => {
+    if (userData.linkedin) {
+      let linkedinStr = userData.linkedin;
+      try {
+        await Clipboard.setStringAsync(linkedinStr);
+        Toast.show({
+          type: "success",
+          text1: "linkedin copied to clipboard",
+          text2: linkedinStr,
+          visibilityTime: 5000,
+          topOffset: 150,
+        });
+      } catch (error) {
+        console.error("Error copying to clipboard", error);
+        Toast.show({
+          type: "error",
+          text1: "Failed to copy linkedin to clipboard",
+        });
+      }
     }
   };
 
@@ -316,6 +381,9 @@ export default function ProfileScreen({ navigation }) {
                     handleYoutubePress={handleYoutubePress}
                     handleFacebookPress={handleFacebookPress}
                     handlePhonePress={handlePhonePress}
+                    handleTwitterPress={handleTwitterPress}
+                    handleTiktokPress={handleTiktokPress}
+                    handleLinkedinPress={handleLinkedinPress}
                   />
                 </View>
               </View>
