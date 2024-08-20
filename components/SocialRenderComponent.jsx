@@ -12,6 +12,9 @@ export const SocialRenderComponent = ({
   handleYoutubePress,
   handleFacebookPress,
   handlePhonePress,
+  handleLinkedinPress,
+  handleTwitterPress,
+  handleTiktokPress,
 }) => {
   let contactDataArray = [];
   if (userData.email !== null && userData.emailVisible === true) {
@@ -29,12 +32,21 @@ export const SocialRenderComponent = ({
   if (userData.phoneNumber !== null) {
     contactDataArray.push([userData.phoneNumber, 4]);
   }
+  if (userData.twitter !== null) {
+    contactDataArray.push([userData.twitter, 5]);
+  }
+  if (userData.linkedin !== null) {
+    contactDataArray.push([userData.linkedin, 6]);
+  }
+  if (userData.tiktok !== null) {
+    contactDataArray.push([userData.tiktok, 7]);
+  }
 
   const renderAllItems = () => {
-    if (contactDataArray.length > 0 && contactDataArray.length <= 5) {
-      return contactDataArray.map((x, index) => {
+    if (contactDataArray.length > 0) {
+      return contactDataArray.slice(0, 5).map((x, index) => {
         const baseStyle =
-          styles[`social_${contactDataArray.length}_${index}`] ||
+          styles[`social_${Math.min(contactDataArray.length, 5)}_${index}`] ||
           styles.social_default;
 
         switch (x[1]) {
@@ -83,6 +95,33 @@ export const SocialRenderComponent = ({
                 handlePhonePress={handlePhonePress}
               />
             );
+          case 5:
+            return (
+              <TwitterItem
+                style={baseStyle}
+                key={index}
+                twitter={userData.twitter}
+                handleTwitterPress={handleTwitterPress}
+              />
+            );
+          case 6:
+            return (
+              <TiktokItem
+                style={baseStyle}
+                key={index}
+                tiktok={userData.tiktok}
+                handleTiktokPress={handleTiktokPress}
+              />
+            );
+          case 7:
+            return (
+              <LinkedinItem
+                style={baseStyle}
+                key={index}
+                linkedin={userData.linkedin}
+                handleLinkedinPress={handleLinkedinPress}
+              />
+            );
           default:
             return null;
         }
@@ -95,10 +134,23 @@ export const SocialRenderComponent = ({
       <View
         style={[
           styles[`social_Main_${contactDataArray.length}`],
-          { marginLeft: vh(8), marginTop: vh(0.8) },
+          { marginLeft: vw(12), marginTop: vh(0.8) },
         ]}
       >
         {renderAllItems()}
+
+        {contactDataArray.length > 7 && (
+          <TouchableOpacity
+            onPress={() => {
+              console.log("hello");
+            }}
+            style={styles.extendedAreaContainer}
+          >
+            <View style={styles.extendedArea}>
+              <Text style={styles.seeOnMap}>more</Text>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
     </>
   );
@@ -177,7 +229,79 @@ const PhoneItem = ({ phoneNumber, handlePhonePress, style }) => {
   );
 };
 
+const TwitterItem = ({ twitter, handleTwitterPress, style }) => {
+  return (
+    <TouchableOpacity style={style} onPress={() => handleTwitterPress()}>
+      <Image
+        style={styles.iconLogo}
+        source={require("../assets/twitter_logo.png")}
+      />
+      <Text style={styles.iconText}>
+        {twitter.length > 17 ? `${twitter.substring(0, 14)}...` : twitter}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+const TiktokItem = ({ tiktok, handleTiktokPress, style }) => {
+  return (
+    <TouchableOpacity style={style} onPress={() => handleTiktokPress()}>
+      <Image
+        style={styles.iconLogo}
+        source={require("../assets/tiktok_logo.png")}
+      />
+      <Text style={styles.iconText}>
+        {tiktok.length > 17 ? `${tiktok.substring(0, 14)}...` : tiktok}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+const LinkedinItem = ({ linkedin, handleLinkedinPress, style }) => {
+  return (
+    <TouchableOpacity style={style} onPress={() => handleLinkedinPress()}>
+      <Image
+        style={styles.iconLogo}
+        source={require("../assets/linkedin_logo.png")}
+      />
+      <Text style={styles.iconText}>
+        {linkedin.length > 17 ? `${linkedin.substring(0, 14)}...` : linkedin}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
+  extendedAreaContainer: {
+    alignSelf: "flex-end",
+    position: "absolute",
+    bottom: vh(0),
+    right: vw(2),
+    borderRadius: vh(4),
+    backgroundColor: "pink",
+    zIndex: 100,
+  },
+  extendedArea: {
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(3),
+    backgroundColor: "red",
+  },
+  seeOnMap: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "rgba(0, 119, 234,.51)",
+    alignSelf: "flex-end",
+    backgroundColor: "rgba(0, 119, 234,0.051)",
+    borderRadius: vh(2),
+    paddingHorizontal: vw(2),
+    borderWidth: 1,
+    borderColor: "white",
+  },
+  choiceText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "white",
+  },
   iconLogo: {
     height: vh(4),
     width: vh(4),
