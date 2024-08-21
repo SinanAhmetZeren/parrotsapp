@@ -198,16 +198,6 @@ const styles = StyleSheet.create({
     borderColor: "#2ac898",
     backgroundColor: "white",
   },
-  acceptedBidText: {
-    color: "#66a9ff",
-    fontWeight: "900",
-    fontSize: 13,
-  },
-  acceptedBid: {
-    borderWidth: 1,
-    borderColor: "#71aeff",
-  },
-
   logo: {
     height: vh(5),
     width: vh(5),
@@ -236,28 +226,13 @@ const styles = StyleSheet.create({
     paddingLeft: vw(4),
     paddingBottom: vh(0.2),
     width: vw(50),
-    // backgroundColor: "orange",
   },
-  map: {
-    width: "100%",
-    height: "100%",
-    borderRadius: vw(10),
-  },
-
-  subContainer: {
-    backgroundColor: "blue",
-    padding: vh(1),
-    margin: vh(0.5),
-    marginTop: vh(0.5),
-  },
-
   userName: {
     fontSize: 14,
     fontWeight: "600",
     marginTop: vh(0.2),
     color: "blue",
   },
-
   bidImage: {
     width: vh(5),
     height: vh(5),
@@ -284,16 +259,7 @@ const styles = StyleSheet.create({
     width: vw(20),
     textAlign: "right",
   },
-  currentBidsTitle: {
-    paddingLeft: vw(2),
-    fontSize: 25,
-    fontWeight: "700",
-    color: "#1c71a9",
-  },
-  allBidsContainer: {
-    margin: vh(1),
-    padding: vh(0),
-  },
+
   singleBidContainer: {
     flexDirection: "row",
     padding: vh(0.5),
@@ -312,20 +278,16 @@ const styles = StyleSheet.create({
     marginTop: vh(30),
     alignSelf: "center",
     backgroundColor: "#f2fafa",
-    // backgroundColor: "yellow",
     borderColor: "#bfdff4",
     borderRadius: vh(2),
-    // padding: vh(1),
     paddingLeft: vh(0.5),
   },
   singleBidContainer2: {
     flexDirection: "row",
-    // padding: vh(0.2),
     paddingVertical: vh(0.2),
     marginVertical: vh(0.3),
     alignItems: "center",
     backgroundColor: "rgba(220,238,249,0.4)",
-    // backgroundColor: "red",
     borderRadius: vh(2),
   },
   bidImage2: {
@@ -360,11 +322,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: vw(3),
     marginTop: vh(1),
     marginBottom: vh(15),
-  },
-
-  closeTextInModal: {
-    color: "#3c9dde",
-    fontWeight: "700",
-    fontSize: 16,
   },
 });

@@ -87,14 +87,6 @@ const FilterCountModal = ({
               </TouchableOpacity>
             </View>
           </View>
-          {/* <View style={styles.floatingIcon}>
-            <MaterialCommunityIcons
-              style={styles.icon}
-              name="human"
-              size={24}
-              color="black"
-            />
-          </View> */}
         </View>
       </Modal>
     </>
@@ -179,17 +171,6 @@ const styles = StyleSheet.create({
   count: {
     fontSize: 18,
     fontWeight: "bold",
-  },
-  floatingIcon: {
-    backgroundColor: "white",
-    height: 40,
-    width: 40,
-    borderRadius: 15,
-    position: "absolute",
-    top: vh(10),
-    right: vw(35),
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 

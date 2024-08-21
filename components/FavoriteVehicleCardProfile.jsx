@@ -188,9 +188,7 @@ const styles = StyleSheet.create({
     // borderWidth: 3,
     borderColor: "rgba(10, 119, 234,0.2)",
   },
-  imageContainer: {
-    backgroundColor: "white",
-  },
+
   cardImage: {
     width: vw(46),
     height: vh(20),
@@ -204,17 +202,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(0.5),
   },
   header: {
-    //margintop
-
     marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
     color: "rgba(10, 119, 234,1)",
   },
-  subHeader: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
+
   cardDescription: {
     paddingHorizontal: 0,
     fontSize: 11.5,

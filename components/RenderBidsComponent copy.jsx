@@ -205,18 +205,6 @@ const styles = StyleSheet.create({
     width: vw(55),
     backgroundColor: "orange",
   },
-  map: {
-    width: "100%",
-    height: "100%",
-    borderRadius: vw(10),
-  },
-
-  subContainer: {
-    backgroundColor: "blue",
-    padding: vh(1),
-    margin: vh(0.5),
-    marginTop: vh(0.5),
-  },
 
   userName: {
     fontSize: 14,
@@ -251,16 +239,7 @@ const styles = StyleSheet.create({
     width: vw(20),
     textAlign: "right",
   },
-  currentBidsTitle: {
-    paddingLeft: vw(2),
-    fontSize: 25,
-    fontWeight: "700",
-    color: "#1c71a9",
-  },
-  allBidsContainer: {
-    margin: vh(1),
-    padding: vh(0),
-  },
+
   singleBidContainer: {
     flexDirection: "row",
     padding: vh(0.5),
@@ -310,7 +289,6 @@ const styles = StyleSheet.create({
     width: vw(20),
     textAlign: "right",
     color: "#2ac898",
-    // backgroundColor: "pink",
   },
   closeButtonInModal: {
     alignSelf: "center",
@@ -322,11 +300,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: vw(3),
     marginTop: vh(1),
     marginBottom: vh(15),
-  },
-
-  closeTextInModal: {
-    color: "#3c9dde",
-    fontWeight: "700",
-    fontSize: 16,
   },
 });

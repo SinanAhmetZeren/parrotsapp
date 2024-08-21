@@ -356,24 +356,6 @@ export const CreateBidComponent = ({
 };
 
 const styles2 = StyleSheet.create({
-  createBidImage: {
-    height: vh(5.3),
-    width: vh(20),
-    borderRadius: vh(5),
-  },
-  choiceText: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "white",
-  },
-  selection2: {
-    marginHorizontal: vh(0.5),
-    marginVertical: vh(0.5),
-    paddingHorizontal: vh(2),
-    paddingVertical: vh(1),
-    backgroundColor: "#15537d",
-    borderRadius: vh(2.5),
-  },
   modalView2: {
     position: "absolute",
     alignSelf: "center",
@@ -394,13 +376,7 @@ const styles2 = StyleSheet.create({
     height: vh(4),
     justifyContent: "center",
   },
-  createBidButton: {
-    fontSize: 18,
-    color: "white",
-    alignSelf: "center",
-    fontWeight: "500",
-    letterSpacing: 1,
-  },
+
   InputName: {
     fontSize: 18,
     color: "#186ff1",
@@ -457,12 +433,6 @@ const styles2 = StyleSheet.create({
     justifyContent: "space-around",
   },
 
-  buttonSaveContainer: {
-    alignItems: "center",
-  },
-  buttonClearContainer: {
-    alignItems: "center",
-  },
   buttonSave: {
     fontSize: 18,
     color: "white",

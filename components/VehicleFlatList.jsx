@@ -72,7 +72,6 @@ export default function VehicleFlatList() {
 const styles = StyleSheet.create({
   flatList: {
     height: vh(100),
-    //backgroundColor: "",
     marginBottom: 0,
   },
 });

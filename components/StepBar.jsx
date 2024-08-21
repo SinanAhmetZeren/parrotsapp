@@ -58,16 +58,10 @@ const styles = StyleSheet.create({
     color: "rgba(0, 119, 234,1)",
     fontWeight: "700",
   },
-
-  //backgroundColor: "rgba(0, 119, 234,1)"
-  //backgroundColor: "rgba(0, 119, 234,.2)"
-
   inactiveStep: {
     borderRadius: vh(3),
-    // backgroundColor: "white",
     backgroundColor: "rgba(24,111,241,0.05)",
   },
-
   stepText: {
     fontSize: 16,
     textAlign: "auto",

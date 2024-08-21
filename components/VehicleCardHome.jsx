@@ -44,9 +44,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 0,
   },
-  imageContainer: {
-    backgroundColor: "white",
-  },
   cardImage: {
     width: vw(40),
     height: vh(19),

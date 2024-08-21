@@ -142,31 +142,7 @@ const styles = StyleSheet.create({
     height: vh(22),
     top: 0,
   },
-  extendedAreaContainer: {
-    alignSelf: "flex-end",
-    position: "absolute",
-    bottom: vh(0.3),
-    right: vw(2),
-    borderRadius: vh(1),
-    paddingLeft: vw(5),
-    paddingRight: vw(2),
-  },
-  extendedArea: {
-    paddingHorizontal: vh(8),
-    paddingVertical: vh(3),
-  },
-  seeOnMap: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#2ac898",
-    alignSelf: "flex-end",
-    position: "absolute",
-    bottom: vh(0.3),
-    right: vw(2),
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
-    borderRadius: vh(1),
-    paddingHorizontal: vw(2),
-  },
+
   cardContainer: {
     marginHorizontal: vw(2),
     alignItems: "center",
@@ -178,9 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     borderColor: "rgba(10, 119, 234,0.2)",
   },
-  imageContainer: {
-    backgroundColor: "white",
-  },
+
   cardImage: {
     width: vw(38),
     height: vh(20),
@@ -196,8 +170,6 @@ const styles = StyleSheet.create({
     padding: vh(0.2),
   },
   header: {
-    //margintop
-
     marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
@@ -205,7 +177,6 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.2),
     alignSelf: "center",
   },
-
   subHeader: {
     fontSize: 12,
     fontWeight: "600",
@@ -243,7 +214,6 @@ const styles = StyleSheet.create({
   },
   vacancyAndVehicle: {
     flexDirection: "row",
-    // backgroundColor: "pink",
     justifyContent: "space-around",
   },
 });

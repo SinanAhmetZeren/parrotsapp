@@ -297,11 +297,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
   },
-  choiceText: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "white",
-  },
+
   iconLogo: {
     height: vh(4),
     width: vh(4),
@@ -494,15 +490,12 @@ const styles = StyleSheet.create({
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   ///////
-
   icon: {
     padding: 3,
     margin: 2,
     marginLeft: 8,
     borderRadius: 20,
-    // color: "rgba(0, 119, 234,0.9)",
     color: "#3c9dde",
-
     fontSize: 18,
   },
   iconText: {
@@ -510,16 +503,5 @@ const styles = StyleSheet.create({
     marginTop: vh(0.4),
     fontSize: 13,
     color: "#3c9dde",
-  },
-  profileImageAndSocial: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderRadius: vh(5),
-    borderBottomLeftRadius: vh(0),
-    borderBottomRightRadius: vh(0),
-    width: "100%",
-    alignSelf: "center",
-    paddingBottom: vh(0.95),
-    backgroundColor: "white",
   },
 });

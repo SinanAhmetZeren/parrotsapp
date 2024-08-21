@@ -85,11 +85,7 @@ const styles = StyleSheet.create({
     width: vw(13),
     borderRadius: vh(10),
   },
-  messagesTextContainer: {
-    height: vh(10),
-    width: vw(50),
-    padding: vh(0.5),
-  },
+
   columnContainer: {
     padding: vh(0.6),
     justifyContent: "center",
@@ -128,11 +124,5 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: vw(10),
     alignSelf: "center",
-  },
-  alertText: {
-    padding: 2,
-    fontWeight: "800",
-    alignSelf: "center",
-    color: "white",
   },
 });

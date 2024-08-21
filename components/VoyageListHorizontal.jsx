@@ -78,9 +78,7 @@ const styles = StyleSheet.create({
     color: "#3c9dde",
     textAlign: "center",
   },
-  containerVertical: {
-    borderRadius: vh(2),
-  },
+
   containerHorizontal: {
     flexDirection: "row",
     marginLeft: vw(2),

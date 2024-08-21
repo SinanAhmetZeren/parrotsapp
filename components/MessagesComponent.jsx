@@ -156,9 +156,7 @@ const styles = StyleSheet.create({
   },
   dateDisplay: {
     fontWeight: "400",
-    // color: "#a2a2a2",
     color: "grey",
-
     fontSize: 11,
   },
   dateBox: {
@@ -167,7 +165,6 @@ const styles = StyleSheet.create({
     marginTop: vh(0.3),
   },
   userName: {
-    // color: "orange",
     color: "#3c9dde",
   },
   MessageContainer: {

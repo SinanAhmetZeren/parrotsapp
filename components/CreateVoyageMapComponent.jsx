@@ -450,37 +450,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: vh(1),
   },
-  closeWaypointModalButtonText: {
-    fontWeight: "800",
-    color: "red",
-  },
-  closeWaypointModalButton: {
-    alignSelf: "flex-end",
-    bottom: vh(-5),
-    width: vw(15),
-  },
-  waypointTitleInModal: {
-    fontWeight: "700",
-    fontSize: 20,
-  },
-  waypointDescriptionInModal: {
-    fontWeight: "500",
-    fontSize: 14,
-  },
-  waypointModalContainer: {
-    borderWidth: 3,
-    borderColor: "rgba(0, 119, 234,0.19)",
-    backgroundColor: "white",
-    height: vh(50),
-    top: vh(20),
-    width: vw(75),
-    alignSelf: "center",
-    borderRadius: vh(5),
-    padding: vh(2),
-  },
-  waypointItemTitle: {
-    fontWeight: "700",
-  },
+
   waypointItem: {
     margin: vw(1),
     width: vw(50),
@@ -491,10 +461,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 119, 234,0.39)",
     borderRadius: vh(3),
   },
-  waypointImageContainer: {
-    marginTop: vh(1),
-    alignItems: "center",
-  },
+
   waypointImage: {
     width: vh(14),
     height: vh(14),
@@ -502,11 +469,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "rgba(0, 119, 234,0.3)",
   },
-  waypointImageInModal: {
-    width: vh(30),
-    height: vh(30),
-    borderRadius: vh(3),
-  },
+
   waypointFlatlistContainer: {
     height: vh(32),
     marginLeft: vw(3),

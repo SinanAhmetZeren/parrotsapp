@@ -91,22 +91,6 @@ const FilterCalendarModal = ({
               textStyle={{ fontWeight: "700", color: "#333333" }}
               previousTitle="⬅️"
               nextTitle="➡️"
-              /*
-              previousTitle={
-                <Ionicons
-                  name="arrow-back-circle-outline"
-                  size={24}
-                  color="blue"
-                />
-              }
-              nextTitle={
-                <Ionicons
-                  name="arrow-forward-circle-outline"
-                  size={24}
-                  color="blue"
-                />
-              }
-              */
               width={300}
             />
 
@@ -134,14 +118,6 @@ const FilterCalendarModal = ({
               </TouchableOpacity>
             )}
           </View>
-          {/* <View style={styles.floatingIcon}>
-            <AntDesign
-              style={styles.icon}
-              name="calendar"
-              size={24}
-              color="black"
-            />
-          </View> */}
         </View>
       </Modal>
     </>
@@ -209,17 +185,6 @@ const styles = StyleSheet.create({
     width: vw(30),
     borderRadius: 10,
     marginTop: 5,
-  },
-  floatingIcon: {
-    backgroundColor: "white",
-    height: 40,
-    width: 40,
-    borderRadius: 15,
-    position: "absolute",
-    top: vh(10),
-    right: vw(24),
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 

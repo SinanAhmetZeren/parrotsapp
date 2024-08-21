@@ -41,7 +41,7 @@ const VehicleImagesWithCarousel = ({ vehicleImages }) => {
               handleImagePress(index);
             }}
           >
-            <View style={styles2.imageContainer1}>
+            <View>
               <Image
                 source={{
                   uri: `${API_URL}/Uploads/VehicleImages/${item.vehicleImagePath}`,
@@ -134,14 +134,6 @@ const styles2 = StyleSheet.create({
     borderColor: "#93c9ed",
     marginTop: vh(1),
   },
-  modalWrappeer: {
-    position: "absolute",
-    top: 0,
-    backgroundColor: "red",
-    height: vh(10),
-    width: vw(80),
-  },
-
   imageContainerInModal: {
     top: vh(30),
     height: vh(40),
@@ -157,30 +149,11 @@ const styles2 = StyleSheet.create({
     borderColor: "white",
   },
 
-  imageContainer1: {
-    // backgroundColor: "white",
-  },
   voyageImage1: {
     height: vh(17),
     width: vh(17),
     marginRight: vh(1),
     borderRadius: vh(2.5),
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adjust opacity as needed
-  },
-  carouselImage: {
-    position: "absolute",
-    top: vh(30),
-    alignSelf: "center",
-    height: vh(40),
-    width: vw(90),
-    borderRadius: vh(3),
-    borderWidth: 1.5,
-    borderColor: "white",
   },
   closeButtonAndText: {
     flexDirection: "row",
@@ -190,28 +163,6 @@ const styles2 = StyleSheet.create({
     borderRadius: vh(2.5),
     bottom: vh(29),
     alignSelf: "center",
-  },
-  closeText1: {
-    marginLeft: vw(1),
-    fontSize: 18,
-    height: vh(3),
-    alignSelf: "center",
-    color: "#3aa4ff",
-  },
-  closeText2: {
-    fontSize: 18,
-    height: vh(3),
-    alignSelf: "center",
-    color: "#3aa4ff",
-  },
-  pagerView: {
-    backgroundColor: "rgba(111,1,1,0.01)",
-    height: vh(50),
-    flex: 1,
-  },
-  pagerInside: {
-    height: vh(50),
-    width: vw(100),
   },
 });
 

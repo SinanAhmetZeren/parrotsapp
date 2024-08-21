@@ -38,26 +38,6 @@ const DropdownComponentType = ({ data, setVehicleType, selected }) => {
 export default DropdownComponentType;
 
 const styles = StyleSheet.create({
-  latLngNameRow: {
-    flexDirection: "row",
-    backgroundColor: "#f1f2f3",
-    borderRadius: vh(3),
-    marginBottom: vh(0.5),
-  },
-  latLngLabel: {
-    justifyContent: "center",
-    backgroundColor: "#f4f5f6",
-    marginVertical: vh(0.3),
-    padding: vh(0.4),
-    borderRadius: vh(3),
-    borderColor: "#babbbc",
-  },
-  latorLngtxt: {
-    color: "#6b7f9d",
-    fontWeight: "500",
-    width: vw(25),
-    textAlign: "center",
-  },
   latorLng: {
     flexDirection: "row",
     backgroundColor: "#fafbfc",
@@ -68,11 +48,7 @@ const styles = StyleSheet.create({
     borderColor: "#babbbc",
     width: vw(64),
   },
-  textInput5: {
-    fontSize: 13,
-    paddingLeft: vw(1),
-    width: "90%",
-  },
+
   dropdown: {
     width: vw(62),
     height: vh(5),

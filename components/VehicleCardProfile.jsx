@@ -132,11 +132,6 @@ export default function VehicleCardProfile({
   }
 
   const navigation = useNavigation();
-
-  const currentPage = navigation.getState().routes[0].name;
-
-  console.log("get State VCP: ", currentPage);
-
   const handleNavigateToVehicle = (vehicleId) => {
     const parentScreen = navigation.getState().routes[0].name;
 
