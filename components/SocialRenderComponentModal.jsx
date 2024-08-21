@@ -6,7 +6,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useEffect } from "react";
 
-export const SocialRenderComponent = ({
+export const SocialRenderComponentModal = ({
   userData,
   handleEmailPress,
   handleInstagramPress,
@@ -49,16 +49,12 @@ export const SocialRenderComponent = ({
 
   const renderAllItems = () => {
     if (contactDataArray.length > 0) {
-      return contactDataArray.slice(0, 5).map((x, index) => {
-        const baseStyle =
-          styles[`social_${Math.min(contactDataArray.length, 5)}_${index}`] ||
-          styles.social_default;
-
+      return contactDataArray.map((x, index) => {
         switch (x[1]) {
           case 0:
             return (
               <EmailItem
-                style={baseStyle}
+                style={styles.baseStyle}
                 key={index}
                 email={userData.email}
                 handleEmailPress={handleEmailPress}
@@ -67,7 +63,7 @@ export const SocialRenderComponent = ({
           case 1:
             return (
               <InstagramItem
-                style={baseStyle}
+                style={styles.baseStyle}
                 key={index}
                 instagram={userData.instagram}
                 handleInstagramPress={handleInstagramPress}
@@ -76,7 +72,7 @@ export const SocialRenderComponent = ({
           case 2:
             return (
               <YoutubeItem
-                style={baseStyle}
+                style={styles.baseStyle}
                 key={index}
                 youtube={userData.youtube}
                 handleYoutubePress={handleYoutubePress}
@@ -85,7 +81,7 @@ export const SocialRenderComponent = ({
           case 3:
             return (
               <FacebookItem
-                style={baseStyle}
+                style={styles.baseStyle}
                 key={index}
                 facebook={userData.facebook}
                 handleFacebookPress={handleFacebookPress}
@@ -94,7 +90,7 @@ export const SocialRenderComponent = ({
           case 4:
             return (
               <PhoneItem
-                style={baseStyle}
+                style={styles.baseStyle}
                 key={index}
                 phoneNumber={userData.phoneNumber}
                 handlePhonePress={handlePhonePress}
@@ -103,7 +99,7 @@ export const SocialRenderComponent = ({
           case 5:
             return (
               <TwitterItem
-                style={baseStyle}
+                style={styles.baseStyle}
                 key={index}
                 twitter={userData.twitter}
                 handleTwitterPress={handleTwitterPress}
@@ -112,7 +108,7 @@ export const SocialRenderComponent = ({
           case 6:
             return (
               <TiktokItem
-                style={baseStyle}
+                style={styles.baseStyle}
                 key={index}
                 tiktok={userData.tiktok}
                 handleTiktokPress={handleTiktokPress}
@@ -121,7 +117,7 @@ export const SocialRenderComponent = ({
           case 7:
             return (
               <LinkedinItem
-                style={baseStyle}
+                style={styles.baseStyle}
                 key={index}
                 linkedin={userData.linkedin}
                 handleLinkedinPress={handleLinkedinPress}
@@ -136,27 +132,7 @@ export const SocialRenderComponent = ({
 
   return (
     <>
-      <View
-        style={[
-          styles[`social_Main_${contactDataArray.length}`],
-          { marginLeft: vw(12), marginTop: vh(0.8) },
-        ]}
-      >
-        {renderAllItems()}
-
-        {/* {contactDataArray.length > 7 && (
-          <TouchableOpacity
-            onPress={() => {
-              console.log("hello");
-            }}
-            style={styles.extendedAreaContainer}
-          >
-            <View style={styles.extendedArea}>
-              <Text style={styles.moreButton}>more</Text>
-            </View>
-          </TouchableOpacity>
-        )} */}
-      </View>
+      <View>{renderAllItems()}</View>
     </>
   );
 };
@@ -170,7 +146,7 @@ const EmailItem = ({ email, handleEmailPress, style }) => {
       />
 
       <Text style={styles.iconText}>
-        {email.length > 17 ? `${email.substring(0, 14)}...` : email}
+        {email.length > 22 ? `${email.substring(0, 19)}...` : email}
       </Text>
     </TouchableOpacity>
   );
@@ -184,7 +160,7 @@ const InstagramItem = ({ instagram, handleInstagramPress, style }) => {
         source={require("../assets/instagram_icon.png")}
       />
       <Text style={styles.iconText}>
-        {instagram.length > 17 ? `${instagram.substring(0, 14)}...` : instagram}
+        {instagram.length > 22 ? `${instagram.substring(0, 19)}...` : instagram}
       </Text>
     </TouchableOpacity>
   );
@@ -198,7 +174,7 @@ const YoutubeItem = ({ youtube, handleYoutubePress, style }) => {
         source={require("../assets/youtube_icon.png")}
       />
       <Text style={styles.iconText}>
-        {youtube.length > 17 ? `${youtube.substring(0, 14)}...` : youtube}
+        {youtube.length > 22 ? `${youtube.substring(0, 19)}...` : youtube}
       </Text>
     </TouchableOpacity>
   );
@@ -212,7 +188,7 @@ const FacebookItem = ({ facebook, handleFacebookPress, style }) => {
         source={require("../assets/facebook_logo.png")}
       />
       <Text style={styles.iconText}>
-        {facebook.length > 17 ? `${facebook.substring(0, 14)}...` : facebook}
+        {facebook.length > 22 ? `${facebook.substring(0, 19)}...` : facebook}
       </Text>
     </TouchableOpacity>
   );
@@ -227,7 +203,7 @@ const PhoneItem = ({ phoneNumber, handlePhonePress, style }) => {
       />
       <Text style={styles.iconText}>
         {phoneNumber.length > 17
-          ? `${phoneNumber.substring(0, 14)}...`
+          ? `${phoneNumber.substring(0, 19)}...`
           : phoneNumber}
       </Text>
     </TouchableOpacity>
@@ -242,7 +218,7 @@ const TwitterItem = ({ twitter, handleTwitterPress, style }) => {
         source={require("../assets/twitter_logo.png")}
       />
       <Text style={styles.iconText}>
-        {twitter.length > 17 ? `${twitter.substring(0, 14)}...` : twitter}
+        {twitter.length > 22 ? `${twitter.substring(0, 19)}...` : twitter}
       </Text>
     </TouchableOpacity>
   );
@@ -256,7 +232,7 @@ const TiktokItem = ({ tiktok, handleTiktokPress, style }) => {
         source={require("../assets/tiktok_logo.png")}
       />
       <Text style={styles.iconText}>
-        {tiktok.length > 17 ? `${tiktok.substring(0, 14)}...` : tiktok}
+        {tiktok.length > 22 ? `${tiktok.substring(0, 19)}...` : tiktok}
       </Text>
     </TouchableOpacity>
   );
@@ -270,204 +246,31 @@ const LinkedinItem = ({ linkedin, handleLinkedinPress, style }) => {
         source={require("../assets/linkedin_logo.png")}
       />
       <Text style={styles.iconText}>
-        {linkedin.length > 17 ? `${linkedin.substring(0, 14)}...` : linkedin}
+        {linkedin.length > 22 ? `${linkedin.substring(0, 19)}...` : linkedin}
       </Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
+  baseStyle: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    backgroundColor: "rgba(162, 208, 239,0.2)",
+    borderRadius: 20,
+    marginVertical: vh(0.6),
+    marginBottom: 2,
+    borderColor: "rgba(190, 119, 234,0.4)",
+    width: vw(55),
+  },
   iconLogo: {
     height: vh(4),
     width: vh(4),
     borderRadius: vh(2),
     marginRight: vh(1),
   },
-  social_Main_5: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: 0,
-    top: vh(1),
-    height: vh(22.5),
-  },
-  social_Main_4: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: vh(2),
-    top: vh(1),
-    height: vh(22.5),
-  },
-  social_Main_3: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: vh(4),
-    top: vh(1),
-    height: vh(22.5),
-  },
-  social_Main_2: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: vh(6),
-    top: vh(1),
-    height: vh(22.5),
-  },
-  social_Main_1: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: vh(8),
-    top: vh(1),
-    height: vh(22.5),
-  },
 
-  social_5_0: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-12),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_5_1: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-6),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_5_2: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    left: vw(-4),
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_5_3: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-6),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_5_4: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-12),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  //////
-  social_4_0: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-8.5),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_4_1: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: vh(0.5),
-    marginBottom: 2,
-    left: vw(-4),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_4_2: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    left: vw(-4),
-    borderRadius: 20,
-    marginTop: vh(0.5),
-    marginBottom: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_4_3: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: vh(0.5),
-    marginBottom: 2,
-    left: vw(-8.5),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  //////
-  social_3_0: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-6),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_3_1: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: vh(0.8),
-    marginBottom: 2,
-    left: vw(-4),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_3_2: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    left: vw(-6),
-    borderRadius: 20,
-    marginTop: vh(0.8),
-    marginBottom: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  //////
-  social_2_0: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-4.5),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  social_2_1: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: vh(1),
-    marginBottom: 2,
-    left: vw(-4),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
-  //////
-  social_1_0: {
-    flexDirection: "row",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
-    borderRadius: 20,
-    marginTop: vh(1),
-    marginBottom: 2,
-    left: vw(-4),
-    borderColor: "rgba(190, 119, 234,0.4)",
-  },
   ///////
   icon: {
     padding: 3,

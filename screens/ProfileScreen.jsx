@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Linking,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -26,12 +27,15 @@ import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { updateAsLoggedOut } from "../slices/UserSlice";
 import { SocialRenderComponent } from "../components/SocialRenderComponent";
+import { SocialRenderComponentModal } from "../components/SocialRenderComponentModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
   const dispatch = useDispatch();
+  const [socialItemCount, setSocialItemCount] = useState(0);
+  const [socialModalVisible, setSocialModalVisible] = useState(false);
 
   const {
     data: userData,
@@ -57,6 +61,10 @@ export default function ProfileScreen({ navigation }) {
 
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
+  };
+
+  const handlePressOut = () => {
+    setModalVisible(false);
   };
 
   useFocusEffect(
@@ -141,69 +149,21 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleTwitterPress = async () => {
-    if (userData.twitter) {
-      let twitterStr = userData.twitter;
-      try {
-        await Clipboard.setStringAsync(twitterStr);
-        Toast.show({
-          type: "success",
-          text1: "twitter copied to clipboard",
-          text2: twitterStr,
-          visibilityTime: 5000,
-          topOffset: 150,
-        });
-      } catch (error) {
-        console.error("Error copying to clipboard", error);
-        Toast.show({
-          type: "error",
-          text1: "Failed to copy twitter to clipboard",
-        });
-      }
-    }
+    const twitterUsername = `${userData.twitter}`;
+    const fallbackUrl = `https://twitter.com/${twitterUsername}`;
+    Linking.openURL(fallbackUrl);
   };
 
   const handleTiktokPress = async () => {
-    if (userData.tiktok) {
-      let tiktokStr = userData.tiktok;
-      try {
-        await Clipboard.setStringAsync(tiktokStr);
-        Toast.show({
-          type: "success",
-          text1: "tiktok copied to clipboard",
-          text2: tiktokStr,
-          visibilityTime: 5000,
-          topOffset: 150,
-        });
-      } catch (error) {
-        console.error("Error copying to clipboard", error);
-        Toast.show({
-          type: "error",
-          text1: "Failed to copy tiktok to clipboard",
-        });
-      }
-    }
+    const tiktokUsername = `${userData.tiktok}`;
+    const fallbackUrl = `https://www.tiktok.com/@${tiktokUsername}`;
+    Linking.openURL(fallbackUrl);
   };
 
   const handleLinkedinPress = async () => {
-    if (userData.linkedin) {
-      let linkedinStr = userData.linkedin;
-      try {
-        await Clipboard.setStringAsync(linkedinStr);
-        Toast.show({
-          type: "success",
-          text1: "linkedin copied to clipboard",
-          text2: linkedinStr,
-          visibilityTime: 5000,
-          topOffset: 150,
-        });
-      } catch (error) {
-        console.error("Error copying to clipboard", error);
-        Toast.show({
-          type: "error",
-          text1: "Failed to copy linkedin to clipboard",
-        });
-      }
-    }
+    const linkedinProfileID = `${userData.linkedin}`;
+    const fallbackUrl = `https://www.linkedin.com/in/${linkedinProfileID}`;
+    Linking.openURL(fallbackUrl);
   };
 
   const BlueHashTagText = ({ originalText }) => {
@@ -384,12 +344,27 @@ export default function ProfileScreen({ navigation }) {
                     handleTwitterPress={handleTwitterPress}
                     handleTiktokPress={handleTiktokPress}
                     handleLinkedinPress={handleLinkedinPress}
+                    setSocialItemCount={setSocialItemCount}
                   />
                 </View>
               </View>
 
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
+                {socialItemCount > 5 ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log("hello");
+                      setSocialModalVisible(true);
+                    }}
+                    style={styles.extendedAreaContainer}
+                  >
+                    <View style={styles.extendedArea}>
+                      <Text style={styles.moreButton}>see more</Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : null}
+
                 <View style={styles.nameContainer}>
                   <Text style={styles.UserNameProfile}>
                     {userData.userName.length <= 30 ? (
@@ -463,6 +438,38 @@ export default function ProfileScreen({ navigation }) {
               ) : null}
             </View>
           </ScrollView>
+
+          <View>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={socialModalVisible}
+              onRequestClose={() => setSocialModalVisible(false)}
+            >
+              <TouchableOpacity
+                onPress={() => setSocialModalVisible(false)}
+                style={{
+                  flex: 1,
+                  backgroundColor: "rgba(1,1,1,0.3)",
+                }}
+              >
+                <View style={styles.socialRenderComponentModal}>
+                  <SocialRenderComponentModal
+                    userData={userData}
+                    handleEmailPress={handleEmailPress}
+                    handleInstagramPress={handleInstagramPress}
+                    handleYoutubePress={handleYoutubePress}
+                    handleFacebookPress={handleFacebookPress}
+                    handlePhonePress={handlePhonePress}
+                    handleTwitterPress={handleTwitterPress}
+                    handleTiktokPress={handleTiktokPress}
+                    handleLinkedinPress={handleLinkedinPress}
+                    setSocialItemCount={setSocialItemCount}
+                  />
+                </View>
+              </TouchableOpacity>
+            </Modal>
+          </View>
         </View>
       </>
     );
@@ -470,6 +477,63 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  closeButtonAndText2: {
+    flexDirection: "row",
+    position: "absolute",
+    height: vh(3.5),
+    width: vh(11.45),
+    borderRadius: vh(2.5),
+    bottom: vh(-6),
+    alignSelf: "center",
+  },
+  socialRenderComponentModal: {
+    top: vh(20),
+    backgroundColor: "white",
+    alignSelf: "center",
+    justifyContent: "center",
+    width: vw(65),
+    borderRadius: vh(2),
+    borderColor: "rgba(10, 119, 234,0.9)",
+    paddingVertical: vh(2),
+  },
+  closeButtonAndText: {
+    flexDirection: "row",
+    borderRadius: vh(2.5),
+    borderColor: "#3aa4ff",
+    top: vh(14),
+    alignSelf: "center",
+  },
+  closeButtonInModal2: {
+    alignSelf: "center",
+    backgroundColor: "rgba(217, 241, 241,.99)",
+    borderRadius: vh(10),
+    padding: vh(1.5),
+    borderColor: "#93c9ed",
+  },
+  extendedAreaContainer: {
+    alignSelf: "flex-end",
+    position: "absolute",
+    top: vh(-2),
+    right: vw(0),
+    borderRadius: vh(4),
+    // backgroundColor: "pink",
+    zIndex: 100,
+  },
+  extendedArea: {
+    paddingHorizontal: vw(1),
+    paddingVertical: vh(1),
+    // backgroundColor: "red",
+  },
+  moreButton: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "rgba(0, 119, 234,.51)",
+    alignSelf: "flex-end",
+    backgroundColor: "rgba(0, 119, 234,0.051)",
+    borderRadius: vh(2),
+    paddingHorizontal: vw(2),
+    paddingHorizontal: vw(2),
+  },
   notCreated: {
     paddingVertical: vh(2),
     paddingHorizontal: vh(3),
