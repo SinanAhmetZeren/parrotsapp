@@ -442,13 +442,6 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  // parrotBubble: {
-  //   height: vh(10),
-  //   width: vw(50),
-  //   zIndex: 0,
-  //   position: "absolute",
-  //   left: vw(12),
-  // },
   miniLogo: {
     height: vh(6),
     width: vh(6),
@@ -462,11 +455,7 @@ const styles = StyleSheet.create({
     width: vh(5),
     borderRadius: vh(10),
   },
-  appLogo: {
-    height: vh(7),
-    width: vh(7),
-    borderRadius: vh(10),
-  },
+
   closeButtonInModal2: {
     alignSelf: "center",
     backgroundColor: "rgba(217, 241, 241,.75)",
@@ -474,21 +463,6 @@ const styles = StyleSheet.create({
     padding: vh(1.5),
     borderColor: "#93c9ed",
     marginTop: vh(1),
-  },
-  innerProfileContainer: {
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    borderRadius: vh(2),
-    paddingHorizontal: vw(2),
-  },
-  logoutBox: {
-    marginTop: vh(0.5),
-    backgroundColor: "white",
-    width: vw(30),
-    flexDirection: "row",
-    borderRadius: vh(2),
-    padding: vw(1),
-    zIndex: 100,
   },
   imageContainerInModal: {
     top: vh(35),
@@ -525,18 +499,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  closeText1: {
-    marginLeft: vw(1),
-    fontSize: 18,
-    height: vh(3),
-    alignSelf: "center",
-    color: "#3aa4ff",
-  },
-  closeTextInModal: {
-    color: "#3c9dde",
-    fontWeight: "700",
-    fontSize: 16,
-  },
   closeButtonInModal: {
     alignSelf: "center",
     marginRight: vw(10),
@@ -548,15 +510,6 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     marginBottom: vh(15),
   },
-  filterButtonContaineronMap: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    margin: vh(0.4),
-    zIndex: 100,
-    borderRadius: vh(4),
-    backgroundColor: "white",
-  },
   applyFilter: {
     fontSize: 14,
     fontWeight: "700",
@@ -567,18 +520,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.7),
   },
-  seeOnMapRefresh: {
-    fontSize: 14,
-    fontWeight: "700",
-    // color: "#2ac898",
-    color: "white",
-    alignSelf: "flex-end",
-    // backgroundColor: "rgba(42, 200, 152, 0.1)",
-    backgroundColor: "rgba(0, 119, 234,0.7)",
-    borderRadius: vh(3),
-    paddingHorizontal: vh(3),
-    paddingVertical: vh(0.5),
-  },
+
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
@@ -616,14 +558,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: "white ",
   },
-  flatList: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    marginLeft: 10,
-    paddingBottom: 0,
-    marginTop: 6,
-    bottom: 0,
-  },
+
   map: {
     width: "100%",
     height: "100%",
@@ -639,11 +574,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#2ac898",
   },
-  usernameLong: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#2ac898",
-  },
+
   usernameSmall: {
     fontSize: 12,
     fontWeight: "700",
@@ -653,12 +584,6 @@ const styles = StyleSheet.create({
   welcomebox: {
     width: vw(50),
     justifyContent: "center",
-    // alignItems: "center",
-    // borderWidth: 2,
-    // borderColor: "rgba(10, 119, 234, 0.06)",
-    // borderRadius: vh(2),
-    // marginRight: vw(2),
-    //backgroundColor: "rgba(10, 119, 234, 0.13)",
   },
   filterbox: {
     flexDirection: "row",
@@ -669,22 +594,6 @@ const styles = StyleSheet.create({
     padding: 7,
     margin: 2,
     borderRadius: 20,
-  },
-  searchAndMenu: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-    backgroundColor: "white", // Set background color as needed
-  },
-  searchInput1: {
-    flex: 1,
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginRight: 10,
-    paddingHorizontal: 10,
-    borderRadius: 5,
   },
   popularBox: {
     flexDirection: "row",

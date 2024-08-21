@@ -380,22 +380,17 @@ const styles = StyleSheet.create({
     right: vw(2),
     flexDirection: "column",
   },
-
   rectangularBox: {
     height: vh(35),
     backgroundColor: "white",
   },
   imageContainer: {
-    // top: vh(5),
     height: vh(40),
     width: vw(100),
   },
   scrollView: {
-    //marginBottom: vh(30),
-    // top: vh(-5),
     height: vh(90),
     borderRadius: vh(4),
-    // backgroundColor: "white",
     backgroundColor: "#fff6f0",
   },
   bioBox: {
@@ -403,53 +398,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     marginTop: vh(0),
     paddingVertical: 10,
-    // backgroundColor: "rgba(190, 119, 234,0.08)",
     width: "93%",
     borderRadius: 20,
     borderColor: "rgba(190, 119, 234,0.5)",
-  },
-  choiceItem: {
-    marginHorizontal: 15,
-  },
-  choiceItemText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "grey",
-  },
-  viewChoice: {
-    marginTop: vh(1),
-    marginVertical: vh(0.1),
-    width: vw(100),
-    alignSelf: "center",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    // top: vh(-9),
-  },
-  selectedChoice: {
-    paddingHorizontal: vh(6),
-    paddingVertical: vh(0.3),
-    // backgroundColor: "rgba(0, 119, 234,0.12)",
-    borderRadius: vh(1.5),
-    // borderWidth: 1,
-    borderColor: "rgba(10, 119, 234,0.4)",
-  },
-  nonSelectedChoice: {
-    paddingHorizontal: vh(6),
-    paddingVertical: vh(0.3),
-    // backgroundColor: "rgba(0, 119, 234,0.02)",
-    borderRadius: vh(1.5),
-    // borderWidth: 1,
-    borderColor: "rgba(10, 119, 234,0.08)",
-  },
-  selectedText: {
-    color: "rgba(91,91,255,1)",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  nonSelectedText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "rgba(91,91,255,.5)",
   },
   voyageListContainer: {
     width: vw(98),
@@ -459,7 +410,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     // top: vh(-12),
   },
-  vehicleList: {},
   blueText: {
     fontWeight: "600",
     color: "#000077",
@@ -491,20 +441,6 @@ const styles = StyleSheet.create({
   bio: {
     paddingTop: 5,
   },
-  icon: {
-    padding: 3,
-    margin: 2,
-    marginLeft: 8,
-    borderRadius: 20,
-    color: "rgba(0, 119, 234,0.9)",
-    fontSize: 18,
-  },
-  iconText: {
-    lineHeight: 22,
-    marginVertical: 1,
-    fontSize: 11,
-  },
-  //container of image and social
   profileImageAndSocial: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -555,18 +491,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     padding: vw(1),
     // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.5)",
-  },
-  logoutBox: {
-    backgroundColor: "white",
-    position: "absolute",
-    top: vh(-5),
-    width: vw(30),
-    right: vw(4),
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    borderRadius: vh(2),
-    padding: vw(1),
     borderColor: "rgba(190, 119, 234,0.5)",
   },
   innerProfileContainer: {

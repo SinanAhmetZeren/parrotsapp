@@ -564,10 +564,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(6),
     borderColor: "rgba(190, 119, 234,0.6)",
   },
-  saveButton: {
-    padding: 10,
-    paddingHorizontal: vw(15),
-  },
+
   refetch: {
     padding: 3,
     paddingHorizontal: vw(15),

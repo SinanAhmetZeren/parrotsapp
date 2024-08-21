@@ -86,11 +86,6 @@ const CreateVoyageScreen = ({ navigation }) => {
 
   useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
 
-  console.log(
-    "getparent from create voyage:",
-    navigation.getState().routes[0].name
-  );
-
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
@@ -113,7 +108,6 @@ const CreateVoyageScreen = ({ navigation }) => {
       return () => {
         if (voyageId) {
           checkAndDeleteVoyage(voyageId);
-          console.log("checking to delete voyage with id ", voyageId);
           setCurrentStep(1);
           setName("");
         }
@@ -299,24 +293,15 @@ const CreateVoyageScreen = ({ navigation }) => {
       setStartDate(date);
       setEndDate(null);
       setCalendarRangeAllowed(false);
-      console.log("calendar 1 ");
     } else {
       if (date >= startDate) {
         setCalendarRangeAllowed(true);
         setEndDate(date);
-        console.log("calendar 2 ");
       } else {
         setStartDate(date);
         setEndDate(null);
-        console.log("calendar 3 ");
       }
     }
-  };
-
-  const printDates = () => {
-    console.log("start: ", startDate);
-    console.log("  end: ", endDate);
-    console.log("-----");
   };
 
   const handleDeleteImage = (imageId) => {
@@ -986,21 +971,13 @@ const styles = StyleSheet.create({
   formContainer: {
     padding: vh(2),
   },
-  recycle: {
-    color: "purple",
-  },
+
   backgroundImage: {
     width: vw(100),
     height: vh(30),
     marginBottom: vh(5),
   },
-  createVoyageButton: {
-    width: vw(40),
-    alignSelf: "center",
-    borderRadius: vh(2),
-    overflow: "hidden",
-    marginTop: vh(1),
-  },
+
   refetch: {
     padding: 3,
     paddingHorizontal: vw(15),
@@ -1008,11 +985,6 @@ const styles = StyleSheet.create({
     // display: "none",
   },
 
-  imageContainer: {
-    top: vh(0),
-    height: vh(35),
-    width: vw(100),
-  },
   icon: {
     padding: 3,
     margin: 2,
@@ -1029,12 +1001,7 @@ const styles = StyleSheet.create({
     padding: vh(1),
     borderRadius: vh(1),
   },
-  inputDescription: {
-    color: "rgba(0, 119, 234,0.9)",
-    fontSize: 13,
-    alignSelf: "center",
-    width: vw(23),
-  },
+
   voyageDatesContainer: {
     flexDirection: "row",
   },
@@ -1052,22 +1019,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: vw(1),
     backgroundColor: "green",
-  },
-  textDescriptionInput: {
-    width: vw(60),
-    flexWrap: "wrap",
-    lineHeight: 21,
-    marginVertical: 1,
-    fontSize: 14,
-    padding: vw(1),
-    backgroundColor: "green",
-  },
-  socialBox: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: vh(1.5),
-    marginTop: 2,
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
   },
 });

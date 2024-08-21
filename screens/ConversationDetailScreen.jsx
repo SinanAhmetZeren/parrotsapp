@@ -310,13 +310,7 @@ const styles = StyleSheet.create({
     height: vh(74),
     backgroundColor: "white",
   },
-  text1: {
-    justifyContent: "center",
-    margin: vh(3),
-    backgroundColor: "white",
-    padding: vh(1),
-    borderRadius: vh(2),
-  },
+
   buttonsContainer: {
     justifyContent: "center",
   },

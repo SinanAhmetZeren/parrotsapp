@@ -478,10 +478,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     marginTop: vh(1),
   },
-  notCreatedText: {
-    fontSize: 16,
-    color: "#9a9a9a",
-  },
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
@@ -529,44 +525,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: "rgba(190, 119, 234,0.5)",
   },
-  choiceItem: {
-    marginHorizontal: 15,
-  },
-  choiceItemText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "grey",
-  },
-  viewChoice: {
-    marginTop: vh(1),
-    marginVertical: vh(0.1),
-    width: vw(100),
-    alignSelf: "center",
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  selectedChoice: {
-    paddingHorizontal: vh(6),
-    paddingVertical: vh(0.3),
-    borderRadius: vh(1.5),
-    borderColor: "rgba(10, 119, 234,0.4)",
-  },
-  nonSelectedChoice: {
-    paddingHorizontal: vh(6),
-    paddingVertical: vh(0.3),
-    borderRadius: vh(1.5),
-    borderColor: "rgba(10, 119, 234,0.08)",
-  },
-  selectedText: {
-    color: "rgba(91,91,255,1)",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  nonSelectedText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "rgba(91,91,255,.5)",
-  },
   voyageListContainer: {
     width: vw(98),
     overflow: "hidden",
@@ -575,7 +533,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: vh(3),
   },
-  vehicleList: {},
   blueText: {
     fontWeight: "600",
     color: "#000077",
@@ -615,13 +572,6 @@ const styles = StyleSheet.create({
     color: "rgba(0, 119, 234,0.9)",
     fontSize: 18,
   },
-
-  iconText: {
-    lineHeight: 22,
-    marginVertical: 1,
-    fontSize: 11,
-  },
-  //container of image and social
   profileImageAndSocial: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -631,12 +581,8 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     paddingBottom: vh(0.95),
-    // backgroundColor: "white",
     backgroundColor: "#fff6f0",
-
-    // top: vh(-9),
   },
-  //container of social
   social: {
     flexDirection: "column",
     width: vw(50),
@@ -644,9 +590,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingTop: 0,
     top: vh(1),
-    // backgroundColor: "pink",
   },
-  //container of image and name
   profileImageAndName: {
     left: vw(6),
     top: vh(3),

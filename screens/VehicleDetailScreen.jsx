@@ -110,10 +110,6 @@ const VehicleDetailScreen = () => {
   }, [isSuccessVehicles, userFavoriteVehicles]);
 
   const navigation = useNavigation();
-  console.log(
-    "getparent from vehicle detail:",
-    navigation.getState().routes[0].name
-  );
 
   const goToProfilePage = (userId) => {
     const parentScreen = navigation.getState().routes[0].name;
@@ -445,21 +441,12 @@ const styles = StyleSheet.create({
   extendedAreaContainer: {
     alignSelf: "flex-end",
     position: "absolute",
-    // bottom: vh(0.3),
     right: vw(2),
     borderRadius: vh(1),
     paddingLeft: vw(5),
     paddingRight: vw(2),
     paddingVertical: vh(2),
     bottom: vh(-3),
-  },
-  heartContainer1: {
-    position: "absolute",
-    backgroundColor: "#fef6e3",
-    height: vw(11),
-    width: vw(11),
-    borderRadius: vw(12),
-    justifyContent: "center",
   },
   heartContainer2: {
     padding: vw(1),
