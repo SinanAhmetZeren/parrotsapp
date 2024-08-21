@@ -44,7 +44,6 @@ export default function FavoriteVoyageList({ data, direction }) {
 
 const styles = StyleSheet.create({
   containerVertical: {
-    // marginBottom: vh(13),
     marginTop: 10,
     borderRadius: vh(2),
   },

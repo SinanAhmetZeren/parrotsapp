@@ -216,8 +216,6 @@ export const WaypointItem = ({ title, description, imageUri }) => {
   );
 };
 
-const stylesX = StyleSheet.create({});
-
 const styles = StyleSheet.create({
   logo: {
     height: vh(5),
@@ -256,17 +254,6 @@ const styles = StyleSheet.create({
     top: vh(-14),
     alignSelf: "center",
   },
-  closeText1: {
-    marginLeft: vw(1),
-    fontSize: 18,
-    height: vh(3),
-    alignSelf: "center",
-    color: "#3aa4ff",
-  },
-  closeWaypointModalButton2: {
-    alignSelf: "flex-end",
-    width: vw(15),
-  },
   waypointTitleInModal2: {
     fontWeight: "600",
     fontSize: 18,
@@ -302,9 +289,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
 
-  modalContent: {
-    height: vh(47),
-  },
   title: {
     fontWeight: "600",
     paddingVertical: vh(0.25),
@@ -351,45 +335,16 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 119, 234,0.3)",
     backgroundColor: "white",
   },
-
-  closeWaypointModalButtonText: {
-    fontWeight: "800",
-    color: "purple",
-  },
-  closeWaypointModalButton: {
-    alignSelf: "flex-end",
-    position: "absolute",
-    bottom: 0,
-    width: vw(15),
-  },
-
   waypointTitleInModal: {
     fontWeight: "700",
     fontSize: 18,
     marginTop: vh(0.5),
     alignSelf: "center",
   },
-
   waypointDescriptionInModal: {
     paddingHorizontal: vw(2),
     fontWeight: "500",
     fontSize: 14,
-  },
-
-  waypointModalContainer: {
-    borderWidth: 2,
-    borderColor: "rgba(0, 119, 234,0.19)",
-    backgroundColor: "white",
-    height: vh(50),
-    top: vh(20),
-    width: vw(80),
-    alignSelf: "center",
-    borderRadius: vh(5),
-    padding: vh(2),
-  },
-  waypointImageContainer: {
-    marginTop: vh(1),
-    alignItems: "center",
   },
   waypointImage: {
     width: vh(14),
@@ -397,11 +352,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
     borderWidth: 3,
     borderColor: "rgba(0, 119, 234,0.3)",
-  },
-  waypointImageInModal: {
-    width: vh(24),
-    height: vh(24),
-    borderRadius: vh(1),
   },
   seeDetails: {
     color: "rgba(0, 119, 234,1)",

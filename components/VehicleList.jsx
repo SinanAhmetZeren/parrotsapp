@@ -28,7 +28,6 @@ export default function VehicleList({ data }) {
 
 const styles = StyleSheet.create({
   container: {
-    // marginBottom: vh(13),
     marginTop: 10,
     borderRadius: vh(2),
   },

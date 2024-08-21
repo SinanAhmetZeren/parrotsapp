@@ -188,9 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     borderColor: "rgba(10, 119, 234,0.2)",
   },
-  imageContainer: {
-    backgroundColor: "white",
-  },
+
   cardImage: {
     width: vw(38),
     height: vh(20),
@@ -206,8 +204,6 @@ const styles = StyleSheet.create({
     padding: vh(0.2),
   },
   header: {
-    //margintop
-
     marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
@@ -215,7 +211,6 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.2),
     alignSelf: "center",
   },
-
   subHeader: {
     fontSize: 12,
     fontWeight: "600",
@@ -253,7 +248,6 @@ const styles = StyleSheet.create({
   },
   vacancyAndVehicle: {
     flexDirection: "row",
-    // backgroundColor: "pink",
     justifyContent: "space-around",
   },
 });

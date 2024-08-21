@@ -95,34 +95,6 @@ const styles = StyleSheet.create({
     borderColor: "#93c9ed",
     width: vw(40),
   },
-  currentBidsTitle2: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#3c9dde",
-    paddingTop: vh(3),
-  },
-  logoImage: {
-    height: vh(20),
-    width: vh(20),
-    borderRadius: vh(10),
-  },
-  currentBidsAndSeeAll2: {
-    marginTop: vh(2),
-    alignItems: "center",
-    alignSelf: "center",
-  },
-  mainBidsContainer2: {
-    marginTop: vh(7.5),
-    borderRadius: vw(5),
-  },
-  buttonSave: {
-    fontSize: 14,
-    color: "white",
-    textAlign: "center",
-    backgroundColor: "#186ff1",
-    marginTop: vh(1),
-    paddingVertical: vh(0.5),
-  },
   container: {
     //margintop
     marginTop: vh(5),
@@ -130,18 +102,5 @@ const styles = StyleSheet.create({
     width: vw(100),
     alignSelf: "center",
     height: vh(95),
-  },
-  recentChats: {
-    fontWeight: "700",
-    fontSize: 26,
-    justifyContent: "center",
-    alignSelf: "center",
-  },
-  flatlist: {
-    backgroundColor: "yellow",
-    marginTop: vh(2),
-    width: vw(94),
-    justifyContent: "center",
-    alignSelf: "center",
   },
 });

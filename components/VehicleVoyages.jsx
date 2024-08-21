@@ -93,7 +93,6 @@ export default function VehicleVoyages({ voyages }) {
 
 const styles = StyleSheet.create({
   singleVoyage: {
-    // backgroundColor: "green",
     padding: vh(1),
     margin: vh(0.3),
     flexDirection: "row",

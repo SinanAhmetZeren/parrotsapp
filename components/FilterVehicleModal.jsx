@@ -102,14 +102,6 @@ const FilterVehicleModal = ({
             </TouchableOpacity>
           </View>
         </View>
-        {/* <View style={styles.floatingIcon}>
-          <Ionicons
-            style={styles.icon}
-            name="car-outline"
-            size={24}
-            color="black"
-          />
-        </View> */}
       </View>
     </Modal>
   );
@@ -189,17 +181,6 @@ const styles = StyleSheet.create({
     width: vw(30),
     borderRadius: 10,
     marginTop: 5,
-  },
-  floatingIcon: {
-    backgroundColor: "white",
-    height: 40,
-    width: 40,
-    borderRadius: 15,
-    position: "absolute",
-    top: vh(10),
-    right: vw(14),
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 
