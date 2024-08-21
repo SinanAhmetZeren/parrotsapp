@@ -14,7 +14,6 @@ import {
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import FavoriteVoyageListVertical from "../components/FavoriteVoyageListVertical";
-// import VehicleList from "../components/VehicleList";
 import FavoriteVehicleList from "../components/FavoriteVehicleList";
 import { useGetFavoriteVoyagesByUserIdQuery } from "../slices/VoyageSlice";
 import { useGetFavoriteVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
@@ -152,9 +151,7 @@ const styles = StyleSheet.create({
     color: "#3c9dde",
     paddingLeft: vw(5),
   },
-
   currentBidsAndSeeAll: {
-    // marginTop: vh(2),
     flexDirection: "row",
     paddingRight: vw(10),
   },
@@ -180,12 +177,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     height: vh(90),
-    // marginTop: vh(5),
-    // backgroundColor: "pink",
   },
-  choiceItem: {
-    marginHorizontal: 15,
-  },
+
   voyageListContainer: {
     width: vw(98),
     overflow: "hidden",
@@ -194,15 +187,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: vh(3),
   },
-  vehicleList: {},
-  name: {
-    fontSize: 19,
-    fontWeight: "600",
-    flexWrap: "wrap",
-    flexShrink: 1,
-    color: "#5b5bff",
-  },
-
   title: {
     fontSize: 18,
     fontWeight: "600",

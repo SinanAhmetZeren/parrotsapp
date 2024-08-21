@@ -77,14 +77,8 @@ const CreateVehicleScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("----");
-      console.log("hello from create vehicle");
-      console.log("----");
-
       return () => {
-        console.log("goodbye from create vehicle");
         checkAndDeleteVehicle(vehicleId);
-        console.log("deleting vehicle with id ", vehicleId);
         setCurrentStep(1);
         setName("");
       };
@@ -417,7 +411,7 @@ const CreateVehicleScreen = () => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => {
                   return (
-                    <View key={index} style={styles2.imageContainer1}>
+                    <View key={index}>
                       <TouchableOpacity
                         onPress={() => {
                           if (item.addedVoyageImageId) {
@@ -517,9 +511,7 @@ const styles2 = StyleSheet.create({
     fontWeight: "700",
     color: "white",
   },
-  imageContainer1: {
-    // backgroundColor: "white",
-  },
+
   voyageImage1: {
     height: vh(13),
     width: vh(13),
@@ -589,22 +581,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     top: vh(-5),
   },
-  calendarStyle: {
-    backgroundColor: "white",
-    width: vw(86),
-    alignSelf: "center",
-    marginBottom: vh(1),
-    borderRadius: vh(3),
-  },
-  checkboxText: {
-    color: "#6b7f9d",
-    fontWeight: "500",
-    paddingRight: vw(2),
-  },
-  auctionFixedPrice: {
-    backgroundColor: "#f1f2f3",
-    borderRadius: vh(3),
-  },
   latLngNameRow: {
     flexDirection: "row",
     backgroundColor: "#f1f2f3",
@@ -642,10 +618,6 @@ const styles = StyleSheet.create({
   },
   selectedChoice: {
     marginTop: vh(1),
-    alignItems: "center",
-  },
-  addWaypoints: {
-    marginTop: vh(4),
     alignItems: "center",
   },
   selectedText: {
@@ -688,18 +660,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
   },
-
-  startEndText: {
-    color: "white",
-  },
-  calendarSelected: {
-    backgroundColor: "rgba(42,200,152,0.15)",
-  },
-  calendarEndStart: {
-    backgroundColor: "rgba(12,200,152,0.9)",
-    color: "white",
-  },
-
   scrollview: {
     height: vh(140),
     top: vh(5),
@@ -746,55 +706,10 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 119, 234,0.1)",
     // borderWidth: 5,
   },
-  mainCheckboxContainer: {
-    paddingHorizontal: vh(1),
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: vh(0.3),
-    backgroundColor: "#f1f2f3",
-    borderRadius: vh(3),
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    margin: vh(0.2),
-    paddingHorizontal: vw(4),
-    paddingVertical: vh(0.5),
-    borderRadius: vh(2),
-  },
-  calendarContainer: {
-    borderRadius: vh(3),
-    backgroundColor: "#f1f2f3",
-    marginBottom: vh(1),
-  },
   formContainer: {
     padding: vh(2),
   },
-  recycle: {
-    color: "purple",
-  },
 
-  createVoyageButton: {
-    width: vw(40),
-    alignSelf: "center",
-    borderRadius: vh(2),
-    overflow: "hidden",
-    marginTop: vh(1),
-  },
-  refetch: {
-    padding: 3,
-    paddingHorizontal: vw(15),
-    borderRadius: vw(9),
-    // display: "none",
-  },
-  step123: {
-    display: "none",
-  },
-
-  imageContainer: {
-    top: vh(0),
-    height: vh(35),
-    width: vw(100),
-  },
   icon: {
     padding: 3,
     margin: 2,
@@ -811,15 +726,6 @@ const styles = StyleSheet.create({
     padding: vh(1),
     borderRadius: vh(1),
   },
-  inputDescription: {
-    color: "rgba(0, 119, 234,0.9)",
-    fontSize: 13,
-    alignSelf: "center",
-    width: vw(23),
-  },
-  voyageDatesContainer: {
-    flexDirection: "row",
-  },
   voyageDates: {
     color: "#6b7f9d",
     fontWeight: "500",
@@ -827,29 +733,10 @@ const styles = StyleSheet.create({
     marginVertical: vh(1),
     alignSelf: "flex-start",
   },
-
   textInput: {
     lineHeight: 21,
     marginVertical: 1,
     fontSize: 14,
     padding: vw(1),
-    // backgroundColor: "green",
-  },
-  textDescriptionInput: {
-    width: vw(60),
-    flexWrap: "wrap",
-    lineHeight: 21,
-    marginVertical: 1,
-    fontSize: 14,
-    padding: vw(1),
-    backgroundColor: "green",
-  },
-  socialBox: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: vh(1.5),
-    marginTop: 2,
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.4)",
   },
 });

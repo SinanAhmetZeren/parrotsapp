@@ -107,7 +107,6 @@ export default function MessagesScreen({ navigation }) {
   }, []);
 
   const handleSearchUsers = async () => {
-    // console.log("currently: ", usersData);
     setUsername(searchText);
     try {
       await refetchUsers();
@@ -233,9 +232,7 @@ const styles = StyleSheet.create({
     height: vh(5),
     borderRadius: vh(2),
   },
-  selectionContainer: {
-    flexDirection: "row",
-  },
+
   currentBidsTitle: {
     fontSize: 26,
     fontWeight: "700",
@@ -248,12 +245,6 @@ const styles = StyleSheet.create({
     color: "#3c9dde",
     paddingLeft: vw(5),
   },
-  nonSelectedTitle: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: "rgba(118, 186, 232,0.5)",
-    paddingLeft: vw(5),
-  },
   currentBidsAndSeeAll: {
     marginTop: vh(2),
     flexDirection: "row",
@@ -262,17 +253,6 @@ const styles = StyleSheet.create({
   mainBidsContainer: {
     borderRadius: vw(5),
     borderColor: "#93c9ed",
-  },
-  mainBidsContainer3: {
-    borderRadius: vw(5),
-    borderColor: "#93c9ed",
-    width: vw(55),
-    alignItems: "center",
-  },
-  mainBidsContainer4: {
-    borderRadius: vw(5),
-    borderColor: "#93c9ed",
-    width: vw(40),
   },
   currentBidsTitle2: {
     fontSize: 20,
@@ -294,26 +274,11 @@ const styles = StyleSheet.create({
     marginTop: vh(7.5),
     borderRadius: vw(5),
   },
-  buttonSave: {
-    fontSize: 14,
-    color: "white",
-    textAlign: "center",
-    backgroundColor: "#186ff1",
-    marginTop: vh(1),
-    paddingVertical: vh(0.5),
-  },
   container: {
-    //marginTop: vh(5),
     backgroundColor: "white",
     width: vw(100),
     alignSelf: "center",
     height: vh(95),
-  },
-  recentChats: {
-    fontWeight: "700",
-    fontSize: 26,
-    justifyContent: "center",
-    alignSelf: "center",
   },
   flatlist: {
     backgroundColor: "yellow",

@@ -24,7 +24,6 @@ const CreateVoyageMapComponent = ({
   setCurrentStep,
   imagesAdded,
 }) => {
-  console.log("images added: ", imagesAdded);
   const [addedWayPoints, setAddedWayPoints] = useState([]);
   const [markerCoords, setMarkerCoords] = useState(null);
   const [latitude, setLatitude] = useState("");
@@ -210,12 +209,9 @@ const CreateVoyageMapComponent = ({
     setLatitude(event.nativeEvent.coordinate.latitude);
     setLongitude(event.nativeEvent.coordinate.longitude);
     setMarkerCoords(event.nativeEvent.coordinate);
-    console.log("tap coordinates: ", event.nativeEvent.coordinate);
-    console.log("tap coordinates: ", event);
   };
 
   const goToHomePage = () => {
-    console.log("pressed");
     setAddedWayPoints([]);
     setMarkerCoords(null);
     setLatitude("");

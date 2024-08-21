@@ -39,7 +39,6 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           Type: vehicleType,
         });
         const url = `/api/Vehicle/AddVehicle?${queryParams}`;
-        console.log("url: ", url);
         return {
           url,
           method: "POST",

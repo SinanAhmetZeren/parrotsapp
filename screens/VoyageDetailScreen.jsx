@@ -154,7 +154,6 @@ const VoyageDetailScreen = ({ navigation }) => {
   const handleShare = async () => {
     const currentScreenLink = getCurrentPageLink();
 
-    console.log("currentScreenLink ", currentScreenLink);
     if (currentScreenLink) {
       try {
         const result = await Share.share({
@@ -200,12 +199,6 @@ const VoyageDetailScreen = ({ navigation }) => {
       params: { userId: userId },
     });
   };
-
-  console.log(
-    "getparent from voyage detail:",
-    navigation.getState().routes[0].name
-  );
-
   const goToVehiclePage = (vehicleId) => {
     const parentScreen = navigation.getState().routes[0].name;
 
@@ -802,13 +795,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(1),
     marginTop: vh(1.5),
   },
-  bidImage: {
-    width: vh(5),
-    height: vh(5),
-    borderRadius: vh(2.5),
-    marginRight: 8,
-    backgroundColor: "grey",
-  },
+
   profileImage: {
     width: vh(3),
     height: vh(3),
@@ -816,11 +803,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     backgroundColor: "grey",
   },
-  bidUsername: {
-    fontSize: 17,
-    fontWeight: "700",
-    width: vw(50),
-  },
+
   offerPrice: {
     fontSize: 18,
     fontWeight: "800",
@@ -857,29 +840,13 @@ const styles = StyleSheet.create({
     marginHorizontal: vw(4),
     marginTop: vh(2),
   },
-  voyageDescriptionTitle: {
-    borderRadius: vw(5),
-    marginHorizontal: vw(4),
-    marginTop: vh(2),
-  },
   voyageRoute: {
     borderRadius: vw(5),
     marginHorizontal: vw(4),
   },
-
   allBidsContainer: {
     marginTop: vh(1),
     padding: vh(0),
-  },
-  singleBidContainer: {
-    flexDirection: "row",
-    padding: vh(0.5),
-    margin: vh(0.3),
-    alignItems: "center",
-    borderRadius: vh(3),
-    backgroundColor: "rgba(0, 119, 234,0.51)",
-    // borderWidth: 1,
-    borderColor: "rgba(10, 119, 234,0.3)",
   },
   currentBidsAndSeeAll: {
     marginTop: vh(2),
@@ -907,22 +874,5 @@ const styles = StyleSheet.create({
   VoyageDataContainer: {
     borderRadius: vh(5),
     marginHorizontal: vw(2),
-  },
-  closeButtonInModal: {
-    alignSelf: "flex-end",
-    marginRight: vw(10),
-    backgroundColor: "#f2fafa",
-    borderRadius: vw(5),
-    borderColor: "#93c9ed",
-    // borderWidth: 2,
-    padding: vw(1),
-    paddingHorizontal: vw(3),
-    marginTop: vh(1),
-  },
-
-  closeTextInModal: {
-    color: "#3c9dde",
-    fontWeight: "700",
-    fontSize: 16,
   },
 });

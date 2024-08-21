@@ -84,13 +84,10 @@ const LoginScreen = ({ navigation }) => {
   });
 
   const signInGoogle = async () => {
-    console.log("Pressed sign in");
-
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       setUserInfo(userInfo);
-      console.log(userInfo);
       setError("");
     } catch (e) {
       setError(e);
@@ -167,10 +164,6 @@ const LoginScreen = ({ navigation }) => {
       setPasswordR2("");
       setRegisterCode2("");
       if (resetPasswordResponse.token) {
-        console.log(
-          "login response userName : ",
-          resetPasswordResponse.userName
-        );
         await dispatch(
           updateAsLoggedIn({
             userId: resetPasswordResponse.userId,
@@ -199,9 +192,7 @@ const LoginScreen = ({ navigation }) => {
       }).unwrap();
       setEmail("");
       setPassword("");
-      console.log("login response: ", loginResponse);
       if (loginResponse.token) {
-        console.log("login response userName : ", loginResponse.userName);
         await dispatch(
           updateAsLoggedIn({
             userId: loginResponse.userId,
@@ -233,8 +224,6 @@ const LoginScreen = ({ navigation }) => {
       setUserNameR("");
       setPasswordR("");
       setPasswordR2("");
-      console.log("hello aaaaa");
-      console.log("register  response ax: ", registerResponse);
 
       // if registration response is 200
       // go to Registration-2
@@ -270,7 +259,6 @@ const LoginScreen = ({ navigation }) => {
 
   const handleConfirm = async () => {
     try {
-      console.log("email: ", emailR);
       const confirmResponse = await confirmUser({
         email: emailR,
         code: registerCode,
@@ -278,8 +266,6 @@ const LoginScreen = ({ navigation }) => {
 
       setRegisterCode("");
       setEmailR("");
-
-      console.log("register  response ax: ", confirmResponse);
 
       if (confirmResponse.token) {
         setLoginOrRegister("Login");
@@ -324,10 +310,6 @@ const LoginScreen = ({ navigation }) => {
   const handlePrintLocal = async () => {
     const storedToken = await AsyncStorage.getItem("storedToken");
     const storedUserId = await AsyncStorage.getItem("storedUserId");
-    console.log(".....");
-    console.log("stored user id: ", storedUserId);
-    console.log("storedToken: ", storedToken?.substring(0, 10) + "...");
-    console.log("username: ", username);
   };
 
   return (
@@ -384,7 +366,6 @@ const LoginScreen = ({ navigation }) => {
               <TouchableOpacity
                 style={styles.forgotPassword}
                 onPress={() => {
-                  console.log("forgot password");
                   setLoginOrRegister("ForgotPassword");
                   handleFocusAll();
                 }}
@@ -407,7 +388,6 @@ const LoginScreen = ({ navigation }) => {
               <TouchableOpacity
                 style={styles.noAccount}
                 onPress={() => {
-                  console.log("no account");
                   setLoginOrRegister("Register1");
                   handleFocusAll();
                 }}
@@ -557,9 +537,6 @@ const LoginScreen = ({ navigation }) => {
                   ]}
                   // onPress={handleRegister}
                   onPress={() => {
-                    // console.log("passwordr:", passwordR);
-                    // console.log("passwordr2: ", passwordR2);
-                    // console.log("is equal: ", passwordR2 === passwordR);
                     if (passwordR !== passwordR2) {
                       Toast.show({
                         type: "success",
@@ -855,17 +832,7 @@ const styles = StyleSheet.create({
   disabled: {
     backgroundColor: "rgba(24,111,241,0.3)",
   },
-  parrotsTextContainer: {
-    marginBottom: vh(3),
-    alignSelf: "center",
-  },
-  parrotsText: {
-    fontSize: 30,
-    fontWeight: "800",
-    fontStyle: "italic",
-    // color: "#2184c6",
-    color: "rgba(74, 165, 225,0.75)",
-  },
+
   loginContainer: {
     marginTop: vh(2),
   },
@@ -902,14 +869,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(24,111,241)",
     borderRadius: vh(1.5),
     width: vw(75),
-  },
-  modalView2: {
-    backgroundColor: "#76bae8",
-    borderRadius: vh(3),
-    borderWidth: 2,
-    borderColor: "#15537d",
-    width: vw(25),
-    alignSelf: "center",
   },
   container: {
     flexDirection: "row",
@@ -955,13 +914,6 @@ const styles = StyleSheet.create({
     width: vw(72),
     height: vh(7),
   },
-  welcomeText: {
-    justifyContent: "center",
-    alignSelf: "center",
-    fontSize: 30,
-    fontWeight: "900",
-    color: "#c3c3c3",
-  },
 });
 
 const styles2 = StyleSheet.create({
@@ -976,21 +928,6 @@ const styles2 = StyleSheet.create({
     marginTop: 50,
     width: "80%",
     backgroundColor: "white",
-  },
-  input: {
-    backgroundColor: "white",
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 12,
-    padding: 8,
-    width: "100%",
-  },
-
-  image: {
-    width: 200,
-    height: 200,
-    borderRadius: 200,
   },
 });
 

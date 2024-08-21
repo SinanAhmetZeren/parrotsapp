@@ -14,7 +14,6 @@ export const SearchUsersComponent = ({ searchResults }) => {
     <>
       {searchResults
         ? searchResults.map((item, index) => {
-            console.log("item: ", item.id);
             return (
               <TouchableOpacity
                 onPress={() => {
