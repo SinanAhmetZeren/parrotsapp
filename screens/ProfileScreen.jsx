@@ -205,6 +205,9 @@ export default function ProfileScreen({ navigation }) {
   }
 
   if (isSuccess && isSuccessVehicles && isSuccessVoyages) {
+    console.log("aaaaa", userData.emailVisible);
+    console.log("bbbbb", socialItemCount);
+
     const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
     const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
@@ -351,7 +354,8 @@ export default function ProfileScreen({ navigation }) {
 
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
-                {socialItemCount > 5 ? (
+                {(socialItemCount > 5 && userData.emailVisible == true) ||
+                (socialItemCount > 6 && userData.emailVisible == false) ? (
                   <TouchableOpacity
                     onPress={() => {
                       console.log("hello");

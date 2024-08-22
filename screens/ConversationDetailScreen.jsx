@@ -32,6 +32,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
     (state) => state.users.userProfileImage
   );
 
+  console.log(currentUserId);
+  console.log(currentUserName);
+  console.log(currentUserProfileImage);
+
   const { conversationUserId, profileImg, name } = route.params;
   const users = { currentUserId, conversationUserId };
   const {

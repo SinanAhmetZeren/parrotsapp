@@ -377,6 +377,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                         placeholder="Enter voyage name"
                         placeholderTextColor="#c3c3c3"
                         value={name}
+                        maxLength={50}
                         onChangeText={(text) => setName(text)}
                       />
                     </View>
@@ -396,6 +397,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                         value={brief}
                         multiline
                         numberOfLines={5}
+                        maxLength={135}
                         onChangeText={(text) => setBrief(text)}
                       />
                     </View>

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React, { useState } from "react";
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 
 import {
   View,
@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   Linking,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -25,12 +26,15 @@ import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useRoute } from "@react-navigation/native";
 import { SocialRenderComponent } from "../components/SocialRenderComponent";
+import { SocialRenderComponentModal } from "../components/SocialRenderComponentModal";
 import VoyageListVertical from "../components/VoyageListVertical";
 import { API_URL } from "@env";
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
   const { userId } = route.params;
+  const [socialItemCount, setSocialItemCount] = useState(0);
+  const [socialModalVisible, setSocialModalVisible] = useState(false);
 
   const {
     data: userData,
@@ -122,6 +126,24 @@ export default function ProfileScreenPublic({ navigation }) {
       const youtubeUrl = `https://www.youtube.com/@${userData.youtube}`;
       Linking.openURL(youtubeUrl);
     }
+  };
+
+  const handleTwitterPress = async () => {
+    const twitterUsername = `${userData.twitter}`;
+    const fallbackUrl = `https://twitter.com/${twitterUsername}`;
+    Linking.openURL(fallbackUrl);
+  };
+
+  const handleTiktokPress = async () => {
+    const tiktokUsername = `${userData.tiktok}`;
+    const fallbackUrl = `https://www.tiktok.com/@${tiktokUsername}`;
+    Linking.openURL(fallbackUrl);
+  };
+
+  const handleLinkedinPress = async () => {
+    const linkedinProfileID = `${userData.linkedin}`;
+    const fallbackUrl = `https://www.linkedin.com/in/${linkedinProfileID}`;
+    Linking.openURL(fallbackUrl);
   };
 
   const handleChangeSelection = (s) => {
@@ -264,11 +286,30 @@ export default function ProfileScreenPublic({ navigation }) {
                   handleYoutubePress={handleYoutubePress}
                   handleFacebookPress={handleFacebookPress}
                   handlePhonePress={handlePhonePress}
+                  handleTwitterPress={handleTwitterPress}
+                  handleTiktokPress={handleTiktokPress}
+                  handleLinkedinPress={handleLinkedinPress}
+                  setSocialItemCount={setSocialItemCount}
                 />
               </View>
 
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
+                {(socialItemCount > 5 && userData.emailVisible == true) ||
+                (socialItemCount > 6 && userData.emailVisible == false) ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log("hello");
+                      setSocialModalVisible(true);
+                    }}
+                    style={styles.extendedAreaContainer}
+                  >
+                    <View style={styles.extendedArea}>
+                      <Text style={styles.moreButton}>see more</Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : null}
+
                 <View style={styles.nameContainer}>
                   <Text style={styles.UserNameProfile}>
                     {userData.userName.length <= 30 ? (
@@ -342,6 +383,38 @@ export default function ProfileScreenPublic({ navigation }) {
               ) : null}
             </View>
           </ScrollView>
+
+          <View>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={socialModalVisible}
+              onRequestClose={() => setSocialModalVisible(false)}
+            >
+              <TouchableOpacity
+                onPress={() => setSocialModalVisible(false)}
+                style={{
+                  flex: 1,
+                  backgroundColor: "rgba(1,1,1,0.3)",
+                }}
+              >
+                <View style={styles.socialRenderComponentModal}>
+                  <SocialRenderComponentModal
+                    userData={userData}
+                    handleEmailPress={handleEmailPress}
+                    handleInstagramPress={handleInstagramPress}
+                    handleYoutubePress={handleYoutubePress}
+                    handleFacebookPress={handleFacebookPress}
+                    handlePhonePress={handlePhonePress}
+                    handleTwitterPress={handleTwitterPress}
+                    handleTiktokPress={handleTiktokPress}
+                    handleLinkedinPress={handleLinkedinPress}
+                    setSocialItemCount={setSocialItemCount}
+                  />
+                </View>
+              </TouchableOpacity>
+            </Modal>
+          </View>
         </View>
       </>
     );
@@ -349,6 +422,41 @@ export default function ProfileScreenPublic({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  socialRenderComponentModal: {
+    top: vh(20),
+    backgroundColor: "white",
+    alignSelf: "center",
+    justifyContent: "center",
+    width: vw(65),
+    borderRadius: vh(2),
+    borderColor: "rgba(10, 119, 234,0.9)",
+    paddingVertical: vh(2),
+  },
+
+  extendedAreaContainer: {
+    alignSelf: "flex-end",
+    position: "absolute",
+    top: vh(-2),
+    right: vw(0),
+    borderRadius: vh(4),
+    // backgroundColor: "pink",
+    zIndex: 100,
+  },
+  extendedArea: {
+    paddingHorizontal: vw(1),
+    paddingVertical: vh(1),
+    // backgroundColor: "red",
+  },
+  moreButton: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "rgba(0, 119, 234,.51)",
+    alignSelf: "flex-end",
+    backgroundColor: "rgba(0, 119, 234,0.051)",
+    borderRadius: vh(2),
+    paddingHorizontal: vw(2),
+    paddingHorizontal: vw(2),
+  },
   UserNameProfile: {
     fontSize: 22,
     fontWeight: "800",
