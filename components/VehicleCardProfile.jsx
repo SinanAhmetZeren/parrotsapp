@@ -167,12 +167,14 @@ export default function VehicleCardProfile({
           <View style={styles.iconAndName}>
             <View style={styles.icon}>{icon}</View>
             <View style={styles.name}>
-              <Text style={styles.headerName}>{vehiclename}</Text>
+              <Text numberOfLines={1} style={styles.headerName}>
+                {vehiclename}
+              </Text>
             </View>
             <View style={styles.vacancy}>
               <Text style={styles.header}>
                 <Feather name="users" size={14} color="rgba(10, 119, 234,1)" />
-                {" " + capacity}
+                {" " + capacity > 100 ? "100+" : capacity}
               </Text>
             </View>
           </View>
@@ -254,5 +256,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "rgba(10, 119, 234,1)",
     textAlign: "center",
+    paddingHorizontal: vw(1),
   },
 });
