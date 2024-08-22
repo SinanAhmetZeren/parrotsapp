@@ -69,7 +69,6 @@ export default function HomeScreen({ navigation }) {
   const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
 
   const username = useSelector((state) => state.users.userName);
-
   // 1. GET LOCATION //
   useEffect(() => {
     async function getLocation() {
@@ -285,21 +284,20 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.welcomebox}>
               <Text style={styles.welcome}>Welcome to Parrots</Text>
 
-              {username.length > 10 ? (
-                username.length > 12 ? (
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={styles.username}>
-                      {username.substring(0, 7)}
-                    </Text>
-                    <Text style={styles.usernameSmall}>{"..."}</Text>
-                    <Text style={styles.username}>!</Text>
-                  </View>
-                ) : (
-                  <Text style={styles.username}>{username}!</Text>
-                )
-              ) : (
-                <Text style={styles.username}>{username}!</Text>
-              )}
+              {username.length < 13 ? (
+                <Text style={styles.usernameLarge}>{username}!</Text>
+              ) : null}
+              {username.length > 12 && username.length < 18 ? ( // 13 to 16
+                <Text style={styles.usernameMedium}>{username}!</Text>
+              ) : null}
+              {username.length > 17 && username.length < 21 ? ( // 17 to 24
+                <Text style={styles.usernameSmall}>{username}!</Text>
+              ) : null}
+              {username.length > 20 ? (
+                <Text style={styles.usernameSmall}>
+                  {username.substring(0, 19)}...!
+                </Text>
+              ) : null}
             </View>
 
             <View>
@@ -569,17 +567,20 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
 
-  username: {
+  usernameLarge: {
     fontSize: 26,
     fontWeight: "700",
     color: "#2ac898",
   },
-
-  usernameSmall: {
-    fontSize: 12,
+  usernameMedium: {
+    fontSize: 18,
     fontWeight: "700",
     color: "#2ac898",
-    alignSelf: "flex-end",
+  },
+  usernameSmall: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#2ac898",
   },
   welcomebox: {
     width: vw(50),

@@ -333,7 +333,7 @@ const CreateVoyageMapComponent = ({
                   multiline
                   numberOfLines={1}
                   onChangeText={(text) => setTitle(text)}
-                  maxLength={20}
+                  maxLength={35}
                 />
               </View>
             </View>

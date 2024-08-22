@@ -20,6 +20,7 @@ import {
   useUpdateBackgroundImageMutation,
   usePatchUserMutation,
   updateUserName,
+  updateUserData,
 } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
@@ -137,6 +138,12 @@ const EditProfileScreen = ({ navigation }) => {
           username,
         })
       );
+      dispatch(
+        updateUserData({
+          image: profileImage,
+        })
+      );
+      console.log("updating user");
     } catch (error) {
       console.error("Error uploading image", error);
     }
@@ -251,6 +258,7 @@ const EditProfileScreen = ({ navigation }) => {
               placeholder="Enter your username"
               value={username}
               onChangeText={(text) => setUsername(text)}
+              maxLength={25}
             />
           </View>
 
@@ -423,7 +431,7 @@ const EditProfileScreen = ({ navigation }) => {
               style={styles.textInput}
               placeholder="Enter your title"
               value={title}
-              maxLength={30}
+              maxLength={40}
               multiline
               onChangeText={(text) => {
                 setTitle(text);
@@ -446,6 +454,7 @@ const EditProfileScreen = ({ navigation }) => {
               value={bio}
               onChangeText={(text) => setBio(text)}
               multiline
+              maxLength={500}
             />
           </View>
 

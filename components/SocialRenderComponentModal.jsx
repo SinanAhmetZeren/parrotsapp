@@ -37,19 +37,20 @@ export const SocialRenderComponentModal = ({
   if (userData.phoneNumber !== null) {
     contactDataArray.push([userData.phoneNumber, 4]);
   }
-  if (userData.twitter !== null) {
+  if (userData?.twitter !== null) {
     contactDataArray.push([userData.twitter, 5]);
   }
-  if (userData.linkedin !== null) {
+  if (userData?.linkedin !== null) {
     contactDataArray.push([userData.linkedin, 6]);
   }
-  if (userData.tiktok !== null) {
+  if (userData?.tiktok !== null) {
     contactDataArray.push([userData.tiktok, 7]);
   }
 
   const renderAllItems = () => {
     if (contactDataArray.length > 0) {
       return contactDataArray.map((x, index) => {
+        console.log(x[1]);
         switch (x[1]) {
           case 0:
             return (
@@ -105,7 +106,7 @@ export const SocialRenderComponentModal = ({
                 handleTwitterPress={handleTwitterPress}
               />
             );
-          case 6:
+          case 7:
             return (
               <TiktokItem
                 style={styles.baseStyle}
@@ -114,7 +115,7 @@ export const SocialRenderComponentModal = ({
                 handleTiktokPress={handleTiktokPress}
               />
             );
-          case 7:
+          case 6:
             return (
               <LinkedinItem
                 style={styles.baseStyle}
@@ -225,6 +226,7 @@ const TwitterItem = ({ twitter, handleTwitterPress, style }) => {
 };
 
 const TiktokItem = ({ tiktok, handleTiktokPress, style }) => {
+  console.log(tiktok);
   return (
     <TouchableOpacity style={style} onPress={() => handleTiktokPress()}>
       <Image

@@ -278,6 +278,7 @@ const CreateVehicleScreen = () => {
                       placeholder="Enter Vehicle Name"
                       placeholderTextColor="#c3c3c3"
                       value={name}
+                      maxLength={50}
                       onChangeText={(text) => setName(text)}
                     />
                   </View>

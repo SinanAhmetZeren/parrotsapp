@@ -465,6 +465,7 @@ const LoginScreen = ({ navigation }) => {
                 placeholderTextColor="#c3c3c3"
                 placeholder="Username (max 25 characters)"
                 value={userNameR}
+                maxLength={25}
                 onChangeText={(text) => handleUserNameRChange(text)}
               />
               <TextInput
