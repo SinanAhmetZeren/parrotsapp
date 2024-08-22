@@ -102,7 +102,9 @@ export default function VoyageCardProfile({
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.header}>{cardHeader}</Text>
+          <Text numberOfLines={2} style={styles.header}>
+            {cardHeader}
+          </Text>
 
           <View style={styles.vacancyAndVehicle}>
             <View>

@@ -84,9 +84,6 @@ export const WaypointItemVoyageDetailScreen = ({
     setModalVisible(true);
   };
 
-  const truncatedDescription =
-    description.length > 100 ? `${description.slice(0, 100)}..` : description;
-
   return (
     <View style={{ marginLeft: vh(1), marginTop: vh(1) }}>
       <TouchableOpacity onPress={() => handleFocusMap()}>
@@ -99,8 +96,12 @@ export const WaypointItemVoyageDetailScreen = ({
           </View>
 
           <View style={styles.titleAndDescription}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>{truncatedDescription}</Text>
+            <Text numberOfLines={1} style={styles.title}>
+              {title}
+            </Text>
+            <Text numberOfLines={6} style={styles.description}>
+              {description}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -127,7 +128,9 @@ export const WaypointItemVoyageDetailScreen = ({
               style={styles.voyageImageInModal}
             />
             <ScrollView style={styles.scrollView}>
-              <Text style={styles.waypointTitleInModal2}>{title}</Text>
+              <Text numberOfLines={2} style={styles.waypointTitleInModal2}>
+                {title}
+              </Text>
               <Text style={styles.waypointDescriptionInModal2}>
                 {description}
               </Text>
@@ -154,9 +157,6 @@ export const WaypointItemVoyageDetailScreen = ({
 export const WaypointItem = ({ title, description, imageUri }) => {
   const [modalVisibleX, setModalVisibleX] = useState(false);
 
-  const truncatedDescription =
-    description.length > 150 ? `${description.slice(0, 150)}...` : description;
-
   return (
     <>
       <TouchableOpacity
@@ -166,9 +166,11 @@ export const WaypointItem = ({ title, description, imageUri }) => {
       >
         <Image source={{ uri: imageUri }} style={styles.voyageImageInModalX} />
         <ScrollView style={styles.scrollViewX}>
-          <Text style={styles.waypointTitleInModal2}>{title}</Text>
-          <Text style={styles.waypointDescriptionInModal2}>
-            {truncatedDescription}
+          <Text numberOfLines={1} style={styles.waypointTitleInModal2}>
+            {title}
+          </Text>
+          <Text numberOfLines={6} style={styles.waypointDescriptionInModal2}>
+            {description}
           </Text>
         </ScrollView>
       </TouchableOpacity>
