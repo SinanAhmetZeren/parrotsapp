@@ -36,35 +36,39 @@ export default function ProfileScreen({ navigation }) {
   const dispatch = useDispatch();
   const [socialItemCount, setSocialItemCount] = useState(0);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
+  const [retryCountUser, setRetryCountUser] = useState(0);
+  const [retryCountVoyages, setRetryCountVoyages] = useState(0);
+  const [retryCountVehicles, setRetryCountVehicles] = useState(0);
+  const [shouldFetchUser, setShouldFetchUser] = useState(false);
+  const [shouldFetchVoyages, setShouldFetchVoyages] = useState(false);
+  const [shouldFetchVehicles, setShouldFetchVehicles] = useState(false);
 
   const {
     data: userData,
-    isLoading,
-    isError,
+    isLoading: isLoadingUser,
+    isError: isErrorUser,
     error,
-    isSuccess,
+    isSuccess: isSuccessUser,
     refetch: refetchUserData,
   } = useGetUserByIdQuery(userId);
 
   const {
     data: VoyagesData,
     isSuccess: isSuccessVoyages,
+    isError: isErrorVoyages,
     isLoading: isLoadingVoyages,
     refetch: refetchVoyageData,
   } = useGetVoyagesByUserByIdQuery(userId);
   const {
     data: VehiclesData,
     isSuccess: isSuccessVehicles,
+    isError: isErrorVehicles,
     isLoading: isLoadingVehicles,
     refetch: refetchVehicleData,
   } = useGetVehiclesByUserByIdQuery(userId);
 
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
-  };
-
-  const handlePressOut = () => {
-    setModalVisible(false);
   };
 
   useFocusEffect(
@@ -95,6 +99,100 @@ export default function ProfileScreen({ navigation }) {
       userData,
     ])
   );
+
+  useEffect(() => {
+    if (
+      (isErrorUser || isErrorVoyages || isErrorVehicles) &&
+      (retryCountUser < 5 || retryCountVoyages < 5 || retryCountVehicles < 5)
+    ) {
+      const timeout = setTimeout(() => {
+        console.log(
+          `User retry count: ${retryCountUser}, Voyage retry count: ${retryCountVoyages}, Vehicles retry count: ${retryCountVehicles}`
+        );
+
+        if (isErrorUser && retryCountUser < 5) {
+          setRetryCountUser((prev) => prev + 1);
+          setShouldFetchUser(true); // Trigger refetch for user
+        }
+
+        if (isErrorVoyages && retryCountVoyages < 5) {
+          setRetryCountVoyages((prev) => prev + 1);
+          setShouldFetchVoyages(true); // Trigger refetch for voyage
+        }
+
+        if (isErrorVehicles && retryCountVehicles < 5) {
+          setRetryCountVehicles((prev) => prev + 1);
+          setShouldFetchVehicles(true); // Trigger refetch for vehicles
+        }
+      }, Math.max(Math.pow(2, retryCountUser), Math.pow(2, retryCountVoyages), Math.pow(2, retryCountVehicles)) * 2000);
+
+      return () => clearTimeout(timeout); // Clean up timeout
+    }
+  }, [
+    isErrorUser,
+    isErrorVoyages,
+    isErrorVehicles,
+    retryCountUser,
+    retryCountVoyages,
+    retryCountVehicles,
+  ]);
+
+  useEffect(() => {
+    if (shouldFetchUser && !isLoadingUser) {
+      refetchUserData(); // Trigger refetch for user
+      setShouldFetchUser(false); // Reset shouldFetchUser
+    }
+
+    if (shouldFetchVoyages && !isLoadingVoyages) {
+      refetchVoyageData(); // Trigger refetch for voyage
+      setShouldFetchVoyages(false); // Reset shouldFetchVoyage
+    }
+
+    if (shouldFetchVehicles && !isLoadingVehicles) {
+      refetchVehicleData(); // Trigger refetch for vehicles
+      setShouldFetchVehicles(false); // Reset shouldFetchVehicles
+    }
+  }, [
+    shouldFetchUser,
+    shouldFetchVoyages,
+    shouldFetchVehicles,
+    isLoadingUser,
+    isLoadingVoyages,
+    isLoadingVehicles,
+    refetchUserData,
+    refetchVoyageData,
+    refetchVehicleData,
+  ]);
+
+  useEffect(() => {
+    if (isSuccessUser) {
+      setShouldFetchUser(false);
+      setRetryCountUser(0);
+      console.log("Success User");
+    } else if (isLoadingUser) {
+      setShouldFetchUser(false);
+    }
+  }, [isSuccessUser, isLoadingUser]);
+
+  useEffect(() => {
+    if (isSuccessVoyages) {
+      setShouldFetchVoyages(false);
+      setRetryCountVoyages(0);
+      console.log("Success Voyage");
+    } else if (isLoadingVoyages) {
+      setShouldFetchVoyages(false);
+    }
+  }, [isSuccessVoyages, isLoadingVoyages]);
+
+  useEffect(() => {
+    if (isSuccessVehicles) {
+      setShouldFetchVehicles(false);
+      setRetryCountVehicles(0);
+      console.log("Success Vehicles");
+    } else if (isLoadingVehicles) {
+      setShouldFetchVehicles(false);
+    }
+  }, [isSuccessVehicles, isLoadingVehicles]);
 
   const handleInstagramPress = async () => {
     if (userData.instagram) {
@@ -192,22 +290,27 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
-  if (isLoading) {
+  if (isLoadingUser || isLoadingVehicles || isLoadingVoyages) {
+    console.log("isloading something");
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
-  if (isError) {
+  if (isErrorUser || isErrorVehicles || isErrorVoyages) {
     return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 50 }}>error...</Text>
+      <View style={styles.mainBidsContainer2}>
+        <View style={styles.currentBidsAndSeeAll2}>
+          <Image
+            source={require("../assets/ParrotsWhiteBg.png")}
+            style={styles.logoImage}
+          />
+          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+        </View>
       </View>
     );
   }
 
-  if (isSuccess && isSuccessVehicles && isSuccessVoyages) {
-    console.log("aaaaa", userData.emailVisible);
-    console.log("bbbbb", socialItemCount);
-
+  if (isSuccessUser && isSuccessVehicles && isSuccessVoyages) {
+    console.log("all success");
     const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
     const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
@@ -358,7 +461,6 @@ export default function ProfileScreen({ navigation }) {
                 (socialItemCount > 6 && userData.emailVisible == false) ? (
                   <TouchableOpacity
                     onPress={() => {
-                      console.log("hello");
                       setSocialModalVisible(true);
                     }}
                     style={styles.extendedAreaContainer}
@@ -481,6 +583,24 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  logoImage: {
+    marginTop: vh(25),
+    height: vh(25),
+    width: vh(25),
+    borderRadius: vh(15),
+  },
+  mainBidsContainer2: { backgroundColor: "white", flex: 1 },
+  currentBidsAndSeeAll2: {
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  currentBidsTitle2: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#3c9dde",
+    textAlign: "center",
+  },
+
   closeButtonAndText2: {
     flexDirection: "row",
     position: "absolute",

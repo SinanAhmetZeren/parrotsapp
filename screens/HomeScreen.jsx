@@ -62,11 +62,26 @@ export default function HomeScreen({ navigation }) {
   const [voyageIdM, setVoyageIdM] = useState("");
   const [latitudeM, setLatitudeM] = useState(0);
   const [longitudeM, setLongitudeM] = useState(0);
+
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
 
-  const [getVoyagesByLocation] = useGetVoyagesByLocationMutation();
-  const [getFilteredVoyages] = useGetFilteredVoyagesMutation();
+  const [
+    getVoyagesByLocation,
+    {
+      isError: isErrorVoyages,
+      isLoading: isLoadingVoyages,
+      isSuccess: isSuccessVoyages,
+    },
+  ] = useGetVoyagesByLocationMutation();
+  const [
+    getFilteredVoyages,
+    {
+      isError: isErrorVoyagesFiltered,
+      isLoading: isLoadingVoyagesFiltered,
+      isSuccess: isSuccessVoyagesFiltered,
+    },
+  ] = useGetFilteredVoyagesMutation();
 
   const username = useSelector((state) => state.users.userName);
   // 1. GET LOCATION //
@@ -192,6 +207,7 @@ export default function HomeScreen({ navigation }) {
     };
 
     const filteredVoyages = await getFilteredVoyages(data);
+
     setInitialVoyages(filteredVoyages.data || []);
   };
 
@@ -276,10 +292,6 @@ export default function HomeScreen({ navigation }) {
               source={require("../assets/parrots-logo-mini.png")}
               style={styles.miniLogo}
             />
-            {/* <Image
-              source={require("../assets/parrotBubble.png")}
-              style={styles.parrotBubble}
-            /> */}
 
             <View style={styles.welcomebox}>
               <Text style={styles.welcome}>Welcome to Parrots</Text>
@@ -374,6 +386,17 @@ export default function HomeScreen({ navigation }) {
               })}
             </MapView>
           </View>
+          {isErrorVoyages ? (
+            <View>
+              <View>
+                <Image
+                  source={require("../assets/ParrotsWhiteBg.png")}
+                  style={styles.logoImage}
+                />
+                <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+              </View>
+            </View>
+          ) : null}
 
           {initialVoyages.length === 0 ? (
             <Text></Text>
@@ -437,6 +460,18 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  currentBidsTitle2: {
+    top: vh(-2),
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#3c9dde",
+    textAlign: "center",
+  },
+  logoImage: {
+    height: vh(25),
+    width: vh(25),
+    alignSelf: "center",
+  },
   buttonClose: {
     fontSize: 18,
     color: "white",
