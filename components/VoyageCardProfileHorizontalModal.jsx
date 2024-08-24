@@ -39,7 +39,7 @@ export default function VoyageCardProfileHorizontalModal({
   const handleNavigation = (voyageId) => {
     // navigation.navigate("VoyageDetail", { voyageId });
 
-    navigation.navigate("ProfileStack", {
+    navigation.navigate("Home", {
       screen: "VoyageDetail",
       params: { voyageId: voyageId },
     });

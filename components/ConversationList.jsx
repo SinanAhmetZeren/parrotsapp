@@ -56,6 +56,6 @@ export default function ConversationList({ data, userId }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
-    height: vh(80),
+    height: vh(85),
   },
 });

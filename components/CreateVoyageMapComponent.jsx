@@ -388,7 +388,7 @@ const CreateVoyageMapComponent = ({
       >
         <Text
           style={[
-            styles.addWaypointText,
+            styles.completeText,
             addedWayPoints.length > 0 && imagesAdded > 0
               ? { backgroundColor: "rgba(0, 119, 234,1)" }
               : { backgroundColor: "rgba(0, 119, 234,.2)" },
@@ -436,6 +436,15 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
     marginBottom: vh(1),
+  },
+  completeText: {
+    alignSelf: "center",
+    padding: vh(1),
+    borderRadius: vh(2),
+    backgroundColor: "rgba(0, 119, 234,1)",
+    color: "white",
+    fontWeight: "600",
+    marginBottom: vh(3),
   },
   addWaypointTextDisabled: {
     alignSelf: "center",

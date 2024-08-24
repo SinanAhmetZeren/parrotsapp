@@ -96,11 +96,10 @@ const styles = StyleSheet.create({
     width: vw(40),
   },
   container: {
-    //margintop
     marginTop: vh(5),
     backgroundColor: "white",
     width: vw(100),
     alignSelf: "center",
-    height: vh(95),
+    height: vh(100),
   },
 });

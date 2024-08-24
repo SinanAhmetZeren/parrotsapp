@@ -108,11 +108,8 @@ const VehicleImagesWithCarousel = ({ vehicleImages }) => {
           style={styles2.closeButtonAndText}
           onPress={handleCloseModal}
         >
-          <View style={styles2.closeButtonInModal2}>
-            <Image
-              style={styles2.logo}
-              source={require("../assets/close-icon.png")}
-            />
+          <View>
+            <Text style={styles2.buttonClose}>Close</Text>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -121,6 +118,16 @@ const VehicleImagesWithCarousel = ({ vehicleImages }) => {
 };
 
 const styles2 = StyleSheet.create({
+  buttonClose: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    alignSelf: "center",
+    backgroundColor: "#186ff1",
+    width: vw(30),
+    borderRadius: vh(4),
+    padding: vw(1),
+  },
   logo: {
     height: vh(5),
     width: vh(5),
@@ -158,7 +165,6 @@ const styles2 = StyleSheet.create({
   closeButtonAndText: {
     flexDirection: "row",
     position: "absolute",
-    height: vh(3.5),
     width: vh(11.45),
     borderRadius: vh(2.5),
     bottom: vh(29),

@@ -79,7 +79,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -757,7 +757,7 @@ const styles = StyleSheet.create({
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
     backgroundColor: "rgb(24,111,241)",
-    borderRadius: vh(1.5),
+    borderRadius: vh(4),
     width: vw(50),
   },
   selection2Disabled: {
@@ -765,7 +765,7 @@ const styles = StyleSheet.create({
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
     backgroundColor: "rgba(24,111,241,.3)",
-    borderRadius: vh(1.5),
+    borderRadius: vh(4),
     width: vw(50),
   },
   loginText: {
@@ -910,8 +910,7 @@ const styles = StyleSheet.create({
 
   scrollview: {
     height: vh(140),
-    top: vh(5),
-    marginBottom: vh(10),
+    marginBottom: vh(2),
     backgroundColor: "white",
   },
   profileContainer: {
