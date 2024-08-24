@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  ScrollView,
   ActivityIndicator,
   Keyboard,
 } from "react-native";
@@ -48,7 +49,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [message, setMessage] = useState("");
   const [messagesToDisplay, setMessagesToDisplay] = useState([]);
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
-  const scrollViewRef = useRef();
 
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
@@ -122,8 +122,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
   }, [messagesData]);
 
   const handleSendMessage = () => {
-    scrollViewRef.current.scrollToEnd({ animated: true });
-
     hubConnection.invoke(
       "SendMessage",
       currentUserId,
@@ -162,26 +160,18 @@ export const ConversationDetailScreen = ({ navigation }) => {
     return (
       <View
         style={{
+          //marginTop: vh(5),
           backgroundColor: "white",
           padding: vh(2),
         }}
       >
         {/* // HEADER // */}
         <View
-          style={
-            textInputBottomMargin !== 0 && {
-              position: "absolute",
-              top: 0,
-              zIndex: 110,
-              paddingLeft: vh(2),
-              paddingTop: vh(2),
-              backgroundColor: "white",
-            }
-          }
+          style={textInputBottomMargin === 0 ? {} : { top: 0, zIndex: 100 }}
         >
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("Messages", {
+              navigation.navigate("Create", {
                 screen: "ProfileScreenPublic",
                 params: { userId: conversationUserId },
               });
@@ -205,18 +195,14 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
         {/* // MESSAGES COMPONENT // */}
         <View
-          style={
-            textInputBottomMargin === 0
-              ? {
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-              : {
-                  top: vh(8) - textInputBottomMargin,
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-          }
+        // style={
+        //   textInputBottomMargin === 0
+        //     ? {}
+        //     : {
+        //         zIndex: 50,
+        //         height: vh(66) - textInputBottomMargin,
+        //       }
+        // }
         >
           <View style={styles.scrollViewMessages}>
             <MessagesComponent
@@ -226,7 +212,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
               userProfileImage={currentUserProfileImage}
               otherUserProfileImg={profileImg}
               otherUserName={name}
-              scrollViewRef={scrollViewRef}
             />
           </View>
         </View>
@@ -241,7 +226,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
                   backgroundColor: "white",
                 }
               : {
-                  top: vh(8) - textInputBottomMargin,
+                  top: vh(0) - textInputBottomMargin,
                   zIndex: 100,
                   backgroundColor: "white",
                 }
@@ -314,8 +299,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: "row",
-    width: vw(100),
-    height: vh(6),
+    width: "100%",
   },
   profileImage: {
     height: vh(6),

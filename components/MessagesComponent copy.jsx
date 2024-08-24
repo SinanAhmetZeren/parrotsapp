@@ -30,7 +30,6 @@ export default function MessagesComponent({
   otherUserProfileImg,
   otherUserName,
   currentUserId,
-  scrollViewRef,
 }) {
   const renderMessages = () => {
     if (data) {
@@ -106,7 +105,7 @@ export default function MessagesComponent({
     }
     return null;
   };
-  // const scrollViewRef = useRef();
+  const scrollViewRef = useRef();
 
   useEffect(() => {
     if (scrollViewRef.current) {
