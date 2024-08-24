@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   containerHorizontal: {
     flexDirection: "row",
     marginLeft: vw(2),
-    marginBottom: vh(13),
+    marginBottom: vh(0),
     marginTop: 10,
     borderRadius: vh(2),
   },

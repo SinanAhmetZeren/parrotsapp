@@ -7,13 +7,14 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   FlatList,
   Modal,
   StyleSheet,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useAcceptBidMutation } from "../slices/VoyageSlice";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, AntDesign } from "@expo/vector-icons";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { API_URL } from "@env";
 
@@ -27,11 +28,8 @@ export const RenderBidsComponent = ({
   refetch,
 }) => {
   const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
-  const visibleBids = bids.slice(0, 6);
+  const visibleBids = bids.slice(0, 5);
   const [acceptBid] = useAcceptBidMutation();
-  const closeModal = () => {
-    setModalVisible(false);
-  };
 
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
@@ -73,16 +71,17 @@ export const RenderBidsComponent = ({
           />
           <View>
             <Text style={styles.bidUsername}>{bid.userName}</Text>
-            <View>
-              <Text style={styles.seeMessage}>
-                {ownVoyage &&
-                  (bid.message
-                    ? bid.message.length > 50
+
+            {ownVoyage && bid.message ? (
+              <View>
+                <Text style={styles.seeMessage}>
+                  {bid.message &&
+                    (bid.message.length > 50
                       ? `${bid.message.substring(0, 47)}...`
-                      : bid.message.substring(0, 50)
-                    : null)}
-              </Text>
-            </View>
+                      : bid.message.substring(0, 50))}
+                </Text>
+              </View>
+            ) : null}
           </View>
           <View>
             <Text style={styles.offerPrice}>
@@ -96,94 +95,93 @@ export const RenderBidsComponent = ({
         animationType="fade"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={closeModal}
+        onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.flatlistContainer}>
-          <FlatList
-            style={styles.BidsFlatList}
-            data={bids}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => {
-              return (
-                <View key={index} style={styles.singleBidContainer2}>
-                  {/* <View style={{ backgroundColor: "red" }}> */}
-                  <View>
-                    <Image
-                      source={{
-                        uri: UserImageBaseUrl + item.userProfileImage,
-                      }}
-                      style={styles.bidImage2}
-                    />
-                  </View>
-                  {/* <View style={{ backgroundColor: "green" }}> */}
-                  <View>
-                    <View style={styles.nameAndMessage}>
-                      <Text style={styles.bidUsername2}>{item.userName}</Text>
-                      <Text style={styles.seeMessage}>
-                        {ownVoyage && (item.message ?? null)}
-                      </Text>
+          <View>
+            <FlatList
+              style={styles.BidsFlatList}
+              data={bids}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item, index }) => {
+                return (
+                  <View key={index} style={styles.singleBidContainer2}>
+                    <View>
+                      <Image
+                        source={{
+                          uri: UserImageBaseUrl + item.userProfileImage,
+                        }}
+                        style={styles.bidImage2}
+                      />
                     </View>
-                  </View>
+                    <View>
+                      <View style={styles.nameAndMessage}>
+                        <Text style={styles.bidUsername2}>{item.userName}</Text>
+                        {ownVoyage && item.message ? (
+                          <View>
+                            <Text style={styles.seeMessage}>
+                              {item.message ?? null}
+                            </Text>
+                          </View>
+                        ) : null}
+                      </View>
+                    </View>
 
-                  <View style={{ flexDirection: "row" }}>
-                    <Text style={styles.offerPrice2}>
-                      {item.currency} {item.offerPrice.toFixed(2)}
-                    </Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text style={styles.offerPrice2}>
+                        {item.currency} {item.offerPrice.toFixed(2)}
+                      </Text>
 
-                    <View style={styles.acceptedButton}>
-                      {item.accepted ? (
-                        <Text>
-                          <Ionicons
-                            name="checkmark-circle"
-                            size={28}
-                            color="#2ac898"
-                          />
-                        </Text>
-                      ) : ownVoyage ? (
-                        <TouchableOpacity
-                          onPress={() =>
-                            handleAcceptBid({
-                              bidId: item.id,
-                              bidUserId: item.userId,
-                            })
-                          }
-                          style={styles.thumbsUpCircle}
-                        >
-                          <Text
-                            style={{
-                              padding: vw(0.9),
-                            }}
-                          >
-                            <FontAwesome
-                              name="thumbs-up"
-                              size={16}
+                      <View style={styles.acceptedButton}>
+                        {item.accepted ? (
+                          <Text>
+                            <Ionicons
+                              name="checkmark-circle"
+                              size={29}
                               color="#2ac898"
                             />
                           </Text>
-                        </TouchableOpacity>
-                      ) : (
-                        <Text>
-                          <Ionicons
-                            name="checkmark-circle-outline"
-                            size={28}
-                            color="#2ac898"
-                          />
-                        </Text>
-                      )}
+                        ) : ownVoyage ? (
+                          <TouchableOpacity
+                            onPress={() =>
+                              handleAcceptBid({
+                                bidId: item.id,
+                                bidUserId: item.userId,
+                              })
+                            }
+                            style={styles.thumbsUpCircle}
+                          >
+                            <Text
+                              style={{
+                                padding: vw(0.9),
+                              }}
+                            >
+                              <FontAwesome
+                                name="thumbs-up"
+                                size={16}
+                                color="#2ac898"
+                              />
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <Text>
+                            <Ionicons
+                              name="checkmark-circle-outline"
+                              size={28}
+                              color="#2ac898"
+                            />
+                          </Text>
+                        )}
+                      </View>
                     </View>
                   </View>
-                </View>
-              );
-            }}
-          />
-          <TouchableOpacity
-            onPress={closeModal}
-            style={styles.closeButtonInModal2}
-          >
-            <Image
-              style={styles.logo}
-              source={require("../assets/close-icon.png")}
+                );
+              }}
             />
+          </View>
+
+          <TouchableOpacity onPress={() => setModalVisible(false)}>
+            <Text style={styles.buttonClose}>Close</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -192,6 +190,17 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
+  buttonClose: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    alignSelf: "center",
+    marginTop: vh(1),
+    backgroundColor: "#186ff1",
+    padding: 5,
+    width: vw(30),
+    borderRadius: vh(4),
+  },
   thumbsUpCircle: {
     borderWidth: 2,
     borderRadius: vh(3),
@@ -202,15 +211,15 @@ const styles = StyleSheet.create({
     height: vh(5),
     width: vh(5),
     borderRadius: vh(10),
-  },
-  closeButtonInModal2: {
     alignSelf: "center",
-    backgroundColor: "rgba(217, 241, 241,.75)",
+    backgroundColor: "white",
     borderRadius: vh(10),
-    padding: vh(1.5),
+    padding: vh(0.5),
     borderColor: "#93c9ed",
-    marginTop: vh(1),
-    marginBottom: vh(15),
+    position: "absolute",
+    top: vh(15.5),
+    right: vw(2),
+    zIndex: 100,
   },
   acceptedButton: {
     marginTop: vh(0.5),
@@ -270,12 +279,12 @@ const styles = StyleSheet.create({
   },
   flatlistContainer: {
     backgroundColor: "rgba(1,1,1,0.4)",
-    height: vh(100),
+    flex: 1,
   },
   BidsFlatList: {
     width: vw(95),
-    height: vh(50),
-    marginTop: vh(30),
+    maxHeight: vh(50),
+    marginTop: vh(20),
     alignSelf: "center",
     backgroundColor: "#f2fafa",
     borderColor: "#bfdff4",
@@ -311,16 +320,5 @@ const styles = StyleSheet.create({
     color: "#3c9dde",
     // backgroundColor: "red",
     alignSelf: "center",
-  },
-  closeButtonInModal: {
-    alignSelf: "center",
-    marginRight: vw(10),
-    backgroundColor: "#f2fafa",
-    borderRadius: vw(5),
-    borderColor: "#93c9ed",
-    padding: vw(1),
-    paddingHorizontal: vw(3),
-    marginTop: vh(1),
-    marginBottom: vh(15),
   },
 });

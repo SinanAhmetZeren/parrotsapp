@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: vw(100),
     alignSelf: "center",
-    height: vh(95),
+    height: vh(100),
   },
   flatlist: {
     backgroundColor: "yellow",

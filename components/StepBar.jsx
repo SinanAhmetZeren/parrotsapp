@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     height: vh(7),
-    top: vh(5),
     backgroundColor: "white",
   },
   activeStep: {

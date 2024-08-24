@@ -96,11 +96,8 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
           style={styles2.closeButtonAndText}
           onPress={handleCloseModal}
         >
-          <View style={styles2.closeButtonInModal2}>
-            <Image
-              style={styles2.logo}
-              source={require("../assets/close-icon.png")}
-            />
+          <View>
+            <Text style={styles2.buttonClose}>Close</Text>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -109,6 +106,16 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
 };
 
 const styles2 = StyleSheet.create({
+  buttonClose: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    alignSelf: "center",
+    backgroundColor: "#186ff1",
+    width: vw(30),
+    borderRadius: vh(4),
+    padding: vw(1),
+  },
   logo: {
     height: vh(5),
     width: vh(5),
@@ -148,7 +155,7 @@ const styles2 = StyleSheet.create({
     flexDirection: "row",
     position: "absolute",
     borderRadius: vh(2.5),
-    bottom: vh(11),
+    bottom: vh(29),
     alignSelf: "center",
   },
 });

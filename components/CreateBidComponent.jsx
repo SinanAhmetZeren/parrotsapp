@@ -440,7 +440,7 @@ const styles2 = StyleSheet.create({
     backgroundColor: "#186ff1",
     padding: 5,
     width: vw(30),
-    borderRadius: 10,
+    borderRadius: vh(4),
     marginTop: 5,
   },
   buttonClear: {
@@ -450,7 +450,7 @@ const styles2 = StyleSheet.create({
     backgroundColor: "#2ac898",
     padding: 5,
     width: vw(30),
-    borderRadius: 10,
+    borderRadius: vh(4),
     marginTop: 5,
   },
   buttonCount: {

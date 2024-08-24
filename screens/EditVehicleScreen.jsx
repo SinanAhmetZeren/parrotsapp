@@ -600,7 +600,6 @@ const styles2 = StyleSheet.create({
     justifyContent: "center",
   },
   modalViewRed2: {
-    backgroundColor: "red",
     borderRadius: vh(3),
     borderWidth: 2,
     borderColor: "orange",
@@ -655,7 +654,6 @@ const styles2 = StyleSheet.create({
     width: vw(45),
   },
   modalViewRed: {
-    backgroundColor: "red",
     borderRadius: vh(3),
     borderWidth: 2,
     borderColor: "orange",

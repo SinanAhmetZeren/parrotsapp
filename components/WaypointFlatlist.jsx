@@ -140,11 +140,8 @@ export const WaypointItemVoyageDetailScreen = ({
               style={styles.closeButtonAndText}
               onPress={() => setModalVisible(false)}
             >
-              <View style={styles.closeButtonInModal2}>
-                <Image
-                  style={styles.logo}
-                  source={require("../assets/close-icon.png")}
-                />
+              <View>
+                <Text style={styles.buttonClose}>Close</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -204,11 +201,8 @@ export const WaypointItem = ({ title, description, imageUri }) => {
               style={styles.closeButtonAndText}
               onPress={() => setModalVisibleX(false)}
             >
-              <View style={styles.closeButtonInModal2}>
-                <Image
-                  style={styles.logo}
-                  source={require("../assets/close-icon.png")}
-                />
+              <View>
+                <Text style={styles.buttonClose}>Close</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -219,6 +213,16 @@ export const WaypointItem = ({ title, description, imageUri }) => {
 };
 
 const styles = StyleSheet.create({
+  buttonClose: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    alignSelf: "center",
+    backgroundColor: "#186ff1",
+    width: vw(30),
+    borderRadius: vh(4),
+    padding: vw(1),
+  },
   logo: {
     height: vh(5),
     width: vh(5),

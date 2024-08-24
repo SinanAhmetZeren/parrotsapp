@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
     backgroundColor: "rgb(24,111,241)",
-    borderRadius: vh(1.5),
+    borderRadius: vh(4),
     width: vw(50),
   },
   selection2Disabled: {
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
     backgroundColor: "rgba(24,111,241,.3)",
-    borderRadius: vh(1.5),
+    borderRadius: vh(4),
     width: vw(50),
   },
   addWaypointText: {
@@ -663,8 +663,7 @@ const styles = StyleSheet.create({
   },
   scrollview: {
     height: vh(140),
-    top: vh(5),
-    marginBottom: vh(10),
+    marginBottom: vh(5),
     backgroundColor: "white",
   },
   overlay: {
