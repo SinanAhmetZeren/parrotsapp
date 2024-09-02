@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  RefreshControl,
+  ScrollView,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
@@ -28,6 +30,8 @@ export default function MessagesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
   const [searchText, setSearchText] = useState("");
   const [username, setUsername] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const {
     data: messagesData,
@@ -57,6 +61,15 @@ export default function MessagesScreen({ navigation }) {
       .build();
   }, [userId]);
 
+  useEffect(() => {
+    if (isErrorMessages) {
+      setHasError(true);
+    }
+    if (!isErrorMessages) {
+      setHasError(false);
+    }
+  }, [isErrorMessages]);
+
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
@@ -73,6 +86,20 @@ export default function MessagesScreen({ navigation }) {
       };
     }, [refetch, navigation])
   );
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    console.log("refreshing ");
+    try {
+      refetch();
+      setHasError(false);
+      console.log("refreshing 2 ");
+    } catch (error) {
+      console.log(error);
+      setHasError(true);
+    }
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     const startHubConnection = async () => {
@@ -115,6 +142,31 @@ export default function MessagesScreen({ navigation }) {
       console.error("Error refetching users data:", error);
     }
   };
+
+  if (hasError) {
+    return (
+      <ScrollView
+        style={styles.mainBidsContainer2}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#9Bd35A", "#689F38"]} // Android
+            tintColor="#689F38" // iOS
+          />
+        }
+      >
+        <View style={styles.currentBidsAndSeeAll2}>
+          <Image
+            source={require("../assets/ParrotsWhiteBg.png")}
+            style={styles.logoImage}
+          />
+          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+        </View>
+      </ScrollView>
+    );
+  }
 
   if (isSuccessMessages) {
     return (

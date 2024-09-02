@@ -446,6 +446,9 @@ export default function HomeScreen({ navigation }) {
                   style={styles.logoImage}
                 />
                 <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+                <Text style={styles.currentBidsTitle3}>
+                  Swipe Down to Retry
+                </Text>
               </View>
             </View>
           ) : null}
@@ -512,16 +515,23 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  currentBidsTitle3: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#3c9dde",
+    textAlign: "center",
+  },
   currentBidsTitle2: {
-    top: vh(-2),
+    top: vh(-3),
     fontSize: 17,
     fontWeight: "700",
     color: "#3c9dde",
     textAlign: "center",
   },
   logoImage: {
-    height: vh(25),
-    width: vh(25),
+    height: vh(23),
+    width: vh(23),
     alignSelf: "center",
   },
   buttonClose: {
