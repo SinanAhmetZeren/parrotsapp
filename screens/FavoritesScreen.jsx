@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   View,
@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Image,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import FavoriteVoyageListVertical from "../components/FavoriteVoyageListVertical";
@@ -21,6 +22,9 @@ import { useSelector } from "react-redux";
 
 export default function FavoritesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
+  const [hasError, setHasError] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     data: VoyagesData,
@@ -36,6 +40,35 @@ export default function FavoritesScreen({ navigation }) {
     isLoading: isLoadingVehicles,
     refetch: refetchVehicles,
   } = useGetFavoriteVehiclesByUserByIdQuery(userId);
+
+  useEffect(() => {
+    if (isErrorVehicles || isErrorVoyages) {
+      setHasError(true);
+      console.log("has Error");
+    }
+    if (!isErrorVehicles && !isErrorVoyages) {
+      setHasError(false);
+      console.log("has no Error");
+    }
+  }, [isErrorVoyages, isErrorVehicles]);
+
+  const onRefresh = async () => {
+    console.log("refreshing ");
+    setRefreshing(true);
+    setHasError(false);
+    try {
+      setIsLoading(true);
+      await refetchVehicles();
+      await refetchVoyages();
+      console.log("...", VoyagesData[0].id);
+      console.log("...", VehiclesData[0].id);
+      console.log("refreshing 2 ");
+    } catch (error) {
+      console.log(error);
+      setHasError(true);
+    }
+    setRefreshing(false);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -60,12 +93,29 @@ export default function FavoritesScreen({ navigation }) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
-  if (isErrorVehicles || isErrorVoyages) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 50 }}>error...</Text>
-      </View>
-    );
+  {
+    if (hasError)
+      return (
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#9Bd35A", "#689F38"]} // Android
+              tintColor="#689F38" // iOS
+            />
+          }
+        >
+          <View>
+            <Image
+              source={require("../assets/ParrotsWhiteBg.png")}
+              style={styles.logoImage}
+            />
+            <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+            <Text style={styles.currentBidsTitle3}>Swipe Down to Retry</Text>
+          </View>
+        </ScrollView>
+      );
   }
 
   if (isSuccessVehicles && isSuccessVoyages) {

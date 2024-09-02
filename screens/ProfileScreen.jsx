@@ -13,6 +13,7 @@ import {
   Linking,
   ActivityIndicator,
   Modal,
+  RefreshControl,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -42,6 +43,9 @@ export default function ProfileScreen({ navigation }) {
   const [shouldFetchUser, setShouldFetchUser] = useState(false);
   const [shouldFetchVoyages, setShouldFetchVoyages] = useState(false);
   const [shouldFetchVehicles, setShouldFetchVehicles] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     data: userData,
@@ -89,6 +93,12 @@ export default function ProfileScreen({ navigation }) {
         }
       };
       fetchData();
+      console.log("1", isSuccessUser);
+      console.log("2", isSuccessVehicles);
+      console.log("3", isSuccessVoyages);
+      console.log("4", isErrorUser);
+      console.log("5", isErrorVehicles);
+      console.log("6", isErrorVoyages);
     }, [
       refetchVehicleData,
       refetchVoyageData,
@@ -101,98 +111,32 @@ export default function ProfileScreen({ navigation }) {
   );
 
   useEffect(() => {
-    if (
-      (isErrorUser || isErrorVoyages || isErrorVehicles) &&
-      (retryCountUser < 5 || retryCountVoyages < 5 || retryCountVehicles < 5)
-    ) {
-      const timeout = setTimeout(() => {
-        console.log(
-          `User retry count: ${retryCountUser}, Voyage retry count: ${retryCountVoyages}, Vehicles retry count: ${retryCountVehicles}`
-        );
-
-        if (isErrorUser && retryCountUser < 5) {
-          setRetryCountUser((prev) => prev + 1);
-          setShouldFetchUser(true); // Trigger refetch for user
-        }
-
-        if (isErrorVoyages && retryCountVoyages < 5) {
-          setRetryCountVoyages((prev) => prev + 1);
-          setShouldFetchVoyages(true); // Trigger refetch for voyage
-        }
-
-        if (isErrorVehicles && retryCountVehicles < 5) {
-          setRetryCountVehicles((prev) => prev + 1);
-          setShouldFetchVehicles(true); // Trigger refetch for vehicles
-        }
-      }, Math.max(Math.pow(2, retryCountUser), Math.pow(2, retryCountVoyages), Math.pow(2, retryCountVehicles)) * 2000);
-
-      return () => clearTimeout(timeout); // Clean up timeout
+    if (isErrorUser || isErrorVehicles || isErrorVoyages) {
+      setHasError(true);
     }
-  }, [
-    isErrorUser,
-    isErrorVoyages,
-    isErrorVehicles,
-    retryCountUser,
-    retryCountVoyages,
-    retryCountVehicles,
-  ]);
+  }, [isErrorUser, isErrorVehicles, isErrorVoyages]);
 
-  useEffect(() => {
-    if (shouldFetchUser && !isLoadingUser) {
-      refetchUserData(); // Trigger refetch for user
-      setShouldFetchUser(false); // Reset shouldFetchUser
+  const onRefresh = () => {
+    setRefreshing(true);
+    setHasError(false);
+    console.log("refreshing 1");
+    try {
+      const refreshData = async () => {
+        setIsLoading(true);
+        console.log("refreshing 2");
+        await refetchUserData();
+        await refetchVehicleData();
+        await refetchVoyageData();
+        setIsLoading(false);
+      };
+      refreshData();
+      console.log("refreshing 3");
+    } catch (error) {
+      console.log(error);
+      setHasError(true);
     }
-
-    if (shouldFetchVoyages && !isLoadingVoyages) {
-      refetchVoyageData(); // Trigger refetch for voyage
-      setShouldFetchVoyages(false); // Reset shouldFetchVoyage
-    }
-
-    if (shouldFetchVehicles && !isLoadingVehicles) {
-      refetchVehicleData(); // Trigger refetch for vehicles
-      setShouldFetchVehicles(false); // Reset shouldFetchVehicles
-    }
-  }, [
-    shouldFetchUser,
-    shouldFetchVoyages,
-    shouldFetchVehicles,
-    isLoadingUser,
-    isLoadingVoyages,
-    isLoadingVehicles,
-    refetchUserData,
-    refetchVoyageData,
-    refetchVehicleData,
-  ]);
-
-  useEffect(() => {
-    if (isSuccessUser) {
-      setShouldFetchUser(false);
-      setRetryCountUser(0);
-      console.log("Success User");
-    } else if (isLoadingUser) {
-      setShouldFetchUser(false);
-    }
-  }, [isSuccessUser, isLoadingUser]);
-
-  useEffect(() => {
-    if (isSuccessVoyages) {
-      setShouldFetchVoyages(false);
-      setRetryCountVoyages(0);
-      console.log("Success Voyage");
-    } else if (isLoadingVoyages) {
-      setShouldFetchVoyages(false);
-    }
-  }, [isSuccessVoyages, isLoadingVoyages]);
-
-  useEffect(() => {
-    if (isSuccessVehicles) {
-      setShouldFetchVehicles(false);
-      setRetryCountVehicles(0);
-      console.log("Success Vehicles");
-    } else if (isLoadingVehicles) {
-      setShouldFetchVehicles(false);
-    }
-  }, [isSuccessVehicles, isLoadingVehicles]);
+    setRefreshing(false);
+  };
 
   const handleInstagramPress = async () => {
     if (userData.instagram) {
@@ -290,27 +234,39 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
-  if (isLoadingUser || isLoadingVehicles || isLoadingVoyages) {
+  if (isLoadingUser || isLoadingVehicles || isLoadingVoyages || isLoading) {
     console.log("isloading something");
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
-  if (isErrorUser || isErrorVehicles || isErrorVoyages) {
+  if (hasError) {
     return (
-      <View style={styles.mainBidsContainer2}>
+      <ScrollView
+        style={styles.mainBidsContainer2}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#9Bd35A", "#689F38"]} // Android
+            tintColor="#689F38" // iOS
+          />
+        }
+      >
         <View style={styles.currentBidsAndSeeAll2}>
           <Image
             source={require("../assets/ParrotsWhiteBg.png")}
             style={styles.logoImage}
           />
           <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 
   if (isSuccessUser && isSuccessVehicles && isSuccessVoyages) {
-    console.log("all success");
+    console.log("is success user", isSuccessUser);
+    // setHasError(false);
     const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
     const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
