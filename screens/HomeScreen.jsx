@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Modal,
   Image,
+  RefreshControl,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
@@ -62,6 +63,8 @@ export default function HomeScreen({ navigation }) {
   const [voyageIdM, setVoyageIdM] = useState("");
   const [latitudeM, setLatitudeM] = useState(0);
   const [longitudeM, setLongitudeM] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
@@ -137,6 +140,43 @@ export default function HomeScreen({ navigation }) {
     }
   }, [initialLatitude, initialLongitude]);
 
+  useEffect(() => {
+    if (isErrorVoyages) {
+      setHasError(true);
+    }
+  }, [isErrorVoyages]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setHasError(false);
+    console.log("refreshing ");
+    try {
+      const getVoyages = async () => {
+        const lat1 = initialLatitude - 0.15;
+        const lat2 = initialLatitude + 0.15;
+        const lon1 = initialLongitude - 0.2;
+        const lon2 = initialLongitude + 0.2;
+
+        setIsLoading(true);
+
+        const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
+        setInitialVoyages(voyages.data || []);
+        setIsLoading(false);
+      };
+
+      getVoyages();
+
+      // console.log(initialVoyages);
+      console.log("latitude", latitude);
+      console.log("longitude", longitude);
+      console.log("refreshing 2 ");
+    } catch (error) {
+      console.log(error);
+      setHasError(true);
+    }
+    setRefreshing(false);
+  };
+
   const updateSelectedVoyageData = (item) => {
     setVoyageIdM(item.id);
     setCardHeaderM(item.name);
@@ -205,6 +245,7 @@ export default function HomeScreen({ navigation }) {
       formattedStartDate,
       formattedEndDate,
     };
+    console.log("latitude", latitude);
 
     const filteredVoyages = await getFilteredVoyages(data);
 
@@ -253,7 +294,17 @@ export default function HomeScreen({ navigation }) {
     };
 
     return (
-      <ScrollView style={styles.scrollview}>
+      <ScrollView
+        style={styles.scrollview}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#9Bd35A", "#689F38"]} // Android
+            tintColor="#689F38" // iOS
+          />
+        }
+      >
         <View style={styles.countModal}>
           <FilterCountModal
             isCountFiltered={isCountFiltered}
@@ -386,7 +437,8 @@ export default function HomeScreen({ navigation }) {
               })}
             </MapView>
           </View>
-          {isErrorVoyages ? (
+          {/* {isErrorVoyages ? ( */}
+          {hasError ? (
             <View>
               <View>
                 <Image

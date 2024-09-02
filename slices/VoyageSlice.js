@@ -200,6 +200,8 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           Vacancy: count.toString(),
         });
 
+        console.log("query params: ", queryParams);
+
         if (selectedVehicleType !== undefined && selectedVehicleType !== null) {
           queryParams.append("VehicleType", selectedVehicleType);
         }
