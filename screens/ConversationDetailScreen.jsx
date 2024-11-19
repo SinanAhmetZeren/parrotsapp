@@ -11,6 +11,7 @@ import {
   Image,
   StyleSheet,
   ActivityIndicator,
+  RefreshControl,
   Keyboard,
 } from "react-native";
 import { useGetMessagesBetweenUsersQuery } from "../slices/MessageSlice";
@@ -22,8 +23,12 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
+import { ScrollView } from "react-native-web";
 
 export const ConversationDetailScreen = ({ navigation }) => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
   const currentUserName = useSelector((state) => state.users.userName);
@@ -31,16 +36,12 @@ export const ConversationDetailScreen = ({ navigation }) => {
     (state) => state.users.userProfileImage
   );
 
-  console.log(currentUserId);
-  console.log(currentUserName);
-  console.log(currentUserProfileImage);
-
   const { conversationUserId, profileImg, name } = route.params;
   const users = { currentUserId, conversationUserId };
   const {
     data: messagesData,
     isLoading: isLoadingMessages,
-    isError,
+    isError: isErrorMessages,
     error,
     isSuccess: isSuccessMessages,
     refetch,
@@ -55,6 +56,28 @@ export const ConversationDetailScreen = ({ navigation }) => {
       .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
       .build();
   }, [currentUserId]);
+
+  useEffect(() => {
+    if (isErrorMessages) {
+      setHasError(true);
+    }
+    if (!isErrorMessages) {
+      setHasError(false);
+    }
+  }, [isErrorMessages]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setHasError(false);
+    console.log("refreshing ");
+    try {
+      refetch();
+    } catch (error) {
+      console.log(error);
+      setHasError(true);
+    }
+    setRefreshing(false);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -121,7 +144,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
     if (messagesData) setMessagesToDisplay(messagesData.data);
   }, [messagesData]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage2 = () => {
     scrollViewRef.current.scrollToEnd({ animated: true });
 
     hubConnection.invoke(
@@ -153,6 +176,78 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
     setMessage("");
   };
+
+  const handleSendMessage = async () => {
+    scrollViewRef.current.scrollToEnd({ animated: true });
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const hours = String(currentDate.getHours()).padStart(2, "0");
+    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+    const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+    const milliseconds = String(currentDate.getMilliseconds()).padStart(3, "0");
+    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
+
+    const sentMessage = {
+      dateTime: formattedDateTime,
+      receiverId: conversationUserId,
+      senderId: currentUserId,
+      text: message,
+    };
+
+    // Optimistic UI Update
+    setMessagesToDisplay((prevMessages) => {
+      return [...(prevMessages ?? []), sentMessage];
+    });
+
+    setMessage("");
+
+    try {
+      await hubConnection.invoke(
+        "SendMessage",
+        currentUserId,
+        conversationUserId,
+        message
+      );
+      console.log("Message sent successfully.");
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      setMessagesToDisplay((prevMessages) => {
+        return prevMessages.filter(
+          (msg) => msg.dateTime !== sentMessage.dateTime
+        );
+      });
+      alert(
+        "Failed to send message. Please check your connection and try again."
+      );
+    }
+  };
+
+  if (hasError) {
+    return (
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#9Bd35A", "#689F38"]} // Android
+            tintColor="#689F38" // iOS
+          />
+        }
+      >
+        <View>
+          <Image
+            source={require("../assets/ParrotsWhiteBg.png")}
+            style={styles.logoImage}
+          />
+          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle3}>Swipe Down to Retry</Text>
+        </View>
+      </ScrollView>
+    );
+  }
 
   if (isLoadingMessages) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;

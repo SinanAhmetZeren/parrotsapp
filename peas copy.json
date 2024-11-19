@@ -16,18 +16,9 @@
         "simulator": true
       }
     },
-    "production": {
-      "android": {
-        "buildType": "apk"
-      },
-      "ios": {
-        "simulator": false
-      }
-    }
+    "production": {}
   },
   "submit": {
-    "production": {
-      // Configure for app submission (optional)
-    }
+    "production": {}
   }
 }
