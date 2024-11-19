@@ -101,6 +101,49 @@ const CreateVehicleScreen = () => {
 
   const handleCreateVehicle = async () => {
     if (!image) {
+      return; // Optionally display an alert to the user
+    }
+
+    const formData = new FormData();
+    formData.append("imageFile", {
+      uri: image,
+      type: "image/jpeg",
+      name: "profileImage.jpg",
+    });
+
+    setIsCreatingVehicle(true);
+    try {
+      const response = await createVehicle({
+        formData,
+        name,
+        description,
+        userId,
+        vehicleType,
+        capacity,
+      });
+      console.log("-->>", response);
+      const createdVehicleId = response.data.data.id;
+
+      setVehicleId(createdVehicleId);
+      setDescription("");
+      setCapacity("");
+      setVehicleType("");
+      setImage("");
+      setVoyageImage("");
+      setAddedVehicleImages([]);
+      setCurrentStep(2);
+    } catch (error) {
+      alert(
+        "Failed to create vehicle. Please check your connection and try again."
+      );
+      console.error("Error creating vehicle:", error);
+    } finally {
+      setIsCreatingVehicle(false);
+    }
+  };
+
+  const handleCreateVehicle2 = async () => {
+    if (!image) {
       return;
     }
 
@@ -138,7 +181,7 @@ const CreateVehicleScreen = () => {
     setIsCreatingVehicle(false);
   };
 
-  const handleUploadImage = async () => {
+  const handleUploadImage2 = async () => {
     if (!voyageImage) {
       return;
     }
@@ -170,6 +213,41 @@ const CreateVehicleScreen = () => {
     setIsUploadingImage(false);
   };
 
+  const handleUploadImage = useCallback(async () => {
+    if (!voyageImage) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("imageFile", {
+      uri: voyageImage,
+      type: "image/jpeg",
+      name: "profileImage.jpg",
+    });
+
+    setIsUploadingImage(true);
+    try {
+      const addedVehicleImageResponse = await addVehicleImage({
+        formData,
+        vehicleId,
+      });
+
+      const addedVoyageImageId = addedVehicleImageResponse.data.imagePath;
+      const newItem = {
+        addedVoyageImageId,
+        voyageImage,
+      };
+      setAddedVehicleImages((prevImages) => [...prevImages, newItem]);
+      setVoyageImage(null);
+    } catch (error) {
+      console.error("Error uploading image", error);
+      alert(
+        "Failed to upload image. Please check your connection and try again."
+      );
+    }
+    setIsUploadingImage(false);
+  }, [voyageImage, vehicleId, addVehicleImage]);
+
   const pickProfileImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -195,11 +273,28 @@ const CreateVehicleScreen = () => {
     }
   };
 
-  const handleDeleteImage = (imageId) => {
+  const handleDeleteImage2 = (imageId) => {
     deleteVehicleImage(imageId);
     setAddedVehicleImages((prevImages) =>
       prevImages.filter((item) => item.addedVoyageImageId !== imageId)
     );
+  };
+
+  const handleDeleteImage = async (imageId) => {
+    const previousImages = [...addedVehicleImages];
+    setAddedVehicleImages(
+      previousImages.filter((item) => item.addedVoyageImageId !== imageId)
+    );
+
+    try {
+      await deleteVehicleImage(imageId);
+    } catch (error) {
+      console.error("Error deleting image", error);
+      setAddedVehicleImages(previousImages);
+      alert(
+        "Failed to delete image. Please check your connection and try again."
+      );
+    }
   };
 
   const VehicleTypes = [
