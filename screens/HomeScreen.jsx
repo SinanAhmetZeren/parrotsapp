@@ -15,6 +15,7 @@ import {
   RefreshControl,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -31,7 +32,6 @@ import {
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
 import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
-import { CommonActions } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -65,10 +65,8 @@ export default function HomeScreen({ navigation }) {
   const [longitudeM, setLongitudeM] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
-
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
-
   const [
     getVoyagesByLocation,
     {
@@ -86,6 +84,33 @@ export default function HomeScreen({ navigation }) {
     },
   ] = useGetFilteredVoyagesMutation();
 
+  const logAllAsyncStorage = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const result = await AsyncStorage.multiGet(keys);
+
+      console.log("📦 AsyncStorage contents:");
+      result.forEach(([key, value]) => {
+        console.log(`  ${key}: ${value}`);
+      });
+    } catch (e) {
+      console.error("Failed to load AsyncStorage data", e);
+    }
+  };
+
+  useEffect(() => {
+    AsyncStorage.setItem(
+      "storedToken",
+      "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InNpbmFuYWhtZXR6ZXJlbiIsIm5hbWVpZCI6ImY0OTY2M2Y3LWUyNjYtNDdkNi04NTM3LTE5NjE1NTY1NWNkOSIsImVtYWlsIjoic2luYW5haG1ldHplcmVuQGdtYWlsLmNvbSIsIm5iZiI6MTc0OTA2NzEwMCwiZXhwIjoxNzQ5MTUzNTAwLCJpYXQiOjE3NDkwNjcxMDB9.9auT62IpmI3nyoWFWYnMBygD9gt5-uvFDIWHFTsQlVaCwSo99MVy4jSytVWuLXmVuskNXBFeEbBzdoDMC1CFNA"
+    );
+    AsyncStorage.setItem(
+      "storedRefreshToken",
+      "XoWiYgsFZyzdYB5AECYxGaFEHWEMALLHtOy4ixVvJgA="
+    );
+
+    logAllAsyncStorage();
+  }, []);
+
   const username = useSelector((state) => state.users.userName);
   // 1. GET LOCATION //
   useEffect(() => {
@@ -97,8 +122,10 @@ export default function HomeScreen({ navigation }) {
           return;
         }
         const location = await Location.getCurrentPositionAsync({});
-        const lat = location.coords.latitude;
-        const lon = location.coords.longitude;
+        // console.log(location, "location");
+        const lat = location?.coords?.latitude;
+        const lon = location?.coords?.longitude;
+
         //const lat = 52.2;  // cambridge
         //const lon = 0.13;  // cambridge
         setInitialLatitude(lat);
@@ -160,6 +187,7 @@ export default function HomeScreen({ navigation }) {
         setIsLoading(true);
 
         const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
+        console.log("voyages -->>", voyages);
         setInitialVoyages(voyages.data || []);
         setIsLoading(false);
       };
@@ -265,11 +293,15 @@ export default function HomeScreen({ navigation }) {
   }
 
   const handleRegionChangeComplete = (newRegion) => {
-    setLatitude(newRegion.latitude);
-    setLongitude(newRegion.longitude);
-    setLatitudeDelta(newRegion.latitudeDelta);
-    setLongitudeDelta(newRegion.longitudeDelta);
+    setLatitude(newRegion?.latitude);
+    setLongitude(newRegion?.longitude);
+    setLatitudeDelta(newRegion?.latitudeDelta);
+    setLongitudeDelta(newRegion?.longitudeDelta);
   };
+
+  useEffect(() => {
+    console.log("hello");
+  }, []);
 
   if (isLoading) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
@@ -421,13 +453,25 @@ export default function HomeScreen({ navigation }) {
               onRegionChangeComplete={handleRegionChangeComplete}
             >
               {initialVoyages.map((item, index) => {
+                const waypoint = item.waypoints?.[0];
+                const latitude = waypoint?.latitude;
+                const longitude = waypoint?.longitude;
+
+                // Skip rendering if coordinates are invalid
+                if (
+                  typeof latitude !== "number" ||
+                  typeof longitude !== "number"
+                ) {
+                  return null;
+                }
+
                 return (
                   <Marker
                     key={item.id}
                     pinColor={"#2ac898"}
                     coordinate={{
-                      latitude: item.waypoints[0].latitude,
-                      longitude: item.waypoints[0].longitude,
+                      latitude: item.waypoints[0]?.latitude,
+                      longitude: item.waypoints[0]?.longitude,
                     }}
                     onPress={() => {
                       updateSelectedVoyageData(item);
