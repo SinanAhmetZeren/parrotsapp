@@ -181,6 +181,11 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     getFilteredVoyages: builder.mutation({
       query: (data) => {
+        console.log("getFilteredVoyages called with data: ", data);
+        if (!data) {
+          throw new Error("Data is required for getFilteredVoyages");
+        }
+
         const {
           latitude,
           longitude,

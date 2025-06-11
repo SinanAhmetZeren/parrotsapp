@@ -8,6 +8,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 
 export default function VoyageListHorizontal({ data, focusMap }) {
   const renderItem = ({ item }) => {
+    console.log("Rendering item:", item);
     return (
       <VoyageCardProfileHorizontal
         key={item.id}
@@ -20,8 +21,8 @@ export default function VoyageListHorizontal({ data, focusMap }) {
         enddate={item.endDate}
         vehiclename={item.vehicle.name}
         vehicletype={item.vehicle.type}
-        latitude={item.waypoints[0].latitude}
-        longitude={item.waypoints[0].longitude}
+        latitude={item.waypoints[0]?.latitude}
+        longitude={item.waypoints[0]?.longitude}
         focusMap={focusMap}
       />
     );
