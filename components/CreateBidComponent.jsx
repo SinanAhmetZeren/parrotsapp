@@ -369,7 +369,7 @@ const styles2 = StyleSheet.create({
     borderColor: "#d8f7ee",
   },
   bidButtonContainer: {
-    marginBottom: vh(11),
+    // marginBottom: vh(11),
     width: vw(40),
     alignSelf: "center",
     marginTop: vh(1),

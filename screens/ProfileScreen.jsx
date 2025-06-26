@@ -93,12 +93,12 @@ export default function ProfileScreen({ navigation }) {
         }
       };
       fetchData();
-      console.log("1", isSuccessUser);
-      console.log("2", isSuccessVehicles);
-      console.log("3", isSuccessVoyages);
-      console.log("4", isErrorUser);
-      console.log("5", isErrorVehicles);
-      console.log("6", isErrorVoyages);
+      // console.log("1", isSuccessUser);
+      // console.log("2", isSuccessVehicles);
+      // console.log("3", isSuccessVoyages);
+      // console.log("4", isErrorUser);
+      // console.log("5", isErrorVehicles);
+      // console.log("6", isErrorVoyages);
     }, [
       refetchVehicleData,
       refetchVoyageData,
@@ -265,7 +265,7 @@ export default function ProfileScreen({ navigation }) {
   }
 
   if (isSuccessUser && isSuccessVehicles && isSuccessVoyages) {
-    console.log("is success user", isSuccessUser);
+    // console.log("is success user", isSuccessUser);
     // setHasError(false);
     const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
     const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;

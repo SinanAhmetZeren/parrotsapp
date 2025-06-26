@@ -8,7 +8,6 @@ import { vh, vw } from "react-native-expo-viewport-units";
 
 export default function VoyageListHorizontal({ data, focusMap }) {
   const renderItem = ({ item }) => {
-    console.log("Rendering item:", item);
     return (
       <VoyageCardProfileHorizontal
         key={item.id}
@@ -28,7 +27,7 @@ export default function VoyageListHorizontal({ data, focusMap }) {
     );
   };
 
-  if (data.length === 0) {
+  if (data?.length === 0) {
     return (
       <View style={styles.mainBidsContainer2}>
         <View style={styles.currentBidsAndSeeAll2}>

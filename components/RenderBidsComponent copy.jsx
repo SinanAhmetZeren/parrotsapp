@@ -3,14 +3,6 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useMemo } from "react";
 import {
-  parrotBlue,
-  parrotGreen,
-  parrotGreenMediumTransparent,
-  parrotBlueSemiTransparent,
-  parrotBlueTransparent,
-  parrotBlueMediumTransparent,
-} from "../assets/color.jsx";
-import {
   View,
   Image,
   Text,
@@ -135,14 +127,20 @@ export const RenderBidsComponent = ({
                       </View>
                     </View>
 
-                    <View style={{ flexDirection: "column" }}>
+                    <View style={{ flexDirection: "row" }}>
                       <Text style={styles.offerPrice2}>
                         {item.currency} {item.offerPrice.toFixed(2)}
                       </Text>
 
                       <View style={styles.acceptedButton}>
                         {item.accepted ? (
-                          <Text style={styles.acceptedText}>Accepted</Text>
+                          <Text>
+                            <Ionicons
+                              name="checkmark-circle"
+                              size={29}
+                              color="#2ac898"
+                            />
+                          </Text>
                         ) : ownVoyage ? (
                           <TouchableOpacity
                             onPress={() =>
@@ -151,8 +149,19 @@ export const RenderBidsComponent = ({
                                 bidUserId: item.userId,
                               })
                             }
+                            style={styles.thumbsUpCircle}
                           >
-                            <Text style={styles.acceptText}>Accept</Text>
+                            <Text
+                              style={{
+                                padding: vw(0.9),
+                              }}
+                            >
+                              <FontAwesome
+                                name="thumbs-up"
+                                size={16}
+                                color="#2ac898"
+                              />
+                            </Text>
                           </TouchableOpacity>
                         ) : (
                           <Text>
@@ -181,30 +190,6 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
-  acceptedText: {
-    paddingVertical: vw(0.5),
-    paddingHorizontal: vw(2),
-    color: parrotGreen,
-    fontWeight: "900",
-    backgroundColor: parrotGreenMediumTransparent,
-    borderRadius: vh(2),
-  },
-  acceptText: {
-    paddingVertical: vw(0.5),
-    paddingHorizontal: vw(3),
-    color: parrotBlue,
-    fontWeight: "900",
-    backgroundColor: parrotBlueMediumTransparent,
-    borderRadius: vh(2),
-  },
-  acceptButtonText: {
-    paddingVertical: vw(0.5),
-    paddingHorizontal: vw(3),
-    color: parrotBlue,
-    fontWeight: "900",
-    backgroundColor: parrotBlueMediumTransparent,
-    borderRadius: vh(2),
-  },
   buttonClose: {
     fontSize: 18,
     color: "white",
@@ -240,6 +225,7 @@ const styles = StyleSheet.create({
     marginTop: vh(0.5),
     marginLeft: vw(2),
     alignItems: "center",
+    // backgroundColor: "pink",
   },
   nameAndMessage: {
     width: vw(52),
@@ -329,12 +315,10 @@ const styles = StyleSheet.create({
   offerPrice2: {
     fontSize: 16,
     fontWeight: "800",
-    // width: vw(19),
+    width: vw(19),
     textAlign: "right",
-    color: parrotGreen,
-    // backgroundColor: parrotGreenMediumTransparent,
+    color: "#3c9dde",
+    // backgroundColor: "red",
     alignSelf: "center",
-    paddingHorizontal: vw(2),
-    borderRadius: vh(2),
   },
 });

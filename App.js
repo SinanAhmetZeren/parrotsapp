@@ -293,6 +293,21 @@ const TabNavigator = () => {
               );
             },
           }}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              const state = navigation.getState();
+
+              const homeStackKey = state.routes.find(
+                (r) => r.name === "Home"
+              )?.key;
+
+              if (homeStackKey) {
+                navigation.navigate("Home", {
+                  screen: "HomeScreen",
+                });
+              }
+            },
+          })}
         />
 
         <Tab.Screen
@@ -320,6 +335,21 @@ const TabNavigator = () => {
               );
             },
           }}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              const state = navigation.getState();
+
+              const homeStackKey = state.routes.find(
+                (r) => r.name === "ProfileScreen"
+              )?.key;
+
+              if (homeStackKey) {
+                navigation.navigate("ProfileStack", {
+                  screen: "ProfileScreen",
+                });
+              }
+            },
+          })}
         />
 
         <Tab.Screen
