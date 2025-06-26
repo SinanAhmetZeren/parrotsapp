@@ -25,6 +25,9 @@ import {
   useLoginUserMutation,
   useRequestCodeMutation,
   useResetPasswordMutation,
+  useLazyGetFavoriteVoyageIdsByUserIdQuery,
+  useLazyGetFavoriteVehicleIdsByUserIdQuery,
+  updateUserFavorites,
 } from "../slices/UserSlice";
 // import {
 //   GoogleSignin,
@@ -37,8 +40,9 @@ const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("sinanzen@gmail.com");
+  const [password, setPassword] = useState("123456");
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
   const [isFocusedPassword, setIsFocusedPassword] = useState(false);
   const [isFocusedCode, setIsFocusedCode] = useState(false);
@@ -67,6 +71,11 @@ const LoginScreen = ({ navigation }) => {
     confirmUser,
     { isLoading: isLoadingConfirmUser, isSuccess: isSuccessConfirmUser },
   ] = useConfirmUserMutation();
+
+  const [getFavoriteVehicleIdsByUserId] =
+    useLazyGetFavoriteVehicleIdsByUserIdQuery();
+  const [getFavoriteVoyageIdsByUserId] =
+    useLazyGetFavoriteVoyageIdsByUserIdQuery();
 
   const configureGoogleSignIn = () => {
     GoogleSignin.configure({
@@ -185,31 +194,103 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
     try {
+      setIsLoggingIn(true);
+
+      // Use await inside try-catch with unwrap() for handling rejected promises
       const loginResponse = await loginUser({
         Email: email,
         Password: password,
       }).unwrap();
+
+      // Ensure token and userId exist before proceeding
+      if (!loginResponse?.token || !loginResponse?.userId) {
+        throw new Error("Invalid login response");
+      }
+
+      // // Store tokens securely
+      // await AsyncStorage.setItem("storedToken", loginResponse.token);
+      // await AsyncStorage.setItem(
+      //   "storedRefreshToken",
+      //   loginResponse.refreshToken
+      // );
+
+      let favoriteVehicles = [];
+      let favoriteVoyages = [];
+
+      try {
+        // Fetch favorites safely, fall back to empty arrays if request fails
+        const vehiclesRes = await getFavoriteVehicleIdsByUserId(
+          loginResponse.userId
+        ).unwrap();
+        favoriteVehicles = vehiclesRes?.data || [];
+        console.log("Favorite Vehicles:", favoriteVehicles);
+      } catch (vehicleErr) {
+        console.warn("Failed to fetch favorite vehicles:", vehicleErr);
+      }
+
+      try {
+        const voyagesRes = await getFavoriteVoyageIdsByUserId(
+          loginResponse.userId
+        ).unwrap();
+        console.log("Favorite Voyages Response:", voyagesRes);
+        favoriteVoyages = voyagesRes?.data || [];
+      } catch (voyageErr) {
+        console.warn("Failed to fetch favorite voyages:", voyageErr);
+      }
+
+      // Update Redux state
+      dispatch(
+        updateUserFavorites({
+          favoriteVehicles,
+          favoriteVoyages,
+        })
+      );
+
+      // Dispatch login state only if token is present
+      // if (false)
+      dispatch(
+        updateAsLoggedIn({
+          userId: loginResponse.userId,
+          token: loginResponse.token,
+          refreshToken: loginResponse.refreshToken,
+          userName: loginResponse.userName || "", // Fallbacks for optional fields
+          profileImageUrl: loginResponse.profileImageUrl || "",
+        })
+      );
+
+      // Reset inputs
       setEmail("");
       setPassword("");
-      if (loginResponse.token) {
-        await dispatch(
-          updateAsLoggedIn({
-            userId: loginResponse.userId,
-            token: loginResponse.token,
-            userName: loginResponse.userName,
-            profileImageUrl: loginResponse.profileImageUrl,
-          })
-        );
-      }
     } catch (err) {
-      Toast.show({
-        type: "success",
-        text1: "Could not log in",
-        text2: "Please check your credentials ",
-        visibilityTime: 1200,
-        topOffset: 100,
-      });
+      console.error("Login error:", err);
+      setIsLoggingIn(false);
+
+      // Handle common HTTP errors, else show generic error
+      if (err?.status === 401) {
+        Toast.show({
+          type: "error",
+          text1: "Could not log in",
+          text2: "Incorrect email or password.",
+          visibilityTime: 1500,
+          topOffset: 100,
+        });
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Login failed",
+          text2: err?.message || "Something went wrong. Please try again.",
+          visibilityTime: 1500,
+          topOffset: 100,
+        });
+      }
+    } finally {
+      setIsLoggingIn(false); // Always reset loading state
     }
   };
 
@@ -307,10 +388,25 @@ const LoginScreen = ({ navigation }) => {
 
   const username = useSelector((state) => state.users.userName);
 
-  const handlePrintLocal = async () => {
-    const storedToken = await AsyncStorage.getItem("storedToken");
-    const storedUserId = await AsyncStorage.getItem("storedUserId");
+  const logAllAsyncStorage = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const result = await AsyncStorage.multiGet(keys);
+
+      console.log("📦 AsyncStorage contents:");
+      result.forEach(([key, value]) => {
+        console.log(`  ${key}: ${value}`);
+      });
+    } catch (e) {
+      console.error("Failed to load AsyncStorage data", e);
+    }
   };
+
+  /*    HARD LOGOUT  */
+  useEffect(() => {
+    logAllAsyncStorage();
+    return;
+  }, []);
 
   return (
     <>
@@ -382,6 +478,16 @@ const LoginScreen = ({ navigation }) => {
                   disabled={isLoading}
                 >
                   <Text style={styles.choiceText}>Login</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.loginContainer}>
+                <TouchableOpacity
+                  style={styles.selection2}
+                  onPress={logAllAsyncStorage}
+                  disabled={isLoading}
+                >
+                  <Text style={styles.choiceText}>print</Text>
                 </TouchableOpacity>
               </View>
 

@@ -5,7 +5,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ngrok http --domain=measured-wolf-grossly.ngrok-free.app https://localhost:7151
 
-/*
 const baseQuery = fetchBaseQuery({
   baseUrl: API_URL,
   prepareHeaders: async (headers) => {
@@ -58,11 +57,10 @@ export const apiSlice = createApi({
   tagTypes: ["User", "Voyage"],
   endpoints: (builder) => ({}),
 });
-*/
 
 /* eslint-disable no-unused-vars */
 
-// Simple baseQuery without any auth
+/* Simple baseQuery without any auth
 const baseQuery = fetchBaseQuery({
   baseUrl: API_URL,
   prepareHeaders: (headers) => {
@@ -77,3 +75,4 @@ export const apiSlice = createApi({
   tagTypes: ["User", "Voyage"],
   endpoints: (builder) => ({}),
 });
+*/

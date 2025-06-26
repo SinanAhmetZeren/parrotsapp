@@ -591,19 +591,22 @@ const VoyageDetailScreen = ({ navigation }) => {
 
           {/* // enter bid */}
 
-          <View>
-            <CreateBidComponent
-              userName={userName}
-              userProfileImage={userProfileImage}
-              voyageId={voyageId}
-              userId={userId}
-              userBidId={userBidId}
-              hasBidWithUserId={hasBidWithUserId}
-              userBidPrice={userBidPrice}
-              userBidPersons={userBidPersons}
-              userBidMessage={userBidMessage}
-              refetch={refetch}
-            />
+          <View style={{ paddingBottom: ownVoyage ? vh(11) : 0 }}>
+            {ownVoyage ? null : (
+              <CreateBidComponent
+                userName={userName}
+                userProfileImage={userProfileImage}
+                voyageId={voyageId}
+                userId={userId}
+                userBidId={userBidId}
+                hasBidWithUserId={hasBidWithUserId}
+                userBidPrice={userBidPrice}
+                userBidPersons={userBidPersons}
+                userBidMessage={userBidMessage}
+                refetch={refetch}
+                ownVoyage={ownVoyage}
+              />
+            )}
           </View>
         </ScrollView>
       </>

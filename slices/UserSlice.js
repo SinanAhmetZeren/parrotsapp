@@ -27,6 +27,12 @@ const usersSlice = createSlice({
           console.error("Error setting storedToken ", error);
         }
       );
+      AsyncStorage.setItem(
+        "storedRefreshToken",
+        action.payload.refreshToken
+      ).catch((error) => {
+        console.error("Error setting storedToken ", error);
+      });
       AsyncStorage.setItem("storedUserId", action.payload.userId).catch(
         (error) => {
           console.error("Error setting storedUserId:", error);
@@ -52,6 +58,9 @@ const usersSlice = createSlice({
       state.userProfileImage = "";
       AsyncStorage.removeItem("storedToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedToken:", error);
+      });
+      AsyncStorage.removeItem("storedRefreshToken").catch((error) => {
+        console.error("Error clearing AsyncStorage storedRefreshToken:", error);
       });
       AsyncStorage.removeItem("storedUserId").catch((error) => {
         console.error("Error clearing AsyncStorage storedUserId:", error);
@@ -258,7 +267,9 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetUsersByUsernameQuery,
   useGetFavoriteVoyageIdsByUserIdQuery,
+  useLazyGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
+  useLazyGetFavoriteVehicleIdsByUserIdQuery,
   useRegisterUserMutation,
   useRequestCodeMutation,
   useConfirmUserMutation,

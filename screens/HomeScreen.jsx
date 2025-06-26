@@ -24,11 +24,12 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   useGetVoyagesByLocationMutation,
   useGetFilteredVoyagesMutation,
 } from "../slices/VoyageSlice";
+import { updateAsLoggedOut } from "../slices/UserSlice";
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
 import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
@@ -98,18 +99,19 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  /*    HARD LOGOUT  */
   useEffect(() => {
-    AsyncStorage.setItem(
-      "storedToken",
-      "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InNpbmFuYWhtZXR6ZXJlbiIsIm5hbWVpZCI6ImY0OTY2M2Y3LWUyNjYtNDdkNi04NTM3LTE5NjE1NTY1NWNkOSIsImVtYWlsIjoic2luYW5haG1ldHplcmVuQGdtYWlsLmNvbSIsIm5iZiI6MTc0OTA2NzEwMCwiZXhwIjoxNzQ5MTUzNTAwLCJpYXQiOjE3NDkwNjcxMDB9.9auT62IpmI3nyoWFWYnMBygD9gt5-uvFDIWHFTsQlVaCwSo99MVy4jSytVWuLXmVuskNXBFeEbBzdoDMC1CFNA"
-    );
-    AsyncStorage.setItem(
-      "storedRefreshToken",
-      "XoWiYgsFZyzdYB5AECYxGaFEHWEMALLHtOy4ixVvJgA="
-    );
-
     logAllAsyncStorage();
+    return;
   }, []);
+
+  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    console.log("Redux isLoggedIn:", isLoggedIn);
+    // dispatch(updateAsLoggedOut()); // Reset state on mount
+  }, [isLoggedIn]);
+  /*    HARD LOGOUT  */
 
   const username = useSelector((state) => state.users.userName);
   // 1. GET LOCATION //
@@ -187,7 +189,7 @@ export default function HomeScreen({ navigation }) {
         setIsLoading(true);
 
         const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
-        console.log("voyages -->>", voyages);
+        // console.log("voyages -->>", voyages);
         setInitialVoyages(voyages.data || []);
         setIsLoading(false);
       };
@@ -195,9 +197,9 @@ export default function HomeScreen({ navigation }) {
       getVoyages();
 
       // console.log(initialVoyages);
-      console.log("latitude", latitude);
-      console.log("longitude", longitude);
-      console.log("refreshing 2 ");
+      // console.log("latitude", latitude);
+      // console.log("longitude", longitude);
+      // console.log("refreshing 2 ");
     } catch (error) {
       console.log(error);
       setHasError(true);
@@ -273,7 +275,7 @@ export default function HomeScreen({ navigation }) {
       formattedStartDate,
       formattedEndDate,
     };
-    console.log("latitude", latitude);
+    // console.log("latitude", latitude);
 
     const filteredVoyages = await getFilteredVoyages(data);
 
@@ -299,9 +301,10 @@ export default function HomeScreen({ navigation }) {
     setLongitudeDelta(newRegion?.longitudeDelta);
   };
 
-  useEffect(() => {
-    console.log("hello");
-  }, []);
+  const handleLogout = async () => {
+    console.log("Logging out...");
+    dispatch(updateAsLoggedOut());
+  };
 
   if (isLoading) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
@@ -379,18 +382,18 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.welcomebox}>
               <Text style={styles.welcome}>Welcome to Parrots</Text>
 
-              {username.length < 13 ? (
+              {username?.length < 13 ? (
                 <Text style={styles.usernameLarge}>{username}!</Text>
               ) : null}
-              {username.length > 12 && username.length < 18 ? ( // 13 to 16
+              {username?.length > 12 && username.length < 18 ? ( // 13 to 16
                 <Text style={styles.usernameMedium}>{username}!</Text>
               ) : null}
-              {username.length > 17 && username.length < 21 ? ( // 17 to 24
+              {username?.length > 17 && username.length < 21 ? ( // 17 to 24
                 <Text style={styles.usernameSmall}>{username}!</Text>
               ) : null}
-              {username.length > 20 ? (
+              {username?.length > 20 ? (
                 <Text style={styles.usernameSmall}>
-                  {username.substring(0, 19)}...!
+                  {username?.substring(0, 19)}...!
                 </Text>
               ) : null}
             </View>
@@ -443,6 +446,18 @@ export default function HomeScreen({ navigation }) {
                   </View>
                 </TouchableOpacity>
               </View>
+
+              {/* <View>
+                <TouchableOpacity
+                  onPress={() => {
+                    handleLogout();
+                  }}
+                >
+                  <View>
+                    <Text style={styles.applyFilter}>Logout</Text>
+                  </View>
+                </TouchableOpacity>
+              </View> */}
             </View>
           </View>
           <View style={styles.mapContainer}>
