@@ -239,11 +239,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     getFavoriteVoyageIdsByUserId: builder.query({
       query: (userId) => {
-        if (userId) {
-          return `/api/Favorite/getFavoriteVoyageIdsByUserId/${userId}`;
-        } else {
-          return "";
-        }
+        return `/api/Favorite/getFavoriteVoyageIdsByUserId/${userId}`;
       },
       transformResponse: (responseData) => responseData.data,
       refetchOnMountOrArgChange: true,
@@ -251,11 +247,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     getFavoriteVehicleIdsByUserId: builder.query({
       query: (userId) => {
-        if (userId) {
-          return `/api/Favorite/getFavoriteVehicleIdsByUserId/${userId}`;
-        } else {
-          return "";
-        }
+        return `/api/Favorite/getFavoriteVehicleIdsByUserId/${userId}`;
       },
       transformResponse: (responseData) => responseData.data,
       refetchOnMountOrArgChange: true,

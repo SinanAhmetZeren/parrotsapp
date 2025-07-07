@@ -498,18 +498,25 @@ function App() {
       data: userData,
       isLoading: isLoadingUser,
       isSuccess: isSuccessUser,
-    } = useGetUserByIdQuery(userId);
+    } = useGetUserByIdQuery(userId, {
+      skip: !userId,
+    });
+
     const {
       data: favoriteVoyageData,
       isLoading: isLoadingFavoriteVoyages,
       isSuccess: isSuccessFavoriteVoyages,
-    } = useGetFavoriteVoyageIdsByUserIdQuery(userId);
+    } = useGetFavoriteVoyageIdsByUserIdQuery(userId, {
+      skip: !userId,
+    });
 
     const {
       data: favoriteVehicleData,
       isLoading: isLoadingFavoriteVehicles,
       isSuccess: isSuccessFavoriteVehicles,
-    } = useGetFavoriteVehicleIdsByUserIdQuery(userId);
+    } = useGetFavoriteVehicleIdsByUserIdQuery(userId, {
+      skip: !userId,
+    });
 
     useEffect(() => {
       if (

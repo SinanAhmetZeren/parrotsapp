@@ -3,6 +3,16 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useMemo } from "react";
 import {
+  parrotBlue,
+  parrotGreen,
+  parrotGreenMediumTransparent,
+  parrotBlueSemiTransparent,
+  parrotBlueTransparent,
+  parrotBlueMediumTransparent,
+  parrotDarkBlue,
+  parrotTextDarkBlue,
+} from "../assets/color.jsx";
+import {
   View,
   Image,
   Text,
@@ -127,20 +137,14 @@ export const RenderBidsComponent = ({
                       </View>
                     </View>
 
-                    <View style={{ flexDirection: "row" }}>
+                    <View style={{ flexDirection: "column" }}>
                       <Text style={styles.offerPrice2}>
                         {item.currency} {item.offerPrice.toFixed(2)}
                       </Text>
 
                       <View style={styles.acceptedButton}>
                         {item.accepted ? (
-                          <Text>
-                            <Ionicons
-                              name="checkmark-circle"
-                              size={29}
-                              color="#2ac898"
-                            />
-                          </Text>
+                          <Text style={styles.acceptedText}>Accepted</Text>
                         ) : ownVoyage ? (
                           <TouchableOpacity
                             onPress={() =>
@@ -149,19 +153,8 @@ export const RenderBidsComponent = ({
                                 bidUserId: item.userId,
                               })
                             }
-                            style={styles.thumbsUpCircle}
                           >
-                            <Text
-                              style={{
-                                padding: vw(0.9),
-                              }}
-                            >
-                              <FontAwesome
-                                name="thumbs-up"
-                                size={16}
-                                color="#2ac898"
-                              />
-                            </Text>
+                            <Text style={styles.acceptText}>Accept</Text>
                           </TouchableOpacity>
                         ) : (
                           <Text>
@@ -190,6 +183,30 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
+  acceptedText: {
+    paddingVertical: vw(0.5),
+    paddingHorizontal: vw(2),
+    color: parrotGreen,
+    fontWeight: "900",
+    backgroundColor: parrotGreenMediumTransparent,
+    borderRadius: vh(2),
+  },
+  acceptText: {
+    paddingVertical: vw(0.5),
+    paddingHorizontal: vw(3),
+    color: parrotBlue,
+    fontWeight: "900",
+    backgroundColor: parrotBlueMediumTransparent,
+    borderRadius: vh(2),
+  },
+  acceptButtonText: {
+    paddingVertical: vw(0.5),
+    paddingHorizontal: vw(3),
+    color: parrotBlue,
+    fontWeight: "900",
+    backgroundColor: parrotBlueMediumTransparent,
+    borderRadius: vh(2),
+  },
   buttonClose: {
     fontSize: 18,
     color: "white",
@@ -225,7 +242,6 @@ const styles = StyleSheet.create({
     marginTop: vh(0.5),
     marginLeft: vw(2),
     alignItems: "center",
-    // backgroundColor: "pink",
   },
   nameAndMessage: {
     width: vw(52),
@@ -275,7 +291,7 @@ const styles = StyleSheet.create({
     margin: vh(0.3),
     alignItems: "center",
     borderRadius: vh(3),
-    backgroundColor: "rgba(0, 119, 234,0.05)",
+    backgroundColor: "rgba(0, 119, 234,0.07)",
   },
   flatlistContainer: {
     backgroundColor: "rgba(1,1,1,0.4)",
@@ -294,16 +310,19 @@ const styles = StyleSheet.create({
   singleBidContainer2: {
     flexDirection: "row",
     paddingVertical: vh(0.2),
-    marginVertical: vh(0.3),
+    marginVertical: vh(0.6),
     alignItems: "center",
-    backgroundColor: "rgba(220,238,249,0.4)",
     borderRadius: vh(2),
+    backgroundColor: "rgba(0, 119, 234,0.07)",
+    width: "98%",
+    margin: "auto",
   },
   bidImage2: {
     width: vh(5),
     height: vh(5),
     borderRadius: vh(2.5),
     marginRight: 8,
+    marginLeft: vw(2),
     backgroundColor: "grey",
   },
   bidUsername2: {
@@ -315,10 +334,12 @@ const styles = StyleSheet.create({
   offerPrice2: {
     fontSize: 16,
     fontWeight: "800",
-    width: vw(19),
+    // width: vw(19),
     textAlign: "right",
-    color: "#3c9dde",
-    // backgroundColor: "red",
+    color: parrotTextDarkBlue,
+    // backgroundColor: parrotGreenMediumTransparent,
     alignSelf: "center",
+    paddingHorizontal: vw(2),
+    borderRadius: vh(2),
   },
 });
