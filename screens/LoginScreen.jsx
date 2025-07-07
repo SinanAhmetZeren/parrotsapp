@@ -88,10 +88,6 @@ const LoginScreen = ({ navigation }) => {
     });
   };
 
-  useEffect(() => {
-    // configureGoogleSignIn();
-  });
-
   const signInGoogle = async () => {
     try {
       await GoogleSignin.hasPlayServices();
