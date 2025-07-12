@@ -11,6 +11,9 @@ import {
   parrotBlueMediumTransparent,
   parrotDarkBlue,
   parrotTextDarkBlue,
+  parrotRed,
+  parrotRedTransparent,
+  parrotBlueSemiTransparent2,
 } from "../assets/color.jsx";
 import {
   View,
@@ -116,7 +119,7 @@ export const RenderBidsComponent = ({
               renderItem={({ item, index }) => {
                 return (
                   <View key={index} style={styles.singleBidContainerPopup}>
-                    <View style={{ backgroundColor: "yellow" }}>
+                    <View style={{ backgroundColor: "" }}>
                       <Image
                         source={{
                           uri: UserImageBaseUrl + item.userProfileImage,
@@ -127,49 +130,63 @@ export const RenderBidsComponent = ({
 
                     <View
                       style={{
-                        backgroundColor: "rgba(200,10,10,0.2)",
                         width: vw(75),
-                        height: vh(11),
+                        // height: vh(11),
                       }}
                     >
                       <View
                         style={{
-                          backgroundColor: "white",
                           width: vw(75),
-                          height: vh(3),
+                          // height: vh(3),
                           display: "flex",
                           flexDirection: "row",
                         }}
                       >
                         <Text
-                          style={{ backgroundColor: "white", width: vw(50) }}
+                          style={{
+                            width: vw(50),
+                            fontWeight: "bold",
+                            color: parrotTextDarkBlue,
+                          }}
                         >
-                          User Name
+                          {item.userName}
                         </Text>
                         <Text
                           style={{
-                            backgroundColor: "white",
                             width: vw(25),
+                            color: parrotTextDarkBlue,
+                            fontWeight: "bold",
                           }}
                         >
-                          Current Offer
+                          {item.currency} {item.offerPrice.toFixed(2)}
                         </Text>
                       </View>
                       <View
                         style={{
-                          backgroundColor: "white",
-                          width: vw(75),
-                          height: vh(5),
+                          width: vw(72),
+                          // minHeight: vh(4.5),
+                          marginBottom: vh(0.5),
+                          marginLeft: vw(3),
                           display: "flex",
                           flexDirection: "row",
+                          display: item.message ? "flex" : "none",
                         }}
                       >
-                        <Text>
-                          Bid message message message message message message
-                          message message message message message{" "}
+                        <Text
+                          style={{
+                            color: parrotTextDarkBlue,
+                          }}
+                        >
+                          {ownVoyage && item.message}
                         </Text>
                       </View>
-                      <View style={{ flexDirection: "row" }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          marginTop: item.message ? vh(0.5) : vh(1),
+                          marginBottom: vh(1),
+                        }}
+                      >
                         <TouchableOpacity
                           style={{ flex: 1, alignItems: "center" }}
                           onPress={() =>
@@ -179,7 +196,14 @@ export const RenderBidsComponent = ({
                             })
                           }
                         >
-                          <Text style={styles.acceptText}>Accept</Text>
+                          <View
+                            style={{
+                              backgroundColor: "white",
+                              borderRadius: vh(2),
+                            }}
+                          >
+                            <Text style={styles.acceptText}>Accept</Text>
+                          </View>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -191,7 +215,14 @@ export const RenderBidsComponent = ({
                             })
                           }
                         >
-                          <Text style={styles.acceptText}>Delete</Text>
+                          <View
+                            style={{
+                              backgroundColor: "white",
+                              borderRadius: vh(2),
+                            }}
+                          >
+                            <Text style={styles.deleteText}>Delete</Text>
+                          </View>
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -225,9 +256,22 @@ const styles = StyleSheet.create({
     color: parrotBlue,
     fontWeight: "900",
     backgroundColor: parrotBlueMediumTransparent,
-    backgroundColor: "yellow",
+    // backgroundColor: "yellow",
     borderRadius: vh(2),
     width: vw(20),
+    textAlign: "center",
+  },
+  deleteText: {
+    paddingVertical: vw(0.5),
+    paddingHorizontal: vw(3),
+    color: parrotRed,
+    fontWeight: "900",
+    backgroundColor: parrotRedTransparent,
+    // backgroundColor: "white",
+    // backgroundColor: "yellow",
+    borderRadius: vh(2),
+    width: vw(20),
+    textAlign: "center",
   },
   acceptButtonText: {
     paddingVertical: vw(0.5),
@@ -283,6 +327,7 @@ const styles = StyleSheet.create({
     paddingLeft: vw(4),
     paddingBottom: vh(0.2),
     width: vw(50),
+    color: parrotTextDarkBlue,
   },
   userName: {
     fontSize: 14,
@@ -308,13 +353,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     width: vw(50),
+    color: parrotTextDarkBlue,
   },
   offerPrice: {
-    fontSize: 18,
-    fontWeight: "800",
+    fontSize: 14,
+    fontWeight: "bold",
     color: "#2ac898",
     width: vw(20),
     textAlign: "right",
+    color: parrotTextDarkBlue,
   },
 
   singleBidContainer: {
@@ -322,8 +369,10 @@ const styles = StyleSheet.create({
     padding: vh(0.5),
     margin: vh(0.3),
     alignItems: "center",
-    borderRadius: vh(3),
-    backgroundColor: "rgba(0, 119, 234,0.07)",
+    borderRadius: vh(2),
+    backgroundColor: "rgba(0, 119, 234,0.05)",
+    borderWidth: 1,
+    borderColor: parrotBlueMediumTransparent,
   },
   flatlistContainer: {
     backgroundColor: "rgba(1,1,1,0.4)",
@@ -335,6 +384,7 @@ const styles = StyleSheet.create({
     marginTop: vh(20),
     alignSelf: "center",
     backgroundColor: "#f2fafa",
+    backgroundColor: "white",
     borderColor: "#bfdff4",
     borderRadius: vh(2),
     paddingLeft: vh(0.5),
@@ -345,9 +395,11 @@ const styles = StyleSheet.create({
     marginVertical: vh(0.6),
     alignItems: "center",
     borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234,0.07)",
+    backgroundColor: "rgba(0, 119, 234,0.05)",
     width: "98%",
     margin: "auto",
+    borderWidth: 1,
+    borderColor: parrotBlueMediumTransparent,
   },
   bidImage2: {
     width: vh(5),
