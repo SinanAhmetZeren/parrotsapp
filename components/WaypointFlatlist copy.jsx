@@ -21,7 +21,6 @@ import {
   parrotBlueSemiTransparent,
   parrotBlueTransparent,
   parrotDarkBlue,
-  parrotTextDarkBlue,
 } from "../assets/color";
 
 export const WaypointFlatList = ({ addedWayPoints }) => {
@@ -99,7 +98,7 @@ export const WaypointItemVoyageDetailScreen = ({
         marginTop: vh(1),
         borderColor: parrotBlueMediumTransparent,
         borderRadius: vh(3),
-        borderWidth: 2,
+        borderWidth: 1,
       }}
     >
       <TouchableOpacity onPress={() => handleFocusMap()}>
@@ -327,13 +326,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "600",
-    color: parrotTextDarkBlue,
+    paddingVertical: vh(0.25),
+    backgroundColor: "rgba(0, 119, 234,.06)",
+    color: "rgba(0, 119, 234,1)",
+    width: vw(80),
+    position: "absolute",
+    left: vh(-17),
+    borderTopLeftRadius: vh(3),
+    borderTopRightRadius: vh(3),
     textAlign: "center",
   },
   description: {
     width: vw(42),
+    marginTop: vh(3),
     paddingLeft: vw(2),
-    color: parrotTextDarkBlue,
   },
   titleAndDescription: {
     paddingVertical: vh(0.5),
@@ -342,9 +348,8 @@ const styles = StyleSheet.create({
   waypointCard: {
     width: vw(80),
     flexDirection: "row",
+    // backgroundColor: "#eff3f6",
     borderRadius: vh(3),
-    backgroundColor: "rgba(0, 119, 234,0.05)",
-    overflow: "hidden",
   },
   profileImage: {
     margin: vh(1),
@@ -356,10 +361,12 @@ const styles = StyleSheet.create({
   },
   waypointCardImage: {
     width: vh(17),
-    height: vh(20),
+    height: vh(17),
+    marginTop: vh(3),
     borderRadius: vh(3),
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
+    borderTopLeftRadius: 0,
     borderColor: "rgba(0, 119, 234,0.3)",
     backgroundColor: "white",
   },
@@ -416,10 +423,10 @@ const styles = StyleSheet.create({
     borderRadius: vh(1),
   },
   seeDetails: {
+    color: "rgba(0, 119, 234,1)",
     fontWeight: "600",
     position: "absolute",
     bottom: vh(1),
     right: vw(2),
-    color: parrotTextDarkBlue,
   },
 });
