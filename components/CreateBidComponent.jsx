@@ -17,6 +17,11 @@ import {
   useSendBidMutation,
   useChangeBidMutation,
 } from "../slices/VoyageSlice";
+import {
+  parrotTextDarkBlue,
+  parrotBlueSemiTransparent,
+  parrotBlueMediumTransparent,
+} from "../assets/color.jsx";
 
 export const CreateBidComponent = ({
   userProfileImage,
@@ -86,7 +91,7 @@ export const CreateBidComponent = ({
       personCount: persons,
       message: message,
       offerPrice: price,
-      currency: "",
+      currency: "€",
       voyageId,
       userId,
       userProfileImage,
@@ -178,7 +183,7 @@ export const CreateBidComponent = ({
         )}
       </View>
 
-      {/* NEW BID MODAL */}
+      {/* NEW BID MODAL 
       <Modal
         visible={isCreateModalVisible}
         transparent
@@ -187,11 +192,14 @@ export const CreateBidComponent = ({
       >
         <View style={styles2.modalContainer}>
           <View style={styles2.innerContainer}>
-            <Text style={styles2.title}>Enter Your Bid</Text>
+            <Text style={[styles2.title, { color: parrotTextDarkBlue }]}>
+              Enter Your Bid
+            </Text>
 
-            {/* Bid Amount */}
             <View style={styles2.inputMainContainer}>
-              <Text style={styles2.InputName}>Offer Price: </Text>
+              <View style={{ backgroundColor: "orange" }}>
+                <Text style={styles2.InputName}>Offer Price: </Text>
+              </View>
 
               <View style={styles2.counterContainer}>
                 <TouchableOpacity onPress={handleDecrementPrice}>
@@ -212,7 +220,6 @@ export const CreateBidComponent = ({
               </View>
             </View>
 
-            {/* Person count */}
             <View style={styles2.inputMainContainer}>
               <Text style={styles2.InputName}>Persons: </Text>
 
@@ -234,7 +241,6 @@ export const CreateBidComponent = ({
               </View>
             </View>
 
-            {/* Message */}
             <TextInput
               style={styles2.messageInput}
               placeholder="Enter your message"
@@ -244,7 +250,101 @@ export const CreateBidComponent = ({
               onChangeText={(text) => setMessage(text)}
             />
 
-            {/* Buttons */}
+            <View style={styles2.buttonsContainer}>
+              <TouchableOpacity
+                onPress={handleCloseCreateModal}
+                style={styles2.buttonCancelContainer}
+              >
+                <Text style={styles2.buttonClear}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleSendBid(userProfileImage, userName)}
+                style={styles2.buttonSendBidContainer}
+              >
+                <Text style={styles2.buttonSave}>Send Bid</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      */}
+
+      <Modal
+        visible={isCreateModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={handleCloseCreateModal}
+      >
+        <View style={styles2.modalContainer}>
+          <View style={styles2.innerContainer}>
+            <Text style={[styles2.title, { color: parrotTextDarkBlue }]}>
+              Enter Your Bid
+            </Text>
+
+            <View style={styles2.inputMainContainer}>
+              <Text style={styles2.InputName}>Offer Price: </Text>
+
+              <View style={styles2.counterContainer}>
+                <TouchableOpacity
+                  onPress={handleDecrementPrice}
+                  style={styles2.decrementButtonContainer}
+                >
+                  <Text style={styles2.buttonCount}>-</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  ref={createBidTextInputRef}
+                  style={styles2.bidInput}
+                  keyboardType="numeric"
+                  value={price.toString()}
+                  onChangeText={(text) => setPrice(parseInt(text) || 0)}
+                />
+
+                <TouchableOpacity
+                  onPress={handleIncrementPrice}
+                  style={styles2.incrementButtonContainer}
+                >
+                  <Text style={styles2.buttonCount}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles2.inputMainContainer}>
+              <Text style={styles2.InputName}>Persons: </Text>
+
+              <View style={styles2.counterContainer}>
+                <TouchableOpacity
+                  onPress={handleDecrementPersons}
+                  style={styles2.decrementButtonContainer}
+                >
+                  <Text style={styles2.buttonCount}>-</Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles2.bidInput}
+                  keyboardType="numeric"
+                  value={persons.toString()}
+                  onChangeText={(text) => setPersons(parseInt(text) || 0)}
+                />
+
+                <TouchableOpacity
+                  onPress={handleIncrementPersons}
+                  style={styles2.incrementButtonContainer}
+                >
+                  <Text style={styles2.buttonCount}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <TextInput
+              style={styles2.messageInput}
+              placeholder="Enter your message"
+              placeholderTextColor={parrotTextDarkBlue}
+              multiline
+              value={message}
+              onChangeText={(text) => setMessage(text)}
+            />
+
             <View style={styles2.buttonsContainer}>
               <TouchableOpacity
                 onPress={handleCloseCreateModal}
@@ -272,14 +372,18 @@ export const CreateBidComponent = ({
       >
         <View style={styles2.modalContainer}>
           <View style={styles2.innerContainer}>
-            <Text style={styles2.title}>Change Your Bid</Text>
+            <Text style={[styles2.title, { color: parrotTextDarkBlue }]}>
+              Change Your Bid
+            </Text>
 
-            {/* Bid Amount */}
-            <View style={styles2.inputMainContainer}>
+            <View style={styles2.inputMainContainer1}>
               <Text style={styles2.InputName}>Offer Price: </Text>
 
               <View style={styles2.counterContainer}>
-                <TouchableOpacity onPress={handleDecrementExistingPrice}>
+                <TouchableOpacity
+                  onPress={handleDecrementExistingPrice}
+                  style={styles2.decrementButtonContainer}
+                >
                   <Text style={styles2.buttonCount}>-</Text>
                 </TouchableOpacity>
 
@@ -293,7 +397,10 @@ export const CreateBidComponent = ({
                   }
                 />
 
-                <TouchableOpacity onPress={handleIncrementExistingPrice}>
+                <TouchableOpacity
+                  onPress={handleIncrementExistingPrice}
+                  style={styles2.incrementButtonContainer}
+                >
                   <Text style={styles2.buttonCount}>+</Text>
                 </TouchableOpacity>
               </View>
@@ -304,7 +411,10 @@ export const CreateBidComponent = ({
               <Text style={styles2.InputName}>Persons: </Text>
 
               <View style={styles2.counterContainer}>
-                <TouchableOpacity onPress={handleDecrementExistingPersons}>
+                <TouchableOpacity
+                  onPress={handleDecrementExistingPersons}
+                  style={styles2.decrementButtonContainer}
+                >
                   <Text style={styles2.buttonCount}>-</Text>
                 </TouchableOpacity>
 
@@ -317,7 +427,10 @@ export const CreateBidComponent = ({
                   }
                 />
 
-                <TouchableOpacity onPress={handleIncrementExistingPersons}>
+                <TouchableOpacity
+                  onPress={handleIncrementExistingPersons}
+                  style={styles2.incrementButtonContainer}
+                >
                   <Text style={styles2.buttonCount}>+</Text>
                 </TouchableOpacity>
               </View>
@@ -327,7 +440,7 @@ export const CreateBidComponent = ({
             <TextInput
               style={styles2.messageInput}
               placeholder="Enter your message"
-              placeholderTextColor="#2ac898"
+              placeholderTextColor={parrotTextDarkBlue}
               multiline
               value={existingMessage}
               onChangeText={(text) => setExistingMessage(text)}
@@ -356,20 +469,45 @@ export const CreateBidComponent = ({
 };
 
 const styles2 = StyleSheet.create({
+  decrementButtonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    backgroundColor: parrotTextDarkBlue,
+    borderRadius: vh(2),
+    height: vh(5),
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  incrementButtonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    backgroundColor: parrotTextDarkBlue,
+    borderRadius: vh(2),
+    height: vh(5),
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+  },
   modalView2: {
     position: "absolute",
     alignSelf: "center",
   },
   inputMainContainer: {
-    backgroundColor: "#f4fdfa",
-    height: vh(13),
     padding: vh(1),
     marginBottom: vh(1),
     borderRadius: vh(2),
     borderColor: "#d8f7ee",
+    flexDirection: "row",
+  },
+  inputMainContainer1: {
+    padding: vh(1),
+    marginBottom: vh(1),
+    borderRadius: vh(2),
+    borderColor: "#d8f7ee",
+    flexDirection: "row",
   },
   bidButtonContainer: {
-    // marginBottom: vh(11),
     width: vw(40),
     alignSelf: "center",
     marginTop: vh(1),
@@ -378,24 +516,35 @@ const styles2 = StyleSheet.create({
   },
 
   InputName: {
-    fontSize: 18,
-    color: "#186ff1",
-    fontWeight: "700",
-    marginBottom: vh(2),
+    fontSize: 16,
+    color: parrotTextDarkBlue,
+    fontWeight: "bold",
+    alignSelf: "center",
+    width: vw(25),
   },
   messageInput: {
-    fontSize: 18,
-    color: "#186ff1",
-    fontWeight: "700",
+    fontSize: 14,
+    // color: "#186ff1",
+    color: parrotTextDarkBlue,
+    backgroundColor: parrotBlueMediumTransparent,
+    fontWeight: "bold",
     marginBottom: vh(2),
-    backgroundColor: "rgba(42,200,152,.1)",
     padding: vh(1),
     borderRadius: vh(2),
+    borderWidth: 1,
+    borderColor: parrotTextDarkBlue,
   },
   bidInput: {
-    color: "#2ac898",
-    fontSize: 22,
-    fontWeight: "800",
+    color: parrotTextDarkBlue,
+    fontSize: 16,
+    fontWeight: "bold",
+    backgroundColor: "white",
+    width: vw(25),
+    textAlign: "center",
+    borderWidth: 1,
+    borderColor: parrotTextDarkBlue,
+    height: vh(5) - 1.5,
+    backgroundColor: parrotBlueMediumTransparent,
   },
   modalContainer: {
     flex: 1,
@@ -417,14 +566,17 @@ const styles2 = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: vh(2),
     textAlign: "center",
   },
   counterContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    width: vw(53),
+    paddingHorizontal: vw(2),
+    // paddingVertical: vh(0.5),
+    borderRadius: vh(2),
   },
 
   buttonsContainer: {
@@ -434,7 +586,7 @@ const styles2 = StyleSheet.create({
   },
 
   buttonSave: {
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     textAlign: "center",
     backgroundColor: "#186ff1",
@@ -442,9 +594,11 @@ const styles2 = StyleSheet.create({
     width: vw(30),
     borderRadius: vh(4),
     marginTop: 5,
+    fontWeight: "bold",
   },
   buttonClear: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "bold",
     color: "white",
     textAlign: "center",
     backgroundColor: "#2ac898",
@@ -454,17 +608,13 @@ const styles2 = StyleSheet.create({
     marginTop: 5,
   },
   buttonCount: {
-    fontSize: 24,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    // borderWidth: 1,
+    fontSize: 22,
     borderColor: "#3498db",
     borderRadius: 10,
-    backgroundColor: "#fff",
     width: vh(6),
     textAlign: "center",
-    color: "#2ac898",
     fontWeight: "800",
+    color: "white",
   },
   count: {
     fontSize: 18,
