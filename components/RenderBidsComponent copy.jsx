@@ -11,6 +11,9 @@ import {
   parrotBlueMediumTransparent,
   parrotDarkBlue,
   parrotTextDarkBlue,
+  parrotRed,
+  parrotRedTransparent,
+  parrotBlueSemiTransparent2,
 } from "../assets/color.jsx";
 import {
   View,
@@ -79,8 +82,25 @@ export const RenderBidsComponent = ({
             }}
             style={styles.bidImage}
           />
-          <View>
-            <Text style={styles.bidUsername}>{bid.userName}</Text>
+          <View
+            style={{
+              width: vw(75),
+              flexDirection: "column",
+              padding: vh(0.1),
+            }}
+          >
+            <View
+              style={{
+                width: vw(75),
+                flexDirection: "row",
+                padding: vh(0.1),
+              }}
+            >
+              <Text style={styles.bidUsername}>{bid.userName}</Text>
+              <Text style={styles.offerPrice}>
+                {bid.currency} {bid.offerPrice}
+              </Text>
+            </View>
 
             {ownVoyage && bid.message ? (
               <View>
@@ -92,11 +112,6 @@ export const RenderBidsComponent = ({
                 </Text>
               </View>
             ) : null}
-          </View>
-          <View>
-            <Text style={styles.offerPrice}>
-              {bid.currency} {bid.offerPrice}
-            </Text>
           </View>
         </View>
       ))}
@@ -114,9 +129,10 @@ export const RenderBidsComponent = ({
               data={bids}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item, index }) => {
+                // console.log("Rendering item:", item);
                 return (
-                  <View key={index} style={styles.singleBidContainer2}>
-                    <View>
+                  <View key={index} style={styles.singleBidContainerPopup}>
+                    <View style={{ backgroundColor: "" }}>
                       <Image
                         source={{
                           uri: UserImageBaseUrl + item.userProfileImage,
@@ -124,29 +140,71 @@ export const RenderBidsComponent = ({
                         style={styles.bidImage2}
                       />
                     </View>
-                    <View>
-                      <View style={styles.nameAndMessage}>
-                        <Text style={styles.bidUsername2}>{item.userName}</Text>
-                        {ownVoyage && item.message ? (
-                          <View>
-                            <Text style={styles.seeMessage}>
-                              {item.message ?? null}
-                            </Text>
-                          </View>
-                        ) : null}
+
+                    <View
+                      style={{
+                        width: vw(75),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: vw(75),
+                          display: "flex",
+                          flexDirection: "row",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            width: vw(50),
+                            fontWeight: "bold",
+                            color: parrotTextDarkBlue,
+                          }}
+                        >
+                          {item.userName}
+                        </Text>
+                        <Text
+                          style={{
+                            width: vw(25),
+                            color: parrotTextDarkBlue,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {item.currency} {item.offerPrice.toFixed(2)}
+                        </Text>
                       </View>
-                    </View>
+                      <View
+                        style={{
+                          width: vw(72),
+                          marginBottom: vh(0.5),
+                          marginLeft: vw(3),
+                          display: "flex",
+                          flexDirection: "row",
+                          display: item.message && ownVoyage ? "flex" : "none",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: parrotTextDarkBlue,
+                          }}
+                        >
+                          {ownVoyage && item.message}
+                        </Text>
+                      </View>
 
-                    <View style={{ flexDirection: "column" }}>
-                      <Text style={styles.offerPrice2}>
-                        {item.currency} {item.offerPrice.toFixed(2)}
-                      </Text>
-
-                      <View style={styles.acceptedButton}>
-                        {item.accepted ? (
-                          <Text style={styles.acceptedText}>Accepted</Text>
-                        ) : ownVoyage ? (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          marginTop: ownVoyage
+                            ? item.message
+                              ? vh(0.5)
+                              : vh(1)
+                            : 0,
+                          marginBottom: ownVoyage ? vh(1) : 0,
+                        }}
+                      >
+                        {!item.accepted ? (
                           <TouchableOpacity
+                            style={{ flex: 1, alignItems: "center" }}
                             onPress={() =>
                               handleAcceptBid({
                                 bidId: item.id,
@@ -154,17 +212,57 @@ export const RenderBidsComponent = ({
                               })
                             }
                           >
-                            <Text style={styles.acceptText}>Accept</Text>
+                            <View
+                              style={{
+                                backgroundColor: "white",
+                                borderRadius: vh(2),
+                                display: ownVoyage ? "flex" : "none",
+                              }}
+                            >
+                              <Text style={styles.acceptText}>Accept</Text>
+                            </View>
                           </TouchableOpacity>
                         ) : (
-                          <Text>
-                            <Ionicons
-                              name="checkmark-circle-outline"
-                              size={28}
-                              color="#2ac898"
-                            />
-                          </Text>
+                          <TouchableOpacity
+                            style={{ flex: 1, alignItems: "center" }}
+                            onPress={() =>
+                              handleAcceptBid({
+                                bidId: item.id,
+                                bidUserId: item.userId,
+                              })
+                            }
+                          >
+                            <View
+                              style={{
+                                backgroundColor: "white",
+                                borderRadius: vh(2),
+                                display: ownVoyage ? "flex" : "none",
+                              }}
+                            >
+                              <Text style={styles.acceptedText}>Accepted</Text>
+                            </View>
+                          </TouchableOpacity>
                         )}
+
+                        <TouchableOpacity
+                          style={{ flex: 1, alignItems: "center" }}
+                          onPress={() =>
+                            handleAcceptBid({
+                              bidId: item.id,
+                              bidUserId: item.userId,
+                            })
+                          }
+                        >
+                          <View
+                            style={{
+                              backgroundColor: "white",
+                              borderRadius: vh(2),
+                              display: ownVoyage ? "flex" : "none",
+                            }}
+                          >
+                            <Text style={styles.deleteText}>Delete</Text>
+                          </View>
+                        </TouchableOpacity>
                       </View>
                     </View>
                   </View>
@@ -197,7 +295,22 @@ const styles = StyleSheet.create({
     color: parrotBlue,
     fontWeight: "900",
     backgroundColor: parrotBlueMediumTransparent,
+    // backgroundColor: "yellow",
     borderRadius: vh(2),
+    width: vw(20),
+    textAlign: "center",
+  },
+  deleteText: {
+    paddingVertical: vw(0.5),
+    paddingHorizontal: vw(3),
+    color: parrotRed,
+    fontWeight: "900",
+    backgroundColor: parrotRedTransparent,
+    // backgroundColor: "white",
+    // backgroundColor: "yellow",
+    borderRadius: vh(2),
+    width: vw(20),
+    textAlign: "center",
   },
   acceptButtonText: {
     paddingVertical: vw(0.5),
@@ -243,14 +356,17 @@ const styles = StyleSheet.create({
     marginLeft: vw(2),
     alignItems: "center",
   },
-  nameAndMessage: {
-    width: vw(52),
+  nameAndPrice: {
+    width: vw(75),
+    display: "flex",
+    flexDirection: "row",
   },
   seeMessage: {
     borderRadius: vh(2),
     paddingLeft: vw(4),
     paddingBottom: vh(0.2),
     width: vw(50),
+    color: parrotTextDarkBlue,
   },
   userName: {
     fontSize: 14,
@@ -275,14 +391,16 @@ const styles = StyleSheet.create({
   bidUsername: {
     fontSize: 14,
     fontWeight: "500",
-    width: vw(50),
+    width: vw(48),
+    color: parrotTextDarkBlue,
   },
   offerPrice: {
-    fontSize: 18,
-    fontWeight: "800",
+    fontSize: 14,
+    fontWeight: "bold",
     color: "#2ac898",
-    width: vw(20),
+    width: vw(25),
     textAlign: "right",
+    color: parrotTextDarkBlue,
   },
 
   singleBidContainer: {
@@ -290,8 +408,10 @@ const styles = StyleSheet.create({
     padding: vh(0.5),
     margin: vh(0.3),
     alignItems: "center",
-    borderRadius: vh(3),
-    backgroundColor: "rgba(0, 119, 234,0.07)",
+    borderRadius: vh(2),
+    backgroundColor: "rgba(0, 119, 234,0.05)",
+    borderWidth: 1,
+    borderColor: parrotBlueMediumTransparent,
   },
   flatlistContainer: {
     backgroundColor: "rgba(1,1,1,0.4)",
@@ -303,19 +423,22 @@ const styles = StyleSheet.create({
     marginTop: vh(20),
     alignSelf: "center",
     backgroundColor: "#f2fafa",
+    backgroundColor: "white",
     borderColor: "#bfdff4",
     borderRadius: vh(2),
     paddingLeft: vh(0.5),
   },
-  singleBidContainer2: {
+  singleBidContainerPopup: {
     flexDirection: "row",
     paddingVertical: vh(0.2),
     marginVertical: vh(0.6),
     alignItems: "center",
     borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234,0.07)",
+    backgroundColor: "rgba(0, 119, 234,0.05)",
     width: "98%",
     margin: "auto",
+    borderWidth: 1,
+    borderColor: parrotBlueMediumTransparent,
   },
   bidImage2: {
     width: vh(5),
@@ -329,7 +452,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     width: vw(40),
-    // backgroundColor: "yellow",
   },
   offerPrice2: {
     fontSize: 16,
@@ -337,7 +459,6 @@ const styles = StyleSheet.create({
     // width: vw(19),
     textAlign: "right",
     color: parrotTextDarkBlue,
-    // backgroundColor: parrotGreenMediumTransparent,
     alignSelf: "center",
     paddingHorizontal: vw(2),
     borderRadius: vh(2),

@@ -6,28 +6,27 @@ import {
   parrotBlue,
   parrotGreen,
   parrotGreenMediumTransparent,
-  parrotBlueSemiTransparent,
-  parrotBlueTransparent,
   parrotBlueMediumTransparent,
-  parrotDarkBlue,
   parrotTextDarkBlue,
   parrotRed,
   parrotRedTransparent,
-  parrotBlueSemiTransparent2,
 } from "../assets/color.jsx";
 import {
   View,
   Image,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   FlatList,
   Modal,
   StyleSheet,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { useAcceptBidMutation } from "../slices/VoyageSlice";
-import { Ionicons, FontAwesome, AntDesign } from "@expo/vector-icons";
+import {
+  useAcceptBidMutation,
+  useDeleteBidMutation,
+} from "../slices/VoyageSlice";
+import { Feather } from "@expo/vector-icons";
+
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { API_URL } from "@env";
 
@@ -39,11 +38,13 @@ export const RenderBidsComponent = ({
   voyageName,
   currentUserId,
   refetch,
+  username,
 }) => {
   const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
+
   const visibleBids = bids.slice(0, 5);
   const [acceptBid] = useAcceptBidMutation();
-
+  const [deleteBid] = useDeleteBidMutation();
   const hubConnection = useMemo(() => {
     return new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
@@ -65,10 +66,15 @@ export const RenderBidsComponent = ({
 
   const handleAcceptBid = ({ bidId, bidUserId }) => {
     const text = `Hi there! 👋 Welcome on board to "${voyageName}" 🎉`;
-
     hubConnection.invoke("SendMessage", currentUserId, bidUserId, text);
-
     acceptBid(bidId);
+    refetch();
+  };
+
+  const handleDeleteBid = async ({ bidId, bidUserId }) => {
+    const text = `Hi there! 👋 Your bid was deleted by ${username}`;
+    await hubConnection.invoke("SendMessage", currentUserId, bidUserId, text);
+    deleteBid(bidId);
     refetch();
   };
 
@@ -82,8 +88,29 @@ export const RenderBidsComponent = ({
             }}
             style={styles.bidImage}
           />
-          <View>
-            <Text style={styles.bidUsername}>{bid.userName}</Text>
+          <View
+            style={{
+              width: vw(75),
+              flexDirection: "column",
+              padding: vh(0.1),
+            }}
+          >
+            <View
+              style={{
+                width: vw(75),
+                flexDirection: "row",
+                padding: vh(0.1),
+              }}
+            >
+              <Text style={styles.bidUsername}>{bid.userName}</Text>
+              <Text style={styles.personCount}>
+                <Feather name="users" size={14} color={parrotTextDarkBlue} />{" "}
+                {bid.personCount}
+              </Text>
+              <Text style={styles.offerPrice}>
+                {bid.currency} {bid.offerPrice}
+              </Text>
+            </View>
 
             {ownVoyage && bid.message ? (
               <View>
@@ -95,11 +122,6 @@ export const RenderBidsComponent = ({
                 </Text>
               </View>
             ) : null}
-          </View>
-          <View>
-            <Text style={styles.offerPrice}>
-              {bid.currency} {bid.offerPrice}
-            </Text>
           </View>
         </View>
       ))}
@@ -117,117 +139,151 @@ export const RenderBidsComponent = ({
               data={bids}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item, index }) => {
-                return (
-                  <View key={index} style={styles.singleBidContainerPopup}>
-                    <View style={{ backgroundColor: "" }}>
-                      <Image
-                        source={{
-                          uri: UserImageBaseUrl + item.userProfileImage,
-                        }}
-                        style={styles.bidImage2}
-                      />
-                    </View>
+                // console.log("Rendering item:", item);
 
-                    <View
-                      style={{
-                        width: vw(75),
-                        // height: vh(11),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: vw(75),
-                          // height: vh(3),
-                          display: "flex",
-                          flexDirection: "row",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            width: vw(50),
-                            fontWeight: "bold",
-                            color: parrotTextDarkBlue,
+                if (ownVoyage) {
+                  return (
+                    <View key={index} style={styles.singleBidContainerPopup}>
+                      <View>
+                        <Image
+                          source={{
+                            uri: UserImageBaseUrl + item.userProfileImage,
                           }}
-                        >
-                          {item.userName}
-                        </Text>
-                        <Text
-                          style={{
-                            width: vw(25),
-                            color: parrotTextDarkBlue,
-                            fontWeight: "bold",
-                          }}
-                        >
-                          {item.currency} {item.offerPrice.toFixed(2)}
-                        </Text>
+                          style={styles.bidImage2}
+                        />
                       </View>
-                      <View
-                        style={{
-                          width: vw(72),
-                          // minHeight: vh(4.5),
-                          marginBottom: vh(0.5),
-                          marginLeft: vw(3),
-                          display: "flex",
-                          flexDirection: "row",
-                          display: item.message ? "flex" : "none",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: parrotTextDarkBlue,
-                          }}
-                        >
-                          {ownVoyage && item.message}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          marginTop: item.message ? vh(0.5) : vh(1),
-                          marginBottom: vh(1),
-                        }}
-                      >
-                        <TouchableOpacity
-                          style={{ flex: 1, alignItems: "center" }}
-                          onPress={() =>
-                            handleAcceptBid({
-                              bidId: item.id,
-                              bidUserId: item.userId,
+
+                      <View style={styles.modalDataContainer}>
+                        <View style={styles.nameAndPriceContainer}>
+                          <Text style={styles.modalUserNameText}>
+                            {item.userName}
+                          </Text>
+                          <Text style={styles.modalPersonCount}>
+                            <Feather
+                              name="users"
+                              size={14}
+                              color={parrotTextDarkBlue}
+                            />{" "}
+                            {item.personCount}
+                          </Text>
+                          <Text style={styles.modalPriceText}>
+                            {item.currency} {item.offerPrice.toFixed(2)}
+                          </Text>
+                        </View>
+                        <View
+                          style={
+                            (styles.modalMessageContainer,
+                            {
+                              display:
+                                // item.message && ownVoyage ? "flex" : "none",
+                                item.message ? "flex" : "none",
                             })
                           }
                         >
-                          <View
+                          <Text
                             style={{
-                              backgroundColor: "white",
-                              borderRadius: vh(2),
+                              color: parrotTextDarkBlue,
                             }}
                           >
-                            <Text style={styles.acceptText}>Accept</Text>
-                          </View>
-                        </TouchableOpacity>
+                            {/* {ownVoyage && item.message} */}
+                            {item.message}
+                          </Text>
+                        </View>
 
-                        <TouchableOpacity
-                          style={{ flex: 1, alignItems: "center" }}
-                          onPress={() =>
-                            handleAcceptBid({
-                              bidId: item.id,
-                              bidUserId: item.userId,
-                            })
-                          }
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            marginTop: item.message ? vh(0.5) : vh(1),
+                            marginBottom: vh(1),
+                          }}
                         >
-                          <View
-                            style={{
-                              backgroundColor: "white",
-                              borderRadius: vh(2),
+                          {!item.accepted ? (
+                            <TouchableOpacity
+                              style={{ flex: 1, alignItems: "center" }}
+                              onPress={() =>
+                                handleAcceptBid({
+                                  bidId: item.id,
+                                  bidUserId: item.userId,
+                                })
+                              }
+                            >
+                              <View style={styles.acceptTextContainer}>
+                                <Text style={styles.acceptText}>Accept</Text>
+                              </View>
+                            </TouchableOpacity>
+                          ) : (
+                            <TouchableOpacity
+                              style={{ flex: 1, alignItems: "center" }}
+                              onPress={console.log("bid accepted")}
+                            >
+                              <View style={styles.acceptTextContainer}>
+                                <Text style={styles.acceptedText}>
+                                  Accepted
+                                </Text>
+                              </View>
+                            </TouchableOpacity>
+                          )}
+
+                          <TouchableOpacity
+                            style={{ flex: 1, alignItems: "center" }}
+                            onPress={() => {
+                              console.log("Delete bid:", item.id);
+                              handleDeleteBid({
+                                bidId: item.id,
+                                bidUserId: item.userId,
+                              });
                             }}
                           >
-                            <Text style={styles.deleteText}>Delete</Text>
-                          </View>
-                        </TouchableOpacity>
+                            <View style={styles.acceptTextContainer}>
+                              <Text style={styles.deleteText}>Delete</Text>
+                            </View>
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                );
+                  );
+                } else {
+                  return (
+                    <View key={index} style={styles.singleBidContainerPopup}>
+                      <View>
+                        <Image
+                          source={{
+                            uri: UserImageBaseUrl + item.userProfileImage,
+                          }}
+                          style={styles.bidImage2}
+                        />
+                      </View>
+
+                      <View style={styles.modalDataContainerNotOwn}>
+                        <View style={styles.nameAndPriceContainerNotOwn}>
+                          <Text style={styles.modalUserNameTextNotOwn}>
+                            {item.userName}
+                          </Text>
+                          <Text style={styles.modalPersonCountNotOwn}>
+                            <Feather
+                              name="users"
+                              size={14}
+                              color={parrotTextDarkBlue}
+                            />{" "}
+                            {item.personCount}
+                          </Text>
+                          <Text style={styles.modalPriceTextNotOwn}>
+                            {item.currency} {item.offerPrice}
+                          </Text>
+                          {item.accepted ? (
+                            <View style={styles.acceptTextContainer}>
+                              <Text style={styles.acceptedText}>Accepted</Text>
+                            </View>
+                          ) : (
+                            <View style={styles.acceptTextContainer}>
+                              <Text style={styles.acceptText}>Pending</Text>
+                            </View>
+                          )}
+                        </View>
+                      </View>
+                    </View>
+                  );
+                }
               }}
             />
           </View>
@@ -242,6 +298,71 @@ export const RenderBidsComponent = ({
 };
 
 const styles = StyleSheet.create({
+  acceptTextContainer: {
+    backgroundColor: "white",
+    borderRadius: vh(2),
+  },
+  modalMessageContainer: {
+    width: vw(72),
+    marginBottom: vh(0.5),
+    marginLeft: vw(3),
+    display: "flex",
+    flexDirection: "row",
+  },
+
+  modalUserNameText: {
+    width: vw(43),
+    fontWeight: "bold",
+    color: parrotTextDarkBlue,
+  },
+  modalPersonCount: {
+    fontSize: 14,
+    fontWeight: "bold",
+    width: vw(12),
+    textAlign: "right",
+    color: parrotTextDarkBlue,
+  },
+  modalPriceText: {
+    width: vw(20),
+    color: parrotTextDarkBlue,
+    fontWeight: "bold",
+    textAlign: "right",
+  },
+  nameAndPriceContainer: {
+    width: vw(75),
+    display: "flex",
+    flexDirection: "row",
+  },
+  nameAndPriceContainerNotOwn: {
+    width: vw(33),
+    display: "flex",
+    flexDirection: "row",
+  },
+  modalDataContainer: {
+    width: vw(75),
+  },
+  modalUserNameTextNotOwn: {
+    width: vw(32),
+    fontWeight: "bold",
+    color: parrotTextDarkBlue,
+  },
+  modalPriceTextNotOwn: {
+    width: vw(10),
+    color: parrotTextDarkBlue,
+    fontWeight: "bold",
+    textAlign: "right",
+    marginRight: vw(2),
+  },
+  modalPersonCountNotOwn: {
+    fontSize: 14,
+    fontWeight: "bold",
+    width: vw(12),
+    textAlign: "right",
+    color: parrotTextDarkBlue,
+  },
+  modalDataContainerNotOwn: {
+    width: vw(75),
+  },
   acceptedText: {
     paddingVertical: vw(0.5),
     paddingHorizontal: vw(2),
@@ -282,7 +403,8 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
   },
   buttonClose: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "bold",
     color: "white",
     textAlign: "center",
     alignSelf: "center",
@@ -292,31 +414,7 @@ const styles = StyleSheet.create({
     width: vw(30),
     borderRadius: vh(4),
   },
-  thumbsUpCircle: {
-    borderWidth: 2,
-    borderRadius: vh(3),
-    borderColor: "#2ac898",
-    backgroundColor: "white",
-  },
-  logo: {
-    height: vh(5),
-    width: vh(5),
-    borderRadius: vh(10),
-    alignSelf: "center",
-    backgroundColor: "white",
-    borderRadius: vh(10),
-    padding: vh(0.5),
-    borderColor: "#93c9ed",
-    position: "absolute",
-    top: vh(15.5),
-    right: vw(2),
-    zIndex: 100,
-  },
-  acceptedButton: {
-    marginTop: vh(0.5),
-    marginLeft: vw(2),
-    alignItems: "center",
-  },
+
   nameAndPrice: {
     width: vw(75),
     display: "flex",
@@ -326,7 +424,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     paddingLeft: vw(4),
     paddingBottom: vh(0.2),
-    width: vw(50),
+    width: vw(75),
     color: parrotTextDarkBlue,
   },
   userName: {
@@ -352,14 +450,20 @@ const styles = StyleSheet.create({
   bidUsername: {
     fontSize: 14,
     fontWeight: "500",
-    width: vw(50),
+    width: vw(45),
+    color: parrotTextDarkBlue,
+  },
+  personCount: {
+    fontSize: 14,
+    fontWeight: "bold",
+    width: vw(12),
+    textAlign: "right",
     color: parrotTextDarkBlue,
   },
   offerPrice: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#2ac898",
-    width: vw(20),
+    width: vw(15),
     textAlign: "right",
     color: parrotTextDarkBlue,
   },
@@ -408,23 +512,5 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginLeft: vw(2),
     backgroundColor: "grey",
-  },
-  bidUsername2: {
-    fontSize: 14,
-    fontWeight: "500",
-    width: vw(40),
-    backgroundColor: "rgb(141,155,222)",
-  },
-  offerPrice2: {
-    fontSize: 16,
-    fontWeight: "800",
-    // width: vw(19),
-    textAlign: "right",
-    color: parrotTextDarkBlue,
-    // backgroundColor: parrotGreenMediumTransparent,
-    alignSelf: "center",
-    paddingHorizontal: vw(2),
-    borderRadius: vh(2),
-    backgroundColor: "rgb(105, 154, 158)",
   },
 });

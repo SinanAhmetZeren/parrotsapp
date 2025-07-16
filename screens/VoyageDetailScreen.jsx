@@ -44,6 +44,7 @@ import {
   removeVoyageFromUserFavorites,
 } from "../slices/UserSlice";
 import { API_URL } from "@env";
+import { parrotTextDarkBlue } from "../assets/color";
 
 const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -396,9 +397,13 @@ const VoyageDetailScreen = ({ navigation }) => {
                   </View>
                   <View style={styles.VoyagePropsBox}>
                     <View style={styles.VoyageProps}>
-                      <Text style={styles.propTextDescription}>Dates: </Text>
+                      <Text style={styles.propTextDescription}>Starts: </Text>
                       <Text style={styles.propText}>{formattedStartDate}</Text>
-                      <Text style={styles.propText}> - </Text>
+                    </View>
+
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>Ends: </Text>
+
                       <Text style={styles.propText}>{formattedEndDate}</Text>
                     </View>
                   </View>
@@ -584,6 +589,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   voyageName={VoyageData.name}
                   currentUserId={userId}
                   refetch={refetch}
+                  username={userName}
                 />
               </View>
             </View>
@@ -591,7 +597,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
           {/* // enter bid */}
 
-          <View style={{ paddingBottom: ownVoyage ? vh(11) : 0 }}>
+          <View style={{ paddingBottom: ownVoyage ? vh(11) : vh(11) }}>
             {ownVoyage ? null : (
               <CreateBidComponent
                 userName={userName}
@@ -686,10 +692,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "#3c9dde",
+    color: parrotTextDarkBlue,
   },
   propText: {
     fontSize: 14,
     color: "#666",
+    color: parrotTextDarkBlue,
   },
   ScrollView: {
     backgroundColor: "white",
@@ -749,9 +757,10 @@ const styles = StyleSheet.create({
   },
   descriptionInnerContainer: {
     marginVertical: vh(0.2),
-    fontWeight: "500",
+    // fontWeight: "500",
     color: "#959595",
     paddingBottom: vh(1),
+    color: parrotTextDarkBlue,
   },
   ReadMoreLess: {
     color: "#2ac898",
@@ -787,6 +796,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: vh(0.2),
     color: "#3c9dde",
+    color: parrotTextDarkBlue,
   },
   voyageImage: {
     height: vh(13),
