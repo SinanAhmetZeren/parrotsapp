@@ -15,6 +15,7 @@ import {
   RefreshControl,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
@@ -33,6 +34,12 @@ import { updateAsLoggedOut } from "../slices/UserSlice";
 import * as Location from "expo-location";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
 import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
+import parrotMarker1 from "../assets/parrotMarkers/parrotMarker1.png";
+import parrotMarker2 from "../assets/parrotMarkers/parrotMarker2.png";
+import parrotMarker3 from "../assets/parrotMarkers/parrotMarker3.png";
+import parrotMarker4 from "../assets/parrotMarkers/parrotMarker4.png";
+import parrotMarker5 from "../assets/parrotMarkers/parrotMarker5.png";
+import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -68,6 +75,16 @@ export default function HomeScreen({ navigation }) {
   const [hasError, setHasError] = useState(false);
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
+
+  const markerImages = [
+    parrotMarker1,
+    parrotMarker2,
+    parrotMarker3,
+    parrotMarker4,
+    parrotMarker5,
+    parrotMarker6,
+  ];
+
   const [
     getVoyagesByLocation,
     {
@@ -90,10 +107,10 @@ export default function HomeScreen({ navigation }) {
       const keys = await AsyncStorage.getAllKeys();
       const result = await AsyncStorage.multiGet(keys);
 
-      console.log("📦 AsyncStorage contents:");
-      result.forEach(([key, value]) => {
-        console.log(`  ${key}: ${value}`);
-      });
+      // console.log("📦 AsyncStorage contents:");
+      // result.forEach(([key, value]) => {
+      //   console.log(`  ${key}: ${value}`);
+      // });
     } catch (e) {
       console.error("Failed to load AsyncStorage data", e);
     }
@@ -133,7 +150,7 @@ export default function HomeScreen({ navigation }) {
         setInitialLatitude(lat);
         setInitialLongitude(lon);
       } catch (error) {
-        console.error("Error getting user location:", error);
+        console.error("Error getting user location :", error);
       }
     }
 
@@ -195,11 +212,6 @@ export default function HomeScreen({ navigation }) {
       };
 
       getVoyages();
-
-      // console.log(initialVoyages);
-      // console.log("latitude", latitude);
-      // console.log("longitude", longitude);
-      // console.log("refreshing 2 ");
     } catch (error) {
       console.log(error);
       setHasError(true);
@@ -275,7 +287,7 @@ export default function HomeScreen({ navigation }) {
       formattedStartDate,
       formattedEndDate,
     };
-    // console.log("latitude", latitude);
+    // console.log("------------data------------", data);
 
     const filteredVoyages = await getFilteredVoyages(data);
 
@@ -309,16 +321,6 @@ export default function HomeScreen({ navigation }) {
   if (isLoading) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
-
-  /*
-  if (isError) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 50, padding: vh(10) }}>error...</Text>
-      </View>
-    );
-  }
-*/
 
   if (!isLoading) {
     const initialRegion = {
@@ -471,14 +473,21 @@ export default function HomeScreen({ navigation }) {
                 const waypoint = item.waypoints?.[0];
                 const latitude = waypoint?.latitude;
                 const longitude = waypoint?.longitude;
-
+                console.log("item waypoints", item.waypoints);
                 // Skip rendering if coordinates are invalid
-                if (
-                  typeof latitude !== "number" ||
-                  typeof longitude !== "number"
-                ) {
+                // Ensure valid coordinates for marker rendering
+                if (latitude == null || longitude == null) {
                   return null;
                 }
+                // Log coordinates for debugging
+                console.log(
+                  "item.waypoints[0]",
+                  item.waypoints[0]?.latitude,
+                  item.waypoints[0]?.longitude
+                );
+
+                const imageIndex = index % markerImages.length;
+                const markerImage = markerImages[imageIndex];
 
                 return (
                   <Marker
@@ -491,6 +500,7 @@ export default function HomeScreen({ navigation }) {
                     onPress={() => {
                       updateSelectedVoyageData(item);
                     }}
+                    image={markerImage}
                   />
                 );
               })}
