@@ -42,6 +42,7 @@ import {
 } from "../slices/UserSlice";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
@@ -221,6 +222,7 @@ const VehicleDetailScreen = () => {
 
     return (
       <>
+        <TokenExpiryGuard />
         <ScrollView style={styles.ScrollView}>
           <View style={styles.rectangularBox}>
             <Image

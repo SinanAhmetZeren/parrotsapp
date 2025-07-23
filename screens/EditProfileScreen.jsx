@@ -29,6 +29,7 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { API_URL } from "@env";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 const EditProfileScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -199,293 +200,307 @@ const EditProfileScreen = ({ navigation }) => {
     const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
     return (
-      <ScrollView style={styles.scrollview}>
-        <TouchableOpacity onPress={pickBackgroundImage}>
-          <View style={styles.rectangularBox}>
-            {image2 ? (
-              <Image
-                style={styles.imageContainer}
-                resizeMode="cover"
-                source={{ uri: image2 }}
-              />
-            ) : (
-              <Image
-                style={styles.imageContainer}
-                resizeMode="cover"
-                source={{ uri: backgroundImageUrl }}
-              />
-            )}
-          </View>
-          <View style={styles.recycleBoxBG}>
-            <Entypo
-              name="image"
-              size={24}
-              color="black"
-              style={styles.recycleBackground}
-            />
-          </View>
-        </TouchableOpacity>
-        <View style={styles.profileBackGround}>
-          <TouchableOpacity onPress={pickProfileImage}>
-            {image ? (
-              <Image source={{ uri: image }} style={styles.profileImage} />
-            ) : (
-              <Image
-                source={{ uri: profileImageUrl }}
-                style={styles.profileImage}
-              />
-            )}
-            <View style={styles.recycleBox}>
+      <>
+        <TokenExpiryGuard />
+
+        <ScrollView style={styles.scrollview}>
+          <TouchableOpacity onPress={pickBackgroundImage}>
+            <View style={styles.rectangularBox}>
+              {image2 ? (
+                <Image
+                  style={styles.imageContainer}
+                  resizeMode="cover"
+                  source={{ uri: image2 }}
+                />
+              ) : (
+                <Image
+                  style={styles.imageContainer}
+                  resizeMode="cover"
+                  source={{ uri: backgroundImageUrl }}
+                />
+              )}
+            </View>
+            <View style={styles.recycleBoxBG}>
               <Entypo
                 name="image"
                 size={24}
                 color="black"
-                style={styles.recycle}
+                style={styles.recycleBackground}
               />
             </View>
           </TouchableOpacity>
-          {/* Your other UI elements */}
-        </View>
-
-        <View style={styles.profileImageContainer}>
-          {/* Username */}
-          <View style={styles.socialBox}>
-            <Feather style={styles.icon} name="user" size={24} color="black" />
-            <Text style={styles.inputDescription}>Username</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your username"
-              value={username}
-              onChangeText={(text) => setUsername(text)}
-              maxLength={25}
-            />
+          <View style={styles.profileBackGround}>
+            <TouchableOpacity onPress={pickProfileImage}>
+              {image ? (
+                <Image source={{ uri: image }} style={styles.profileImage} />
+              ) : (
+                <Image
+                  source={{ uri: profileImageUrl }}
+                  style={styles.profileImage}
+                />
+              )}
+              <View style={styles.recycleBox}>
+                <Entypo
+                  name="image"
+                  size={24}
+                  color="black"
+                  style={styles.recycle}
+                />
+              </View>
+            </TouchableOpacity>
+            {/* Your other UI elements */}
           </View>
 
-          <View style={styles.socialBox}>
-            <Fontisto
-              style={styles.icon}
-              name="email"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Email</Text>
-            <TextInput
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-              style={styles.textInput}
-              editable={false}
-            />
-          </View>
+          <View style={styles.profileImageContainer}>
+            {/* Username */}
+            <View style={styles.socialBox}>
+              <Feather
+                style={styles.icon}
+                name="user"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Username</Text>
 
-          <View style={styles.socialBoxCheckbox}>
-            <Fontisto
-              style={styles.icon}
-              name="email"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Hide Email</Text>
-            <View style={styles.checkboxContainer}>
-              <Checkbox
-                value={emailHidden}
-                onValueChange={setEmailHidden}
-                color={emailHidden ? "rgba(0, 119, 234,0.9)" : undefined}
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your username"
+                value={username}
+                onChangeText={(text) => setUsername(text)}
+                maxLength={25}
+              />
+            </View>
+
+            <View style={styles.socialBox}>
+              <Fontisto
+                style={styles.icon}
+                name="email"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Email</Text>
+              <TextInput
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+                style={styles.textInput}
+                editable={false}
+              />
+            </View>
+
+            <View style={styles.socialBoxCheckbox}>
+              <Fontisto
+                style={styles.icon}
+                name="email"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Hide Email</Text>
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  value={emailHidden}
+                  onValueChange={setEmailHidden}
+                  color={emailHidden ? "rgba(0, 119, 234,0.9)" : undefined}
+                />
+              </View>
+            </View>
+
+            {/* Phone Number */}
+            <View style={styles.socialBox}>
+              <Feather
+                style={styles.icon}
+                name="phone"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Phone</Text>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your phone number"
+                value={phoneNumber}
+                onChangeText={(text) => setPhoneNumber(text)}
+              />
+            </View>
+
+            {/* Facebook Profile */}
+            <View style={styles.socialBox}>
+              <Feather
+                style={styles.icon}
+                name="facebook"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Facebook</Text>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your Facebook profile"
+                value={facebookProfile}
+                onChangeText={(text) => setFacebookProfile(text)}
+              />
+            </View>
+
+            {/* Instagram Profile */}
+            <View style={styles.socialBox}>
+              <Feather
+                style={styles.icon}
+                name="instagram"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Instagram</Text>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your Instagram profile"
+                value={instagramProfile}
+                onChangeText={(text) => setInstagramProfile(text)}
+              />
+            </View>
+
+            {/* Youtube Profile */}
+            <View style={styles.socialBox}>
+              <Feather
+                style={styles.icon}
+                name="youtube"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Youtube</Text>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your Youtube profile"
+                value={youtubeProfile}
+                onChangeText={(text) => setYoutubeProfile(text)}
+              />
+            </View>
+
+            {/* Twitter Profile */}
+            <View style={styles.socialBox}>
+              <Feather
+                style={styles.icon}
+                name="twitter"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Twitter</Text>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your Twitter profile"
+                value={twitterProfile}
+                onChangeText={(text) => setTwitterProfile(text)}
+              />
+            </View>
+
+            {/* Tiktok Profile */}
+            <View style={styles.socialBox}>
+              <FontAwesome5
+                style={styles.icon}
+                name="tiktok"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Tiktok</Text>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your Tiktok profile"
+                value={tiktokProfile}
+                onChangeText={(text) => setTiktokProfile(text)}
+              />
+            </View>
+
+            {/* Linkedin Profile */}
+            <View style={styles.socialBox}>
+              <Feather
+                style={styles.icon}
+                name="linkedin"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Linkedin</Text>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your Linkedin profile"
+                value={linkedinProfile}
+                onChangeText={(text) => setLinkedinProfile(text)}
+              />
+            </View>
+
+            {/* Title */}
+            <View style={styles.socialBox}>
+              <Feather
+                style={styles.icon}
+                name="pen-tool"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Title</Text>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter your title"
+                value={title}
+                maxLength={40}
+                multiline
+                onChangeText={(text) => {
+                  setTitle(text);
+                }}
+              />
+            </View>
+
+            {/* Bio */}
+            <View style={styles.socialBoxBio}>
+              <Feather
+                style={styles.icon}
+                name="pen-tool"
+                size={24}
+                color="black"
+              />
+              <Text style={styles.inputDescription}>Bio</Text>
+              <TextInput
+                style={styles.textInputBio}
+                placeholder="Enter your bio"
+                value={bio}
+                onChangeText={(text) => setBio(text)}
+                multiline
+                maxLength={500}
+              />
+            </View>
+
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                style={styles.selection}
+                onPress={() => {
+                  {
+                    image ? handleUploadProfile() : null;
+                  }
+                  {
+                    image2 ? handleUploadBackground() : null;
+                  }
+                  handlePatchUser();
+                  navigation.navigate("ProfileScreen");
+                }}
+              >
+                <Text style={styles.choiceText}>Save Changes</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.refetch}>
+              <Button
+                title="refetch"
+                onPress={() => {
+                  refetch();
+                }}
               />
             </View>
           </View>
-
-          {/* Phone Number */}
-          <View style={styles.socialBox}>
-            <Feather style={styles.icon} name="phone" size={24} color="black" />
-            <Text style={styles.inputDescription}>Phone</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your phone number"
-              value={phoneNumber}
-              onChangeText={(text) => setPhoneNumber(text)}
-            />
-          </View>
-
-          {/* Facebook Profile */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="facebook"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Facebook</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your Facebook profile"
-              value={facebookProfile}
-              onChangeText={(text) => setFacebookProfile(text)}
-            />
-          </View>
-
-          {/* Instagram Profile */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="instagram"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Instagram</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your Instagram profile"
-              value={instagramProfile}
-              onChangeText={(text) => setInstagramProfile(text)}
-            />
-          </View>
-
-          {/* Youtube Profile */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="youtube"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Youtube</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your Youtube profile"
-              value={youtubeProfile}
-              onChangeText={(text) => setYoutubeProfile(text)}
-            />
-          </View>
-
-          {/* Twitter Profile */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="twitter"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Twitter</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your Twitter profile"
-              value={twitterProfile}
-              onChangeText={(text) => setTwitterProfile(text)}
-            />
-          </View>
-
-          {/* Tiktok Profile */}
-          <View style={styles.socialBox}>
-            <FontAwesome5
-              style={styles.icon}
-              name="tiktok"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Tiktok</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your Tiktok profile"
-              value={tiktokProfile}
-              onChangeText={(text) => setTiktokProfile(text)}
-            />
-          </View>
-
-          {/* Linkedin Profile */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="linkedin"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Linkedin</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your Linkedin profile"
-              value={linkedinProfile}
-              onChangeText={(text) => setLinkedinProfile(text)}
-            />
-          </View>
-
-          {/* Title */}
-          <View style={styles.socialBox}>
-            <Feather
-              style={styles.icon}
-              name="pen-tool"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Title</Text>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter your title"
-              value={title}
-              maxLength={40}
-              multiline
-              onChangeText={(text) => {
-                setTitle(text);
-              }}
-            />
-          </View>
-
-          {/* Bio */}
-          <View style={styles.socialBoxBio}>
-            <Feather
-              style={styles.icon}
-              name="pen-tool"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.inputDescription}>Bio</Text>
-            <TextInput
-              style={styles.textInputBio}
-              placeholder="Enter your bio"
-              value={bio}
-              onChangeText={(text) => setBio(text)}
-              multiline
-              maxLength={500}
-            />
-          </View>
-
-          <View style={styles.modalView}>
-            <TouchableOpacity
-              style={styles.selection}
-              onPress={() => {
-                {
-                  image ? handleUploadProfile() : null;
-                }
-                {
-                  image2 ? handleUploadBackground() : null;
-                }
-                handlePatchUser();
-                navigation.navigate("ProfileScreen");
-              }}
-            >
-              <Text style={styles.choiceText}>Save Changes</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.refetch}>
-            <Button
-              title="refetch"
-              onPress={() => {
-                refetch();
-              }}
-            />
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </>
     );
   }
 };

@@ -38,6 +38,7 @@ import CreateVoyageMapComponent from "../components/CreateVoyageMapComponent";
 import { API_URL } from "@env";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 const CreateVoyageScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -342,6 +343,7 @@ const CreateVoyageScreen = ({ navigation }) => {
 
     return (
       <>
+        <TokenExpiryGuard />
         <StepBar style={styles.StepBar} currentStep={currentStep} />
         {currentStep == 1 ? (
           <ScrollView style={styles.scrollview}>

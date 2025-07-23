@@ -33,6 +33,12 @@ const usersSlice = createSlice({
       ).catch((error) => {
         console.error("Error setting storedToken ", error);
       });
+      AsyncStorage.setItem(
+        "storedRefreshTokenExpiryTime",
+        action.payload.refreshTokenExpiryTime
+      ).catch((error) => {
+        console.error("Error setting storedToken ", error);
+      });
       AsyncStorage.setItem("storedUserId", action.payload.userId).catch(
         (error) => {
           console.error("Error setting storedUserId:", error);
@@ -61,6 +67,12 @@ const usersSlice = createSlice({
       });
       AsyncStorage.removeItem("storedRefreshToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedRefreshToken:", error);
+      });
+      AsyncStorage.removeItem("storedRefreshTokenExpiryTime").catch((error) => {
+        console.error(
+          "Error clearing AsyncStorage storedRefreshTokenExpiryTime:",
+          error
+        );
       });
       AsyncStorage.removeItem("storedUserId").catch((error) => {
         console.error("Error clearing AsyncStorage storedUserId:", error);

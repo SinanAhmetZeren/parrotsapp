@@ -24,6 +24,7 @@ import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { ScrollView } from "react-native-web";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 export const ConversationDetailScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -69,7 +70,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const onRefresh = () => {
     setRefreshing(true);
     setHasError(false);
-    console.log("refreshing ");
     try {
       refetch();
     } catch (error) {
@@ -255,130 +255,134 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   if (isSuccessMessages) {
     return (
-      <View
-        style={{
-          backgroundColor: "white",
-          padding: vh(2),
-        }}
-      >
-        {/* // HEADER // */}
+      <>
+        <TokenExpiryGuard />
+
         <View
-          style={
-            textInputBottomMargin !== 0 && {
-              position: "absolute",
-              top: 0,
-              zIndex: 110,
-              paddingLeft: vh(2),
-              paddingTop: vh(2),
-              backgroundColor: "white",
+          style={{
+            backgroundColor: "white",
+            padding: vh(2),
+          }}
+        >
+          {/* // HEADER // */}
+          <View
+            style={
+              textInputBottomMargin !== 0 && {
+                position: "absolute",
+                top: 0,
+                zIndex: 110,
+                paddingLeft: vh(2),
+                paddingTop: vh(2),
+                backgroundColor: "white",
+              }
             }
-          }
-        >
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Messages", {
-                screen: "ProfileScreenPublic",
-                params: { userId: conversationUserId },
-              });
-            }}
-            style={styles.headerContainer}
           >
-            <View style={styles.imageContainer}>
-              <Image
-                source={{
-                  uri: `${API_URL}/Uploads/UserImages/${profileImg}`,
-                }}
-                style={styles.profileImage}
-              />
-            </View>
-            <View>
-              <Text style={styles.nameStyle}>{name}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-        {/* // HEADER // */}
-
-        {/* // MESSAGES COMPONENT // */}
-        <View
-          style={
-            textInputBottomMargin === 0
-              ? {
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-              : {
-                  top: vh(8) - textInputBottomMargin,
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-          }
-        >
-          <View style={styles.scrollViewMessages}>
-            <MessagesComponent
-              data={messagesToDisplay}
-              currentUserId={currentUserId}
-              userName={currentUserName}
-              userProfileImage={currentUserProfileImage}
-              otherUserProfileImg={profileImg}
-              otherUserName={name}
-              scrollViewRef={scrollViewRef}
-            />
-          </View>
-        </View>
-        {/* // MESSAGES COMPONENT // */}
-
-        {/* // SEND MESSAGE COMPONENT // */}
-        <View
-          style={
-            textInputBottomMargin === 0
-              ? {
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-              : {
-                  top: vh(8) - textInputBottomMargin,
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-          }
-        >
-          <View style={styles.sendMessageContainer}>
-            <View style={styles.messageTextContainer}>
-              <View>
-                <TextInput
-                  onChangeText={(text) => setMessage(text)}
-                  style={styles.textinputStyle}
-                  multiline
-                  placeholder="Write a message"
-                  placeholderTextColor="#a3b4c5"
-                  value={message}
-                  numberOfLines={1}
-                  maxLength={500}
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Messages", {
+                  screen: "ProfileScreenPublic",
+                  params: { userId: conversationUserId },
+                });
+              }}
+              style={styles.headerContainer}
+            >
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{
+                    uri: `${API_URL}/Uploads/UserImages/${profileImg}`,
+                  }}
+                  style={styles.profileImage}
                 />
               </View>
-            </View>
+              <View>
+                <Text style={styles.nameStyle}>{name}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          {/* // HEADER // */}
 
-            <View style={styles.buttonsContainer}>
-              <TouchableOpacity
-                disabled={message ? false : true}
-                onPress={() => handleSendMessage()}
-                style={styles.buttonCancelContainer}
-              >
-                <View
-                  style={
-                    message ? styles.buttonClear : styles.buttonClearDisabled
+          {/* // MESSAGES COMPONENT // */}
+          <View
+            style={
+              textInputBottomMargin === 0
+                ? {
+                    zIndex: 100,
+                    backgroundColor: "white",
                   }
-                >
-                  <Text style={styles.buttonText}>
-                    <Feather name="send" size={24} color="white" />
-                  </Text>
-                </View>
-              </TouchableOpacity>
+                : {
+                    top: vh(8) - textInputBottomMargin,
+                    zIndex: 100,
+                    backgroundColor: "white",
+                  }
+            }
+          >
+            <View style={styles.scrollViewMessages}>
+              <MessagesComponent
+                data={messagesToDisplay}
+                currentUserId={currentUserId}
+                userName={currentUserName}
+                userProfileImage={currentUserProfileImage}
+                otherUserProfileImg={profileImg}
+                otherUserName={name}
+                scrollViewRef={scrollViewRef}
+              />
             </View>
           </View>
+          {/* // MESSAGES COMPONENT // */}
+
+          {/* // SEND MESSAGE COMPONENT // */}
+          <View
+            style={
+              textInputBottomMargin === 0
+                ? {
+                    zIndex: 100,
+                    backgroundColor: "white",
+                  }
+                : {
+                    top: vh(8) - textInputBottomMargin,
+                    zIndex: 100,
+                    backgroundColor: "white",
+                  }
+            }
+          >
+            <View style={styles.sendMessageContainer}>
+              <View style={styles.messageTextContainer}>
+                <View>
+                  <TextInput
+                    onChangeText={(text) => setMessage(text)}
+                    style={styles.textinputStyle}
+                    multiline
+                    placeholder="Write a message"
+                    placeholderTextColor="#a3b4c5"
+                    value={message}
+                    numberOfLines={1}
+                    maxLength={500}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.buttonsContainer}>
+                <TouchableOpacity
+                  disabled={message ? false : true}
+                  onPress={() => handleSendMessage()}
+                  style={styles.buttonCancelContainer}
+                >
+                  <View
+                    style={
+                      message ? styles.buttonClear : styles.buttonClearDisabled
+                    }
+                  >
+                    <Text style={styles.buttonText}>
+                      <Feather name="send" size={24} color="white" />
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+          {/* // SEND MESSAGE COMPONENT // */}
         </View>
-        {/* // SEND MESSAGE COMPONENT // */}
-      </View>
+      </>
     );
   }
 };

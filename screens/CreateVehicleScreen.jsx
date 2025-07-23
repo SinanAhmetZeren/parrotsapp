@@ -28,6 +28,7 @@ import StepBarVehicle from "../components/StepBarVehicle";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -333,6 +334,8 @@ const CreateVehicleScreen = () => {
 
   return (
     <>
+      <TokenExpiryGuard />
+
       <StepBarVehicle currentStep={currentStep} />
       {currentStep == 1 ? (
         <ScrollView style={styles.scrollview}>

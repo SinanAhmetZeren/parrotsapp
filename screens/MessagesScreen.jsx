@@ -25,6 +25,7 @@ import { ConnectSelectionComponent } from "../components/ConnectSelectionCompone
 import { SearchUsersComponent } from "../components/SearchUsersComponent";
 import { FontAwesome } from "@expo/vector-icons";
 import { API_URL } from "@env";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 export default function MessagesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -89,11 +90,9 @@ export default function MessagesScreen({ navigation }) {
 
   const onRefresh = () => {
     setRefreshing(true);
-    console.log("refreshing ");
     try {
       refetch();
       setHasError(false);
-      console.log("refreshing 2 ");
     } catch (error) {
       console.log(error);
       setHasError(true);
@@ -171,6 +170,8 @@ export default function MessagesScreen({ navigation }) {
   if (isSuccessMessages) {
     return (
       <>
+        <TokenExpiryGuard />
+
         {selectedFunction === 1 ? (
           <View style={styles.container}>
             {messagesData ? (

@@ -14,6 +14,8 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
+import RenderHtml from "react-native-render-html";
+import { parrotTextDarkBlue, parrotBlue } from "../assets/color";
 
 export default function FavoriteVehicleCardProfile({
   vehicleId,
@@ -161,14 +163,20 @@ export default function FavoriteVehicleCardProfile({
               </Text>
             </View>
           </View>
-
-          <Text
-            style={styles.cardDescription}
-            numberOfLines={8}
-            ellipsizeMode="tail"
+          <View
+            style={{
+              height: vh(15),
+              overflow: "hidden",
+            }}
           >
-            {description}
-          </Text>
+            <RenderHtml
+              source={{ html: description }}
+              baseStyle={{
+                fontSize: 11, // 👈 change this to desired size
+                color: parrotTextDarkBlue,
+              }}
+            />
+          </View>
         </View>
       </View>
     </TouchableOpacity>

@@ -29,6 +29,7 @@ import { SocialRenderComponent } from "../components/SocialRenderComponent";
 import { SocialRenderComponentModal } from "../components/SocialRenderComponentModal";
 import VoyageListVertical from "../components/VoyageListVertical";
 import { API_URL } from "@env";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
@@ -195,6 +196,8 @@ export default function ProfileScreenPublic({ navigation }) {
 
     return (
       <>
+        <TokenExpiryGuard />
+
         <View style={styles.mainContainer}>
           <ScrollView style={styles.scrollView}>
             <View style={styles.innerContainer}>
