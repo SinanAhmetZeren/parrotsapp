@@ -29,6 +29,8 @@ import {
   useLazyGetFavoriteVehicleIdsByUserIdQuery,
   updateUserFavorites,
 } from "../slices/UserSlice";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+
 // import {
 //   GoogleSignin,
 //   GoogleSigninButton,
@@ -164,6 +166,7 @@ const LoginScreen = ({ navigation }) => {
         password: passwordR,
         confirmationCode: registerCode2,
       }).unwrap();
+      console.log("resetpasswordresponse: --->>", resetPasswordResponse);
 
       setPasswordR("");
       setPasswordR2("");
@@ -172,9 +175,12 @@ const LoginScreen = ({ navigation }) => {
         await dispatch(
           updateAsLoggedIn({
             userId: resetPasswordResponse.userId,
-            token: resetPasswordResponse.token,
             userName: resetPasswordResponse.userName,
             profileImageUrl: resetPasswordResponse.profileImageUrl,
+            token: resetPasswordResponse.token,
+            refreshToken: resetPasswordResponse.refreshTokenExpiryTime,
+            refreshTokenExpiryTime:
+              resetPasswordResponse.refreshTokenExpiryTime,
           })
         );
       }
@@ -203,6 +209,8 @@ const LoginScreen = ({ navigation }) => {
         Email: email,
         Password: password,
       }).unwrap();
+
+      console.log("----->", loginResponse);
 
       // Ensure token and userId exist before proceeding
       if (!loginResponse?.token || !loginResponse?.userId) {
@@ -253,10 +261,11 @@ const LoginScreen = ({ navigation }) => {
       dispatch(
         updateAsLoggedIn({
           userId: loginResponse.userId,
+          userName: loginResponse.userName || "",
+          profileImageUrl: loginResponse.profileImageUrl || "",
           token: loginResponse.token,
           refreshToken: loginResponse.refreshToken,
-          userName: loginResponse.userName || "", // Fallbacks for optional fields
-          profileImageUrl: loginResponse.profileImageUrl || "",
+          refreshTokenExpiryTime: loginResponse.refreshTokenExpiryTime,
         })
       );
 
@@ -351,9 +360,11 @@ const LoginScreen = ({ navigation }) => {
         await dispatch(
           updateAsLoggedIn({
             userId: confirmResponse.userId,
-            token: confirmResponse.token,
             userName: confirmResponse.userName,
             profileImageUrl: confirmResponse.profileImageUrl,
+            token: confirmResponse.token,
+            refreshToken: confirmResponse.refreshToken,
+            refreshTokenExpiryTime: confirmResponse.refreshTokenExpiryTime,
           })
         );
       }
@@ -406,6 +417,8 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <>
+      <TokenExpiryGuard />
+
       {loginOrRegister === "Login" ? (
         <>
           <View style={{ backgroundColor: "white" }}>

@@ -40,6 +40,7 @@ import parrotMarker3 from "../assets/parrotMarkers/parrotMarker3.png";
 import parrotMarker4 from "../assets/parrotMarkers/parrotMarker4.png";
 import parrotMarker5 from "../assets/parrotMarkers/parrotMarker5.png";
 import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 export default function HomeScreen({ navigation }) {
   const [countModalVisibility, setCountModalVisibility] = useState(false);
@@ -125,7 +126,6 @@ export default function HomeScreen({ navigation }) {
   const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("Redux isLoggedIn:", isLoggedIn);
     // dispatch(updateAsLoggedOut()); // Reset state on mount
   }, [isLoggedIn]);
   /*    HARD LOGOUT  */
@@ -195,7 +195,6 @@ export default function HomeScreen({ navigation }) {
   const onRefresh = () => {
     setRefreshing(true);
     setHasError(false);
-    console.log("refreshing ");
     try {
       const getVoyages = async () => {
         const lat1 = initialLatitude - 0.15;
@@ -331,254 +330,252 @@ export default function HomeScreen({ navigation }) {
     };
 
     return (
-      <ScrollView
-        style={styles.scrollview}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#9Bd35A", "#689F38"]} // Android
-            tintColor="#689F38" // iOS
-          />
-        }
-      >
-        <View style={styles.countModal}>
-          <FilterCountModal
-            isCountFiltered={isCountFiltered}
-            setIsCountFiltered={setIsCountFiltered}
-            onClose={handleCountModal}
-            isVisible={countModalVisibility}
-            count={count}
-            setCount={setCount}
-          />
-        </View>
-        <View style={styles.calendarModal}>
-          <FilterCalendarModal
-            isDatesFiltered={isDatesFiltered}
-            setIsDatesFiltered={setIsDatesFiltered}
-            onClose={handleCalendarModal}
-            isVisible={calendarModalVisibility}
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-          />
-        </View>
-        <View style={styles.vehicleModal}>
-          <FilterVehicleModal
-            isVehicleFiltered={isVehicleFiltered}
-            setIsVehicleFiltered={setIsVehicleFiltered}
-            onClose={handleVehicleModal}
-            isVisible={vehicleModalVisibility}
-            selectedVehicleType={selectedVehicleType}
-            setSelectedVehicleType={setSelectedVehicleType}
-          />
-        </View>
-        <View style={{ height: vh(95) }}>
-          <View style={styles.welcomeandFilters}>
-            <Image
-              source={require("../assets/parrots-logo-mini.png")}
-              style={styles.miniLogo}
+      <>
+        <TokenExpiryGuard />
+        <ScrollView
+          style={styles.scrollview}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#9Bd35A", "#689F38"]} // Android
+              tintColor="#689F38" // iOS
             />
+          }
+        >
+          <View style={styles.countModal}>
+            <FilterCountModal
+              isCountFiltered={isCountFiltered}
+              setIsCountFiltered={setIsCountFiltered}
+              onClose={handleCountModal}
+              isVisible={countModalVisibility}
+              count={count}
+              setCount={setCount}
+            />
+          </View>
+          <View style={styles.calendarModal}>
+            <FilterCalendarModal
+              isDatesFiltered={isDatesFiltered}
+              setIsDatesFiltered={setIsDatesFiltered}
+              onClose={handleCalendarModal}
+              isVisible={calendarModalVisibility}
+              startDate={startDate}
+              setStartDate={setStartDate}
+              endDate={endDate}
+              setEndDate={setEndDate}
+            />
+          </View>
+          <View style={styles.vehicleModal}>
+            <FilterVehicleModal
+              isVehicleFiltered={isVehicleFiltered}
+              setIsVehicleFiltered={setIsVehicleFiltered}
+              onClose={handleVehicleModal}
+              isVisible={vehicleModalVisibility}
+              selectedVehicleType={selectedVehicleType}
+              setSelectedVehicleType={setSelectedVehicleType}
+            />
+          </View>
+          <View style={{ height: vh(95) }}>
+            <View style={styles.welcomeandFilters}>
+              <Image
+                source={require("../assets/parrots-logo-mini.png")}
+                style={styles.miniLogo}
+              />
 
-            <View style={styles.welcomebox}>
-              <Text style={styles.welcome}>Welcome to Parrots</Text>
+              <View style={styles.welcomebox}>
+                <Text style={styles.welcome}>Welcome to Parrots</Text>
 
-              {username?.length < 13 ? (
-                <Text style={styles.usernameLarge}>{username}!</Text>
-              ) : null}
-              {username?.length > 12 && username.length < 18 ? ( // 13 to 16
-                <Text style={styles.usernameMedium}>{username}!</Text>
-              ) : null}
-              {username?.length > 17 && username.length < 21 ? ( // 17 to 24
-                <Text style={styles.usernameSmall}>{username}!</Text>
-              ) : null}
-              {username?.length > 20 ? (
-                <Text style={styles.usernameSmall}>
-                  {username?.substring(0, 19)}...!
-                </Text>
-              ) : null}
-            </View>
-
-            <View>
-              <View style={styles.filterbox}>
-                <TouchableOpacity onPress={handleCountModal}>
-                  <MaterialCommunityIcons
-                    style={[
-                      styles.icon,
-                      isCountFiltered ? styles.filtered : null,
-                    ]}
-                    name="human-handsup"
-                    size={24}
-                    color="#c3c3c3"
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleCalendarModal}>
-                  <Ionicons
-                    style={[
-                      styles.icon,
-                      isDatesFiltered ? styles.filtered : null,
-                    ]}
-                    name="calendar-outline"
-                    size={24}
-                    color="#c3c3c3"
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleVehicleModal}>
-                  <MaterialCommunityIcons
-                    style={[
-                      styles.icon,
-                      isVehicleFiltered ? styles.filtered : null,
-                    ]}
-                    name="car-side"
-                    size={24}
-                    color="#c3c3c3"
-                  />
-                </TouchableOpacity>
+                {username?.length < 13 ? (
+                  <Text style={styles.usernameLarge}>{username}!</Text>
+                ) : null}
+                {username?.length > 12 && username.length < 18 ? ( // 13 to 16
+                  <Text style={styles.usernameMedium}>{username}!</Text>
+                ) : null}
+                {username?.length > 17 && username.length < 21 ? ( // 17 to 24
+                  <Text style={styles.usernameSmall}>{username}!</Text>
+                ) : null}
+                {username?.length > 20 ? (
+                  <Text style={styles.usernameSmall}>
+                    {username?.substring(0, 19)}...!
+                  </Text>
+                ) : null}
               </View>
 
               <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    applyFilter();
-                  }}
-                >
-                  <View>
-                    <Text style={styles.applyFilter}>Apply Filter</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
+                <View style={styles.filterbox}>
+                  <TouchableOpacity onPress={handleCountModal}>
+                    <MaterialCommunityIcons
+                      style={[
+                        styles.icon,
+                        isCountFiltered ? styles.filtered : null,
+                      ]}
+                      name="human-handsup"
+                      size={24}
+                      color="#c3c3c3"
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleCalendarModal}>
+                    <Ionicons
+                      style={[
+                        styles.icon,
+                        isDatesFiltered ? styles.filtered : null,
+                      ]}
+                      name="calendar-outline"
+                      size={24}
+                      color="#c3c3c3"
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleVehicleModal}>
+                    <MaterialCommunityIcons
+                      style={[
+                        styles.icon,
+                        isVehicleFiltered ? styles.filtered : null,
+                      ]}
+                      name="car-side"
+                      size={24}
+                      color="#c3c3c3"
+                    />
+                  </TouchableOpacity>
+                </View>
 
-              {/* <View>
-                <TouchableOpacity
-                  onPress={() => {
-                    handleLogout();
-                  }}
-                >
-                  <View>
-                    <Text style={styles.applyFilter}>Logout</Text>
-                  </View>
-                </TouchableOpacity>
-              </View> */}
-            </View>
-          </View>
-          <View style={styles.mapContainer}>
-            <MapView
-              style={styles.map}
-              initialRegion={initialRegion}
-              ref={mapRef}
-              onRegionChangeComplete={handleRegionChangeComplete}
-            >
-              {initialVoyages.map((item, index) => {
-                const waypoint = item.waypoints?.[0];
-                const latitude = waypoint?.latitude;
-                const longitude = waypoint?.longitude;
-                console.log("item waypoints", item.waypoints);
-                // Skip rendering if coordinates are invalid
-                // Ensure valid coordinates for marker rendering
-                if (latitude == null || longitude == null) {
-                  return null;
-                }
-                // Log coordinates for debugging
-                console.log(
-                  "item.waypoints[0]",
-                  item.waypoints[0]?.latitude,
-                  item.waypoints[0]?.longitude
-                );
-
-                const imageIndex = index % markerImages.length;
-                const markerImage = markerImages[imageIndex];
-
-                return (
-                  <Marker
-                    key={item.id}
-                    pinColor={"#2ac898"}
-                    coordinate={{
-                      latitude: item.waypoints[0]?.latitude,
-                      longitude: item.waypoints[0]?.longitude,
-                    }}
+                <View>
+                  <TouchableOpacity
                     onPress={() => {
-                      updateSelectedVoyageData(item);
+                      applyFilter();
                     }}
-                    image={markerImage}
-                  />
-                );
-              })}
-            </MapView>
-          </View>
-          {/* {isErrorVoyages ? ( */}
-          {hasError ? (
-            <View>
+                  >
+                    <View>
+                      <Text style={styles.applyFilter}>Apply Filter</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+
+                <View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleLogout();
+                    }}
+                  >
+                    <View>
+                      <Text style={styles.applyFilter}>Logout</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                initialRegion={initialRegion}
+                ref={mapRef}
+                onRegionChangeComplete={handleRegionChangeComplete}
+              >
+                {initialVoyages.map((item, index) => {
+                  const waypoint = item.waypoints?.[0];
+                  const latitude = waypoint?.latitude;
+                  const longitude = waypoint?.longitude;
+                  // Skip rendering if coordinates are invalid
+                  // Ensure valid coordinates for marker rendering
+                  if (latitude == null || longitude == null) {
+                    return null;
+                  }
+
+                  const imageIndex = index % markerImages.length;
+                  const markerImage = markerImages[imageIndex];
+
+                  return (
+                    <Marker
+                      key={item.id}
+                      pinColor={"#2ac898"}
+                      coordinate={{
+                        latitude: item.waypoints[0]?.latitude,
+                        longitude: item.waypoints[0]?.longitude,
+                      }}
+                      onPress={() => {
+                        updateSelectedVoyageData(item);
+                      }}
+                      image={markerImage}
+                    />
+                  );
+                })}
+              </MapView>
+            </View>
+            {/* {isErrorVoyages ? ( */}
+            {hasError ? (
               <View>
-                <Image
-                  source={require("../assets/ParrotsWhiteBg.png")}
-                  style={styles.logoImage}
-                />
-                <Text style={styles.currentBidsTitle2}>Connection Error</Text>
-                <Text style={styles.currentBidsTitle3}>
-                  Swipe Down to Retry
-                </Text>
+                <View>
+                  <Image
+                    source={require("../assets/ParrotsWhiteBg.png")}
+                    style={styles.logoImage}
+                  />
+                  <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+                  <Text style={styles.currentBidsTitle3}>
+                    Swipe Down to Retry
+                  </Text>
+                </View>
               </View>
-            </View>
-          ) : null}
+            ) : null}
 
-          {initialVoyages.length === 0 ? (
-            <Text></Text>
-          ) : (
-            <View style={styles.mainBidsContainer}>
-              <View style={styles.currentBidsAndSeeAll}>
-                <Text style={styles.currentBidsTitle}>Voyages</Text>
+            {initialVoyages.length === 0 ? (
+              <Text></Text>
+            ) : (
+              <View style={styles.mainBidsContainer}>
+                <View style={styles.currentBidsAndSeeAll}>
+                  <Text style={styles.currentBidsTitle}>Voyages</Text>
+                </View>
               </View>
-            </View>
-          )}
+            )}
 
-          <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
-        </View>
-        <View>
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={selectedVoyageModalVisible}
-            onRequestClose={() => setSelectedVoyageModalVisible(false)}
-          >
-            <TouchableOpacity
-              onPress={() => setSelectedVoyageModalVisible(false)}
-              style={{
-                flex: 1,
-                backgroundColor: "rgba(1,1,1,0.3)",
-              }}
+            <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
+          </View>
+          <View>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={selectedVoyageModalVisible}
+              onRequestClose={() => setSelectedVoyageModalVisible(false)}
             >
-              <View style={styles.imageContainerInModal}>
-                <VoyageCardProfileHorizontalModal
-                  key={voyageIdM}
-                  voyageId={voyageIdM}
-                  cardHeader={cardHeaderM}
-                  cardDescription={cardDescriptionM}
-                  cardImage={cardImageM}
-                  vacancy={vacancyM}
-                  startdate={startDateM}
-                  enddate={endDateM}
-                  vehiclename={vehicleNameM}
-                  vehicletype={vehicleTypeM}
-                  latitude={latitudeM}
-                  longitude={longitudeM}
-                  focusMap={() => {}}
-                  setSelectedVoyageModalVisible={setSelectedVoyageModalVisible}
-                />
+              <TouchableOpacity
+                onPress={() => setSelectedVoyageModalVisible(false)}
+                style={{
+                  flex: 1,
+                  backgroundColor: "rgba(1,1,1,0.3)",
+                }}
+              >
+                <View style={styles.imageContainerInModal}>
+                  <VoyageCardProfileHorizontalModal
+                    key={voyageIdM}
+                    voyageId={voyageIdM}
+                    cardHeader={cardHeaderM}
+                    cardDescription={cardDescriptionM}
+                    cardImage={cardImageM}
+                    vacancy={vacancyM}
+                    startdate={startDateM}
+                    enddate={endDateM}
+                    vehiclename={vehicleNameM}
+                    vehicletype={vehicleTypeM}
+                    latitude={latitudeM}
+                    longitude={longitudeM}
+                    focusMap={() => {}}
+                    setSelectedVoyageModalVisible={
+                      setSelectedVoyageModalVisible
+                    }
+                  />
 
-                <TouchableOpacity
-                  style={styles.closeButtonAndText2}
-                  onPress={() => setSelectedVoyageModalVisible(false)}
-                >
-                  <View>
-                    <Text style={styles.buttonClose}>Close</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          </Modal>
-        </View>
-      </ScrollView>
+                  <TouchableOpacity
+                    style={styles.closeButtonAndText2}
+                    onPress={() => setSelectedVoyageModalVisible(false)}
+                  >
+                    <View>
+                      <Text style={styles.buttonClose}>Close</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
+          </View>
+        </ScrollView>
+      </>
     );
   }
 }

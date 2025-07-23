@@ -19,6 +19,7 @@ import FavoriteVehicleList from "../components/FavoriteVehicleList";
 import { useGetFavoriteVoyagesByUserIdQuery } from "../slices/VoyageSlice";
 import { useGetFavoriteVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useSelector } from "react-redux";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 export default function FavoritesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -44,25 +45,19 @@ export default function FavoritesScreen({ navigation }) {
   useEffect(() => {
     if (isErrorVehicles || isErrorVoyages) {
       setHasError(true);
-      console.log("has Error");
     }
     if (!isErrorVehicles && !isErrorVoyages) {
       setHasError(false);
-      console.log("has no Error");
     }
   }, [isErrorVoyages, isErrorVehicles]);
 
   const onRefresh = async () => {
-    console.log("refreshing ");
     setRefreshing(true);
     setHasError(false);
     try {
       setIsLoading(true);
       await refetchVehicles();
       await refetchVoyages();
-      console.log("...", VoyagesData[0].id);
-      console.log("...", VehiclesData[0].id);
-      console.log("refreshing 2 ");
     } catch (error) {
       console.log(error);
       setHasError(true);
@@ -121,6 +116,8 @@ export default function FavoritesScreen({ navigation }) {
   if (isSuccessVehicles && isSuccessVoyages) {
     return (
       <View>
+        <TokenExpiryGuard />
+
         <View style={styles.mainContainer}>
           <ScrollView style={styles.scrollView}>
             <View style={styles.innerContainer}>

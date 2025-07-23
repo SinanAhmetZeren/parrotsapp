@@ -45,6 +45,7 @@ import {
 } from "../slices/UserSlice";
 import { API_URL } from "@env";
 import { parrotTextDarkBlue } from "../assets/color";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -308,6 +309,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
     return (
       <>
+        <TokenExpiryGuard />
         <ScrollView style={styles.ScrollView}>
           <View style={styles.rectangularBox}>
             <Image

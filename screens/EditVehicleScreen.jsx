@@ -33,6 +33,7 @@ import StepBarVehicle from "../components/StepBarVehicle";
 import { useNavigation } from "@react-navigation/native";
 import { Entypo } from "@expo/vector-icons";
 import { API_URL } from "@env";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 const EditVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -260,6 +261,8 @@ const EditVehicleScreen = () => {
 
     return (
       <>
+        <TokenExpiryGuard />
+
         <StepBarVehicle currentStep={currentStep} />
         {currentStep == 1 ? (
           <ScrollView style={styles.scrollview}>

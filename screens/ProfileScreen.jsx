@@ -31,6 +31,7 @@ import { SocialRenderComponent } from "../components/SocialRenderComponent";
 import { SocialRenderComponentModal } from "../components/SocialRenderComponentModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -119,18 +120,15 @@ export default function ProfileScreen({ navigation }) {
   const onRefresh = () => {
     setRefreshing(true);
     setHasError(false);
-    console.log("refreshing 1");
     try {
       const refreshData = async () => {
         setIsLoading(true);
-        console.log("refreshing 2");
         await refetchUserData();
         await refetchVehicleData();
         await refetchVoyageData();
         setIsLoading(false);
       };
       refreshData();
-      console.log("refreshing 3");
     } catch (error) {
       console.log(error);
       setHasError(true);
@@ -235,7 +233,6 @@ export default function ProfileScreen({ navigation }) {
   };
 
   if (isLoadingUser || isLoadingVehicles || isLoadingVoyages || isLoading) {
-    console.log("isloading something");
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
@@ -272,6 +269,8 @@ export default function ProfileScreen({ navigation }) {
 
     return (
       <>
+        <TokenExpiryGuard />
+
         <View style={styles.mainContainer}>
           <ScrollView style={styles.scrollView}>
             <View style={styles.innerContainer}>

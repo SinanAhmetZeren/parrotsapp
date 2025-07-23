@@ -21,7 +21,7 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
   if (result.error && result.error.status === 401) {
-    const refreshToken = AsyncStorage.getItem("storedRefreshToken");
+    const refreshToken = await AsyncStorage.getItem("storedRefreshToken");
     if (!refreshToken) {
       return result;
     }
@@ -45,7 +45,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     } else {
       AsyncStorage.removeItem("storedToken");
       AsyncStorage.removeItem("storedRefreshToken");
-      window.location.href = "/login";
     }
   }
   return result;
