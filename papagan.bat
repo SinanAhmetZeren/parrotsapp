@@ -1,1 +1,1 @@
-ngrok http --domain=measured-wolf-grossly.ngrok-free.app https://localhost:7151
+ngrok http --domain=adapting-sheepdog-annually.ngrok-free.app https://localhost:7151

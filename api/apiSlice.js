@@ -3,8 +3,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// ngrok http --domain=measured-wolf-grossly.ngrok-free.app https://localhost:7151
-
 const baseQuery = fetchBaseQuery({
   baseUrl: API_URL,
   prepareHeaders: async (headers) => {
