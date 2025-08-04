@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "bundleIdentifier": "com.zenforest.parrots",
       "supportsTablet": true,
@@ -54,7 +56,8 @@
       ],
       "@react-native-google-signin/google-signin",
       "expo-font",
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-web-browser"
     ],
     "extra": {
       "eas": {

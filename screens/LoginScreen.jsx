@@ -30,6 +30,7 @@ import {
   updateUserFavorites,
 } from "../slices/UserSlice";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import GoogleLoginButton from "../components/GoogleAuthButton";
 
 // import {
 //   GoogleSignin,
@@ -90,17 +91,6 @@ const LoginScreen = ({ navigation }) => {
     });
   };
 
-  const signInGoogle = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      setUserInfo(userInfo);
-      setError("");
-    } catch (e) {
-      setError(e);
-    }
-  };
-
   const logout = () => {
     setUserInfo(undefined);
     GoogleSignin.revokeAccess();
@@ -129,17 +119,6 @@ const LoginScreen = ({ navigation }) => {
 
   const handleRegisterCode2Change = (text) => {
     setRegisterCode2(text);
-  };
-
-  const handleGoogleLogin = () => {
-    GoogleSignin.signIn()
-      .then((userInfo) => {
-        console.log("User signed in successfully:", userInfo);
-        // ...
-      })
-      .catch((error) => {
-        console.error("Error signing in:", error);
-      });
   };
 
   const handleFocusAll = () => {
@@ -520,12 +499,15 @@ const LoginScreen = ({ navigation }) => {
                   style={{
                     height: 1,
                     backgroundColor: "black",
-                    marginVertical: vh(5),
+                    marginVertical: vh(1),
                   }}
                 />
 
+                <View style={styles.loginContainer}>
+                  <GoogleLoginButton />
+                </View>
+
                 <View style={styles.container2}>
-                  <Text>{JSON.stringify(error)}</Text>
                   {userInfo && (
                     <>
                       <Text>{JSON.stringify(userInfo.user.email)}</Text>
@@ -533,20 +515,6 @@ const LoginScreen = ({ navigation }) => {
                       <Text>{JSON.stringify(userInfo.user.photo)}</Text>
                     </>
                   )}
-
-                  {/* 
-                  {userInfo ? (
-                    <Button title="Logout" onPress={logout} />
-                  ) : (
-                    <GoogleSigninButton
-                      size={GoogleSigninButton.Size.Standard}
-                      color={GoogleSigninButton.Color.Dark}
-                      onPress={signInGoogle}
-
-                      />
-                  )}
-
-                   */}
 
                   <StatusBar style="auto" />
                 </View>
