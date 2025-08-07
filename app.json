@@ -2,7 +2,9 @@
   "expo": {
     "name": "parrots",
     "slug": "parrots",
+    "owner": "ahmetzeren",
     "version": "1.0.0",
+    "scheme": "parrotsapp",
     "orientation": "portrait",
     "icon": "./assets/ParrotsWhiteBg.png",
     "userInterfaceStyle": "light",
