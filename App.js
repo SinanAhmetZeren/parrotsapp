@@ -72,7 +72,7 @@ const screenOptions = {
 const selectedTabColor = parrotBlue;
 const unselectedTabColor = parrotTextDarkBlue;
 const selectedTabBackGroundColor = parrotBlueSemiTransparent;
-const unselectedTabBackGroundColor = "green";
+const unselectedTabBackGroundColor = "rgba(0, 119, 234, 0.01)";
 
 const baseTextStyle = {
   fontSize: 12,
