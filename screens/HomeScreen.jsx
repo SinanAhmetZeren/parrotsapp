@@ -330,7 +330,9 @@ export default function HomeScreen({ navigation }) {
     };
 
     return (
-      <>
+      <View
+      //style={{ backgroundColor: "pink", padding: vh(.1) }}
+      >
         <TokenExpiryGuard />
         <ScrollView
           style={styles.scrollview}
@@ -556,7 +558,7 @@ export default function HomeScreen({ navigation }) {
                     vehicletype={vehicleTypeM}
                     latitude={latitudeM}
                     longitude={longitudeM}
-                    focusMap={() => {}}
+                    focusMap={() => { }}
                     setSelectedVoyageModalVisible={
                       setSelectedVoyageModalVisible
                     }
@@ -575,7 +577,7 @@ export default function HomeScreen({ navigation }) {
             </Modal>
           </View>
         </ScrollView>
-      </>
+      </View>
     );
   }
 }

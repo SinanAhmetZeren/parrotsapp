@@ -16,7 +16,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
 } from "react-native";
-import { vh } from "react-native-expo-viewport-units";
+import { vh, vw } from "react-native-expo-viewport-units";
 import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
@@ -47,6 +47,7 @@ import {
   useGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotDarkBlue, parrotTextDarkBlue } from "./assets/color";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -60,13 +61,24 @@ const screenOptions = {
     right: 0,
     left: 0,
     elevation: 0,
-    height: vh(10),
+    height: vh(14),
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    backgroundColor: "#fff6ec",
-    //backgroundColor: "#ffeedb",
+    // backgroundColor: "#fff6ec",
+    backgroundColor: "#ede2d5ff",
   },
 };
+
+const selectedTabColor = parrotBlue;
+const unselectedTabColor = parrotTextDarkBlue;
+const selectedTabBackGroundColor = parrotBlueSemiTransparent;
+const unselectedTabBackGroundColor = "green";
+
+const baseTextStyle = {
+  fontSize: 12,
+  fontWeight: "600",
+};
+
 const toastConfig = {
   success: (props) => (
     <BaseToast
@@ -274,18 +286,17 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <View style={styles.tabIconStyle}>
+                <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
                   <Feather
                     name="home"
                     size={24}
-                    color={focused && !modalVisible ? "#3aa4ff" : "#000"}
+                    color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
                   <Text
-                    style={
-                      focused && !modalVisible
-                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
-                        : { fontSize: 12, color: "#000", fontWeight: "600" }
-                    }
+                    style={{
+                      ...baseTextStyle,
+                      color: focused && !modalVisible ? selectedTabColor : unselectedTabColor,
+                    }}
                   >
                     Home
                   </Text>
@@ -316,18 +327,17 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <View style={styles.tabIconStyle}>
+                <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
                   <Feather
                     name="user"
                     size={24}
-                    color={focused && !modalVisible ? "#3aa4ff" : "#000"}
+                    color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
                   <Text
-                    style={
-                      focused && !modalVisible
-                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
-                        : { fontSize: 12, color: "#000", fontWeight: "600" }
-                    }
+                    style={{
+                      ...baseTextStyle,
+                      color: focused && !modalVisible ? selectedTabColor : unselectedTabColor,
+                    }}
                   >
                     Profile
                   </Text>
@@ -356,33 +366,27 @@ const TabNavigator = () => {
           name="Create"
           component={AddNewStack}
           options={{
-            tabBarIcon: ({ focused }) => (
-              <TouchableOpacity onPress={toggleModal}>
-                <View
-                  style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    // marginBottom: vh(6),
-                  }}
-                >
-                  <Ionicons
-                    name="rocket-outline"
-                    size={24}
-                    color={!modalVisible ? "black" : "#3aa4ff"}
-                  />
-
-                  <Text
-                    style={
-                      modalVisible
-                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
-                        : { fontSize: 12, color: "#000", fontWeight: "600" }
-                    }
-                  >
-                    Voyage
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ),
+            tabBarIcon: ({ focused }) => {
+              const isActive = focused || modalVisible;
+              return (
+                <TouchableOpacity onPress={toggleModal} >
+                  <View style={{ ...styles.tabIconStyle, backgroundColor: isActive ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
+                    <Ionicons
+                      name="rocket-outline"
+                      size={24}
+                      color={isActive ? selectedTabColor : unselectedTabColor}
+                    />
+                    <Text
+                      style={{
+                        ...baseTextStyle,
+                        color: isActive ? selectedTabColor : unselectedTabColor,
+                      }}
+                    >
+                      Voyage
+                    </Text>
+                  </View>
+                </TouchableOpacity>)
+            }
           }}
         />
 
@@ -392,20 +396,18 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
+                <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
+
                   <Feather
                     name="heart"
                     size={24}
-                    color={focused && !modalVisible ? "#3aa4ff" : "#000"}
+                    color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
                   <Text
-                    style={
-                      focused && !modalVisible
-                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
-                        : { fontSize: 12, color: "#000", fontWeight: "600" }
-                    }
+                    style={{
+                      ...baseTextStyle,
+                      color: focused && !modalVisible ? selectedTabColor : unselectedTabColor,
+                    }}
                   >
                     Favorites
                   </Text>
@@ -421,21 +423,18 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
+                <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
+
                   <AntDesign
                     name="sharealt"
                     size={24}
-                    color={focused && !modalVisible ? "#3aa4ff" : "#000"}
+                    color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
-
                   <Text
-                    style={
-                      focused && !modalVisible
-                        ? { fontSize: 12, color: "#3aa4ff", fontWeight: "600" }
-                        : { fontSize: 12, color: "#000", fontWeight: "600" }
-                    }
+                    style={{
+                      ...baseTextStyle,
+                      color: focused && !modalVisible ? selectedTabColor : unselectedTabColor,
+                    }}
                   >
                     Connect
                   </Text>
@@ -444,7 +443,7 @@ const TabNavigator = () => {
             },
           }}
         />
-      </Tab.Navigator>
+      </Tab.Navigator >
 
       <CreateChoiceModal
         modalVisible={modalVisible}
@@ -580,34 +579,13 @@ function App() {
 export default App;
 
 const styles = StyleSheet.create({
-  miniLogo: {
-    height: vh(8),
-    width: vh(8),
-  },
   tabIconStyle: {
     alignItems: "center",
     justifyContent: "center",
-  },
-  bottomIcon: {
-    height: vh(5),
-    width: vh(5),
-    borderRadius: vh(5),
-    alignSelf: "center",
-  },
-  plusSign: {
-    height: vh(9),
-    width: vh(9),
-    borderRadius: vh(8),
-    borderWidth: 3,
-    borderColor: "#2184c6",
-  },
-  plusContainer: {
-    backgroundColor: "#76bae8",
-    padding: vh(0.35),
-    borderRadius: vh(10),
+    width: vw(16),
+    height: vw(16),
+    borderRadius: vw(8),
   },
 });
 
-// #15537d
-// #2184c6
-// #76bae8
+
