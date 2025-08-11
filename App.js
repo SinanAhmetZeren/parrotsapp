@@ -17,7 +17,8 @@ import {
   SafeAreaView,
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
+import { Feather, Ionicons, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
 import VehicleDetailScreen from "./screens/VehicleDetailScreen";
@@ -52,6 +53,23 @@ import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, par
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const bottomTabColor = "#ede2d5ff";
+const selectedTabColor = parrotBlue;
+const unselectedTabColor = "black" || "#3c9dde" || parrotBlue;
+const selectedTabBackGroundColor = "rgba(240,240,240,0.0009)"//parrotBlueSemiTransparent;
+const unselectedTabBackGroundColor = "rgba(0, 119, 234, 0.01)";
+
+const styles = StyleSheet.create({
+  tabIconStyle: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: vw(14),
+    height: vw(13),
+    borderRadius: vw(4),
+  },
+});
+
+
 const screenOptions = {
   tabBarShowLabel: false,
   headerShown: false,
@@ -65,14 +83,11 @@ const screenOptions = {
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     // backgroundColor: "#fff6ec",
-    backgroundColor: "#ede2d5ff",
+    backgroundColor: bottomTabColor,
   },
 };
 
-const selectedTabColor = parrotBlue;
-const unselectedTabColor = parrotTextDarkBlue;
-const selectedTabBackGroundColor = parrotBlueSemiTransparent;
-const unselectedTabBackGroundColor = "rgba(0, 119, 234, 0.01)";
+
 
 const baseTextStyle = {
   fontSize: 12,
@@ -287,8 +302,8 @@ const TabNavigator = () => {
             tabBarIcon: ({ focused }) => {
               return (
                 <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
-                  <Feather
-                    name="home"
+                  <MaterialCommunityIcons
+                    name={"home-outline"}
                     size={24}
                     color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
@@ -328,8 +343,8 @@ const TabNavigator = () => {
             tabBarIcon: ({ focused }) => {
               return (
                 <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
-                  <Feather
-                    name="user"
+                  <MaterialCommunityIcons
+                    name={"account-outline"}
                     size={24}
                     color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
@@ -371,8 +386,8 @@ const TabNavigator = () => {
               return (
                 <TouchableOpacity onPress={toggleModal} >
                   <View style={{ ...styles.tabIconStyle, backgroundColor: isActive ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
-                    <Ionicons
-                      name="rocket-outline"
+                    <MaterialCommunityIcons
+                      name={"rocket-launch-outline"}
                       size={24}
                       color={isActive ? selectedTabColor : unselectedTabColor}
                     />
@@ -398,8 +413,8 @@ const TabNavigator = () => {
               return (
                 <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
 
-                  <Feather
-                    name="heart"
+                  <MaterialCommunityIcons
+                    name={"heart-outline"}
                     size={24}
                     color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
@@ -425,8 +440,8 @@ const TabNavigator = () => {
               return (
                 <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
 
-                  <AntDesign
-                    name="sharealt"
+                  <MaterialCommunityIcons
+                    name={"share-variant-outline"}
                     size={24}
                     color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
@@ -578,14 +593,5 @@ function App() {
 
 export default App;
 
-const styles = StyleSheet.create({
-  tabIconStyle: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: vw(16),
-    height: vw(16),
-    borderRadius: vw(8),
-  },
-});
 
 
