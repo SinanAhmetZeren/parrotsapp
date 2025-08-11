@@ -18,6 +18,7 @@ import {
   useAddVehicleImageMutation,
   useDeleteVehicleImageMutation,
   useCheckAndDeleteVehicleMutation,
+  useConfirmVehicleMutation
 } from "../slices/VehicleSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
@@ -37,6 +38,8 @@ const CreateVehicleScreen = () => {
   const [addVehicleImage] = useAddVehicleImageMutation();
   const [deleteVehicleImage] = useDeleteVehicleImageMutation();
   const [checkAndDeleteVehicle] = useCheckAndDeleteVehicleMutation();
+  const [confirmVehicle] = useConfirmVehicleMutation();
+
   const currentDate = new Date();
   const hours = currentDate.getHours();
   const minutes = currentDate.getMinutes();
@@ -46,10 +49,9 @@ const CreateVehicleScreen = () => {
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
   const [vehicleType, setVehicleType] = useState(1);
-
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [capacity, setCapacity] = useState(null);
+  const [name, setName] = useState("aaa");
+  const [description, setDescription] = useState("bbb");
+  const [capacity, setCapacity] = useState(22) //useState(null);
   const [vehicleId, setVehicleId] = useState("");
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
@@ -57,36 +59,52 @@ const CreateVehicleScreen = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVehicle, setIsCreatingVehicle] = useState(false);
+  const [isCompletingVehicle, setIsCompletingVehicle] = useState(false);
+
   const navigation = useNavigation();
 
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
         navigation.navigate("Home");
-
         return true;
       };
-
       const backHandler = BackHandler.addEventListener(
         "hardwareBackPress",
         backAction
       );
-
       return () => backHandler.remove();
     }, [navigation])
+  );
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setVehicleType(1);
+      setName("");
+      setDescription("");
+      setCapacity(22);
+      setVehicleId("");
+      setImage("");
+      setVoyageImage(null);
+      setAddedVehicleImages([]);
+      setCurrentStep(1);
+      setIsUploadingImage(false);
+      setIsCreatingVehicle(false);
+    }, [])
   );
 
   useFocusEffect(
     React.useCallback(() => {
       return () => {
-        checkAndDeleteVehicle(vehicleId);
-        setCurrentStep(1);
-        setName("");
+        if (addedVehicleImages.length == 0 && vehicleId !== "") {
+          checkAndDeleteVehicle(vehicleId);
+        }
       };
-    }, [vehicleId])
+    }, [vehicleId, addedVehicleImages])
   );
 
-  const goToProfilePage = () => {
+  const completeVehicle = async () => {
     setName("");
     setDescription("");
     setCapacity(0);
@@ -97,12 +115,24 @@ const CreateVehicleScreen = () => {
     setAddedVehicleImages([]);
     setCurrentStep(1);
 
+    //
+
+    if (addedVehicleImages.length === 0) {
+      console.log("images length: -->", addedVehicleImages.length);
+      return;
+    }
+    setIsCompletingVehicle(true);
+    console.log("confirming vehicle: ", vehicleId);
+    var confirmResult = await confirmVehicle(vehicleId);
+    console.log("confirmResult: ", confirmResult);
+    setIsCompletingVehicle(false);
+    //
     navigation.navigate("Home");
   };
 
   const handleCreateVehicle = async () => {
     if (!image) {
-      return; // Optionally display an alert to the user
+      return;
     }
 
     const formData = new FormData();
@@ -123,7 +153,9 @@ const CreateVehicleScreen = () => {
         capacity,
       });
       console.log("-->>", response);
+      console.log("-->>", response.user);
       const createdVehicleId = response.data.data.id;
+      console.log("Created Vehicle ID:", createdVehicleId);
 
       setVehicleId(createdVehicleId);
       setDescription("");
@@ -132,100 +164,31 @@ const CreateVehicleScreen = () => {
       setImage("");
       setVoyageImage("");
       setAddedVehicleImages([]);
+      console.log("1. Vehicle created successfully, moving to step 2");
       setCurrentStep(2);
+      console.log("2. Vehicle created successfully, moving to step 2");
+
     } catch (error) {
       alert(
         "Failed to create vehicle. Please check your connection and try again."
       );
-      console.error("Error creating vehicle:", error);
+      console.error("Error in or after createVehicle:", error);
+      console.log("Error details:", error.data || error.error || error.message);
     } finally {
       setIsCreatingVehicle(false);
     }
-  };
-
-  const handleCreateVehicle2 = async () => {
-    if (!image) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: image,
-      type: "image/jpeg",
-      name: "profileImage.jpg",
-    });
-
-    setIsCreatingVehicle(true);
-    try {
-      const response = await createVehicle({
-        formData,
-        name,
-        description,
-        userId,
-        vehicleType,
-        capacity,
-      });
-      const createdVehicleId = response.data.data.id;
-
-      setVehicleId(createdVehicleId);
-      setDescription("");
-      setCapacity("");
-      setVehicleType("");
-      setImage("");
-      setVoyageImage("");
-      setAddedVehicleImages("");
-      setCurrentStep(2);
-    } catch (error) {
-      console.error("Error uploading image", error);
-    }
-
-    setIsCreatingVehicle(false);
-  };
-
-  const handleUploadImage2 = async () => {
-    if (!voyageImage) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: voyageImage,
-      type: "image/jpeg",
-      name: "profileImage.jpg",
-    });
-
-    setIsUploadingImage(true);
-    try {
-      const addedVehicleImageResponse = await addVehicleImage({
-        formData,
-        vehicleId,
-      });
-
-      const addedVoyageImageId = addedVehicleImageResponse.data.imagePath;
-      const newItem = {
-        addedVoyageImageId,
-        voyageImage,
-      };
-      setAddedVehicleImages((prevImages) => [...prevImages, newItem]);
-      setVoyageImage(null);
-    } catch (error) {
-      console.error("Error uploading image", error);
-    }
-    setIsUploadingImage(false);
   };
 
   const handleUploadImage = useCallback(async () => {
     if (!voyageImage) {
       return;
     }
-
     const formData = new FormData();
     formData.append("imageFile", {
       uri: voyageImage,
       type: "image/jpeg",
       name: "profileImage.jpg",
     });
-
     setIsUploadingImage(true);
     try {
       const addedVehicleImageResponse = await addVehicleImage({
@@ -250,35 +213,33 @@ const CreateVehicleScreen = () => {
   }, [voyageImage, vehicleId, addVehicleImage]);
 
   const pickProfileImage = async () => {
+    console.log("Picking profile image... PICKING");
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ['images'],
       allowsEditing: true,
       quality: 1,
     });
 
+    console.log("Picking profile image... PICKED");
+
     if (!result.canceled) {
+      console.log("Picking profile image... CANCELLED");
+
       setImage(result.assets[0].uri);
     }
+
   };
 
   const pickVoyageImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ['images'],
       allowsEditing: true,
-      // aspect: [4, 3],
       quality: 1,
     });
 
     if (!result.canceled) {
       setVoyageImage(result.assets[0].uri);
     }
-  };
-
-  const handleDeleteImage2 = (imageId) => {
-    deleteVehicleImage(imageId);
-    setAddedVehicleImages((prevImages) =>
-      prevImages.filter((item) => item.addedVoyageImageId !== imageId)
-    );
   };
 
   const handleDeleteImage = async (imageId) => {
@@ -324,13 +285,13 @@ const CreateVehicleScreen = () => {
   const data =
     addedVehicleImages.length < maxItems
       ? [
-          ...addedVehicleImages,
-          ...placeholders.slice(addedVehicleImages.length),
-        ]
+        ...addedVehicleImages,
+        ...placeholders.slice(addedVehicleImages.length),
+      ]
       : addedVehicleImages.map((item) => ({
-          ...item,
-          key: item.addedVoyageImageId,
-        }));
+        ...item,
+        key: item.addedVoyageImageId,
+      }));
 
   return (
     <>
@@ -346,7 +307,7 @@ const CreateVehicleScreen = () => {
                   <ActivityIndicator size="large" style={{ top: vh(14) }} />
                 </View>
               ) : (
-                <TouchableOpacity onPress={pickProfileImage}>
+                <TouchableOpacity onPress={() => pickProfileImage()}>
                   {image ? (
                     <Image
                       source={{ uri: image }}
@@ -438,10 +399,10 @@ const CreateVehicleScreen = () => {
                       onPress={() => handleCreateVehicle()}
                       style={
                         name === "" ||
-                        description === "" ||
-                        capacity === "" ||
-                        vehicleType === "" ||
-                        image === ""
+                          description === "" ||
+                          capacity === "" ||
+                          vehicleType === "" ||
+                          image === ""
                           ? styles.selection2Disabled
                           : styles.selection2
                       }
@@ -453,7 +414,12 @@ const CreateVehicleScreen = () => {
                         image === ""
                       }
                     >
-                      <Text style={styles.loginText}>Create Vehicle</Text>
+                      {isCreatingVehicle ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <Text style={styles.loginText}>Create Vehicle</Text>
+
+                      )}
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -464,7 +430,10 @@ const CreateVehicleScreen = () => {
       ) : null}
 
       {currentStep === 2 ? (
+
         <ScrollView style={styles.scrollview}>
+          {console.log("Step 2 screen rendered")}
+
           <View style={styles.overlay}>
             <View style={styles.selectedChoice}>
               <Text style={styles.selectedText}>Add Vehicle Images</Text>
@@ -499,8 +468,8 @@ const CreateVehicleScreen = () => {
                 addedVehicleImages.length <= 1
                   ? styles.length1
                   : addedVehicleImages.length === 2
-                  ? styles.length2
-                  : styles.length3
+                    ? styles.length2
+                    : styles.length3
               }
             >
               <FlatList
@@ -562,7 +531,7 @@ const CreateVehicleScreen = () => {
             <View style={styles.completeContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  goToProfilePage();
+                  completeVehicle();
                 }}
                 style={
                   data[0].key === "placeholder_1"
@@ -571,7 +540,14 @@ const CreateVehicleScreen = () => {
                 }
                 disabled={data[0].key === "placeholder_1"}
               >
-                <Text style={styles.loginText}>Complete</Text>
+                {/* <Text style={styles.loginText}>Complete</Text> */}
+
+                {isCompletingVehicle ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.loginText}>Complete</Text>
+                )}
+
               </TouchableOpacity>
             </View>
           </View>
@@ -838,3 +814,75 @@ const styles = StyleSheet.create({
     padding: vw(1),
   },
 });
+
+
+const handleCreateVehicle2 = async () => {
+  if (!image) {
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("imageFile", {
+    uri: image,
+    type: "image/jpeg",
+    name: "profileImage.jpg",
+  });
+
+  setIsCreatingVehicle(true);
+  try {
+    const response = await createVehicle({
+      formData,
+      name,
+      description,
+      userId,
+      vehicleType,
+      capacity,
+    });
+    const createdVehicleId = response.data.data.id;
+
+    setVehicleId(createdVehicleId);
+    setDescription("");
+    setCapacity("");
+    setVehicleType("");
+    setImage("");
+    setVoyageImage("");
+    setAddedVehicleImages([]);
+    setCurrentStep(2);
+  } catch (error) {
+    console.error("Error uploading image", error);
+  }
+
+  setIsCreatingVehicle(false);
+};
+
+const handleUploadImage2 = async () => {
+  if (!voyageImage) {
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("imageFile", {
+    uri: voyageImage,
+    type: "image/jpeg",
+    name: "profileImage.jpg",
+  });
+
+  setIsUploadingImage(true);
+  try {
+    const addedVehicleImageResponse = await addVehicleImage({
+      formData,
+      vehicleId,
+    });
+
+    const addedVoyageImageId = addedVehicleImageResponse.data.imagePath;
+    const newItem = {
+      addedVoyageImageId,
+      voyageImage,
+    };
+    setAddedVehicleImages((prevImages) => [...prevImages, newItem]);
+    setVoyageImage(null);
+  } catch (error) {
+    console.error("Error uploading image", error);
+  }
+  setIsUploadingImage(false);
+};

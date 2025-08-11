@@ -148,6 +148,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    confirmVehicle: builder.mutation({
+      query: (vehicleId) => ({
+        url: `/api/Vehicle/confirmVehicle/${vehicleId}`,
+        method: "POST",
+      }),
+    }),
   }),
 
   overrideExisting: true,
@@ -167,4 +173,5 @@ export const {
   usePatchVehicleMutation,
   useGetVehicleImagesByVehicleIdQuery,
   useDeleteVehicleMutation,
+  useConfirmVehicleMutation,
 } = extendedApiSlice;
