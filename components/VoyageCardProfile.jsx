@@ -136,7 +136,7 @@ export default function VoyageCardProfile({
             numberOfLines={5}
             ellipsizeMode="tail"
           >
-            {cardDescription}
+            {cardDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()}
           </Text>
         </View>
       </View>

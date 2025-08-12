@@ -294,7 +294,7 @@ const TabNavigator = () => {
 
   return (
     <>
-      <Tab.Navigator screenOptions={screenOptions}>
+      <Tab.Navigator screenOptions={screenOptions}  >
         <Tab.Screen
           name="Home"
           component={HomeStack}
