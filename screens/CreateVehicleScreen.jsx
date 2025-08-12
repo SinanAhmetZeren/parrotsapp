@@ -113,10 +113,7 @@ const CreateVehicleScreen = () => {
     setImage("");
     setVoyageImage("");
     setAddedVehicleImages([]);
-    setCurrentStep(1);
-
-    //
-
+    // setCurrentStep(1);
     if (addedVehicleImages.length === 0) {
       console.log("images length: -->", addedVehicleImages.length);
       return;
@@ -126,7 +123,6 @@ const CreateVehicleScreen = () => {
     var confirmResult = await confirmVehicle(vehicleId);
     console.log("confirmResult: ", confirmResult);
     setIsCompletingVehicle(false);
-    //
     navigation.navigate("Home");
   };
 

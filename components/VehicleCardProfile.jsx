@@ -2,6 +2,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
+import RenderHtml from "react-native-render-html";
+
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
@@ -178,14 +180,12 @@ export default function VehicleCardProfile({
               </Text>
             </View>
           </View>
-
           <Text
             style={styles.cardDescription}
             numberOfLines={8}
             ellipsizeMode="tail"
-          >
-            {description}
-          </Text>
+
+          >{description.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -218,11 +218,10 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     width: vw(46),
+    height: vh(18),
     paddingHorizontal: vh(0.5),
   },
   header: {
-    //margintop
-
     marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
@@ -235,11 +234,12 @@ const styles = StyleSheet.create({
   cardDescription: {
     paddingHorizontal: 0,
     fontSize: 11.5,
+    // backgroundColor: "lightyellow",
   },
   iconAndName: {
-    // padding: vh(0.3),
     flexDirection: "row",
     justifyContent: "space-around",
+    // backgroundColor: "pink",
   },
   icon: {
     alignSelf: "center",

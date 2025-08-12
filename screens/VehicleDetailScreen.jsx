@@ -8,6 +8,7 @@ import { useRoute } from "@react-navigation/native";
 
 import { useGetVehicleByIdQuery } from "../slices/VehicleSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import RenderHtml from "react-native-render-html";
 
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
@@ -43,6 +44,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { parrotTextDarkBlue } from "../assets/color";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
@@ -177,9 +179,9 @@ const VehicleDetailScreen = () => {
     const displayText = showFullText
       ? VehicleData.description
       : VehicleData.description.slice(0, descriptionShortenedChars) +
-        (VehicleData.description.length > descriptionShortenedChars
-          ? "..."
-          : "");
+      (VehicleData.description.length > descriptionShortenedChars
+        ? "..."
+        : "");
 
     let icon;
     switch (VehicleData.type) {
@@ -369,7 +371,14 @@ const VehicleDetailScreen = () => {
 
               <View style={styles.DescriptionContainer}>
                 <Text style={styles.descriptionInnerContainer}>
-                  {displayText}
+                  {/* {displayText} */}
+                  <RenderHtml
+                    source={{ html: displayText }}
+                  // baseStyle={{
+                  //   fontSize: 14,
+                  //   color: parrotTextDarkBlue,
+                  // }}
+                  />
                 </Text>
                 {VehicleData.description.length > descriptionShortenedChars &&
                   !showFullText && (
