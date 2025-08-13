@@ -8,28 +8,29 @@ import { useNavigation } from "@react-navigation/native";
 
 export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
   const navigation = useNavigation();
-  const [opacityAnim] = useState(new Animated.Value(0));
+  const [slideAnim] = useState(new Animated.Value(300));
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (modalVisible) {
       setIsVisible(true);
-      opacityAnim.setValue(0);
-      Animated.timing(opacityAnim, {
-        toValue: 1,
-        duration: 300,
+      slideAnim.setValue(300);
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
         useNativeDriver: true,
       }).start();
     } else if (isVisible) {
-      Animated.timing(opacityAnim, {
-        toValue: 0,
-        duration: 300,
+      Animated.timing(slideAnim, {
+        toValue: 300,
+        duration: 500,
         useNativeDriver: true,
       }).start(() => {
         setIsVisible(false);
       });
     }
   }, [modalVisible]);
+
 
   const handlePressOut = () => {
     setModalVisible(false);
@@ -48,12 +49,14 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
   return (
     <Modal
       animationType="none"
-      transparent
+      transparent={true}
       visible={isVisible}
-      onRequestClose={() => setModalVisible(false)}
+      onRequestClose={() => {
+        setModalVisible(false);
+      }}
     >
       <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPressOut={handlePressOut}>
-        <Animated.View style={[styles.centeredView, { opacity: opacityAnim }]}>
+        <Animated.View style={[styles.centeredView, { transform: [{ translateY: slideAnim }] }]}>
           <View style={styles.modalView}>
             <TouchableOpacity style={styles.selection} onPress={handleAddVehicle}>
               <Text style={styles.choiceText}>New Vehicle</Text>
@@ -72,15 +75,18 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
 
 const styles = StyleSheet.create({
   centeredView: {
-    position: "absolute",
-    bottom: vh(8), // stays fixed above the bottom
-    alignSelf: "center",
     width: vw(75),
     height: vh(6.5),
     paddingHorizontal: vh(0.2),
     paddingVertical: vh(0.2),
+    bottom: vh(-87),
+    alignSelf: "center",
+    backgroundColor: "rgba(205,230,247,1)",
     backgroundColor: "#ede2d5ff",
     borderRadius: vh(4),
+    borderBottomRightRadius: vh(0),
+    borderBottomLeftRadius: vh(0),
+    display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
   },

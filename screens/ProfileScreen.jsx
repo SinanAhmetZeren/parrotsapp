@@ -32,6 +32,7 @@ import { SocialRenderComponentModal } from "../components/SocialRenderComponentM
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import he from "he";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -94,12 +95,6 @@ export default function ProfileScreen({ navigation }) {
         }
       };
       fetchData();
-      // console.log("1", isSuccessUser);
-      // console.log("2", isSuccessVehicles);
-      // console.log("3", isSuccessVoyages);
-      // console.log("4", isErrorUser);
-      // console.log("5", isErrorVehicles);
-      // console.log("6", isErrorVoyages);
     }, [
       refetchVehicleData,
       refetchVoyageData,
@@ -206,28 +201,23 @@ export default function ProfileScreen({ navigation }) {
     Linking.openURL(fallbackUrl);
   };
 
+
   const BlueHashTagText = ({ originalText }) => {
-    if (!originalText) {
-      return null;
-    }
-    const words = originalText.split(" ");
+    if (!originalText) return null;
+    const plainText = he.decode(originalText.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+    const words = plainText.split(" ");
+
     return (
-      <Text style={styles.container}>
-        {words.map((word, index) => {
-          if (word.startsWith("#")) {
-            return (
-              <Text key={index} style={styles.blueText}>
-                {word + " "}
-              </Text>
-            );
-          } else {
-            return (
-              <Text style={styles.bioText} key={index}>
-                {word + " "}
-              </Text>
-            );
-          }
-        })}
+      <Text>
+        {words.map((word, index) =>
+          word.startsWith("#") ? (
+            <Text key={index} style={{ color: "blue" }}>
+              {word + " "}
+            </Text>
+          ) : (
+            <Text key={index}>{word + " "}</Text>
+          )
+        )}
       </Text>
     );
   };
@@ -262,15 +252,12 @@ export default function ProfileScreen({ navigation }) {
   }
 
   if (isSuccessUser && isSuccessVehicles && isSuccessVoyages) {
-    // console.log("is success user", isSuccessUser);
-    // setHasError(false);
     const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
     const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
 
     return (
       <>
         <TokenExpiryGuard />
-
         <View style={styles.mainContainer}>
           <ScrollView style={styles.scrollView}>
             <View style={styles.innerContainer}>
@@ -413,7 +400,7 @@ export default function ProfileScreen({ navigation }) {
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
                 {(socialItemCount > 5 && userData.emailVisible == true) ||
-                (socialItemCount > 6 && userData.emailVisible == false) ? (
+                  (socialItemCount > 6 && userData.emailVisible == false) ? (
                   <TouchableOpacity
                     onPress={() => {
                       setSocialModalVisible(true);
@@ -464,7 +451,7 @@ export default function ProfileScreen({ navigation }) {
                 <ActivityIndicator size="large" />
               ) : isSuccessVoyages ? (
                 <>
-                  {VehiclesData[0] !== undefined ? (
+                  {VehiclesData?.[0] !== undefined ? (
                     <>
                       <View style={styles.mainBidsContainer}>
                         <View style={styles.currentBidsAndSeeAll}>

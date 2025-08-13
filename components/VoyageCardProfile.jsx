@@ -15,6 +15,7 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
+import he from "he";
 
 export default function VoyageCardProfile({
   cardHeader,
@@ -96,17 +97,17 @@ export default function VoyageCardProfile({
   // let x = "1234567890123456789012345";
   return (
     <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
-      <View style={styles.cardContainer}>
-        <View style={styles.shadow}>
+      <View style={{ ...styles.cardContainer }}>
+        <View style={{ ...styles.shadow }}>
           <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
         </View>
 
-        <View style={styles.textContainer}>
-          <Text numberOfLines={2} style={styles.header}>
+        <View style={{ ...styles.textContainer, height: vh(20) }}>
+          <Text numberOfLines={2} style={{ ...styles.header }}>
             {cardHeader}
           </Text>
 
-          <View style={styles.vacancyAndVehicle}>
+          <View style={{ ...styles.vacancyAndVehicle }}>
             <View>
               <Text style={styles.subHeader}>
                 {/* {vehiclename + "111 "} */}
@@ -119,7 +120,7 @@ export default function VoyageCardProfile({
             </View>
           </View>
 
-          <View style={styles.vacancyAndVehicle}>
+          <View style={{ ...styles.vacancyAndVehicle }}>
             <View>
               <Text style={styles.subHeader2}>
                 {vacancy + " "}
@@ -131,16 +132,18 @@ export default function VoyageCardProfile({
               <AntDesign name="calendar" size={12} color="blue" />
             </Text>
           </View>
-          <Text
-            style={styles.cardDescription}
-            numberOfLines={5}
-            ellipsizeMode="tail"
-          >
-            {cardDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()}
-          </Text>
+          <View  >
+            <Text
+              style={styles.cardDescription}
+              numberOfLines={5}
+              ellipsizeMode="tail"
+            >
+              {he.decode(cardDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim())}
+            </Text>
+          </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </TouchableOpacity >
   );
 }
 

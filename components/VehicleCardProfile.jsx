@@ -16,6 +16,7 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
+import he from "he";
 
 export default function VehicleCardProfile({
   vehicleId,
@@ -184,8 +185,14 @@ export default function VehicleCardProfile({
             style={styles.cardDescription}
             numberOfLines={8}
             ellipsizeMode="tail"
-
-          >{description.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()}</Text>
+          >
+            {he.decode(
+              description
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+            )}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>

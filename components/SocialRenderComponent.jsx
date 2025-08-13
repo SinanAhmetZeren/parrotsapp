@@ -139,7 +139,7 @@ export const SocialRenderComponent = ({
       <View
         style={[
           styles[`social_Main_${contactDataArray.length}`],
-          { marginLeft: vw(12), marginTop: vh(0.8) },
+          { marginLeft: vw(12), marginTop: vh(0.8), minWidth: vw(45) },
         ]}
       >
         {renderAllItems()}

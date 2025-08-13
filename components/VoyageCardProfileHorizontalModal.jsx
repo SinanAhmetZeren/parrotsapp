@@ -15,6 +15,7 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
+import he from "he";
 
 export default function VoyageCardProfileHorizontalModal({
   cardHeader,
@@ -128,7 +129,12 @@ export default function VoyageCardProfileHorizontalModal({
               numberOfLines={5}
               ellipsizeMode="tail"
             >
-              {cardDescription}
+              {he.decode(
+                cardDescription
+                  .replace(/<[^>]+>/g, ' ')
+                  .replace(/\s+/g, ' ')
+                  .trim()
+              )}
             </Text>
           </View>
         </View>
