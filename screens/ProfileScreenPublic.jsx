@@ -3,7 +3,7 @@
 /* eslint-disable no-undef */
 import React, { useState } from "react";
 import { useCallback } from "react";
-
+import he from "he";
 import {
   View,
   Image,
@@ -152,28 +152,21 @@ export default function ProfileScreenPublic({ navigation }) {
   };
 
   const BlueHashTagText = ({ originalText }) => {
-    if (!originalText) {
-      return null;
-    }
+    if (!originalText) return null;
+    const plainText = he.decode(originalText.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+    const words = plainText.split(" ");
 
-    const words = originalText.split(" ");
     return (
-      <Text style={styles.container}>
-        {words.map((word, index) => {
-          if (word.startsWith("#")) {
-            return (
-              <Text key={index} style={styles.blueText}>
-                {word + " "}
-              </Text>
-            );
-          } else {
-            return (
-              <Text style={styles.bioText} key={index}>
-                {word + " "}
-              </Text>
-            );
-          }
-        })}
+      <Text>
+        {words.map((word, index) =>
+          word.startsWith("#") ? (
+            <Text key={index} style={{ color: "blue" }}>
+              {word + " "}
+            </Text>
+          ) : (
+            <Text key={index}>{word + " "}</Text>
+          )
+        )}
       </Text>
     );
   };
@@ -299,7 +292,7 @@ export default function ProfileScreenPublic({ navigation }) {
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
                 {(socialItemCount > 5 && userData.emailVisible == true) ||
-                (socialItemCount > 6 && userData.emailVisible == false) ? (
+                  (socialItemCount > 6 && userData.emailVisible == false) ? (
                   <TouchableOpacity
                     onPress={() => {
                       console.log("hello");
@@ -351,7 +344,7 @@ export default function ProfileScreenPublic({ navigation }) {
                 <ActivityIndicator size="large" />
               ) : isSuccessVoyages ? (
                 <>
-                  {VehiclesData[0] !== undefined ? (
+                  {VehiclesData?.[0] !== undefined ? (
                     <>
                       <View style={styles.mainBidsContainer}>
                         <View style={styles.currentBidsAndSeeAll}>

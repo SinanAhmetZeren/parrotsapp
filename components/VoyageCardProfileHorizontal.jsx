@@ -16,6 +16,7 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
+import he from "he";
 
 export default function VoyageCardProfileHorizontal({
   cardHeader,
@@ -85,7 +86,7 @@ export default function VoyageCardProfileHorizontal({
   };
 
   return (
-    <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
+    <TouchableOpacity onPress={() => handleNavigation(voyageId)} >
       <View style={styles.cardContainer}>
         <View style={styles.shadow}>
           <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
@@ -125,7 +126,12 @@ export default function VoyageCardProfileHorizontal({
               numberOfLines={5}
               ellipsizeMode="tail"
             >
-              {cardDescription}
+              {he.decode(
+                cardDescription
+                  .replace(/<[^>]+>/g, ' ')
+                  .replace(/\s+/g, ' ')
+                  .trim()
+              )}
             </Text>
           </View>
         </View>

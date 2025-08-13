@@ -16,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import RenderHtml from "react-native-render-html";
 import { parrotTextDarkBlue, parrotBlue } from "../assets/color";
+import he from "he";
 
 export default function FavoriteVehicleCardProfile({
   vehicleId,
@@ -165,17 +166,21 @@ export default function FavoriteVehicleCardProfile({
           </View>
           <View
             style={{
-              height: vh(15),
+              height: vh(14),
               overflow: "hidden",
             }}
           >
-            <RenderHtml
-              source={{ html: description }}
-              baseStyle={{
-                fontSize: 11, // 👈 change this to desired size
-                color: parrotTextDarkBlue,
-              }}
-            />
+            <Text style={styles.cardDescription}
+              numberOfLines={8}
+              ellipsizeMode="tail"
+            >
+              {he.decode(
+                description
+                  .replace(/<[^>]+>/g, ' ')
+                  .replace(/\s+/g, ' ')
+                  .trim()
+              )}
+            </Text>
           </View>
         </View>
       </View>

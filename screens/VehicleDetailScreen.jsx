@@ -374,10 +374,10 @@ const VehicleDetailScreen = () => {
                   {/* {displayText} */}
                   <RenderHtml
                     source={{ html: displayText }}
-                  // baseStyle={{
-                  //   fontSize: 14,
-                  //   color: parrotTextDarkBlue,
-                  // }}
+                    tagsStyles={{
+                      strong: { fontWeight: 'bold' }, // force bold
+                      b: { fontWeight: 'bold' },      // just in case HTML uses <b>
+                    }}
                   />
                 </Text>
                 {VehicleData.description.length > descriptionShortenedChars &&

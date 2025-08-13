@@ -15,6 +15,8 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
+import he from "he";
+
 
 export default function FavoriteVoyageCardProfile({
   cardHeader,
@@ -112,12 +114,16 @@ export default function FavoriteVoyageCardProfile({
               <AntDesign name="calendar" size={12} color="blue" />
             </Text>
           </View>
-          <Text
-            style={styles.cardDescription}
-            numberOfLines={5}
+          <Text style={styles.cardDescription}
+            numberOfLines={6}
             ellipsizeMode="tail"
           >
-            {cardDescription}
+            {he.decode(
+              cardDescription
+                .replace(/<[^>]+>/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim()
+            )}
           </Text>
         </View>
       </View>

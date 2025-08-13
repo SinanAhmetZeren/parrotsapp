@@ -46,6 +46,7 @@ import {
 import { API_URL } from "@env";
 import { parrotTextDarkBlue } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import RenderHtml from "react-native-render-html";
 
 const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -468,8 +469,15 @@ const VoyageDetailScreen = ({ navigation }) => {
               {/* // Voyage Description */}
               <View style={styles.DescriptionContainer}>
                 <Text style={styles.descriptionInnerContainer}>
-                  {displayText}
+                  <RenderHtml
+                    source={{ html: displayText }}
+                    tagsStyles={{
+                      strong: { fontWeight: 'bold' },
+                      b: { fontWeight: 'bold' },
+                    }}
+                  />
                 </Text>
+
                 {VoyageData.description.length > descriptionShortenedChars &&
                   !showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
