@@ -120,7 +120,8 @@ const EditProfileScreen = ({ navigation }) => {
   const handlePatchUser = async () => {
     const patchDoc = [
       { op: "replace", path: "/userName", value: username },
-      { op: "replace", path: "/email", value: email },
+      // { op: "replace", path: "/email", value: email },
+      { op: "replace", path: "/displayEmail", value: displayEmail },
       { op: "replace", path: "/phonenumber", value: phoneNumber },
       { op: "replace", path: "/facebook", value: facebookProfile },
       { op: "replace", path: "/instagram", value: instagramProfile },
@@ -152,9 +153,8 @@ const EditProfileScreen = ({ navigation }) => {
 
   const pickProfileImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ['images'],
       allowsEditing: true,
-      // aspect: [4, 3],
       quality: 1,
     });
 
@@ -165,7 +165,7 @@ const EditProfileScreen = ({ navigation }) => {
 
   const pickBackgroundImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: [images],
       allowsEditing: true,
       // aspect: [4, 3],
       quality: 1,
@@ -185,7 +185,7 @@ const EditProfileScreen = ({ navigation }) => {
       setTiktokProfile(userData.tiktok);
       setLinkedinProfile(userData.linkedin);
       setYoutubeProfile(userData.youtube);
-      setEmail(userData.email);
+      setEmail(userData.displayEmail);
       setPhoneNumber(userData.phoneNumber);
       setFacebookProfile(userData.facebook);
       setUsername(userData.userName);

@@ -22,8 +22,8 @@ export const SocialRenderComponent = ({
     setSocialItemCount(contactDataArray.length);
   }, [setSocialItemCount]);
   let contactDataArray = [];
-  if (userData.email !== null && userData.emailVisible === true) {
-    contactDataArray.push([userData.email, 0]);
+  if (userData.displayEmail !== null && userData.emailVisible === true) {
+    contactDataArray.push([userData.displayEmail, 0]);
   }
   if (userData.instagram !== null) {
     contactDataArray.push([userData.instagram, 1]);
@@ -60,7 +60,7 @@ export const SocialRenderComponent = ({
               <EmailItem
                 style={baseStyle}
                 key={index}
-                email={userData.email}
+                email={userData.displayEmail}
                 handleEmailPress={handleEmailPress}
               />
             );

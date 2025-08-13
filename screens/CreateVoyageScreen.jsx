@@ -85,7 +85,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
 
-  useEffect(() => {}, [startDate, endDate, lastBidDate, voyageImage]);
+  useEffect(() => { }, [startDate, endDate, lastBidDate, voyageImage]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -247,7 +247,7 @@ const CreateVoyageScreen = ({ navigation }) => {
 
   const pickProfileImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: [images],
       allowsEditing: true,
       // aspect: [4, 3],
       quality: 1,
@@ -260,7 +260,7 @@ const CreateVoyageScreen = ({ navigation }) => {
 
   const pickVoyageImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: [images],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -333,13 +333,13 @@ const CreateVoyageScreen = ({ navigation }) => {
     const data =
       addedVoyageImages.length < maxItems
         ? [
-            ...addedVoyageImages,
-            ...placeholders.slice(addedVoyageImages.length),
-          ]
+          ...addedVoyageImages,
+          ...placeholders.slice(addedVoyageImages.length),
+        ]
         : addedVoyageImages.map((item) => ({
-            ...item,
-            key: item.addedVoyageImageId,
-          }));
+          ...item,
+          key: item.addedVoyageImageId,
+        }));
 
     return (
       <>
@@ -591,16 +591,16 @@ const CreateVoyageScreen = ({ navigation }) => {
                         onPress={() => handleCreateVoyage()}
                         style={
                           image === "" ||
-                          name === "" ||
-                          brief === "" ||
-                          description === "" ||
-                          vacancy === "" ||
-                          vehicleId === "" ||
-                          startDate === "" ||
-                          endDate === "" ||
-                          lastBidDate === "" ||
-                          minPrice === "" ||
-                          maxPrice === ""
+                            name === "" ||
+                            brief === "" ||
+                            description === "" ||
+                            vacancy === "" ||
+                            vehicleId === "" ||
+                            startDate === "" ||
+                            endDate === "" ||
+                            lastBidDate === "" ||
+                            minPrice === "" ||
+                            maxPrice === ""
                             ? styles.selection2Disabled
                             : styles.selection2
                         }
@@ -654,8 +654,8 @@ const CreateVoyageScreen = ({ navigation }) => {
                     addedVoyageImages.length <= 1
                       ? styles.length1
                       : addedVoyageImages.length === 2
-                      ? styles.length2
-                      : styles.length3
+                        ? styles.length2
+                        : styles.length3
                   }
                 >
                   <FlatList

@@ -145,8 +145,8 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleEmailPress = async () => {
-    if (userData.email) {
-      let emailStr = userData.email;
+    if (userData.displayEmail) {
+      let emailStr = userData.displayEmail;
       try {
         await Clipboard.setStringAsync(emailStr);
         Toast.show({

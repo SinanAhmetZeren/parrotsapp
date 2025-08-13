@@ -161,7 +161,7 @@ const CreateVoyageMapComponent = ({
 
   const pickVoyageImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: [images],
       allowsEditing: true,
       // aspect: [4, 3],
       quality: 1,
@@ -367,7 +367,7 @@ const CreateVoyageMapComponent = ({
             <Text style={styles.addWaypointText}> Add Waypoint </Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={() => { }}>
             <Text style={styles.addWaypointTextDisabled}> Add Waypoint </Text>
           </TouchableOpacity>
         )}
