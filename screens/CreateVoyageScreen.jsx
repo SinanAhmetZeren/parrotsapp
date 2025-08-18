@@ -246,12 +246,17 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   const pickProfileImage = async () => {
+    console.log("pickProfileImage called");
+    console.log("voyageimage", voyageImage);
+    console.log("image", image);
+
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: [images],
+      mediaTypes: ["images"],
       allowsEditing: true,
-      // aspect: [4, 3],
       quality: 1,
     });
+
+    console.log("result ", result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
@@ -260,7 +265,7 @@ const CreateVoyageScreen = ({ navigation }) => {
 
   const pickVoyageImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: [images],
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -912,7 +917,7 @@ const styles = StyleSheet.create({
 
   scrollview: {
     height: vh(140),
-    marginBottom: vh(2),
+    marginBottom: vh(5),
     backgroundColor: "white",
   },
   profileContainer: {

@@ -55,7 +55,7 @@ const EditProfileScreen = ({ navigation }) => {
   const [tiktokProfile, setTiktokProfile] = useState("");
   const [linkedinProfile, setLinkedinProfile] = useState("");
   const [youtubeProfile, setYoutubeProfile] = useState("");
-  const [email, setEmail] = useState("");
+  const [displayEmail, setDisplayEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [facebookProfile, setFacebookProfile] = useState("");
   const [username, setUsername] = useState("");
@@ -165,7 +165,7 @@ const EditProfileScreen = ({ navigation }) => {
 
   const pickBackgroundImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: [images],
+      mediaTypes: ["images"],
       allowsEditing: true,
       // aspect: [4, 3],
       quality: 1,
@@ -185,7 +185,7 @@ const EditProfileScreen = ({ navigation }) => {
       setTiktokProfile(userData.tiktok);
       setLinkedinProfile(userData.linkedin);
       setYoutubeProfile(userData.youtube);
-      setEmail(userData.displayEmail);
+      setDisplayEmail(userData.displayEmail);
       setPhoneNumber(userData.phoneNumber);
       setFacebookProfile(userData.facebook);
       setUsername(userData.userName);
@@ -281,10 +281,10 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Email</Text>
               <TextInput
                 placeholder="Enter your email"
-                value={email}
-                onChangeText={(text) => setEmail(text)}
+                value={displayEmail}
+                onChangeText={(text) => setDisplayEmail(text)}
                 style={styles.textInput}
-                editable={false}
+                editable={true}
               />
             </View>
 

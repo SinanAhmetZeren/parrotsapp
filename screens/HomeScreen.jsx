@@ -65,8 +65,8 @@ export default function HomeScreen({ navigation }) {
   const [cardDescriptionM, setCardDescriptionM] = useState("");
   const [cardImageM, setCardImageM] = useState("");
   const [vacancyM, setVacancyM] = useState(0);
-  const [startDateM, setStartDateM] = useState("2024-03-14T09:00:00");
-  const [endDateM, setEndDateM] = useState("2024-03-14T09:00:00");
+  const [startDateM, setStartDateM] = useState("2004-03-14T09:00:00");
+  const [endDateM, setEndDateM] = useState("2054-03-14T09:00:00");
   const [vehicleNameM, setVehicleNameM] = useState("");
   const [vehicleTypeM, setVehicleTypeM] = useState("");
   const [voyageIdM, setVoyageIdM] = useState("");
@@ -77,6 +77,23 @@ export default function HomeScreen({ navigation }) {
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
 
+  const [appliedFilters, setAppliedFilters] = useState({
+    count: 1,
+    startDate: null,
+    endDate: null,
+    vehicle: null,
+  });
+  const isChanged =
+    count !== appliedFilters.count ||
+    startDate !== appliedFilters.startDate ||
+    endDate !== appliedFilters.endDate ||
+    selectedVehicleType !== appliedFilters.vehicle;
+
+  useEffect(() => {
+    console.log("Applied filters changed:", appliedFilters);
+
+  }, [appliedFilters]);
+
   const markerImages = [
     parrotMarker1,
     parrotMarker2,
@@ -85,6 +102,20 @@ export default function HomeScreen({ navigation }) {
     parrotMarker5,
     parrotMarker6,
   ];
+
+
+  const vehicleIconsMaterialComm = {
+    0: "sailboat",
+    1: "car",
+    2: "caravan",
+    3: "bus",
+    4: "walk",
+    5: "run",
+    6: "motorbike",
+    7: "bicycle",
+    8: "home",
+    9: "airplane",
+  };
 
   const [
     getVoyagesByLocation,
@@ -277,20 +308,25 @@ export default function HomeScreen({ navigation }) {
     const formattedEndDate = convertDateFormat(endDate, "endDate");
 
     const data = {
-      latitude,
-      longitude,
-      latitudeDelta,
-      longitudeDelta,
+      latitude: latitude == 0 ? initialLatitude : latitude,
+      longitude: longitude == 0 ? initialLongitude : longitude,
+      latitudeDelta: latitude == 0 ? 0.25 : latitudeDelta,
+      longitudeDelta: longitude == 0 ? 0.25 : longitudeDelta,
       count,
       selectedVehicleType,
       formattedStartDate,
       formattedEndDate,
     };
-    // console.log("------------data------------", data);
 
     const filteredVoyages = await getFilteredVoyages(data);
 
     setInitialVoyages(filteredVoyages.data || []);
+    setAppliedFilters({
+      count,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      vehicle: selectedVehicleType,
+    });
   };
 
   function handleCountModal() {
@@ -411,7 +447,7 @@ export default function HomeScreen({ navigation }) {
                         styles.icon,
                         isCountFiltered ? styles.filtered : null,
                       ]}
-                      name="human-handsup"
+                      name={!isCountFiltered ? "human-handsdown" : "human-handsup"}
                       size={24}
                       color="#c3c3c3"
                     />
@@ -428,38 +464,55 @@ export default function HomeScreen({ navigation }) {
                     />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleVehicleModal}>
-                    <MaterialCommunityIcons
+                    {/* <MaterialCommunityIcons
                       style={[
                         styles.icon,
                         isVehicleFiltered ? styles.filtered : null,
                       ]}
-                      name="car-side"
+                      name={isVehicleFiltered ? "car-side" : "car-back"}
+                      size={24}
+                      color="#c3c3c3"
+                    /> */}
+                    <MaterialCommunityIcons
+                      style={[styles.icon, isVehicleFiltered ? styles.filtered : null]}
+                      name={selectedVehicleType !== null ? vehicleIconsMaterialComm[selectedVehicleType] : "car"}
                       size={24}
                       color="#c3c3c3"
                     />
+
                   </TouchableOpacity>
                 </View>
 
                 <View>
                   <TouchableOpacity
+                    disabled={!isChanged}
                     onPress={() => {
+                      console.log("Applying filters...");
                       applyFilter();
                     }}
                   >
                     <View>
-                      <Text style={styles.applyFilter}>Apply Filter</Text>
+                      <Text
+                        style={[
+                          styles.applyFilter,
+                          isChanged ? styles.applyFilterEnabled : styles.applyFilterDisabled
+                        ]}
+                      >Apply Filter</Text>
                     </View>
                   </TouchableOpacity>
+
                 </View>
 
-                <View>
+                <View style={{ display: "none" }}>
                   <TouchableOpacity
                     onPress={() => {
                       handleLogout();
                     }}
                   >
                     <View>
-                      <Text style={styles.applyFilter}>Logout</Text>
+                      <Text
+                        style={styles.applyFilter}
+                      >Main Page Logout</Text>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -661,14 +714,19 @@ const styles = StyleSheet.create({
   applyFilter: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#2ac898",
     alignSelf: "flex-end",
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
     borderRadius: vh(3),
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.7),
   },
-
+  applyFilterEnabled: {
+    color: "#2ac898",
+    backgroundColor: "rgba(42, 200, 152, 0.1)",
+  },
+  applyFilterDisabled: {
+    color: "#2ac89855",
+    backgroundColor: "rgba(42, 200, 152, 0.1)",
+  },
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",

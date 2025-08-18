@@ -24,6 +24,9 @@ const FilterCalendarModal = ({
   endDate,
   setEndDate,
 }) => {
+  // console.log("FilterCalendarModal:", startDate, endDate);
+
+
   const handleDateChange = (date, type) => {
     if (type === "END_DATE") {
       setEndDate(date);
