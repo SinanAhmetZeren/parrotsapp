@@ -20,6 +20,8 @@ const FilterCountModal = ({
   count,
   setCount,
 }) => {
+
+  // console.log("FilterCountModal count:", count);
   const handleIncrement = () => {
     setCount((count) => {
       const newCount = count + 1;

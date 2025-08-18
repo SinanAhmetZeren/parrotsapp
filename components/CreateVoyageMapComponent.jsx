@@ -161,7 +161,7 @@ const CreateVoyageMapComponent = ({
 
   const pickVoyageImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: [images],
+      mediaTypes: ["images"],
       allowsEditing: true,
       // aspect: [4, 3],
       quality: 1,
@@ -244,15 +244,6 @@ const CreateVoyageMapComponent = ({
         </View>
       </View>
 
-      {/* <View style={styles.warningTextContainer}>
-        <Image
-          source={require("../assets/parrots-logo-mini.png")}
-          style={styles.miniLogo}
-        />
-        <Text style={styles.warningText}>
-          Tap to pick your spot. If a city name is in the way, zoom in closer.
-        </Text>
-      </View> */}
 
       <View style={styles.ImageAndLatLng}>
         <View style={styles.warningTextContainer}>
@@ -261,12 +252,10 @@ const CreateVoyageMapComponent = ({
             style={styles.miniLogo}
           />
           <Image
-            source={require("../assets/messagebubble.png")}
+            source={require("../assets/parrot_message.png")}
             style={styles.messageBubble}
           />
-          {/* <Text style={styles.warningText}>
-            Tap to pick your spot. If a city name is in the way, zoom in closer.
-          </Text> */}
+
         </View>
         <View style={styles.profileContainer}>
           {isUploadingWaypointImage ? (
@@ -405,8 +394,8 @@ export default CreateVoyageMapComponent;
 
 const styles = StyleSheet.create({
   messageBubble: {
-    width: vw(63),
-    height: vh(5.2),
+    width: vw(88),
+    height: vh(6.8),
     marginTop: vh(0.7),
   },
   warningTextContainer: {

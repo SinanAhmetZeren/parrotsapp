@@ -12,6 +12,8 @@ const FilterVehicleModal = ({
   selectedVehicleType: selectedValue,
   setSelectedVehicleType: setSelectedValue,
 }) => {
+
+  // console.log("FilterVehicleModal:", selectedValue);
   const vehicleTypes2 = [
     "Boat",
     "Car",
