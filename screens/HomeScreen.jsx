@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
-import React from "react";
+import React, { use } from "react";
 import { useEffect, useRef, useState } from "react";
 import {
   View,
@@ -43,6 +43,8 @@ import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 export default function HomeScreen({ navigation }) {
+
+
   const [countModalVisibility, setCountModalVisibility] = useState(false);
   const [calendarModalVisibility, setCalendarModalVisibility] = useState(false);
   const [vehicleModalVisibility, setVehicleModalVisibility] = useState(false);
@@ -77,22 +79,56 @@ export default function HomeScreen({ navigation }) {
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
 
-  const [appliedFilters, setAppliedFilters] = useState({
+  const initialFilters = JSON.stringify({ // initial state for filters
     count: 1,
     startDate: null,
     endDate: null,
-    vehicle: null,
-  });
-  const isChanged =
-    count !== appliedFilters.count ||
-    startDate !== appliedFilters.startDate ||
-    endDate !== appliedFilters.endDate ||
-    selectedVehicleType !== appliedFilters.vehicle;
+    selectedVehicleType: null,
+  })
+  const [appliedFilters, setAppliedFilters] = useState(initialFilters); // last state of api call
+  const [currentFilters, setCurrentFilters] = useState(initialFilters); // current state of filters
+  const areEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+  const [filterComparisonState, setFilterComparisonState] = useState(1); // default
 
   useEffect(() => {
-    console.log("Applied filters changed:", appliedFilters);
+    const current = JSON.stringify({
+      count,
+      startDate,
+      endDate,
+      selectedVehicleType,
+    })
+    setCurrentFilters(current);
+    console.log("Current filters updated:", current);
+  }, [count, startDate, endDate, selectedVehicleType]);
 
-  }, [appliedFilters]);
+
+  useEffect(() => {
+    console.log("--- Comparing filters ---");
+    if (areEqual(appliedFilters, initialFilters) && areEqual(appliedFilters, currentFilters)) {
+      // Case 1: all equal
+      console.log("Case 1: all filters are equal");
+      console.log("Initial filters:", initialFilters);
+      console.log("Current filters:", currentFilters);
+      console.log("Applied filters:", appliedFilters);
+      setFilterComparisonState(1);
+    } else if (areEqual(appliedFilters, currentFilters) && !areEqual(currentFilters, initialFilters)) {
+      // Case 2: applied == current but different from initial
+      console.log("Case 2: applied == current but different from initial");
+      console.log("Initial filters:", initialFilters);
+      console.log("Current filters:", currentFilters);
+      console.log("Applied filters:", appliedFilters);
+      setFilterComparisonState(2);
+    } else if (!areEqual(appliedFilters, currentFilters) && !areEqual(currentFilters, initialFilters)) {
+      // Case 3: current != applied and != initial
+      console.log("Case 3: current != applied and != initial");
+      console.log("Initial filters:", initialFilters);
+      console.log("Current filters:", currentFilters);
+      console.log("Applied filters:", appliedFilters);
+      setFilterComparisonState(3);
+    }
+  }, [appliedFilters, currentFilters, initialFilters]);
+
 
   const markerImages = [
     parrotMarker1,
@@ -317,16 +353,17 @@ export default function HomeScreen({ navigation }) {
       formattedStartDate,
       formattedEndDate,
     };
-
     const filteredVoyages = await getFilteredVoyages(data);
-
     setInitialVoyages(filteredVoyages.data || []);
-    setAppliedFilters({
+
+    const filtersJson = JSON.stringify({
       count,
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-      vehicle: selectedVehicleType,
-    });
+      startDate,
+      endDate,
+      selectedVehicleType,
+    })
+    setAppliedFilters(filtersJson);
+    console.log("Applied filters:", filtersJson);
   };
 
   function handleCountModal() {
@@ -485,9 +522,8 @@ export default function HomeScreen({ navigation }) {
 
                 <View>
                   <TouchableOpacity
-                    disabled={!isChanged}
+                    disabled={false}
                     onPress={() => {
-                      console.log("Applying filters...");
                       applyFilter();
                     }}
                   >
@@ -495,7 +531,9 @@ export default function HomeScreen({ navigation }) {
                       <Text
                         style={[
                           styles.applyFilter,
-                          isChanged ? styles.applyFilterEnabled : styles.applyFilterDisabled
+                          filterComparisonState == 1 && styles.applyFilterInitial,
+                          filterComparisonState == 2 && styles.applyFilterApplied,
+                          filterComparisonState == 3 && styles.applyFilterChanged,
                         ]}
                       >Apply Filter</Text>
                     </View>
@@ -719,14 +757,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.7),
   },
-  applyFilterEnabled: {
+  applyFilterApplied: {
     color: "#2ac898",
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    backgroundColor: "rgba(42, 200, 152, 0.12)",
+    borderWidth: 2,
+    borderColor: "white",
   },
-  applyFilterDisabled: {
-    color: "#2ac89855",
+  applyFilterInitial: {
+    color: "#81e6c7ff",
     backgroundColor: "rgba(42, 200, 152, 0.1)",
+    borderWidth: 2,
+    borderColor: "white",
   },
+  applyFilterChanged: {
+    color: "#2ac898",
+    backgroundColor: "rgba(42, 200, 152, 0.12)",
+    borderWidth: 2,
+    borderColor: "#2ac89866",
+  },
+
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
