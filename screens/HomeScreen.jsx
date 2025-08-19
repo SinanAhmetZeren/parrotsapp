@@ -119,9 +119,14 @@ export default function HomeScreen({ navigation }) {
       console.log("Current filters:", currentFilters);
       console.log("Applied filters:", appliedFilters);
       setFilterComparisonState(2);
-    } else if (!areEqual(appliedFilters, currentFilters) && !areEqual(currentFilters, initialFilters)) {
+    } else if (
+      !areEqual(appliedFilters, currentFilters)
+      // &&
+      // !areEqual(currentFilters, initialFilters) &&
+      // !areEqual(appliedFilters, initialFilters)
+    ) {
       // Case 3: current != applied and != initial
-      console.log("Case 3: current != applied and != initial");
+      console.log("Case 3: current != applied");
       console.log("Initial filters:", initialFilters);
       console.log("Current filters:", currentFilters);
       console.log("Applied filters:", appliedFilters);
@@ -139,19 +144,53 @@ export default function HomeScreen({ navigation }) {
     parrotMarker6,
   ];
 
+  /*
+    const vehicleIconsMaterialComm = {
+      0: "sail-boat",
+      1: "car",
+      2: "caravan",
+      3: "bus",
+      4: "walk",
+      5: "run",
+      6: "motorbike",
+      7: "bicycle",
+      8: "home",
+      9: "airplane",
+    };
+    */
 
-  const vehicleIconsMaterialComm = {
-    0: "sailboat",
-    1: "car",
-    2: "caravan",
-    3: "bus",
-    4: "walk",
-    5: "run",
-    6: "motorbike",
-    7: "bicycle",
-    8: "home",
-    9: "airplane",
+  const vehicleIcons = [
+    ["FontAwesome6", "sailboat", 20],     // index 0
+    ["MaterialCommunityIcons", "car", 24], // index 1
+    ["MaterialCommunityIcons", "caravan", 24], // index 2
+    ["MaterialCommunityIcons", "bus", 24], // index 3
+    ["MaterialCommunityIcons", "walk", 24], // index 4
+    ["MaterialCommunityIcons", "run", 24], // index 5
+    ["MaterialCommunityIcons", "motorbike", 24], // index 6
+    ["MaterialCommunityIcons", "bicycle", 24], // index 7
+    ["MaterialCommunityIcons", "home", 24], // index 8
+    ["MaterialCommunityIcons", "airplane", 24], // index 9
+  ];
+
+  const iconLibraries = {
+    MaterialCommunityIcons,
+    FontAwesome6,
   };
+
+  function VehicleIcon({ selectedVehicleType, color = "#c3c3c3", style }) {
+    const [library, iconName, iconSize] =
+      selectedVehicleType !== null
+        ? vehicleIcons[selectedVehicleType]
+        : ["MaterialCommunityIcons", "car-hatchback", 24];
+
+    const IconComponent = iconLibraries[library] || MaterialCommunityIcons;
+
+    return (<View style={selectedVehicleType === 0 && { padding: 0, borderRadius: 20 }}>
+      <IconComponent name={iconName} size={iconSize} color={color} style={style} />
+    </View>)
+  }
+
+
 
   const [
     getVoyagesByLocation,
@@ -482,9 +521,10 @@ export default function HomeScreen({ navigation }) {
                     <MaterialCommunityIcons
                       style={[
                         styles.icon,
-                        isCountFiltered ? styles.filtered : null,
+                        // isCountFiltered ? styles.filtered : null,
+                        count !== 1 ? styles.filtered : null,
                       ]}
-                      name={!isCountFiltered ? "human-handsdown" : "human-handsup"}
+                      name={count == 1 ? "human-handsdown" : "human-greeting"}//"human-handsup"}
                       size={24}
                       color="#c3c3c3"
                     />
@@ -493,7 +533,8 @@ export default function HomeScreen({ navigation }) {
                     <Ionicons
                       style={[
                         styles.icon,
-                        isDatesFiltered ? styles.filtered : null,
+                        // isDatesFiltered  ? styles.filtered : null,
+                        startDate !== null && endDate !== null ? styles.filtered : null,
                       ]}
                       name="calendar-outline"
                       size={24}
@@ -510,12 +551,26 @@ export default function HomeScreen({ navigation }) {
                       size={24}
                       color="#c3c3c3"
                     /> */}
-                    <MaterialCommunityIcons
-                      style={[styles.icon, isVehicleFiltered ? styles.filtered : null]}
-                      name={selectedVehicleType !== null ? vehicleIconsMaterialComm[selectedVehicleType] : "car"}
+                    {/* <MaterialCommunityIcons
+                      style={[
+                        styles.icon,
+                        //isVehicleFiltered ? styles.filtered : null
+                        selectedVehicleType !== null ? styles.filtered : null
+                      ]}
+                      name={selectedVehicleType !== null ? vehicleIcons[selectedVehicleType][1] : "car"}
                       size={24}
                       color="#c3c3c3"
+                    /> */}
+
+                    <VehicleIcon
+                      selectedVehicleType={selectedVehicleType}
+                      style={[
+                        styles.icon,
+                        selectedVehicleType !== null ? styles.filtered : null
+                      ]}
                     />
+
+
 
                   </TouchableOpacity>
                 </View>
@@ -757,25 +812,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.7),
   },
+  applyFilterInitial: {
+    backgroundColor: "white",
+    color: "#81e6c755",
+    borderWidth: 2,
+    borderColor: "#81e6c722",
+  },
   applyFilterApplied: {
     color: "#2ac898",
     backgroundColor: "rgba(42, 200, 152, 0.12)",
     borderWidth: 2,
-    borderColor: "white",
+    borderColor: "#2ac89833",
   },
+  applyFilterChanged: {
+    color: "white",
+    backgroundColor: "#2ac89888",
+    borderWidth: 2,
+    borderColor: "#2ac898",
+  },
+  /*
   applyFilterInitial: {
     color: "#81e6c7ff",
     backgroundColor: "rgba(42, 200, 152, 0.1)",
     borderWidth: 2,
     borderColor: "white",
   },
-  applyFilterChanged: {
-    color: "#2ac898",
-    backgroundColor: "rgba(42, 200, 152, 0.12)",
-    borderWidth: 2,
-    borderColor: "#2ac89866",
-  },
-
+  */
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
