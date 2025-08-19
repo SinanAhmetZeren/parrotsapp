@@ -8,9 +8,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Button,
+  TextInput
 } from "react-native";
 import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { parrotBlueMediumTransparent, parrotTextDarkBlue } from "../assets/color";
 
 const FilterCountModal = ({
   isVisible,
@@ -60,30 +62,42 @@ const FilterCountModal = ({
       >
         <View style={styles.modalContainer}>
           <View style={styles.innerContainer}>
-            <Text style={styles.title}>Vacancy</Text>
-
-            <View style={styles.counterContainer}>
-              <TouchableOpacity onPress={handleDecrement}>
-                <Text style={styles.buttonCount}>-</Text>
-              </TouchableOpacity>
-
-              <Text style={styles.count}>{count}</Text>
-
-              <TouchableOpacity onPress={handleIncrement}>
-                <Text style={styles.buttonCount}>+</Text>
-              </TouchableOpacity>
+            <Text style={[styles.title, { color: parrotTextDarkBlue }]}>
+              Vacancy
+            </Text>
+            <View style={styles.inputMainContainer}>
+              <View style={styles.counterContainer}>
+                <TouchableOpacity
+                  onPress={handleDecrement}
+                  style={{ ...styles.changeButtonContainer, ...styles.rightFlatBorders }}
+                >
+                  <Text style={styles.buttonCount}>-</Text>
+                </TouchableOpacity>
+                <TextInput
+                  style={styles.bidInput}
+                  keyboardType="numeric"
+                  value={count.toString()}
+                  onChangeText={(text) => setCount(parseInt(text) || 0)}
+                />
+                <TouchableOpacity
+                  onPress={handleIncrement}
+                  style={{ ...styles.changeButtonContainer, ...styles.leftFlatBorders }}
+                >
+                  <Text style={styles.buttonCount}>+</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
+                style={styles.buttonCancelContainer}
                 onPress={handleClear}
-                style={styles.buttonClearContainer}
               >
                 <Text style={styles.buttonClear}>Clear</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                style={styles.buttonSendBidContainer}
                 onPress={handleSave}
-                style={styles.buttonSaveContainer}
               >
                 <Text style={styles.buttonSave}>Ok</Text>
               </TouchableOpacity>
@@ -107,72 +121,112 @@ const styles = StyleSheet.create({
     paddingTop: vh(17),
     paddingBottom: vh(70),
   },
+  count: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  changeButtonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    backgroundColor: parrotTextDarkBlue,
+    borderRadius: vh(20),
+    height: vh(4.5),
+  },
+  rightFlatBorders: {
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  leftFlatBorders: {
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
+  },
+  inputMainContainer: {
+    padding: vh(1),
+    marginBottom: vh(1),
+    borderRadius: vh(2),
+    borderColor: "#d8f7ee",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    // backgroundColor: "orange",
+    width: vw(55),
+  },
+  bidInput: {
+    color: parrotTextDarkBlue,
+    fontSize: 18,
+    fontWeight: "bold",
+    backgroundColor: "white",
+    width: vw(32),
+    textAlign: "center",
+    borderWidth: 1,
+    borderColor: parrotTextDarkBlue,
+    height: vh(4.5) - 1.5,
+    backgroundColor: parrotBlueMediumTransparent,
+    lineHeight: 20,  // keep line height close to font size
+    paddingBottom: 6,   // fine tune
+
+  },
   innerContainer: {
     backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    width: 300,
+    width: vw(70),
+    // backgroundColor: "pink",
+    alignItems: "center",
   },
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: vh(2),
     textAlign: "center",
   },
   counterContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    width: vw(60),
+    paddingHorizontal: vw(2),
+    borderRadius: vh(2),
   },
-
   buttonsContainer: {
     flexDirection: "row",
     alignContent: "center",
-    justifyContent: "space-around",
-  },
-
-  buttonSaveContainer: {
-    alignItems: "center",
-  },
-  buttonClearContainer: {
-    alignItems: "center",
+    justifyContent: "center",
+    // backgroundColor: "yellow",
+    width: vw(55),
   },
   buttonSave: {
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     textAlign: "center",
     backgroundColor: "#186ff1",
-    padding: 5,
-    width: vw(30),
-    borderRadius: 10,
-    marginTop: 5,
+    padding: vw(1),
+    width: vw(25),
+    borderRadius: vh(4),
+    fontWeight: "bold",
+    marginLeft: vw(2.5),
   },
   buttonClear: {
-    fontSize: 18,
+    fontSize: 16,
+    fontWeight: "bold",
     color: "white",
     textAlign: "center",
     backgroundColor: "#2ac898",
-    padding: 5,
-    width: vw(30),
-    borderRadius: 10,
-    marginTop: 5,
+    padding: vw(1),
+    width: vw(25),
+    borderRadius: vh(4),
+    marginRight: vw(2.5),
+
   },
   buttonCount: {
-    fontSize: 24,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderWidth: 1,
+    fontSize: 22,
     borderColor: "#3498db",
     borderRadius: 10,
-    backgroundColor: "#fff",
     width: vh(6),
-    textAlign: "center", // Center the text horizontally
-    color: "green",
-  },
-  count: {
-    fontSize: 18,
-    fontWeight: "bold",
+    textAlign: "center",
+    fontWeight: "800",
+    color: "white",
   },
 });
 

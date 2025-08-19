@@ -826,9 +826,9 @@ const styles = StyleSheet.create({
   },
   applyFilterChanged: {
     color: "white",
-    backgroundColor: "#2ac89888",
+    backgroundColor: "#2ac898bb",
     borderWidth: 2,
-    borderColor: "#2ac898",
+    borderColor: "#2ac89833",
   },
   /*
   applyFilterInitial: {
