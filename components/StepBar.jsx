@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    height: vh(7),
+    height: vh(5),
     backgroundColor: "white",
   },
   activeStep: {

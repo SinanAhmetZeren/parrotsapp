@@ -15,10 +15,9 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 
 import * as ImagePicker from "expo-image-picker";
-import { useAddWaypointMutation, useConfirmVoyageMutation } from "../slices/VoyageSlice";
+import { useAddWaypointMutation } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
-import { parrotBlueMediumTransparent, parrotBlueSemiTransparent } from "../assets/color";
 
 const CreateVoyageMapComponent = ({
   voyageId,
@@ -36,7 +35,6 @@ const CreateVoyageMapComponent = ({
   const [imageUri, setImageUri] = useState(null);
   const [order, setOrder] = useState(1);
   const [addWaypoint] = useAddWaypointMutation();
-  const [confirmVoyage] = useConfirmVoyageMutation();
   const navigation = useNavigation();
   const [isUploadingWaypointImage, setIsUploadingWaypointImage] =
     useState(false);
@@ -110,9 +108,6 @@ const CreateVoyageMapComponent = ({
       setImageUri(null);
       setLatitude("");
       setLongitude("");
-      setTitle("");
-      setDescription("")
-
     } catch (error) {
       console.error("Error uploading image", error);
     }
@@ -226,7 +221,6 @@ const CreateVoyageMapComponent = ({
     setImageUri(null);
     setOrder(1);
     setCurrentStep(1);
-    confirmVoyage(voyageId);
     navigation.navigate("Home");
   };
 
@@ -251,18 +245,18 @@ const CreateVoyageMapComponent = ({
       </View>
 
 
-      <View style={styles.warningTextContainer}>
-        <Image
-          source={require("../assets/parrots-logo-mini.png")}
-          style={styles.miniLogo}
-        />
-        <Image
-          source={require("../assets/parrot_message.png")}
-          style={styles.messageBubble}
-        />
-      </View>
+      <View style={styles.ImageAndLatLng}>
+        <View style={styles.warningTextContainer}>
+          <Image
+            source={require("../assets/parrots-logo-mini.png")}
+            style={styles.miniLogo}
+          />
+          <Image
+            source={require("../assets/parrot_message.png")}
+            style={styles.messageBubble}
+          />
 
-      <View style={styles.newWaypointCard}>
+        </View>
         <View style={styles.profileContainer}>
           {isUploadingWaypointImage ? (
             <View style={styles.profileImage}>
@@ -317,12 +311,12 @@ const CreateVoyageMapComponent = ({
             </View>
 
             <View style={styles.latLngNameRow}>
-              <View style={styles.nameLabel}>
+              <View style={styles.latLngLabel}>
                 <Text style={styles.latorLngtxt}>Name:</Text>
               </View>
-              <View style={styles.nameInputContainer}>
+              <View style={styles.latorLng}>
                 <TextInput
-                  style={styles.nameInput}
+                  style={styles.textInput}
                   placeholder="Enter title for waypoint"
                   value={title}
                   multiline
@@ -352,29 +346,20 @@ const CreateVoyageMapComponent = ({
           </View>
         </View>
 
-
-        <View style={{ marginTop: vh(.5), marginBottom: vh(.05) }}>
-          {latitude && imageUri ? (
-            <TouchableOpacity
-              style={styles.addWaypointButtonContainer}
-              onPress={() => {
-                handleAddWaypoint();
-              }}
-            >
-              <Text style={styles.addWaypointText}> Add Waypoint </Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity disabled>
-              <Text style={styles.addWaypointTextDisabled}> Add Waypoint </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-      </View >
-
-
-      <View style={styles.addWaypoints}>
-        <Text style={styles.selectedText}>Added Waypoints</Text>
+        {latitude && imageUri ? (
+          <TouchableOpacity
+            style={styles.addWaypointButtonContainer}
+            onPress={() => {
+              handleAddWaypoint();
+            }}
+          >
+            <Text style={styles.addWaypointText}> Add Waypoint </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={() => { }}>
+            <Text style={styles.addWaypointTextDisabled}> Add Waypoint </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.waypointFlatlistContainer}>
@@ -408,19 +393,6 @@ const CreateVoyageMapComponent = ({
 export default CreateVoyageMapComponent;
 
 const styles = StyleSheet.create({
-  addWaypoints: {
-    alignItems: "center",
-  },
-  selectedText: {
-    color: "rgba(24,111,241,1)",
-    fontSize: 18,
-    fontWeight: "700",
-    textAlign: "center",
-    backgroundColor: "white",
-    paddingVertical: vh(0.5),
-    borderRadius: vh(1.5),
-    width: vw(50),
-  },
   messageBubble: {
     width: vw(88),
     height: vh(6.8),
@@ -467,7 +439,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: vh(1),
     borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234,.15)",
+    backgroundColor: "rgba(0, 119, 234,.5)",
     color: "white",
     fontWeight: "600",
     marginBottom: vh(1),
@@ -487,25 +459,14 @@ const styles = StyleSheet.create({
   waypointImage: {
     width: vh(14),
     height: vh(14),
-    borderRadius: vh(1.5),
+    borderRadius: vh(3),
     borderWidth: 3,
     borderColor: "rgba(0, 119, 234,0.3)",
   },
 
   waypointFlatlistContainer: {
-    height: vh(34),
-    padding: vh(2),
-    backgroundColor: parrotBlueMediumTransparent,
-    borderColor: parrotBlueSemiTransparent,
-    borderWidth: 2,
-    borderRadius: vh(2),
-    width: vw(94),
-    alignSelf: "center",
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-    verticalAlign: "auto",
-    marginBottom: vh(2)
+    height: vh(32),
+    marginLeft: vw(3),
   },
   FinishButtonContainer: {
     borderRadius: vh(2),
@@ -513,43 +474,25 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: vh(5),
   },
-  newWaypointCard: {
-    marginTop: vh(3),
-    marginBottom: vh(3),
-    backgroundColor: "rgba(210, 211, 212,.7)",
-    backgroundColor: parrotBlueMediumTransparent,
-    borderColor: parrotBlueSemiTransparent,
-    borderWidth: 2,
+  ImageAndLatLng: {
+    backgroundColor: "rgba(240, 241, 242,.7)",
+    borderColor: "rgba(230, 231, 232,1)",
     borderRadius: vh(2),
-    width: vw(94),
+    width: vw(97),
     alignSelf: "center",
-    // backgroundColor: "pink"
   },
   latLng: {
-    width: vw(59),
+    width: vw(66),
     marginTop: vh(1),
-    // backgroundColor: "red"
   },
   latorLng: {
     flexDirection: "row",
     backgroundColor: "white",
-    marginVertical: vh(0.2),
+    marginVertical: vh(0.3),
     padding: vh(0.4),
-    borderTopRightRadius: vh(1.5),
-    borderBottomRightRadius: vh(1.5),
-    width: vw(45),
-    // backgroundColor: "orange",
-  },
-  nameInputContainer: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    marginVertical: vh(0),
-    padding: vh(0.4),
-    paddingVertical: 0,
-    borderTopRightRadius: vh(1.5),
-    borderBottomRightRadius: vh(1.5),
-    width: vw(45),
-    // backgroundColor: "orange",
+    borderTopRightRadius: vh(3),
+    borderBottomRightRadius: vh(3),
+    width: vw(52),
   },
   latorLng2: {
     flexDirection: "row",
@@ -558,42 +501,29 @@ const styles = StyleSheet.create({
     padding: vh(0.4),
     // borderWidth: 1,
     borderColor: "#babbbc",
-    width: vw(62),
-    borderTopRightRadius: vh(1.5),
-    borderBottomRightRadius: vh(1.5),
-    // backgroundColor: "yellow"
+    width: vw(66),
+    borderTopRightRadius: vh(3),
+    borderBottomRightRadius: vh(3),
   },
   latLngNameRow: {
     flexDirection: "row",
     backgroundColor: "#f1f2f3",
-    // backgroundColor: "cyan",
-    borderRadius: vh(1.5),
+    borderRadius: vh(3),
     marginBottom: vh(0.5),
-    height: vh(4.5),
   },
   latLngNameRow2: {
     flexDirection: "row",
     backgroundColor: "#f1f2f3",
-    borderRadius: vh(1.5),
+    borderRadius: vh(3),
     marginBottom: vh(0.5),
     marginHorizontal: vw(2),
-  },
-  nameLabel: {
-    justifyContent: "center",
-    backgroundColor: "#f8f9fa",
-    marginVertical: vh(0.3),
-    padding: vh(0.4),
-    borderRadius: vh(1.5),
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    borderColor: "#babbbc",
   },
   latLngLabel: {
     justifyContent: "center",
     backgroundColor: "#f8f9fa",
-    marginVertical: vh(0.1),
+    marginVertical: vh(0.3),
     padding: vh(0.4),
-    borderRadius: vh(1.5),
+    borderRadius: vh(3),
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
     borderColor: "#babbbc",
@@ -604,7 +534,7 @@ const styles = StyleSheet.create({
     marginVertical: vh(0.3),
     marginLeft: vw(3),
     padding: vh(0.4),
-    borderRadius: vh(1.5),
+    borderRadius: vh(3),
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
     width: vw(25),
@@ -627,26 +557,17 @@ const styles = StyleSheet.create({
     marginRight: vh(1.5),
     borderRadius: vh(1.5),
     justifyContent: "space-between",
-    // backgroundColor: "green"
   },
   profileImage: {
-    // marginLeft: vw(3),
-    marginLeft: vw(2),
-    marginRight: vw(2),
+    marginLeft: vw(3),
     marginVertical: vh(1),
-    width: vh(14.5),
-    height: vh(14.5),
-    borderRadius: vh(1.5),
+    width: vh(13),
+    height: vh(13),
+    borderRadius: vh(3),
     borderColor: "rgba(0, 119, 234,0.3)",
     backgroundColor: "white",
-
   },
   textInput: {
-    fontSize: 13,
-    paddingLeft: vw(1),
-    width: "90%",
-  },
-  nameInput: {
     fontSize: 13,
     paddingLeft: vw(1),
     width: "90%",
