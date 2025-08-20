@@ -15,7 +15,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 
 import * as ImagePicker from "expo-image-picker";
-import { useAddWaypointMutation, useConfirmVoyageMutation } from "../slices/VoyageSlice";
+import { useAddWaypointMutation, useConfirmVoyageMutation, useDeleteWaypointMutation } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
 import { parrotBlueMediumTransparent, parrotBlueSemiTransparent } from "../assets/color";
@@ -493,9 +493,11 @@ const styles = StyleSheet.create({
   },
 
   waypointFlatlistContainer: {
-    height: vh(34),
+    //height: vh(34),
+    height: vh(50),
     padding: vh(2),
     backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "red",
     borderColor: parrotBlueSemiTransparent,
     borderWidth: 2,
     borderRadius: vh(2),
