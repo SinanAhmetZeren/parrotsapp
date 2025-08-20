@@ -273,6 +273,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    confirmVoyage: builder.mutation({
+      query: (voyageId) => ({
+        url: `/api/Voyage/confirmVoyage/${voyageId}`,
+        method: "POST",
+      }),
+    }),
   }),
 
   overrideExisting: true,
@@ -295,4 +301,5 @@ export const {
   useGetFavoriteVoyagesByUserIdQuery,
   useAddVoyageToFavoritesMutation,
   useDeleteVoyageFromFavoritesMutation,
+  useConfirmVoyageMutation
 } = extendedApiSlice;

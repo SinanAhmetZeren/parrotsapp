@@ -32,7 +32,7 @@ export const WaypointFlatList = ({ addedWayPoints }) => {
       keyExtractor={(item) => item.order}
       renderItem={({ item, index }) => {
         return (
-          <View key={index}>
+          <View key={index} >
             <WaypointItem
               title={item.title}
               description={item.description}

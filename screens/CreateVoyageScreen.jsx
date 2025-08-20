@@ -39,6 +39,7 @@ import { API_URL } from "@env";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { parrotBlueMediumTransparent, parrotBlueSemiTransparent } from "../assets/color";
 
 const CreateVoyageScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -629,10 +630,6 @@ const CreateVoyageScreen = ({ navigation }) => {
               </View>
 
               <View style={styles2.voyageImagesContainer2}>
-                {/* <View style={styles.selectedChoice}>
-                  <Text style={styles.selectedText}>Add Voyage Images</Text>
-                </View> */}
-
                 <View style={styles.profileContainer2}>
                   {isUploadingImage ? (
                     <View style={styles.profileImage}>
@@ -737,9 +734,10 @@ export default CreateVoyageScreen;
 
 const styles2 = StyleSheet.create({
   voyageImagesContainer2: {
-    // backgroundColor: "rgba(248, 248, 248,1)",
-    backgroundColor: "rgba(240, 241, 242,.7)",
-    marginTop: vh(2),
+    backgroundColor: parrotBlueMediumTransparent,
+    borderColor: parrotBlueSemiTransparent,
+    borderWidth: 2,
+    marginTop: vh(1),
     paddingBottom: vh(1),
     width: vw(94),
     alignSelf: "center",

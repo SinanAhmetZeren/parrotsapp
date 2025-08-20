@@ -813,10 +813,13 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.7),
   },
   applyFilterInitial: {
-    backgroundColor: "white",
-    color: "#81e6c755",
+    // backgroundColor: "white",
+    backgroundColor: "#c3c3c311",
+    // color: "#81e6c755",
+    color: "#c3c3c388",
     borderWidth: 2,
-    borderColor: "#81e6c722",
+    // borderColor: "#81e6c722",
+    borderColor: "#c3c3c333",
   },
   applyFilterApplied: {
     color: "#2ac898",
