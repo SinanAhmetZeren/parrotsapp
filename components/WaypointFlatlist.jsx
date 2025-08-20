@@ -23,6 +23,8 @@ import {
   parrotDarkBlue,
   parrotTextDarkBlue,
 } from "../assets/color";
+import { useDeleteWaypointMutation } from "../slices/VoyageSlice";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export const WaypointFlatList = ({ addedWayPoints }) => {
   return (
@@ -32,7 +34,7 @@ export const WaypointFlatList = ({ addedWayPoints }) => {
       keyExtractor={(item) => item.order}
       renderItem={({ item, index }) => {
         return (
-          <View key={index} >
+          <View key={index} style={{ backgroundColor: "pink" }}>
             <WaypointItem
               title={item.title}
               description={item.description}
@@ -169,10 +171,13 @@ export const WaypointItemVoyageDetailScreen = ({
 
 export const WaypointItem = ({ title, description, imageUri }) => {
   const [modalVisibleX, setModalVisibleX] = useState(false);
+  const [deleteWaypoint] = useDeleteWaypointMutation();
 
   return (
-    <>
+    <View >
+
       <TouchableOpacity
+        style={{ backgroundColor: "orange", marginTop: vh(3) }}
         onPress={() => {
           setModalVisibleX(true);
         }}
@@ -186,7 +191,26 @@ export const WaypointItem = ({ title, description, imageUri }) => {
             {description}
           </Text>
         </ScrollView>
-      </TouchableOpacity>
+        <View style={{
+          height: vh(5), width: vh(5),
+          backgroundColor: "green", position: "absolute",
+          top: vh(-2), right: 0, justifyContent: "center",
+          borderRadius: vh(5),
+          alignContent: "center", alignItems: "center"
+        }}>
+          <Text style={styles.deleteAddedImage}>
+            <MaterialIcons
+              name="cancel"
+              size={24}
+              color="darkred"
+            />
+          </Text>
+
+
+        </View>
+      </TouchableOpacity >
+
+
 
       <Modal
         animationType="fade"
@@ -224,11 +248,22 @@ export const WaypointItem = ({ title, description, imageUri }) => {
           </View>
         </View>
       </Modal>
-    </>
+    </View >
   );
 };
 
 const styles = StyleSheet.create({
+  deleteAddedImage: {
+    // top: vh(1),
+    // right: vw(1),
+    backgroundColor: "white",
+    backgroundColor: "yellow",
+    borderRadius: vh(3),
+    width: vh(3)
+    // width: vh(5),
+    // height: vh(5),
+    //position: "absolute",
+  },
   buttonClose: {
     fontSize: 18,
     color: "white",

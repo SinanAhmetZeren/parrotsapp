@@ -179,6 +179,15 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    deleteWaypoint: builder.mutation({
+      query: (data) => {
+        const { waypointId } = data;
+        return {
+          url: `/api/Waypoint/deleteWaypoint/${waypointId}`,
+          method: "DELETE",
+        };
+      },
+    }),
     getVoyagesByLocation: builder.mutation({
       query: (data) => {
         const { lat1, lat2, lon1, lon2 } = data;
@@ -301,5 +310,6 @@ export const {
   useGetFavoriteVoyagesByUserIdQuery,
   useAddVoyageToFavoritesMutation,
   useDeleteVoyageFromFavoritesMutation,
-  useConfirmVoyageMutation
+  useConfirmVoyageMutation,
+  useDeleteWaypointMutation
 } = extendedApiSlice;
