@@ -180,8 +180,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       },
     }),
     deleteWaypoint: builder.mutation({
-      query: (data) => {
-        const { waypointId } = data;
+      query: (waypointId) => {
         return {
           url: `/api/Waypoint/deleteWaypoint/${waypointId}`,
           method: "DELETE",

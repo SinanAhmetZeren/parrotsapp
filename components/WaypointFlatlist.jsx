@@ -26,7 +26,9 @@ import {
 import { useDeleteWaypointMutation } from "../slices/VoyageSlice";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-export const WaypointFlatList = ({ addedWayPoints }) => {
+export const WaypointFlatList = ({ addedWayPoints, handleDeleteWaypoint }) => {
+  // console.log("addedWayPoints", addedWayPoints[0].waypointId);
+
   return (
     <FlatList
       horizontal
@@ -34,11 +36,13 @@ export const WaypointFlatList = ({ addedWayPoints }) => {
       keyExtractor={(item) => item.order}
       renderItem={({ item, index }) => {
         return (
-          <View key={index} style={{ backgroundColor: "pink" }}>
+          <View key={index} style={{ backgroundColor: "" }}>
             <WaypointItem
               title={item.title}
               description={item.description}
               imageUri={item.imageUri}
+              waypointId={item.waypointId}
+              handleDeleteWaypoint={handleDeleteWaypoint}
             />
           </View>
         );
@@ -169,15 +173,13 @@ export const WaypointItemVoyageDetailScreen = ({
   );
 };
 
-export const WaypointItem = ({ title, description, imageUri }) => {
+export const WaypointItem = ({ title, description, imageUri, waypointId, handleDeleteWaypoint }) => {
   const [modalVisibleX, setModalVisibleX] = useState(false);
-  const [deleteWaypoint] = useDeleteWaypointMutation();
 
   return (
-    <View >
-
+    <View>
       <TouchableOpacity
-        style={{ backgroundColor: "orange", marginTop: vh(3) }}
+        style={{ marginTop: vh(3) }}
         onPress={() => {
           setModalVisibleX(true);
         }}
@@ -191,23 +193,17 @@ export const WaypointItem = ({ title, description, imageUri }) => {
             {description}
           </Text>
         </ScrollView>
-        <View style={{
-          height: vh(5), width: vh(5),
-          backgroundColor: "green", position: "absolute",
-          top: vh(-2), right: 0, justifyContent: "center",
-          borderRadius: vh(5),
-          alignContent: "center", alignItems: "center"
-        }}>
-          <Text style={styles.deleteAddedImage}>
+        <TouchableOpacity
+          onPress={() => handleDeleteWaypoint(waypointId)}
+          style={styles.deleteAddedWaypointContainer}>
+          <Text style={styles.deleteAddedWaypoint}>
             <MaterialIcons
               name="cancel"
               size={24}
               color="darkred"
             />
           </Text>
-
-
-        </View>
+        </TouchableOpacity>
       </TouchableOpacity >
 
 
@@ -253,16 +249,21 @@ export const WaypointItem = ({ title, description, imageUri }) => {
 };
 
 const styles = StyleSheet.create({
-  deleteAddedImage: {
-    // top: vh(1),
-    // right: vw(1),
+  deleteAddedWaypoint: {
     backgroundColor: "white",
-    backgroundColor: "yellow",
     borderRadius: vh(3),
     width: vh(3)
-    // width: vh(5),
-    // height: vh(5),
-    //position: "absolute",
+  },
+  deleteAddedWaypointContainer:
+  {
+    height: vh(5), width: vh(5),
+    position: "absolute",
+    top: vh(-2),
+    right: 0,
+    justifyContent: "center",
+    borderRadius: vh(5),
+    alignContent: "center",
+    alignItems: "center"
   },
   buttonClose: {
     fontSize: 18,

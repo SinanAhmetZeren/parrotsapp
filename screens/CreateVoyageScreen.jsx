@@ -81,7 +81,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -718,11 +718,15 @@ const CreateVoyageScreen = ({ navigation }) => {
             <View style={styles.addWaypoints}>
               <Text style={styles.selectedText}>Add Waypoints</Text>
             </View>
-            <CreateVoyageMapComponent
-              voyageId={voyageId}
-              setCurrentStep={setCurrentStep}
-              imagesAdded={addedVoyageImages.length}
-            />
+            <View style={{ marginTop: vh(3) }}>
+
+              <CreateVoyageMapComponent
+                voyageId={voyageId}
+                setCurrentStep={setCurrentStep}
+                imagesAdded={addedVoyageImages.length}
+              />
+            </View>
+
           </ScrollView>
         ) : null}
       </>
