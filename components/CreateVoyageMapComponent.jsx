@@ -36,6 +36,7 @@ const CreateVoyageMapComponent = ({
   const [imageUri, setImageUri] = useState(null);
   const [order, setOrder] = useState(1);
   const [addWaypoint] = useAddWaypointMutation();
+  const [deleteWaypoint] = useDeleteWaypointMutation();
   const [confirmVoyage] = useConfirmVoyageMutation();
   const navigation = useNavigation();
   const [isUploadingWaypointImage, setIsUploadingWaypointImage] =
@@ -85,15 +86,17 @@ const CreateVoyageMapComponent = ({
 
     setIsUploadingWaypointImage(true);
     try {
-      await addWaypoint({
+      const result = await addWaypoint({
         formData,
         latitude,
         longitude,
         title,
         description,
-        voyageId,
+        voyageId: 2265,
         order,
       });
+      const waypointId = result.data.data;
+      console.log("waypoint id: ", waypointId);
       setAddedWayPoints((prevWaypoints) => [
         ...prevWaypoints,
         {
@@ -104,6 +107,7 @@ const CreateVoyageMapComponent = ({
           description,
           voyageId,
           order,
+          waypointId
         },
       ]);
       setOrder(order + 1);
@@ -118,6 +122,18 @@ const CreateVoyageMapComponent = ({
     }
     setIsUploadingWaypointImage(false);
   };
+
+  const handleDeleteWaypoint = async (waypointId) => {
+    console.log("delete waypoint id:", waypointId);
+    try {
+      await deleteWaypoint(waypointId);
+      setAddedWayPoints((prevWaypoints) =>
+        prevWaypoints.filter((waypoint) => waypoint.waypointId !== waypointId)
+      );
+    } catch (error) {
+      console.error("Error deleting waypoint", error);
+    }
+  }
 
   const renderPolylines = (waypoints) => {
     const coordinates = waypoints.map((marker) => {
@@ -230,37 +246,44 @@ const CreateVoyageMapComponent = ({
     navigation.navigate("Home");
   };
 
+
+
   return (
     <View>
-      {/* // map */}
 
-      <View style={styles.mapAndEmojisContainer}>
-        <View style={styles.mapContainer}>
-          <MapView
-            style={styles.map}
-            initialRegion={initialRegion}
-            onPress={handleMapPress}
-          >
-            {markerCoords && (
-              <Marker coordinate={markerCoords} title="Tapped Location" />
-            )}
-            <WaypointList waypoints={addedWayPoints} />
-            {renderPolylines(addedWayPoints)}
-          </MapView>
+
+      <View style={styles.mapWrapper} >
+
+
+        <View style={styles.mapAndEmojisContainer}>
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              initialRegion={initialRegion}
+              onPress={handleMapPress}
+            >
+              {markerCoords && (
+                <Marker coordinate={markerCoords} title="Tapped Location" />
+              )}
+              <WaypointList waypoints={addedWayPoints} />
+              {renderPolylines(addedWayPoints)}
+            </MapView>
+          </View>
+        </View>
+
+
+        <View style={styles.warningTextContainer}>
+          <Image
+            source={require("../assets/parrots-logo-mini.png")}
+            style={styles.miniLogo}
+          />
+          <Image
+            source={require("../assets/parrot_message.png")}
+            style={styles.messageBubble}
+          />
         </View>
       </View>
 
-
-      <View style={styles.warningTextContainer}>
-        <Image
-          source={require("../assets/parrots-logo-mini.png")}
-          style={styles.miniLogo}
-        />
-        <Image
-          source={require("../assets/parrot_message.png")}
-          style={styles.messageBubble}
-        />
-      </View>
 
       <View style={styles.newWaypointCard}>
         <View style={styles.profileContainer}>
@@ -378,7 +401,7 @@ const CreateVoyageMapComponent = ({
       </View>
 
       <View style={styles.waypointFlatlistContainer}>
-        <WaypointFlatList addedWayPoints={addedWayPoints} />
+        <WaypointFlatList addedWayPoints={addedWayPoints} handleDeleteWaypoint={handleDeleteWaypoint} />
       </View>
 
       <TouchableOpacity
@@ -408,6 +431,10 @@ const CreateVoyageMapComponent = ({
 export default CreateVoyageMapComponent;
 
 const styles = StyleSheet.create({
+
+  mapWrapper: {
+
+  },
   addWaypoints: {
     alignItems: "center",
   },
@@ -493,11 +520,10 @@ const styles = StyleSheet.create({
   },
 
   waypointFlatlistContainer: {
-    //height: vh(34),
-    height: vh(50),
+    height: vh(38),
     padding: vh(2),
+    paddingVertical: vh(0),
     backgroundColor: parrotBlueMediumTransparent,
-    backgroundColor: "red",
     borderColor: parrotBlueSemiTransparent,
     borderWidth: 2,
     borderRadius: vh(2),
@@ -671,7 +697,7 @@ const styles = StyleSheet.create({
     padding: vh(1),
     margin: vh(2),
     justifyContent: "center",
-    backgroundColor: "yellow",
+    // backgroundColor: "yellow",
   },
 
   label: {
@@ -706,7 +732,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: vh(3),
     borderColor: "#93c9ed",
-    // borderWidth: 3,
+    borderWidth: 3,
+    borderColor: parrotBlueSemiTransparent,
+    borderWidth: 2,
+    borderRadius: vh(2),
+
   },
   map: {
     width: "100%",
