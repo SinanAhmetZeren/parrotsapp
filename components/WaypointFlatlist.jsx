@@ -33,7 +33,8 @@ export const WaypointFlatList = ({ addedWayPoints, handleDeleteWaypoint }) => {
     <FlatList
       horizontal
       data={addedWayPoints}
-      keyExtractor={(item) => item.order}
+      // keyExtractor={(item) => item.order}
+      keyExtractor={(item, index) => `${item.order}-${index}`}
       renderItem={({ item, index }) => {
         return (
           <View key={index} style={{ backgroundColor: "" }}>
@@ -60,7 +61,7 @@ export const WaypointFlatListVoyageDetailsScreen = ({
     <FlatList
       horizontal
       data={addedWayPoints}
-      keyExtractor={(item) => item.order}
+      keyExtractor={(item, index) => `${item.order}-${index}`}
       renderItem={({ item, index }) => {
         let newUri = baseUrl + item.profileImage;
         return (

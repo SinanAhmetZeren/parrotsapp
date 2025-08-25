@@ -92,7 +92,7 @@ const CreateVoyageMapComponent = ({
         longitude,
         title,
         description,
-        voyageId: 2265,
+        voyageId,
         order,
       });
       const waypointId = result.data.data;

@@ -472,7 +472,8 @@ const CreateVehicleScreen = () => {
                 horizontal
                 data={data}
                 // keyExtractor={(item) => item.addedVoyageImageId}
-                keyExtractor={(item, index) => index.toString()}
+                // keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item, index) => `voyage-image-${index}`}
                 renderItem={({ item, index }) => {
                   return (
                     <View key={index}>
