@@ -635,6 +635,7 @@ export default VoyageDetailScreen;
 const styles = StyleSheet.create({
   waypointFlatlistContainer: {
     marginRight: vw(3),
+    marginBottom: vh(3)
   },
   waypointInfoMessage: {
     color: "#3c9dde",

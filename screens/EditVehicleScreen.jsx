@@ -430,7 +430,8 @@ const EditVehicleScreen = () => {
                 <FlatList
                   horizontal
                   data={data}
-                  keyExtractor={(item, index) => index.toString()}
+                  // keyExtractor={(item, index) => index.toString()}
+                  keyExtractor={(item, index) => `key-${index}`}
                   renderItem={({ item, index }) => {
                     return (
                       <View key={index} style={styles2.imageContainer1}>

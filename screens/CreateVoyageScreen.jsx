@@ -65,15 +65,38 @@ const CreateVoyageScreen = ({ navigation }) => {
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
 
-  const [name, setName] = useState("Aaa");
-  const [brief, setBrief] = useState("Aaa");
-  const [description, setDescription] = useState("Aaa");
-  const [vacancy, setVacancy] = useState("10");
+
+
+  const getRandomString = (length = 6) => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  };
+
+  const getRandomNumberString = (min = 1, max = 999) => {
+    return String(Math.floor(Math.random() * (max - min + 1)) + min);
+  };
+
+
+  const [name, setName] = useState(getRandomString(6));
+  const [brief, setBrief] = useState(getRandomString(8));
+  const [description, setDescription] = useState(getRandomString(12));
+  const [vacancy, setVacancy] = useState(getRandomNumberString(1, 100));
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [lastBidDate, setLastBidDate] = useState("11/11/1111");
-  const [minPrice, setMinPrice] = useState("11");
-  const [maxPrice, setMaxPrice] = useState("11");
+  const [minPrice, setMinPrice] = useState(getRandomNumberString(10, 100));
+  const [maxPrice, setMaxPrice] = useState(getRandomNumberString(101, 500));
+
+
+  // const [name, setName] = useState("Aaa");
+  // const [brief, setBrief] = useState("Aaa");
+  // const [description, setDescription] = useState("Aaa");
+  // const [vacancy, setVacancy] = useState("10");
+  // const [startDate, setStartDate] = useState("");
+  // const [endDate, setEndDate] = useState("");
+  // const [lastBidDate, setLastBidDate] = useState("11/11/1111");
+  // const [minPrice, setMinPrice] = useState("11");
+  // const [maxPrice, setMaxPrice] = useState("11");
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
   const [vehicleId, setVehicleId] = useState("");
@@ -81,7 +104,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
