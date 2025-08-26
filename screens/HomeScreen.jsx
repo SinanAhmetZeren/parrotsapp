@@ -99,25 +99,29 @@ export default function HomeScreen({ navigation }) {
       selectedVehicleType,
     })
     setCurrentFilters(current);
-    console.log("Current filters updated:", current);
+    // console.log("Current filters updated:", current);
   }, [count, startDate, endDate, selectedVehicleType]);
 
 
   useEffect(() => {
-    console.log("--- Comparing filters ---");
+    // console.log("--- Comparing filters ---");
     if (areEqual(appliedFilters, initialFilters) && areEqual(appliedFilters, currentFilters)) {
       // Case 1: all equal
+      /*
       console.log("Case 1: all filters are equal");
       console.log("Initial filters:", initialFilters);
       console.log("Current filters:", currentFilters);
       console.log("Applied filters:", appliedFilters);
+      */
       setFilterComparisonState(1);
     } else if (areEqual(appliedFilters, currentFilters) && !areEqual(currentFilters, initialFilters)) {
       // Case 2: applied == current but different from initial
+      /*
       console.log("Case 2: applied == current but different from initial");
       console.log("Initial filters:", initialFilters);
       console.log("Current filters:", currentFilters);
       console.log("Applied filters:", appliedFilters);
+      */
       setFilterComparisonState(2);
     } else if (
       !areEqual(appliedFilters, currentFilters)
@@ -126,10 +130,13 @@ export default function HomeScreen({ navigation }) {
       // !areEqual(appliedFilters, initialFilters)
     ) {
       // Case 3: current != applied and != initial
+      /*
       console.log("Case 3: current != applied");
       console.log("Initial filters:", initialFilters);
       console.log("Current filters:", currentFilters);
       console.log("Applied filters:", appliedFilters);
+      */
+
       setFilterComparisonState(3);
     }
   }, [appliedFilters, currentFilters, initialFilters]);
@@ -382,6 +389,7 @@ export default function HomeScreen({ navigation }) {
     const formattedStartDate = convertDateFormat(startDate, "startDate");
     const formattedEndDate = convertDateFormat(endDate, "endDate");
 
+    console.log("Applying filters with parameters:", formattedStartDate, "---", formattedEndDate);
     const data = {
       latitude: latitude == 0 ? initialLatitude : latitude,
       longitude: longitude == 0 ? initialLongitude : longitude,
@@ -402,7 +410,7 @@ export default function HomeScreen({ navigation }) {
       selectedVehicleType,
     })
     setAppliedFilters(filtersJson);
-    console.log("Applied filters:", filtersJson);
+    // console.log("Applied filters:", filtersJson);
   };
 
   function handleCountModal() {
@@ -427,6 +435,12 @@ export default function HomeScreen({ navigation }) {
   const handleLogout = async () => {
     console.log("Logging out...");
     dispatch(updateAsLoggedOut());
+  };
+
+  const handlePrintDates = () => {
+    console.log("printing dates...");
+    console.log("Start Date:", startDate);
+    console.log("End Date:", endDate);
   };
 
   if (isLoading) {
@@ -596,16 +610,16 @@ export default function HomeScreen({ navigation }) {
 
                 </View>
 
-                <View style={{ display: "none" }}>
+                <View style={{ display: "" }}>
                   <TouchableOpacity
                     onPress={() => {
-                      handleLogout();
+                      handlePrintDates();
                     }}
                   >
                     <View>
                       <Text
                         style={styles.applyFilter}
-                      >Main Page Logout</Text>
+                      >print dates </Text>
                     </View>
                   </TouchableOpacity>
                 </View>
