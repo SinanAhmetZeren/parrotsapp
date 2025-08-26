@@ -10,10 +10,7 @@ import {
   Button,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { AntDesign } from "@expo/vector-icons";
 import CalendarPicker from "react-native-calendar-picker";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
 
 const FilterCalendarModal = ({
   isVisible,
@@ -24,17 +21,35 @@ const FilterCalendarModal = ({
   endDate,
   setEndDate,
 }) => {
-  // console.log("FilterCalendarModal:", startDate, endDate);
+  const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
 
-
-  const handleDateChange = (date, type) => {
-    if (type === "END_DATE") {
-      setEndDate(date);
-    } else {
+  const handleDateChange = (date) => {
+    if (!startDate || (startDate && endDate)) {
       setStartDate(date);
-      setEndDate(null); // Reset end date if start date changes
+      setEndDate(null);
+      setCalendarRangeAllowed(false);
+    } else {
+      if (date >= startDate) {
+        setCalendarRangeAllowed(true);
+        setEndDate(date);
+      } else {
+        setStartDate(date);
+        setEndDate(null);
+      }
     }
   };
+
+  const handlePrintDates = () => {
+    console.log("printing dates...");
+    console.log("Start Date:", startDate);
+    console.log("End Date:", endDate);
+  };
+
+
+
+
+
+
 
   const handleClear = () => {
     setStartDate(null);
@@ -83,7 +98,7 @@ const FilterCalendarModal = ({
       >
         <View style={styles.modalContainer}>
           <View style={styles.innerContainer}>
-            <CalendarPicker
+            {/* <CalendarPicker
               startFromMonday={true}
               allowRangeSelection={true}
               selectedStartDate={startDate}
@@ -94,6 +109,27 @@ const FilterCalendarModal = ({
               textStyle={{ fontWeight: "700", color: "#333333" }}
               previousTitle="⬅️"
               nextTitle="➡️"
+              width={300}
+            /> */}
+
+
+            <CalendarPicker
+              selectedRangeStartTextStyle={styles.startEndText}
+              selectedRangeEndTextStyle={styles.startEndText}
+              selectedRangeStyle={styles.calendarSelected}
+              selectedRangeStartStyle={styles.calendarEndStart}
+              selectedRangeEndStyle={styles.calendarEndStart}
+              selectedDayStyle={styles.calendarEndStart}
+              selectedColor={"blue"}
+              selectedDayColor="#2ac898bb"
+              selectedDayTextColor="white"
+              textStyle={{ fontWeight: "700", color: "#333333" }}
+              startFromMonday={true}
+              allowRangeSelection={calendarRangeAllowed}
+              minDate={new Date()}
+              selectedStartDate={startDate}
+              selectedEndDate={endDate}
+              onDateChange={handleDateChange}
               width={300}
             />
 
@@ -111,14 +147,31 @@ const FilterCalendarModal = ({
                 >
                   <Text style={styles.buttonSave}>Ok</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={handlePrintDates}
+                  style={styles.buttonSaveContainer}
+                >
+                  <Text style={styles.buttonClose}>print dates</Text>
+                </TouchableOpacity>
               </View>
             ) : (
-              <TouchableOpacity
-                onPress={handleClose}
-                style={styles.buttonSaveContainer}
-              >
-                <Text style={styles.buttonClose}>Close</Text>
-              </TouchableOpacity>
+              <>
+                <TouchableOpacity
+                  onPress={handleClose}
+                  style={styles.buttonSaveContainer}
+                >
+                  <Text style={styles.buttonClose}>Close</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={handlePrintDates}
+                  style={styles.buttonSaveContainer}
+                >
+                  <Text style={styles.buttonClose}>print dates</Text>
+                </TouchableOpacity>
+              </>
+
             )}
           </View>
         </View>
