@@ -82,7 +82,7 @@ export const RenderBidsComponent = ({
     } catch (error) {
       console.error("Failed to send message:", error);
     }
-    acceptBid(bidId);
+    await acceptBid(bidId).unwrap();
     refetch();
   };
 

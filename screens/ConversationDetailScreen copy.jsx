@@ -52,12 +52,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
   const scrollViewRef = useRef();
 
-  const hubConnection = useRef(
-    new HubConnectionBuilder()
+  const hubConnection = useMemo(() => {
+    return new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
-      .withAutomaticReconnect()
-      .build()
-  );
+      .build();
+  }, [currentUserId]);
 
   useEffect(() => {
     if (isErrorMessages) {
@@ -90,6 +89,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
           console.error("Error refetching messages data:", error);
         }
       };
+
       fetchData();
       return () => {
         console.log("Cleaning up in ConversationDetailScreen");
@@ -100,19 +100,23 @@ export const ConversationDetailScreen = ({ navigation }) => {
   useEffect(() => {
     const startHubConnection = async () => {
       try {
-        await hubConnection.current.start();
-        console.log("SignalR connection started successfully.");
+        await hubConnection.start();
+        console.log("SignalR connection  started successfully.");
       } catch (error) {
         console.error("Failed to start SignalR connection:", error);
       }
     };
     startHubConnection();
-    hubConnection.current.on("ReceiveMessageRefetch", () => {
+    hubConnection.on(
+      "ReceiveMessage",
+      async (senderId, content, newTime, senderProfileUrl, senderUsername) => { }
+    );
+
+    hubConnection.on("ReceiveMessageRefetch", () => {
       refetch();
     });
-    return () => {
-      hubConnection.current.off("ReceiveMessageRefetch");
-    };
+
+    return () => { };
   }, []);
 
   useEffect(() => {
@@ -130,6 +134,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
         console.log("height: ", event.endCoordinates.height);
       }
     );
+
+
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -140,16 +146,18 @@ export const ConversationDetailScreen = ({ navigation }) => {
     if (messagesData) setMessagesToDisplay(messagesData.data);
   }, [messagesData]);
 
-
   const handleSendMessage = async () => {
-    if (!message.trim()) return; // Don't send empty messages
-
-    // Scroll to bottom immediately
     scrollViewRef.current.scrollToEnd({ animated: true });
 
-    // Prepare message object
     const currentDate = new Date();
-    const formattedDateTime = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}T${String(currentDate.getHours()).padStart(2, "0")}:${String(currentDate.getMinutes()).padStart(2, "0")}:${String(currentDate.getSeconds()).padStart(2, "0")}.${String(currentDate.getMilliseconds()).padStart(3, "0")}`;
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const hours = String(currentDate.getHours()).padStart(2, "0");
+    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+    const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+    const milliseconds = String(currentDate.getMilliseconds()).padStart(3, "0");
+    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
 
     const sentMessage = {
       dateTime: formattedDateTime,
@@ -158,44 +166,33 @@ export const ConversationDetailScreen = ({ navigation }) => {
       text: message,
     };
 
-    // Optimistic UI update
-    setMessagesToDisplay((prev) => [...(prev ?? []), sentMessage]);
+    // Optimistic UI Update
+    setMessagesToDisplay((prevMessages) => {
+      return [...(prevMessages ?? []), sentMessage];
+    });
+
     setMessage("");
 
-    // Retry function
-    const sendWithRetry = async (msg, retries = 3, delay = 1000) => {
-      for (let i = 0; i < retries; i++) {
-        if (hubConnection.current.state === "Connected") {
-          try {
-            await hubConnection.current.invoke(
-              "SendMessage",
-              currentUserId,
-              conversationUserId,
-              msg.text
-            );
-            console.log("Message sent successfully.");
-            return true;
-          } catch (err) {
-            console.error("Send attempt failed:", err);
-          }
-        }
-        console.log(`Retrying send in ${delay}ms... (${i + 1}/${retries})`);
-        await new Promise((res) => setTimeout(res, delay));
-      }
-      return false;
-    };
-
-    const success = await sendWithRetry(sentMessage);
-    if (!success) {
-      console.error("Failed to send message after retries.");
-      setMessagesToDisplay((prev) =>
-        prev.filter((msg) => msg.dateTime !== sentMessage.dateTime)
+    try {
+      await hubConnection.invoke(
+        "SendMessage",
+        currentUserId,
+        conversationUserId,
+        message
       );
-      alert("Failed to send message. Please check your connection and try again.");
+      console.log("Message sent successfully.");
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      setMessagesToDisplay((prevMessages) => {
+        return prevMessages.filter(
+          (msg) => msg.dateTime !== sentMessage.dateTime
+        );
+      });
+      alert(
+        "Failed to send message. Please check your connection and try again."
+      );
     }
   };
-
-
 
   if (hasError) {
     return (

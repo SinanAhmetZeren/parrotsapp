@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
-import React, { useRef } from "react";
+import React from "react";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   View,
@@ -56,63 +56,61 @@ export default function MessagesScreen({ navigation }) {
   const [selectedFunction, setSelectedFunction] = useState(1);
 
   const recipientId = userId;
-
-  // 🔹 CHANGED: Using useRef instead of useMemo for persistent connection
-  const hubConnection = useRef(
-    new HubConnectionBuilder()
+  const hubConnection = useMemo(() => {
+    return new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${userId}`)
-      .withAutomaticReconnect() // 🟢 Added auto-reconnect support
-      .build()
-  );
+      .build();
+  }, [userId]);
 
-  // 🔹 Handle messages API errors
   useEffect(() => {
-    setHasError(isErrorMessages);
+    if (isErrorMessages) {
+      setHasError(true);
+    }
+    if (!isErrorMessages) {
+      setHasError(false);
+    }
   }, [isErrorMessages]);
 
-  // 🟢 Refetch when screen gains focus
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
         try {
-          await refetch();
+          await Promise.all([refetch()]);
         } catch (error) {
-          console.error("Error refetching messages:", error);
+          console.error("Error refetching messages data:", error);
         }
+        await refetch();
       };
       fetchData();
-    }, [refetch])
+      return () => {
+        // Cleanup function if needed
+      };
+    }, [refetch, navigation])
   );
 
-  // Refresh handler
-  const onRefresh = async () => {
+  const onRefresh = () => {
     setRefreshing(true);
     try {
-      await refetch();
+      refetch();
       setHasError(false);
     } catch (error) {
-      console.error(error);
+      console.log(error);
       setHasError(true);
-    } finally {
-      setRefreshing(false);
     }
+    setRefreshing(false);
   };
 
-  // 🟢 Start SignalR connection and set up events
   useEffect(() => {
     const startHubConnection = async () => {
       try {
-        await hubConnection.current.start(); // 🔹 Use .current consistently
-        console.log("SignalR connected");
-      } catch (err) {
-        console.error("SignalR start failed:", err);
+        await hubConnection.start();
+        console.log("SignalR connection started successfully.");
+      } catch (error) {
+        console.error("Failed to start SignalR connection:", error);
       }
     };
-
     startHubConnection();
-
-    // 🟢 DO NOT CHANGE THIS PART — YOUR ORIGINAL HANDLER
-    hubConnection.current.on(
+    hubConnection.on(
       "ReceiveMessage",
       async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
         setReceivedMessageData([
@@ -125,41 +123,24 @@ export default function MessagesScreen({ navigation }) {
       }
     );
 
-    // 🔹 Refetch messages when "ReceiveMessageRefetch" is triggered
-    hubConnection.current.on("ReceiveMessageRefetch", async () => {
-      try {
-        await refetch();
-      } catch (err) {
-        console.error("Failed to refetch messages:", err);
-      }
+    hubConnection.on("ReceiveMessageRefetch", async () => {
+      refetch();
     });
 
-    // 🟢 Proper cleanup
     return () => {
-      hubConnection.current.off("ReceiveMessage");
-      hubConnection.current.off("ReceiveMessageRefetch");
-      hubConnection.current
-        .stop()
-        .then(() => console.log("SignalR stopped"))
-        .catch((err) => console.error("Failed to stop SignalR:", err));
+      // hubConnection.stop();
     };
-  }, [refetch]);
+  }, []);
 
-  // 🟢 Sync messages when API updates
-  useEffect(() => {
-    if (messagesData) setReceivedMessageData(messagesData);
-  }, [messagesData]);
-
-  // Search users handler
   const handleSearchUsers = async () => {
     setUsername(searchText);
     try {
       await refetchUsers();
-    } catch (err) {
-      console.error("Error refetching users:", err);
+      console.log("refetching: ", usersData);
+    } catch (error) {
+      console.error("Error refetching users data:", error);
     }
   };
-
 
   if (hasError) {
     return (
