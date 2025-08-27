@@ -33,7 +33,10 @@ export default function MessagesComponent({
   scrollViewRef,
 }) {
   const renderMessages = () => {
-    if (data) {
+    if (data && Array.isArray(data) && data.length > 0) {
+
+      console.log("Last message from inside component:   ", data[data.length - 1].text);
+      console.log("messages length:   ", data.length);
       return data.map((item, index) => {
         return (
           <View key={index}>
@@ -109,12 +112,17 @@ export default function MessagesComponent({
   // const scrollViewRef = useRef();
 
   useEffect(() => {
-    if (scrollViewRef.current) {
+    if (scrollViewRef.current && data && data.length > 0) {
       requestAnimationFrame(() => {
         scrollViewRef.current.scrollToEnd({ animated: true });
       });
     }
-  }, [scrollViewRef.current]);
+  }, [
+    scrollViewRef.current,
+    data]);
+
+
+
 
   return (
     <ScrollView ref={scrollViewRef} style={styles.container}>
