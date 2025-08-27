@@ -83,16 +83,16 @@ export const ConversationDetailScreen = ({ navigation }) => {
     useCallback(() => {
       const fetchData = async () => {
         try {
-          await refetch();
+          const refetchedMessages = await refetch().unwrap();
+          setMessagesToDisplay(refetchedMessages.data);
         } catch (error) {
           console.error("Error refetching messages data:", error);
         }
       };
 
       fetchData();
-
       return () => {
-        // Cleanup function if needed
+        console.log("Cleaning up in ConversationDetailScreen");
       };
     }, [refetch, navigation])
   );
@@ -109,14 +109,14 @@ export const ConversationDetailScreen = ({ navigation }) => {
     startHubConnection();
     hubConnection.on(
       "ReceiveMessage",
-      async (senderId, content, newTime, senderProfileUrl, senderUsername) => {}
+      async (senderId, content, newTime, senderProfileUrl, senderUsername) => { }
     );
 
     hubConnection.on("ReceiveMessageRefetch", () => {
       refetch();
     });
 
-    return () => {};
+    return () => { };
   }, []);
 
   useEffect(() => {
@@ -124,15 +124,17 @@ export const ConversationDetailScreen = ({ navigation }) => {
       "keyboardDidShow",
       (event) => {
         setTextInputBottomMargin(event.endCoordinates.height);
+        console.log("height: ", event.endCoordinates.height);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      (event) => {
+        setTextInputBottomMargin(0);
+        console.log("height: ", event.endCoordinates.height);
       }
     );
 
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setTextInputBottomMargin(0);
-      }
-    );
 
     return () => {
       keyboardDidShowListener.remove();
@@ -143,39 +145,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
   useEffect(() => {
     if (messagesData) setMessagesToDisplay(messagesData.data);
   }, [messagesData]);
-
-  const handleSendMessage2 = () => {
-    scrollViewRef.current.scrollToEnd({ animated: true });
-
-    hubConnection.invoke(
-      "SendMessage",
-      currentUserId,
-      conversationUserId,
-      message
-    );
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
-    const day = String(currentDate.getDate()).padStart(2, "0");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const seconds = String(currentDate.getSeconds()).padStart(2, "0");
-    const milliseconds = String(currentDate.getMilliseconds()).padStart(3, "0");
-    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
-
-    const sentMessage = {
-      dateTime: formattedDateTime,
-      receiverId: conversationUserId,
-      senderId: currentUserId,
-      text: message,
-    };
-
-    setMessagesToDisplay((prevMessages) => {
-      return [...(prevMessages ?? []), sentMessage];
-    });
-
-    setMessage("");
-  };
 
   const handleSendMessage = async () => {
     scrollViewRef.current.scrollToEnd({ animated: true });
@@ -258,25 +227,13 @@ export const ConversationDetailScreen = ({ navigation }) => {
       <>
         <TokenExpiryGuard />
 
-        <View
-          style={{
-            backgroundColor: "white",
-            padding: vh(2),
-          }}
-        >
+        <View style={styles.mainContainer}>
           {/* // HEADER // */}
           <View
-            style={
-              textInputBottomMargin !== 0 && {
-                position: "absolute",
-                top: 0,
-                zIndex: 110,
-                paddingLeft: vh(2),
-                paddingTop: vh(2),
-                backgroundColor: "white",
-              }
-            }
-          >
+            style={[
+              styles.headerStyle,
+              textInputBottomMargin !== 0
+            ]}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate("Messages", {
@@ -306,14 +263,14 @@ export const ConversationDetailScreen = ({ navigation }) => {
             style={
               textInputBottomMargin === 0
                 ? {
-                    zIndex: 100,
-                    backgroundColor: "white",
-                  }
+                  zIndex: 100,
+                  backgroundColor: "white",
+                }
                 : {
-                    top: vh(8) - textInputBottomMargin,
-                    zIndex: 100,
-                    backgroundColor: "white",
-                  }
+                  top: vh(8) - textInputBottomMargin,
+                  zIndex: 100,
+                  backgroundColor: "white",
+                }
             }
           >
             <View style={styles.scrollViewMessages}>
@@ -335,14 +292,14 @@ export const ConversationDetailScreen = ({ navigation }) => {
             style={
               textInputBottomMargin === 0
                 ? {
-                    zIndex: 100,
-                    backgroundColor: "white",
-                  }
+                  zIndex: 100,
+                  backgroundColor: "white",
+                }
                 : {
-                    top: vh(8) - textInputBottomMargin,
-                    zIndex: 100,
-                    backgroundColor: "white",
-                  }
+                  top: vh(15) - textInputBottomMargin,
+                  zIndex: 100,
+                  backgroundColor: "white",
+                }
             }
           >
             <View style={styles.sendMessageContainer}>
@@ -383,11 +340,26 @@ export const ConversationDetailScreen = ({ navigation }) => {
           {/* // SEND MESSAGE COMPONENT // */}
         </View>
       </>
+
+
     );
   }
 };
 
 const styles = StyleSheet.create({
+  headerStyle: {
+    position: "absolute",
+    top: 0,
+    zIndex: 110,
+    paddingLeft: vh(2),
+    paddingTop: vh(2),
+    backgroundColor: "white",
+  },
+  mainContainer:
+  {
+    backgroundColor: "white",
+    padding: vh(2),
+  },
   textinputStyle: {
     backgroundColor: "#f9f5f1",
     width: vw(75),
@@ -401,7 +373,6 @@ const styles = StyleSheet.create({
     padding: vh(0.3),
   },
   sendMessageContainer: {
-    // backgroundColor: "lightblue",
     padding: vh(1),
     flexDirection: "row",
   },

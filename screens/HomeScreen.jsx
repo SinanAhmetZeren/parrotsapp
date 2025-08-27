@@ -610,7 +610,7 @@ export default function HomeScreen({ navigation }) {
 
                 </View>
 
-                <View style={{ display: "" }}>
+                <View style={{ display: "none" }}>
                   <TouchableOpacity
                     onPress={() => {
                       handlePrintDates();

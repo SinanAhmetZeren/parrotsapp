@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   parrotBlue,
   parrotGreen,
@@ -41,41 +41,64 @@ export const RenderBidsComponent = ({
   username,
 }) => {
   const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
-
   const visibleBids = bids.slice(0, 5);
   const [acceptBid] = useAcceptBidMutation();
   const [deleteBid] = useDeleteBidMutation();
-  const hubConnection = useMemo(() => {
-    return new HubConnectionBuilder()
+
+  const hubConnection = useRef(
+    new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
-      .build();
-  }, [currentUserId]);
+      .withAutomaticReconnect()
+      .build()
+  );
 
   useEffect(() => {
     const startHubConnection = async () => {
       try {
-        await hubConnection.start();
-        console.log("SignalR connection  started successfully.");
+        await hubConnection.current.start();
+        console.log("SignalR connection started successfully.");
       } catch (error) {
         console.error("Failed to start SignalR connection:", error);
       }
     };
-    startHubConnection();
-    return () => {};
-  }, []);
 
-  const handleAcceptBid = ({ bidId, bidUserId }) => {
+    startHubConnection();
+
+    return () => {
+      if (hubConnection.current) {
+        hubConnection.current.stop().then(() =>
+          console.log("SignalR connection stopped")
+        );
+      }
+    };
+  }, [hubConnection]);
+
+  const handleAcceptBid = async ({ bidId, bidUserId }) => {
     const text = `Hi there! 👋 Welcome on board to "${voyageName}" 🎉`;
-    hubConnection.invoke("SendMessage", currentUserId, bidUserId, text);
+    try {
+      if (hubConnection.current.state === "Connected") {
+        await hubConnection.current.invoke("SendMessage", currentUserId, bidUserId, text);
+      }
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
     acceptBid(bidId);
     refetch();
   };
 
   const handleDeleteBid = async ({ bidId, bidUserId }) => {
-    const text = `Hi there! 👋 Your bid was deleted by ${username}`;
-    await hubConnection.invoke("SendMessage", currentUserId, bidUserId, text);
-    deleteBid(bidId);
-    refetch();
+    try {
+      const text = `Hi there! 👋 Your bid was deleted by ${username}`;
+      if (hubConnection.current.state === "Connected") {
+        await hubConnection.current.invoke("SendMessage", currentUserId, bidUserId, text);
+      } else {
+        console.warn("SignalR not connected. Could not send delete message.");
+      }
+      await deleteBid(bidId).unwrap();
+      refetch();
+    } catch (error) {
+      console.error("Failed to delete bid or send message:", error);
+    }
   };
 
   return (

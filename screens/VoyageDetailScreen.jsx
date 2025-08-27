@@ -156,12 +156,14 @@ const VoyageDetailScreen = ({ navigation }) => {
 
   const handleShare = async () => {
     const currentScreenLink = getCurrentPageLink();
+    console.log("-->", currentScreenLink);
 
+    const sampleVoyageLink = "parrots://voyagedetail/2272"
     if (currentScreenLink) {
       try {
         const result = await Share.share({
-          message: `Check out this link: ${currentScreenLink}`,
-          url: currentScreenLink,
+          message: `Check out this link: ${currentScreenLink && sampleVoyageLink}`,
+          url: currentScreenLink && sampleVoyageLink,
           title: "Share Link",
         });
       } catch (error) {
