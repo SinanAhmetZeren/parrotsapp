@@ -26,10 +26,8 @@ import {
   useDeleteBidMutation,
 } from "../slices/VoyageSlice";
 import { Feather } from "@expo/vector-icons";
-import {
-  HubConnectionBuilder,
-  HubConnectionState,
-} from "@microsoft/signalr";
+
+import { HubConnectionBuilder } from "@microsoft/signalr";
 import { API_URL } from "@env";
 
 export const RenderBidsComponent = ({
@@ -47,88 +45,62 @@ export const RenderBidsComponent = ({
   const [acceptBid] = useAcceptBidMutation();
   const [deleteBid] = useDeleteBidMutation();
 
-
-  // 🟢 Create hub connection ref
-  const hubConnection = useRef(null);
-
-  // 🟢 Initialize and start connection
-  useEffect(() => {
-    if (!currentUserId) return;
-
-    // Build connection only once
-    hubConnection.current = new HubConnectionBuilder()
+  const hubConnection = useRef(
+    new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
       .withAutomaticReconnect()
-      .build();
+      .build()
+  );
 
+  useEffect(() => {
     const startHubConnection = async () => {
       try {
-        if (hubConnection.current.state === HubConnectionState.Disconnected) {
+        if (hubConnection.current.state === signalR.HubConnectionState.Disconnected)
           await hubConnection.current.start();
-          console.log("✅ SignalR connected successfully.");
-        }
+        console.log("SignalR connection started successfully.");
       } catch (error) {
-        console.error("❌ Failed to start SignalR connection:", error);
-        setTimeout(startHubConnection, 3000); // Retry after 3 sec if fails
+        console.error("Failed to start SignalR connection:", error);
       }
     };
 
     startHubConnection();
 
-    // 🟢 Cleanup connection on unmount
     return () => {
       if (hubConnection.current) {
-        hubConnection.current.stop()
-          .then(() => console.log("🔴 SignalR stopped"))
-          .catch((err) => console.error("❌ Failed to stop SignalR:", err));
+        hubConnection.current.stop().then(() =>
+          console.log("SignalR connection stopped")
+        );
       }
     };
-  }, [currentUserId]);
+  }, [hubConnection]);
 
-  // 🟢 Accept bid handler
   const handleAcceptBid = async ({ bidId, bidUserId }) => {
     const text = `Hi there! 👋 Welcome on board to "${voyageName}" 🎉`;
     try {
-      if (hubConnection.current?.state === HubConnectionState.Connected) {
-        await hubConnection.current.invoke(
-          "SendMessage",
-          currentUserId,
-          bidUserId,
-          text
-        );
-      } else {
-        console.warn("⚠️ SignalR not connected. Message not sent.");
+      if (hubConnection.current.state === "Connected") {
+        await hubConnection.current.invoke("SendMessage", currentUserId, bidUserId, text);
       }
-
-      await acceptBid(bidId).unwrap();
-      await refetch();
     } catch (error) {
-      console.error("❌ Failed to accept bid or send message:", error);
+      console.error("Failed to send message:", error);
     }
+    await acceptBid(bidId).unwrap();
+    refetch();
   };
 
-  // 🟢 Delete bid handler
   const handleDeleteBid = async ({ bidId, bidUserId }) => {
-    const text = `Hi there! 👋 Your bid was deleted by ${username}`;
     try {
-      if (hubConnection.current?.state === HubConnectionState.Connected) {
-        await hubConnection.current.invoke(
-          "SendMessage",
-          currentUserId,
-          bidUserId,
-          text
-        );
+      const text = `Hi there! 👋 Your bid was deleted by ${username}`;
+      if (hubConnection.current.state === "Connected") {
+        await hubConnection.current.invoke("SendMessage", currentUserId, bidUserId, text);
       } else {
-        console.warn("⚠️ SignalR not connected. Delete message not sent.");
+        console.warn("SignalR not connected. Could not send delete message.");
       }
-
       await deleteBid(bidId).unwrap();
-      await refetch();
+      refetch();
     } catch (error) {
-      console.error("❌ Failed to delete bid or send message:", error);
+      console.error("Failed to delete bid or send message:", error);
     }
   };
-
 
   return (
     <View>

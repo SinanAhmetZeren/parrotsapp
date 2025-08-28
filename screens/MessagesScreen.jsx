@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
-import { HubConnectionBuilder } from "@microsoft/signalr";
+import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
 import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
 
@@ -57,20 +57,25 @@ export default function MessagesScreen({ navigation }) {
 
   const recipientId = userId;
 
-  // 🔹 CHANGED: Using useRef instead of useMemo for persistent connection
-  const hubConnection = useRef(
-    new HubConnectionBuilder()
-      .withUrl(`${API_URL}/chathub/11?userId=${userId}`)
-      .withAutomaticReconnect() // 🟢 Added auto-reconnect support
-      .build()
-  );
+  // 🟢 Create persistent hub connection
+  const hubConnection = useRef(null);
 
-  // 🔹 Handle messages API errors
+  // Initialize hub connection when userId is available
+  useEffect(() => {
+    if (!userId) return;
+
+    hubConnection.current = new HubConnectionBuilder()
+      .withUrl(`${API_URL}/chathub/11?userId=${userId}`)
+      .withAutomaticReconnect() // 🟢 auto-reconnect
+      .build();
+  }, [userId]);
+
+  // Handle API error state
   useEffect(() => {
     setHasError(isErrorMessages);
   }, [isErrorMessages]);
 
-  // 🟢 Refetch when screen gains focus
+  // Refetch when screen gains focus
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
@@ -84,7 +89,7 @@ export default function MessagesScreen({ navigation }) {
     }, [refetch])
   );
 
-  // Refresh handler
+  // Pull-to-refresh handler
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -98,20 +103,25 @@ export default function MessagesScreen({ navigation }) {
     }
   };
 
-  // 🟢 Start SignalR connection and set up events
+  // 🟢 Start SignalR connection & setup events
   useEffect(() => {
+    if (!hubConnection.current) return;
+
     const startHubConnection = async () => {
       try {
-        await hubConnection.current.start(); // 🔹 Use .current consistently
-        console.log("SignalR connected");
+        if (hubConnection.current.state === HubConnectionState.Disconnected) {
+          await hubConnection.current.start();
+          console.log("✅ SignalR connected");
+        }
       } catch (err) {
-        console.error("SignalR start failed:", err);
+        console.error("❌ SignalR start failed:", err);
+        setTimeout(startHubConnection, 3000); // retry
       }
     };
 
     startHubConnection();
 
-    // 🟢 DO NOT CHANGE THIS PART — YOUR ORIGINAL HANDLER
+    // Message received handler
     hubConnection.current.on(
       "ReceiveMessage",
       async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
@@ -125,7 +135,7 @@ export default function MessagesScreen({ navigation }) {
       }
     );
 
-    // 🔹 Refetch messages when "ReceiveMessageRefetch" is triggered
+    // Refetch messages when triggered
     hubConnection.current.on("ReceiveMessageRefetch", async () => {
       try {
         await refetch();
@@ -134,18 +144,20 @@ export default function MessagesScreen({ navigation }) {
       }
     });
 
-    // 🟢 Proper cleanup
+    // Cleanup on unmount
     return () => {
-      hubConnection.current.off("ReceiveMessage");
-      hubConnection.current.off("ReceiveMessageRefetch");
-      hubConnection.current
-        .stop()
-        .then(() => console.log("SignalR stopped"))
-        .catch((err) => console.error("Failed to stop SignalR:", err));
+      if (hubConnection.current) {
+        hubConnection.current.off("ReceiveMessage");
+        hubConnection.current.off("ReceiveMessageRefetch");
+        hubConnection.current
+          .stop()
+          .then(() => console.log("🔴 SignalR stopped"))
+          .catch((err) => console.error("❌ Failed to stop SignalR:", err));
+      }
     };
   }, [refetch]);
 
-  // 🟢 Sync messages when API updates
+  // Sync messages from API updates
   useEffect(() => {
     if (messagesData) setReceivedMessageData(messagesData);
   }, [messagesData]);
