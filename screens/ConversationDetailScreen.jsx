@@ -19,24 +19,25 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import MessagesComponent from "../components/MessagesComponent";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { ScrollView } from "react-native-web";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { HubConnectionBuilder } from "@microsoft/signalr";
+import {
+  HubConnectionBuilder,
+  HubConnectionState
+} from "@microsoft/signalr";
+import { parrotBlue, parrotTextDarkBlue } from "../assets/color";
+
 
 export const ConversationDetailScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
-
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
   const currentUserName = useSelector((state) => state.users.userName);
-  const currentUserProfileImage = useSelector(
-    (state) => state.users.userProfileImage
-  );
-
+  const currentUserProfileImage = useSelector((state) => state.users.userProfileImage);
   const { conversationUserId, profileImg, name } = route.params;
   const users = { currentUserId, conversationUserId };
   const {
@@ -52,12 +53,20 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
   const scrollViewRef = useRef();
 
-  const hubConnection = useRef(
-    new HubConnectionBuilder()
+
+  // 🟢 Create hubConnection reference
+  const hubConnection = useRef(null);
+
+  // 🟢 Initialize connection ONCE when currentUserId is available
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    hubConnection.current = new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
       .withAutomaticReconnect()
-      .build()
-  );
+      .build();
+  }, [currentUserId]);
+
 
   useEffect(() => {
     if (isErrorMessages) {
@@ -97,23 +106,63 @@ export const ConversationDetailScreen = ({ navigation }) => {
     }, [refetch, navigation])
   );
 
+
+
+  // 🟢 Start connection + set up handlers
   useEffect(() => {
+    if (!hubConnection.current) return;
+
     const startHubConnection = async () => {
       try {
-        await hubConnection.current.start();
-        console.log("SignalR connection started successfully.");
-      } catch (error) {
-        console.error("Failed to start SignalR connection:", error);
+        if (hubConnection.current.state === HubConnectionState.Disconnected) {
+          await hubConnection.current.start();
+          console.log("SignalR connected");
+        }
+      } catch (err) {
+        console.error("SignalR start failed:", err);
       }
     };
+
     startHubConnection();
-    hubConnection.current.on("ReceiveMessageRefetch", () => {
-      refetch();
+
+    // 🟢 Message handler
+    hubConnection.current.on(
+      "ReceiveMessage",
+      async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
+        setReceivedMessageData([
+          senderId,
+          content,
+          newTime,
+          senderProfileUrl,
+          senderUsername,
+        ]);
+      }
+    );
+
+    // 🟢 Refetch on signal
+    hubConnection.current.on("ReceiveMessageRefetch", async () => {
+      try {
+        await refetch();
+      } catch (err) {
+        console.error("Failed to refetch messages:", err);
+      }
     });
+
+    // 🟢 Cleanup
     return () => {
-      hubConnection.current.off("ReceiveMessageRefetch");
+      if (hubConnection.current) {
+        hubConnection.current.off("ReceiveMessage");
+        hubConnection.current.off("ReceiveMessageRefetch");
+        hubConnection.current
+          .stop()
+          .then(() => console.log("SignalR stopped"))
+          .catch((err) => console.error("Failed to stop SignalR:", err));
+      }
     };
-  }, []);
+  }, [refetch]);
+
+
+
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -227,16 +276,18 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   if (isSuccessMessages) {
     return (
-      <>
+      <View style={{ flex: 1, backgroundColor: "white" }} >
         <TokenExpiryGuard />
 
-        <View style={styles.mainContainer}>
+        <View
+          style={[
+            styles.mainContainer, // 🟢 base styles
+            textInputBottomMargin !== 0 ? { paddingTop: vh(1) } : { paddingTop: vh(6) } // 🟢 conditional paddingTop
+          ]}
+        >
           {/* // HEADER // */}
           <View
-            style={[
-              styles.headerStyle,
-              textInputBottomMargin !== 0
-            ]}>
+            style={styles.headerStyle}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate("Messages", {
@@ -255,7 +306,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
                 />
               </View>
               <View>
-                <Text style={styles.nameStyle}>{name}</Text>
+                <Text style={styles.nameStyle}>{name}
+                  <MaterialCommunityIcons name="chevron-right" size={20} />
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -268,9 +321,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
                 ? {
                   zIndex: 100,
                   backgroundColor: "white",
+                  marginTop: vh(5),
                 }
                 : {
-                  top: vh(8) - textInputBottomMargin,
+                  top: vh(15) - textInputBottomMargin,
                   zIndex: 100,
                   backgroundColor: "white",
                 }
@@ -342,7 +396,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
           </View>
           {/* // SEND MESSAGE COMPONENT // */}
         </View>
-      </>
+      </View>
 
 
     );
@@ -362,11 +416,13 @@ const styles = StyleSheet.create({
   {
     backgroundColor: "white",
     padding: vh(2),
+
   },
   textinputStyle: {
     backgroundColor: "#f9f5f1",
     width: vw(75),
     maxHeight: vh(12),
+    minHeight: vh(4.5),
     paddingLeft: vh(1.5),
     paddingVertical: vh(0.5),
     borderRadius: vh(2),

@@ -24,19 +24,19 @@ import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { ScrollView } from "react-native-web";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { HubConnectionBuilder } from "@microsoft/signalr";
+import {
+  HubConnectionBuilder,
+  HubConnectionState
+} from "@microsoft/signalr";
+
 
 export const ConversationDetailScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
-
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
   const currentUserName = useSelector((state) => state.users.userName);
-  const currentUserProfileImage = useSelector(
-    (state) => state.users.userProfileImage
-  );
-
+  const currentUserProfileImage = useSelector((state) => state.users.userProfileImage);
   const { conversationUserId, profileImg, name } = route.params;
   const users = { currentUserId, conversationUserId };
   const {
@@ -52,11 +52,27 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
   const scrollViewRef = useRef();
 
-  const hubConnection = useMemo(() => {
-    return new HubConnectionBuilder()
+  /*
+    const hubConnection = useRef(
+      new HubConnectionBuilder()
+        .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
+        .withAutomaticReconnect()
+        .build()
+    );
+  */
+  // 🟢 Create hubConnection reference
+  const hubConnection = useRef(null);
+
+  // 🟢 Initialize connection ONCE when currentUserId is available
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    hubConnection.current = new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
+      .withAutomaticReconnect()
       .build();
   }, [currentUserId]);
+
 
   useEffect(() => {
     if (isErrorMessages) {
@@ -89,7 +105,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
           console.error("Error refetching messages data:", error);
         }
       };
-
       fetchData();
       return () => {
         console.log("Cleaning up in ConversationDetailScreen");
@@ -97,27 +112,83 @@ export const ConversationDetailScreen = ({ navigation }) => {
     }, [refetch, navigation])
   );
 
+  /*
   useEffect(() => {
     const startHubConnection = async () => {
       try {
-        await hubConnection.start();
-        console.log("SignalR connection  started successfully.");
+        if (hubConnection.current.state === signalR.HubConnectionState.Disconnected)
+          await hubConnection.current.start();
+        console.log("SignalR connection started successfully.");
       } catch (error) {
         console.error("Failed to start SignalR connection:", error);
       }
     };
     startHubConnection();
-    hubConnection.on(
-      "ReceiveMessage",
-      async (senderId, content, newTime, senderProfileUrl, senderUsername) => { }
-    );
-
-    hubConnection.on("ReceiveMessageRefetch", () => {
+    hubConnection.current.on("ReceiveMessageRefetch", () => {
       refetch();
     });
-
-    return () => { };
+    return () => {
+      hubConnection.current.off("ReceiveMessageRefetch");
+    };
   }, []);
+*/
+
+
+  // 🟢 Start connection + set up handlers
+  useEffect(() => {
+    if (!hubConnection.current) return;
+
+    const startHubConnection = async () => {
+      try {
+        if (hubConnection.current.state === HubConnectionState.Disconnected) {
+          await hubConnection.current.start();
+          console.log("SignalR connected");
+        }
+      } catch (err) {
+        console.error("SignalR start failed:", err);
+      }
+    };
+
+    startHubConnection();
+
+    // 🟢 Message handler
+    hubConnection.current.on(
+      "ReceiveMessage",
+      async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
+        setReceivedMessageData([
+          senderId,
+          content,
+          newTime,
+          senderProfileUrl,
+          senderUsername,
+        ]);
+      }
+    );
+
+    // 🟢 Refetch on signal
+    hubConnection.current.on("ReceiveMessageRefetch", async () => {
+      try {
+        await refetch();
+      } catch (err) {
+        console.error("Failed to refetch messages:", err);
+      }
+    });
+
+    // 🟢 Cleanup
+    return () => {
+      if (hubConnection.current) {
+        hubConnection.current.off("ReceiveMessage");
+        hubConnection.current.off("ReceiveMessageRefetch");
+        hubConnection.current
+          .stop()
+          .then(() => console.log("SignalR stopped"))
+          .catch((err) => console.error("Failed to stop SignalR:", err));
+      }
+    };
+  }, [refetch]);
+
+
+
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -134,8 +205,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
         console.log("height: ", event.endCoordinates.height);
       }
     );
-
-
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -146,18 +215,16 @@ export const ConversationDetailScreen = ({ navigation }) => {
     if (messagesData) setMessagesToDisplay(messagesData.data);
   }, [messagesData]);
 
+
   const handleSendMessage = async () => {
+    if (!message.trim()) return; // Don't send empty messages
+
+    // Scroll to bottom immediately
     scrollViewRef.current.scrollToEnd({ animated: true });
 
+    // Prepare message object
     const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
-    const day = String(currentDate.getDate()).padStart(2, "0");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const seconds = String(currentDate.getSeconds()).padStart(2, "0");
-    const milliseconds = String(currentDate.getMilliseconds()).padStart(3, "0");
-    const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
+    const formattedDateTime = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}T${String(currentDate.getHours()).padStart(2, "0")}:${String(currentDate.getMinutes()).padStart(2, "0")}:${String(currentDate.getSeconds()).padStart(2, "0")}.${String(currentDate.getMilliseconds()).padStart(3, "0")}`;
 
     const sentMessage = {
       dateTime: formattedDateTime,
@@ -166,33 +233,44 @@ export const ConversationDetailScreen = ({ navigation }) => {
       text: message,
     };
 
-    // Optimistic UI Update
-    setMessagesToDisplay((prevMessages) => {
-      return [...(prevMessages ?? []), sentMessage];
-    });
-
+    // Optimistic UI update
+    setMessagesToDisplay((prev) => [...(prev ?? []), sentMessage]);
     setMessage("");
 
-    try {
-      await hubConnection.invoke(
-        "SendMessage",
-        currentUserId,
-        conversationUserId,
-        message
+    // Retry function
+    const sendWithRetry = async (msg, retries = 3, delay = 1000) => {
+      for (let i = 0; i < retries; i++) {
+        if (hubConnection.current.state === "Connected") {
+          try {
+            await hubConnection.current.invoke(
+              "SendMessage",
+              currentUserId,
+              conversationUserId,
+              msg.text
+            );
+            console.log("Message sent successfully.");
+            return true;
+          } catch (err) {
+            console.error("Send attempt failed:", err);
+          }
+        }
+        console.log(`Retrying send in ${delay}ms... (${i + 1}/${retries})`);
+        await new Promise((res) => setTimeout(res, delay));
+      }
+      return false;
+    };
+
+    const success = await sendWithRetry(sentMessage);
+    if (!success) {
+      console.error("Failed to send message after retries.");
+      setMessagesToDisplay((prev) =>
+        prev.filter((msg) => msg.dateTime !== sentMessage.dateTime)
       );
-      console.log("Message sent successfully.");
-    } catch (error) {
-      console.error("Failed to send message:", error);
-      setMessagesToDisplay((prevMessages) => {
-        return prevMessages.filter(
-          (msg) => msg.dateTime !== sentMessage.dateTime
-        );
-      });
-      alert(
-        "Failed to send message. Please check your connection and try again."
-      );
+      alert("Failed to send message. Please check your connection and try again.");
     }
   };
+
+
 
   if (hasError) {
     return (
@@ -359,6 +437,7 @@ const styles = StyleSheet.create({
   {
     backgroundColor: "white",
     padding: vh(2),
+    backgroundColor: "green"
   },
   textinputStyle: {
     backgroundColor: "#f9f5f1",
