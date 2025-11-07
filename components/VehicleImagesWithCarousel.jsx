@@ -44,7 +44,7 @@ const VehicleImagesWithCarousel = ({ vehicleImages }) => {
             <View>
               <Image
                 source={{
-                  uri: `${API_URL}/Uploads/VehicleImages/${item.vehicleImagePath}`,
+                  uri: `${item.vehicleImagePath}`,
                 }}
                 style={styles2.voyageImage1}
               />
@@ -94,7 +94,7 @@ const VehicleImagesWithCarousel = ({ vehicleImages }) => {
               <View style={styles2.imageContainerInModal}>
                 <Image
                   source={{
-                    uri: `${API_URL}/Uploads/VehicleImages/${item.vehicleImagePath}`,
+                    uri: `${item.vehicleImagePath}`,
                   }}
                   style={styles2.voyageImageInModal}
                 />

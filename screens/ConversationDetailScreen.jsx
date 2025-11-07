@@ -300,7 +300,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
               <View style={styles.imageContainer}>
                 <Image
                   source={{
-                    uri: `${API_URL}/Uploads/UserImages/${profileImg}`,
+                    uri: `${profileImg}`,
                   }}
                   style={styles.profileImage}
                 />

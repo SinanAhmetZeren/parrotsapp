@@ -14,29 +14,29 @@ export const SearchUsersComponent = ({ searchResults }) => {
     <>
       {searchResults
         ? searchResults.map((item, index) => {
-            return (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Messages", {
-                    screen: "ProfileScreenPublic",
-                    params: { userId: item.id },
-                  });
+          return (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Messages", {
+                  screen: "ProfileScreenPublic",
+                  params: { userId: item.id },
+                });
+              }}
+              key={index}
+              style={styles.searchUserContainer}
+            >
+              <Image
+                source={{
+                  uri: `${item.profileImageUrl}`,
                 }}
-                key={index}
-                style={styles.searchUserContainer}
-              >
-                <Image
-                  source={{
-                    uri: `${API_URL}/Uploads/UserImages/${item.profileImageUrl}`,
-                  }}
-                  style={styles.userImage}
-                />
-                <View style={styles.userNameContainer}>
-                  <Text style={styles.userName}>{item.userName}</Text>
-                </View>
-              </TouchableOpacity>
-            );
-          })
+                style={styles.userImage}
+              />
+              <View style={styles.userNameContainer}>
+                <Text style={styles.userName}>{item.userName}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })
         : null}
     </>
   );

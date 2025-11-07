@@ -56,14 +56,13 @@ export const WaypointFlatListVoyageDetailsScreen = ({
   addedWayPoints,
   focusMap,
 }) => {
-  let baseUrl = `${API_URL}/Uploads/WaypointImages/`;
   return (
     <FlatList
       horizontal
       data={addedWayPoints}
       keyExtractor={(item, index) => `${item.order}-${index}`}
       renderItem={({ item, index }) => {
-        let newUri = baseUrl + item.profileImage;
+        let newUri = item.profileImage;
         return (
           <View key={index}>
             <WaypointItemVoyageDetailScreen

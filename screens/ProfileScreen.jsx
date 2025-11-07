@@ -252,8 +252,8 @@ export default function ProfileScreen({ navigation }) {
   }
 
   if (isSuccessUser && isSuccessVehicles && isSuccessVoyages) {
-    const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
-    const backgroundImageUrl = `${API_URL}/Uploads/UserImages/${userData.backgroundImageUrl}`;
+    const profileImageUrl = `${userData.profileImageUrl}`;
+    const backgroundImageUrl = `${userData.backgroundImageUrl}`;
 
     return (
       <>

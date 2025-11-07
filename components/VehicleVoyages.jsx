@@ -36,7 +36,6 @@ export default function VehicleVoyages({ voyages }) {
     });
   };
 
-  const VoyageBaseUrl = `${API_URL}/Uploads/VoyageImages/`;
 
   const renderVehicleVoyages = () => {
     return voyages.map((item) => {
@@ -52,7 +51,7 @@ export default function VehicleVoyages({ voyages }) {
             <View>
               <Image
                 source={{
-                  uri: VoyageBaseUrl + item.profileImage,
+                  uri: item.profileImage,
                 }}
                 style={styles.voyageImage}
               />

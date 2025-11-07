@@ -171,8 +171,6 @@ const VehicleDetailScreen = () => {
   }
 
   if (isSuccessVehicles) {
-    const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
-    const VehicleImageBaseUrl = `${API_URL}/Uploads/VehicleImages/`;
 
     const descriptionShortenedChars = 500;
 
@@ -220,7 +218,7 @@ const VehicleDetailScreen = () => {
         break;
     }
 
-    const imageUrl = VehicleImageBaseUrl + VehicleData.profileImageUrl;
+    const imageUrl = VehicleData.profileImageUrl;
 
     return (
       <>
@@ -334,7 +332,7 @@ const VehicleDetailScreen = () => {
                       <Image
                         source={{
                           uri:
-                            UserImageBaseUrl + VehicleData.user.profileImageUrl,
+                            VehicleData.user.profileImageUrl,
                         }}
                         style={styles.profileImage}
                       />
