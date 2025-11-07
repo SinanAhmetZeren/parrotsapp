@@ -26,7 +26,7 @@ export default function VehicleCardProfile({
   vehicletype,
   capacity,
 }) {
-  const cardImageUrl = `${API_URL}/Uploads/VehicleImages/${cardImage}`;
+  const cardImageUrl = `${cardImage}`;
   let icon;
   switch (vehicletype) {
     case 0:

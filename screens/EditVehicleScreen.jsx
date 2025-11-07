@@ -99,7 +99,7 @@ const EditVehicleScreen = () => {
       setDescription(vehicleData.description);
       setCapacity(vehicleData.capacity.toString());
       setImage(
-        `${API_URL}/Uploads/VehicleImages/` + vehicleData.profileImageUrl
+        vehicleData.profileImageUrl
       );
     }
   }, [isSuccessVehicleData]);
@@ -449,7 +449,7 @@ const EditVehicleScreen = () => {
                                 ? { uri: item.vehicleImagePath }
                                 : item.id
                                   ? {
-                                    uri: `${API_URL}/Uploads/VehicleImages/${item.vehicleImagePath}`,
+                                    uri: `${item.vehicleImagePath}`,
                                   }
                                   : require("../assets/placeholder.png")
                             }

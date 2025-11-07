@@ -342,7 +342,6 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   if (isSuccess) {
-    const profileImageUrl = `${API_URL}/Uploads/UserImages/${userData.profileImageUrl}`;
 
     const dropdownData = [
       { label: "Walk", value: 63 },

@@ -42,7 +42,6 @@ export const RenderBidsComponent = ({
   refetch,
   username,
 }) => {
-  const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
   const visibleBids = bids.slice(0, 5);
   const [acceptBid] = useAcceptBidMutation();
   const [deleteBid] = useDeleteBidMutation();
@@ -136,7 +135,7 @@ export const RenderBidsComponent = ({
         <View key={index} style={styles.singleBidContainer}>
           <Image
             source={{
-              uri: UserImageBaseUrl + bid.userProfileImage,
+              uri: bid.userProfileImage,
             }}
             style={styles.bidImage}
           />
@@ -199,7 +198,7 @@ export const RenderBidsComponent = ({
                       <View>
                         <Image
                           source={{
-                            uri: UserImageBaseUrl + item.userProfileImage,
+                            uri: item.userProfileImage,
                           }}
                           style={styles.bidImage2}
                         />
@@ -300,7 +299,7 @@ export const RenderBidsComponent = ({
                       <View>
                         <Image
                           source={{
-                            uri: UserImageBaseUrl + item.userProfileImage,
+                            uri: item.userProfileImage,
                           }}
                           style={styles.bidImage2}
                         />

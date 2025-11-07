@@ -279,8 +279,6 @@ const VoyageDetailScreen = ({ navigation }) => {
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData.user.id;
     const waypoints = VoyageData.waypoints || [];
-    const UserImageBaseUrl = `${API_URL}/Uploads/UserImages/`;
-    const VehicleImageBaseUrl = `${API_URL}/Uploads/VehicleImages/`;
     const descriptionShortenedChars = 500;
     const displayText = showFullText
       ? VoyageData.description
@@ -307,8 +305,7 @@ const VoyageDetailScreen = ({ navigation }) => {
       "MMM d, yy"
     );
 
-    const baseUrl = `${API_URL}/Uploads/VoyageImages/`;
-    const imageUrl = baseUrl + VoyageData.profileImage;
+    const imageUrl = VoyageData.profileImage;
 
     return (
       <>
@@ -336,7 +333,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                       <Image
                         source={{
                           uri:
-                            UserImageBaseUrl + VoyageData.user.profileImageUrl,
+                            VoyageData.user.profileImageUrl,
                         }}
                         style={styles.profileImage}
                       />
@@ -373,7 +370,6 @@ const VoyageDetailScreen = ({ navigation }) => {
                         <Image
                           source={{
                             uri:
-                              VehicleImageBaseUrl +
                               VoyageData.vehicle.profileImageUrl,
                           }}
                           style={styles.profileImage}

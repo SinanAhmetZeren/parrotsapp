@@ -44,7 +44,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
             <View>
               <Image
                 source={{
-                  uri: `${API_URL}/Uploads/VoyageImages/${item.voyageImagePath}`,
+                  uri: `${item.voyageImagePath}`,
                 }}
                 style={styles2.voyageImage1}
               />
@@ -58,7 +58,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={handleCloseModal}
-        // style={{ flex: 1, backgroundColor: "rgba(1,1,1,0.1)", height: vh(50) }}
+      // style={{ flex: 1, backgroundColor: "rgba(1,1,1,0.1)", height: vh(50) }}
       >
         <View
           style={{
@@ -82,7 +82,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
               <View style={styles2.imageContainerInModal}>
                 <Image
                   source={{
-                    uri: `${API_URL}/Uploads/VoyageImages/${item.voyageImagePath}`,
+                    uri: `${item.voyageImagePath}`,
                   }}
                   style={styles2.voyageImageInModal}
                 />

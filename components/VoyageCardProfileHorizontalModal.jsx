@@ -32,7 +32,7 @@ export default function VoyageCardProfileHorizontalModal({
   focusMap,
   setSelectedVoyageModalVisible,
 }) {
-  const cardImageUrl = `${API_URL}/Uploads/VoyageImages/${cardImage}`;
+  const cardImageUrl = `${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
   const formattedEndDate = require("date-fns").format(enddate, "MMM d, yy");
   const navigation = useNavigation();

@@ -47,7 +47,7 @@ export default function CoversationView({
           style={styles.profileImage}
           resizeMode="cover"
           source={{
-            uri: `${API_URL}/Uploads/UserImages/${profileImg}`,
+            uri: `${profileImg}`,
           }}
         />
       </View>

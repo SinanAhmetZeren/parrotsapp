@@ -46,7 +46,7 @@ export default function MessagesComponent({
                   <View style={styles.imageContainer1}>
                     <Image
                       source={{
-                        uri: `${API_URL}/Uploads/UserImages/${userProfileImage}`,
+                        uri: `${userProfileImage}`,
                       }}
                       style={styles.voyageImage1}
                     />
@@ -77,7 +77,7 @@ export default function MessagesComponent({
                   <View style={styles.imageContainer1}>
                     <Image
                       source={{
-                        uri: `${API_URL}/Uploads/UserImages/${otherUserProfileImg}`,
+                        uri: `${otherUserProfileImg}`,
                       }}
                       style={styles.voyageImage1}
                     />
