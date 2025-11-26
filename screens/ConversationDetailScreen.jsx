@@ -101,7 +101,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
       };
       fetchData();
       return () => {
-        console.log("Cleaning up in ConversationDetailScreen");
+        // console.log("Cleaning up in ConversationDetailScreen");
       };
     }, [refetch, navigation])
   );

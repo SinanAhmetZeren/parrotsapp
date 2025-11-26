@@ -145,7 +145,7 @@ const EditProfileScreen = ({ navigation }) => {
           image: profileImage,
         })
       );
-      console.log("updating user");
+      // console.log("updating user");
     } catch (error) {
       console.error("Error uploading image", error);
     }
