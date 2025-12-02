@@ -5,6 +5,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useEffect } from "react";
+import { parrotBlueMediumTransparent, parrotBlueSemiTransparent } from "../assets/color";
 
 export const SocialRenderComponent = ({
   userData,
@@ -22,32 +23,43 @@ export const SocialRenderComponent = ({
     setSocialItemCount(contactDataArray.length);
   }, [setSocialItemCount]);
   let contactDataArray = [];
-  if (userData.displayEmail !== null && userData.emailVisible === true) {
+
+
+  if (userData.displayEmail && userData.displayEmail.trim() !== "" && userData.emailVisible === true) {
     contactDataArray.push([userData.displayEmail, 0]);
   }
-  if (userData.instagram !== null) {
+
+  if (userData.instagram && userData.instagram.trim() !== "") {
     contactDataArray.push([userData.instagram, 1]);
   }
-  if (userData.youtube !== null) {
+
+  if (userData.youtube && userData.youtube.trim() !== "") {
     contactDataArray.push([userData.youtube, 2]);
   }
-  if (userData.facebook !== null) {
+
+  if (userData.facebook && userData.facebook.trim() !== "") {
     contactDataArray.push([userData.facebook, 3]);
   }
-  if (userData.phoneNumber !== null) {
+
+  if (userData.phoneNumber && userData.phoneNumber.trim() !== "") {
     contactDataArray.push([userData.phoneNumber, 4]);
   }
-  if (userData.twitter !== null) {
+
+  if (userData.twitter && userData.twitter.trim() !== "") {
     contactDataArray.push([userData.twitter, 5]);
   }
-  if (userData.linkedin !== null) {
+
+  if (userData.linkedin && userData.linkedin.trim() !== "") {
     contactDataArray.push([userData.linkedin, 6]);
   }
-  if (userData.tiktok !== null) {
+
+  if (userData.tiktok && userData.tiktok.trim() !== "") {
     contactDataArray.push([userData.tiktok, 7]);
   }
 
-  const renderAllItems = () => {
+
+
+  const renderAllItems2 = () => {
     if (contactDataArray.length > 0) {
       return contactDataArray.slice(0, 5).map((x, index) => {
         const baseStyle =
@@ -134,28 +146,119 @@ export const SocialRenderComponent = ({
     }
   };
 
+
+  const renderAllItems = () => {
+    // Take first 5 non-null contacts
+    const firstFive = contactDataArray.slice(0, 5);
+
+    console.log("first five: ", firstFive);
+    // If less than 5, fill the remaining with null placeholders
+    while (firstFive.length < 5) {
+      firstFive.push([null, 'placeholder']); // use a custom type for shadow
+    }
+
+    return firstFive.map((x, index) => {
+      const baseStyle =
+        styles[`social_${firstFive.length}_${index}`] || styles.social_default;
+
+      if (x[1] === 'placeholder') {
+        return <ShadowItem style={baseStyle} />;
+      }
+
+      switch (x[1]) {
+        case 0:
+          return (
+            <EmailItem
+              style={baseStyle}
+              key={index}
+              email={userData.displayEmail}
+              handleEmailPress={handleEmailPress}
+            />
+          );
+        case 1:
+          return (
+            <InstagramItem
+              style={baseStyle}
+              key={index}
+              instagram={userData.instagram}
+              handleInstagramPress={handleInstagramPress}
+            />
+          );
+        case 2:
+          return (
+            <YoutubeItem
+              style={baseStyle}
+              key={index}
+              youtube={userData.youtube}
+              handleYoutubePress={handleYoutubePress}
+            />
+          );
+        case 3:
+          return (
+            <FacebookItem
+              style={baseStyle}
+              key={index}
+              facebook={userData.facebook}
+              handleFacebookPress={handleFacebookPress}
+            />
+          );
+        case 4:
+          return (
+            <PhoneItem
+              style={baseStyle}
+              key={index}
+              phoneNumber={userData.phoneNumber}
+              handlePhonePress={handlePhonePress}
+            />
+          );
+        case 5:
+          return (
+            <TwitterItem
+              style={baseStyle}
+              key={index}
+              twitter={userData.twitter}
+              handleTwitterPress={handleTwitterPress}
+            />
+          );
+        case 6:
+          return (
+            <LinkedinItem
+              style={baseStyle}
+              key={index}
+              linkedin={userData.linkedin}
+              handleLinkedinPress={handleLinkedinPress}
+            />
+          );
+        case 7:
+          return (
+            <TiktokItem
+              style={baseStyle}
+              key={index}
+              tiktok={userData.tiktok}
+              handleTiktokPress={handleTiktokPress}
+            />
+          );
+        default:
+          return null;
+      }
+    });
+  };
+
+
+
   return (
     <>
       <View
         style={[
-          styles[`social_Main_${contactDataArray.length}`],
-          { marginLeft: vw(12), marginTop: vh(0.8), minWidth: vw(45) },
+          // styles[`social_Main_${contactDataArray.length}`],
+          styles[`social_Main_5`],
+          {
+            //marginLeft: vw(12), marginTop: vh(0.8), minWidth: vw(45),
+            // backgroundColor: "red"
+          },
         ]}
       >
         {renderAllItems()}
-
-        {/* {contactDataArray.length > 7 && (
-          <TouchableOpacity
-            onPress={() => {
-              console.log("hello");
-            }}
-            style={styles.extendedAreaContainer}
-          >
-            <View style={styles.extendedArea}>
-              <Text style={styles.moreButton}>more</Text>
-            </View>
-          </TouchableOpacity>
-        )} */}
       </View>
     </>
   );
@@ -276,12 +379,33 @@ const LinkedinItem = ({ linkedin, handleLinkedinPress, style }) => {
   );
 };
 
+
+const ShadowItem = ({ style }) => {
+  return (
+    <TouchableOpacity style={{ ...style, opacity: 0.6 }} >
+      <View style={styles.iconLogoPlaceHolder} />
+      <Text style={styles.iconText}>
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+
+
 const styles = StyleSheet.create({
   iconLogo: {
     height: vh(4),
     width: vh(4),
     borderRadius: vh(2),
     marginRight: vh(1),
+  },
+  iconLogoPlaceHolder: {
+    backgroundColor: parrotBlueMediumTransparent,
+    height: vh(4),
+    width: vh(4),
+    borderRadius: vh(2),
+    marginRight: vh(1),
+    opacity: 0.7,
   },
   social_Main_5: {
     flexDirection: "column",
@@ -335,7 +459,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    left: vw(-12),
+    left: vw(-4),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   social_5_1: {
@@ -344,13 +468,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    left: vw(-6),
+    left: vw(2),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   social_5_2: {
     flexDirection: "row",
     backgroundColor: "rgba(162, 208, 239,0.2)",
-    left: vw(-4),
+    left: vw(4),
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -362,7 +486,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    left: vw(-6),
+    left: vw(2),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
   social_5_4: {
@@ -371,10 +495,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
-    left: vw(-12),
+    left: vw(-4),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
-  //////
+  /*
   social_4_0: {
     flexDirection: "row",
     backgroundColor: "rgba(162, 208, 239,0.2)",
@@ -468,6 +592,7 @@ const styles = StyleSheet.create({
     left: vw(-4),
     borderColor: "rgba(190, 119, 234,0.4)",
   },
+  */
   ///////
   icon: {
     padding: 3,

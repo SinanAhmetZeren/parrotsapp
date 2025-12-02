@@ -381,7 +381,7 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </View>
 
-                <View>
+                <View style={{}}>
                   <SocialRenderComponent
                     userData={userData}
                     handleEmailPress={handleEmailPress}
