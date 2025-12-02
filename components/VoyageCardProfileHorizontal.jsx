@@ -15,8 +15,9 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { API_URL } from "@env";
 import he from "he";
+import { Shadow } from 'react-native-shadow-2';
+
 
 export default function VoyageCardProfileHorizontal({
   cardHeader,
@@ -86,72 +87,101 @@ export default function VoyageCardProfileHorizontal({
   };
 
   return (
-    <TouchableOpacity onPress={() => handleNavigation(voyageId)} >
-      <View style={styles.cardContainer}>
-        <View style={styles.shadow}>
-          <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
-        </View>
 
-        <View style={styles.containerContainer}>
-          <View style={styles.textContainer}>
-            <Text style={styles.header}>{cardHeader}</Text>
 
-            <View style={styles.vacancyAndVehicle}>
-              <View>
-                <Text style={styles.subHeader}>
-                  {/* {vehiclename + "111 "} */}
-                  {vehiclename.length > 21
-                    ? vehiclename.substring(0, 21) + "..."
-                    : vehiclename}
-                  {"  "}
-                  {icon}
+    <TouchableOpacity onPress={() => handleNavigation(voyageId)} style={styles.TouchableOpacityStyle}>
+      <Shadow
+        distance={12}
+        offset={[0, 0]}
+        startColor="rgba(0,0,0,0.08)"
+        finalColor="rgba(0,0,0,0.13)"
+        radius={12}
+      >
+        <View style={styles.cardContainerWrapper}>
+          <View style={styles.cardContainer}>
+            <View style={styles.shadow}>
+              <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
+            </View>
+
+            <View style={styles.containerContainer}>
+              <View style={styles.textContainer}>
+                <Text style={styles.header}>{cardHeader}</Text>
+
+                <View style={styles.vacancyAndVehicle}>
+                  <View>
+                    <Text style={styles.subHeader}>
+                      {/* {vehiclename + "111 "} */}
+                      {vehiclename.length > 21
+                        ? vehiclename.substring(0, 21) + "..."
+                        : vehiclename}
+                      {"  "}
+                      {icon}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.vacancyAndVehicle}>
+                  <View>
+                    <Text style={styles.subHeader2}>
+                      {vacancy + " "}
+                      <Feather name="users" size={12} color="blue" />
+                    </Text>
+                  </View>
+                  <Text style={styles.subHeader3}>
+                    {formattedStartDate + " - " + formattedEndDate + "  "}
+                    <AntDesign name="calendar" size={12} color="blue" />
+                  </Text>
+                </View>
+                <Text
+                  style={styles.cardDescription}
+                  numberOfLines={5}
+                  ellipsizeMode="tail"
+                >
+                  {he.decode(
+                    cardDescription
+                      .replace(/<[^>]+>/g, ' ')
+                      .replace(/\s+/g, ' ')
+                      .trim()
+                  )}
                 </Text>
               </View>
             </View>
 
-            <View style={styles.vacancyAndVehicle}>
-              <View>
-                <Text style={styles.subHeader2}>
-                  {vacancy + " "}
-                  <Feather name="users" size={12} color="blue" />
-                </Text>
-              </View>
-              <Text style={styles.subHeader3}>
-                {formattedStartDate + " - " + formattedEndDate + "  "}
-                <AntDesign name="calendar" size={12} color="blue" />
-              </Text>
-            </View>
-            <Text
-              style={styles.cardDescription}
-              numberOfLines={5}
-              ellipsizeMode="tail"
+            <TouchableOpacity
+              onPress={() => {
+                panMapOnVoyage();
+              }}
+              style={styles.extendedAreaContainer}
             >
-              {he.decode(
-                cardDescription
-                  .replace(/<[^>]+>/g, ' ')
-                  .replace(/\s+/g, ' ')
-                  .trim()
-              )}
-            </Text>
+              <View style={styles.extendedArea}>
+                <Text style={styles.seeOnMap}>View on map</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
-
-        <TouchableOpacity
-          onPress={() => {
-            panMapOnVoyage();
-          }}
-          style={styles.extendedAreaContainer}
-        >
-          <View style={styles.extendedArea}>
-            <Text style={styles.seeOnMap}>View on map</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+      </Shadow>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
+  TouchableOpacityStyle: {
+    marginRight: vw(2),
+  },
+  cardContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    flexDirection: "row",
+    height: vh(20),
+    backgroundColor: "rgba(0, 119, 234,0.03)",
+    borderRadius: vh(2),
+    borderColor: "rgba(10, 119, 234,0.2)",
+  },
+  cardContainerWrapper: {
+    backgroundColor: "white",
+    borderRadius: vh(2),
+  },
   containerContainer: {
     height: vh(22),
     top: 0,
@@ -183,18 +213,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "white",
   },
-  cardContainer: {
-    marginHorizontal: vw(2),
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    flexDirection: "row",
-    height: vh(20),
-    backgroundColor: "rgba(0, 119, 234,0.03)",
-    borderRadius: vh(2),
-    borderColor: "rgba(10, 119, 234,0.2)",
-  },
-
   cardImage: {
     width: vw(38),
     height: vh(20),

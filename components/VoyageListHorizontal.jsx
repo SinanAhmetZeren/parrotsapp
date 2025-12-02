@@ -47,6 +47,7 @@ export default function VoyageListHorizontal({ data, focusMap }) {
   if (data)
     return (
       <FlatList
+        // style={{ backgroundColor: "pink" }}
         key={data}
         data={data}
         extraData={data}
