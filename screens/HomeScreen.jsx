@@ -14,6 +14,7 @@ import {
   Image,
   RefreshControl,
 } from "react-native";
+import { Shadow } from "react-native-shadow-2";
 import MapView, { Marker } from "react-native-maps";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -625,6 +626,7 @@ export default function HomeScreen({ navigation }) {
                 </View>
               </View>
             </View>
+
             <View style={styles.mapContainer}>
               <MapView
                 style={styles.map}
@@ -662,6 +664,8 @@ export default function HomeScreen({ navigation }) {
                 })}
               </MapView>
             </View>
+
+
             {/* {isErrorVoyages ? ( */}
             {hasError ? (
               <View>
@@ -743,6 +747,19 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+
+  mapContainer: {
+    height: vh(50),
+    marginBottom: 7,
+    width: "94%",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    overflow: "hidden",
+    borderRadius: 20,
+    backgroundColor: "white ",
+  },
+
   currentBidsTitle3: {
     top: vh(-3),
     fontSize: 17,
@@ -881,17 +898,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     paddingBottom: vh(2),
   },
-  mapContainer: {
-    height: vh(50),
-    marginBottom: 7,
-    width: "94%",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    overflow: "hidden",
-    borderRadius: 20,
-    backgroundColor: "white ",
-  },
+
 
   map: {
     width: "100%",
