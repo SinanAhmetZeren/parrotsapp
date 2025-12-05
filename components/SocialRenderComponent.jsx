@@ -18,10 +18,12 @@ export const SocialRenderComponent = ({
   handleTwitterPress,
   handleTiktokPress,
   setSocialItemCount,
+  setSocialModalVisible
 }) => {
   useEffect(() => {
     setSocialItemCount(contactDataArray.length);
-  }, [setSocialItemCount]);
+    console.log("contact data array: ", contactDataArray);
+  }, [setSocialItemCount, contactDataArray]);
   let contactDataArray = [];
 
 
@@ -151,7 +153,6 @@ export const SocialRenderComponent = ({
     // Take first 5 non-null contacts
     const firstFive = contactDataArray.slice(0, 5);
 
-    console.log("first five: ", firstFive);
     // If less than 5, fill the remaining with null placeholders
     while (firstFive.length < 5) {
       firstFive.push([null, 'placeholder']); // use a custom type for shadow
@@ -262,6 +263,20 @@ export const SocialRenderComponent = ({
         ]}
       >
         {renderAllItems()}
+
+        {contactDataArray.length > 5 && (
+          <TouchableOpacity
+            onPress={() => {
+              setSocialModalVisible(true);
+            }}
+            style={styles.extendedAreaContainer}
+          >
+            <View style={styles.extendedArea}>
+              <Text style={styles.moreButton}>see more</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+
       </View>
     </>
   );
@@ -396,6 +411,31 @@ const ShadowItem = ({ style }) => {
 
 
 const styles = StyleSheet.create({
+  extendedAreaContainer: {
+    alignSelf: "flex-end",
+    position: "absolute",
+    bottom: vh(-4),
+    right: vw(8),
+    borderRadius: vh(4),
+    // backgroundColor: "pink",
+    zIndex: 100,
+  },
+  extendedArea: {
+    paddingHorizontal: vw(1),
+    paddingVertical: vh(1),
+    // backgroundColor: "red",
+  },
+  moreButton: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "rgba(0, 119, 234,.51)",
+    alignSelf: "flex-end",
+    backgroundColor: "rgba(0, 119, 234,0.051)",
+    borderRadius: vh(2),
+    paddingHorizontal: vw(2),
+    paddingHorizontal: vw(2),
+  },
+
   iconLogo: {
     height: vh(4),
     width: vh(4),

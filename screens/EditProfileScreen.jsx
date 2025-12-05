@@ -290,7 +290,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Username</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your username"
                 value={username}
                 onChangeText={(text) => setUsername(text)}
@@ -327,18 +327,13 @@ const EditProfileScreen = ({ navigation }) => {
 
 
                 </View>
-
-
                 <TextInput
                   placeholder="Enter your email"
                   value={displayEmail}
                   onChangeText={(text) => setDisplayEmail(text)}
-                  style={styles.textInput}
+                  style={[styles.textInput, { flex: 1 }]}
                   editable={true}
                 />
-
-
-
               </View>
 
 
@@ -372,7 +367,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Phone</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your phone number"
                 value={phoneNumber}
                 onChangeText={(text) => setPhoneNumber(text)}
@@ -390,7 +385,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Facebook</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your Facebook profile"
                 value={facebookProfile}
                 onChangeText={(text) => setFacebookProfile(text)}
@@ -408,7 +403,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Instagram</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your Instagram profile"
                 value={instagramProfile}
                 onChangeText={(text) => setInstagramProfile(text)}
@@ -426,7 +421,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Youtube</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your Youtube profile"
                 value={youtubeProfile}
                 onChangeText={(text) => setYoutubeProfile(text)}
@@ -444,7 +439,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Twitter</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your Twitter profile"
                 value={twitterProfile}
                 onChangeText={(text) => setTwitterProfile(text)}
@@ -462,7 +457,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Tiktok</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your Tiktok profile"
                 value={tiktokProfile}
                 onChangeText={(text) => setTiktokProfile(text)}
@@ -480,7 +475,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Linkedin</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your Linkedin profile"
                 value={linkedinProfile}
                 onChangeText={(text) => setLinkedinProfile(text)}
@@ -498,7 +493,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Title</Text>
 
               <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, { flex: 1 }]}
                 placeholder="Enter your title"
                 value={title}
                 maxLength={40}
@@ -530,7 +525,12 @@ const EditProfileScreen = ({ navigation }) => {
 
             <View style={styles.modalView}>
               <TouchableOpacity
-                style={styles.selection}
+                style={{
+                  ...styles.selection,
+                  display: textInputBottomMargin > 0 ? "none" : "flex",
+
+
+                }}
                 onPress={() => {
                   {
                     image ? handleUploadProfile() : null;
