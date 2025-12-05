@@ -210,6 +210,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
     // Optimistic UI update
     setMessagesToDisplay((prev) => [...(prev ?? []), sentMessage]);
     setMessage("");
+    setTextInputBottomMargin(0);
+    Keyboard.dismiss();
 
     // Retry function
     const sendWithRetry = async (msg, retries = 3, delay = 1000) => {
