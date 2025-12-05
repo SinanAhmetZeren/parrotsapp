@@ -20,30 +20,40 @@ export const SocialRenderComponentModal = ({
 }) => {
   useEffect(() => {
     setSocialItemCount(contactDataArray.length);
-  }, [setSocialItemCount]);
+    console.log("socials length: ", contactDataArray.length);
+  }, [setSocialItemCount, contactDataArray]);
+
   let contactDataArray = [];
-  if (userData.email !== null && userData.emailVisible === true) {
-    contactDataArray.push([userData.email, 0]);
+
+  if (userData.displayEmail && userData.displayEmail.trim() !== "" && userData.emailVisible === true) {
+    contactDataArray.push([userData.displayEmail, 0]);
   }
-  if (userData.instagram !== null) {
+
+  if (userData.instagram && userData.instagram.trim() !== "") {
     contactDataArray.push([userData.instagram, 1]);
   }
-  if (userData.youtube !== null) {
+
+  if (userData.youtube && userData.youtube.trim() !== "") {
     contactDataArray.push([userData.youtube, 2]);
   }
-  if (userData.facebook !== null) {
+
+  if (userData.facebook && userData.facebook.trim() !== "") {
     contactDataArray.push([userData.facebook, 3]);
   }
-  if (userData.phoneNumber !== null) {
+
+  if (userData.phoneNumber && userData.phoneNumber.trim() !== "") {
     contactDataArray.push([userData.phoneNumber, 4]);
   }
-  if (userData?.twitter !== null) {
+
+  if (userData.twitter && userData.twitter.trim() !== "") {
     contactDataArray.push([userData.twitter, 5]);
   }
-  if (userData?.linkedin !== null) {
+
+  if (userData.linkedin && userData.linkedin.trim() !== "") {
     contactDataArray.push([userData.linkedin, 6]);
   }
-  if (userData?.tiktok !== null) {
+
+  if (userData.tiktok && userData.tiktok.trim() !== "") {
     contactDataArray.push([userData.tiktok, 7]);
   }
 

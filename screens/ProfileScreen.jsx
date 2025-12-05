@@ -393,26 +393,13 @@ export default function ProfileScreen({ navigation }) {
                     handleTiktokPress={handleTiktokPress}
                     handleLinkedinPress={handleLinkedinPress}
                     setSocialItemCount={setSocialItemCount}
+                    setSocialModalVisible={setSocialModalVisible}
                   />
                 </View>
               </View>
 
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
-                {(socialItemCount > 5 && userData.emailVisible == true) ||
-                  (socialItemCount > 6 && userData.emailVisible == false) ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSocialModalVisible(true);
-                    }}
-                    style={styles.extendedAreaContainer}
-                  >
-                    <View style={styles.extendedArea}>
-                      <Text style={styles.moreButton}>see more</Text>
-                    </View>
-                  </TouchableOpacity>
-                ) : null}
-
                 <View style={styles.nameContainer}>
                   <Text style={styles.UserNameProfile}>
                     {userData.userName.length <= 30 ? (
@@ -513,6 +500,7 @@ export default function ProfileScreen({ navigation }) {
                     handleTiktokPress={handleTiktokPress}
                     handleLinkedinPress={handleLinkedinPress}
                     setSocialItemCount={setSocialItemCount}
+                    setSocialModalVisible={setSocialModalVisible}
                   />
                 </View>
               </TouchableOpacity>
@@ -579,7 +567,7 @@ const styles = StyleSheet.create({
   extendedAreaContainer: {
     alignSelf: "flex-end",
     position: "absolute",
-    top: vh(-2),
+    top: vh(),
     right: vw(0),
     borderRadius: vh(4),
     // backgroundColor: "pink",
