@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, use } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Button,
   StyleSheet,
   ScrollView,
+  Keyboard
 } from "react-native";
 import Checkbox from "expo-checkbox";
 
@@ -65,6 +66,7 @@ const EditProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [image2, setImage2] = useState(null);
   const [emailHidden, setEmailHidden] = useState(true);
+  const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -196,49 +198,30 @@ const EditProfileScreen = ({ navigation }) => {
     }
   }, [isSuccess, userData]);
 
-  /* const localToastConfig = {
-    success: (props) => (
-      <BaseToast
-        {...props}
-        style={{ borderLeftColor: "pink" }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
-        text1Style={{
-          fontSize: 15,
-          fontWeight: "400",
-        }}
-        text2Style={{
-          fontSize: 15,
-          fontWeight: "400",
-          color: "purple",
-        }}
-      />
-    ),
-    infoLarge: (props) => (
-      <BaseToast
-        {...props}
-        style={{
-          borderLeftColor: "pink",
-          height: "20rem",          // ← Increase height here
-          paddingVertical: 15, // ← More padding if needed
-        }}
-        contentContainerStyle={{
-          paddingHorizontal: 15,
-          justifyContent: "center",
-        }}
-        text1Style={{
-          fontSize: 15,
-          fontWeight: "500",
-        }}
-        text2Style={{
-          fontSize: 14,
-          color: "purple",
-          marginTop: 4,
-        }}
-      />
-    ),
-  };*/
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (event) => {
+        setTextInputBottomMargin(event.endCoordinates.height);
+        console.log("height: ", event.endCoordinates.height);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      (event) => {
+        setTextInputBottomMargin(0);
+        console.log("height: ", event.endCoordinates.height);
+      }
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
-
+  useEffect(() => {
+    console.log("TextInput bottom margin updated:", textInputBottomMargin);
+  }, [textInputBottomMargin]);
 
 
   if (isSuccess) {
@@ -250,7 +233,7 @@ const EditProfileScreen = ({ navigation }) => {
         <TokenExpiryGuard />
         {/* <Toast config={localToastConfig} /> */}
 
-        <ScrollView style={styles.scrollview}>
+        <ScrollView style={{ ...styles.scrollview, top: -textInputBottomMargin }}>
           <TouchableOpacity onPress={pickBackgroundImage}>
             <View style={styles.rectangularBox}>
               {image2 ? (
@@ -579,8 +562,6 @@ const styles = StyleSheet.create({
     padding: 6,
     zIndex: 20,
   },
-
-
   checkboxContainer: {
     justifyContent: "center",
     paddingLeft: vw(2),
@@ -588,7 +569,6 @@ const styles = StyleSheet.create({
   profileBackGround: {
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor: "rgb(183, 220, 255)",
     backgroundColor: "#fff6f0",
     top: vh(-6),
     borderRadius: vh(3),
@@ -622,6 +602,7 @@ const styles = StyleSheet.create({
   scrollview: {
     // backgroundColor: "rgb(183, 220, 255)",
     backgroundColor: "#fff6f0",
+
   },
   profileImage: {
     top: vh(-8),
