@@ -162,15 +162,16 @@ export const SocialRenderComponent = ({
         styles[`social_${firstFive.length}_${index}`] || styles.social_default;
 
       if (x[1] === 'placeholder') {
-        return <ShadowItem style={baseStyle} />;
+        return <ShadowItem style={baseStyle} key={`placeholder-${index}`} />;
       }
+
 
       switch (x[1]) {
         case 0:
           return (
             <EmailItem
               style={baseStyle}
-              key={index}
+              key={`email-${index}`}
               email={userData.displayEmail}
               handleEmailPress={handleEmailPress}
             />
@@ -179,7 +180,7 @@ export const SocialRenderComponent = ({
           return (
             <InstagramItem
               style={baseStyle}
-              key={index}
+              key={`instagram-${index}`}
               instagram={userData.instagram}
               handleInstagramPress={handleInstagramPress}
             />
@@ -188,7 +189,7 @@ export const SocialRenderComponent = ({
           return (
             <YoutubeItem
               style={baseStyle}
-              key={index}
+              key={`youtube-${index}`}
               youtube={userData.youtube}
               handleYoutubePress={handleYoutubePress}
             />
@@ -197,7 +198,7 @@ export const SocialRenderComponent = ({
           return (
             <FacebookItem
               style={baseStyle}
-              key={index}
+              key={`facebook-${index}`}
               facebook={userData.facebook}
               handleFacebookPress={handleFacebookPress}
             />
@@ -206,7 +207,7 @@ export const SocialRenderComponent = ({
           return (
             <PhoneItem
               style={baseStyle}
-              key={index}
+              key={`phone-${index}`}
               phoneNumber={userData.phoneNumber}
               handlePhonePress={handlePhonePress}
             />
@@ -215,7 +216,7 @@ export const SocialRenderComponent = ({
           return (
             <TwitterItem
               style={baseStyle}
-              key={index}
+              key={`twitter-${index}`}
               twitter={userData.twitter}
               handleTwitterPress={handleTwitterPress}
             />
@@ -224,7 +225,7 @@ export const SocialRenderComponent = ({
           return (
             <LinkedinItem
               style={baseStyle}
-              key={index}
+              key={`linkedin-${index}`}
               linkedin={userData.linkedin}
               handleLinkedinPress={handleLinkedinPress}
             />
@@ -233,7 +234,7 @@ export const SocialRenderComponent = ({
           return (
             <TiktokItem
               style={baseStyle}
-              key={index}
+              key={`tiktok-${index}`}
               tiktok={userData.tiktok}
               handleTiktokPress={handleTiktokPress}
             />
@@ -241,6 +242,8 @@ export const SocialRenderComponent = ({
         default:
           return null;
       }
+
+
     });
   };
 
@@ -405,7 +408,7 @@ const styles = StyleSheet.create({
     width: vh(4),
     borderRadius: vh(2),
     marginRight: vh(1),
-    opacity: 0.7,
+    opacity: 0.3,
   },
   social_Main_5: {
     flexDirection: "column",

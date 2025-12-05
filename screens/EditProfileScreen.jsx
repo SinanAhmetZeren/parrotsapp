@@ -30,6 +30,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 
 const EditProfileScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -195,6 +196,51 @@ const EditProfileScreen = ({ navigation }) => {
     }
   }, [isSuccess, userData]);
 
+  /* const localToastConfig = {
+    success: (props) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: "pink" }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 15,
+          fontWeight: "400",
+        }}
+        text2Style={{
+          fontSize: 15,
+          fontWeight: "400",
+          color: "purple",
+        }}
+      />
+    ),
+    infoLarge: (props) => (
+      <BaseToast
+        {...props}
+        style={{
+          borderLeftColor: "pink",
+          height: "20rem",          // ← Increase height here
+          paddingVertical: 15, // ← More padding if needed
+        }}
+        contentContainerStyle={{
+          paddingHorizontal: 15,
+          justifyContent: "center",
+        }}
+        text1Style={{
+          fontSize: 15,
+          fontWeight: "500",
+        }}
+        text2Style={{
+          fontSize: 14,
+          color: "purple",
+          marginTop: 4,
+        }}
+      />
+    ),
+  };*/
+
+
+
+
   if (isSuccess) {
     const profileImageUrl = `${userData.profileImageUrl}`;
     const backgroundImageUrl = `${userData.backgroundImageUrl}`;
@@ -202,6 +248,7 @@ const EditProfileScreen = ({ navigation }) => {
     return (
       <>
         <TokenExpiryGuard />
+        {/* <Toast config={localToastConfig} /> */}
 
         <ScrollView style={styles.scrollview}>
           <TouchableOpacity onPress={pickBackgroundImage}>
@@ -271,24 +318,41 @@ const EditProfileScreen = ({ navigation }) => {
               />
             </View>
 
-            <View style={styles.socialBox}>
-              <Fontisto
-                style={styles.icon}
-                name="email"
-                size={24}
-                color="black"
-              />
-              <Text style={styles.inputDescription}>Email</Text>
-              <TextInput
-                placeholder="Enter your email"
-                value={displayEmail}
-                onChangeText={(text) => setDisplayEmail(text)}
-                style={styles.textInput}
-                editable={true}
-              />
+            <View>
+              <View style={styles.socialBox}>
+                <Fontisto
+                  style={styles.icon}
+                  name="email"
+                  size={24}
+                  color="black"
+                />
+                <Text style={styles.inputDescription}>Email</Text>
+                <TextInput
+                  placeholder="Enter your email"
+                  value={displayEmail}
+                  onChangeText={(text) => setDisplayEmail(text)}
+                  style={styles.textInput}
+                  editable={true}
+                />
+              </View>
+
+              <TouchableOpacity
+                style={styles.infoIcon}
+                onPress={() => {
+                  Toast.show({
+                    type: "infoLarge",
+                    visibilityTime: 8000,
+                    topOffset: 90,
+                    text1: "Display Email",
+                    text2: "This email address will be publicly visible on your profile. It may differ from your login email and is optional to provide.",
+                  });
+                }}
+              >
+                <Feather name="info" size={20} color="#555" />
+              </TouchableOpacity>
             </View>
 
-            <View style={styles.socialBoxCheckbox}>
+            {/* <View style={styles.socialBoxCheckbox}>
               <Fontisto
                 style={styles.icon}
                 name="email"
@@ -303,7 +367,7 @@ const EditProfileScreen = ({ navigation }) => {
                   color={emailHidden ? "rgba(0, 119, 234,0.9)" : undefined}
                 />
               </View>
-            </View>
+            </View> */}
 
             {/* Phone Number */}
             <View style={styles.socialBox}>
@@ -508,6 +572,15 @@ const EditProfileScreen = ({ navigation }) => {
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
+  infoIcon: {
+    position: "absolute",
+    right: 10,
+    top: 10,
+    padding: 6,
+    zIndex: 20,
+  },
+
+
   checkboxContainer: {
     justifyContent: "center",
     paddingLeft: vw(2),

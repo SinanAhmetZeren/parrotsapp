@@ -112,6 +112,32 @@ const toastConfig = {
     />
   ),
 
+  infoLarge: (props) => (
+    <BaseToast
+      {...props}
+      style={{
+        borderLeftColor: "blue",
+        height: "30rem",
+        paddingVertical: 15,
+      }}
+      contentContainerStyle={{
+        paddingHorizontal: 15,
+        justifyContent: "center",
+      }}
+      text1Style={{
+        fontSize: 15,
+        fontWeight: "500",
+      }}
+      text2Style={{
+        fontSize: 14,
+        color: "purple",
+        marginTop: 4,
+      }}
+      text1NumberOfLines={3}
+      text2NumberOfLines={3}
+    />
+  ),
+
   error: (props) => (
     <ErrorToast
       {...props}

@@ -346,7 +346,8 @@ const VoyageDetailScreen = ({ navigation }) => {
                       onPress={() => {
                         if (
                           VoyageData.vehicleType !== 4 &&
-                          VoyageData.vehicleType !== 5
+                          VoyageData.vehicleType !== 5 &&
+                          VoyageData.vehicleType !== 10
                         ) {
                           goToVehiclePage(VoyageData.vehicle.id);
                         }
@@ -366,15 +367,24 @@ const VoyageDetailScreen = ({ navigation }) => {
                           color="rgba(10, 119, 234,1)"
                           style={[styles.icon, { paddingHorizontal: vh(1) }]}
                         />
-                      ) : (
-                        <Image
-                          source={{
-                            uri:
-                              VoyageData.vehicle.profileImageUrl,
-                          }}
-                          style={styles.profileImage}
-                        />
-                      )}
+                      ) :
+                        VoyageData.vehicleType === 10 ? (
+                          <FontAwesome5
+                            name="train"
+                            size={16}
+                            color="rgba(10, 119, 234,1)"
+                            style={[styles.icon, { paddingHorizontal: vh(1) }]}
+                          />
+                        ) :
+                          (
+                            <Image
+                              source={{
+                                uri:
+                                  VoyageData.vehicle.profileImageUrl,
+                              }}
+                              style={styles.profileImage}
+                            />
+                          )}
 
                       <Text style={styles.userName}>
                         {VoyageData.vehicle.name}
