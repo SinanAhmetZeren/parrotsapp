@@ -25,7 +25,7 @@ import {
 } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
-import { Entypo, Fontisto, Feather, FontAwesome5 } from "@expo/vector-icons";
+import { Entypo, Fontisto, Feather, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
@@ -223,7 +223,6 @@ const EditProfileScreen = ({ navigation }) => {
     console.log("TextInput bottom margin updated:", textInputBottomMargin);
   }, [textInputBottomMargin]);
 
-
   if (isSuccess) {
     const profileImageUrl = `${userData.profileImageUrl}`;
     const backgroundImageUrl = `${userData.backgroundImageUrl}`;
@@ -231,8 +230,6 @@ const EditProfileScreen = ({ navigation }) => {
     return (
       <>
         <TokenExpiryGuard />
-        {/* <Toast config={localToastConfig} /> */}
-
         <ScrollView style={{ ...styles.scrollview, top: -textInputBottomMargin }}>
           <TouchableOpacity onPress={pickBackgroundImage}>
             <View style={styles.rectangularBox}>
@@ -309,7 +306,29 @@ const EditProfileScreen = ({ navigation }) => {
                   size={24}
                   color="black"
                 />
-                <Text style={styles.inputDescription}>Email</Text>
+                <View style={styles.emailInfoWrapper}  >
+                  <Text style={styles.inputDescription}>Email</Text>
+                  <TouchableOpacity
+                    style={styles.infoIcon}
+                    onPress={() => {
+                      Toast.show({
+                        type: "infoLarge",
+                        visibilityTime: 8000,
+                        topOffset: 90,
+                        text1: "Display Email",
+                        text2: "This email address will be publicly visible on your profile. It may differ from your login email and is optional to provide.",
+                      });
+                    }}
+                  >
+
+                    {/* info icon */}
+                    <MaterialCommunityIcons name="information-slab-circle-outline" size={20} color="rgba(0, 119, 234,0.5)" />
+                  </TouchableOpacity>
+
+
+                </View>
+
+
                 <TextInput
                   placeholder="Enter your email"
                   value={displayEmail}
@@ -317,22 +336,12 @@ const EditProfileScreen = ({ navigation }) => {
                   style={styles.textInput}
                   editable={true}
                 />
+
+
+
               </View>
 
-              <TouchableOpacity
-                style={styles.infoIcon}
-                onPress={() => {
-                  Toast.show({
-                    type: "infoLarge",
-                    visibilityTime: 8000,
-                    topOffset: 90,
-                    text1: "Display Email",
-                    text2: "This email address will be publicly visible on your profile. It may differ from your login email and is optional to provide.",
-                  });
-                }}
-              >
-                <Feather name="info" size={20} color="#555" />
-              </TouchableOpacity>
+
             </View>
 
             {/* <View style={styles.socialBoxCheckbox}>
@@ -557,10 +566,13 @@ export default EditProfileScreen;
 const styles = StyleSheet.create({
   infoIcon: {
     position: "absolute",
-    right: 10,
-    top: 10,
-    padding: 6,
-    zIndex: 20,
+    right: vw(2)
+  },
+
+  emailInfoWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    position: "relative"
   },
   checkboxContainer: {
     justifyContent: "center",
