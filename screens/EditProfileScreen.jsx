@@ -523,13 +523,11 @@ const EditProfileScreen = ({ navigation }) => {
               />
             </View>
 
-            <View style={styles.modalView}>
+            <View style={styles.saveChangesButtonContainer}>
               <TouchableOpacity
                 style={{
                   ...styles.selection,
                   display: textInputBottomMargin > 0 ? "none" : "flex",
-
-
                 }}
                 onPress={() => {
                   {
@@ -590,31 +588,23 @@ const styles = StyleSheet.create({
     top: vh(-20),
   },
   selection: {
-    marginHorizontal: vh(0.5),
-    marginVertical: vh(0.5),
     paddingHorizontal: vh(2),
-    paddingVertical: vh(1),
+    paddingVertical: vh(.75),
     backgroundColor: "#15537d",
     borderRadius: vh(2.5),
+  },
+  saveChangesButtonContainer: {
+    bottom: vh(-2.5),
+    alignSelf: "center",
+    left: vw(4),
   },
   choiceText: {
     fontSize: 20,
     fontWeight: "700",
     color: "white",
   },
-  modalView: {
-    backgroundColor: "#2184c6",
-    borderRadius: vh(3),
-    borderWidth: 2,
-    borderColor: "#76bae8",
-    bottom: vh(-2.5),
-    alignSelf: "center",
-    left: vw(4),
-  },
   scrollview: {
-    // backgroundColor: "rgb(183, 220, 255)",
     backgroundColor: "#fff6f0",
-
   },
   profileImage: {
     top: vh(-8),
