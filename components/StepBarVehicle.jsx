@@ -42,23 +42,23 @@ const styles = StyleSheet.create({
   mainContainer: {
     flexDirection: "row",
     justifyContent: "space-evenly",
-    height: vh(7),
+    height: vh(5),
     backgroundColor: "white",
   },
   activeStep: {
-    backgroundColor: "#3c9dde",
-    borderRadius: vh(1),
+    backgroundColor: "rgba(0, 119, 234,1)",
+    borderRadius: vh(3),
   },
   activeStepText: {
     color: "white",
     fontWeight: "700",
   },
   inactiveStepText: {
-    color: "#3c9dde",
+    color: "rgba(0, 119, 234,1)",
     fontWeight: "700",
   },
   inactiveStep: {
-    borderRadius: vh(1),
+    borderRadius: vh(3),
     backgroundColor: "rgba(24,111,241,0.05)",
   },
   stepText: {
@@ -73,3 +73,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+

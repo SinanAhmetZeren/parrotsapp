@@ -427,6 +427,7 @@ const styles2 = StyleSheet.create({
     marginTop: vh(1),
     height: vh(4),
     justifyContent: "center",
+    marginBottom: vh(3),
   },
 
   InputName: {
