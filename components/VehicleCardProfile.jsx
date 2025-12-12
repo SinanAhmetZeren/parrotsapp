@@ -129,6 +129,17 @@ export default function VehicleCardProfile({
         />
       );
       break;
+    case 10:
+      icon = (
+        <Ionicons
+          name="train-outline"
+          size={16}
+          color="rgba(10, 119, 234,1)"
+          style={styles.icon}
+        />
+      );
+      break;
+
     default:
       icon = "help-circle";
       break;

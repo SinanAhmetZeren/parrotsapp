@@ -249,6 +249,8 @@ const CreateVoyageScreen = ({ navigation }) => {
       type: "image/jpeg",
       name: "profileImage.jpg",
     });
+
+    console.log("voyage image: ", voyageImage);
     setIsUploadingImage(true);
     try {
       const addedVoyageResponse = await addVoyageImage({
@@ -279,9 +281,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       allowsEditing: true,
       quality: 1,
     });
-
-    console.log("result ", result);
-
+    console.log("result-> ", result.assets[0].uri);
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
@@ -342,10 +342,10 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   if (isSuccess) {
-
     const dropdownData = [
-      { label: "Walk", value: 63 },
-      { label: "Run", value: 64 },
+      { label: "Walk", value: 1 },  // database id's, not type codes
+      { label: "Train", value: 2 },
+      { label: "Run", value: 3 },
     ].concat(
       userData.usersVehicles.map((vehicle) => ({
         label: vehicle.name,
