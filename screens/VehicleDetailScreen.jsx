@@ -213,6 +213,9 @@ const VehicleDetailScreen = () => {
       case 9:
         icon = <Ionicons name="airplane-outline" size={12} color="blue" />;
         break;
+      case 10:
+        icon = <Ionicons name="train-outline" size={12} color="blue" />;
+        break;
       default:
         icon = "help-circle";
         break;

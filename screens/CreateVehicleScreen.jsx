@@ -266,6 +266,7 @@ const CreateVehicleScreen = () => {
     "Bicycle",
     "TinyHouse",
     "Airplane",
+    // "Train",
   ];
 
   const dropdownData = VehicleTypes.map((type) => ({

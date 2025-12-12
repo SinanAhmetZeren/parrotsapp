@@ -164,6 +164,7 @@ export default function HomeScreen({ navigation }) {
       7: "bicycle",
       8: "home",
       9: "airplane",
+      10: "train",
     };
     */
 
@@ -178,6 +179,7 @@ export default function HomeScreen({ navigation }) {
     ["MaterialCommunityIcons", "bicycle", 24], // index 7
     ["MaterialCommunityIcons", "home", 24], // index 8
     ["MaterialCommunityIcons", "airplane", 24], // index 9
+    ["MaterialCommunityIcons", "train", 24], // index 10
   ];
 
   const iconLibraries = {
