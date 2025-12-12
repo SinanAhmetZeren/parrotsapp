@@ -71,8 +71,6 @@ export default function FavoritesScreen({ navigation }) {
         try {
           await refetchVehicles();
           await refetchVoyages();
-          console.log("voyagesData: ", VoyagesData.length);
-          console.log("vehiclesData: ", VehiclesData.length);
         } catch (error) {
           console.error("Error refetching messages data:", error);
         }
@@ -126,72 +124,15 @@ export default function FavoritesScreen({ navigation }) {
               {isLoadingVoyages || isLoadingVehicles ? (
                 <ActivityIndicator size="large" />
               ) : isSuccessVoyages && isSuccessVehicles ? (
-                /*     <>
-                       {VehiclesData ? (
-                         <>
-                           <View style={styles.mainBidsContainer}>
-                             <View style={styles.currentBidsAndSeeAll}>
-                               <Text style={styles.currentBidsTitle}>
-                                 Favorite Vehicles
-                               </Text>
-                             </View>
-                           </View>
-     
-                           <View style={styles.voyageListContainer}>
-                             <FavoriteVehicleList
-                               style={styles.voyageList}
-                               data={VehiclesData}
-                             />
-                           </View>
-                         </>
-                       ) : null}
-     
-                       {VoyagesData ? (
-                         <>
-                           <View style={styles.mainBidsContainer}>
-                             <View style={styles.currentBidsAndSeeAll}>
-                               <Text style={styles.currentBidsTitle}>
-                                 Favorite Voyages
-                               </Text>
-                             </View>
-                           </View>
-                           <View style={styles.voyageListContainer}>
-                             <FavoriteVoyageListVertical
-                               style={styles.voyageList}
-                               data={VoyagesData}
-                             />
-                           </View>
-                         </>
-                       ) : null}
-     
-                       {!(VoyagesData || VehiclesData) || VoyagesData.length === 0 || true ? (
-                         <View style={styles.mainBidsContainer2}>
-                           <View style={styles.currentBidsAndSeeAll2}>
-                             <Image
-                               source={require("../assets/ParrotsWhiteBg.png")}
-                               style={styles.logoImage}
-                             />
-     
-                             <Text style={styles.currentBidsTitle2}>
-                               No favorites yet...
-                             </Text>
-                           </View>
-                         </View>
-                       ) : null}
-                     </>*/
-
-                <>
-
-                  <View style={styles.mainBidsContainer}>
-                    <View style={styles.currentBidsAndSeeAll}>
-                      <Text style={styles.currentBidsTitle}>Favorite Vehicles</Text>
-                    </View>
-                  </View>
+                <View style={{ marginTop: vh(3) }}>
                   {/* Favorite Vehicles */}
-                  {VehiclesData?.length > 0 ? (
+                  {VehiclesData?.length > 0 && (
                     <>
-
-
+                      <View style={styles.mainBidsContainer}>
+                        <View style={styles.currentBidsAndSeeAll}>
+                          <Text style={styles.currentBidsTitle}>Favorite Vehicles</Text>
+                        </View>
+                      </View>
                       <View style={styles.voyageListContainer}>
                         <FavoriteVehicleList
                           style={styles.voyageList}
@@ -199,33 +140,17 @@ export default function FavoritesScreen({ navigation }) {
                         />
                       </View>
                     </>
-                  ) : (
-                    <View style={styles.mainBidsContainer2}>
-                      <View style={styles.currentBidsAndSeeAll2}>
-                        <Image
-                          source={require("../assets/ParrotsLogo.png")}
-                          style={styles.logoImage}
-                        />
-                        <Text style={styles.currentBidsTitle2}>
-                          No favorite vehicles yet...
-                        </Text>
-                      </View>
-                    </View>
-                  )
+                  )}
 
 
-                  }
-
-                  <View style={styles.mainBidsContainer}>
-                    <View style={styles.currentBidsAndSeeAll}>
-                      <Text style={styles.currentBidsTitle}>Favorite Voyages</Text>
-                    </View>
-                  </View>
                   {/* Favorite Voyages */}
-                  {VoyagesData?.length > 0 ? (
+                  {VoyagesData?.length > 0 && (
                     <>
-
-
+                      <View style={styles.mainBidsContainer}>
+                        <View style={styles.currentBidsAndSeeAll}>
+                          <Text style={styles.currentBidsTitle}>Favorite Voyages</Text>
+                        </View>
+                      </View>
                       <View style={styles.voyageListContainer}>
                         <FavoriteVoyageListVertical
                           style={styles.voyageList}
@@ -233,20 +158,25 @@ export default function FavoritesScreen({ navigation }) {
                         />
                       </View>
                     </>
-                  ) : (
+                  )
+                  }
+
+                  {/* No Favorites Message */}
+                  {(VoyagesData?.length == 0) && (VehiclesData?.length == 0) && (
                     <View style={styles.mainBidsContainer2}>
                       <View style={styles.currentBidsAndSeeAll2}>
                         <Image
-                          source={require("../assets/ParrotsLogo.png")}
-                          style={styles.logoImage}
+                          source={require("../assets/parrots-logo-mini.png")}
+                          style={styles.logoImageNoFavorites}
                         />
-                        <Text style={styles.currentBidsTitle2}>
-                          No favorite voyages yet...
+                        <Text style={styles.NoFavoritesText}>
+                          No favorites yet
                         </Text>
                       </View>
                     </View>
                   )}
-                </>
+
+                </View>
 
 
 
@@ -265,6 +195,12 @@ const styles = StyleSheet.create({
     width: vh(20),
     borderRadius: vh(10),
   },
+  logoImageNoFavorites: {
+    height: vh(15),
+    width: vh(15),
+    borderRadius: vh(10),
+    opacity: 0.5,
+  },
   currentBidsTitle: {
     fontSize: 26,
     fontWeight: "700",
@@ -280,16 +216,21 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderRadius: vw(5),
     padding: vh(5),
-    paddingTop: vh(1),
+    paddingTop: vh(20),
   },
   currentBidsAndSeeAll2: {
     marginTop: vh(2),
     padding: vw(5),
     alignItems: "center",
-    // backgroundColor: "red"
   },
   currentBidsTitle2: {
     fontSize: 16,
+    fontWeight: "700",
+    color: "#3c9dde88",
+    paddingTop: vh(0),
+  },
+  NoFavoritesText: {
+    fontSize: 20,
     fontWeight: "700",
     color: "#3c9dde88",
     paddingTop: vh(0),
@@ -300,10 +241,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     height: vh(90),
-    // backgroundColor: "pink",
-    // marginTop: vh(3),
   },
-
   voyageListContainer: {
     width: vw(98),
     overflow: "hidden",
