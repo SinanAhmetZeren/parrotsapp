@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     height: vh(95),
-    borderRadius: vh(4),
+    borderRadius: vh(0),
     // backgroundColor: "white",
     backgroundColor: "#fff6f0",
   },

@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     height: vh(90),
-    borderRadius: vh(4),
+    // borderRadius: vh(4),
     backgroundColor: "#fff6f0",
   },
   bioBox: {
