@@ -14,7 +14,6 @@ import {
   Image,
   RefreshControl,
 } from "react-native";
-import { Shadow } from "react-native-shadow-2";
 import MapView, { Marker } from "react-native-maps";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";

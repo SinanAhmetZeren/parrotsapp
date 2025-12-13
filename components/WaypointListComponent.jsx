@@ -16,13 +16,14 @@ export const WaypointListComponent = ({ waypoints }) => {
           pinColor = "#610101";
         }
 
+        console.log("waypoint id: ", waypoint.id);
+
         return (
           <WaypointComponent
-            key={waypoint.id}
-            description={waypoint.description}
+            index={index}
+            id={waypoint.id}
             latitude={waypoint.latitude}
             longitude={waypoint.longitude}
-            profileImage={waypoint.profileImage}
             title={waypoint.title}
             pinColor={pinColor}
           />
