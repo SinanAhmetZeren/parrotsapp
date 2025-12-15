@@ -253,7 +253,8 @@ export const CreateBidComponent = ({
             <TextInput
               style={styles2.messageInput}
               placeholder="Enter your message"
-              placeholderTextColor={parrotTextDarkBlue}
+              // placeholderTextColor={parrotTextDarkBlue}
+              placeholderTextColor={"white"}
               multiline
               value={message}
               onChangeText={(text) => setMessage(text)}
@@ -354,7 +355,8 @@ export const CreateBidComponent = ({
             <TextInput
               style={styles2.messageInput}
               placeholder="Enter your message"
-              placeholderTextColor={parrotTextDarkBlue}
+              // placeholderTextColor={parrotTextDarkBlue}
+              placeholderTextColor={"white"}
               multiline
               value={existingMessage}
               onChangeText={(text) => setExistingMessage(text)}
@@ -387,8 +389,9 @@ const styles2 = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-    backgroundColor: parrotTextDarkBlue,
-    borderRadius: vh(2),
+    // backgroundColor: parrotTextDarkBlue,
+    backgroundColor: parrotBlueSemiTransparent,
+    borderRadius: vh(3),
     height: vh(5),
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
@@ -397,8 +400,9 @@ const styles2 = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-    backgroundColor: parrotTextDarkBlue,
-    borderRadius: vh(2),
+    // backgroundColor: parrotTextDarkBlue,
+    backgroundColor: parrotBlueSemiTransparent,
+    borderRadius: vh(3),
     height: vh(5),
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
@@ -429,7 +433,6 @@ const styles2 = StyleSheet.create({
     justifyContent: "center",
     marginBottom: vh(3),
   },
-
   InputName: {
     fontSize: 16,
     color: parrotTextDarkBlue,
@@ -439,14 +442,13 @@ const styles2 = StyleSheet.create({
   },
   messageInput: {
     fontSize: 14,
-    // color: "#186ff1",
     color: parrotTextDarkBlue,
     backgroundColor: parrotBlueMediumTransparent,
     fontWeight: "bold",
     marginBottom: vh(2),
     padding: vh(1),
     borderRadius: vh(2),
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: parrotTextDarkBlue,
   },
   bidInput: {
@@ -454,9 +456,9 @@ const styles2 = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     backgroundColor: "white",
-    width: vw(25),
+    width: vw(15),
     textAlign: "center",
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: parrotTextDarkBlue,
     height: vh(5) - 1.5,
     backgroundColor: parrotBlueMediumTransparent,
@@ -488,9 +490,7 @@ const styles2 = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: vw(53),
     paddingHorizontal: vw(2),
-    // paddingVertical: vh(0.5),
     borderRadius: vh(2),
   },
 
@@ -524,12 +524,13 @@ const styles2 = StyleSheet.create({
   },
   buttonCount: {
     fontSize: 22,
-    borderColor: "#3498db",
+    // borderColor: "#3498db",
     borderRadius: 10,
     width: vh(6),
     textAlign: "center",
     fontWeight: "800",
     color: "white",
+    color: parrotTextDarkBlue,
   },
   count: {
     fontSize: 18,

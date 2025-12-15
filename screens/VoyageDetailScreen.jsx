@@ -584,6 +584,7 @@ const VoyageDetailScreen = ({ navigation }) => {
             <WaypointFlatListVoyageDetailsScreen
               focusMap={focusMap}
               addedWayPoints={waypoints}
+              voyageProfileImage={VoyageData.profileImage}
             />
           </View>
 

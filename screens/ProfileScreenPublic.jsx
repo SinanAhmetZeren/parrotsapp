@@ -421,13 +421,11 @@ const styles = StyleSheet.create({
     top: vh(0),
     right: vw(0),
     borderRadius: vh(4),
-    // backgroundColor: "pink",
     zIndex: 100,
   },
   extendedArea: {
     paddingHorizontal: vw(1),
     paddingVertical: vh(1),
-    // backgroundColor: "red",
   },
   moreButton: {
     fontSize: 14,
@@ -479,7 +477,7 @@ const styles = StyleSheet.create({
     width: vw(100),
   },
   scrollView: {
-    height: vh(90),
+    height: vh(100),
     // borderRadius: vh(4),
     backgroundColor: "#fff6f0",
   },
