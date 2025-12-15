@@ -34,7 +34,7 @@ export const WaypointComponent = ({
 
   const imageIndex = index % markerImages.length;
   const markerImage = markerImages[imageIndex];
-  const markerKey = `waypoint-${id}`;
+  const markerKey = `waypoint-${id}-${index}`;
 
   return (
     <>

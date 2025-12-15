@@ -16,7 +16,6 @@ export const WaypointListComponent = ({ waypoints }) => {
           pinColor = "#610101";
         }
 
-        console.log("waypoint id: ", waypoint.id);
 
         return (
           <WaypointComponent

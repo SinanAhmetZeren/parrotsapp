@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { parrotBlueMediumTransparent, parrotTextDarkBlue } from "../assets/color";
+import { parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotTextDarkBlue } from "../assets/color";
 
 const FilterCountModal = ({
   isVisible,
@@ -129,9 +129,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center",
-    backgroundColor: parrotTextDarkBlue,
     borderRadius: vh(20),
     height: vh(4.5),
+    backgroundColor: parrotBlueSemiTransparent,
+
   },
   rightFlatBorders: {
     borderTopRightRadius: 0,
@@ -149,7 +150,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor: "orange",
     width: vw(55),
   },
   bidInput: {
@@ -157,14 +157,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     backgroundColor: "white",
-    width: vw(32),
+    width: vw(22),
     textAlign: "center",
-    borderWidth: 1,
     borderColor: parrotTextDarkBlue,
     height: vh(4.5) - 1.5,
     backgroundColor: parrotBlueMediumTransparent,
-    lineHeight: 20,  // keep line height close to font size
-    paddingBottom: 6,   // fine tune
+    lineHeight: 20,
+    paddingBottom: 6,
 
   },
   innerContainer: {
@@ -185,9 +184,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: vw(60),
+    // width: vw(60),
     paddingHorizontal: vw(2),
     borderRadius: vh(2),
+    // backgroundColor: "red"
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -227,6 +227,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "800",
     color: "white",
+    color: parrotTextDarkBlue,
+
+
   },
 });
 

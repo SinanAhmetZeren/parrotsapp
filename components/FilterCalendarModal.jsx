@@ -148,12 +148,12 @@ const FilterCalendarModal = ({
                   <Text style={styles.buttonSave}>Ok</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={handlePrintDates}
                   style={styles.buttonSaveContainer}
                 >
                   <Text style={styles.buttonClose}>print dates</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             ) : (
               <>
@@ -164,12 +164,12 @@ const FilterCalendarModal = ({
                   <Text style={styles.buttonClose}>Close</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={handlePrintDates}
                   style={styles.buttonSaveContainer}
                 >
                   <Text style={styles.buttonClose}>print dates</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </>
 
             )}
