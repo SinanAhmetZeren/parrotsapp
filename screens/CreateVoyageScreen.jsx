@@ -83,20 +83,11 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [vacancy, setVacancy] = useState(getRandomNumberString(1, 100));
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [lastBidDate, setLastBidDate] = useState("11/11/1111");
+  const [lastBidDate, setLastBidDate] = useState("11/11/2111");
   const [minPrice, setMinPrice] = useState(getRandomNumberString(10, 100));
   const [maxPrice, setMaxPrice] = useState(getRandomNumberString(101, 500));
+  const [createdVoyageImage, setCreatedVoyageImage] = useState(null);
 
-
-  // const [name, setName] = useState("Aaa");
-  // const [brief, setBrief] = useState("Aaa");
-  // const [description, setDescription] = useState("Aaa");
-  // const [vacancy, setVacancy] = useState("10");
-  // const [startDate, setStartDate] = useState("");
-  // const [endDate, setEndDate] = useState("");
-  // const [lastBidDate, setLastBidDate] = useState("11/11/1111");
-  // const [minPrice, setMinPrice] = useState("11");
-  // const [maxPrice, setMaxPrice] = useState("11");
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
   const [vehicleId, setVehicleId] = useState("");
@@ -214,6 +205,7 @@ const CreateVoyageScreen = ({ navigation }) => {
         vehicleId,
       });
       const createdVoyageId = response.data.data.id;
+      setCreatedVoyageImage(image);
       setVoyageId(createdVoyageId);
       setName("");
       setBrief("");
@@ -272,9 +264,9 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   const pickProfileImage = async () => {
-    console.log("pickProfileImage called");
-    console.log("voyageimage", voyageImage);
-    console.log("image", image);
+    // console.log("pickProfileImage called");
+    // console.log("voyageimage", voyageImage);
+    // console.log("image", image);
 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -731,7 +723,7 @@ const CreateVoyageScreen = ({ navigation }) => {
               {voyageImage ? (
                 <View style={styles.addVoyageImageButton}>
                   <TouchableOpacity onPress={() => handleUploadImage()}>
-                    <AntDesign name="clouduploado" size={24} color="white" />
+                    <AntDesign name="cloud-upload" size={24} color="white" />
                   </TouchableOpacity>
                 </View>
               ) : null}
@@ -746,6 +738,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 voyageId={voyageId}
                 setCurrentStep={setCurrentStep}
                 imagesAdded={addedVoyageImages.length}
+                createdVoyageImage={createdVoyageImage}
               />
             </View>
 

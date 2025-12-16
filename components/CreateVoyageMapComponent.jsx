@@ -15,7 +15,12 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
 
 import * as ImagePicker from "expo-image-picker";
-import { useAddWaypointMutation, useConfirmVoyageMutation, useDeleteWaypointMutation } from "../slices/VoyageSlice";
+import {
+  useAddWaypointMutation,
+  useAddWaypointNoImageMutation,
+  useConfirmVoyageMutation,
+  useDeleteWaypointMutation
+} from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
 import { parrotBlueMediumTransparent, parrotBlueSemiTransparent } from "../assets/color";
@@ -24,18 +29,18 @@ const CreateVoyageMapComponent = ({
   voyageId,
   setCurrentStep,
   imagesAdded,
+  createdVoyageImage
 }) => {
   const [addedWayPoints, setAddedWayPoints] = useState([]);
   const [markerCoords, setMarkerCoords] = useState(null);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [title, setTitle] = useState("Amsterdamda gezinti");
-  const [description, setDescription] = useState(
-    "Amsterdam'da geziyoruz, ot içiyoruz.  Ot kafelerde takiliyoruz"
-  );
+  const [description, setDescription] = useState("Amsterdam'da geziyoruz, ot içiyoruz.  Ot kafelerde takiliyoruz");
   const [imageUri, setImageUri] = useState(null);
   const [order, setOrder] = useState(1);
   const [addWaypoint] = useAddWaypointMutation();
+  const [addWaypointNoImage] = useAddWaypointNoImageMutation();
   const [deleteWaypoint] = useDeleteWaypointMutation();
   const [confirmVoyage] = useConfirmVoyageMutation();
   const navigation = useNavigation();
@@ -72,56 +77,74 @@ const CreateVoyageMapComponent = ({
     );
   };
 
-  const handleAddWaypoint = async () => {
-    if (!imageUri) {
-      return;
-    }
 
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: imageUri,
-      type: "image/jpeg",
-      name: "profileImage.jpg",
-    });
+
+  const handleAddWaypoint = async () => {
 
     setIsUploadingWaypointImage(true);
-    try {
-      const result = await addWaypoint({
-        formData,
-        latitude,
-        longitude,
-        title,
-        description,
-        voyageId,
-        order,
+    const formData = new FormData();
+
+    if (imageUri) {
+      formData.append("imageFile", {
+        uri: imageUri,
+        type: "image/jpeg",
+        name: "profileImage.jpg",
       });
-      const waypointId = result.data.data;
-      console.log("waypoint id: ", waypointId);
-      setAddedWayPoints((prevWaypoints) => [
-        ...prevWaypoints,
-        {
-          imageUri,
+    }
+
+    try {
+      const result = imageUri ?
+        await addWaypoint({
+          formData,
           latitude,
           longitude,
           title,
           description,
           voyageId,
           order,
-          waypointId
+        })
+        :
+        await addWaypointNoImage({
+          latitude,
+          longitude,
+          title,
+          description,
+          voyageId,
+          order,
+        })
+
+      const waypointId = result.data.data;
+      setAddedWayPoints((prevWaypoints) => [
+        ...prevWaypoints,
+        {
+          imageUri: imageUri ?? createdVoyageImage,
+          latitude,
+          longitude,
+          title,
+          description,
+          voyageId,
+          order,
+          waypointId,
+          hasImage: !!imageUri
         },
       ]);
-      setOrder(order + 1);
+      // setOrder(order + 1);
+      setOrder(prev => prev + 1);
       setImageUri(null);
       setLatitude("");
       setLongitude("");
       setTitle("");
       setDescription("")
-
     } catch (error) {
       console.error("Error uploading image", error);
     }
-    setIsUploadingWaypointImage(false);
+    finally {
+      setIsUploadingWaypointImage(false);
+    }
+
   };
+
+
 
   const handleDeleteWaypoint = async (waypointId) => {
     console.log("delete waypoint id:", waypointId);
@@ -250,11 +273,7 @@ const CreateVoyageMapComponent = ({
 
   return (
     <View>
-
-
       <View style={styles.mapWrapper} >
-
-
         <View style={styles.mapAndEmojisContainer}>
           <View style={styles.mapContainer}>
             <MapView
@@ -377,7 +396,7 @@ const CreateVoyageMapComponent = ({
 
 
         <View style={{ marginTop: vh(.5), marginBottom: vh(.05) }}>
-          {latitude && imageUri ? (
+          {(latitude && longitude && description && title) ? (
             <TouchableOpacity
               style={styles.addWaypointButtonContainer}
               onPress={() => {

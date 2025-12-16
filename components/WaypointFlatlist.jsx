@@ -25,6 +25,7 @@ import {
 } from "../assets/color";
 import { useDeleteWaypointMutation } from "../slices/VoyageSlice";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Shadow } from "react-native-shadow-2";
 
 export const WaypointFlatList = ({ addedWayPoints, handleDeleteWaypoint, voyageProfileImage }) => {
 
@@ -32,7 +33,6 @@ export const WaypointFlatList = ({ addedWayPoints, handleDeleteWaypoint, voyageP
     <FlatList
       horizontal
       data={addedWayPoints}
-      // keyExtractor={(item) => item.order}
       keyExtractor={(item, index) => `${item.order}-${index}`}
       renderItem={({ item, index }) => {
         return (
@@ -44,6 +44,7 @@ export const WaypointFlatList = ({ addedWayPoints, handleDeleteWaypoint, voyageP
               waypointId={item.waypointId}
               handleDeleteWaypoint={handleDeleteWaypoint}
               voyageProfileImage={voyageProfileImage}
+              hasImage={item.hasImage}
             />
           </View>
         );
@@ -60,23 +61,33 @@ export const WaypointFlatListVoyageDetailsScreen = ({
 
   return (
     <FlatList
+      style={{ padding: vh(0.52) }}
       horizontal
       data={addedWayPoints}
       keyExtractor={(item, index) => `${item.order}-${index}`}
       renderItem={({ item, index }) => {
         let newUri = item.profileImage;
         return (
-          <View key={index}>
-            <WaypointItemVoyageDetailScreen
-              title={item.title}
-              description={item.description}
-              imageUri={newUri}
-              latitude={item.latitude}
-              longitude={item.longitude}
-              focusMap={focusMap}
-              voyageProfileImage={voyageProfileImage}
-            />
-          </View>
+          <Shadow
+            distance={8}
+            offset={[0, 0]}
+            startColor="rgba(0,0,0,0.05)"
+            finalColor="rgba(0,0,0,0.10)"
+            radius={11}
+            style={{ marginRight: vh(1.5) }}
+          >
+            <View key={index} style={{ borderRadius: vh(3), }}>
+              <WaypointItemVoyageDetailScreen
+                title={item.title}
+                description={item.description}
+                imageUri={newUri}
+                latitude={item.latitude}
+                longitude={item.longitude}
+                focusMap={focusMap}
+                voyageProfileImage={voyageProfileImage}
+              />
+            </View>
+          </Shadow>
         );
       }}
     />
@@ -103,34 +114,22 @@ export const WaypointItemVoyageDetailScreen = ({
   };
 
   const hasImage = typeof imageUri === 'string' && imageUri.trim().length > 0;
-  console.log("hello: ", voyageProfileImage);
-  console.log("has image: ", hasImage);
+
 
   return (
     <View
       style={{
-        marginLeft: vh(1),
-        marginTop: vh(1),
-        borderColor: parrotBlueMediumTransparent,
+        marginVertical: vh(0.5),
         borderRadius: vh(3),
-        borderWidth: 2,
       }}
     >
-      <TouchableOpacity onPress={() => handleFocusMap()}>
+      <TouchableOpacity onPress={() => handleFocusMap()} >
         <View style={styles.waypointCard}>
           <View>
-            {/* <Image
-              source={{ uri: imageUri }}
-              style={styles.waypointCardImage}
-            //style={styles.waypointCardDefaultImage}
-            //source={require("../assets/parrots-logo-mini.png")}
-            /> */}
-
             <Image
               source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
               style={hasImage ? styles.waypointCardImage : { ...styles.waypointCardImage, opacity: 0.25 }}
             />
-
           </View>
 
           <View style={styles.titleAndDescription}>
@@ -189,7 +188,7 @@ export const WaypointItemVoyageDetailScreen = ({
   );
 };
 
-export const WaypointItem = ({ title, description, imageUri, waypointId, handleDeleteWaypoint, voyageProfileImage }) => {
+export const WaypointItem = ({ title, description, imageUri, waypointId, handleDeleteWaypoint, hasImage }) => {
   const [modalVisibleX, setModalVisibleX] = useState(false);
 
   return (
@@ -200,7 +199,7 @@ export const WaypointItem = ({ title, description, imageUri, waypointId, handleD
           setModalVisibleX(true);
         }}
       >
-        <Image source={{ uri: imageUri }} style={styles.voyageImageInModalX} />
+        <Image source={{ uri: imageUri }} style={{ ...styles.voyageImageInModalX, opacity: hasImage ? 1 : 0.25 }} />
         <ScrollView style={styles.scrollViewX}>
           <Text numberOfLines={1} style={styles.waypointTitleInModal2}>
             {title}
@@ -390,7 +389,7 @@ const styles = StyleSheet.create({
   titleAndDescription: {
     paddingVertical: vh(0.5),
     paddingHorizontal: vh(0.7),
-    backgroundColor: "lightblue",
+    // backgroundColor: "lightblue",
   },
   waypointCard: {
     // width: vw(80),
@@ -398,6 +397,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: vh(3),
     backgroundColor: "rgba(0, 119, 234,0.05)",
+    backgroundColor: "white",
     overflow: "hidden",
   },
   profileImage: {

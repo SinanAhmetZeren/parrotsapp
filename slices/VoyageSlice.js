@@ -179,6 +179,34 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    addWaypointNoImage: builder.mutation({
+      query: (data) => {
+        const {
+          latitude,
+          longitude,
+          title,
+          description,
+          voyageId,
+          order,
+        } = data;
+
+        const queryParams = new URLSearchParams({
+          Latitude: latitude,
+          Longitude: longitude,
+          Title: title,
+          Description: description,
+          VoyageId: voyageId,
+          Order: order,
+        });
+
+        const url = `/api/Waypoint/AddWaypointNoImage?${queryParams}`;
+
+        return {
+          url,
+          method: "POST",
+        };
+      },
+    }),
     deleteWaypoint: builder.mutation({
       query: (waypointId) => {
         return {
@@ -296,6 +324,7 @@ export const {
   useCreateVoyageMutation,
   useAddVoyageImageMutation,
   useAddWaypointMutation,
+  useAddWaypointNoImageMutation,
   useDeleteVoyageImageMutation,
   useCheckAndDeleteVoyageMutation,
   useGetVoyagesByUserByIdQuery,

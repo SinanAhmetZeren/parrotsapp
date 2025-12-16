@@ -34,10 +34,11 @@ export const WaypointComponent = ({
 
   const imageIndex = index % markerImages.length;
   const markerImage = markerImages[imageIndex];
-  const markerKey = `waypoint-${id}-${index}`;
+  const viewKey = `waypoint-${id}-${index}-view`;
+  const markerKey = `waypoint-${id}-${index}-marker`;
 
   return (
-    <>
+    <View key={viewKey}>
       <Marker
         key={markerKey}
         coordinate={coords}
@@ -48,7 +49,7 @@ export const WaypointComponent = ({
           <Text style={styles.calloutText}>{title}</Text>
         </Callout> */}
       </Marker>
-    </>
+    </View>
   );
 };
 
