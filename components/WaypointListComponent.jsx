@@ -19,6 +19,7 @@ export const WaypointListComponent = ({ waypoints }) => {
 
         return (
           <WaypointComponent
+            key={waypoint.id}
             index={index}
             id={waypoint.id}
             latitude={waypoint.latitude}
