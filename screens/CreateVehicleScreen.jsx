@@ -30,6 +30,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
 
 const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -88,7 +89,7 @@ const CreateVehicleScreen = () => {
       setImage("");
       setVoyageImage(null);
       setAddedVehicleImages([]);
-      setCurrentStep(1);
+      // setCurrentStep(1);  //// RESET
       setIsUploadingImage(false);
       setIsCreatingVehicle(false);
     }, [])
@@ -332,7 +333,7 @@ const CreateVehicleScreen = () => {
                     <TextInput
                       style={styles.textInput5}
                       placeholder="Enter Vehicle Name"
-                      placeholderTextColor="#c3c3c3"
+                      placeholderTextColor={parrotPlaceholderGrey}
                       value={name}
                       maxLength={50}
                       onChangeText={(text) => setName(text)}
@@ -364,7 +365,7 @@ const CreateVehicleScreen = () => {
                       style={styles.textInput5}
                       multiline
                       placeholder="Describe Your Vehicle"
-                      placeholderTextColor="#c3c3c3"
+                      placeholderTextColor={parrotPlaceholderGrey}
                       numberOfLines={10}
                       value={description}
                       onChangeText={(text) => setDescription(text)}
@@ -381,7 +382,7 @@ const CreateVehicleScreen = () => {
                     <TextInput
                       style={styles.textInput5}
                       placeholder="Enter Vehicle Capacity"
-                      placeholderTextColor="#c3c3c3"
+                      placeholderTextColor={parrotPlaceholderGrey}
                       value={capacity}
                       onChangeText={(text) => setCapacity(text)}
                       keyboardType="numeric"
@@ -390,7 +391,7 @@ const CreateVehicleScreen = () => {
                 </View>
                 {/* /// VACANCY /// */}
                 {/* Save Button */}
-                <View style={styles2.modalViewLogin}>
+                <View style={styles.modalViewLogin}>
                   <View style={styles.loginContainer}>
                     <TouchableOpacity
                       onPress={() => handleCreateVehicle()}
@@ -491,7 +492,7 @@ const CreateVehicleScreen = () => {
                               ? { uri: item.voyageImage }
                               : require("../assets/placeholder.png")
                           }
-                          style={styles2.voyageImage1}
+                          style={styles.voyageImage1}
                         />
 
                         {item.addedVoyageImageId && (
@@ -513,7 +514,7 @@ const CreateVehicleScreen = () => {
             {voyageImage ? (
               <View style={styles.addVoyageImageButton}>
                 <TouchableOpacity onPress={() => handleUploadImage()}>
-                  <AntDesign name="clouduploado" size={24} color="white" />
+                  <AntDesign name="cloud-upload" size={24} color="white" />
                 </TouchableOpacity>
               </View>
             ) : null}
@@ -557,43 +558,17 @@ const CreateVehicleScreen = () => {
 
 export default CreateVehicleScreen;
 
-const styles2 = StyleSheet.create({
-  modalView: {
-    backgroundColor: "#2184c6",
-    borderRadius: vh(3),
-    borderWidth: 2,
-    borderColor: "#76bae8",
-    alignSelf: "center",
-    marginTop: vh(0.8),
-  },
-  modalViewLogin: {
-    borderColor: "#76bae8",
-    alignSelf: "center",
-    marginTop: vh(0.8),
-  },
-  selection: {
-    marginHorizontal: vh(0.5),
-    marginVertical: vh(0.5),
-    paddingHorizontal: vh(2),
-    paddingVertical: vh(1),
-    backgroundColor: "#15537d",
-    borderRadius: vh(2.5),
-  },
-  choiceText: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "white",
-  },
-
+const styles = StyleSheet.create({
   voyageImage1: {
     height: vh(13),
     width: vh(13),
     marginRight: vh(1),
     borderRadius: vh(1.5),
   },
-});
-
-const styles = StyleSheet.create({
+  modalViewLogin: {
+    alignSelf: "center",
+    marginTop: vh(0.8),
+  },
   completeContainer: {
     alignSelf: "center",
     marginTop: vh(2),
@@ -614,7 +589,7 @@ const styles = StyleSheet.create({
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
-    backgroundColor: "rgb(24,111,241)",
+    backgroundColor: parrotBlue,
     borderRadius: vh(4),
     width: vw(50),
   },
@@ -622,7 +597,7 @@ const styles = StyleSheet.create({
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
-    backgroundColor: "rgba(24,111,241,.3)",
+    backgroundColor: parrotBlueSemiTransparent,
     borderRadius: vh(4),
     width: vw(50),
   },
@@ -630,7 +605,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: vh(1),
     borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234,1)",
+    backgroundColor: parrotBlue,
     color: "white",
     fontWeight: "600",
     marginBottom: vh(2),
@@ -656,45 +631,47 @@ const styles = StyleSheet.create({
   },
   latLngNameRow: {
     flexDirection: "row",
-    backgroundColor: "#f1f2f3",
+    backgroundColor: parrotCream,
     borderRadius: vh(3),
     marginBottom: vh(0.5),
   },
   latLngLabel: {
     justifyContent: "center",
-    backgroundColor: "#f4f5f6",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderRadius: vh(3),
-    borderColor: "#babbbc",
+    borderColor: parrotPlaceholderGrey,
+
   },
   latorLngtxt: {
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
     fontWeight: "500",
     width: vw(25),
     textAlign: "center",
   },
   latorLng: {
     flexDirection: "row",
-    backgroundColor: "#fafbfc",
+    backgroundColor: "rgba(255,255,255,0.7)",
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderTopRightRadius: vh(3),
     borderBottomRightRadius: vh(3),
-    borderColor: "#babbbc",
+    borderColor: parrotPlaceholderGrey,
     width: vw(64),
   },
   textInput5: {
     fontSize: 13,
     paddingLeft: vw(1),
     width: "90%",
+    color: parrotInputTextColor,
   },
   selectedChoice: {
     marginTop: vh(1),
     alignItems: "center",
   },
   selectedText: {
-    color: "rgba(24,111,241,0.5)",
+    color: parrotBlue,
     fontSize: 18,
     fontWeight: "700",
     textAlign: "center",
@@ -721,7 +698,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   addVoyageImageButton: {
-    backgroundColor: "rgb(0, 119, 234)",
+    backgroundColor: parrotBlue,
     position: "absolute",
     right: vw(22),
     top: vh(22),
@@ -757,7 +734,7 @@ const styles = StyleSheet.create({
     width: vh(20),
     height: vh(20),
     borderRadius: vh(3),
-    borderColor: "rgba(190, 119, 234,0.6)",
+    // borderColor: "rgba(190, 119, 234,0.6)",
   },
   backgroundImage: {
     width: vw(100),
@@ -775,35 +752,9 @@ const styles = StyleSheet.create({
     width: vh(20),
     height: vh(20),
     borderRadius: vh(3),
-    borderColor: "rgba(0, 119, 234,0.1)",
-    // borderWidth: 5,
   },
   formContainer: {
     padding: vh(2),
-  },
-
-  icon: {
-    padding: 3,
-    margin: 2,
-    marginLeft: 8,
-    borderRadius: 20,
-    color: "rgba(0, 119, 234,0.9)",
-    fontSize: 18,
-    alignSelf: "center",
-  },
-  voyageImage: {
-    color: "rgba(0, 119, 234,0.9)",
-    fontSize: 13,
-    backgroundColor: "white",
-    padding: vh(1),
-    borderRadius: vh(1),
-  },
-  voyageDates: {
-    color: "#6b7f9d",
-    fontWeight: "500",
-    fontSize: 13,
-    marginVertical: vh(1),
-    alignSelf: "flex-start",
   },
   textInput: {
     lineHeight: 21,
@@ -813,74 +764,3 @@ const styles = StyleSheet.create({
   },
 });
 
-
-const handleCreateVehicle2 = async () => {
-  if (!image) {
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("imageFile", {
-    uri: image,
-    type: "image/jpeg",
-    name: "profileImage.jpg",
-  });
-
-  setIsCreatingVehicle(true);
-  try {
-    const response = await createVehicle({
-      formData,
-      name,
-      description,
-      userId,
-      vehicleType,
-      capacity,
-    });
-    const createdVehicleId = response.data.data.id;
-
-    setVehicleId(createdVehicleId);
-    setDescription("");
-    setCapacity("");
-    setVehicleType("");
-    setImage("");
-    setVoyageImage("");
-    setAddedVehicleImages([]);
-    setCurrentStep(2);
-  } catch (error) {
-    console.error("Error uploading image", error);
-  }
-
-  setIsCreatingVehicle(false);
-};
-
-const handleUploadImage2 = async () => {
-  if (!voyageImage) {
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("imageFile", {
-    uri: voyageImage,
-    type: "image/jpeg",
-    name: "profileImage.jpg",
-  });
-
-  setIsUploadingImage(true);
-  try {
-    const addedVehicleImageResponse = await addVehicleImage({
-      formData,
-      vehicleId,
-    });
-
-    const addedVoyageImageId = addedVehicleImageResponse.data.imagePath;
-    const newItem = {
-      addedVoyageImageId,
-      voyageImage,
-    };
-    setAddedVehicleImages((prevImages) => [...prevImages, newItem]);
-    setVoyageImage(null);
-  } catch (error) {
-    console.error("Error uploading image", error);
-  }
-  setIsUploadingImage(false);
-};

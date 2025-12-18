@@ -69,14 +69,14 @@ export const WaypointFlatListVoyageDetailsScreen = ({
         let newUri = item.profileImage;
         return (
           <Shadow
-            distance={8}
+            distance={2}
             offset={[0, 0]}
-            startColor="rgba(0,0,0,0.05)"
-            finalColor="rgba(0,0,0,0.10)"
+            startColor="rgba(0,0,0,0.03)"
+            finalColor="rgba(0,0,0,0.08)"
             radius={11}
-            style={{ marginRight: vh(1.5) }}
+            style={{ marginRight: vh(.5) }}
           >
-            <View key={index} style={{ borderRadius: vh(3), }}>
+            <View key={index} style={{ borderRadius: vh(3), marginHorizontal: vh(0.3) }}>
               <WaypointItemVoyageDetailScreen
                 title={item.title}
                 description={item.description}

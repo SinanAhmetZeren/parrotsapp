@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { vh, vw } from "react-native-expo-viewport-units";
+import { parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
 
 const DropdownComponentType = ({ data, setVehicleType, selected }) => {
   const [isFocus, setIsFocus] = useState(false);
@@ -12,11 +13,11 @@ const DropdownComponentType = ({ data, setVehicleType, selected }) => {
     <View style={styles.container}>
       <Dropdown
         style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
+        placeholderStyle={{ ...styles.placeholderStyle, color: parrotPlaceholderGrey }}
+        selectedTextStyle={{ ...styles.selectedTextStyle, color: parrotInputTextColor }}
+        inputSearchStyle={{ ...styles.inputSearchStyle, color: parrotInputTextColor }}
         iconStyle={styles.iconStyle}
-        itemTextStyle={styles.itemTextStyle}
+        itemTextStyle={{ ...styles.itemTextStyle, color: parrotInputTextColor }}
         data={data}
         value={selected}
         maxHeight={300}
@@ -38,17 +39,6 @@ const DropdownComponentType = ({ data, setVehicleType, selected }) => {
 export default DropdownComponentType;
 
 const styles = StyleSheet.create({
-  latorLng: {
-    flexDirection: "row",
-    backgroundColor: "#fafbfc",
-    marginVertical: vh(0.3),
-    padding: vh(0.4),
-    borderTopRightRadius: vh(3),
-    borderBottomRightRadius: vh(3),
-    borderColor: "#babbbc",
-    width: vw(64),
-  },
-
   dropdown: {
     width: vw(62),
     height: vh(5),
@@ -61,34 +51,19 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
   },
-  label: {
-    position: "absolute",
-    left: 22,
-    zIndex: 0,
-    paddingHorizontal: 8,
-    fontSize: 12,
-
-    color: "#6b7f9d",
-    fontWeight: "500",
-    width: vw(25),
-    textAlign: "center",
-  },
   placeholderStyle: {
     fontSize: 12,
-    color: "#c3c3c3",
     fontWeight: "500",
     width: vw(25),
     left: vw(-1),
   },
   selectedTextStyle: {
     fontSize: 12,
-    color: "#6b7f9d",
     fontWeight: "500",
     width: vw(25),
   },
   itemTextStyle: {
     fontSize: 12,
-    color: "#6b7f9d",
     fontWeight: "500",
     width: vw(25),
   },
@@ -100,7 +75,6 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 30,
     fontSize: 12,
-    color: "#6b7f9d",
     fontWeight: "500",
     width: vw(25),
     textAlign: "center",

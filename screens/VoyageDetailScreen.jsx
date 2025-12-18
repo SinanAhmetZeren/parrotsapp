@@ -354,27 +354,18 @@ const VoyageDetailScreen = ({ navigation }) => {
                       }}
                     >
                       {VoyageData.vehicleType === 4 ? (
-                        <FontAwesome5
-                          name="walking"
-                          size={16}
-                          color="rgba(10, 119, 234,1)"
-                          style={[styles.icon, { paddingHorizontal: vh(1) }]}
-                        />
+                        <Image
+                          source={require("../assets/walk1.jpeg")}
+                          style={styles.profileImage} />
                       ) : VoyageData.vehicleType === 5 ? (
-                        <FontAwesome5
-                          name="running"
-                          size={16}
-                          color="rgba(10, 119, 234,1)"
-                          style={[styles.icon, { paddingHorizontal: vh(1) }]}
-                        />
+                        <Image
+                          source={require("../assets/run1.jpeg")}
+                          style={styles.profileImage} />
                       ) :
                         VoyageData.vehicleType === 10 ? (
-                          <FontAwesome5
-                            name="train"
-                            size={16}
-                            color="rgba(10, 119, 234,1)"
-                            style={[styles.icon, { paddingHorizontal: vh(1) }]}
-                          />
+                          <Image
+                            source={require("../assets/train.jpeg")}
+                            style={styles.profileImage} />
                         ) :
                           (
                             <Image

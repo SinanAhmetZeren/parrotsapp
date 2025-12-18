@@ -28,7 +28,7 @@ import {
   HubConnectionBuilder,
   HubConnectionState
 } from "@microsoft/signalr";
-import { parrotBlue, parrotTextDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
 
 
 export const ConversationDetailScreen = ({ navigation }) => {
@@ -255,8 +255,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#9Bd35A", "#689F38"]} // Android
-            tintColor="#689F38" // iOS
+            colors={[parrotPistachioGreen, parrotBananaLeafGreen]} // Android
+            tintColor={parrotBananaLeafGreen} // iOS
           />
         }
       >
@@ -369,7 +369,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
                     style={styles.textinputStyle}
                     multiline
                     placeholder="Write a message"
-                    placeholderTextColor="#a3b4c5"
+                    placeholderTextColor={parrotPlaceholderGrey}
                     value={message}
                     numberOfLines={1}
                     maxLength={500}
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
 
   },
   textinputStyle: {
-    backgroundColor: "#f9f5f1",
+    backgroundColor: parrotCream,
     width: vw(75),
     maxHeight: vh(12),
     minHeight: vh(4.5),
@@ -439,7 +439,8 @@ const styles = StyleSheet.create({
   },
   nameStyle: {
     fontWeight: "800",
-    color: "#3c9dde",
+    // color: "#3c9dde",
+    color: parrotLightBlue,
     fontSize: 22,
     marginTop: vh(1),
   },
@@ -468,14 +469,14 @@ const styles = StyleSheet.create({
   buttonClear: {
     color: "white",
     textAlign: "center",
-    backgroundColor: "#3c9dde",
+    backgroundColor: parrotLightBlue,
     padding: vh(1),
     borderRadius: vh(3),
   },
   buttonClearDisabled: {
     color: "white",
     textAlign: "center",
-    backgroundColor: "rgba(60,157,222,.3)",
+    backgroundColor: parrotBlueSemiTransparent,
     padding: vh(1),
     borderRadius: vh(3),
   },
