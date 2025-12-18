@@ -39,7 +39,7 @@ import { API_URL } from "@env";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBlueMediumTransparent, parrotBlueSemiTransparent } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
 
 const CreateVoyageScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -397,7 +397,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter voyage name"
-                        placeholderTextColor="#c3c3c3"
+                        placeholderTextColor={parrotPlaceholderGrey}
                         value={name}
                         maxLength={50}
                         onChangeText={(text) => setName(text)}
@@ -415,7 +415,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter voyage brief"
-                        placeholderTextColor="#c3c3c3"
+                        placeholderTextColor={parrotPlaceholderGrey}
                         value={brief}
                         multiline
                         numberOfLines={5}
@@ -436,7 +436,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                         style={styles.textInput5}
                         multiline
                         placeholder="Enter voyage description"
-                        placeholderTextColor="#c3c3c3"
+                        placeholderTextColor={parrotPlaceholderGrey}
                         numberOfLines={10}
                         value={description}
                         onChangeText={(text) => setDescription(text)}
@@ -454,7 +454,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter voyage vacancy"
-                        placeholderTextColor="#c3c3c3"
+                        placeholderTextColor={parrotPlaceholderGrey}
                         value={vacancy}
                         onChangeText={(text) => setVacancy(text)}
                         keyboardType="numeric"
@@ -522,7 +522,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                         onChangeText={handleDateChange}
                         keyboardType="numeric"
                         placeholder="MM/DD/YYYY"
-                        placeholderTextColor="#c3c3c3"
+                        placeholderTextColor={parrotPlaceholderGrey}
                         maxLength={10}
                       />
                     </View>
@@ -539,7 +539,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                         style={styles.textInput5}
                         maxLength={20}
                         placeholder="Enter Min Price"
-                        placeholderTextColor="#c3c3c3"
+                        placeholderTextColor={parrotPlaceholderGrey}
                         value={minPrice}
                         onChangeText={(text) => setMinPrice(text)}
                         keyboardType="numeric"
@@ -558,7 +558,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                         style={styles.textInput5}
                         maxLength={20}
                         placeholder="Enter Max Price"
-                        placeholderTextColor="#c3c3c3"
+                        placeholderTextColor={parrotPlaceholderGrey}
                         value={maxPrice}
                         onChangeText={(text) => setMaxPrice(text)}
                         keyboardType="numeric"
@@ -780,7 +780,7 @@ const styles = StyleSheet.create({
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
-    backgroundColor: "rgb(24,111,241)",
+    backgroundColor: parrotBlue,
     borderRadius: vh(4),
     width: vw(50),
   },
@@ -788,7 +788,7 @@ const styles = StyleSheet.create({
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
-    backgroundColor: "rgba(24,111,241,.3)",
+    backgroundColor: parrotBlueSemiTransparent,
     borderRadius: vh(4),
     width: vw(50),
   },
@@ -823,44 +823,40 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
   },
   checkboxText: {
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
     fontWeight: "500",
     paddingRight: vw(2),
   },
   auctionFixedPrice: {
-    backgroundColor: "#f1f2f3",
+    backgroundColor: parrotCream,
     borderRadius: vh(3),
   },
   latLngNameRow: {
     flexDirection: "row",
-    backgroundColor: "#f1f2f3",
+    backgroundColor: parrotCream,
     borderRadius: vh(3),
     marginBottom: vh(0.5),
   },
   latLngLabel: {
     justifyContent: "center",
-    backgroundColor: "#f4f5f6",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderRadius: vh(3),
-    borderColor: "#babbbc",
   },
   latorLngtxt: {
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
     fontWeight: "500",
     width: vw(25),
     textAlign: "center",
   },
   latorLng: {
     flexDirection: "row",
-    backgroundColor: "#fafbfc",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.3),
     padding: vh(0.4),
-    // borderRadius: vh(3),
     borderTopRightRadius: vh(3),
     borderBottomRightRadius: vh(3),
-    // borderWidth: 1,
-    borderColor: "#babbbc",
     width: vw(64),
   },
   textInput5: {
@@ -877,7 +873,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedText: {
-    color: "rgba(24,111,241,1)",
+    color: parrotBlue,
     fontSize: 18,
     fontWeight: "700",
     textAlign: "center",
@@ -908,7 +904,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   addVoyageImageButton: {
-    backgroundColor: "rgb(0, 119, 234)",
+    backgroundColor: parrotBlue,
     position: "absolute",
     right: vw(22),
     top: vh(22),
@@ -925,13 +921,12 @@ const styles = StyleSheet.create({
     color: "white",
   },
   calendarSelected: {
-    backgroundColor: "rgba(42,200,152,0.15)",
+    backgroundColor: parrotGreenMediumTransparent,
   },
   calendarEndStart: {
-    backgroundColor: "rgba(12,200,152,0.9)",
+    backgroundColor: parrotGreen,
     color: "white",
   },
-
   scrollview: {
     height: vh(140),
     marginBottom: vh(5),
@@ -961,24 +956,20 @@ const styles = StyleSheet.create({
     width: vh(20),
     height: vh(20),
     borderRadius: vh(3),
-    borderColor: "rgba(190, 119, 234,0.6)",
+
   },
   profileImage2: {
-    // marginLeft: vw(3),
-    // marginVertical: vh(1),
     marginBottom: vh(2),
     width: vh(20),
     height: vh(20),
     borderRadius: vh(3),
-    borderColor: "rgba(0, 119, 234,0.1)",
-    // borderWidth: 5,
   },
   mainCheckboxContainer: {
     paddingHorizontal: vh(1),
     flexDirection: "row",
     justifyContent: "space-around",
     marginTop: vh(0.3),
-    backgroundColor: "#f1f2f3",
+    backgroundColor: parrotCream,
     borderRadius: vh(3),
   },
   checkboxContainer: {
@@ -990,7 +981,7 @@ const styles = StyleSheet.create({
   },
   calendarContainer: {
     borderRadius: vh(3),
-    backgroundColor: "#f1f2f3",
+    backgroundColor: parrotCream,
     marginBottom: vh(1),
   },
   formContainer: {
@@ -1015,12 +1006,12 @@ const styles = StyleSheet.create({
     margin: 2,
     marginLeft: 8,
     borderRadius: 20,
-    color: "rgba(0, 119, 234,0.9)",
+    color: parrotBlue,
     fontSize: 18,
     alignSelf: "center",
   },
   voyageImage: {
-    color: "rgba(0, 119, 234,0.9)",
+    color: parrotBlue,
     fontSize: 13,
     backgroundColor: "white",
     padding: vh(1),
@@ -1031,18 +1022,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   voyageDates: {
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
     fontWeight: "500",
     fontSize: 13,
     marginVertical: vh(1),
     alignSelf: "flex-start",
   },
 
-  textInput: {
-    lineHeight: 21,
-    marginVertical: 1,
-    fontSize: 14,
-    padding: vw(1),
-    backgroundColor: "green",
-  },
+
 });
