@@ -32,6 +32,7 @@ import { useDispatch } from "react-redux";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
+import { parrotBlue, parrotCream } from "../assets/color";
 
 const EditProfileScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -579,7 +580,8 @@ const styles = StyleSheet.create({
   profileBackGround: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff6f0",
+    // backgroundColor: "#fff6f0",
+    backgroundColor: parrotCream,
     top: vh(-6),
     borderRadius: vh(3),
   },
@@ -590,7 +592,7 @@ const styles = StyleSheet.create({
   selection: {
     paddingHorizontal: vh(2),
     paddingVertical: vh(.75),
-    backgroundColor: "#15537d",
+    backgroundColor: parrotBlue,
     borderRadius: vh(2.5),
   },
   saveChangesButtonContainer: {
@@ -604,7 +606,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   scrollview: {
-    backgroundColor: "#fff6f0",
+    backgroundColor: parrotCream,
   },
   profileImage: {
     top: vh(-8),
@@ -612,13 +614,12 @@ const styles = StyleSheet.create({
     width: vh(22),
     height: vh(22),
     borderRadius: vh(20),
-    borderColor: "rgba(190, 119, 234,0.6)",
   },
   recycle: {
-    color: "purple",
+    color: parrotBlue,
   },
   recycleBackground: {
-    color: "purple",
+    color: parrotBlue,
   },
   recycleBox: {
     top: vh(-14),
@@ -630,7 +631,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: vh(6),
-    borderColor: "rgba(190, 119, 234,0.6)",
   },
   recycleBoxBG: {
     top: vh(-6),
@@ -642,7 +642,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: vh(6),
-    borderColor: "rgba(190, 119, 234,0.6)",
   },
 
   refetch: {
@@ -665,12 +664,12 @@ const styles = StyleSheet.create({
     margin: 2,
     marginLeft: 8,
     borderRadius: 20,
-    color: "rgba(0, 119, 234,0.9)",
+    color: parrotBlue,
     fontSize: 18,
     alignSelf: "center",
   },
   inputDescription: {
-    color: "rgba(0, 119, 234,0.9)",
+    color: parrotBlue,
     fontSize: 13,
     alignSelf: "center",
     width: vw(17),
@@ -694,14 +693,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
   },
   socialBoxCheckbox: {
     flexDirection: "row",
     backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
     paddingVertical: vh(0.4),
   },
   socialBoxBio: {
@@ -709,7 +706,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     marginTop: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
     width: vw(90),
   },
 });
