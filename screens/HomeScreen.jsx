@@ -41,6 +41,13 @@ import parrotMarker4 from "../assets/parrotMarkers/parrotMarker4.png";
 import parrotMarker5 from "../assets/parrotMarkers/parrotMarker5.png";
 import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import {
+  applyFilterAppliedBackgroundColor, applyFilterAppliedBorderColor, applyFilterAppliedColor,
+  applyFilterChangedBackgroundColor, applyFilterChangedBorderColor, applyFilterChangedColor,
+  applyFilterInitialBackgroundColor, applyFilterInitialBorderColor, applyFilterInitialColor,
+  parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
+  parrotPlaceholderGrey
+} from "../assets/color";
 
 export default function HomeScreen({ navigation }) {
 
@@ -186,7 +193,7 @@ export default function HomeScreen({ navigation }) {
     FontAwesome6,
   };
 
-  function VehicleIcon({ selectedVehicleType, color = "#c3c3c3", style }) {
+  function VehicleIcon({ selectedVehicleType, color = parrotDarkCream, style }) {
     const [library, iconName, iconSize] =
       selectedVehicleType !== null
         ? vehicleIcons[selectedVehicleType]
@@ -458,9 +465,7 @@ export default function HomeScreen({ navigation }) {
     };
 
     return (
-      <View
-      //style={{ backgroundColor: "pink", padding: vh(.1) }}
-      >
+      <View>
         <TokenExpiryGuard />
         <ScrollView
           style={styles.scrollview}
@@ -468,8 +473,9 @@ export default function HomeScreen({ navigation }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#9Bd35A", "#689F38"]} // Android
-              tintColor="#689F38" // iOS
+              colors={[parrotPistachioGreen, parrotBananaLeafGreen]} // Android
+              tintColor={parrotBananaLeafGreen} // iOS
+
             />
           }
         >
@@ -537,47 +543,25 @@ export default function HomeScreen({ navigation }) {
                     <MaterialCommunityIcons
                       style={[
                         styles.icon,
-                        // isCountFiltered ? styles.filtered : null,
                         count !== 1 ? styles.filtered : null,
                       ]}
                       name={count == 1 ? "human-handsdown" : "human-greeting"}//"human-handsup"}
                       size={24}
-                      color="#c3c3c3"
+                      color={parrotDarkCream}
                     />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleCalendarModal}>
                     <Ionicons
                       style={[
                         styles.icon,
-                        // isDatesFiltered  ? styles.filtered : null,
                         startDate !== null && endDate !== null ? styles.filtered : null,
                       ]}
                       name="calendar-outline"
                       size={24}
-                      color="#c3c3c3"
+                      color={parrotDarkCream}
                     />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleVehicleModal}>
-                    {/* <MaterialCommunityIcons
-                      style={[
-                        styles.icon,
-                        isVehicleFiltered ? styles.filtered : null,
-                      ]}
-                      name={isVehicleFiltered ? "car-side" : "car-back"}
-                      size={24}
-                      color="#c3c3c3"
-                    /> */}
-                    {/* <MaterialCommunityIcons
-                      style={[
-                        styles.icon,
-                        //isVehicleFiltered ? styles.filtered : null
-                        selectedVehicleType !== null ? styles.filtered : null
-                      ]}
-                      name={selectedVehicleType !== null ? vehicleIcons[selectedVehicleType][1] : "car"}
-                      size={24}
-                      color="#c3c3c3"
-                    /> */}
-
                     <VehicleIcon
                       selectedVehicleType={selectedVehicleType}
                       style={[
@@ -585,9 +569,6 @@ export default function HomeScreen({ navigation }) {
                         selectedVehicleType !== null ? styles.filtered : null
                       ]}
                     />
-
-
-
                   </TouchableOpacity>
                 </View>
 
@@ -651,7 +632,7 @@ export default function HomeScreen({ navigation }) {
                   return (
                     <Marker
                       key={item.id}
-                      pinColor={"#2ac898"}
+                      pinColor={parrotGreen}
                       coordinate={{
                         latitude: item.waypoints[0]?.latitude,
                         longitude: item.waypoints[0]?.longitude,
@@ -758,21 +739,21 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     overflow: "hidden",
     borderRadius: 20,
-    backgroundColor: "white ",
+    backgroundColor: "white",
   },
 
   currentBidsTitle3: {
     top: vh(-3),
     fontSize: 17,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotBlue,
     textAlign: "center",
   },
   currentBidsTitle2: {
     top: vh(-3),
     fontSize: 17,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotBlue,
     textAlign: "center",
   },
   logoImage: {
@@ -785,7 +766,7 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     alignSelf: "center",
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     width: vw(30),
     borderRadius: vh(4),
     padding: vw(1),
@@ -822,19 +803,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: vh(20),
     borderRadius: vh(2),
-    borderColor: "rgba(10, 119, 234,0.9)",
-  },
-
-  closeButtonInModal: {
-    alignSelf: "center",
-    marginRight: vw(10),
-    backgroundColor: "#f2fafa",
-    borderRadius: vw(5),
-    borderColor: "#93c9ed",
-    padding: vw(1),
-    paddingHorizontal: vw(3),
-    marginTop: vh(1),
-    marginBottom: vh(15),
   },
   applyFilter: {
     fontSize: 14,
@@ -845,43 +813,31 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.7),
   },
   applyFilterInitial: {
-    // backgroundColor: "white",
-    backgroundColor: "#c3c3c311",
-    // color: "#81e6c755",
-    color: "#c3c3c388",
+    backgroundColor: applyFilterInitialBackgroundColor,
+    color: applyFilterInitialColor,
     borderWidth: 2,
-    // borderColor: "#81e6c722",
-    borderColor: "#c3c3c333",
+    borderColor: applyFilterInitialBorderColor,
   },
   applyFilterApplied: {
-    color: "#2ac898",
-    backgroundColor: "rgba(42, 200, 152, 0.12)",
+    color: applyFilterAppliedColor,
+    backgroundColor: applyFilterAppliedBackgroundColor,
     borderWidth: 2,
-    borderColor: "#2ac89833",
+    borderColor: applyFilterAppliedBorderColor,
   },
   applyFilterChanged: {
-    color: "white",
-    backgroundColor: "#2ac898bb",
+    color: applyFilterChangedColor,
+    backgroundColor: applyFilterChangedBackgroundColor,
     borderWidth: 2,
-    borderColor: "#2ac89833",
+    borderColor: applyFilterChangedBorderColor,
   },
-  /*
-  applyFilterInitial: {
-    color: "#81e6c7ff",
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
-    borderWidth: 2,
-    borderColor: "white",
-  },
-  */
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotBlue
   },
   mainBidsContainer: {
     borderRadius: vw(5),
     marginHorizontal: vw(4),
-    borderColor: "#93c9ed",
   },
   currentBidsAndSeeAll: {
     marginTop: vh(2),
@@ -899,32 +855,31 @@ const styles = StyleSheet.create({
     marginTop: 0,
     paddingBottom: vh(2),
   },
-
-
   map: {
     width: "100%",
     height: "100%",
   },
   welcome: {
     fontSize: 18,
-    color: "rgba(10, 119, 234,0.55)",
+    color: parrotBlue,
     fontWeight: "900",
   },
-
   usernameLarge: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#2ac898",
+    color: parrotGreen,
   },
   usernameMedium: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#2ac898",
+    color: parrotGreen,
+
   },
   usernameSmall: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#2ac898",
+    color: parrotGreen,
+
   },
   welcomebox: {
     width: vw(50),
@@ -953,14 +908,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "grey",
   },
-  seeall: {
-    fontWeight: "600",
-    color: "#0077ea",
-    marginRight: 6,
-  },
   filtered: {
-    color: "#0077ea",
+    color: parrotBlue,
     backgroundColor: "rgba(0, 119, 234,0.06)",
-    borderRadius: 15,
+    backgroundColor: parrotBlueMediumTransparent,
+    borderRadius: vh(5),
   },
 });

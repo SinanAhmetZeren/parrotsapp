@@ -17,4 +17,17 @@ export const parrotRed = "#CB0404";
 export const parrotRedTransparent = "#CB040411";
 export const parrotYellow = "#FFB800";
 export const parrotCream = "#f9f5f1";
+export const parrotDarkCream = "#c3c3c3";
 export const parrotInputTextColor = "#6b7f9d";
+export const parrotTransparentWhite = "rgba(255,255,255,0.7)"
+
+
+export const applyFilterInitialBackgroundColor = "#c3c3c311";
+export const applyFilterInitialColor = "#c3c3c388";
+export const applyFilterInitialBorderColor = "#c3c3c333";
+export const applyFilterAppliedColor = "#2ac898";
+export const applyFilterAppliedBackgroundColor = "rgba(42, 200, 152, 0.12)";
+export const applyFilterAppliedBorderColor = "#2ac89833";
+export const applyFilterChangedColor = "white";
+export const applyFilterChangedBackgroundColor = "#2ac898bb";
+export const applyFilterChangedBorderColor = "#2ac89833";

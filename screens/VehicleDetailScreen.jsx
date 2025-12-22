@@ -49,7 +49,7 @@ import { parrotTextDarkBlue } from "../assets/color";
 const VehicleDetailScreen = () => {
   const route = useRoute();
   const { vehicleId } = route.params;
-
+  console.log("vehicle id: ", vehicleId);
   const {
     data: VehicleData,
     isSuccess: isSuccessVehicles,
@@ -240,9 +240,18 @@ const VehicleDetailScreen = () => {
               <TouchableOpacity
                 style={styles.editProfileBox}
                 onPress={() => {
-                  navigation.navigate("EditVehicleScreen", {
-                    currentVehicleId: vehicleId,
+                  // navigation.navigate("EditVehicleScreen", {
+                  //   currentVehicleId: vehicleId,
+                  // });
+
+                  navigation.navigate("Create", {
+                    screen: "EditVehicleScreen",
+                    params: {
+                      currentVehicleId: vehicleId,
+                    },
                   });
+
+
                 }}
                 activeOpacity={0.8}
               >

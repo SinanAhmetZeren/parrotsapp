@@ -20,6 +20,7 @@ import { useGetFavoriteVoyagesByUserIdQuery } from "../slices/VoyageSlice";
 import { useGetFavoriteVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useSelector } from "react-redux";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { parrotBananaLeafGreen, parrotBlue, parrotPistachioGreen } from "../assets/color";
 
 export default function FavoritesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -96,8 +97,8 @@ export default function FavoritesScreen({ navigation }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#9Bd35A", "#689F38"]} // Android
-              tintColor="#689F38" // iOS
+              colors={[parrotPistachioGreen, parrotBananaLeafGreen]} // Android
+              tintColor={parrotBananaLeafGreen} // iOS
             />
           }
         >
@@ -178,8 +179,6 @@ export default function FavoritesScreen({ navigation }) {
 
                 </View>
 
-
-
               ) : null}
             </View>
           </ScrollView>
@@ -204,7 +203,7 @@ const styles = StyleSheet.create({
   currentBidsTitle: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotBlue,
     paddingLeft: vw(5),
   },
   currentBidsAndSeeAll: {
@@ -212,8 +211,6 @@ const styles = StyleSheet.create({
     paddingRight: vw(10),
   },
   mainBidsContainer2: {
-    backgroundColor: "white",
-    backgroundColor: "transparent",
     borderRadius: vw(5),
     padding: vh(5),
     paddingTop: vh(20),
@@ -226,18 +223,17 @@ const styles = StyleSheet.create({
   currentBidsTitle2: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#3c9dde88",
+    color: parrotBlue,
     paddingTop: vh(0),
   },
   NoFavoritesText: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#3c9dde88",
+    color: parrotBlue,
     paddingTop: vh(0),
   },
   mainBidsContainer: {
     borderRadius: vw(5),
-    borderColor: "#93c9ed",
   },
   scrollView: {
     height: vh(90),
@@ -250,9 +246,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: vh(3),
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#9f9fff",
-  },
+
 });
