@@ -33,6 +33,7 @@ import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { parrotBlue, parrotCream } from "../assets/color";
+import { htmlToText } from "html-to-text";
 
 const EditProfileScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -180,6 +181,10 @@ const EditProfileScreen = ({ navigation }) => {
     }
   };
 
+
+  const toPlainText = (html) =>
+    htmlToText(html ?? '', { wordwrap: false });
+
   useEffect(() => {
     if (isSuccess && userData) {
       setProfileImage(userData.profileImageUrl);
@@ -193,8 +198,8 @@ const EditProfileScreen = ({ navigation }) => {
       setPhoneNumber(userData.phoneNumber);
       setFacebookProfile(userData.facebook);
       setUsername(userData.userName);
-      setTitle(userData.title);
-      setBio(userData.bio);
+      setTitle(toPlainText(userData.title));
+      setBio(toPlainText(userData.bio));
       setEmailHidden(!userData.emailVisible);
     }
   }, [isSuccess, userData]);

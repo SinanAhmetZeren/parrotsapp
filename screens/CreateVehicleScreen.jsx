@@ -30,7 +30,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotInputTextColor, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 
 const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -652,7 +652,7 @@ const styles = StyleSheet.create({
   },
   latorLng: {
     flexDirection: "row",
-    backgroundColor: "rgba(255,255,255,0.7)",
+    backgroundColor: parrotTransparentWhite,
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderTopRightRadius: vh(3),

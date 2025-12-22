@@ -34,11 +34,14 @@ import { useNavigation } from "@react-navigation/native";
 import { Entypo } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen, parrotPlaceholderGrey, parrotRed, parrotTransparentWhite } from "../assets/color";
+import { htmlToText } from "html-to-text";
 
 const EditVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
   const route = useRoute();
   const { currentVehicleId } = route.params;
+
   // const currentVehicleId = 1;
   const {
     data: vehicleData,
@@ -90,6 +93,10 @@ const EditVehicleScreen = () => {
     Train: "Train",
   };
 
+
+  const toPlainText = (html) =>
+    htmlToText(html ?? '', { wordwrap: false });
+
   useEffect(() => {
     if (vehicleData) {
       const vehicleTypeArray = Object.keys(VehicleTypes);
@@ -97,7 +104,8 @@ const EditVehicleScreen = () => {
 
       setVehicleType(vehicleTypeFromHook);
       setName(vehicleData.name);
-      setDescription(vehicleData.description);
+      setDescription(toPlainText(vehicleData.description))
+      // setDescription(vehicleData.description);
       setCapacity(vehicleData.capacity.toString());
       setImage(
         vehicleData.profileImageUrl
@@ -267,7 +275,7 @@ const EditVehicleScreen = () => {
         <StepBarVehicle currentStep={currentStep} />
         {currentStep == 1 ? (
           <ScrollView style={styles.scrollview}>
-            <View style={styles.overlay}>
+            <View >
               <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={pickProfileImage}>
                   <View style={styles2.recycleBoxBG}>
@@ -304,7 +312,7 @@ const EditVehicleScreen = () => {
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter voyage name"
-                        placeholderStyle={styles.placeholderStyle}
+                        placeholderTextColor={parrotPlaceholderGrey}
                         value={name}
                         onChangeText={(text) => setName(text)}
                       />
@@ -337,7 +345,7 @@ const EditVehicleScreen = () => {
                         style={styles.textInput5}
                         multiline
                         placeholder="Enter voyage description"
-                        placeholderStyle={styles.placeholderStyle}
+                        placeholderTextColor={parrotPlaceholderGrey}
                         numberOfLines={10}
                         value={description}
                         onChangeText={(text) => setDescription(text)}
@@ -355,7 +363,7 @@ const EditVehicleScreen = () => {
                       <TextInput
                         style={styles.textInput5}
                         placeholder="Enter vehicle capacity"
-                        placeholderStyle={styles.placeholderStyle}
+                        placeholderTextColor={parrotPlaceholderGrey}
                         value={capacity}
                         onChangeText={(text) => setCapacity(text)}
                         keyboardType="numeric"
@@ -366,29 +374,33 @@ const EditVehicleScreen = () => {
 
                   {/* Save Button */}
                   <View style={styles2.buttonContainer}>
-                    <View style={styles2.modalView}>
+
+                    <View  >
                       <TouchableOpacity
-                        style={styles2.selection}
+                        style={styles.selection3}
                         onPress={() => {
                           handlePatchVehicle();
                           handleUpdateVehicleProfileImage();
                           setCurrentStep(2);
                         }}
                       >
-                        <Text style={styles2.choiceText}>Save Changes</Text>
+                        <Text style={styles.choiceText3}>Save Changes</Text>
                       </TouchableOpacity>
                     </View>
 
-                    <View style={styles2.modalViewRed}>
+
+                    <View  >
                       <TouchableOpacity
-                        style={styles2.selectionRed}
+                        style={styles.selectionRed3}
                         onPress={() => {
                           handleOpenDeleteVehicleModal();
                         }}
                       >
-                        <Text style={styles2.choiceText}>Delete Vehicle</Text>
+                        <Text style={styles.choiceText3}>Delete Vehicle</Text>
                       </TouchableOpacity>
                     </View>
+
+
                   </View>
                 </View>
               </View>
@@ -398,7 +410,7 @@ const EditVehicleScreen = () => {
 
         {currentStep === 2 ? (
           <ScrollView style={styles.scrollview}>
-            <View style={styles.overlay}>
+            <View  >
               <View style={styles.selectedChoice}>
                 <Text style={styles.selectedText}>Add Vehicle Images</Text>
               </View>
@@ -476,7 +488,7 @@ const EditVehicleScreen = () => {
               {voyageImage ? (
                 <View style={styles.addVoyageImageButton}>
                   <TouchableOpacity onPress={() => handleUploadImage()}>
-                    <AntDesign name="clouduploado" size={24} color="white" />
+                    <AntDesign name="cloud-upload" size={24} color="white" />
                   </TouchableOpacity>
                 </View>
               ) : null}
@@ -548,30 +560,8 @@ const EditVehicleScreen = () => {
 export default EditVehicleScreen;
 
 const styles2 = StyleSheet.create({
-  placeholderStyle: {
-    fontSize: 12,
-    color: "#c3c3c3",
-    fontWeight: "500",
-    width: vw(25),
-    left: vw(-1),
-  },
-  recycle: {
-    color: "purple",
-  },
   recycleBackground: {
     color: "purple",
-  },
-  recycleBox: {
-    left: vw(4),
-    textAlign: "center",
-    width: vw(12),
-    height: vw(12),
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: vh(6),
-    borderColor: "rgba(190, 119, 234,0.6)",
-    // borderWidth: 2,
   },
   recycleBoxBG: {
     zIndex: 100,
@@ -585,11 +575,8 @@ const styles2 = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     borderRadius: vh(6),
-    borderColor: "rgba(190, 119, 234,0.6)",
-    borderWidth: 2,
   },
   modalView2: {
-    backgroundColor: "rgba(255, 255, 0,.31)",
     height: vh(20),
     marginHorizontal: vw(10),
     borderRadius: vh(5),
@@ -598,41 +585,30 @@ const styles2 = StyleSheet.create({
   },
   modalViewRed2: {
     borderRadius: vh(3),
-    borderWidth: 2,
-    borderColor: "orange",
     width: vw(60),
   },
-
   modalViewRed3: {
-    backgroundColor: "green",
     borderRadius: vh(3),
-    borderWidth: 2,
-    borderColor: "lightgreen",
     width: vw(60),
   },
   buttonContainer: {
     flexDirection: "row",
     marginTop: vh(2),
+    justifyContent: "center",
+    columnGap: vw(2),
   },
   choiceText: {
     fontSize: 20,
     fontWeight: "700",
     color: "white",
   },
-  selection: {
-    marginHorizontal: vh(0.5),
-    marginVertical: vh(0.5),
-    paddingHorizontal: vh(2),
-    paddingVertical: vh(1),
-    backgroundColor: "#15537d",
-    borderRadius: vh(2.5),
-  },
+
   selectionRed: {
     marginHorizontal: vh(0.5),
     marginVertical: vh(0.5),
     paddingHorizontal: vh(2),
     paddingVertical: vh(1),
-    backgroundColor: "tomato",
+    backgroundColor: parrotRed,
     borderRadius: vh(2.5),
   },
   selectionGreen: {
@@ -640,21 +616,8 @@ const styles2 = StyleSheet.create({
     marginVertical: vh(0.5),
     paddingHorizontal: vh(2),
     paddingVertical: vh(1),
-    backgroundColor: "yellowgreen",
+    backgroundColor: parrotGreen,
     borderRadius: vh(2.5),
-  },
-  modalView: {
-    backgroundColor: "#2184c6",
-    borderRadius: vh(3),
-    borderWidth: 2,
-    borderColor: "#76bae8",
-    width: vw(45),
-  },
-  modalViewRed: {
-    borderRadius: vh(3),
-    borderWidth: 2,
-    borderColor: "orange",
-    width: vw(45),
   },
 
   voyageImage1: {
@@ -665,12 +628,32 @@ const styles2 = StyleSheet.create({
   },
 });
 
+
+
+
 const styles = StyleSheet.create({
+  selection3: {
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(.75),
+    backgroundColor: parrotBlue,
+    borderRadius: vh(2.5),
+  },
+  selectionRed3: {
+    paddingHorizontal: vh(2),
+    paddingVertical: vh(.75),
+    backgroundColor: parrotRed,
+    borderRadius: vh(2.5),
+  },
+  choiceText3: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "white",
+  },
   addWaypointText: {
     alignSelf: "center",
     padding: vh(1),
     borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234,1)",
+    backgroundColor: parrotBlue,
     color: "white",
     fontWeight: "600",
     marginBottom: vh(2),
@@ -694,37 +677,32 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     top: vh(-5),
   },
-
   latLngNameRow: {
     flexDirection: "row",
-    backgroundColor: "#f1f2f3",
+    backgroundColor: parrotCream,
     borderRadius: vh(3),
     marginBottom: vh(0.5),
   },
   latLngLabel: {
     justifyContent: "center",
-    backgroundColor: "#f4f5f6",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderRadius: vh(3),
-    borderColor: "#babbbc",
   },
   latorLngtxt: {
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
     fontWeight: "500",
     width: vw(25),
     textAlign: "center",
   },
   latorLng: {
     flexDirection: "row",
-    backgroundColor: "#fafbfc",
+    backgroundColor: parrotTransparentWhite,
     marginVertical: vh(0.3),
     padding: vh(0.4),
-    // borderRadius: vh(3),
     borderTopRightRadius: vh(3),
     borderBottomRightRadius: vh(3),
-    // borderWidth: 1,
-    borderColor: "#babbbc",
     width: vw(64),
   },
   textInput5: {
@@ -737,7 +715,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedText: {
-    color: "rgba(24,111,241,0.5)",
     fontSize: 18,
     fontWeight: "700",
     textAlign: "center",
@@ -754,9 +731,7 @@ const styles = StyleSheet.create({
   length3: {
     width: vw(90),
     alignSelf: "center",
-    // backgroundColor: "blue",
   },
-
   deleteAddedImage: {
     top: vh(0),
     right: vw(2),
@@ -765,7 +740,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   addVoyageImageButton: {
-    backgroundColor: "rgb(0, 119, 234)",
+    backgroundColor: parrotBlue,
     position: "absolute",
     right: vw(22),
     top: vh(22),
@@ -779,12 +754,8 @@ const styles = StyleSheet.create({
   },
   scrollview: {
     height: vh(140),
-    top: vh(5),
     marginBottom: vh(15),
     backgroundColor: "white",
-  },
-  overlay: {
-    // backgroundColor: "red",
   },
   profileContainer: {
     flexDirection: "row",
@@ -793,7 +764,6 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     borderRadius: vh(1.5),
   },
-
   profileImage: {
     marginLeft: vw(3),
     marginVertical: vh(1),
@@ -801,11 +771,10 @@ const styles = StyleSheet.create({
     width: vh(20),
     height: vh(20),
     borderRadius: vh(3),
-    borderColor: "rgba(190, 119, 234,0.6)",
   },
   backgroundImage: {
     width: vw(100),
-    height: vh(30),
+    height: vh(50),
   },
   profileImage2: {
     marginLeft: vw(3),
@@ -814,45 +783,10 @@ const styles = StyleSheet.create({
     width: vh(20),
     height: vh(20),
     borderRadius: vh(3),
-    borderColor: "rgba(0, 119, 234,0.1)",
   },
   formContainer: {
     padding: vh(2),
   },
-  recycle: {
-    color: "purple",
-  },
-
-  refetch: {
-    padding: 3,
-    paddingHorizontal: vw(15),
-    borderRadius: vw(9),
-  },
-  imageContainer: {
-    top: vh(0),
-    height: vh(35),
-    width: vw(100),
-  },
-  icon: {
-    padding: 3,
-    margin: 2,
-    marginLeft: 8,
-    borderRadius: 20,
-    color: "rgba(0, 119, 234,0.9)",
-    fontSize: 18,
-    alignSelf: "center",
-  },
-  voyageImage: {
-    color: "rgba(0, 119, 234,0.9)",
-    fontSize: 13,
-    backgroundColor: "white",
-    padding: vh(1),
-    borderRadius: vh(1),
-  },
-  textInput: {
-    lineHeight: 21,
-    marginVertical: 1,
-    fontSize: 14,
-    padding: vw(1),
-  },
 });
+
+
