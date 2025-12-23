@@ -44,7 +44,7 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotTextDarkBlue } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotDarkCream, parrotGreen, parrotGreenMediumTransparent, parrotLightBlue, parrotTextDarkBlue } from "../assets/color";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
@@ -260,7 +260,7 @@ const VehicleDetailScreen = () => {
                     <MaterialCommunityIcons
                       name="account-edit-outline"
                       size={18}
-                      color="rgba(0, 119, 234,0.9)"
+                      color={parrotBlue}
                     />
                     <Text
                       style={{
@@ -398,7 +398,7 @@ const VehicleDetailScreen = () => {
                         <Feather
                           name="chevron-down"
                           size={24}
-                          color={"#2ac898"}
+                          color={parrotGreen}
                         />
                       </Text>
                     </TouchableOpacity>
@@ -407,7 +407,7 @@ const VehicleDetailScreen = () => {
                   <TouchableOpacity onPress={() => setShowFullText(false)}>
                     <Text style={styles.ReadMoreLess}>
                       Read less
-                      <Feather name="chevron-up" size={24} color={"#2ac898"} />
+                      <Feather name="chevron-up" size={24} color={parrotGreen} />
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
   heartContainer2: {
     padding: vw(1),
     width: vw(8),
-    backgroundColor: "#fef6e3",
+    backgroundColor: parrotCream,
     borderRadius: vh(5),
     alignSelf: "center",
   },
@@ -489,14 +489,13 @@ const styles = StyleSheet.create({
   vehicleName: {
     fontSize: 24,
     alignSelf: "center",
-    color: "#2ac898",
+    color: parrotGreen,
     fontWeight: "800",
     borderRadius: vh(3),
   },
   mainBidsContainer: {
     borderRadius: vw(5),
     marginHorizontal: vw(2),
-    borderColor: "#93c9ed",
   },
   currentBidsAndSeeAll: {
     marginTop: vh(2),
@@ -507,7 +506,7 @@ const styles = StyleSheet.create({
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotBlue,
   },
   ImagesMainContainer: {
     marginTop: vh(1),
@@ -521,7 +520,6 @@ const styles = StyleSheet.create({
     height: vh(47),
   },
   voyageDetailsContainer: {
-    borderColor: "rgba(10, 119, 234,0.2)",
     borderRadius: vh(2),
   },
   OwnerAndBoat: {
@@ -535,13 +533,12 @@ const styles = StyleSheet.create({
     marginHorizontal: vw(2),
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(10, 119, 234,0.3)",
+    backgroundColor: parrotBlueTransparent,
   },
   propTextDescription: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#3c9dde",
+    color: parrotLightBlue,
   },
   propText: {
     fontSize: 14,
@@ -567,11 +564,11 @@ const styles = StyleSheet.create({
     paddingVertical: vh(1),
   },
   ReadMoreLess: {
-    color: "#2ac898",
+    color: parrotGreen,
     paddingHorizontal: vw(2),
     paddingBottom: vh(1),
     width: vw(28),
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    backgroundColor: parrotGreenMediumTransparent,
     borderRadius: vh(2),
     fontWeight: "700",
   },
@@ -579,7 +576,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginTop: vh(0.2),
-    color: "#3c9dde",
+    color: parrotLightBlue,
   },
   ImagesSubContainer: {
     paddingHorizontal: vh(1),

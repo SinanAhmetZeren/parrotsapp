@@ -33,6 +33,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import he from "he";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen } from "../assets/color";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -234,8 +235,8 @@ export default function ProfileScreen({ navigation }) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#9Bd35A", "#689F38"]} // Android
-            tintColor="#689F38" // iOS
+            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+            tintColor={parrotBananaLeafGreen}
           />
         }
       >
@@ -294,7 +295,7 @@ export default function ProfileScreen({ navigation }) {
                       <MaterialIcons
                         name="public"
                         size={18}
-                        color="rgba(0, 119, 234,0.9)"
+                        color={parrotBlue}
                       />
                       <Text
                         style={{
@@ -323,7 +324,7 @@ export default function ProfileScreen({ navigation }) {
                       <MaterialCommunityIcons
                         name="logout"
                         size={18}
-                        color="rgba(0, 119, 234,0.9)"
+                        color={parrotBlue}
                       />
                       <Text
                         style={{
@@ -352,7 +353,7 @@ export default function ProfileScreen({ navigation }) {
                       <MaterialCommunityIcons
                         name="account-edit-outline"
                         size={18}
-                        color="rgba(0, 119, 234,0.9)"
+                        color={parrotBlue}
                       />
                       <Text
                         style={{
@@ -527,19 +528,10 @@ const styles = StyleSheet.create({
   currentBidsTitle2: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotLightBlue,
     textAlign: "center",
   },
 
-  closeButtonAndText2: {
-    flexDirection: "row",
-    position: "absolute",
-    height: vh(3.5),
-    width: vh(11.45),
-    borderRadius: vh(2.5),
-    bottom: vh(-6),
-    alignSelf: "center",
-  },
   socialRenderComponentModal: {
     top: vh(20),
     backgroundColor: "white",
@@ -547,70 +539,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: vw(65),
     borderRadius: vh(2),
-    borderColor: "rgba(10, 119, 234,0.9)",
     paddingVertical: vh(2),
   },
-  closeButtonAndText: {
-    flexDirection: "row",
-    borderRadius: vh(2.5),
-    borderColor: "#3aa4ff",
-    top: vh(14),
-    alignSelf: "center",
-  },
-  closeButtonInModal2: {
-    alignSelf: "center",
-    backgroundColor: "rgba(217, 241, 241,.99)",
-    borderRadius: vh(10),
-    padding: vh(1.5),
-    borderColor: "#93c9ed",
-  },
-  extendedAreaContainer: {
-    alignSelf: "flex-end",
-    position: "absolute",
-    top: vh(),
-    right: vw(0),
-    borderRadius: vh(4),
-    // backgroundColor: "pink",
-    zIndex: 100,
-  },
-  extendedArea: {
-    paddingHorizontal: vw(1),
-    paddingVertical: vh(1),
-    // backgroundColor: "red",
-  },
-  moreButton: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "rgba(0, 119, 234,.51)",
-    alignSelf: "flex-end",
-    backgroundColor: "rgba(0, 119, 234,0.051)",
-    borderRadius: vh(2),
-    paddingHorizontal: vw(2),
-    paddingHorizontal: vw(2),
-  },
-  notCreated: {
-    paddingVertical: vh(2),
-    paddingHorizontal: vh(3),
-    backgroundColor: "#f2f2f2",
-    marginHorizontal: vh(3),
-    borderRadius: vh(2),
-    marginTop: vh(1),
-  },
+
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotLightBlue,
     paddingLeft: vw(5),
   },
   UserNameProfile: {
     fontSize: 22,
     fontWeight: "800",
-    color: "#3c9dde",
+    color: parrotLightBlue,
   },
   TitleProfile: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#68b3e5",
+    color: parrotLightBlue,
   },
   currentBidsAndSeeAll: {
     marginTop: vh(2),
@@ -619,7 +565,6 @@ const styles = StyleSheet.create({
   },
   mainBidsContainer: {
     borderRadius: vw(5),
-    borderColor: "#93c9ed",
   },
   rectangularBox: {
     height: vh(35),
@@ -631,8 +576,7 @@ const styles = StyleSheet.create({
   scrollView: {
     height: vh(100),
     borderRadius: vh(0),
-    // backgroundColor: "white",
-    backgroundColor: "#fff6f0",
+    backgroundColor: parrotCream,
   },
   bioBox: {
     paddingHorizontal: 10,
@@ -641,7 +585,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     width: "93%",
     borderRadius: 20,
-    borderColor: "rgba(190, 119, 234,0.5)",
   },
   voyageListContainer: {
     width: vw(98),
@@ -651,45 +594,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: vh(3),
   },
-  blueText: {
-    fontWeight: "600",
-    color: "#000077",
-  },
-  bioText: {
-    fontWeight: "600",
-    color: "#878787",
-    fontSize: 12,
-  },
   nameContainer: {
     marginLeft: 0,
     paddingLeft: 0,
   },
-  name: {
-    fontSize: 19,
-    fontWeight: "600",
-    flexWrap: "wrap",
-    flexShrink: 1,
-    color: "#5b5bff",
-  },
   clickableText: {
     color: "blue",
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#9f9fff",
-  },
-  bio: {
-    paddingTop: 5,
-  },
-  icon: {
-    padding: 3,
-    margin: 2,
-    marginLeft: 8,
-    borderRadius: 20,
-    color: "rgba(0, 119, 234,0.9)",
-    fontSize: 18,
-  },
+
   profileImageAndSocial: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -699,7 +611,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     paddingBottom: vh(0.95),
-    backgroundColor: "#fff6f0",
+    backgroundColor: parrotCream,
   },
   social: {
     flexDirection: "column",
@@ -726,7 +638,8 @@ const styles = StyleSheet.create({
     height: vh(20),
     width: vh(20),
     borderRadius: vh(15),
-    backgroundColor: "rgba(11, 111, 234,0.22)",
+    // backgroundColor: "rgba(11, 111, 234,0.22)",
+    backgroundColor: parrotBlueSemiTransparent
   },
   editProfileBox: {
     marginTop: vh(0.5),
