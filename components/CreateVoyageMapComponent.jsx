@@ -23,7 +23,7 @@ import {
 } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
-import { parrotBlueMediumTransparent, parrotBlueSemiTransparent } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotDarkCream, parrotPlaceholderGrey } from "../assets/color";
 
 const CreateVoyageMapComponent = ({
   voyageId,
@@ -436,8 +436,8 @@ const CreateVoyageMapComponent = ({
           style={[
             styles.completeText,
             addedWayPoints.length > 0 && imagesAdded > 0
-              ? { backgroundColor: "rgba(0, 119, 234,1)" }
-              : { backgroundColor: "rgba(0, 119, 234,.2)" },
+              ? { backgroundColor: parrotBlue }
+              : { backgroundColor: parrotBlueSemiTransparent },
           ]}
         >
           Complete
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedText: {
-    color: "rgba(24,111,241,1)",
+    color: parrotBlue,
     fontSize: 18,
     fontWeight: "700",
     textAlign: "center",
@@ -490,12 +490,11 @@ const styles = StyleSheet.create({
     width: vh(4),
     alignSelf: "center",
   },
-
   addWaypointText: {
     alignSelf: "center",
     padding: vh(1),
     borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234,1)",
+    backgroundColor: parrotBlue,
     color: "white",
     fontWeight: "600",
     marginBottom: vh(1),
@@ -504,7 +503,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: vh(1),
     borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234,1)",
+    backgroundColor: parrotBlue,
     color: "white",
     fontWeight: "600",
     marginBottom: vh(3),
@@ -513,31 +512,18 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: vh(1),
     borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234,.15)",
+    backgroundColor: parrotBlueSemiTransparent2,
     color: "white",
     fontWeight: "600",
     marginBottom: vh(1),
   },
-
-  waypointItem: {
-    margin: vw(1),
-    width: vw(50),
-    height: vh(25),
-    alignItems: "center",
-    backgroundColor: "rgba(0, 119, 234,0.19)",
-    borderWidth: 1,
-    borderColor: "rgba(0, 119, 234,0.39)",
-    borderRadius: vh(3),
-  },
-
   waypointImage: {
     width: vh(14),
     height: vh(14),
     borderRadius: vh(1.5),
     borderWidth: 3,
-    borderColor: "rgba(0, 119, 234,0.3)",
+    borderColor: parrotBlueSemiTransparent
   },
-
   waypointFlatlistContainer: {
     height: vh(38),
     padding: vh(2),
@@ -563,19 +549,16 @@ const styles = StyleSheet.create({
   newWaypointCard: {
     marginTop: vh(3),
     marginBottom: vh(3),
-    backgroundColor: "rgba(210, 211, 212,.7)",
     backgroundColor: parrotBlueMediumTransparent,
     borderColor: parrotBlueSemiTransparent,
     borderWidth: 2,
     borderRadius: vh(2),
     width: vw(94),
     alignSelf: "center",
-    // backgroundColor: "pink"
   },
   latLng: {
     width: vw(59),
     marginTop: vh(1),
-    // backgroundColor: "red"
   },
   latorLng: {
     flexDirection: "row",
@@ -585,7 +568,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: vh(1.5),
     borderBottomRightRadius: vh(1.5),
     width: vw(45),
-    // backgroundColor: "orange",
   },
   nameInputContainer: {
     flexDirection: "row",
@@ -596,58 +578,51 @@ const styles = StyleSheet.create({
     borderTopRightRadius: vh(1.5),
     borderBottomRightRadius: vh(1.5),
     width: vw(45),
-    // backgroundColor: "orange",
   },
   latorLng2: {
     flexDirection: "row",
-    backgroundColor: "#fafbfc",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.3),
     padding: vh(0.4),
-    // borderWidth: 1,
-    borderColor: "#babbbc",
     width: vw(62),
     borderTopRightRadius: vh(1.5),
     borderBottomRightRadius: vh(1.5),
-    // backgroundColor: "yellow"
   },
   latLngNameRow: {
     flexDirection: "row",
-    backgroundColor: "#f1f2f3",
-    // backgroundColor: "cyan",
+    backgroundColor: parrotCream,
     borderRadius: vh(1.5),
     marginBottom: vh(0.5),
     height: vh(4.5),
   },
   latLngNameRow2: {
     flexDirection: "row",
-    backgroundColor: "#f1f2f3",
+    backgroundColor: parrotCream,
     borderRadius: vh(1.5),
     marginBottom: vh(0.5),
     marginHorizontal: vw(2),
   },
   nameLabel: {
     justifyContent: "center",
-    backgroundColor: "#f8f9fa",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderRadius: vh(1.5),
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    borderColor: "#babbbc",
   },
   latLngLabel: {
     justifyContent: "center",
-    backgroundColor: "#f8f9fa",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.1),
     padding: vh(0.4),
     borderRadius: vh(1.5),
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    borderColor: "#babbbc",
   },
   latLngLabel2: {
     justifyContent: "center",
-    backgroundColor: "#f8f9fa",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.3),
     marginLeft: vw(3),
     padding: vh(0.4),
@@ -657,13 +632,13 @@ const styles = StyleSheet.create({
     width: vw(25),
   },
   latorLngtxt: {
-    color: "#6b7f9d",
+    color: parrotPlaceholderGrey,
     fontWeight: "500",
     width: vw(12),
     textAlign: "center",
   },
   latorLngtxt2: {
-    color: "#6b7f9d",
+    color: parrotPlaceholderGrey,
     fontWeight: "500",
     width: vw(20),
     textAlign: "center",
@@ -674,17 +649,15 @@ const styles = StyleSheet.create({
     marginRight: vh(1.5),
     borderRadius: vh(1.5),
     justifyContent: "space-between",
-    // backgroundColor: "green"
   },
   profileImage: {
-    // marginLeft: vw(3),
     marginLeft: vw(2),
     marginRight: vw(2),
     marginVertical: vh(1),
     width: vh(14.5),
     height: vh(14.5),
     borderRadius: vh(1.5),
-    borderColor: "rgba(0, 119, 234,0.3)",
+    borderColor: parrotBlueSemiTransparent,
     backgroundColor: "white",
 
   },
@@ -702,33 +675,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     padding: vw(1),
     width: "90%",
-    color: "#989898",
+    color: parrotPlaceholderGrey,
   },
   latlngtextInput2: {
     fontSize: 13,
     padding: vw(1),
     width: "90%",
-    color: "#b1b1b1",
+    color: parrotPlaceholderGrey,
   },
-
   container: {
     flex: 1,
     padding: vh(1),
     margin: vh(2),
     justifyContent: "center",
-    // backgroundColor: "yellow",
   },
-
   label: {
     fontWeight: "bold",
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginTop: 5,
-    marginBottom: 10,
-    paddingHorizontal: 10,
   },
   image: {
     width: "100%",
@@ -750,10 +712,9 @@ const styles = StyleSheet.create({
     height: "100%",
     overflow: "hidden",
     borderRadius: vh(3),
-    borderColor: "#93c9ed",
-    borderWidth: 3,
+    // borderColor: "#93c9ed",
     borderColor: parrotBlueSemiTransparent,
-    borderWidth: 2,
+    // borderWidth: 2,
     borderRadius: vh(2),
 
   },

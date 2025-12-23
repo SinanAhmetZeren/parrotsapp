@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotTextDarkBlue } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotGreen, parrotTextDarkBlue } from "../assets/color";
 
 const FilterCountModal = ({
   isVisible,
@@ -146,7 +146,6 @@ const styles = StyleSheet.create({
     padding: vh(1),
     marginBottom: vh(1),
     borderRadius: vh(2),
-    borderColor: "#d8f7ee",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -159,19 +158,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: vw(22),
     textAlign: "center",
-    borderColor: parrotTextDarkBlue,
     height: vh(4.5) - 1.5,
     backgroundColor: parrotBlueMediumTransparent,
     lineHeight: 20,
     paddingBottom: 6,
-
   },
   innerContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
     width: vw(70),
-    // backgroundColor: "pink",
     alignItems: "center",
   },
   title: {
@@ -184,23 +180,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // width: vw(60),
     paddingHorizontal: vw(2),
     borderRadius: vh(2),
-    // backgroundColor: "red"
   },
   buttonsContainer: {
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "center",
-    // backgroundColor: "yellow",
     width: vw(55),
   },
   buttonSave: {
     fontSize: 16,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     padding: vw(1),
     width: vw(25),
     borderRadius: vh(4),
@@ -212,24 +205,19 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     textAlign: "center",
-    backgroundColor: "#2ac898",
+    backgroundColor: parrotGreen,
     padding: vw(1),
     width: vw(25),
     borderRadius: vh(4),
     marginRight: vw(2.5),
-
   },
   buttonCount: {
     fontSize: 22,
-    borderColor: "#3498db",
     borderRadius: 10,
     width: vh(6),
     textAlign: "center",
     fontWeight: "800",
-    color: "white",
     color: parrotTextDarkBlue,
-
-
   },
 });
 

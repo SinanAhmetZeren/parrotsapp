@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { vh, vw } from "react-native-expo-viewport-units";
+import { parrotCream, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
 
 const DropdownComponent = ({ data, setVehicleId }) => {
   const [value, setValue] = useState(null);
@@ -43,15 +44,13 @@ export default DropdownComponent;
 const styles = StyleSheet.create({
   latorLng: {
     flexDirection: "row",
-    backgroundColor: "#fafbfc",
+    backgroundColor: parrotCream,
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderTopRightRadius: vh(3),
     borderBottomRightRadius: vh(3),
-    borderColor: "#babbbc",
     width: vw(64),
   },
-
   dropdown: {
     width: vw(62),
     height: vh(5),
@@ -70,26 +69,26 @@ const styles = StyleSheet.create({
     zIndex: 0,
     paddingHorizontal: 8,
     fontSize: 12,
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
     fontWeight: "500",
     width: vw(25),
     textAlign: "center",
   },
   placeholderStyle: {
     fontSize: 12,
-    color: "#c3c3c3",
+    color: parrotInputTextColor,
     fontWeight: "500",
     width: vw(25),
   },
   selectedTextStyle: {
     fontSize: 12,
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
     fontWeight: "500",
     width: vw(25),
   },
   itemTextStyle: {
     fontSize: 12,
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
     fontWeight: "500",
     width: vw(25),
   },
@@ -101,7 +100,8 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 30,
     fontSize: 12,
-    color: "#6b7f9d",
+    color: parrotInputTextColor,
+    color: "red",
     fontWeight: "500",
     width: vw(25),
     textAlign: "center",

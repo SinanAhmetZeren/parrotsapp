@@ -39,7 +39,7 @@ import { API_URL } from "@env";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 
 const CreateVoyageScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
@@ -852,7 +852,7 @@ const styles = StyleSheet.create({
   },
   latorLng: {
     flexDirection: "row",
-    backgroundColor: parrotCream,
+    backgroundColor: parrotTransparentWhite,
     marginVertical: vh(0.3),
     padding: vh(0.4),
     borderTopRightRadius: vh(3),

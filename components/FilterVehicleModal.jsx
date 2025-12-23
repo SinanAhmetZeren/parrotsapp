@@ -4,6 +4,7 @@ import React from "react";
 import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Ionicons } from "@expo/vector-icons";
+import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
 
 const FilterVehicleModal = ({
   isVisible,
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     paddingBottom: vh(70),
   },
   innerContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
     width: 300,
@@ -137,21 +138,21 @@ const styles = StyleSheet.create({
   },
   option: {
     padding: 10,
-    backgroundColor: "#f7f7f7",
+    backgroundColor: parrotCream,
     borderRadius: 10,
     marginVertical: 2,
   },
   selectedOption: {
-    backgroundColor: "#2ac898",
+    backgroundColor: parrotGreen,
     borderRadius: 8,
   },
   selectedOptionText: {
-    color: "#fff", // Change the text color for selected option
+    color: "white", // Change the text color for selected option
   },
   optionText: {
     fontSize: 16,
     fontWeight: "700",
-    color: "grey",
+    color: parrotInputTextColor,
     marginLeft: vw(5),
   },
   buttonsContainer: {
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     padding: 5,
     width: vw(30),
     borderRadius: 10,
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#2ac898",
+    backgroundColor: parrotGreen,
     padding: 5,
     width: vw(30),
     borderRadius: 10,

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Animated } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
+import { parrotBlue, parrotCream } from "../assets/color";
 
 export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
   const navigation = useNavigation();
@@ -79,18 +80,18 @@ const styles = StyleSheet.create({
     height: vh(6.5),
     paddingHorizontal: vh(0.2),
     paddingVertical: vh(0.2),
-    backgroundColor: "#ede2d5ff",
+    backgroundColor: parrotCream,
     borderRadius: vh(4),
     flexDirection: "row",
     justifyContent: "space-around",
   },
   modalView: {
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     borderRadius: vh(3),
     alignSelf: "center",
   },
   modalView2: {
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     borderRadius: vh(3),
     alignSelf: "center",
   },

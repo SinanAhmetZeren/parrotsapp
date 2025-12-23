@@ -15,7 +15,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import RenderHtml from "react-native-render-html";
-import { parrotTextDarkBlue, parrotBlue } from "../assets/color";
+import { parrotTextDarkBlue, parrotBlue, parrotCream } from "../assets/color";
 import he from "he";
 
 export default function FavoriteVehicleCardProfile({
@@ -34,7 +34,7 @@ export default function FavoriteVehicleCardProfile({
         <FontAwesome6
           name="sailboat"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -44,7 +44,7 @@ export default function FavoriteVehicleCardProfile({
         <AntDesign
           name="car"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -54,7 +54,7 @@ export default function FavoriteVehicleCardProfile({
         <FontAwesome5
           name="caravan"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -64,7 +64,7 @@ export default function FavoriteVehicleCardProfile({
         <Ionicons
           name="bus-outline"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -74,7 +74,7 @@ export default function FavoriteVehicleCardProfile({
         <FontAwesome5
           name="walking"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -84,7 +84,7 @@ export default function FavoriteVehicleCardProfile({
         <FontAwesome5
           name="running"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -94,7 +94,7 @@ export default function FavoriteVehicleCardProfile({
         <FontAwesome
           name="motorcycle"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -104,7 +104,7 @@ export default function FavoriteVehicleCardProfile({
         <FontAwesome
           name="bicycle"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -114,7 +114,7 @@ export default function FavoriteVehicleCardProfile({
         <FontAwesome6
           name="house"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -124,7 +124,7 @@ export default function FavoriteVehicleCardProfile({
         <Ionicons
           name="airplane-outline"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -134,7 +134,7 @@ export default function FavoriteVehicleCardProfile({
         <Ionicons
           name="train-outline"
           size={16}
-          color="rgba(10, 119, 234,1)"
+          color={parrotBlue}
           style={styles.icon}
         />
       );
@@ -169,7 +169,7 @@ export default function FavoriteVehicleCardProfile({
             </View>
             <View style={styles.vacancy}>
               <Text style={styles.header}>
-                <Feather name="users" size={14} color="rgba(10, 119, 234,1)" />
+                <Feather name="users" size={14} color={parrotBlue} />
                 {" " + capacity}
               </Text>
             </View>
@@ -206,10 +206,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "rgba(0, 119, 234,0.071)",
+    backgroundColor: parrotCream,
     borderRadius: vh(2),
-    // borderWidth: 3,
-    borderColor: "rgba(10, 119, 234,0.2)",
   },
 
   cardImage: {
@@ -228,15 +226,13 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
-    color: "rgba(10, 119, 234,1)",
+    color: parrotBlue,
   },
-
   cardDescription: {
     paddingHorizontal: 0,
     fontSize: 11.5,
   },
   iconAndName: {
-    // padding: vh(0.3),
     flexDirection: "row",
     justifyContent: "space-around",
   },
@@ -253,7 +249,7 @@ const styles = StyleSheet.create({
   headerName: {
     fontSize: 14,
     fontWeight: "700",
-    color: "rgba(10, 119, 234,1)",
+    color: parrotBlue,
     textAlign: "center",
   },
 });

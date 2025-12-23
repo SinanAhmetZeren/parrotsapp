@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import CalendarPicker from "react-native-calendar-picker";
+import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor } from "../assets/color";
 
 const FilterCalendarModal = ({
   isVisible,
@@ -98,21 +99,6 @@ const FilterCalendarModal = ({
       >
         <View style={styles.modalContainer}>
           <View style={styles.innerContainer}>
-            {/* <CalendarPicker
-              startFromMonday={true}
-              allowRangeSelection={true}
-              selectedStartDate={startDate}
-              selectedEndDate={endDate}
-              onDateChange={handleDateChange}
-              selectedDayColor="#2ac898bb"
-              selectedDayTextColor="white"
-              textStyle={{ fontWeight: "700", color: "#333333" }}
-              previousTitle="⬅️"
-              nextTitle="➡️"
-              width={300}
-            /> */}
-
-
             <CalendarPicker
               selectedRangeStartTextStyle={styles.startEndText}
               selectedRangeEndTextStyle={styles.startEndText}
@@ -121,9 +107,9 @@ const FilterCalendarModal = ({
               selectedRangeEndStyle={styles.calendarEndStart}
               selectedDayStyle={styles.calendarEndStart}
               selectedColor={"blue"}
-              selectedDayColor="#2ac898bb"
+              selectedDayColor={parrotGreen}
               selectedDayTextColor="white"
-              textStyle={{ fontWeight: "700", color: "#333333" }}
+              textStyle={{ fontWeight: "700", color: parrotInputTextColor }}
               startFromMonday={true}
               allowRangeSelection={calendarRangeAllowed}
               minDate={new Date()}
@@ -193,7 +179,7 @@ const styles = StyleSheet.create({
     paddingBottom: vh(70),
   },
   innerContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
     width: vw(90),
@@ -216,7 +202,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     padding: 5,
     width: vw(60),
     borderRadius: 10,
@@ -226,7 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     padding: 5,
     width: vw(30),
     borderRadius: 10,
@@ -236,7 +222,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
     textAlign: "center",
-    backgroundColor: "#2ac898",
+    backgroundColor: parrotGreen,
     padding: 5,
     width: vw(30),
     borderRadius: 10,
