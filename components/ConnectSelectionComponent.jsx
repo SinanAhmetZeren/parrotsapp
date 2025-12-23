@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
+import { parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotLightBlue } from "../assets/color";
 
 export const ConnectSelectionComponent = ({
   selectedFunction,
@@ -60,19 +61,19 @@ const styles = StyleSheet.create({
   currentBidsTitle: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotLightBlue,
     paddingLeft: vw(5),
   },
   selectedTitle: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotLightBlue,
     paddingLeft: vw(5),
   },
   nonSelectedTitle: {
     fontSize: 26,
     fontWeight: "700",
-    color: "rgba(118, 186, 232,0.5)",
+    color: parrotBlueSemiTransparent3,
     paddingLeft: vw(5),
   },
   currentBidsAndSeeAll: {
@@ -82,17 +83,14 @@ const styles = StyleSheet.create({
   },
   mainBidsContainer: {
     borderRadius: vw(5),
-    borderColor: "#93c9ed",
   },
   mainBidsContainer3: {
     borderRadius: vw(5),
-    borderColor: "#93c9ed",
     width: vw(55),
     alignItems: "center",
   },
   mainBidsContainer4: {
     borderRadius: vw(5),
-    borderColor: "#93c9ed",
     width: vw(40),
   },
   container: {

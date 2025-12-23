@@ -8,6 +8,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { MessagesComponent } from "../components/MessagesComponent";
 import { API_URL } from "@env";
+import { parrotCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 6,
     marginBottom: vh(1),
-    backgroundColor: "#f2f6f9",
+    backgroundColor: parrotCream,
     borderRadius: vh(3),
   },
   profileImage: {
@@ -94,13 +95,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.5),
     fontWeight: "700",
-    // color: "grey",
-    color: "#3c9dde",
+    color: parrotLightBlue
   },
   message: {
     paddingHorizontal: vh(2),
     fontWeight: "700",
-    color: "grey",
+    color: parrotPlaceholderGrey,
   },
   nameAndMessage: {
     padding: 1,
@@ -111,18 +111,12 @@ const styles = StyleSheet.create({
   },
   timeText1: {
     fontWeight: "700",
-    color: "darkgrey",
+    color: parrotPlaceholderGrey,
     marginBottom: vh(1),
   },
   timeText2: {
     fontWeight: "700",
-    color: "darkgrey",
+    color: parrotPlaceholderGrey,
   },
-  alert: {
-    padding: 7,
-    backgroundColor: "#0077ea",
-    borderRadius: 20,
-    width: vw(10),
-    alignSelf: "center",
-  },
+
 });
