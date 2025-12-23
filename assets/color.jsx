@@ -1,3 +1,4 @@
+
 export const parrotDarkBlue = "#003366";
 export const parrotTextDarkBlue = "#00008B";
 export const parrotBlue = "rgb(10, 119, 234)";
@@ -6,6 +7,7 @@ export const parrotBlueTransparent = "rgba(0, 119, 234, 0.06)";
 export const parrotBlueMediumTransparent = "rgba(0, 119, 234, 0.12)";
 export const parrotBlueSemiTransparent = "rgba(0, 119, 234, 0.2)";
 export const parrotBlueSemiTransparent2 = "rgba(0, 119, 234, 0.16)";
+export const parrotBlueSemiTransparent3 = "rgba(0, 119, 234, 0.3)";
 export const parrotGreen = "rgb(42, 200, 152)";
 export const parrotPistachioGreen = "#9Bd35A"
 export const parrotBananaLeafGreen = "#689F38";

@@ -31,6 +31,7 @@ import {
 } from "../slices/UserSlice";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import GoogleLoginButton from "../components/GoogleAuthButton";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotDarkCream, parrotPlaceholderGrey } from "../assets/color";
 
 // import {
 //   GoogleSignin,
@@ -417,7 +418,7 @@ const LoginScreen = ({ navigation }) => {
                   onBlur={() => setIsFocusedEmail(false)}
                   style={[styles.input, isFocusedEmail && styles.inputFocused]}
                   placeholder="Email"
-                  placeholderTextColor="#c3c3c3"
+                  placeholderTextColor={parrotPlaceholderGrey}
                   value={email}
                   onChangeText={(text) => handleEmailChange(text)}
                 />
@@ -430,7 +431,7 @@ const LoginScreen = ({ navigation }) => {
                     onFocus={() => setIsFocusedPassword(true)}
                     onBlur={() => setIsFocusedPassword(false)}
                     placeholder="Password"
-                    placeholderTextColor="#c3c3c3"
+                    placeholderTextColor={parrotPlaceholderGrey}
                     secureTextEntry={isPasswordHidden}
                     value={password}
                     onChangeText={(text) => handlePasswordChange(text)}
@@ -438,10 +439,10 @@ const LoginScreen = ({ navigation }) => {
                   <TouchableOpacity
                     style={styles.eyeIcon}
                     onPressIn={() => togglePasswordVisibility()}
-                    // onPressOut={() => setIsPasswordHidden(true)}
+                  // onPressOut={() => setIsPasswordHidden(true)}
                   >
                     <Text>
-                      <Feather name="eye" size={24} color="#c3c3c3" />
+                      <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -454,7 +455,7 @@ const LoginScreen = ({ navigation }) => {
                   handleFocusAll();
                 }}
               >
-                <Text style={{ fontWeight: "500", color: "#939393" }}>
+                <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
                   Forgot password?
                 </Text>
               </TouchableOpacity>
@@ -469,7 +470,7 @@ const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.loginContainer}>
+              <View style={{ ...styles.loginContainer, display: "none" }}>
                 <TouchableOpacity
                   style={styles.selection2}
                   onPress={logAllAsyncStorage}
@@ -486,38 +487,28 @@ const LoginScreen = ({ navigation }) => {
                   handleFocusAll();
                 }}
               >
-                <Text style={{ fontWeight: "500", color: "#939393" }}>
+                <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
                   Don't have an account?{" "}
                 </Text>
-                <Text style={{ fontWeight: "700", color: "#777777" }}>
+                <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
                   Sign up
                 </Text>
               </TouchableOpacity>
 
               <View>
-                <View
+                {/* <View
                   style={{
                     height: 1,
                     backgroundColor: "black",
                     marginVertical: vh(1),
                   }}
-                />
+                /> */}
 
-                <View style={styles.loginContainer}>
+                <View style={styles.googleLoginContainer}>
                   <GoogleLoginButton />
                 </View>
 
-                <View style={styles.container2}>
-                  {userInfo && (
-                    <>
-                      <Text>{JSON.stringify(userInfo.user.email)}</Text>
-                      <Text>{JSON.stringify(userInfo.user.id)}</Text>
-                      <Text>{JSON.stringify(userInfo.user.photo)}</Text>
-                    </>
-                  )}
 
-                  <StatusBar style="auto" />
-                </View>
               </View>
             </View>
           </View>
@@ -545,7 +536,7 @@ const LoginScreen = ({ navigation }) => {
                 ]}
                 onFocus={() => setIsFocusedUserNameR(true)}
                 onBlur={() => setIsFocusedUserNameR(false)}
-                placeholderTextColor="#c3c3c3"
+                placeholderTextColor={parrotPlaceholderGrey}
                 placeholder="Username (max 25 characters)"
                 value={userNameR}
                 maxLength={25}
@@ -555,7 +546,7 @@ const LoginScreen = ({ navigation }) => {
                 style={[styles.input, isFocusedEmailR && styles.inputFocused]}
                 onFocus={() => setIsFocusedEmailR(true)}
                 onBlur={() => setIsFocusedEmailR(false)}
-                placeholderTextColor="#c3c3c3"
+                placeholderTextColor={parrotPlaceholderGrey}
                 placeholder="Email"
                 value={emailR}
                 onChangeText={(text) => handleEmailRChange(text)}
@@ -569,7 +560,7 @@ const LoginScreen = ({ navigation }) => {
                   ]}
                   onFocus={() => setIsFocusedPasswordR(true)}
                   onBlur={() => setIsFocusedPasswordR(false)}
-                  placeholderTextColor="#c3c3c3"
+                  placeholderTextColor={parrotPlaceholderGrey}
                   placeholder="Enter Password"
                   secureTextEntry={isPasswordHidden}
                   value={passwordR}
@@ -580,7 +571,7 @@ const LoginScreen = ({ navigation }) => {
                   onPressIn={() => togglePasswordVisibility()}
                 >
                   <Text>
-                    <Feather name="eye" size={24} color="#c3c3c3" />
+                    <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -593,7 +584,7 @@ const LoginScreen = ({ navigation }) => {
                   ]}
                   onFocus={() => setIsFocusedPasswordR2(true)}
                   onBlur={() => setIsFocusedPasswordR2(false)}
-                  placeholderTextColor="#c3c3c3"
+                  placeholderTextColor={parrotPlaceholderGrey}
                   placeholder="Re-enter Password"
                   secureTextEntry={isPasswordHidden2}
                   value={passwordR2}
@@ -604,7 +595,7 @@ const LoginScreen = ({ navigation }) => {
                   onPressIn={() => togglePasswordVisibility2()}
                 >
                   <Text>
-                    <Feather name="eye" size={24} color="#c3c3c3" />
+                    <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -614,8 +605,8 @@ const LoginScreen = ({ navigation }) => {
                   style={[
                     styles.selection2,
                     isLoadingRegisterUser ||
-                    passwordR === "" ||
-                    passwordR2 === ""
+                      passwordR === "" ||
+                      passwordR2 === ""
                       ? styles.disabled
                       : null,
                   ]}
@@ -650,10 +641,10 @@ const LoginScreen = ({ navigation }) => {
                     handleFocusAll();
                   }}
                 >
-                  <Text style={{ fontWeight: "500", color: "#939393" }}>
+                  <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
                     Back to{" "}
                   </Text>
-                  <Text style={{ fontWeight: "700", color: "#777777" }}>
+                  <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
                     Login
                   </Text>
                 </TouchableOpacity>
@@ -678,7 +669,7 @@ const LoginScreen = ({ navigation }) => {
                 style={[styles.input, isFocusedCode && styles.inputFocused]}
                 onFocus={() => setIsFocusedCode(true)}
                 onBlur={() => setIsFocusedCode(false)}
-                placeholderTextColor="#c3c3c3"
+                placeholderTextColor={parrotPlaceholderGrey}
                 placeholder="Enter 6 Digit Code"
                 value={registerCode}
                 onChangeText={(text) => handleRegisterCodeChange(text)}
@@ -716,10 +707,10 @@ const LoginScreen = ({ navigation }) => {
                     handleFocusAll();
                   }}
                 >
-                  <Text style={{ fontWeight: "500", color: "#939393" }}>
+                  <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
                     Back to{" "}
                   </Text>
-                  <Text style={{ fontWeight: "700", color: "#777777" }}>
+                  <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
                     Login
                   </Text>
                 </TouchableOpacity>
@@ -744,7 +735,7 @@ const LoginScreen = ({ navigation }) => {
                 style={[styles.input, isFocusedEmailR && styles.inputFocused]}
                 onFocus={() => setIsFocusedEmailR(true)}
                 onBlur={() => setIsFocusedEmailR(false)}
-                placeholderTextColor="#c3c3c3"
+                placeholderTextColor={parrotPlaceholderGrey}
                 placeholder="Email"
                 value={emailR}
                 onChangeText={(text) => handleEmailRChange(text)}
@@ -767,10 +758,10 @@ const LoginScreen = ({ navigation }) => {
                     handleFocusAll();
                   }}
                 >
-                  <Text style={{ fontWeight: "500", color: "#939393" }}>
+                  <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
                     Back to{" "}
                   </Text>
-                  <Text style={{ fontWeight: "700", color: "#777777" }}>
+                  <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
                     Login
                   </Text>
                 </TouchableOpacity>
@@ -799,7 +790,7 @@ const LoginScreen = ({ navigation }) => {
                   ]}
                   onFocus={() => setIsFocusedPasswordR(true)}
                   onBlur={() => setIsFocusedPasswordR(false)}
-                  placeholderTextColor="#c3c3c3"
+                  placeholderTextColor={parrotPlaceholderGrey}
                   placeholder="Enter Password"
                   secureTextEntry={isPasswordHidden}
                   value={passwordR}
@@ -810,7 +801,7 @@ const LoginScreen = ({ navigation }) => {
                   onPressIn={() => togglePasswordVisibility()}
                 >
                   <Text>
-                    <Feather name="eye" size={24} color="#c3c3c3" />
+                    <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -823,7 +814,7 @@ const LoginScreen = ({ navigation }) => {
                   ]}
                   onFocus={() => setIsFocusedPasswordR2(true)}
                   onBlur={() => setIsFocusedPasswordR2(false)}
-                  placeholderTextColor="#c3c3c3"
+                  placeholderTextColor={parrotPlaceholderGrey}
                   placeholder="Re-enter Password"
                   secureTextEntry={isPasswordHidden2}
                   value={passwordR2}
@@ -834,7 +825,7 @@ const LoginScreen = ({ navigation }) => {
                   onPressIn={() => togglePasswordVisibility2()}
                 >
                   <Text>
-                    <Feather name="eye" size={24} color="#c3c3c3" />
+                    <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -843,7 +834,7 @@ const LoginScreen = ({ navigation }) => {
                 style={[styles.input, isFocusedCode2 && styles.inputFocused]}
                 onFocus={() => setIsFocusedCode2(true)}
                 onBlur={() => setIsFocusedCode2(false)}
-                placeholderTextColor="#c3c3c3"
+                placeholderTextColor={parrotPlaceholderGrey}
                 placeholder="Enter 6 Digit Code"
                 value={registerCode2}
                 onChangeText={(text) => handleRegisterCode2Change(text)}
@@ -854,9 +845,9 @@ const LoginScreen = ({ navigation }) => {
                   style={[
                     styles.selection2,
                     isLoadingRegisterUser ||
-                    passwordR === "" ||
-                    passwordR2 === "" ||
-                    registerCode2 === ""
+                      passwordR === "" ||
+                      passwordR2 === "" ||
+                      registerCode2 === ""
                       ? styles.disabled
                       : null,
                   ]}
@@ -890,10 +881,10 @@ const LoginScreen = ({ navigation }) => {
                     handleFocusAll();
                   }}
                 >
-                  <Text style={{ fontWeight: "500", color: "#939393" }}>
+                  <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
                     Back to{" "}
                   </Text>
-                  <Text style={{ fontWeight: "700", color: "#777777" }}>
+                  <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
                     Login
                   </Text>
                 </TouchableOpacity>
@@ -907,18 +898,14 @@ const LoginScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container2: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   disabled: {
-    backgroundColor: "rgba(24,111,241,0.3)",
+    backgroundColor: parrotBlueSemiTransparent,
   },
-
   loginContainer: {
     marginTop: vh(2),
+  },
+  googleLoginContainer: {
+    marginTop: vh(8)
   },
   forgotPassword: {
     paddingBottom: vh(1),
@@ -950,7 +937,7 @@ const styles = StyleSheet.create({
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
-    backgroundColor: "rgb(24,111,241)",
+    backgroundColor: parrotBlue,
     borderRadius: vh(1.5),
     width: vw(75),
   },
@@ -970,15 +957,15 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: "white",
     height: 40,
-    borderColor: "#c3c3c3",
-    borderWidth: 1,
+    borderColor: parrotBlueMediumTransparent,
+    borderWidth: 3,
     marginBottom: vh(1),
     padding: 8,
     width: "100%",
     borderRadius: vh(1.5),
   },
   inputFocused: {
-    borderColor: "#76bae8",
+    borderColor: parrotBlueSemiTransparent3,
     borderWidth: 3,
   },
   imagecontainer: {
@@ -986,9 +973,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignSelf: "center",
-    // backgroundColor: "rgba(74, 165, 225,0.15)",
-    // padding: vh(1),
-    // borderRadius: vh(10),
+
   },
   image: {
     width: vw(70),

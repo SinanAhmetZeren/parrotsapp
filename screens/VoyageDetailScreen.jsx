@@ -44,7 +44,7 @@ import {
   removeVoyageFromUserFavorites,
 } from "../slices/UserSlice";
 import { API_URL } from "@env";
-import { parrotTextDarkBlue } from "../assets/color";
+import { parrotBlueMediumTransparent, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotTextDarkBlue } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import RenderHtml from "react-native-render-html";
 
@@ -435,9 +435,9 @@ const VoyageDetailScreen = ({ navigation }) => {
                       <Text style={styles.propTextDescription}>Auction: </Text>
                       <Text style={styles.propText}>
                         {VoyageData.auction ? (
-                          <Feather name="check" size={20} color="#123456" />
+                          <Feather name="check" size={20} color={parrotTextDarkBlue} />
                         ) : (
-                          <Entypo name="cross" size={20} color="#123456" />
+                          <Entypo name="cross" size={20} color={parrotTextDarkBlue} />
                         )}
                       </Text>
                     </View>
@@ -485,7 +485,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                         <Feather
                           name="chevron-down"
                           size={24}
-                          color={"#2ac898"}
+                          color={parrotGreen}
                         />
                       </Text>
                     </TouchableOpacity>
@@ -494,7 +494,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   <TouchableOpacity onPress={() => setShowFullText(false)}>
                     <Text style={styles.ReadMoreLess}>
                       Read less
-                      <Feather name="chevron-up" size={24} color={"#2ac898"} />
+                      <Feather name="chevron-up" size={24} color={parrotGreen} />
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -638,10 +638,10 @@ const styles = StyleSheet.create({
     marginBottom: vh(3)
   },
   waypointInfoMessage: {
-    color: "#3c9dde",
+    color: parrotLightBlue,
     paddingHorizontal: vh(2),
     borderWidth: 1,
-    borderColor: "#3c9dde",
+    borderColor: parrotLightBlue,
     marginLeft: vh(2),
     borderRadius: vh(2),
   },
@@ -670,8 +670,7 @@ const styles = StyleSheet.create({
     marginHorizontal: vw(2),
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(10, 119, 234,0.3)",
+    backgroundColor: parrotBlueMediumTransparent
   },
   voyageBoat: {
     flexDirection: "row",
@@ -679,8 +678,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(5),
     marginTop: vh(1),
     marginHorizontal: vw(2),
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(10, 119, 234,0.3)",
+    backgroundColor: parrotBlueMediumTransparent,
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
   },
@@ -696,18 +694,16 @@ const styles = StyleSheet.create({
     marginTop: vh(0.2),
     marginHorizontal: vw(1),
     borderRadius: vw(3),
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(10, 119, 234,0.3)",
+    backgroundColor: parrotBlueMediumTransparent,
+
   },
   propTextDescription: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#3c9dde",
     color: parrotTextDarkBlue,
   },
   propText: {
     fontSize: 14,
-    color: "#666",
     color: parrotTextDarkBlue,
   },
   ScrollView: {
@@ -728,7 +724,6 @@ const styles = StyleSheet.create({
     height: "100%",
     overflow: "hidden",
     borderRadius: 20,
-    borderColor: "#93c9ed",
   },
   map: {
     width: "100%",
@@ -768,17 +763,15 @@ const styles = StyleSheet.create({
   },
   descriptionInnerContainer: {
     marginVertical: vh(0.2),
-    // fontWeight: "500",
-    color: "#959595",
     paddingBottom: vh(1),
     color: parrotTextDarkBlue,
   },
   ReadMoreLess: {
-    color: "#2ac898",
+    color: parrotGreen,
     paddingHorizontal: vw(2),
     paddingBottom: vh(1),
     width: vw(28),
-    backgroundColor: "rgba(42, 200, 152, 0.1)",
+    backgroundColor: parrotGreenTransparent,
     borderRadius: vh(2),
     fontWeight: "700",
   },
@@ -788,16 +781,11 @@ const styles = StyleSheet.create({
     margin: vh(0.5),
     marginTop: vh(0.5),
   },
-  innerContainer: {
-    marginVertical: vh(0.2),
-    backgroundColor: "honeydew",
-  },
   voyageName: {
     fontSize: 24,
     alignSelf: "center",
-    color: "#2ac898",
+    color: parrotGreen,
     fontWeight: "800",
-    // backgroundColor: "rgba(42, 200, 152, 0.1)",
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.5),
     borderRadius: vh(1),
@@ -806,7 +794,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginTop: vh(0.2),
-    color: "#3c9dde",
     color: parrotTextDarkBlue,
   },
   voyageImage: {
@@ -831,14 +818,14 @@ const styles = StyleSheet.create({
   offerPrice: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#4aa5e1",
+    color: parrotLightBlue,
     width: vw(23),
     textAlign: "right",
   },
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotLightBlue,
   },
   mainBidsContainer: {
     borderRadius: vw(5),
@@ -886,7 +873,7 @@ const styles = StyleSheet.create({
   },
 
   seeAllButton: {
-    color: "#3c9dde",
+    color: parrotLightBlue,
     fontWeight: "700",
     fontSize: 16,
   },

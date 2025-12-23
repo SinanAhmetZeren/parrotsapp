@@ -30,6 +30,7 @@ import { SocialRenderComponentModal } from "../components/SocialRenderComponentM
 import VoyageListVertical from "../components/VoyageListVertical";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue } from "../assets/color";
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
@@ -246,7 +247,7 @@ export default function ProfileScreenPublic({ navigation }) {
                       <Feather
                         name="send"
                         size={18}
-                        color="rgba(0, 119, 234,0.9)"
+                        color={parrotBlue}
                       />
                       <Text
                         style={{
@@ -411,7 +412,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: vw(65),
     borderRadius: vh(2),
-    borderColor: "rgba(10, 119, 234,0.9)",
     paddingVertical: vh(2),
   },
 
@@ -427,30 +427,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: vw(1),
     paddingVertical: vh(1),
   },
-  moreButton: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "rgba(0, 119, 234,.51)",
-    alignSelf: "flex-end",
-    backgroundColor: "rgba(0, 119, 234,0.051)",
-    borderRadius: vh(2),
-    paddingHorizontal: vw(2),
-    paddingHorizontal: vw(2),
-  },
+
   UserNameProfile: {
     fontSize: 22,
     fontWeight: "800",
-    color: "#3c9dde",
+    color: parrotLightBlue
   },
   TitleProfile: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#68b3e5",
+    color: parrotLightBlue
   },
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotLightBlue,
     paddingLeft: vw(5),
   },
   currentBidsAndSeeAll: {
@@ -460,7 +451,6 @@ const styles = StyleSheet.create({
   },
   mainBidsContainer: {
     borderRadius: vw(5),
-    borderColor: "#93c9ed",
   },
   buttonsContainer: {
     position: "absolute",
@@ -478,8 +468,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     height: vh(100),
-    // borderRadius: vh(4),
-    backgroundColor: "#fff6f0",
+    backgroundColor: parrotCream
   },
   bioBox: {
     paddingHorizontal: 10,
@@ -488,7 +477,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     width: "93%",
     borderRadius: 20,
-    borderColor: "rgba(190, 119, 234,0.5)",
   },
   voyageListContainer: {
     width: vw(98),
@@ -496,35 +484,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    // top: vh(-12),
-  },
-  blueText: {
-    fontWeight: "600",
-    color: "#000077",
-  },
-  bioText: {
-    fontWeight: "600",
-    color: "#878787",
-    fontSize: 12,
   },
   nameContainer: {
     marginLeft: 0,
     paddingLeft: 0,
   },
-  name: {
-    fontSize: 19,
-    fontWeight: "600",
-    flexWrap: "wrap",
-    flexShrink: 1,
-    color: "#5b5bff",
-  },
   clickableText: {
     color: "blue",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#9f9fff",
   },
   bio: {
     paddingTop: 5,
@@ -538,10 +504,9 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     paddingBottom: vh(0.95),
-    // backgroundColor: "white",
-    backgroundColor: "#fff6f0",
+    backgroundColor: parrotCream,
+
   },
-  //container of social
   social: {
     flexDirection: "column",
     width: vw(50),
@@ -567,7 +532,8 @@ const styles = StyleSheet.create({
     height: vh(20),
     width: vh(20),
     borderRadius: vh(15),
-    backgroundColor: "rgba(11, 111, 234,0.22)",
+    backgroundColor: parrotBlueSemiTransparent
+
   },
   editProfileBox: {
     backgroundColor: "white",
@@ -578,14 +544,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: vh(2),
     padding: vw(1),
-    // borderWidth: 1,
-    borderColor: "rgba(190, 119, 234,0.5)",
+
   },
   innerProfileContainer: {
     alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),
-    borderColor: "rgba(190, 119, 234,0.5)",
     paddingHorizontal: vw(1),
   },
 });

@@ -26,6 +26,7 @@ import { SearchUsersComponent } from "../components/SearchUsersComponent";
 import { FontAwesome } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotPistachioGreen, parrotPlaceholderGrey } from "../assets/color";
 
 export default function MessagesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -181,8 +182,8 @@ export default function MessagesScreen({ navigation }) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#9Bd35A", "#689F38"]} // Android
-            tintColor="#689F38" // iOS
+            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+            tintColor={parrotBananaLeafGreen}
           />
         }
       >
@@ -254,8 +255,8 @@ export default function MessagesScreen({ navigation }) {
                       }}
                       style={styles.textinputStyle}
                       numberOfLines={1}
-                      placeholder="Type username "
-                      placeholderTextColor="#a3b4c5"
+                      placeholder="Type username"
+                      placeholderTextColor={parrotPlaceholderGrey}
                     >
                       {searchText}
                     </TextInput>
@@ -268,13 +269,13 @@ export default function MessagesScreen({ navigation }) {
                           <FontAwesome
                             name="search"
                             size={24}
-                            color="#3c9dde"
+                            color={parrotBlue}
                           />
                         ) : (
                           <FontAwesome
                             name="search"
                             size={24}
-                            color="rgba(118, 186, 232,0.35)"
+                            color={parrotBlueSemiTransparent}
                           />
                         )}
                       </Text>
@@ -296,14 +297,14 @@ const styles = StyleSheet.create({
   magnifier: {
     alignSelf: "center",
     padding: vw(3),
-    backgroundColor: "rgba(118, 186, 232,0.15)",
+    backgroundColor: parrotBlueTransparent,
     borderRadius: vw(10),
   },
 
   searchBar: {
     flexDirection: "row",
     paddingLeft: vh(2),
-    backgroundColor: "#fefdfd",
+    backgroundColor: "white",
     marginHorizontal: vw(2),
     borderRadius: vh(3),
   },
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
     padding: vh(1),
     margin: vh(1),
     alignSelf: "center",
-    backgroundColor: "#f9f5f1",
+    backgroundColor: parrotCream,
     width: vw(75),
     height: vh(5),
     borderRadius: vh(2),
@@ -320,13 +321,13 @@ const styles = StyleSheet.create({
   currentBidsTitle: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotBlue,
     paddingLeft: vw(5),
   },
   selectedTitle: {
     fontSize: 26,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotBlue,
     paddingLeft: vw(5),
   },
   currentBidsAndSeeAll: {
@@ -334,14 +335,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingRight: vw(10),
   },
-  mainBidsContainer: {
-    borderRadius: vw(5),
-    borderColor: "#93c9ed",
-  },
+
   currentBidsTitle2: {
     fontSize: 20,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotBlue,
     paddingTop: vh(3),
   },
   logoImage: {
