@@ -338,7 +338,7 @@ export default function ProfileScreenPublic({ navigation }) {
                           <Text style={styles.currentBidsTitle}>Vehicles</Text>
                         </View>
                       </View>
-                      <View style={styles.voyageListContainer}>
+                      <View style={styles.vehicleListContainer}>
                         <VehicleList
                           style={styles.voyageList}
                           data={VehiclesData}
@@ -478,13 +478,24 @@ const styles = StyleSheet.create({
     width: "93%",
     borderRadius: 20,
   },
+
   voyageListContainer: {
     width: vw(98),
     overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+    marginBottom: vh(8),
   },
+  vehicleListContainer: {
+    width: vw(98),
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginBottom: vh(3),
+  },
+
   nameContainer: {
     marginLeft: 0,
     paddingLeft: 0,

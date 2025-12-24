@@ -5,6 +5,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useEffect } from "react";
+import { parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotLightBlue } from "../assets/color";
 
 export const SocialRenderComponentModal = ({
   userData,
@@ -269,11 +270,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "center",
-    backgroundColor: "rgba(162, 208, 239,0.2)",
+    backgroundColor: parrotBlueTransparent,
     borderRadius: 20,
     marginVertical: vh(0.6),
     marginBottom: 2,
-    borderColor: "rgba(190, 119, 234,0.4)",
     width: vw(55),
   },
   iconLogo: {
@@ -282,20 +282,18 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     marginRight: vh(1),
   },
-
-  ///////
   icon: {
     padding: 3,
     margin: 2,
     marginLeft: 8,
     borderRadius: 20,
-    color: "#3c9dde",
+    color: parrotLightBlue,
     fontSize: 18,
   },
   iconText: {
     lineHeight: 22,
     marginTop: vh(0.4),
     fontSize: 13,
-    color: "#3c9dde",
+    color: parrotLightBlue,
   },
 });

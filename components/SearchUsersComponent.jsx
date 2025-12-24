@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
+import { parrotCream, parrotLightBlue } from "../assets/color";
 
 export const SearchUsersComponent = ({ searchResults }) => {
   const navigation = useNavigation();
@@ -48,13 +49,14 @@ const styles = StyleSheet.create({
     marginLeft: vh(2),
   },
   userName: {
-    color: "#3c9dde",
+    color: parrotLightBlue,
     fontSize: 16,
     fontWeight: "800",
   },
   searchUserContainer: {
     flexDirection: "row",
-    backgroundColor: "#f6f6f6",
+    // backgroundColor: "#f6f6f6",
+    backgroundColor: parrotCream,
     margin: vh(1),
     padding: vh(1),
     borderRadius: vh(6),

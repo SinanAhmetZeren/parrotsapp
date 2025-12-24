@@ -17,6 +17,8 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import he from "he";
+import { parrotBlue, parrotCream } from "../assets/color";
+import { Shadow } from "react-native-shadow-2";
 
 export default function VehicleCardProfile({
   vehicleId,
@@ -171,42 +173,57 @@ export default function VehicleCardProfile({
   };
 
   return (
-    <TouchableOpacity onPress={() => handleNavigateToVehicle(vehicleId)}>
-      <View style={styles.cardContainer}>
-        <View style={styles.shadow}>
-          <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
-        </View>
+    <View style={{
+      marginBottom: 0, borderRadius: vh(2), padding: vh(1)
+    }}>
 
-        <View style={styles.textContainer}>
-          <View style={styles.iconAndName}>
-            <View style={styles.icon}>{icon}</View>
-            <View style={styles.name}>
-              <Text numberOfLines={1} style={styles.headerName}>
-                {vehiclename}
-              </Text>
+      <Shadow
+        distance={8}
+        offset={[0, 0]}
+        startColor="rgba(0,0,0,0.08)"
+        finalColor="rgba(0,0,0,0.13)"
+        radius={12}
+        style={{ borderRadius: vh(2) }}
+      >
+        <TouchableOpacity onPress={() => handleNavigateToVehicle(vehicleId)}>
+          <View style={styles.cardContainer}>
+            <View style={styles.shadow}>
+              <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
             </View>
-            <View style={styles.vacancy}>
-              <Text style={styles.header}>
-                <Feather name="users" size={14} color="rgba(10, 119, 234,1)" />
-                {" " + capacity > 100 ? "100+" : capacity}
+
+            <View style={styles.textContainer}>
+              <View style={styles.iconAndName}>
+                <View style={styles.icon}>{icon}</View>
+                <View style={styles.name}>
+                  <Text numberOfLines={1} style={styles.headerName}>
+                    {vehiclename}
+                  </Text>
+                </View>
+                <View style={styles.vacancy}>
+                  <Text style={styles.header}>
+                    <Feather name="users" size={14} color={parrotBlue} />
+                    {" " + capacity > 100 ? "100+" : capacity}
+                  </Text>
+                </View>
+              </View>
+              <Text
+                style={styles.cardDescription}
+                numberOfLines={8}
+                ellipsizeMode="tail"
+              >
+                {he.decode(
+                  description
+                    .replace(/<[^>]+>/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim()
+                )}
               </Text>
             </View>
           </View>
-          <Text
-            style={styles.cardDescription}
-            numberOfLines={8}
-            ellipsizeMode="tail"
-          >
-            {he.decode(
-              description
-                .replace(/<[^>]+>/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim()
-            )}
-          </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+        </TouchableOpacity>
+
+      </Shadow>
+    </View>
   );
 }
 
@@ -215,13 +232,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    marginBottom: 10,
+    // marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "rgba(0, 119, 234,0.071)",
+    backgroundColor: parrotCream,
+    // backgroundColor: "white",
     borderRadius: vh(2),
-    // borderWidth: 3,
-    borderColor: "rgba(10, 119, 234,0.2)",
+
   },
   imageContainer: {
     backgroundColor: "white",
@@ -243,7 +260,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
-    color: "rgba(10, 119, 234,1)",
+    color: parrotBlue,
   },
   subHeader: {
     fontSize: 12,
@@ -252,12 +269,10 @@ const styles = StyleSheet.create({
   cardDescription: {
     paddingHorizontal: 0,
     fontSize: 11.5,
-    // backgroundColor: "lightyellow",
   },
   iconAndName: {
     flexDirection: "row",
     justifyContent: "space-around",
-    // backgroundColor: "pink",
   },
   icon: {
     alignSelf: "center",
@@ -272,7 +287,7 @@ const styles = StyleSheet.create({
   headerName: {
     fontSize: 14,
     fontWeight: "700",
-    color: "rgba(10, 119, 234,1)",
+    color: parrotBlue,
     textAlign: "center",
     paddingHorizontal: vw(1),
   },

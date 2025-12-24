@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
+import { parrotCream, parrotLightBlue } from "../assets/color";
+import { Shadow } from "react-native-shadow-2";
 
 export default function VehicleVoyages({ voyages }) {
   const navigation = useNavigation();
@@ -43,6 +45,7 @@ export default function VehicleVoyages({ voyages }) {
       const formattedEndDate = format(new Date(item.endDate), "MMM d, yy");
 
       return (
+
         <TouchableOpacity
           key={item.id}
           onPress={() => handleNavigateToVoyage(item.id)}
@@ -69,7 +72,7 @@ export default function VehicleVoyages({ voyages }) {
                   {"  "}
                 </Text>
                 <Text style={styles.boldBlue}>{item.vacancy} </Text>
-                <Feather name="users" size={18} color="#3c9dde" />
+                <Feather name="users" size={18} color={parrotLightBlue} />
               </View>
               <View style={styles.betweenDates}>
                 <Text style={styles.boldBlack}>
@@ -87,18 +90,17 @@ export default function VehicleVoyages({ voyages }) {
     });
   };
 
-  return <View style={styles.container}>{renderVehicleVoyages()}</View>;
+  return <View>{renderVehicleVoyages()}</View>;
 }
 
 const styles = StyleSheet.create({
   singleVoyage: {
     padding: vh(1),
-    margin: vh(0.3),
+    margin: vh(.6),
     flexDirection: "row",
-    backgroundColor: "rgba(0, 119, 234,0.051)",
-    // borderWidth: 1,
-    borderColor: "rgba(10, 119, 234,0.3)",
+    backgroundColor: parrotCream,
     borderRadius: vh(3),
+
   },
   voyageImage: {
     height: vh(6),
@@ -113,7 +115,7 @@ const styles = StyleSheet.create({
   },
   boldBlue: {
     fontWeight: "500",
-    color: "#3c9dde",
+    color: parrotLightBlue,
   },
   boldBlack: {
     fontWeight: "500",

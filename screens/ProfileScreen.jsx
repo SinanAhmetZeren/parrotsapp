@@ -446,7 +446,7 @@ export default function ProfileScreen({ navigation }) {
                           <Text style={styles.currentBidsTitle}>Vehicles</Text>
                         </View>
                       </View>
-                      <View style={styles.voyageListContainer}>
+                      <View style={styles.vehicleListContainer}>
                         <VehicleList
                           style={styles.voyageList}
                           data={VehiclesData}
@@ -592,6 +592,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
+    marginBottom: vh(8),
+  },
+  vehicleListContainer: {
+    width: vw(98),
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
     marginBottom: vh(3),
   },
   nameContainer: {
@@ -638,7 +646,6 @@ const styles = StyleSheet.create({
     height: vh(20),
     width: vh(20),
     borderRadius: vh(15),
-    // backgroundColor: "rgba(11, 111, 234,0.22)",
     backgroundColor: parrotBlueSemiTransparent
   },
   editProfileBox: {

@@ -12,6 +12,7 @@ import parrotMarker3 from "../assets/parrotMarkers/parrotMarker3.png";
 import parrotMarker4 from "../assets/parrotMarkers/parrotMarker4.png";
 import parrotMarker5 from "../assets/parrotMarkers/parrotMarker5.png";
 import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
+import { parrotBlue } from "../assets/color";
 
 export const WaypointComponent = ({
   index,
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   calloutText: {
     fontWeight: "700",
     fontSize: 13,
-    color: "#186ff1",
+    color: parrotBlue,
     textAlign: "center",
   },
 });

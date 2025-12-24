@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { vh, vw } from "react-native-expo-viewport-units";
+import { parrotBlue, parrotCream } from "../assets/color";
 
 const StepBar = ({ currentStep }) => {
   const StepBarStep = ({ displayText, stepNumber }) => {
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   activeStep: {
-    backgroundColor: "rgba(0, 119, 234,1)",
+    backgroundColor: parrotBlue,
     borderRadius: vh(3),
   },
   activeStepText: {
@@ -54,12 +55,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   inactiveStepText: {
-    color: "rgba(0, 119, 234,1)",
+    color: parrotBlue,
     fontWeight: "700",
   },
   inactiveStep: {
     borderRadius: vh(3),
-    backgroundColor: "rgba(24,111,241,0.05)",
+    backgroundColor: parrotCream,
   },
   stepText: {
     fontSize: 16,
