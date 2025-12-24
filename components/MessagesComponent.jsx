@@ -6,6 +6,7 @@ import { StyleSheet, View, Text, ScrollView, Image } from "react-native";
 import { useRef, useEffect } from "react";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { API_URL } from "@env";
+import { parrotCream, parrotInputTextColor, parrotLightBlue } from "../assets/color";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -138,22 +139,22 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontWeight: "500",
-    color: "#999",
+    color: parrotInputTextColor,
   },
   messageBox: {
     width: vw(60),
   },
   MessageMainContainer: {
     marginTop: vh(1),
-    padding: vh(1),
-    backgroundColor: "#f7f7f7",
+    // padding: vh(1),
+    backgroundColor: parrotCream,
     borderRadius: vh(2),
     width: vw(80),
   },
   MessageMainContainerRight: {
     marginTop: vh(1),
     paddingHorizontal: vh(1),
-    backgroundColor: "#f7f7f7",
+    backgroundColor: parrotCream,
     borderRadius: vh(2),
     width: vw(80),
     alignSelf: "flex-end",
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
     marginTop: vh(0.3),
   },
   userName: {
-    color: "#3c9dde",
+    color: parrotLightBlue,
   },
   MessageContainer: {
     flexDirection: "row",

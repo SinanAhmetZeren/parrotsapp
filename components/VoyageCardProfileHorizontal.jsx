@@ -17,6 +17,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import he from "he";
 import { Shadow } from 'react-native-shadow-2';
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream } from "../assets/color";
 
 
 export default function VoyageCardProfileHorizontal({
@@ -48,37 +49,37 @@ export default function VoyageCardProfileHorizontal({
   let icon;
   switch (vehicletype) {
     case 0:
-      icon = <FontAwesome6 name="sailboat" size={12} color="blue" />;
+      icon = <FontAwesome6 name="sailboat" size={12} color={parrotBlue} />;
       break;
     case 1:
-      icon = <AntDesign name="car" size={12} color="blue" />;
+      icon = <AntDesign name="car" size={12} color={parrotBlue} />;
       break;
     case 2:
-      icon = <FontAwesome5 name="caravan" size={12} color="blue" />;
+      icon = <FontAwesome5 name="caravan" size={12} color={parrotBlue} />;
       break;
     case 3:
-      icon = <Ionicons name="bus-outline" size={12} color="blue" />;
+      icon = <Ionicons name="bus-outline" size={12} color={parrotBlue} />;
       break;
     case 4:
-      icon = <FontAwesome5 name="walking" size={12} color="blue" />;
+      icon = <FontAwesome5 name="walking" size={12} color={parrotBlue} />;
       break;
     case 5:
-      icon = <FontAwesome5 name="running" size={12} color="blue" />;
+      icon = <FontAwesome5 name="running" size={12} color={parrotBlue} />;
       break;
     case 6:
-      icon = <FontAwesome name="motorcycle" size={12} color="blue" />;
+      icon = <FontAwesome name="motorcycle" size={12} color={parrotBlue} />;
       break;
     case 7:
-      icon = <FontAwesome name="bicycle" size={12} color="blue" />;
+      icon = <FontAwesome name="bicycle" size={12} color={parrotBlue} />;
       break;
     case 8:
-      icon = <FontAwesome6 name="house" size={12} color="blue" />;
+      icon = <FontAwesome6 name="house" size={12} color={parrotBlue} />;
       break;
     case 9:
-      icon = <Ionicons name="airplane-outline" size={12} color="blue" />;
+      icon = <Ionicons name="airplane-outline" size={12} color={parrotBlue} />;
       break;
     case 10:
-      icon = <Ionicons name="train-outline" size={12} color="blue" />;
+      icon = <Ionicons name="train-outline" size={12} color={parrotBlue} />;
       break;
 
     default:
@@ -128,12 +129,12 @@ export default function VoyageCardProfileHorizontal({
                   <View>
                     <Text style={styles.subHeader2}>
                       {vacancy + " "}
-                      <Feather name="users" size={12} color="blue" />
+                      <Feather name="users" size={12} color={parrotBlue} />
                     </Text>
                   </View>
                   <Text style={styles.subHeader3}>
                     {formattedStartDate + " - " + formattedEndDate + "  "}
-                    <AntDesign name="calendar" size={12} color="blue" />
+                    <AntDesign name="calendar" size={12} color={parrotBlue} />
                   </Text>
                 </View>
                 <Text
@@ -178,9 +179,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "rgba(0, 119, 234,0.03)",
+    backgroundColor: parrotCream,
     borderRadius: vh(2),
-    borderColor: "rgba(10, 119, 234,0.2)",
   },
   cardContainerWrapper: {
     backgroundColor: "white",
@@ -206,12 +206,13 @@ const styles = StyleSheet.create({
   seeOnMap: {
     fontSize: 14,
     fontWeight: "700",
-    color: "rgba(0, 119, 234,.51)",
+    color: parrotBlue,
+    opacity: 0.7,
     alignSelf: "flex-end",
     position: "absolute",
     bottom: vh(0),
     right: vw(0),
-    backgroundColor: "rgba(0, 119, 234,0.051)",
+    backgroundColor: parrotBlueTransparent,
     borderRadius: vh(2),
     paddingHorizontal: vw(2),
     borderWidth: 1,
@@ -235,16 +236,15 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
-    color: "rgba(0, 119, 234,1)",
+    color: parrotBlue,
     paddingVertical: vh(0.2),
     alignSelf: "center",
   },
   subHeader: {
     fontSize: 12,
     fontWeight: "600",
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(0, 119, 234,0.2)",
-    // borderWidth: 1,
+    backgroundColor: "red",
+    backgroundColor: parrotBlueMediumTransparent,
     paddingHorizontal: vh(0.5),
     marginTop: vh(0.2),
     borderRadius: vw(2),
@@ -252,9 +252,7 @@ const styles = StyleSheet.create({
   subHeader2: {
     fontSize: 10,
     fontWeight: "600",
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(0, 119, 234,0.2)",
-    // borderWidth: 1,
+    backgroundColor: parrotBlueMediumTransparent,
     paddingHorizontal: vh(0.5),
     marginTop: vh(0.2),
     borderRadius: vw(2),
@@ -262,9 +260,7 @@ const styles = StyleSheet.create({
   subHeader3: {
     fontSize: 10,
     fontWeight: "600",
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(0, 119, 234,0.2)",
-    // borderWidth: 1,
+    backgroundColor: parrotBlueMediumTransparent,
     paddingHorizontal: vh(1),
     marginTop: vh(0.1),
     borderRadius: vw(2),

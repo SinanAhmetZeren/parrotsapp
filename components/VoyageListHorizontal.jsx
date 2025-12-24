@@ -5,6 +5,7 @@ import React from "react";
 import { StyleSheet, View, FlatList, Text, Image } from "react-native";
 import VoyageCardProfileHorizontal from "./VoyageCardProfileHorizontal";
 import { vh, vw } from "react-native-expo-viewport-units";
+import { parrotLightBlue } from "../assets/color";
 
 export default function VoyageListHorizontal({ data, focusMap }) {
   const renderItem = ({ item }) => {
@@ -47,12 +48,10 @@ export default function VoyageListHorizontal({ data, focusMap }) {
   if (data)
     return (
       <FlatList
-        // style={{ backgroundColor: "pink" }}
         key={data}
         data={data}
         extraData={data}
         renderItem={renderItem}
-        // keyExtractor={(item) => item.id.toString()}
         keyExtractor={(item) => item.id}
         horizontal
         contentContainerStyle={styles.containerHorizontal}
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
   currentBidsTitle2: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#3c9dde",
+    color: parrotLightBlue,
     textAlign: "center",
   },
 

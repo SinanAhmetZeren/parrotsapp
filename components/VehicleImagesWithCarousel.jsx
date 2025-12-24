@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { API_URL } from "@env";
+import { parrotBlue } from "../assets/color";
 
 const VehicleImagesWithCarousel = ({ vehicleImages }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -123,7 +124,7 @@ const styles2 = StyleSheet.create({
     color: "white",
     textAlign: "center",
     alignSelf: "center",
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     width: vw(30),
     borderRadius: vh(4),
     padding: vw(1),
@@ -132,14 +133,6 @@ const styles2 = StyleSheet.create({
     height: vh(5),
     width: vh(5),
     borderRadius: vh(10),
-  },
-  closeButtonInModal2: {
-    alignSelf: "center",
-    backgroundColor: "rgba(217, 241, 241,.75)",
-    borderRadius: vh(10),
-    padding: vh(1.5),
-    borderColor: "#93c9ed",
-    marginTop: vh(1),
   },
   imageContainerInModal: {
     top: vh(30),

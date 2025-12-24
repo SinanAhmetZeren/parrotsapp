@@ -21,6 +21,7 @@ import {
   parrotBlueSemiTransparent,
   parrotBlueTransparent,
   parrotDarkBlue,
+  parrotLightBlue,
   parrotTextDarkBlue,
 } from "../assets/color";
 import { useDeleteWaypointMutation } from "../slices/VoyageSlice";
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     alignSelf: "center",
-    backgroundColor: "#186ff1",
+    backgroundColor: parrotBlue,
     width: vw(30),
     borderRadius: vh(4),
     padding: vw(1),
@@ -294,13 +295,6 @@ const styles = StyleSheet.create({
     height: vh(5),
     width: vh(5),
     borderRadius: vh(10),
-  },
-  closeButtonInModal2: {
-    alignSelf: "center",
-    backgroundColor: "rgba(217, 241, 241,.75)",
-    borderRadius: vh(10),
-    padding: vh(1.5),
-    borderColor: "#93c9ed",
   },
   scrollView: {
     height: vh(15),
@@ -323,7 +317,7 @@ const styles = StyleSheet.create({
   closeButtonAndText: {
     flexDirection: "row",
     borderRadius: vh(2.5),
-    borderColor: "#3aa4ff",
+    borderColor: parrotLightBlue,
     top: vh(-14),
     alignSelf: "center",
   },
@@ -332,7 +326,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     height: vh(3),
     alignSelf: "center",
-    color: "#3aa4ff",
+    color: parrotLightBlue,
   },
   closeWaypointModalButton2: {
     alignSelf: "flex-end",
@@ -389,14 +383,11 @@ const styles = StyleSheet.create({
   titleAndDescription: {
     paddingVertical: vh(0.5),
     paddingHorizontal: vh(0.7),
-    // backgroundColor: "lightblue",
   },
   waypointCard: {
-    // width: vw(80),
     width: vh(40),
     flexDirection: "row",
     borderRadius: vh(3),
-    backgroundColor: "rgba(0, 119, 234,0.05)",
     backgroundColor: "white",
     overflow: "hidden",
   },
@@ -405,7 +396,6 @@ const styles = StyleSheet.create({
     width: vh(13),
     height: vh(13),
     borderRadius: vh(3),
-    borderColor: "rgba(0, 119, 234,0.3)",
     backgroundColor: "white",
   },
   waypointCardImage: {
@@ -414,7 +404,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    borderColor: "rgba(0, 119, 234,0.3)",
     backgroundColor: "white",
   },
   waypointCardDefaultImage: {
@@ -423,7 +412,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
-    borderColor: "rgba(0, 119, 234,0.3)",
     backgroundColor: "white",
     resizeMode: "contain",
     opacity: 0.25
@@ -452,28 +440,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  waypointModalContainer: {
-    borderWidth: 2,
-    borderColor: "rgba(0, 119, 234,0.19)",
-    backgroundColor: "white",
-    height: vh(50),
-    top: vh(20),
-    width: vw(80),
-    alignSelf: "center",
-    borderRadius: vh(5),
-    padding: vh(2),
-  },
   waypointImageContainer: {
     marginTop: vh(1),
     alignItems: "center",
   },
-  waypointImage: {
-    width: vh(14),
-    height: vh(14),
-    borderRadius: vh(3),
-    borderWidth: 3,
-    borderColor: "rgba(0, 119, 234,0.3)",
-  },
+
   waypointImageInModal: {
     width: vh(24),
     height: vh(24),

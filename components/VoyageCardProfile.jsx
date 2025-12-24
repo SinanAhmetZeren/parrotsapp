@@ -16,6 +16,8 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import he from "he";
+import { parrotBlue, parrotBlueMediumTransparent, parrotCream } from "../assets/color";
+import { Shadow } from "react-native-shadow-2";
 
 export default function VoyageCardProfile({
   cardHeader,
@@ -60,37 +62,37 @@ export default function VoyageCardProfile({
   let icon;
   switch (vehicletype) {
     case 0:
-      icon = <FontAwesome6 name="sailboat" size={12} color="blue" />;
+      icon = <FontAwesome6 name="sailboat" size={12} color={parrotBlue} />;
       break;
     case 1:
-      icon = <AntDesign name="car" size={12} color="blue" />;
+      icon = <AntDesign name="car" size={12} color={parrotBlue} />;
       break;
     case 2:
-      icon = <FontAwesome5 name="caravan" size={12} color="blue" />;
+      icon = <FontAwesome5 name="caravan" size={12} color={parrotBlue} />;
       break;
     case 3:
-      icon = <Ionicons name="bus-outline" size={12} color="blue" />;
+      icon = <Ionicons name="bus-outline" size={12} color={parrotBlue} />;
       break;
     case 4:
-      icon = <FontAwesome5 name="walking" size={12} color="blue" />;
+      icon = <FontAwesome5 name="walking" size={12} color={parrotBlue} />;
       break;
     case 5:
-      icon = <FontAwesome5 name="running" size={12} color="blue" />;
+      icon = <FontAwesome5 name="running" size={12} color={parrotBlue} />;
       break;
     case 6:
-      icon = <FontAwesome name="motorcycle" size={12} color="blue" />;
+      icon = <FontAwesome name="motorcycle" size={12} color={parrotBlue} />;
       break;
     case 7:
-      icon = <FontAwesome name="bicycle" size={12} color="blue" />;
+      icon = <FontAwesome name="bicycle" size={12} color={parrotBlue} />;
       break;
     case 8:
-      icon = <FontAwesome6 name="house" size={12} color="blue" />;
+      icon = <FontAwesome6 name="house" size={12} color={parrotBlue} />;
       break;
     case 9:
-      icon = <Ionicons name="airplane-outline" size={12} color="blue" />;
+      icon = <Ionicons name="airplane-outline" size={12} color={parrotBlue} />;
       break;
     case 10:
-      icon = <Ionicons name="train-outline" size={12} color="blue" />;
+      icon = <Ionicons name="train-outline" size={12} color={parrotBlue} />;
       break;
     default:
       icon = "help-circle";
@@ -99,54 +101,70 @@ export default function VoyageCardProfile({
 
   // let x = "1234567890123456789012345";
   return (
-    <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
-      <View style={{ ...styles.cardContainer }}>
-        <View style={{ ...styles.shadow }}>
-          <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
-        </View>
+    <View style={{
+      marginBottom: 0, borderRadius: vh(2), padding: vh(1)
+    }}>
 
-        <View style={{ ...styles.textContainer, height: vh(20) }}>
-          <Text numberOfLines={2} style={{ ...styles.header }}>
-            {cardHeader}
-          </Text>
+      <Shadow
+        distance={8}
+        offset={[0, 0]}
+        startColor="rgba(0,0,0,0.08)"
+        finalColor="rgba(0,0,0,0.13)"
+        radius={12}
+        style={{ borderRadius: vh(2) }}
+      >
+        <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
+          <View style={{ ...styles.cardContainer }}>
+            <View style={{ ...styles.shadow }}>
+              <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
+            </View>
 
-          <View style={{ ...styles.vacancyAndVehicle }}>
-            <View>
-              <Text style={styles.subHeader}>
-                {/* {vehiclename + "111 "} */}
-                {vehiclename.length > 21
-                  ? vehiclename.substring(0, 21) + "..."
-                  : vehiclename}
-                {"  "}
-                {icon}
+            <View style={{ ...styles.textContainer, height: vh(20) }}>
+              <Text numberOfLines={2} style={{ ...styles.header }}>
+                {cardHeader}
               </Text>
+
+              <View style={{ ...styles.vacancyAndVehicle }}>
+                <View>
+                  <Text style={styles.subHeader}>
+                    {/* {vehiclename + "111 "} */}
+                    {vehiclename.length > 21
+                      ? vehiclename.substring(0, 21) + "..."
+                      : vehiclename}
+                    {"  "}
+                    {icon}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={{ ...styles.vacancyAndVehicle }}>
+                <View>
+                  <Text style={styles.subHeader2}>
+                    {vacancy + " "}
+                    <Feather name="users" size={12} color={parrotBlue} />
+                  </Text>
+                </View>
+                <Text style={styles.subHeader3}>
+                  {formattedStartDate + " - " + formattedEndDate + "  "}
+                  <AntDesign name="calendar" size={12} color={parrotBlue} />
+                </Text>
+              </View>
+              <View  >
+                <Text
+                  style={styles.cardDescription}
+                  numberOfLines={5}
+                  ellipsizeMode="tail"
+                >
+                  {he.decode(cardDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim())}
+                </Text>
+              </View>
             </View>
           </View>
+        </TouchableOpacity >
+      </Shadow>
 
-          <View style={{ ...styles.vacancyAndVehicle }}>
-            <View>
-              <Text style={styles.subHeader2}>
-                {vacancy + " "}
-                <Feather name="users" size={12} color="blue" />
-              </Text>
-            </View>
-            <Text style={styles.subHeader3}>
-              {formattedStartDate + " - " + formattedEndDate + "  "}
-              <AntDesign name="calendar" size={12} color="blue" />
-            </Text>
-          </View>
-          <View  >
-            <Text
-              style={styles.cardDescription}
-              numberOfLines={5}
-              ellipsizeMode="tail"
-            >
-              {he.decode(cardDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim())}
-            </Text>
-          </View>
-        </View>
-      </View>
-    </TouchableOpacity >
+    </View>
+
   );
 }
 
@@ -155,13 +173,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "rgba(0, 119, 234,0.03)",
+    backgroundColor: parrotCream,
     borderRadius: vh(2),
-    // borderWidth: 3,
-    borderColor: "rgba(10, 119, 234,0.2)",
+
   },
   cardImage: {
     width: vw(42),
@@ -179,16 +195,14 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 14,
     fontWeight: "700",
-    color: "rgba(0, 119, 234,1)",
+    color: parrotBlue,
     paddingVertical: vh(0.2),
     alignSelf: "center",
   },
   subHeader: {
     fontSize: 12,
     fontWeight: "600",
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(0, 119, 234,0.2)",
-    // borderWidth: 1,
+    backgroundColor: parrotBlueMediumTransparent,
     paddingHorizontal: vh(0.5),
     marginTop: vh(0.2),
     borderRadius: vw(2),
@@ -196,9 +210,7 @@ const styles = StyleSheet.create({
   subHeader2: {
     fontSize: 10,
     fontWeight: "600",
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(0, 119, 234,0.2)",
-    // borderWidth: 1,
+    backgroundColor: parrotBlueMediumTransparent,
     paddingHorizontal: vh(0.5),
     marginTop: vh(0.2),
     borderRadius: vw(2),
@@ -206,9 +218,7 @@ const styles = StyleSheet.create({
   subHeader3: {
     fontSize: 10,
     fontWeight: "600",
-    backgroundColor: "rgba(0, 119, 234,0.1)",
-    borderColor: "rgba(0, 119, 234,0.2)",
-    // borderWidth: 1,
+    backgroundColor: parrotBlueMediumTransparent,
     paddingHorizontal: vh(1),
     marginTop: vh(0.1),
     borderRadius: vw(2),
