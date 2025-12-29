@@ -29,6 +29,7 @@ import {
   TouchableOpacity,
   Share,
   ActivityIndicator,
+  RefreshControl
 } from "react-native";
 import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,18 +45,18 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotDarkCream, parrotGreen, parrotGreenMediumTransparent, parrotLightBlue, parrotTextDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotDarkCream, parrotGreen, parrotGreenMediumTransparent, parrotLightBlue, parrotPistachioGreen, parrotTextDarkBlue } from "../assets/color";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
   const { vehicleId } = route.params;
-  console.log("vehicle id: ", vehicleId);
+  // console.log("vehicle id: ", vehicleId);
   const {
     data: VehicleData,
-    isSuccess: isSuccessVehicles,
-    isLoading: isLoadingVehicles,
-    isError: isErrorVehicles,
-    refetch,
+    isSuccess: isSuccessVehicle,
+    isLoading: isLoadingVehicle,
+    isError: isErrorVehicle,
+    refetch: refetchVehicle,
   } = useGetVehicleByIdQuery(vehicleId);
   const userFavoriteVehicles = useSelector(
     (state) => state.users.userFavoriteVehicles
@@ -66,7 +67,29 @@ const VehicleDetailScreen = () => {
   const [isFavorited, setIsFavorited] = useState(false);
   const [addVehicleToFavorites] = useAddVehicleToFavoritesMutation();
   const [deleteVehicleFromFavorites] = useDeleteVehicleFromFavoritesMutation();
+
+  const [hasError, setHasError] = useState(false)
+  const [refreshing, setRefreshing] = useState(false);
+
   const dispatch = useDispatch();
+
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setHasError(false);
+    try {
+      const refreshData = async () => {
+        setIsLoading(true);
+        await refetchVehicle();
+        setIsLoading(false);
+      };
+      refreshData();
+    } catch (error) {
+      console.log(error);
+      setHasError(true);
+    }
+    setRefreshing(false);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -105,12 +128,12 @@ const VehicleDetailScreen = () => {
   };
 
   useEffect(() => {
-    if (isSuccessVehicles && userFavoriteVehicles) {
+    if (isSuccessVehicle && userFavoriteVehicles) {
       if (userFavoriteVehicles.includes(VehicleData.id)) {
         setIsFavorited(true);
       }
     }
-  }, [isSuccessVehicles, userFavoriteVehicles]);
+  }, [isSuccessVehicle, userFavoriteVehicles]);
 
   const navigation = useNavigation();
 
@@ -158,19 +181,39 @@ const VehicleDetailScreen = () => {
     );
   };
 
-  if (isLoadingVehicles) {
+  if (isLoadingVehicle) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
   }
 
-  if (isErrorVehicles) {
+  if (isErrorVehicle) {
     return (
-      <View style={styles.container}>
-        <Text style={{ fontSize: 50 }}>error...</Text>
-      </View>
+
+      <ScrollView
+        style={styles.mainBidsContainer2}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+            tintColor={parrotBananaLeafGreen}
+          />
+        }
+      >
+        <View style={styles.currentBidsAndSeeAll2}>
+          <Image
+            source={require("../assets/ParrotsWhiteBg.png")}
+            style={styles.logoImage}
+          />
+          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+        </View>
+      </ScrollView>
+
+
     );
   }
 
-  if (isSuccessVehicles) {
+  if (isSuccessVehicle) {
 
     const descriptionShortenedChars = 500;
 

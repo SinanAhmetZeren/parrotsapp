@@ -76,9 +76,10 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flexDirection: "row",
-    padding: 6,
-    marginBottom: vh(1),
-    backgroundColor: parrotCream,
+    padding: vw(2),
+    // marginBottom: vh(1),
+    // marginLeft: vh(.5),
+    backgroundColor: "white",
     borderRadius: vh(3),
   },
   profileImage: {

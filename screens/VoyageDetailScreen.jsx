@@ -25,6 +25,7 @@ import {
   TouchableOpacity,
   Share,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import MapView from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
@@ -44,7 +45,7 @@ import {
   removeVoyageFromUserFavorites,
 } from "../slices/UserSlice";
 import { API_URL } from "@env";
-import { parrotBlueMediumTransparent, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotTextDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotTextDarkBlue } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import RenderHtml from "react-native-render-html";
 
@@ -71,12 +72,19 @@ const VoyageDetailScreen = ({ navigation }) => {
     data: VoyageData,
     isSuccess: isSuccessVoyages,
     isLoading: isLoadingVoyages,
-    refetch,
+    isError: isErrorVoyage,
+    refetch: refetchVoyage,
   } = useGetVoyageByIdQuery(voyageId);
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [waypointInfoVisible, setWayPointInfoVisible] = useState(false);
+  const [voyageImageInfoVisible, setVoyageImageInfoVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+
+  const [hasError, setHasError] = useState(false)
+  const [refreshing, setRefreshing] = useState(false);
+
+
   const dispatch = useDispatch();
 
   useFocusEffect(
@@ -232,6 +240,10 @@ const VoyageDetailScreen = ({ navigation }) => {
     setWayPointInfoVisible(!waypointInfoVisible);
   };
 
+  const toggleVoyageImagesInfo = () => {
+    setVoyageImageInfoVisible(!voyageImageInfoVisible);
+  };
+
   const mapRef = useRef(null);
 
   const focusMap = (latitude, longitude) => {
@@ -270,7 +282,53 @@ const VoyageDetailScreen = ({ navigation }) => {
     );
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setHasError(false);
+    try {
+      const refreshData = async () => {
+        setIsLoading(true);
+        await refetchVoyage();
+        setIsLoading(false);
+      };
+      refreshData();
+    } catch (error) {
+      console.log(error);
+      setHasError(true);
+    }
+    setRefreshing(false);
+  };
+
   // const navigation = useNavigation();
+
+  if (isErrorVoyage) {
+    return (
+
+      <ScrollView
+        style={styles.mainBidsContainer2}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+            tintColor={parrotBananaLeafGreen}
+          />
+        }
+      >
+        <View style={styles.currentBidsAndSeeAll2}>
+          <Image
+            source={require("../assets/ParrotsWhiteBg.png")}
+            style={styles.logoImage}
+          />
+          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+        </View>
+      </ScrollView>
+
+
+    );
+  }
+
 
   if (isLoadingVoyages) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
@@ -280,7 +338,7 @@ const VoyageDetailScreen = ({ navigation }) => {
     const ownVoyage = userId == VoyageData.user.id;
     const waypoints = VoyageData.waypoints || [];
     const descriptionShortenedChars = 500;
-    const displayText = showFullText
+    const displayText = showFullText || VoyageData.description.length < descriptionShortenedChars
       ? VoyageData.description
       : VoyageData.description.slice(0, descriptionShortenedChars) + "...";
 
@@ -448,6 +506,16 @@ const VoyageDetailScreen = ({ navigation }) => {
               <View style={styles.TitleContainerVoyageImages}>
                 <View style={styles.currentBidsAndSeeAll}>
                   <Text style={styles.currentBidsTitle}>Voyage Images</Text>
+                  <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
+                    <MaterialIcons name="info-outline" size={16} color={parrotDarkBlue} />
+                  </TouchableOpacity>
+                  {voyageImageInfoVisible && (
+                    <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
+                      <Text style={styles.voyageImageInfoMessage}>
+                        Tap an image to view photos
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
 
@@ -558,16 +626,16 @@ const VoyageDetailScreen = ({ navigation }) => {
           <View style={styles.waypointsContainer}>
             <View style={styles.WaypointsAndInfo}>
               <Text style={styles.currentBidsTitle}>Waypoints </Text>
-              <TouchableOpacity onPress={() => toggleWaypointsInfo()}>
-                <MaterialIcons name="info-outline" size={24} color="#3c9dde" />
+              <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
+                <MaterialIcons name="info-outline" size={16} color={parrotDarkBlue} />
               </TouchableOpacity>
-              {waypointInfoVisible ? (
-                <TouchableOpacity onPress={() => toggleWaypointsInfo()}>
+              {waypointInfoVisible && (
+                <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
                   <Text style={styles.waypointInfoMessage}>
                     Tap on card to focus map
                   </Text>
                 </TouchableOpacity>
-              ) : null}
+              )}
             </View>
           </View>
 
@@ -639,10 +707,17 @@ const styles = StyleSheet.create({
   },
   waypointInfoMessage: {
     color: parrotLightBlue,
-    paddingHorizontal: vh(2),
+    paddingHorizontal: vh(1),
     borderWidth: 1,
     borderColor: parrotLightBlue,
-    marginLeft: vh(2),
+    marginLeft: vh(1),
+    borderRadius: vh(2),
+  },
+  voyageImageInfoMessage: {
+    color: parrotLightBlue,
+    paddingHorizontal: vh(1),
+    borderWidth: 1,
+    borderColor: parrotLightBlue,
     borderRadius: vh(2),
   },
   rectangularBox: {
@@ -650,8 +725,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   imageContainer: {
-    top: vh(5),
-    height: vh(34),
+    // top: vh(5),
+    height: vh(39),
   },
   voyageDetailsContainer: {
     padding: 4,
@@ -862,7 +937,8 @@ const styles = StyleSheet.create({
   currentBidsAndSeeAll: {
     marginTop: vh(2),
     flexDirection: "row",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
+    justifyContent: "flex-start",
     paddingRight: vw(10),
   },
   WaypointsAndInfo: {

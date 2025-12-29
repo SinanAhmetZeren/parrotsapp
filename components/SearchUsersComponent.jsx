@@ -7,6 +7,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { parrotCream, parrotLightBlue } from "../assets/color";
+import { Shadow } from "react-native-shadow-2";
 
 export const SearchUsersComponent = ({ searchResults }) => {
   const navigation = useNavigation();
@@ -14,31 +15,45 @@ export const SearchUsersComponent = ({ searchResults }) => {
   return (
     <>
       {searchResults
-        ? searchResults.map((item, index) => {
+        && searchResults.map((item, index) => {
           return (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Messages", {
-                  screen: "ProfileScreenPublic",
-                  params: { userId: item.id },
-                });
-              }}
-              key={index}
-              style={styles.searchUserContainer}
-            >
-              <Image
-                source={{
-                  uri: `${item.profileImageUrl}`,
-                }}
-                style={styles.userImage}
-              />
-              <View style={styles.userNameContainer}>
-                <Text style={styles.userName}>{item.userName}</Text>
-              </View>
-            </TouchableOpacity>
+            <View style={{ width: vw(90), marginLeft: vw(5), borderRadius: vh(6), marginTop: vh(2) }}>
+
+              <Shadow
+                distance={7}
+                offset={[0, 0]}
+                startColor="rgba(0,0,0,0.08)"
+                finalColor="rgba(0,0,0,0.23)"
+                radius={12}
+                key={item.id}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("Messages", {
+                      screen: "ProfileScreenPublic",
+                      params: { userId: item.id },
+                    });
+                  }}
+                  key={index}
+                  style={styles.searchUserContainer}
+                >
+                  <Image
+                    source={{
+                      uri: `${item.profileImageUrl}`,
+                    }}
+                    style={styles.userImage}
+                  />
+                  <View style={styles.userNameContainer}>
+                    <Text style={styles.userName}>{item.userName}</Text>
+                  </View>
+                </TouchableOpacity>
+              </Shadow>
+            </View>
+
+
           );
         })
-        : null}
+      }
     </>
   );
 };
@@ -55,15 +70,16 @@ const styles = StyleSheet.create({
   },
   searchUserContainer: {
     flexDirection: "row",
-    // backgroundColor: "#f6f6f6",
     backgroundColor: parrotCream,
-    margin: vh(1),
-    padding: vh(1),
+    backgroundColor: "white",
+    padding: vh(.5),
+    paddingHorizontal: vh(1),
     borderRadius: vh(6),
+    width: vw(90)
   },
   userImage: {
-    height: vh(8),
-    width: vh(8),
+    height: vh(6),
+    width: vh(6),
     borderRadius: vh(6),
   },
 });

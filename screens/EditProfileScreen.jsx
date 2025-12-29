@@ -69,6 +69,7 @@ const EditProfileScreen = ({ navigation }) => {
   const [image2, setImage2] = useState(null);
   const [emailHidden, setEmailHidden] = useState(true);
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
+  const [hasError, setHasError] = useState(false)
 
   useFocusEffect(
     useCallback(() => {
@@ -102,6 +103,7 @@ const EditProfileScreen = ({ navigation }) => {
       const response = await updateProfileImage({ formData, userId });
     } catch (error) {
       console.error("Error uploading image", error);
+      setHasError(true)
     }
   };
 
@@ -119,6 +121,7 @@ const EditProfileScreen = ({ navigation }) => {
       const response = await updateBackgroundImage({ formData, userId });
     } catch (error) {
       console.error("Error uploading image", error);
+      setHasError(true)
     }
   };
 
@@ -153,6 +156,7 @@ const EditProfileScreen = ({ navigation }) => {
       // console.log("updating user");
     } catch (error) {
       console.error("Error uploading image", error);
+      setHasError(true)
     }
   };
 
@@ -229,7 +233,25 @@ const EditProfileScreen = ({ navigation }) => {
     console.log("TextInput bottom margin updated:", textInputBottomMargin);
   }, [textInputBottomMargin]);
 
-  if (isSuccess) {
+
+  if (hasError) {
+    return (
+      <View style={{ backgroundColor: "white", height: vh(100) }}>
+        <View style={{ marginTop: vh(15) }}>
+          <Image
+            source={require("../assets/ParrotsWhiteBg.png")}
+            style={styles.logoImage}
+          />
+          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          {/* <Text style={styles.currentBidsTitle3}>
+              Swipe Down to Retry
+            </Text> */}
+        </View>
+      </View>
+    )
+  }
+
+  if (isSuccess && !hasError) {
     const profileImageUrl = `${userData.profileImageUrl}`;
     const backgroundImageUrl = `${userData.backgroundImageUrl}`;
 
@@ -568,11 +590,29 @@ const EditProfileScreen = ({ navigation }) => {
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
+  currentBidsTitle3: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotBlue,
+    textAlign: "center",
+  },
+  currentBidsTitle2: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotBlue,
+    textAlign: "center",
+  },
+  logoImage: {
+    height: vh(23),
+    width: vh(23),
+    alignSelf: "center",
+  },
   infoIcon: {
     position: "absolute",
     right: vw(2)
   },
-
   emailInfoWrapper: {
     flexDirection: "row",
     alignItems: "center",
@@ -585,7 +625,6 @@ const styles = StyleSheet.create({
   profileBackGround: {
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor: "#fff6f0",
     backgroundColor: parrotCream,
     top: vh(-6),
     borderRadius: vh(3),
@@ -648,7 +687,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(6),
   },
-
   refetch: {
     padding: 3,
     paddingHorizontal: vw(15),
@@ -679,7 +717,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: vw(17),
   },
-
   textInput: {
     lineHeight: 21,
     marginVertical: 1,

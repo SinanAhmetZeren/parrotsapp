@@ -281,7 +281,6 @@ export default function MessagesScreen({ navigation }) {
                       </Text>
                     </TouchableOpacity>
                   </View>
-
                   <SearchUsersComponent searchResults={usersData} />
                 </View>
               </>
@@ -363,7 +362,6 @@ const styles = StyleSheet.create({
     height: vh(100),
   },
   flatlist: {
-    backgroundColor: "yellow",
     marginTop: vh(2),
     width: vw(94),
     justifyContent: "center",
