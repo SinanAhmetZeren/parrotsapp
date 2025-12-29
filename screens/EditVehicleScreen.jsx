@@ -76,6 +76,7 @@ const EditVehicleScreen = () => {
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [hasError, setHasError] = useState(false)
 
   const navigation = useNavigation();
 
@@ -143,6 +144,7 @@ const EditVehicleScreen = () => {
       const response = await patchVehicle({ patchDoc, currentVehicleId });
     } catch (error) {
       console.error("Error", error);
+      setHasError(true)
     }
   };
 
@@ -173,6 +175,7 @@ const EditVehicleScreen = () => {
       setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
+      setHasError(true)
     }
   };
 
@@ -198,6 +201,7 @@ const EditVehicleScreen = () => {
       setImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
+      setHasError(true)
     }
   };
 
@@ -272,8 +276,25 @@ const EditVehicleScreen = () => {
       <>
         <TokenExpiryGuard />
 
+
+        {hasError && (
+          <View style={{ backgroundColor: "white", height: vh(100) }}>
+            <View style={{ marginTop: vh(15) }}>
+              <Image
+                source={require("../assets/ParrotsWhiteBg.png")}
+                style={styles.logoImage}
+              />
+              <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+              {/* <Text style={styles.currentBidsTitle3}>
+                Swipe Down to Retry
+              </Text> */}
+            </View>
+          </View>
+        )}
+
+
         <StepBarVehicle currentStep={currentStep} />
-        {currentStep == 1 ? (
+        {currentStep == 1 && !hasError && (
           <ScrollView style={styles.scrollview}>
             <View >
               <View style={styles.profileContainer}>
@@ -406,9 +427,9 @@ const EditVehicleScreen = () => {
               </View>
             </View>
           </ScrollView>
-        ) : null}
+        )}
 
-        {currentStep === 2 ? (
+        {currentStep === 2 && !hasError && (
           <ScrollView style={styles.scrollview}>
             <View  >
               <View style={styles.selectedChoice}>
@@ -502,7 +523,7 @@ const EditVehicleScreen = () => {
               </TouchableOpacity>
             </View>
           </ScrollView>
-        ) : null}
+        )}
 
         <View>
           <TouchableOpacity
@@ -560,6 +581,27 @@ const EditVehicleScreen = () => {
 export default EditVehicleScreen;
 
 const styles2 = StyleSheet.create({
+
+  currentBidsTitle3: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotBlue,
+    textAlign: "center",
+  },
+  currentBidsTitle2: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotBlue,
+    textAlign: "center",
+  },
+
+  logoImage: {
+    height: vh(23),
+    width: vh(23),
+    alignSelf: "center",
+  },
   recycleBackground: {
     color: "purple",
   },

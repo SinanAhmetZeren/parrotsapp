@@ -4,7 +4,8 @@
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import ConversationView from "./CoversationView";
-import { vh } from "react-native-expo-viewport-units";
+import { vh, vw } from "react-native-expo-viewport-units";
+import { Shadow } from "react-native-shadow-2";
 
 export default function ConversationList({ data, userId }) {
   let transformedMessages = [];
@@ -34,15 +35,29 @@ export default function ConversationList({ data, userId }) {
     });
 
     return sortedData.map((item, index) => (
-      <ConversationView
-        key={index}
-        profileImg={item.userProfileImage}
-        name={item.userName}
-        userId={item.user}
-        message={item.text}
-        time={item.dateTime}
-        count={33}
-      />
+
+      <Shadow
+        distance={7}
+        offset={[0, 0]}
+        startColor="rgba(0,0,0,0.08)"
+        finalColor="rgba(0,0,0,0.23)"
+        radius={12}
+        style={{ borderRadius: vh(3), marginBottom: vh(1.5) }}
+        key={`${item.id}-${item.userName}`}
+
+      >
+        <ConversationView
+          // key={`${item.id}-${item.userName}-1`}
+          profileImg={item.userProfileImage}
+          name={item.userName}
+          userId={item.user}
+          message={item.text}
+          time={item.dateTime}
+        // count={33}
+        />
+      </Shadow>
+
+
     ));
   };
 
@@ -55,7 +70,9 @@ export default function ConversationList({ data, userId }) {
 
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: vw(0.5),
     backgroundColor: "white",
     height: vh(85),
+    paddingTop: vh(1)
   },
 });

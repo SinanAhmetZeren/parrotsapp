@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity, Modal, StyleSheet, Animated } from "react
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { parrotBlue, parrotCream } from "../assets/color";
+import { Shadow } from "react-native-shadow-2";
 
 export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
   const navigation = useNavigation();
@@ -56,14 +57,36 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
       <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPressOut={handlePressOut}>
         <Animated.View style={[styles.centeredView, { opacity: opacityAnim }]}>
           <View style={styles.modalView}>
-            <TouchableOpacity style={styles.selection} onPress={handleAddVehicle}>
-              <Text style={styles.choiceText}>New Vehicle</Text>
-            </TouchableOpacity>
+            <Shadow
+              distance={8}
+              offset={[0, 0]}
+              startColor="rgba(0,0,0,0.18)"
+              finalColor="rgba(0,0,0,0.23)"
+              radius={12}
+              style={{ borderRadius: vh(2) }}
+            >
+              <View style={styles.modalView}>
+                <TouchableOpacity style={styles.selection} onPress={handleAddVehicle}>
+                  <Text style={styles.choiceText}>New Vehicle</Text>
+                </TouchableOpacity>
+              </View>
+            </Shadow>
           </View>
           <View style={styles.modalView2}>
-            <TouchableOpacity style={styles.selection2} onPress={handleAddVoyage}>
-              <Text style={styles.choiceText}>New Voyage</Text>
-            </TouchableOpacity>
+            <Shadow
+              distance={8}
+              offset={[0, 0]}
+              startColor="rgba(0,0,0,0.18)"
+              finalColor="rgba(0,0,0,0.23)"
+              radius={12}
+              style={{ borderRadius: vh(2) }}
+            >
+              <View style={styles.modalView2}>
+                <TouchableOpacity style={styles.selection2} onPress={handleAddVoyage}>
+                  <Text style={styles.choiceText}>New Voyage</Text>
+                </TouchableOpacity>
+              </View>
+            </Shadow>
           </View>
         </Animated.View>
       </TouchableOpacity>

@@ -30,13 +30,15 @@ import { SocialRenderComponentModal } from "../components/SocialRenderComponentM
 import VoyageListVertical from "../components/VoyageListVertical";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen } from "../assets/color";
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
   const { userId } = route.params;
   const [socialItemCount, setSocialItemCount] = useState(0);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const {
     data: userData,
@@ -44,19 +46,31 @@ export default function ProfileScreenPublic({ navigation }) {
     isError,
     error,
     isSuccess,
-    refetch,
+    refetch: refetchUser,
   } = useGetUserByIdQuery(userId);
   const {
     data: VoyagesData,
     isSuccess: isSuccessVoyages,
+    isError: isErrorVoyages,
     isLoading: isLoadingVoyages,
+    refetch: refetchVoyages
   } = useGetVoyagesByUserByIdQuery(userId);
   const {
     data: VehiclesData,
     isSuccess: isSuccessVehicles,
+    isError: isErrorVehicles,
     isLoading: isLoadingVehicles,
+    refetch: refetchVehicles
   } = useGetVehiclesByUserByIdQuery(userId);
+
   const [selected, setSelected] = useState("voyages");
+
+
+  useEffect(() => {
+    if (isErrorUser || isErrorVehicles || isErrorVoyages) {
+      setHasError(true);
+    }
+  }, [isErrorUser, isErrorVehicles, isErrorVoyages]);
 
   const handleInstagramPress = async () => {
     if (userData.instagram) {
@@ -82,6 +96,27 @@ export default function ProfileScreenPublic({ navigation }) {
       };
     }, [refetch])
   );
+
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setHasError(false);
+    try {
+      const refreshData = async () => {
+        setIsLoading(true);
+        await refetchUser();
+        await refetchVehicles();
+        await refetchVoyages();
+        setIsLoading(false);
+      };
+      refreshData();
+    } catch (error) {
+      console.log(error);
+      setHasError(true);
+    }
+    setRefreshing(false);
+  };
+
 
   const handleFacebookPress = async () => {
     const facebookPageID = `${userData.facebook}`;
@@ -180,8 +215,29 @@ export default function ProfileScreenPublic({ navigation }) {
     );
   }
 
-  if (isError) {
-    console.log(error);
+  if (hasError) {
+    return (
+      <ScrollView
+        style={styles.mainBidsContainer2}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+            tintColor={parrotBananaLeafGreen}
+          />
+        }
+      >
+        <View style={styles.currentBidsAndSeeAll2}>
+          <Image
+            source={require("../assets/ParrotsWhiteBg.png")}
+            style={styles.logoImage}
+          />
+          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+        </View>
+      </ScrollView>
+    );
   }
 
   if (isSuccess) {

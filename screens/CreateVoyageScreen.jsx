@@ -95,10 +95,13 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
+
+  const [hasError, setHasError] = useState(false)
+
 
   useEffect(() => { }, [startDate, endDate, lastBidDate, voyageImage]);
 
@@ -226,6 +229,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       setCurrentStep(2);
     } catch (error) {
       console.error("Error uploading image", error);
+      setHasError(true)
     }
     setIsCreatingVoyage(false);
   };
@@ -259,6 +263,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
+      setHasError(true)
     }
     setIsUploadingImage(false);
   };
@@ -327,10 +332,15 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   const handleDeleteImage = (imageId) => {
-    deleteVoyageImage(imageId);
-    setAddedVoyageImages((prevImages) =>
-      prevImages.filter((item) => item.addedVoyageImageId !== imageId)
-    );
+    try {
+      deleteVoyageImage(imageId);
+      setAddedVoyageImages((prevImages) =>
+        prevImages.filter((item) => item.addedVoyageImageId !== imageId)
+      );
+    }
+    catch {
+      setHasError(true)
+    }
   };
 
   if (isSuccess) {
@@ -365,7 +375,25 @@ const CreateVoyageScreen = ({ navigation }) => {
       <>
         <TokenExpiryGuard />
         <StepBar style={styles.StepBar} currentStep={currentStep} />
-        {currentStep == 1 ? (
+
+
+        {hasError && (
+          <View style={{ backgroundColor: "white", height: vh(100) }}>
+            <View style={{ marginTop: vh(15) }}>
+              <Image
+                source={require("../assets/ParrotsWhiteBg.png")}
+                style={styles.logoImage}
+              />
+              <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+              {/* <Text style={styles.currentBidsTitle3}>
+                Swipe Down to Retry
+              </Text> */}
+            </View>
+          </View>
+        )}
+
+
+        {currentStep == 1 && !hasError && (
           <ScrollView style={styles.scrollview}>
             <View>
               <View style={styles.profileContainer}>
@@ -634,9 +662,9 @@ const CreateVoyageScreen = ({ navigation }) => {
               </View>
             </View>
           </ScrollView>
-        ) : null}
+        )}
 
-        {currentStep === 2 ? (
+        {currentStep === 2 && !hasError && (
           <ScrollView style={styles.scrollview}>
             <View>
               <View style={styles.selectedChoice}>
@@ -743,7 +771,7 @@ const CreateVoyageScreen = ({ navigation }) => {
             </View>
 
           </ScrollView>
-        ) : null}
+        )}
       </>
     );
   }
@@ -771,6 +799,28 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+
+  currentBidsTitle3: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotBlue,
+    textAlign: "center",
+  },
+  currentBidsTitle2: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotBlue,
+    textAlign: "center",
+  },
+
+  logoImage: {
+    height: vh(23),
+    width: vh(23),
+    alignSelf: "center",
+  },
+
   loginContainer: {
     alignSelf: "center",
     marginTop: vh(1),

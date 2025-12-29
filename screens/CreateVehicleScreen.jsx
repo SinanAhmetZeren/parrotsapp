@@ -61,6 +61,7 @@ const CreateVehicleScreen = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVehicle, setIsCreatingVehicle] = useState(false);
   const [isCompletingVehicle, setIsCompletingVehicle] = useState(false);
+  const [hasError, setHasError] = useState(false)
 
   const navigation = useNavigation();
 
@@ -106,6 +107,7 @@ const CreateVehicleScreen = () => {
   );
 
   const completeVehicle = async () => {
+    // reset form state
     setName("");
     setDescription("");
     setCapacity(0);
@@ -114,17 +116,28 @@ const CreateVehicleScreen = () => {
     setImage("");
     setVoyageImage("");
     setAddedVehicleImages([]);
-    // setCurrentStep(1);
+
+    // guard: no images → do nothing
     if (addedVehicleImages.length === 0) {
       console.log("images length: -->", addedVehicleImages.length);
       return;
     }
+
     setIsCompletingVehicle(true);
-    console.log("confirming vehicle: ", vehicleId);
-    var confirmResult = await confirmVehicle(vehicleId);
-    console.log("confirmResult: ", confirmResult);
-    setIsCompletingVehicle(false);
-    navigation.navigate("Home");
+    setHasError(false);
+
+    try {
+      console.log("confirming vehicle: ", vehicleId);
+      const confirmResult = await confirmVehicle(vehicleId);
+      console.log("confirmResult: ", confirmResult);
+
+      navigation.navigate("Home");
+    } catch (error) {
+      console.error("Error completing vehicle:", error);
+      setHasError(true);
+    } finally {
+      setIsCompletingVehicle(false);
+    }
   };
 
   const handleCreateVehicle = async () => {
@@ -140,6 +153,8 @@ const CreateVehicleScreen = () => {
     });
 
     setIsCreatingVehicle(true);
+    setHasError(false);
+
     try {
       const response = await createVehicle({
         formData,
@@ -149,10 +164,11 @@ const CreateVehicleScreen = () => {
         vehicleType,
         capacity,
       });
-      console.log("-->>", response);
-      console.log("-->>", response.user);
-      const createdVehicleId = response.data.data.id;
-      console.log("Created Vehicle ID:", createdVehicleId);
+
+      const createdVehicleId = response?.data?.data?.id;
+      if (!createdVehicleId) {
+        throw new Error("Vehicle ID not returned from API");
+      }
 
       setVehicleId(createdVehicleId);
       setDescription("");
@@ -161,53 +177,66 @@ const CreateVehicleScreen = () => {
       setImage("");
       setVoyageImage("");
       setAddedVehicleImages([]);
+
       console.log("1. Vehicle created successfully, moving to step 2");
       setCurrentStep(2);
       console.log("2. Vehicle created successfully, moving to step 2");
-
     } catch (error) {
-      alert(
-        "Failed to create vehicle. Please check your connection and try again."
-      );
       console.error("Error in or after createVehicle:", error);
-      console.log("Error details:", error.data || error.error || error.message);
+      console.log(
+        "Error details:",
+        error?.data || error?.error || error?.message
+      );
+      setHasError(true);
     } finally {
       setIsCreatingVehicle(false);
     }
   };
 
+
   const handleUploadImage = useCallback(async () => {
     if (!voyageImage) {
       return;
     }
+
     const formData = new FormData();
     formData.append("imageFile", {
       uri: voyageImage,
       type: "image/jpeg",
       name: "profileImage.jpg",
     });
+
     setIsUploadingImage(true);
+    setHasError(false);
+
     try {
       const addedVehicleImageResponse = await addVehicleImage({
         formData,
         vehicleId,
       });
 
-      const addedVoyageImageId = addedVehicleImageResponse.data.imagePath;
+      const addedVoyageImageId =
+        addedVehicleImageResponse?.data?.imagePath;
+
+      if (!addedVoyageImageId) {
+        throw new Error("Image path not returned from API");
+      }
+
       const newItem = {
         addedVoyageImageId,
         voyageImage,
       };
+
       setAddedVehicleImages((prevImages) => [...prevImages, newItem]);
       setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
-      alert(
-        "Failed to upload image. Please check your connection and try again."
-      );
+      setHasError(true);
+    } finally {
+      setIsUploadingImage(false);
     }
-    setIsUploadingImage(false);
   }, [voyageImage, vehicleId, addVehicleImage]);
+
 
   const pickProfileImage = async () => {
     console.log("Picking profile image... PICKING");
@@ -239,22 +268,32 @@ const CreateVehicleScreen = () => {
     }
   };
 
+
+
   const handleDeleteImage = async (imageId) => {
     const previousImages = [...addedVehicleImages];
+
+    // optimistic UI update
     setAddedVehicleImages(
-      previousImages.filter((item) => item.addedVoyageImageId !== imageId)
+      previousImages.filter(
+        (item) => item.addedVoyageImageId !== imageId
+      )
     );
+
+    setHasError(false);
 
     try {
       await deleteVehicleImage(imageId);
     } catch (error) {
       console.error("Error deleting image", error);
+
+      // rollback on failure
       setAddedVehicleImages(previousImages);
-      alert(
-        "Failed to delete image. Please check your connection and try again."
-      );
+      setHasError(true);
     }
   };
+
+
 
   const VehicleTypes = [
     "Boat",
@@ -296,7 +335,25 @@ const CreateVehicleScreen = () => {
       <TokenExpiryGuard />
 
       <StepBarVehicle currentStep={currentStep} />
-      {currentStep == 1 ? (
+
+
+
+      {hasError && (
+        <View style={{ backgroundColor: "white", height: vh(100) }}>
+          <View style={{ marginTop: vh(15) }}>
+            <Image
+              source={require("../assets/ParrotsWhiteBg.png")}
+              style={styles.logoImage}
+            />
+            <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+            {/* <Text style={styles.currentBidsTitle3}>
+              Swipe Down to Retry
+            </Text> */}
+          </View>
+        </View>
+      )}
+
+      {currentStep == 1 && !hasError && (
         <ScrollView style={styles.scrollview}>
           <View style={styles.overlay}>
             <View style={styles.profileContainer}>
@@ -425,9 +482,9 @@ const CreateVehicleScreen = () => {
             </View>
           </View>
         </ScrollView>
-      ) : null}
+      )}
 
-      {currentStep === 2 ? (
+      {currentStep === 2 && !hasError && (
 
         <ScrollView style={styles.scrollview}>
           {console.log("Step 2 screen rendered")}
@@ -551,7 +608,7 @@ const CreateVehicleScreen = () => {
             </View>
           </View>
         </ScrollView>
-      ) : null}
+      )}
     </>
   );
 };
@@ -559,6 +616,27 @@ const CreateVehicleScreen = () => {
 export default CreateVehicleScreen;
 
 const styles = StyleSheet.create({
+
+  currentBidsTitle3: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotBlue,
+    textAlign: "center",
+  },
+  currentBidsTitle2: {
+    top: vh(-3),
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotBlue,
+    textAlign: "center",
+  },
+
+  logoImage: {
+    height: vh(23),
+    width: vh(23),
+    alignSelf: "center",
+  },
   voyageImage1: {
     height: vh(13),
     width: vh(13),

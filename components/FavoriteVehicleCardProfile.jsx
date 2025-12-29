@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    marginBottom: 10,
+    // marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
     backgroundColor: parrotCream,
