@@ -1,6 +1,7 @@
 import React from "react";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
+
 import { useEffect } from "react";
 import { Button, Alert } from "react-native";
 import { useDispatch } from "react-redux";
@@ -10,6 +11,7 @@ import {
   useLazyGetFavoriteVoyageIdsByUserIdQuery,
   useLazyGetFavoriteVehicleIdsByUserIdQuery,
 } from "../slices/UserSlice";
+// import * as AuthSession from "expo-auth-session";
 
 
 
@@ -23,13 +25,20 @@ export default function GoogleLoginButton() {
 
   const redirectUri = "https://auth.expo.io/@ahmetzeren/parrots";
 
-  console.log("Redirect URI:", redirectUri);
+  // const redirectUri2 = AuthSession.makeRedirectUri({
+  //   useProxy: true,
+  // });
+  // const [request, response, promptAsync] = Google.useAuthRequest({
+  //   androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
+  //   webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
+  //   redirectUri: redirectUri,
+  //   useProxy: true,
+  // });
+
+  WebBrowser.maybeCompleteAuthSession();
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
-    webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
-    redirectUri: redirectUri,
-    useProxy: true,
   });
 
 
