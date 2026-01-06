@@ -6,10 +6,10 @@
     "version": "1.0.0",
     "scheme": "parrotsapp",
     "orientation": "portrait",
-    "icon": "./assets/parrots-logo-new11.jpeg",
+    "icon": "./assets/parrotsLogoX.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/parrots-logo-new11.jpeg",
+      "image": "./assets/parrotsLogoX.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -31,7 +31,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/parrots-logo-new11.jpeg",
+        "foregroundImage": "./assets/parrotsLogoX.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
