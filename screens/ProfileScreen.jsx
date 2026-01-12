@@ -34,6 +34,7 @@ import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import he from "he";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen } from "../assets/color";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -76,6 +77,7 @@ export default function ProfileScreen({ navigation }) {
 
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
+    await GoogleSignin.signOut();
   };
 
   useFocusEffect(
