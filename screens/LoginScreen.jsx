@@ -159,7 +159,7 @@ const logout = () => {
             userName: resetPasswordResponse.userName,
             profileImageUrl: resetPasswordResponse.profileImageUrl,
             token: resetPasswordResponse.token,
-            refreshToken: resetPasswordResponse.refreshTokenExpiryTime,
+            refreshToken: resetPasswordResponse.refreshToken,
             refreshTokenExpiryTime:
               resetPasswordResponse.refreshTokenExpiryTime,
           })

@@ -8,6 +8,8 @@ import { useEffect } from 'react'; // Added React import
 import { StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native'; // Added Text and ActivityIndicator
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useGoogleLoginInternalMutation } from "../slices/UserSlice";
+import { useDispatch } from "react-redux";
+import { updateAsLoggedIn } from "../slices/UserSlice";
 
 export default function GoogleLoginButton() {
   const [googleLoginInternal, { isLoading }] = useGoogleLoginInternalMutation();
@@ -15,27 +17,54 @@ export default function GoogleLoginButton() {
   useEffect(() => {
     GoogleSignin.configure({
       // Ensure this is your WEB Client ID from Google Console
+      androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
       webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
       offlineAccess: true,
     });
   }, []);
 
+  const dispatch = useDispatch();
+
   const handleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
 
-      // In latest versions, it's response.data
-      const response = await GoogleSignin.signIn();
+      try {
+        await GoogleSignin.signOut();
+      } catch (e) {
+        // Ignore error if no one was signed in
+      }
 
-      // For your backend, you usually want the idToken or the accessToken
-      // If your backend uses 'access_token' endpoint, use accessToken.
-      const token = response.data?.idToken || response.data?.accessToken;
+      // 1. Initial Sign In to get the user context
+      await GoogleSignin.signIn();
 
-      if (token) {
-        await googleLoginInternal(token).unwrap();
+      // 2. Fetch the AccessToken explicitly (to match your backend tokeninfo check)
+      const { accessToken } = await GoogleSignin.getTokens();
+
+      console.log("Access Token for backend: ", accessToken);
+
+      if (accessToken) {
+        // 3. Send the accessToken to your google-login endpoint
+        const res = await googleLoginInternal(accessToken).unwrap();
         console.log("Login Success");
+        console.log("-->", res);
+
+
+        await dispatch(
+          updateAsLoggedIn({
+            userId: res.userId,
+            userName: res.userName,
+            profileImageUrl: res.profileImageUrl,
+            token: res.token,
+            refreshToken: res.refreshToken,
+            refreshTokenExpiryTime:
+              res.refreshTokenExpiryTime,
+          })
+        );
+
+
       } else {
-        console.error("No token received from Google");
+        console.error("No Access Token received from Google");
       }
     } catch (error) {
       console.error("Native Sign-In Error:", error);
