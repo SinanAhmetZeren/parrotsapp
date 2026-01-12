@@ -31,7 +31,7 @@ import {
 } from "../slices/UserSlice";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import GoogleLoginButton from "../components/GoogleAuthButton";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotDarkCream, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotDarkCream, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
 
 // import {
 //   GoogleSignin,
@@ -81,23 +81,24 @@ const LoginScreen = ({ navigation }) => {
   const [getFavoriteVoyageIdsByUserId] =
     useLazyGetFavoriteVoyageIdsByUserIdQuery();
 
-  const configureGoogleSignIn = () => {
-    GoogleSignin.configure({
-      webClientId:
-        "938579686654-99cii7dblv837klmb8kkmg09d80ehf4k.apps.googleusercontent.com",
-      androidClientId:
-        "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
-      iosClientId:
-        "938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq.apps.googleusercontent.com",
-    });
-  };
+  /*
+const configureGoogleSignIn = () => {
+  GoogleSignin.configure({
+    webClientId:
+      "938579686654-99cii7dblv837klmb8kkmg09d80ehf4k.apps.googleusercontent.com",
+    androidClientId:
+      "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
+    iosClientId:
+      "938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq.apps.googleusercontent.com",
+  });
+};
 
-  const logout = () => {
-    setUserInfo(undefined);
-    GoogleSignin.revokeAccess();
-    GoogleSignin.signOut();
-  };
-
+const logout = () => {
+  setUserInfo(undefined);
+  GoogleSignin.revokeAccess();
+  GoogleSignin.signOut();
+};
+*/
   const handleEmailChange = (text) => {
     setEmail(text);
   };
@@ -405,7 +406,7 @@ const LoginScreen = ({ navigation }) => {
             <View style={styles.imagecontainer}>
               <Image
                 style={styles.image}
-                source={require("../assets/welcomeBack.png")}
+                source={require("../assets/welcome.png")}
               />
             </View>
           </View>
@@ -521,6 +522,7 @@ const LoginScreen = ({ navigation }) => {
               <Image
                 style={styles.imageLetsStart}
                 source={require("../assets/letsStart.png")}
+
               />
             </View>
           </View>
@@ -657,8 +659,8 @@ const LoginScreen = ({ navigation }) => {
           <View style={{ backgroundColor: "white" }}>
             <View style={styles.imagecontainer}>
               <Image
-                style={styles.imageLetsStart}
-                source={require("../assets/letsStart.png")}
+                style={styles.imageAlmostThere}
+                source={require("../assets/almostthere.png")}
               />
             </View>
           </View>
@@ -724,7 +726,7 @@ const LoginScreen = ({ navigation }) => {
             <View style={styles.imagecontainer}>
               <Image
                 style={styles.image}
-                source={require("../assets/welcomeBack.png")}
+                source={require("../assets/resetpassword.png")}
               />
             </View>
           </View>
@@ -774,8 +776,8 @@ const LoginScreen = ({ navigation }) => {
           <View style={{ backgroundColor: "white" }}>
             <View style={styles.imagecontainer}>
               <Image
-                style={styles.image}
-                source={require("../assets/welcomeBack.png")}
+                style={styles.imageAlmostThere}
+                source={require("../assets/checkYourEmail.png")}
               />
             </View>
           </View>
@@ -791,7 +793,7 @@ const LoginScreen = ({ navigation }) => {
                   onFocus={() => setIsFocusedPasswordR(true)}
                   onBlur={() => setIsFocusedPasswordR(false)}
                   placeholderTextColor={parrotPlaceholderGrey}
-                  placeholder="Enter Password"
+                  placeholder="Enter New Password"
                   secureTextEntry={isPasswordHidden}
                   value={passwordR}
                   onChangeText={(text) => handlePasswordRChange(text)}
@@ -815,7 +817,7 @@ const LoginScreen = ({ navigation }) => {
                   onFocus={() => setIsFocusedPasswordR2(true)}
                   onBlur={() => setIsFocusedPasswordR2(false)}
                   placeholderTextColor={parrotPlaceholderGrey}
-                  placeholder="Re-enter Password"
+                  placeholder="Re-enter New Password"
                   secureTextEntry={isPasswordHidden2}
                   value={passwordR2}
                   onChangeText={(text) => handlePasswordR2Change(text)}
@@ -963,6 +965,7 @@ const styles = StyleSheet.create({
     padding: 8,
     width: "100%",
     borderRadius: vh(1.5),
+    color: parrotInputTextColor,
   },
   inputFocused: {
     borderColor: parrotBlueSemiTransparent3,
@@ -975,13 +978,19 @@ const styles = StyleSheet.create({
     alignSelf: "center",
 
   },
+
   image: {
     width: vw(70),
     height: vh(15),
   },
   imageLetsStart: {
     width: vw(72),
-    height: vh(7),
+    height: vh(17),
+  },
+  imageAlmostThere: {
+    width: vw(72),
+    height: vh(15),
+    resizeMode: "contain",
   },
 });
 

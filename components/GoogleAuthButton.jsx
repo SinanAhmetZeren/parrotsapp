@@ -1,91 +1,77 @@
-import React from "react";
-import * as Google from "expo-auth-session/providers/google";
-import * as WebBrowser from "expo-web-browser";
 
-import { useEffect } from "react";
-import { Button, Alert } from "react-native";
-import { useDispatch } from "react-redux";
-import { updateAsLoggedIn, updateUserFavorites } from "../slices/UserSlice";
-import {
-  useGoogleLoginInternalMutation,
-  useLazyGetFavoriteVoyageIdsByUserIdQuery,
-  useLazyGetFavoriteVehicleIdsByUserIdQuery,
-} from "../slices/UserSlice";
-// import * as AuthSession from "expo-auth-session";
+// iosClientId: "938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq.apps.googleusercontent.com",
+// androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
+//webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
 
 
-
-WebBrowser.maybeCompleteAuthSession();
+import { useEffect } from 'react'; // Added React import
+import { StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native'; // Added Text and ActivityIndicator
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useGoogleLoginInternalMutation } from "../slices/UserSlice";
 
 export default function GoogleLoginButton() {
-  const dispatch = useDispatch();
-  const [googleLoginInternal] = useGoogleLoginInternalMutation();
-  const [getFavoriteVehicles] = useLazyGetFavoriteVehicleIdsByUserIdQuery();
-  const [getFavoriteVoyages] = useLazyGetFavoriteVoyageIdsByUserIdQuery();
-
-  const redirectUri = "https://auth.expo.io/@ahmetzeren/parrots";
-
-  // const redirectUri2 = AuthSession.makeRedirectUri({
-  //   useProxy: true,
-  // });
-  // const [request, response, promptAsync] = Google.useAuthRequest({
-  //   androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
-  //   webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
-  //   redirectUri: redirectUri,
-  //   useProxy: true,
-  // });
-
-  WebBrowser.maybeCompleteAuthSession();
-
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
-  });
-
+  const [googleLoginInternal, { isLoading }] = useGoogleLoginInternalMutation();
 
   useEffect(() => {
-    const handleGoogleLogin = async () => {
-      if (response?.type === "success") {
-        const accessToken = response.authentication.accessToken;
+    GoogleSignin.configure({
+      // Ensure this is your WEB Client ID from Google Console
+      webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
+      offlineAccess: true,
+    });
+  }, []);
 
-        try {
-          const res = await googleLoginInternal(accessToken).unwrap();
+  const handleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
 
-          const favoriteVehicles = await getFavoriteVehicles(
-            res.userId
-          ).unwrap();
-          const favoriteVoyages = await getFavoriteVoyages(res.userId).unwrap();
+      // In latest versions, it's response.data
+      const response = await GoogleSignin.signIn();
 
-          dispatch(
-            updateUserFavorites({
-              favoriteVehicles,
-              favoriteVoyages,
-            })
-          );
+      // For your backend, you usually want the idToken or the accessToken
+      // If your backend uses 'access_token' endpoint, use accessToken.
+      const token = response.data?.idToken || response.data?.accessToken;
 
-          dispatch(
-            updateAsLoggedIn({
-              userId: res.userId,
-              token: res.token,
-              refreshToken: res.refreshToken,
-              userName: res.userName,
-              profileImageUrl: res.profileImageUrl,
-            })
-          );
-        } catch (error) {
-          Alert.alert("Login failed", error.message || "Internal error");
-          console.error(error);
-        }
+      if (token) {
+        await googleLoginInternal(token).unwrap();
+        console.log("Login Success");
+      } else {
+        console.error("No token received from Google");
       }
-    };
-
-    handleGoogleLogin();
-  }, [response]);
+    } catch (error) {
+      console.error("Native Sign-In Error:", error);
+    }
+  };
 
   return (
-    <Button
-      title="Sign in with Google"
-      onPress={() => promptAsync()}
-      disabled={!request}
-    />
+    <TouchableOpacity
+      onPress={handleSignIn}
+      disabled={isLoading}
+      style={[styles.button, isLoading && styles.disabled]}
+    >
+      {isLoading ? (
+        <ActivityIndicator color="#fff" />
+      ) : (
+        <Text style={styles.text}>Sign in with Google</Text>
+      )}
+    </TouchableOpacity>
   );
 }
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: '#4285F4',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 200,
+  },
+  disabled: {
+    backgroundColor: '#a1c2fa',
+  },
+  text: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  }
+});
