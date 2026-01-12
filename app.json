@@ -6,10 +6,10 @@
     "version": "1.0.0",
     "scheme": "parrotsapp",
     "orientation": "portrait",
-    "icon": "./assets/parrotsLogoX.png",
+    "icon": "./assets/parrotsLogo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/parrotsLogoX.png",
+      "image": "./assets/parrotsLogo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -23,6 +23,7 @@
         "CFBundleURLTypes": [
           {
             "CFBundleURLSchemes": [
+              "parrotsapp",
               "com.googleusercontent.apps.938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq"
             ]
           }
@@ -31,7 +32,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/parrotsLogoX.png",
+        "foregroundImage": "./assets/parrotsLogo.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -56,10 +57,10 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
-      "@react-native-google-signin/google-signin",
       "expo-font",
       "expo-build-properties",
-      "expo-web-browser"
+      "expo-web-browser",
+      "@react-native-google-signin/google-signin"
     ],
     "extra": {
       "eas": {

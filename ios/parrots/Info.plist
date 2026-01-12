@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>parrotsapp</string>
           <string>com.googleusercontent.apps.938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq</string>
         </array>
       </dict>
