@@ -287,8 +287,10 @@ export default function ProfileScreen({ navigation }) {
                   onPress={() => {
                     navigation.navigate("ProfileStack", {
                       screen: "ProfileScreenPublic",
-                      params: { userId: userId },
+                      // params: { userId: userId },
+                      params: { publicId: userData.publicId, userName: userData.id },
                     });
+
                   }}
                   activeOpacity={0.8}
                 >

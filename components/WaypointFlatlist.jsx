@@ -28,6 +28,7 @@ import { useDeleteWaypointMutation } from "../slices/VoyageSlice";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Shadow } from "react-native-shadow-2";
 
+
 export const WaypointFlatList = ({ addedWayPoints, handleDeleteWaypoint, voyageProfileImage }) => {
 
   return (
@@ -128,7 +129,9 @@ export const WaypointItemVoyageDetailScreen = ({
         <View style={styles.waypointCard}>
           <View>
             <Image
-              source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
+              // source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
+
+              source={hasImage ? { uri: imageUri } : require("../assets/ParrotsLogo.png")}
               style={hasImage ? styles.waypointCardImage : { ...styles.waypointCardImage, opacity: 0.25 }}
             />
           </View>

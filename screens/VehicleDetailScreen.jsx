@@ -95,7 +95,7 @@ const VehicleDetailScreen = () => {
     useCallback(() => {
       const fetchData = async () => {
         try {
-          await refetch();
+          await refetchVehicle();
         } catch (error) {
           console.error("Error refetching messages data:", error);
         }
@@ -106,24 +106,19 @@ const VehicleDetailScreen = () => {
       return () => {
         // Cleanup function if needed
       };
-    }, [refetch, navigation])
+    }, [refetchVehicle, navigation])
   );
 
-  const shareLink = async () => {
-    const currentScreenLink = getCurrentPageLink();
 
-    if (currentScreenLink) {
-      try {
-        const result = await Share.share({
-          message: `Check out this link: ${currentScreenLink}`,
-          url: currentScreenLink,
-          title: "Share Link",
-        });
-      } catch (error) {
-        console.error("Error sharing:", error.message);
-      }
-    } else {
-      console.warn("Unable to determine the current screen link.");
+
+  const handleShareVehicle = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out this link:\nhttps://parrotsvoyages.com/vehicle-details/${vehicleId}`,
+        title: "Share Link",
+      });
+    } catch (error) {
+      console.error("Error sharing:", error.message);
     }
   };
 
@@ -325,6 +320,61 @@ const VehicleDetailScreen = () => {
               <View style={styles.VoyageNameAndUsername}>
                 <Text style={styles.vehicleName}>{VehicleData.name}</Text>
               </View>
+
+              <View style={{}}>
+
+                <TouchableOpacity
+                  style={styles.extendedAreaContainer2}
+                  onPress={() => {
+                    handleShareVehicle();
+                  }}
+                >
+                  <Ionicons
+                    name="share-outline"
+                    size={24}
+                    color={parrotBlue}
+                    //color={"orange"}
+                    style={styles.shareContainer}
+                  />
+                </TouchableOpacity>
+
+
+
+                {isFavorited ? (
+                  <TouchableOpacity
+                    style={styles.extendedAreaContainer}
+                    onPress={() => handleDeleteVehicleFromFavorites()}
+                  >
+                    <View style={styles.heartIconContainer}>
+
+                      <Ionicons
+                        name="heart"
+                        size={24}
+                        color="red"
+                        style={styles.heartIcon}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.extendedAreaContainer}
+                    onPress={() => handleAddVehicleToFavorites()}
+                  >
+                    <View style={styles.heartIconContainer}>
+
+                      <Ionicons
+                        name="heart-outline"
+                        size={24}
+                        color={parrotBlue}
+                        style={styles.heartIcon}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+
+              </View>
+
+
               {/* // Vehicle Images */}
               <View style={styles.mainBidsContainer}>
                 <View style={styles.currentBidsAndSeeAll}>
@@ -337,31 +387,6 @@ const VehicleDetailScreen = () => {
                     vehicleImages={VehicleData.vehicleImages}
                   />
 
-                  {isFavorited ? (
-                    <TouchableOpacity
-                      style={styles.extendedAreaContainer}
-                      onPress={() => handleDeleteVehicleFromFavorites()}
-                    >
-                      <Ionicons
-                        name="heart"
-                        size={24}
-                        color="red"
-                        style={styles.heartContainer2}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      style={styles.extendedAreaContainer}
-                      onPress={() => handleAddVehicleToFavorites()}
-                    >
-                      <Ionicons
-                        name="heart"
-                        size={24}
-                        color="orange"
-                        style={styles.heartContainer2}
-                      />
-                    </TouchableOpacity>
-                  )}
                 </View>
               </View>
 
@@ -512,12 +537,30 @@ const styles = StyleSheet.create({
     paddingVertical: vh(2),
     bottom: vh(-3),
   },
-  heartContainer2: {
+  extendedAreaContainer2: {
+    alignSelf: "flex-end",
+    position: "absolute",
+    right: vw(12),
+    borderRadius: vh(1),
+    paddingLeft: vw(5),
+    paddingRight: vw(2),
+    paddingVertical: vh(2),
+    bottom: vh(-3),
+  },
+  shareContainer: {
     padding: vw(1),
     width: vw(8),
-    backgroundColor: parrotCream,
+    backgroundColor: parrotBlueMediumTransparent,
     borderRadius: vh(5),
     alignSelf: "center",
+  },
+  heartIconContainer: {
+    padding: vw(1),
+    borderRadius: vh(5),
+    backgroundColor: parrotBlueMediumTransparent,
+  },
+  heartIcon: {
+    top: vh(.2),
   },
   VoyageDataContainer: {
     borderRadius: vh(5),

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React, { useState } from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import he from "he";
 import {
   View,
@@ -14,7 +14,6 @@ import {
   Linking,
   ActivityIndicator,
   Modal,
-  RefreshControl
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -22,9 +21,9 @@ import { Feather, MaterialIcons } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
 import { useFocusEffect } from "@react-navigation/native";
-import { useGetUserByIdQuery, useGetUserByPublicIdQuery } from "../slices/UserSlice";
-import { useGetVoyagesByUserByIdQuery, useLazyGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
-import { useGetVehiclesByUserByIdQuery, useLazyGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
+import { useGetUserByIdQuery } from "../slices/UserSlice";
+import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
+import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useRoute } from "@react-navigation/native";
 import { SocialRenderComponent } from "../components/SocialRenderComponent";
 import { SocialRenderComponentModal } from "../components/SocialRenderComponentModal";
@@ -39,7 +38,7 @@ export default function ProfileScreenPublic({ navigation }) {
   const { publicId } = route.params;
   const { userName } = route.params;
 
-  console.log("publicId: ", publicId);
+  console.log("userID: ", userId);
   const [socialItemCount, setSocialItemCount] = useState(0);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -53,9 +52,8 @@ export default function ProfileScreenPublic({ navigation }) {
     isSuccess,
     refetch: refetchUser,
     // } = useGetUserByIdQuery(userId);
-  } = useGetUserByPublicIdQuery(publicId);
-
-  /*
+  } = useGetUserByIdQuery(userId);
+  useGetUserByPublicIdQuery
   const {
     data: VoyagesData,
     isSuccess: isSuccessVoyages,
@@ -70,42 +68,6 @@ export default function ProfileScreenPublic({ navigation }) {
     isLoading: isLoadingVehicles,
     refetch: refetchVehicles,
   } = useGetVehiclesByUserByIdQuery(userId);
-*/
-  const [
-    triggerVoyages,
-    {
-      data: VoyagesData,
-      isSuccess: isSuccessVoyages,
-      isError: isErrorVoyages,
-      isLoading: isLoadingVoyages,
-    },
-  ] = useLazyGetVoyagesByUserByIdQuery();
-
-
-  const [
-    triggerVehicles,
-    {
-      data: VehiclesData,
-      isSuccess: isSuccessVehicles,
-      isError: isErrorVehicles,
-      isLoading: isLoadingVehicles,
-    },
-  ] = useLazyGetVehiclesByUserByIdQuery();
-
-  const hasTriggered = useRef(false);
-  useEffect(() => {
-    if (!hasTriggered.current && isSuccess && userData?.id) {
-      console.log("hi");
-      triggerVoyages(userData.id);
-      triggerVehicles(userData.id);
-      hasTriggered.current = true;
-    }
-  }, [isSuccess, userData, triggerVoyages, triggerVehicles]);
-
-  useEffect(() => {
-    if (isSuccess)
-      console.log(userData);
-  }, [userData]);
 
   const [selected, setSelected] = useState("voyages");
 
@@ -141,8 +103,8 @@ export default function ProfileScreenPublic({ navigation }) {
       const fetchData = async () => {
         try {
           await refetchUser();
-          await triggerVehicles();
-          await triggerVoyages();
+          await refetchVehicles();
+          await refetchVoyages();
         } catch (error) {
           console.error("Error refetching  data:", error);
         }
@@ -153,7 +115,7 @@ export default function ProfileScreenPublic({ navigation }) {
       return () => {
         // Cleanup function if needed
       };
-    }, [refetchUser, triggerVehicles, triggerVoyages])
+    }, [refetchUser, refetchVehicles, refetchVoyages])
   );
 
 
@@ -164,8 +126,8 @@ export default function ProfileScreenPublic({ navigation }) {
       const refreshData = async () => {
         setIsLoading(true);
         await refetchUser();
-        await triggerVehicles();
-        await triggerVoyages();
+        await refetchVehicles();
+        await refetchVoyages();
         setIsLoading(false);
       };
       refreshData();
@@ -266,6 +228,17 @@ export default function ProfileScreenPublic({ navigation }) {
     );
   };
 
+
+  const handleShareProfile = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out this link:\nhttps://parrotsvoyages.com/profile-public/${profileId}`,
+        title: "Share Link",
+      });
+    } catch (error) {
+      console.error("Error sharing:", error.message);
+    }
+  };
 
   if (isLoading) {
     return (

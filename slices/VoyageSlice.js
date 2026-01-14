@@ -328,6 +328,7 @@ export const {
   useDeleteVoyageImageMutation,
   useCheckAndDeleteVoyageMutation,
   useGetVoyagesByUserByIdQuery,
+  useLazyGetVoyagesByUserByIdQuery,
   useGetVoyageByIdQuery,
   useSendBidMutation,
   useChangeBidMutation,

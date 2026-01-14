@@ -216,6 +216,18 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    getUserByPublicId: builder.query({
+      query: (userId) => {
+        if (userId) {
+          return `/api/User/getUserByPublicId/${userId}`;
+        } else {
+          return undefined;
+        }
+      },
+      transformResponse: (responseData) => responseData.data,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }),
     updateProfileImage: builder.mutation({
       query: (data) => {
         const { formData, userId } = data;
@@ -288,6 +300,7 @@ export const {
   useGoogleLoginInternalMutation,
   useResetPasswordMutation,
   useGetUserByIdQuery,
+  useGetUserByPublicIdQuery,
   useUpdateProfileImageMutation,
   useUpdateBackgroundImageMutation,
   usePatchUserMutation,

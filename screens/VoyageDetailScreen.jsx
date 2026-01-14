@@ -91,13 +91,13 @@ const VoyageDetailScreen = ({ navigation }) => {
     useCallback(() => {
       const fetchData = async () => {
         try {
-          await refetch();
+          await refetchVoyage();
         } catch (error) {
           console.error("Error refetching messages data:", error);
         }
       };
       fetchData();
-    }, [refetch, navigation])
+    }, [refetchVoyage, navigation])
   );
 
   const handleSeeAll = () => {
@@ -154,31 +154,16 @@ const VoyageDetailScreen = ({ navigation }) => {
     return initialRegion;
   };
 
-  const getCurrentPageLink = () => {
-    if (route) {
-      const currentScreenLink = `${API_URL}/${route.name}/${voyageId}`;
-      return currentScreenLink;
-    }
-    return null;
-  };
 
-  const handleShare = async () => {
-    const currentScreenLink = getCurrentPageLink();
-    console.log("-->", currentScreenLink);
 
-    const sampleVoyageLink = "parrots://voyagedetail/2272"
-    if (currentScreenLink) {
-      try {
-        const result = await Share.share({
-          message: `Check out this link: ${currentScreenLink && sampleVoyageLink}`,
-          url: currentScreenLink && sampleVoyageLink,
-          title: "Share Link",
-        });
-      } catch (error) {
-        console.error("Error sharing:", error.message);
-      }
-    } else {
-      console.warn("Unable to determine the current screen link.");
+  const handleShareVoyage = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out this link:\nhttps://parrotsvoyages.com/voyage-details/${voyageId}`,
+        title: "Share Link",
+      });
+    } catch (error) {
+      console.error("Error sharing:", error.message);
     }
   };
 
@@ -612,16 +597,18 @@ const VoyageDetailScreen = ({ navigation }) => {
             )}
 
             <TouchableOpacity
-              onPress={() => handleShare()}
+              onPress={() => handleShareVoyage()}
               style={styles.shareContainer1}
             >
               <MaterialIcons
                 name="ios-share"
                 size={24}
-                color="black"
+                color={parrotBlue}
                 style={styles.shareContainer2}
               />
             </TouchableOpacity>
+
+
           </View>
           <View style={styles.waypointsContainer}>
             <View style={styles.WaypointsAndInfo}>
@@ -666,7 +653,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   ownVoyage={ownVoyage}
                   voyageName={VoyageData.name}
                   currentUserId={userId}
-                  refetch={refetch}
+                  refetch={refetchVoyage}
                   username={userName}
                 />
               </View>
@@ -687,7 +674,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                 userBidPrice={userBidPrice}
                 userBidPersons={userBidPersons}
                 userBidMessage={userBidMessage}
-                refetch={refetch}
+                refetch={refetchVoyage}
                 ownVoyage={ownVoyage}
               />
             )}
@@ -808,7 +795,7 @@ const styles = StyleSheet.create({
   heartContainer1: {
     position: "absolute",
     bottom: vh(-1),
-    right: vw(15),
+    right: vw(5),
   },
   heartContainer2: {
     padding: vw(1),
@@ -819,7 +806,7 @@ const styles = StyleSheet.create({
   shareContainer1: {
     position: "absolute",
     bottom: vh(-1),
-    right: vw(5),
+    right: vw(15),
   },
   shareContainer2: {
     padding: vw(1),
