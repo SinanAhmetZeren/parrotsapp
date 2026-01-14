@@ -38,7 +38,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const currentUserId = useSelector((state) => state.users.userId);
   const currentUserName = useSelector((state) => state.users.userName);
   const currentUserProfileImage = useSelector((state) => state.users.userProfileImage);
-  const { conversationUserId, profileImg, name } = route.params;
+  const { conversationUserId, profileImg, name, publicId } = route.params;
+  console.log("-->>", conversationUserId, profileImg, name, publicId);
   const users = { currentUserId, conversationUserId };
   const {
     data: messagesData,
@@ -294,7 +295,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
               onPress={() => {
                 navigation.navigate("Messages", {
                   screen: "ProfileScreenPublic",
-                  params: { userId: conversationUserId },
+                  params: { publicId: publicId, userName: name },
                 });
               }}
               style={styles.headerContainer}

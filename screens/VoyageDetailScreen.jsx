@@ -75,6 +75,9 @@ const VoyageDetailScreen = ({ navigation }) => {
     isError: isErrorVoyage,
     refetch: refetchVoyage,
   } = useGetVoyageByIdQuery(voyageId);
+
+  console.log("-->", VoyageData?.user.publicId);
+
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [waypointInfoVisible, setWayPointInfoVisible] = useState(false);
@@ -167,12 +170,6 @@ const VoyageDetailScreen = ({ navigation }) => {
     }
   };
 
-  // const goToProfilePage = (userId) => {
-  //   navigation.navigate("Home", {
-  //     screen: "ProfileScreenPublic",
-  //     params: { userId: userId },
-  //   });
-  // };
 
   const goToProfilePage = (userId) => {
     const parentScreen = navigation.getState().routes[0].name;
@@ -194,7 +191,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
     navigation.navigate(targetScreen, {
       screen: "ProfileScreenPublic",
-      params: { userId: userId },
+      params: { publicId: VoyageData?.user.publicId, username: VoyageData?.user.userName },
     });
   };
   const goToVehiclePage = (vehicleId) => {

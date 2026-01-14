@@ -16,9 +16,9 @@ export const SearchUsersComponent = ({ searchResults }) => {
     <>
       {searchResults
         && searchResults.map((item, index) => {
+          console.log("item: ", item.publicId, item.userName);
           return (
-            <View style={{ width: vw(90), marginLeft: vw(5), borderRadius: vh(6), marginTop: vh(2) }}>
-
+            <View key={item.publicId} style={{ width: vw(90), marginLeft: vw(5), borderRadius: vh(6), marginTop: vh(2) }}>
               <Shadow
                 distance={7}
                 offset={[0, 0]}
@@ -31,7 +31,7 @@ export const SearchUsersComponent = ({ searchResults }) => {
                   onPress={() => {
                     navigation.navigate("Messages", {
                       screen: "ProfileScreenPublic",
-                      params: { userId: item.id },
+                      params: { publicId: item.publicId, userName: item.userName },
                     });
                   }}
                   key={index}

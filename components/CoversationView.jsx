@@ -27,6 +27,7 @@ export default function CoversationView({
   message,
   time,
   userId,
+  publicId
 }) {
   const navigation = useNavigation();
 
@@ -35,6 +36,7 @@ export default function CoversationView({
       conversationUserId,
       profileImg,
       name,
+      publicId
     });
   };
 

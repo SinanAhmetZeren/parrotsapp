@@ -23,7 +23,11 @@ export default function ConversationList({ data, userId }) {
           : message.receiverUsername;
       const text = message.text;
       const dateTime = message.dateTime;
-      return { user, userName, userProfileImage, text, dateTime };
+      const publicId =
+        message.senderId !== userId
+          ? message.senderPublicId
+          : message.receiverPublicId;
+      return { user, userName, userProfileImage, text, dateTime, publicId };
     });
   } else {
     console.log("Data is null.");
@@ -33,9 +37,9 @@ export default function ConversationList({ data, userId }) {
     const sortedData = [...transformedMessages].sort((a, b) => {
       return new Date(b.dateTime) - new Date(a.dateTime);
     });
-
+    console.log("---");
+    console.log(sortedData[0]);
     return sortedData.map((item, index) => (
-
       <Shadow
         distance={7}
         offset={[0, 0]}
@@ -44,20 +48,16 @@ export default function ConversationList({ data, userId }) {
         radius={12}
         style={{ borderRadius: vh(3), marginBottom: vh(1.5) }}
         key={`${item.id}-${item.userName}`}
-
       >
         <ConversationView
-          // key={`${item.id}-${item.userName}-1`}
           profileImg={item.userProfileImage}
           name={item.userName}
           userId={item.user}
           message={item.text}
           time={item.dateTime}
-        // count={33}
+          publicId={item.publicId}
         />
       </Shadow>
-
-
     ));
   };
 
