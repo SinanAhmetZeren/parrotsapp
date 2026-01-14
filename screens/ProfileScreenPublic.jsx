@@ -14,7 +14,8 @@ import {
   Linking,
   ActivityIndicator,
   Modal,
-  RefreshControl
+  RefreshControl,
+  Share
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -32,6 +33,7 @@ import VoyageListVertical from "../components/VoyageListVertical";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen } from "../assets/color";
+import { skipToken } from '@reduxjs/toolkit/query';
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
@@ -55,73 +57,36 @@ export default function ProfileScreenPublic({ navigation }) {
     // } = useGetUserByIdQuery(userId);
   } = useGetUserByPublicIdQuery(publicId);
 
-  /*
+  const receivedUserId = userData?.id ?? skipToken;
+
   const {
     data: VoyagesData,
     isSuccess: isSuccessVoyages,
     isError: isErrorVoyages,
     isLoading: isLoadingVoyages,
     refetch: refetchVoyages,
-  } = useGetVoyagesByUserByIdQuery(userId);
+  } = useGetVoyagesByUserByIdQuery(receivedUserId);
   const {
     data: VehiclesData,
     isSuccess: isSuccessVehicles,
     isError: isErrorVehicles,
     isLoading: isLoadingVehicles,
     refetch: refetchVehicles,
-  } = useGetVehiclesByUserByIdQuery(userId);
-*/
-  const [
-    triggerVoyages,
-    {
-      data: VoyagesData,
-      isSuccess: isSuccessVoyages,
-      isError: isErrorVoyages,
-      isLoading: isLoadingVoyages,
-    },
-  ] = useLazyGetVoyagesByUserByIdQuery();
+  } = useGetVehiclesByUserByIdQuery(receivedUserId);
 
-
-  const [
-    triggerVehicles,
-    {
-      data: VehiclesData,
-      isSuccess: isSuccessVehicles,
-      isError: isErrorVehicles,
-      isLoading: isLoadingVehicles,
-    },
-  ] = useLazyGetVehiclesByUserByIdQuery();
-
-  const hasTriggered = useRef(false);
-  useEffect(() => {
-    if (!hasTriggered.current && isSuccess && userData?.id) {
-      console.log("hi");
-      triggerVoyages(userData.id);
-      triggerVehicles(userData.id);
-      hasTriggered.current = true;
-    }
-  }, [isSuccess, userData, triggerVoyages, triggerVehicles]);
-
-  useEffect(() => {
-    if (isSuccess)
-      console.log(userData);
-  }, [userData]);
 
   const [selected, setSelected] = useState("voyages");
 
-  const hanleShareProfile = async () => {
+  const handleShareProfile = async () => {
     try {
       const result = await Share.share({
-        message: `Check out this link:\nhttps://parrotsvoyages.com/profile-public/${userId}`,
+        message: `Check out this link:\nhttps://parrotsvoyages.com/profile-public/${userData.publicId}/${encodeURIComponent(userData.userName)}`,
         title: "Share Link",
       });
     } catch (error) {
       console.error("Error sharing:", error.message);
     }
   };
-
-
-
 
   useEffect(() => {
     if (isErrorUser || isErrorVehicles || isErrorVoyages) {
@@ -141,8 +106,10 @@ export default function ProfileScreenPublic({ navigation }) {
       const fetchData = async () => {
         try {
           await refetchUser();
-          await triggerVehicles();
-          await triggerVoyages();
+          // await triggerVehicles();
+          // await triggerVoyages();
+          await refetchVehicles();
+          await refetchVoyages();
         } catch (error) {
           console.error("Error refetching  data:", error);
         }
@@ -153,7 +120,7 @@ export default function ProfileScreenPublic({ navigation }) {
       return () => {
         // Cleanup function if needed
       };
-    }, [refetchUser, triggerVehicles, triggerVoyages])
+    }, [refetchUser, refetchVehicles, refetchVoyages])
   );
 
 
@@ -164,8 +131,10 @@ export default function ProfileScreenPublic({ navigation }) {
       const refreshData = async () => {
         setIsLoading(true);
         await refetchUser();
-        await triggerVehicles();
-        await triggerVoyages();
+        // await triggerVehicles();
+        // await triggerVoyages();
+        await refetchVehicles();
+        await refetchVoyages();
         setIsLoading(false);
       };
       refreshData();
