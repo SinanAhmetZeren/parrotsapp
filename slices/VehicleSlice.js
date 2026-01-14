@@ -161,6 +161,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetVehiclesByUserByIdQuery,
+  useLazyGetVehiclesByUserByIdQuery,
   useGetVehicleByIdQuery,
   useCreateVehicleMutation,
   useAddVehicleImageMutation,
