@@ -50,7 +50,6 @@ import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotB
 const VehicleDetailScreen = () => {
   const route = useRoute();
   const { vehicleId } = route.params;
-  // console.log("vehicle id: ", vehicleId);
   const {
     data: VehicleData,
     isSuccess: isSuccessVehicle,
@@ -152,7 +151,7 @@ const VehicleDetailScreen = () => {
 
     navigation.navigate(targetScreen, {
       screen: "ProfileScreenPublic",
-      params: { userId: userId },
+      params: { publicId: VehicleData?.user.publicId, username: VehicleData?.user.userName },
     });
   };
 

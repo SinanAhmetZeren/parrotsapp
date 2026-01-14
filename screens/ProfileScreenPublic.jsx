@@ -306,15 +306,6 @@ export default function ProfileScreenPublic({ navigation }) {
                 {/* ///// EDIT PROFILE BUTTON /////// */}
                 <TouchableOpacity
                   style={styles.editProfileBox}
-                  /*
-                  onPress={() => {
-                    navigation.navigate("ConversationDetailScreen", {
-                      conversationUserId: userId,
-                      profileImg: userData.profileImageUrl,
-                      name: userData.userName,
-                    });
-                  }}
-*/
                   onPress={() => {
                     navigation.navigate("Messages", {
                       screen: "ConversationDetailScreen",
