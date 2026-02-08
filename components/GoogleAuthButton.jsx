@@ -5,11 +5,14 @@
 
 
 import { useEffect } from 'react'; // Added React import
-import { StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native'; // Added Text and ActivityIndicator
+import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, Image, View } from 'react-native'; // Added Text and ActivityIndicator
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useGoogleLoginInternalMutation } from "../slices/UserSlice";
 import { useDispatch } from "react-redux";
 import { updateAsLoggedIn } from "../slices/UserSlice";
+import { parrotBlue, parrotDarkBlue, parrotGreen } from '../assets/color';
+import { vh, vw } from 'react-native-expo-viewport-units';
+import gooogleSignin from "../assets/googleG.png";
 
 export default function GoogleLoginButton() {
   const [googleLoginInternal, { isLoading }] = useGoogleLoginInternalMutation();
@@ -80,7 +83,11 @@ export default function GoogleLoginButton() {
       {isLoading ? (
         <ActivityIndicator color="#fff" />
       ) : (
-        <Text style={styles.text}>Sign in with Google</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Image source={gooogleSignin} style={{ height: 23, width: 23 }} />
+          <Text style={styles.text}>Sign in with Google</Text>
+        </ View>
+
       )}
     </TouchableOpacity>
   );
@@ -88,19 +95,26 @@ export default function GoogleLoginButton() {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#4285F4',
+    backgroundColor: "#f2f2f2",
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 200,
+    marginHorizontal: vh(0.25),
+    marginVertical: vh(0.25),
+    paddingVertical: vh(1),
+    borderRadius: vh(1.5),
+    width: vw(75),
   },
   disabled: {
     backgroundColor: '#a1c2fa',
   },
   text: {
-    color: '#fff',
-    fontWeight: 'bold',
     fontSize: 16,
+    fontWeight: "500",
+    color: "black",
+    textAlign: "center",
+
   }
 });

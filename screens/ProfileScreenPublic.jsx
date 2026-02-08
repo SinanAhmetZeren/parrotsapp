@@ -103,6 +103,8 @@ export default function ProfileScreenPublic({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
+      if (!userData?.id) return;
+
       const fetchData = async () => {
         try {
           await refetchUser();

@@ -31,7 +31,7 @@ import {
 } from "../slices/UserSlice";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import GoogleLoginButton from "../components/GoogleAuthButton";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotDarkCream, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotDarkCream, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
 
 // import {
 //   GoogleSignin,
@@ -81,24 +81,6 @@ const LoginScreen = ({ navigation }) => {
   const [getFavoriteVoyageIdsByUserId] =
     useLazyGetFavoriteVoyageIdsByUserIdQuery();
 
-  /*
-const configureGoogleSignIn = () => {
-  GoogleSignin.configure({
-    webClientId:
-      "938579686654-99cii7dblv837klmb8kkmg09d80ehf4k.apps.googleusercontent.com",
-    androidClientId:
-      "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
-    iosClientId:
-      "938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq.apps.googleusercontent.com",
-  });
-};
-
-const logout = () => {
-  setUserInfo(undefined);
-  GoogleSignin.revokeAccess();
-  GoogleSignin.signOut();
-};
-*/
   const handleEmailChange = (text) => {
     setEmail(text);
   };
@@ -184,13 +166,11 @@ const logout = () => {
 
     try {
       setIsLoggingIn(true);
-
       // Use await inside try-catch with unwrap() for handling rejected promises
       const loginResponse = await loginUser({
         Email: email,
         Password: password,
       }).unwrap();
-
       console.log("----->", loginResponse);
 
       // Ensure token and userId exist before proceeding
@@ -210,6 +190,7 @@ const logout = () => {
 
       try {
         // Fetch favorites safely, fall back to empty arrays if request fails
+        console.log("--->>>>", loginResponse.userId);
         const vehiclesRes = await getFavoriteVehicleIdsByUserId(
           loginResponse.userId
         ).unwrap();
@@ -399,11 +380,11 @@ const logout = () => {
   return (
     <>
       <TokenExpiryGuard />
-
       {loginOrRegister === "Login" ? (
         <>
           <View style={{ backgroundColor: "white" }}>
             <View style={styles.imagecontainer}>
+              <LoginPageLogoComponent />
               <Image
                 style={styles.image}
                 source={require("../assets/welcome.png")}
@@ -496,14 +477,29 @@ const logout = () => {
                 </Text>
               </TouchableOpacity>
 
+
+              <View style={{
+                flexDirection: "row", justifyContent: "center", alignItems: "center",
+                marginTop: vh(6), marginBottom: vh(6),
+              }}>
+                <View style={{
+                  backgroundColor: parrotLightBlue, height: 1, width: vw(25), marginRight: vh(1.5)
+                }}>
+                </View>
+                <View style={{
+                  alignItems: "center", backgroundColor: "", justifyContent: "center", padding: vh(0), borderRadius: vh(3)
+                }}>
+                  <Text style={{ fontWeight: "500", color: parrotTextDarkBlue }} > or </Text>
+                </View>
+                <View style={{ backgroundColor: parrotLightBlue, height: 1, width: vw(25), marginLeft: vh(1.5) }}>
+                </View>
+              </View>
+
+
+
               <View>
-                {/* <View
-                  style={{
-                    height: 1,
-                    backgroundColor: "black",
-                    marginVertical: vh(1),
-                  }}
-                /> */}
+
+
 
                 <View style={styles.googleLoginContainer}>
                   <GoogleLoginButton />
@@ -519,6 +515,8 @@ const logout = () => {
         <>
           <View style={{ backgroundColor: "white" }}>
             <View style={styles.imagecontainer}>
+              <LoginPageLogoComponent />
+
               <Image
                 style={styles.imageLetsStart}
                 source={require("../assets/letsStart.png")}
@@ -658,6 +656,8 @@ const logout = () => {
         <>
           <View style={{ backgroundColor: "white" }}>
             <View style={styles.imagecontainer}>
+              <LoginPageLogoComponent />
+
               <Image
                 style={styles.imageAlmostThere}
                 source={require("../assets/almostthere.png")}
@@ -724,6 +724,8 @@ const logout = () => {
         <>
           <View style={{ backgroundColor: "white" }}>
             <View style={styles.imagecontainer}>
+              <LoginPageLogoComponent />
+
               <Image
                 style={styles.image}
                 source={require("../assets/resetpassword.png")}
@@ -775,6 +777,7 @@ const logout = () => {
         <>
           <View style={{ backgroundColor: "white" }}>
             <View style={styles.imagecontainer}>
+              <LoginPageLogoComponent />
               <Image
                 style={styles.imageAlmostThere}
                 source={require("../assets/checkYourEmail.png")}
@@ -899,6 +902,10 @@ const logout = () => {
   );
 };
 
+
+
+
+
 const styles = StyleSheet.create({
   disabled: {
     backgroundColor: parrotBlueSemiTransparent,
@@ -907,7 +914,7 @@ const styles = StyleSheet.create({
     marginTop: vh(2),
   },
   googleLoginContainer: {
-    marginTop: vh(8)
+    marginTop: vh(4)
   },
   forgotPassword: {
     paddingBottom: vh(1),
@@ -980,16 +987,22 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: vw(70),
-    height: vh(15),
+    marginTop: vh(1),
+    marginLeft: vh(2),
+    width: vw(70 * .6),
+    height: vh(15 * .6),
   },
   imageLetsStart: {
-    width: vw(72),
-    height: vh(17),
+    marginTop: vh(1),
+    marginLeft: vh(2),
+    width: vw(72 * .6),
+    height: vh(17 * .6),
   },
   imageAlmostThere: {
-    width: vw(72),
-    height: vh(15),
+    marginTop: vh(1),
+    marginLeft: vh(2),
+    width: vw(72 * .6),
+    height: vh(15 * .6),
     resizeMode: "contain",
   },
 });
@@ -1010,3 +1023,12 @@ const styles2 = StyleSheet.create({
 });
 
 export default LoginScreen;
+
+const LoginPageLogoComponent = () => {
+  return (
+    <Image
+      style={{ width: vh(12), height: vh(12) }}
+      source={require("../assets/ParrotsLogo.png")}
+    />
+  );
+};

@@ -76,7 +76,6 @@ const VoyageDetailScreen = ({ navigation }) => {
     refetch: refetchVoyage,
   } = useGetVoyageByIdQuery(voyageId);
 
-  console.log("-->", VoyageData?.user.publicId);
 
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);

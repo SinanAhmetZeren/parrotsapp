@@ -401,6 +401,10 @@ const TabNavigator = () => {
               }
             },
           })}
+
+
+
+
         />
 
         <Tab.Screen
@@ -456,6 +460,26 @@ const TabNavigator = () => {
               );
             },
           }}
+
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              e.preventDefault(); // ⬅️ IMPORTANT
+
+              const state = navigation.getState();
+
+              const favoritesStackKey = state.routes.find(
+                (r) => r.name === "Favorites"
+              )?.key;
+
+              if (favoritesStackKey) {
+                navigation.navigate("Favorites", {
+                  screen: "FavoritesScreen",
+                });
+              }
+            },
+          })}
+
+
         />
 
         <Tab.Screen
