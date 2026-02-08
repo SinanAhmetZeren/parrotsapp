@@ -58,6 +58,8 @@ export default function ProfileScreen({ navigation }) {
     error,
     isSuccess: isSuccessUser,
     refetch: refetchUserData,
+    isUninitialized: userUninit,
+
   } = useGetUserByIdQuery(userId);
 
   const {
@@ -66,13 +68,18 @@ export default function ProfileScreen({ navigation }) {
     isError: isErrorVoyages,
     isLoading: isLoadingVoyages,
     refetch: refetchVoyageData,
+    isUninitialized: voyageUninit,
+
   } = useGetVoyagesByUserByIdQuery(userId);
+
   const {
     data: VehiclesData,
     isSuccess: isSuccessVehicles,
     isError: isErrorVehicles,
     isLoading: isLoadingVehicles,
     refetch: refetchVehicleData,
+    isUninitialized: vehicleUninit,
+
   } = useGetVehiclesByUserByIdQuery(userId);
 
   const handleLogout = async () => {
@@ -80,6 +87,7 @@ export default function ProfileScreen({ navigation }) {
     await GoogleSignin.signOut();
   };
 
+  /*
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
@@ -108,6 +116,40 @@ export default function ProfileScreen({ navigation }) {
       userData,
     ])
   );
+*/
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      const fetchData = async () => {
+        try {
+          if (!isActive) return;
+
+          if (!userUninit) await refetchUserData();
+          if (!voyageUninit) await refetchVoyageData();
+          if (!vehicleUninit) await refetchVehicleData();
+        } catch (error) {
+          console.error("Error fetching or refetching data:", error);
+        }
+      };
+
+      fetchData();
+
+      return () => {
+        isActive = false; // cleanup on blur / logout
+      };
+    }, [
+      refetchUserData,
+      refetchVoyageData,
+      refetchVehicleData,
+      userUninit,
+      voyageUninit,
+      vehicleUninit,
+    ])
+  );
+
+
 
   useEffect(() => {
     if (isErrorUser || isErrorVehicles || isErrorVoyages) {
