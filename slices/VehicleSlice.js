@@ -15,6 +15,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       },
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
+      refetchOnFocus: true,
     }),
     providesTags: (result, error, arg) => [
       ...result.ids.map((id) => ({ type: "Vehicle", id })),

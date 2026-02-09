@@ -55,6 +55,7 @@ export default function ProfileScreenPublic({ navigation }) {
     isSuccess,
     refetch: refetchUser,
     // } = useGetUserByIdQuery(userId);
+    isUninitialized: userUninit,
   } = useGetUserByPublicIdQuery(publicId);
 
   const receivedUserId = userData?.id ?? skipToken;
@@ -65,13 +66,16 @@ export default function ProfileScreenPublic({ navigation }) {
     isError: isErrorVoyages,
     isLoading: isLoadingVoyages,
     refetch: refetchVoyages,
+    isUninitialized: voyageUninit,
   } = useGetVoyagesByUserByIdQuery(receivedUserId);
+
   const {
     data: VehiclesData,
     isSuccess: isSuccessVehicles,
     isError: isErrorVehicles,
     isLoading: isLoadingVehicles,
     refetch: refetchVehicles,
+    isUninitialized: vehicleUninit,
   } = useGetVehiclesByUserByIdQuery(receivedUserId);
 
 
@@ -101,6 +105,7 @@ export default function ProfileScreenPublic({ navigation }) {
     }
   };
 
+  /*
   useFocusEffect(
     useCallback(() => {
       if (!userData?.id) return;
@@ -124,7 +129,56 @@ export default function ProfileScreenPublic({ navigation }) {
       };
     }, [refetchUser, refetchVehicles, refetchVoyages])
   );
+*/
 
+  /*
+    useFocusEffect(
+      useCallback(() => {
+        let isActive = true;
+  
+        const fetchData = async () => {
+          if (!isActive) return;
+  
+          if (!userUninit) {
+            try {
+              await refetchUser();
+            } catch (err) {
+              console.error("❌ refetchUser failed", err);
+            }
+          }
+  
+          if (!voyageUninit) {
+            try {
+              await refetchVoyages();
+            } catch (err) {
+              console.error("❌ refetchVoyages failed", err);
+            }
+          }
+  
+          if (!vehicleUninit) {
+            try {
+              await refetchVehicles();
+            } catch (err) {
+              console.error("❌ refetchVehicles failed", err);
+            }
+          }
+        };
+  
+        fetchData();
+  
+        return () => {
+          isActive = false;
+        };
+      }, [
+        refetchUser,
+        refetchVoyages,
+        refetchVehicles,
+        userUninit,
+        voyageUninit,
+        vehicleUninit,
+      ])
+    );
+  */
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -261,7 +315,7 @@ export default function ProfileScreenPublic({ navigation }) {
       >
         <View style={styles.currentBidsAndSeeAll2}>
           <Image
-            source={require("../assets/ParrotsWhiteBg.png")}
+            source={require("../assets/ParrotsLogo.png")}
             style={styles.logoImage}
           />
           <Text style={styles.currentBidsTitle2}>Connection Error</Text>

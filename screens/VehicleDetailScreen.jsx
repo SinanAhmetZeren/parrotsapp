@@ -195,7 +195,7 @@ const VehicleDetailScreen = () => {
       >
         <View style={styles.currentBidsAndSeeAll2}>
           <Image
-            source={require("../assets/ParrotsWhiteBg.png")}
+            source={require("../assets/ParrotsLogo.png")}
             style={styles.logoImage}
           />
           <Text style={styles.currentBidsTitle2}>Connection Error</Text>

@@ -342,7 +342,7 @@ const CreateVehicleScreen = () => {
         <View style={{ backgroundColor: "white", height: vh(100) }}>
           <View style={{ marginTop: vh(15) }}>
             <Image
-              source={require("../assets/ParrotsWhiteBg.png")}
+              source={require("../assets/ParrotsLogo.png")}
               style={styles.logoImage}
             />
             <Text style={styles.currentBidsTitle2}>Connection Error</Text>
@@ -371,7 +371,7 @@ const CreateVehicleScreen = () => {
                   ) : (
                     <Image
                       // source={require("../assets/placeholder.png")}
-                      source={require("../assets/ParrotsWhiteBgPlus.png")}
+                      source={require("../assets/ParrotsLogo.png")}
                       style={styles.backgroundImagePlaceholder}
                     />
                   )}
@@ -508,7 +508,7 @@ const CreateVehicleScreen = () => {
                     />
                   ) : (
                     <Image
-                      source={require("../assets/ParrotsWhiteBgPlus.png")}
+                      source={require("../assets/ParrotsLogo.png")}
                       style={styles.profileImage2}
                     />
                   )}
