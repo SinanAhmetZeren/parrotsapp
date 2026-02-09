@@ -15,6 +15,8 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       },
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
+      refetchOnFocus: true,
+
     }),
     getVoyageById: builder.query({
       query: (voyageId) => `/api/Voyage/GetVoyageById/${voyageId}`,

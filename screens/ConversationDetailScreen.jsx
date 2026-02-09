@@ -263,7 +263,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
       >
         <View>
           <Image
-            source={require("../assets/ParrotsWhiteBg.png")}
+            source={require("../assets/ParrotsLogo.png")}
             style={styles.logoImage}
           />
           <Text style={styles.currentBidsTitle2}>Connection Error</Text>

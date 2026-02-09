@@ -514,7 +514,7 @@ export default function HomeScreen({ navigation }) {
           <View style={{ height: vh(95) }}>
             <View style={styles.welcomeandFilters}>
               <Image
-                source={require("../assets/parrots-logo-mini.png")}
+                source={require("../assets/parrotsRealLife.png")}
                 style={styles.miniLogo}
               />
 
@@ -653,7 +653,7 @@ export default function HomeScreen({ navigation }) {
               <View>
                 <View>
                   <Image
-                    source={require("../assets/ParrotsWhiteBg.png")}
+                    source={require("../assets/ParrotsLogo.png")}
                     style={styles.logoImage}
                   />
                   <Text style={styles.currentBidsTitle2}>Connection Error</Text>
@@ -787,6 +787,7 @@ const styles = StyleSheet.create({
     marginLeft: vw(-1),
     marginRight: vw(2),
     zIndex: 1,
+    borderRadius: vh(10),
   },
   logo: {
     height: vh(5),

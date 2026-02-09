@@ -227,6 +227,8 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       transformResponse: (responseData) => responseData.data,
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
+      refetchOnFocus: true,
+
     }),
     updateProfileImage: builder.mutation({
       query: (data) => {
