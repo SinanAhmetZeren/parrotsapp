@@ -50,9 +50,13 @@ const CreateVehicleScreen = () => {
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
   const [vehicleType, setVehicleType] = useState(1);
-  const [name, setName] = useState("aaa");
-  const [description, setDescription] = useState("bbb");
-  const [capacity, setCapacity] = useState(22) //useState(null);
+  // const [name, setName] = useState("aaa");
+  // const [description, setDescription] = useState("bbb");
+  // const [capacity, setCapacity] = useState(22) //useState(null);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [capacity, setCapacity] = useState(null);
+
   const [vehicleId, setVehicleId] = useState("");
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
