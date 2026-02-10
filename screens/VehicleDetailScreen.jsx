@@ -62,11 +62,9 @@ const VehicleDetailScreen = () => {
   );
   const userId = useSelector((state) => state.users.userId);
   const [showFullText, setShowFullText] = useState(false);
-
   const [isFavorited, setIsFavorited] = useState(false);
   const [addVehicleToFavorites] = useAddVehicleToFavoritesMutation();
   const [deleteVehicleFromFavorites] = useDeleteVehicleFromFavoritesMutation();
-
   const [hasError, setHasError] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
   const [vehicleImagesInfoVisible, setVehicleImagesInfoVisible] = useState(false);

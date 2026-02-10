@@ -41,6 +41,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 
+
+// ------------------------------------ //
+// LAST BID DATE HIDDEN AND SET TO 2111 //
+// ------------------------------------ //
 const CreateVoyageScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
   const {
@@ -93,7 +97,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [vacancy, setVacancy] = useState(1);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [lastBidDate, setLastBidDate] = useState("");
+  const [lastBidDate, setLastBidDate] = useState("11/11/2111"); // useState("");
   const [minPrice, setMinPrice] = useState(1);
   const [maxPrice, setMaxPrice] = useState(1);
 
@@ -119,7 +123,8 @@ const CreateVoyageScreen = ({ navigation }) => {
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
-        navigation.navigate("Home");
+        // navigation.navigate("Home");
+        navigation.navigate("Home", { screen: "HomeScreen" });
 
         return true;
       };
@@ -550,7 +555,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                   </View>
 
                   {/* /// LAST BID DATE /// */}
-                  <View style={styles.latLngNameRow}>
+                  <View style={{ ...styles.latLngNameRow, display: "none" }}>
                     <View style={styles.latLngLabel}>
                       <Text style={styles.latorLngtxt}>Last Bid:</Text>
                     </View>
@@ -861,7 +866,7 @@ const styles = StyleSheet.create({
   },
   backgroundImagePlaceholder: {
     height: vh(30),
-    width: vw(50),
+    width: vw(55),
     marginBottom: vh(5),
   },
   profileImageAndSocial: {

@@ -610,7 +610,7 @@ const VoyageDetailScreen = ({ navigation }) => {
             <View style={styles.WaypointsAndInfo}>
               <Text style={styles.currentBidsTitle}>Waypoints </Text>
               <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
-                <MaterialIcons name="info-outline" size={16} color={parrotDarkBlue} />
+                <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
               </TouchableOpacity>
               {waypointInfoVisible && (
                 <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
@@ -634,7 +634,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
           {bids.length !== 0 ? (
             <View style={styles.mainBidsContainer2}>
-              <View style={styles.currentBidsAndSeeAll}>
+              <View style={styles.currentBidsAndSeeAllBids}>
                 <Text style={styles.currentBidsTitle}>Current Bids</Text>
                 <TouchableOpacity onPress={handleSeeAll}>
                   <Text style={styles.seeAllButton}>See All</Text>
@@ -689,10 +689,10 @@ const styles = StyleSheet.create({
     marginBottom: vh(3)
   },
   waypointInfoMessage: {
-    color: parrotLightBlue,
+    color: parrotBlue,
     paddingHorizontal: vh(1),
     borderWidth: 1,
-    borderColor: parrotLightBlue,
+    borderColor: parrotBlue,
     marginLeft: vh(1),
     borderRadius: vh(2),
   },
@@ -922,6 +922,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // justifyContent: "space-between",
     justifyContent: "flex-start",
+    paddingRight: vw(10),
+  },
+  currentBidsAndSeeAllBids: {
+    marginTop: vh(2),
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingRight: vw(10),
   },
   WaypointsAndInfo: {

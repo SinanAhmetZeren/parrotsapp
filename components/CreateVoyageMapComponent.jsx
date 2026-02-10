@@ -35,8 +35,11 @@ const CreateVoyageMapComponent = ({
   const [markerCoords, setMarkerCoords] = useState(null);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [title, setTitle] = useState("Amsterdamda gezinti");
-  const [description, setDescription] = useState("Amsterdam'da geziyoruz, ot içiyoruz.  Ot kafelerde takiliyoruz");
+  // const [title, setTitle] = useState("Amsterdamda gezinti");
+  // const [description, setDescription] = useState("Amsterdam'da geziyoruz, ot içiyoruz.  Ot kafelerde takiliyoruz");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   const [imageUri, setImageUri] = useState(null);
   const [order, setOrder] = useState(1);
   const [addWaypoint] = useAddWaypointMutation();
@@ -266,7 +269,11 @@ const CreateVoyageMapComponent = ({
     setOrder(1);
     setCurrentStep(1);
     confirmVoyage(voyageId);
-    navigation.navigate("Home");
+    // navigation.navigate("Home");
+
+    navigation.navigate("Home", { screen: "HomeScreen" });
+
+
   };
 
 
