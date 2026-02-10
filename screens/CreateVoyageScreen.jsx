@@ -42,9 +42,8 @@ import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 
 
-// ------------------------------------ //
-// LAST BID DATE HIDDEN AND SET TO 2111 //
-// ------------------------------------ //
+// Set lastBidDate to startDate for now, 
+// since lastBidDate is hidden and not used in the form
 const CreateVoyageScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
   const {
@@ -81,7 +80,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
 
-  /*const [name, setName] = useState(getRandomString(6));
+  const [name, setName] = useState(getRandomString(6));
   const [brief, setBrief] = useState(getRandomString(8));
   const [description, setDescription] = useState(getRandomString(12));
   const [vacancy, setVacancy] = useState(getRandomNumberString(1, 100));
@@ -89,18 +88,18 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [endDate, setEndDate] = useState("");
   const [lastBidDate, setLastBidDate] = useState("11/11/2111");
   const [minPrice, setMinPrice] = useState(getRandomNumberString(10, 100));
-  const [maxPrice, setMaxPrice] = useState(getRandomNumberString(101, 500));*/
-
-  const [name, setName] = useState("");
-  const [brief, setBrief] = useState("");
-  const [description, setDescription] = useState("");
-  const [vacancy, setVacancy] = useState(1);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [lastBidDate, setLastBidDate] = useState("11/11/2111"); // useState("");
-  const [minPrice, setMinPrice] = useState(1);
-  const [maxPrice, setMaxPrice] = useState(1);
-
+  const [maxPrice, setMaxPrice] = useState(getRandomNumberString(101, 500));
+  /*
+    const [name, setName] = useState("");
+    const [brief, setBrief] = useState("");
+    const [description, setDescription] = useState("");
+    const [vacancy, setVacancy] = useState(1);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [lastBidDate, setLastBidDate] = useState("");
+    const [minPrice, setMinPrice] = useState(1);
+    const [maxPrice, setMaxPrice] = useState(1);
+  */
 
   const [createdVoyageImage, setCreatedVoyageImage] = useState(null);
   const [isAuction, setIsAuction] = useState(true);
@@ -204,7 +203,9 @@ const CreateVoyageScreen = ({ navigation }) => {
       const formattedEndDate = endDate
         ? convertDateFormat(endDate)
         : convertDateFormat(startDate);
-      const formattedLastBidDate = convertDateFormat_LastBidDate(lastBidDate);
+      // const formattedLastBidDate = convertDateFormat_LastBidDate(lastBidDate);
+      const formattedLastBidDate = formattedStartDate;
+
 
       setIsCreatingVoyage(true);
       const response = await createVoyage({
@@ -304,7 +305,7 @@ const CreateVoyageScreen = ({ navigation }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [4, 3],
+      //aspect: [4, 3],
       quality: 1,
     });
 
@@ -334,6 +335,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const onDateChange = (date) => {
     if (!startDate || (startDate && endDate)) {
       setStartDate(date);
+      console.log("-->>", date);
       setEndDate(null);
       setCalendarRangeAllowed(false);
     } else {
@@ -723,14 +725,21 @@ const CreateVoyageScreen = ({ navigation }) => {
                     data={data}
                     //keyExtractor={(item) => item.addedVoyageImageId}
                     //keyExtractor={(item) => item.addedVoyageImageId.toString()}
+                    // keyExtractor={(item, index) =>
+                    //   item.addedVoyageImageId
+                    //     ? item.addedVoyageImageId.toString()
+                    //     : index.toString()
+                    // }
+
                     keyExtractor={(item, index) =>
                       item.addedVoyageImageId
                         ? item.addedVoyageImageId.toString()
-                        : index.toString()
+                        : `placeholder-${index}`
                     }
+
                     renderItem={({ item, index }) => {
                       return (
-                        <View key={index}>
+                        <View /*key={index } */>
                           <TouchableOpacity
                             onPress={() => {
                               if (item.addedVoyageImageId) {
@@ -929,6 +938,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingLeft: vw(1),
     width: "90%",
+    // backgroundColor: parrotTransparentWhite,
+
   },
   selectedChoice: {
     marginTop: vh(1),

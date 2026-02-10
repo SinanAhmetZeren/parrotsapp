@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
+import * as Location from "expo-location";
 
 import * as ImagePicker from "expo-image-picker";
 import {
@@ -47,8 +48,8 @@ const CreateVoyageMapComponent = ({
   const [deleteWaypoint] = useDeleteWaypointMutation();
   const [confirmVoyage] = useConfirmVoyageMutation();
   const navigation = useNavigation();
-  const [isUploadingWaypointImage, setIsUploadingWaypointImage] =
-    useState(false);
+  const [isUploadingWaypointImage, setIsUploadingWaypointImage] = useState(false);
+  const [initialRegion, setInitialRegion] = useState(null)
 
   const WaypointComponent = ({
     description,
@@ -79,8 +80,6 @@ const CreateVoyageMapComponent = ({
       </>
     );
   };
-
-
 
   const handleAddWaypoint = async () => {
 
@@ -146,8 +145,6 @@ const CreateVoyageMapComponent = ({
     }
 
   };
-
-
 
   const handleDeleteWaypoint = async (waypointId) => {
     console.log("delete waypoint id:", waypointId);
@@ -219,6 +216,7 @@ const CreateVoyageMapComponent = ({
     }
   };
 
+  /*
   const getInitialRegion = (waypoints) => {
     const maxLatitude = Math.max(
       ...waypoints.map((waypoint) => waypoint.latitude)
@@ -244,13 +242,47 @@ const CreateVoyageMapComponent = ({
     };
     return initialRegion;
   };
+*/
 
+  // 1. GET LOCATION & SET INITIAL REGION //
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          console.error("Permission to access location was denied");
+          return;
+        }
+
+        const location = await Location.getCurrentPositionAsync({});
+        const { latitude, longitude } = location.coords;
+
+        const initial = {
+          latitude,
+          longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        };
+
+        setInitialRegion(initial);
+      } catch (error) {
+        console.error("Error getting user location:", error);
+      }
+    };
+
+    fetchLocation();
+  }, []);
+
+
+  /*
   const initialRegion = {
     latitude: 52.3676, // Amsterdam's latitude
     longitude: 4.9041, // Amsterdam's longitude
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
+  */
 
   const handleMapPress = (event) => {
     setLatitude(event.nativeEvent.coordinate.latitude);
@@ -375,6 +407,7 @@ const CreateVoyageMapComponent = ({
                   placeholder="Enter title for waypoint"
                   value={title}
                   multiline
+                  placeholderTextColor={parrotPlaceholderGrey}
                   numberOfLines={1}
                   onChangeText={(text) => setTitle(text)}
                   maxLength={35}
@@ -390,9 +423,10 @@ const CreateVoyageMapComponent = ({
           </View>
           <View style={styles.latorLng2}>
             <TextInput
-              style={styles.textInput}
+              style={styles.textInputDescription}
               placeholder="Enter description for waypoint"
               value={description}
+              placeholderTextColor={parrotPlaceholderGrey}
               multiline
               numberOfLines={3}
               onChangeText={(text) => setDescription(text)}
@@ -590,7 +624,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: parrotCream,
     marginVertical: vh(0.3),
-    padding: vh(0.4),
+    padding: vh(0.1),
     width: vw(62),
     borderTopRightRadius: vh(1.5),
     borderBottomRightRadius: vh(1.5),
@@ -672,6 +706,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     paddingLeft: vw(1),
     width: "90%",
+  },
+  textInputDescription: {
+    fontSize: 13,
+    paddingLeft: vw(1),
+    width: "99%",
+    backgroundColor: "white",
+    borderRadius: vh(1.5),
   },
   nameInput: {
     fontSize: 13,

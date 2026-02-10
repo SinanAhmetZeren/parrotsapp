@@ -131,7 +131,22 @@ export default function TermsOfUseComponent() {
                     Users must not post illegal, harmful, or offensive content; harass or
                     threaten others; or violate intellectual property rights.
                 </Text>
+
+                <Text style={styles.sectionTitle2}>Content Moderation and Removal</Text>
+                <Text style={styles.paragraph}>
+                    Parrots reserves the right, but not the obligation, to review, restrict, or
+                    remove any voyage, vehicle listing, or related content at its sole
+                    discretion. This may include content that appears to be fake, misleading,
+                    fraudulent, outdated, inactive for an extended period, or otherwise
+                    inconsistent with the purpose of the platform or these Terms.
+                </Text>
+
+                <Text style={styles.paragraph}>
+                    Removal of content does not imply wrongdoing by the user, and Parrots is not
+                    required to provide prior notice, explanation, or justification.
+                </Text>
             </View>
+
 
             {/* 7. IP */}
             <View style={styles.wrapper}>
