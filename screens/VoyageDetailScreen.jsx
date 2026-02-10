@@ -488,12 +488,12 @@ const VoyageDetailScreen = ({ navigation }) => {
                 <View style={styles.currentBidsAndSeeAll}>
                   <Text style={styles.currentBidsTitle}>Voyage Images</Text>
                   <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
-                    <MaterialIcons name="info-outline" size={16} color={parrotDarkBlue} />
+                    <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
                   </TouchableOpacity>
                   {voyageImageInfoVisible && (
                     <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
                       <Text style={styles.voyageImageInfoMessage}>
-                        Tap an image to view photos
+                        Tap an image to view gallery
                       </Text>
                     </TouchableOpacity>
                   )}
@@ -697,10 +697,10 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
   },
   voyageImageInfoMessage: {
-    color: parrotLightBlue,
+    color: parrotBlue,
     paddingHorizontal: vh(1),
     borderWidth: 1,
-    borderColor: parrotLightBlue,
+    borderColor: parrotBlue,
     borderRadius: vh(2),
   },
   rectangularBox: {
