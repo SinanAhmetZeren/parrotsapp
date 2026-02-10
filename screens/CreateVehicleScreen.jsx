@@ -72,7 +72,9 @@ const CreateVehicleScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
-        navigation.navigate("Home");
+        // navigation.navigate("Home");
+        navigation.navigate("Home", { screen: "HomeScreen" });
+
         return true;
       };
       const backHandler = BackHandler.addEventListener(
@@ -135,7 +137,9 @@ const CreateVehicleScreen = () => {
       const confirmResult = await confirmVehicle(vehicleId);
       console.log("confirmResult: ", confirmResult);
 
-      navigation.navigate("Home");
+      // navigation.navigate("Home");
+      navigation.navigate("Home", { screen: "HomeScreen" });
+
     } catch (error) {
       console.error("Error completing vehicle:", error);
       setHasError(true);
