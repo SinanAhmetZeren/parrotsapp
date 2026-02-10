@@ -295,7 +295,7 @@ export default function ProfileScreenPublic({ navigation }) {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="blue" />
+        <ActivityIndicator size="large" style={{ top: vh(30) }} />
       </View>
     );
   }

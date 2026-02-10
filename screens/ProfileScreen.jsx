@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { Ionicons, Feather, MaterialIcons, Fontisto } from "@expo/vector-icons";
+import { Ionicons, Feather, MaterialIcons, Fontisto, AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import VoyageListVertical from "../components/VoyageListVertical";
 import VehicleList from "../components/VehicleList";
@@ -33,14 +33,17 @@ import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import he from "he";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed } from "../assets/color";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import TermsOfUseComponent from "../components/TermsOfUseComponent";
+import { set } from "date-fns";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
   const dispatch = useDispatch();
   const [socialItemCount, setSocialItemCount] = useState(0);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
+  const [termsModalVisible, setTermsModalVisible] = useState(false);
   const [retryCountUser, setRetryCountUser] = useState(0);
   const [retryCountVoyages, setRetryCountVoyages] = useState(0);
   const [retryCountVehicles, setRetryCountVehicles] = useState(0);
@@ -117,6 +120,10 @@ export default function ProfileScreen({ navigation }) {
     ])
   );
 */
+
+  const handleCloseTermsModal = () => {
+    setTermsModalVisible(false);
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -322,7 +329,78 @@ export default function ProfileScreen({ navigation }) {
                 )}
               </View>
 
-              <View style={styles.buttonsContainer}>
+              <View style={styles.buttonsContainerLeft}>
+
+                {/* ///// terms of use BUTTON /////// */}
+                <TouchableOpacity
+                  style={styles.publicProfileBox}
+                  onPress={() => {
+                    setTermsModalVisible(true);
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <View>
+                    <View style={styles.innerProfileContainer}>
+                      <MaterialIcons
+                        name="web-asset"
+                        size={18}
+                        color={parrotBlue}
+                      />
+                      <Text
+                        style={{
+                          lineHeight: 22,
+                          marginLeft: vw(2),
+                          fontSize: 11,
+                        }}
+                      >
+                        Terms of Use
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+                {/* ///// terms of use BUTTON /////// */}
+              </View>
+
+
+
+
+
+              <Modal
+                animationType="fade"
+                transparent={true}
+                visible={termsModalVisible}
+                onRequestClose={handleCloseTermsModal}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    marginTop: vh(10),
+                    width: vw(90),
+                    height: vh(80),
+                    margin: "auto"
+                  }}
+                >
+                  <TermsOfUseComponent />
+
+                </View>
+
+                <TouchableOpacity
+                  style={styles.closeButtonAndText2}
+                  onPress={handleCloseTermsModal}
+                >
+                  <View>
+                    <Text style={styles.buttonClose2}>
+                      <AntDesign name="close" size={24} color="white " />
+                    </Text>
+
+                  </View>
+                </TouchableOpacity>
+              </Modal>
+
+
+              <View style={styles.buttonsContainerRight}>
+
+
                 {/* ///// PUBLIC PROFILE BUTTON /////// */}
                 <TouchableOpacity
                   style={styles.publicProfileBox}
@@ -356,6 +434,7 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </TouchableOpacity>
                 {/* ///// PUBLIC PROFILE BUTTON /////// */}
+
 
                 {/* ///// LOGOUT BUTTON /////// */}
                 <TouchableOpacity
@@ -414,6 +493,10 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </TouchableOpacity>
                 {/* ///// EDIT PROFILE BUTTON /////// */}
+
+
+
+
               </View>
 
               <View style={styles.profileImageAndSocial}>
@@ -712,6 +795,8 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   publicProfileBox: {
+    marginTop: vh(0.5),
+
     backgroundColor: "white",
     width: vw(30),
     flexDirection: "row",
@@ -719,16 +804,44 @@ const styles = StyleSheet.create({
     padding: vw(1),
     zIndex: 100,
   },
-  buttonsContainer: {
+  buttonsContainerLeft: {
     position: "absolute",
-    top: vh(22),
+    top: vh(.5),
     right: vw(2),
     flexDirection: "column",
+    backgroundColor: ""
+  },
+  buttonsContainerRight: {
+    position: "absolute",
+    top: vh(21),
+    right: vw(2),
+    flexDirection: "column",
+    backgroundColor: ""
   },
   innerProfileContainer: {
     alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),
     paddingHorizontal: vw(2),
+  },
+  closeButtonAndText2: {
+    flexDirection: "row",
+    position: "absolute",
+    // width: vh(11.45),
+    borderRadius: vh(2.5),
+    top: vh(8),
+    alignSelf: "center",
+    right: vw(2),
+  },
+  buttonClose2: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    alignSelf: "center",
+    backgroundColor: parrotDarkBlue,
+    // backgroundColor: parrotRed,
+    // width: vw(30),
+    borderRadius: vh(4),
+    padding: vw(1),
   },
 });
