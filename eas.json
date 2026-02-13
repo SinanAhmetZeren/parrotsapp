@@ -26,8 +26,6 @@
     }
   },
   "submit": {
-    "production": {
-      // Configure for app submission (optional)
-    }
+    "production": {}
   }
 }
