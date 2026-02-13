@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "parrots",
-    "slug": "parrots",
+    "name": "Parrots",
+    "slug": "Parrots",
     "owner": "ahmetzeren",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "scheme": "parrotsapp",
     "orientation": "portrait",
-    "icon": "./assets/app-icon.png",
+    "icon": "./assets/ParrotsLogoApp.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/ParrotsLogoApp.png",
@@ -35,8 +35,9 @@
     },
     "android": {
       "package": "com.zenforest.parrots",
+      "versionCode": 2,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/app-icon.png",
+        "foregroundImage": "./assets/ParrotsLogoApp.png",
         "backgroundColor": "#ffffff"
       },
       "intentFilters": [
