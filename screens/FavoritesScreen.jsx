@@ -167,7 +167,7 @@ export default function FavoritesScreen({ navigation }) {
                     <View style={styles.mainBidsContainer2}>
                       <View style={styles.currentBidsAndSeeAll2}>
                         <Image
-                          source={require("../assets/parrots-logo-mini.png")}
+                          source={require("../assets/ParrotsLogo.png")}
                           style={styles.logoImageNoFavorites}
                         />
                         <Text style={styles.NoFavoritesText}>
