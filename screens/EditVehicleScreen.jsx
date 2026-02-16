@@ -281,7 +281,7 @@ const EditVehicleScreen = () => {
           <View style={{ backgroundColor: "white", height: vh(100) }}>
             <View style={{ marginTop: vh(15) }}>
               <Image
-                source={require("../assets/ParrotsLogo.png")}
+                source={require("../assets/parrotslogo.png")}
                 style={styles.logoImage}
               />
               <Text style={styles.currentBidsTitle2}>Connection Error</Text>
@@ -445,7 +445,7 @@ const EditVehicleScreen = () => {
                     />
                   ) : (
                     <Image
-                      source={require("../assets/ParrotsLogo.png")}
+                      source={require("../assets/parrotslogo.png")}
                       style={styles.profileImage2}
                     />
                   )}

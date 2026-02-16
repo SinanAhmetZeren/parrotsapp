@@ -104,7 +104,7 @@ export default function FavoritesScreen({ navigation }) {
         >
           <View>
             <Image
-              source={require("../assets/ParrotsLogo.png")}
+              source={require("../assets/parrotslogo.png")}
               style={styles.logoImage}
             />
             <Text style={styles.currentBidsTitle2}>Connection Error</Text>
@@ -167,7 +167,7 @@ export default function FavoritesScreen({ navigation }) {
                     <View style={styles.mainBidsContainer2}>
                       <View style={styles.currentBidsAndSeeAll2}>
                         <Image
-                          source={require("../assets/ParrotsLogo.png")}
+                          source={require("../assets/parrotslogo.png")}
                           style={styles.logoImageNoFavorites}
                         />
                         <Text style={styles.NoFavoritesText}>

@@ -332,7 +332,7 @@ const CreateVoyageMapComponent = ({
 
         <View style={styles.warningTextContainer}>
           <Image
-            source={require("../assets/ParrotsLogo.png")}
+            source={require("../assets/parrotslogo.png")}
             style={styles.miniLogo}
           />
           <Image
@@ -355,7 +355,7 @@ const CreateVoyageMapComponent = ({
                 <Image source={{ uri: imageUri }} style={styles.profileImage} />
               ) : (
                 <Image
-                  source={require("../assets/ParrotsLogo.png")}
+                  source={require("../assets/parrotslogo.png")}
                   style={styles.profileImage}
                 />
               )}

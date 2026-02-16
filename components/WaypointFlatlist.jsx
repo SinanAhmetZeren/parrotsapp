@@ -131,7 +131,7 @@ export const WaypointItemVoyageDetailScreen = ({
             <Image
               // source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
 
-              source={hasImage ? { uri: imageUri } : require("../assets/ParrotsLogo.png")}
+              source={hasImage ? { uri: imageUri } : require("../assets/parrotslogo.png")}
               style={hasImage ? styles.waypointCardImage : { ...styles.waypointCardImage, opacity: 0.25 }}
             />
           </View>
