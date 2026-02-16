@@ -48,6 +48,7 @@ export const RenderBidsComponent = ({
   const [deleteBid] = useDeleteBidMutation();
 
 
+  const chatReadyRef = useRef(false);
   // 🟢 Create hub connection ref
   const hubConnection = useRef(null);
 
@@ -55,35 +56,58 @@ export const RenderBidsComponent = ({
   useEffect(() => {
     if (!currentUserId) return;
 
-    // Build connection only once
     hubConnection.current = new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
       .withAutomaticReconnect()
       .build();
 
+
+    // ✅ ADD THIS
+    chatReadyRef.current = false;
+
+    hubConnection.current.on("ParrotsChatHubInitialized", () => {
+      console.log("✅ ParrotsChatHubInitialized received");
+      chatReadyRef.current = true;
+    });
+
+    hubConnection.current.onreconnecting(() => {
+      console.log("⚠️ SignalR reconnecting...");
+      chatReadyRef.current = false;
+    });
+
+    hubConnection.current.onreconnected(() => {
+      console.log("🔁 SignalR reconnected");
+    });
+
     const startHubConnection = async () => {
       try {
+
         if (hubConnection.current.state === HubConnectionState.Disconnected) {
+          chatReadyRef.current = false; // ✅ ADD THIS
           await hubConnection.current.start();
           console.log("✅ SignalR connected successfully.");
         }
       } catch (error) {
         console.error("❌ Failed to start SignalR connection:", error);
-        setTimeout(startHubConnection, 3000); // Retry after 3 sec if fails
+        chatReadyRef.current = false; // ✅ ADD THIS
+        setTimeout(startHubConnection, 3000);
       }
     };
 
     startHubConnection();
 
-    // 🟢 Cleanup connection on unmount
+    // 🟢 Cleanup
     return () => {
       if (hubConnection.current) {
+        hubConnection.current.off("ParrotsChatHubInitialized"); // ✅ ADD THIS
         hubConnection.current.stop()
           .then(() => console.log("🔴 SignalR stopped"))
           .catch((err) => console.error("❌ Failed to stop SignalR:", err));
       }
     };
+
   }, [currentUserId]);
+
 
   // 🟢 Accept bid handler
   const handleAcceptBid = async ({ bidId, bidUserId }) => {
