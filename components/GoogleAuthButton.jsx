@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { updateAsLoggedIn } from "../slices/UserSlice";
 import { parrotBlue, parrotDarkBlue, parrotGreen } from '../assets/color';
 import { vh, vw } from 'react-native-expo-viewport-units';
-import gooogleSignin from "../assets/googleG.png";
+import gooogleSignin from "../assets/googleg.png";
 
 export default function GoogleLoginButton() {
   const [googleLoginInternal, { isLoading }] = useGoogleLoginInternalMutation();

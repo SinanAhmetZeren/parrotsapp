@@ -514,7 +514,7 @@ export default function HomeScreen({ navigation }) {
           <View style={{ height: vh(95) }}>
             <View style={styles.welcomeandFilters}>
               <Image
-                source={require("../assets/parrotsRealLife.png")}
+                source={require("../assets/parrotsreallife.png")}
                 style={styles.miniLogo}
               />
 
@@ -653,7 +653,7 @@ export default function HomeScreen({ navigation }) {
               <View>
                 <View>
                   <Image
-                    source={require("../assets/ParrotsLogo.png")}
+                    source={require("../assets/parrotslogo.png")}
                     style={styles.logoImage}
                   />
                   <Text style={styles.currentBidsTitle2}>Connection Error</Text>

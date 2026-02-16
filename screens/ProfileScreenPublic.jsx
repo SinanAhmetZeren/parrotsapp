@@ -315,7 +315,7 @@ export default function ProfileScreenPublic({ navigation }) {
       >
         <View style={styles.currentBidsAndSeeAll2}>
           <Image
-            source={require("../assets/ParrotsLogo.png")}
+            source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
           <Text style={styles.currentBidsTitle2}>Connection Error</Text>
@@ -347,7 +347,7 @@ export default function ProfileScreenPublic({ navigation }) {
                   <Image
                     style={styles.imageContainer}
                     resizeMode="cover"
-                    source={require("../assets/amazonForest.jpg")}
+                    source={require("../assets/amazonforest.jpg")}
                   />
                 ) : (
                   <Image

@@ -519,7 +519,7 @@ const LoginScreen = ({ navigation }) => {
 
               <Image
                 style={styles.imageLetsStart}
-                source={require("../assets/letsStart.png")}
+                source={require("../assets/letsstart.png")}
 
               />
             </View>
@@ -780,7 +780,7 @@ const LoginScreen = ({ navigation }) => {
               <LoginPageLogoComponent />
               <Image
                 style={styles.imageAlmostThere}
-                source={require("../assets/checkYourEmail.png")}
+                source={require("../assets/checkyouremail.png")}
               />
             </View>
           </View>
@@ -1028,7 +1028,7 @@ const LoginPageLogoComponent = () => {
   return (
     <Image
       style={{ width: vh(12), height: vh(12) }}
-      source={require("../assets/ParrotsLogo.png")}
+      source={require("../assets/parrotslogo.png")}
     />
   );
 };
