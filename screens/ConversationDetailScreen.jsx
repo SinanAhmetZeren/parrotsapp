@@ -108,23 +108,39 @@ export const ConversationDetailScreen = ({ navigation }) => {
   );
 
 
-
   // 🟢 Start connection + set up handlers
+  const chatReadyRef = useRef(false);
   useEffect(() => {
     if (!hubConnection.current) return;
 
     const startHubConnection = async () => {
       try {
+
+        // ✅ ADD THIS — before start
+        chatReadyRef.current = false;
+
+        hubConnection.current.on("ParrotsChatHubInitialized", () => {
+          console.log("Chat Hub initialized");
+          chatReadyRef.current = true;
+        });
+
+        hubConnection.current.onreconnecting(() => {
+          console.log("SignalR reconnecting...");
+          chatReadyRef.current = false;
+        });
+
         if (hubConnection.current.state === HubConnectionState.Disconnected) {
           await hubConnection.current.start();
           console.log("SignalR connected");
         }
+
       } catch (err) {
         console.error("SignalR start failed:", err);
       }
     };
 
     startHubConnection();
+
 
     // 🟢 Message handler
     hubConnection.current.on(
@@ -140,7 +156,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
       }
     );
 
-    // 🟢 Refetch on signal
+
+    // 🟢 Refetch
     hubConnection.current.on("ReceiveMessageRefetch", async () => {
       try {
         await refetch();
@@ -149,19 +166,22 @@ export const ConversationDetailScreen = ({ navigation }) => {
       }
     });
 
+
     // 🟢 Cleanup
     return () => {
       if (hubConnection.current) {
+
+        hubConnection.current.off("ParrotsChatHubInitialized"); // ✅ ADD THIS
         hubConnection.current.off("ReceiveMessage");
         hubConnection.current.off("ReceiveMessageRefetch");
-        hubConnection.current
-          .stop()
+
+        hubConnection.current.stop()
           .then(() => console.log("SignalR stopped"))
           .catch((err) => console.error("Failed to stop SignalR:", err));
       }
     };
-  }, [refetch]);
 
+  }, [refetch]);
 
 
 
@@ -217,7 +237,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
     // Retry function
     const sendWithRetry = async (msg, retries = 3, delay = 1000) => {
       for (let i = 0; i < retries; i++) {
-        if (hubConnection.current.state === "Connected") {
+
+        if (
+          hubConnection.current.state === "Connected" &&
+          chatReadyRef.current === true
+        ) {
           try {
             await hubConnection.current.invoke(
               "SendMessage",

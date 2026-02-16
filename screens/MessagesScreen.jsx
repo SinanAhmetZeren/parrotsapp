@@ -104,19 +104,38 @@ export default function MessagesScreen({ navigation }) {
     }
   };
 
+
+  const chatReadyRef = useRef(false);
   // 🟢 Start SignalR connection & setup events
   useEffect(() => {
     if (!hubConnection.current) return;
 
+    // ✅ Reset ready state
+    chatReadyRef.current = false;
+
+    hubConnection.current.on("ParrotsChatHubInitialized", () => {
+      console.log("✅ ParrotsChatHubInitialized received");
+      chatReadyRef.current = true;
+    });
+
+    hubConnection.current.onreconnecting(() => {
+      console.log("⚠️ SignalR reconnecting...");
+      chatReadyRef.current = false;
+    });
+
     const startHubConnection = async () => {
       try {
         if (hubConnection.current.state === HubConnectionState.Disconnected) {
+
+          chatReadyRef.current = false; // ✅ important
+
           await hubConnection.current.start();
           console.log("✅ SignalR connected");
         }
       } catch (err) {
         console.error("❌ SignalR start failed:", err);
-        setTimeout(startHubConnection, 3000); // retry
+        chatReadyRef.current = false; // ✅ important
+        setTimeout(startHubConnection, 3000);
       }
     };
 
@@ -148,8 +167,11 @@ export default function MessagesScreen({ navigation }) {
     // Cleanup on unmount
     return () => {
       if (hubConnection.current) {
+
+        hubConnection.current.off("ParrotsChatHubInitialized"); // ✅ add
         hubConnection.current.off("ReceiveMessage");
         hubConnection.current.off("ReceiveMessageRefetch");
+
         hubConnection.current
           .stop()
           .then(() => console.log("🔴 SignalR stopped"))
@@ -157,6 +179,9 @@ export default function MessagesScreen({ navigation }) {
       }
     };
   }, [refetch]);
+
+
+
 
   // Sync messages from API updates
   useEffect(() => {
