@@ -102,13 +102,13 @@ export default function FavoritesScreen({ navigation }) {
             />
           }
         >
-          <View>
+          <View style={styles.errorComponentContainer}>
             <Image
               source={require("../assets/parrotslogo.png")}
               style={styles.logoImage}
             />
             <Text style={styles.currentBidsTitle2}>Connection Error</Text>
-            <Text style={styles.currentBidsTitle3}>Swipe Down to Retry</Text>
+            <Text style={styles.currentBidsTitle2}>Swipe Down to Retry</Text>
           </View>
         </ScrollView>
       );
@@ -213,6 +213,11 @@ const styles = StyleSheet.create({
   mainBidsContainer2: {
     borderRadius: vw(5),
     padding: vh(5),
+    paddingTop: vh(20),
+  },
+  errorComponentContainer: {
+    borderRadius: vw(5),
+    padding: vh(15),
     paddingTop: vh(20),
   },
   currentBidsAndSeeAll2: {

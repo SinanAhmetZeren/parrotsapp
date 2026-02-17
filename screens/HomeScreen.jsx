@@ -639,9 +639,14 @@ export default function HomeScreen({ navigation }) {
                       }}
                       onPress={() => {
                         updateSelectedVoyageData(item);
-                      }}
-                      image={markerImage}
-                    />
+                      }} // image={markerImage}
+                    >
+                      <Image
+                        source={markerImage}
+                        style={{ width: 36, height: 36 }}
+                        resizeMode="contain"
+                      />
+                    </Marker>
                   );
                 })}
               </MapView>

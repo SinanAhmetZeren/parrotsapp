@@ -22,7 +22,8 @@ export const parrotCream = "#f9f5f1";
 export const parrotDarkCream = "#c3c3c3";
 export const parrotInputTextColor = "#6b7f9d";
 export const parrotTransparentWhite = "rgba(255,255,255,0.7)"
-
+export const parrotBlueDarkTransparent = "rgba(0, 119, 234, 0.3)";
+export const parrotBlueDarkTransparent2 = "rgba(0, 119, 234, 0.5)";
 
 export const applyFilterInitialBackgroundColor = "#c3c3c311";
 export const applyFilterInitialColor = "#c3c3c388";
