@@ -6,18 +6,17 @@ import { StyleSheet, View, Text, ScrollView, Image } from "react-native";
 import { useRef, useEffect } from "react";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { API_URL } from "@env";
-import { parrotCream, parrotInputTextColor, parrotLightBlue } from "../assets/color";
+import { parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotInputTextColor, parrotLightBlue } from "../assets/color";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
-
   const day = date.getDate();
-  const month = date.toLocaleString("default", { month: "short" });
-  const year = date.getFullYear();
-
+  // const month = date.toLocaleString("default", { month: "short" });
+  const month = date.toLocaleString("en-US", { month: "short" });
+  // const year = date.getFullYear();
+  const year = date.getFullYear().toString().slice(-2);
   const formattedDate1 = `${hours}:${minutes}`;
   const formattedDate2 = `${day}-${month}-${year}`;
 
@@ -161,12 +160,15 @@ const styles = StyleSheet.create({
   },
   timeDisplay: {
     color: "grey",
+    color: parrotBlueDarkTransparent2,
     fontWeight: "400",
     fontSize: 11,
   },
   dateDisplay: {
     fontWeight: "400",
     color: "grey",
+    color: parrotBlueDarkTransparent,
+
     fontSize: 11,
   },
   dateBox: {

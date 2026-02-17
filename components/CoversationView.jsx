@@ -8,7 +8,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { MessagesComponent } from "../components/MessagesComponent";
 import { API_URL } from "@env";
-import { parrotCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -115,11 +115,13 @@ const styles = StyleSheet.create({
   timeText1: {
     fontWeight: "700",
     color: parrotPlaceholderGrey,
+    color: parrotBlueDarkTransparent2,
     marginBottom: vh(1),
   },
   timeText2: {
     fontWeight: "700",
     color: parrotPlaceholderGrey,
+    color: parrotBlueDarkTransparent
   },
 
 });

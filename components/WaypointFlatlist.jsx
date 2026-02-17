@@ -165,8 +165,10 @@ export const WaypointItemVoyageDetailScreen = ({
           {/* // modal edited // */}
           <View style={styles.imageContainerInModal}>
             <Image
-              source={{ uri: imageUri }}
-              style={styles.voyageImageInModal}
+              // source={{ uri: imageUri }}
+              source={hasImage ? { uri: imageUri } : require("../assets/parrotslogo.png")}
+              style={hasImage ? styles.voyageImageInModal : { ...styles.voyageImageInModal, opacity: 0.25 }}
+
             />
             <ScrollView style={styles.scrollView}>
               <Text numberOfLines={2} style={styles.waypointTitleInModal2}>

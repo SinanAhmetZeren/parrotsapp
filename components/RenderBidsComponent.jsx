@@ -11,6 +11,9 @@ import {
   parrotRed,
   parrotRedTransparent,
   parrotCream,
+  parrotBlueSemiTransparent,
+  parrotPlaceholderGrey,
+  parrotInputTextColor,
 } from "../assets/color.jsx";
 import {
   View,
@@ -552,8 +555,8 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     // backgroundColor: "rgba(0, 119, 234,0.05)",
     backgroundColor: parrotCream,
-    borderWidth: 1,
-    borderColor: parrotBlueMediumTransparent,
+    // borderWidth: 1,
+    // borderColor: parrotInputTextColor,
   },
   flatlistContainer: {
     backgroundColor: "rgba(1,1,1,0.4)",
@@ -578,8 +581,8 @@ const styles = StyleSheet.create({
     backgroundColor: parrotCream,
     width: "98%",
     margin: "auto",
-    borderWidth: 1,
-    borderColor: parrotBlueMediumTransparent,
+    // borderWidth: 1,
+    // borderColor: parrotBlueMediumTransparent,
   },
   bidImage2: {
     width: vh(5),

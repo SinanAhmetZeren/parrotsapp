@@ -44,11 +44,14 @@ export const WaypointComponent = ({
         key={markerKey}
         coordinate={coords}
         pinColor={pinColor}
-        image={markerImage}
+        anchor={{ x: 0.5, y: 0.5 }} // keeps marker centered
+      // image={markerImage}
       >
-        {/* <Callout style={styles.calloutContainer}>
-          <Text style={styles.calloutText}>{title}</Text>
-        </Callout> */}
+        <Image
+          source={markerImage}
+          style={{ width: 36, height: 36 }}
+          resizeMode="contain"
+        />
       </Marker>
     </View>
   );
