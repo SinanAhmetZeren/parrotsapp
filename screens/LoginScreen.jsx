@@ -30,7 +30,7 @@ import {
   updateUserFavorites,
 } from "../slices/UserSlice";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-// import GoogleLoginButton from "../components/GoogleAuthButton";
+import GoogleLoginButton from "../components/GoogleAuthButton";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotDarkCream, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
 
 
@@ -497,7 +497,7 @@ const LoginScreen = ({ navigation }) => {
 
 
                 <View style={styles.googleLoginContainer}>
-                  {/* <GoogleLoginButton /> */}
+                  <GoogleLoginButton />
                 </View>
 
 
