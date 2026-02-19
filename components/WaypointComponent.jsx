@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/prop-types */
 import React from "react";
-import { useState } from "react";
+import { useState, memo } from "react";
 import { View, Image, Text, StyleSheet } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import MapView, { Marker, Callout, Polyline } from "react-native-maps";
@@ -14,7 +14,49 @@ import parrotMarker5 from "../assets/parrotMarkers/parrotMarker5.png";
 import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
 import { parrotBlue } from "../assets/color";
 
-export const WaypointComponent = ({
+const markerImages = [
+  parrotMarker1,
+  parrotMarker2,
+  parrotMarker3,
+  parrotMarker4,
+  parrotMarker5,
+  parrotMarker6,
+];
+
+
+export const WaypointComponent = memo(({
+  index,
+  latitude,
+  longitude,
+  pinColor,
+  id
+}) => {
+  const [tracksView, setTracksView] = useState(true);
+
+  const coords = { latitude, longitude };
+  const imageIndex = index % markerImages.length;
+  const markerImage = markerImages[imageIndex];
+
+  return (
+    <Marker
+      coordinate={coords}
+      pinColor={pinColor}
+      anchor={{ x: 0.5, y: 0.5 }}
+      tracksViewChanges={tracksView}
+    >
+      <Image
+        source={markerImage}
+        style={{ width: 36, height: 36 }}
+        resizeMode="contain"
+        onLoad={() => setTracksView(false)}
+      />
+    </Marker>
+  );
+});
+
+
+
+export const WaypointComponent2 = ({
   index,
   latitude,
   longitude,
@@ -23,16 +65,6 @@ export const WaypointComponent = ({
   id
 }) => {
   const coords = { latitude, longitude };
-
-  const markerImages = [
-    parrotMarker1,
-    parrotMarker2,
-    parrotMarker3,
-    parrotMarker4,
-    parrotMarker5,
-    parrotMarker6,
-  ];
-
   const imageIndex = index % markerImages.length;
   const markerImage = markerImages[imageIndex];
   const viewKey = `waypoint-${id}-${index}-view`;
@@ -44,7 +76,7 @@ export const WaypointComponent = ({
         key={markerKey}
         coordinate={coords}
         pinColor={pinColor}
-        anchor={{ x: 0.5, y: 0.5 }} // keeps marker centered
+        anchor={{ x: 0.5, y: 0.5 }}
       // image={markerImage}
       >
         <Image

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React, { use } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -48,6 +48,12 @@ import {
   parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
   parrotPlaceholderGrey
 } from "../assets/color";
+
+// Define static assets outside to keep references stable
+const markerImages = [parrotMarker1, parrotMarker2, parrotMarker3, parrotMarker4, parrotMarker5, parrotMarker6];
+
+
+
 
 export default function HomeScreen({ navigation }) {
 
@@ -149,7 +155,7 @@ export default function HomeScreen({ navigation }) {
   }, [appliedFilters, currentFilters, initialFilters]);
 
 
-  const markerImages = [
+  const markerImages2 = [
     parrotMarker1,
     parrotMarker2,
     parrotMarker3,
@@ -158,21 +164,37 @@ export default function HomeScreen({ navigation }) {
     parrotMarker6,
   ];
 
-  /*
-    const vehicleIconsMaterialComm = {
-      0: "sail-boat",
-      1: "car",
-      2: "caravan",
-      3: "bus",
-      4: "walk",
-      5: "run",
-      6: "motorbike",
-      7: "bicycle",
-      8: "home",
-      9: "airplane",
-      10: "train",
-    };
-    */
+
+  // Create a memoized sub-component to prevent unnecessary redraws
+  const MapMarker = memo(({ item, index, onPress }) => {
+    const [tracksView, setTracksView] = useState(true);
+    const markerImage = markerImages[index % markerImages.length];
+
+    return (
+      <Marker
+        key={`item-${item.id}`}
+        pinColor={parrotGreen}
+        coordinate={{
+          latitude: item.waypoints[0]?.latitude,
+          longitude: item.waypoints[0]?.longitude,
+        }}
+        tracksViewChanges={tracksView}
+        onPress={() => {
+          updateSelectedVoyageData(item);
+        }} // image={markerImage}
+      >
+        <Image
+          source={markerImage}
+          style={{ width: 36, height: 36 }}
+          resizeMode="contain"
+          onLoad={() => setTracksView(false)} // Kill the flicker after load
+
+        />
+      </Marker>
+
+    );
+  });
+
 
   const vehicleIcons = [
     ["FontAwesome6", "sailboat", 20],     // index 0
@@ -398,7 +420,7 @@ export default function HomeScreen({ navigation }) {
     const formattedStartDate = convertDateFormat(startDate, "startDate");
     const formattedEndDate = convertDateFormat(endDate, "endDate");
 
-    console.log("Applying filters with parameters:", formattedStartDate, "---", formattedEndDate);
+    // console.log("Applying filters with parameters:", formattedStartDate, "---", formattedEndDate);
     const data = {
       latitude: latitude == 0 ? initialLatitude : latitude,
       longitude: longitude == 0 ? initialLongitude : longitude,
@@ -630,24 +652,14 @@ export default function HomeScreen({ navigation }) {
                   const imageIndex = index % markerImages.length;
                   const markerImage = markerImages[imageIndex];
 
+                  // console.log(" marker key: ", item.id, "time now: ", new Date());
                   return (
-                    <Marker
+                    <MapMarker
                       key={item.id}
-                      pinColor={parrotGreen}
-                      coordinate={{
-                        latitude: item.waypoints[0]?.latitude,
-                        longitude: item.waypoints[0]?.longitude,
-                      }}
-                      onPress={() => {
-                        updateSelectedVoyageData(item);
-                      }} // image={markerImage}
-                    >
-                      <Image
-                        source={markerImage}
-                        style={{ width: 36, height: 36 }}
-                        resizeMode="contain"
-                      />
-                    </Marker>
+                      item={item}
+                      index={index}
+                      onPress={updateSelectedVoyageData}
+                    />
                   );
                 })}
               </MapView>
