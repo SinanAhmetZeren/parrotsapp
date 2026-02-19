@@ -314,7 +314,7 @@ export default function HomeScreen({ navigation }) {
     }
   }, [isErrorVoyages]);
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
     setHasError(false);
     try {
@@ -332,7 +332,7 @@ export default function HomeScreen({ navigation }) {
         setIsLoading(false);
       };
 
-      getVoyages();
+      await getVoyages();
     } catch (error) {
       console.log(error);
       setHasError(true);
@@ -470,13 +470,14 @@ export default function HomeScreen({ navigation }) {
         <ScrollView
           style={styles.scrollview}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={[parrotPistachioGreen, parrotBananaLeafGreen]} // Android
-              tintColor={parrotBananaLeafGreen} // iOS
-
-            />
+            hasError ? (
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+                tintColor={parrotBananaLeafGreen}
+              />
+            ) : undefined
           }
         >
           <View style={styles.countModal}>

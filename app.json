@@ -6,10 +6,10 @@
     "version": "1.0.1",
     "scheme": "parrotsapp",
     "orientation": "portrait",
-    "icon": "./assets/parrotslogo.png",
+    "icon": "./assets/parrotsiconpadded.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/parrotslogo.png",
+      "image": "./assets/parrotsiconpadded.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -37,7 +37,7 @@
       "package": "com.zenforest.parrots",
       "versionCode": 2,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/parrotslogo.png",
+        "foregroundImage": "./assets/parrotsiconpadded.png",
         "backgroundColor": "#ffffff"
       },
       "intentFilters": [
