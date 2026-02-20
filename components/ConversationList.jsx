@@ -37,8 +37,8 @@ export default function ConversationList({ data, userId }) {
     const sortedData = [...transformedMessages].sort((a, b) => {
       return new Date(b.dateTime) - new Date(a.dateTime);
     });
-    console.log("---");
-    console.log(sortedData[0]);
+    // console.log("---");
+    // console.log(sortedData[0]);
     return sortedData.map((item, index) => (
       <Shadow
         distance={7}

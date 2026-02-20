@@ -3,8 +3,8 @@
 // androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
 //webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
 
-/*
 
+/*
 import { useEffect } from 'react'; // Added React import
 import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, Image, View } from 'react-native'; // Added Text and ActivityIndicator
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
 
   }
 });
-
 
 
 */
