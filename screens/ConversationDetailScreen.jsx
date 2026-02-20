@@ -319,7 +319,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
               onPress={() => {
                 navigation.navigate("Messages", {
                   screen: "ProfileScreenPublic",
-                  params: { publicId: publicId, userName: name },
+                  params: { publicId: publicId, userName: name, userId: conversationUserId },
                 });
               }}
               style={styles.headerContainer}
