@@ -64,7 +64,6 @@ export default function MessagesScreen({ navigation }) {
   // Initialize hub connection when userId is available
   useEffect(() => {
     if (!userId) return;
-
     hubConnection.current = new HubConnectionBuilder()
       .withUrl(`${API_URL}/chathub/11?userId=${userId}`)
       .withAutomaticReconnect() // 🟢 auto-reconnect
@@ -106,7 +105,13 @@ export default function MessagesScreen({ navigation }) {
 
 
   const chatReadyRef = useRef(false);
+
+
+
+
+
   // 🟢 Start SignalR connection & setup events
+  /*
   useEffect(() => {
     if (!hubConnection.current) return;
 
@@ -179,8 +184,99 @@ export default function MessagesScreen({ navigation }) {
       }
     };
   }, [refetch]);
+*/
+
+  useEffect(() => {
+    if (!hubConnection.current) return;
+    chatReadyRef.current = false;
+
+    hubConnection.current.on("ParrotsChatHubInitialized", async () => {
+      console.log("✅ ParrotsChatHubInitialized received");
+      chatReadyRef.current = true;
+
+      // On initial connect, tell hub user is on Messages page
+      if (userId) {
+        hubConnection.current.invoke("EnterMessagesScreen", userId);
+      }
+    });
+
+    hubConnection.current.onreconnecting(() => {
+      console.log("⚠️ SignalR reconnecting...");
+      chatReadyRef.current = false;
+    });
+
+    hubConnection.current.onreconnected(() => {
+      console.log("🔄 SignalR reconnected");
+      chatReadyRef.current = true;
+
+      // On reconnect, re-register Messages page
+      if (userId) {
+        hubConnection.current.invoke("EnterMessagesScreen", userId);
+      }
+    });
+
+    const startHubConnection = async () => {
+      try {
+        if (hubConnection.current.state === HubConnectionState.Disconnected) {
+          chatReadyRef.current = false;
+          await hubConnection.current.start();
+          console.log("✅ SignalR connected");
+
+          // Re-register Messages page after start
+          if (userId) {
+            hubConnection.current.invoke("EnterMessagesScreen", userId);
+          }
+        }
+      } catch (err) {
+        console.error("❌ SignalR start failed:", err);
+        chatReadyRef.current = false;
+        setTimeout(startHubConnection, 3000);
+      }
+    };
+    startHubConnection();
+
+    hubConnection.current.on("ReceiveMessage", async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
+      setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
+    });
+
+    hubConnection.current.on("ReceiveMessageRefetch", async () => {
+      try {
+        await refetch();
+      } catch (err) {
+        console.error("Failed to refetch messages:", err);
+      }
+    });
+
+    return () => {
+      if (hubConnection.current) {
+        hubConnection.current.off("ParrotsChatHubInitialized");
+        hubConnection.current.off("ReceiveMessage");
+        hubConnection.current.off("ReceiveMessageRefetch");
+        hubConnection.current
+          .stop()
+          .then(() => console.log("🔴 SignalR stopped"))
+          .catch((err) => console.error("❌ Failed to stop SignalR:", err));
+      }
+    };
+  }, [refetch, userId]);
 
 
+  useFocusEffect(
+    useCallback(() => {
+      if (hubConnection.current && chatReadyRef.current) {
+        hubConnection.current.invoke("EnterMessagesScreen", userId);
+        console.log("-->Entered Messages screen");
+        console.log(hubConnection.current._connectionState);
+      }
+
+      return () => {
+        if (hubConnection.current && chatReadyRef.current) {
+          hubConnection.current.invoke("LeaveMessagesScreen", userId);
+          console.log("Leaving Messages screen");
+        }
+      };
+    }, [userId])
+  );
 
 
   // Sync messages from API updates
