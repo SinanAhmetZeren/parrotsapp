@@ -12,6 +12,7 @@ const usersSlice = createSlice({
     token: "",
     userName: "",
     userProfileImage: "",
+    unreadMessages: "",
     userFavoriteVoyages: [0],
     userFavoriteVehicles: [0],
   },
@@ -22,6 +23,7 @@ const usersSlice = createSlice({
       state.token = action.payload.token;
       state.userName = action.payload.userName;
       state.userProfileImage = action.payload.profileImageUrl;
+      state.unreadMessages = action.payload.unreadMessages;
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
           console.error("Error setting storedToken ", error);
@@ -55,6 +57,7 @@ const usersSlice = createSlice({
       ).catch((error) => {
         console.error("Error setting storedProfileImageUrl:", error);
       });
+
     },
     updateAsLoggedOut: (state) => {
       state.isLoggedIn = false;
@@ -62,6 +65,7 @@ const usersSlice = createSlice({
       state.token = "";
       state.userName = "";
       state.userProfileImage = "";
+      state.unreadMessages = "";
       AsyncStorage.removeItem("storedToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedToken:", error);
       });
@@ -86,10 +90,10 @@ const usersSlice = createSlice({
           error
         );
       });
+
     },
     updateStateFromLocalStorage: (state, action) => {
       const { token, userId, userName, profileImageUrl } = action.payload;
-
       state.userId = userId;
       state.token = token;
       state.userName = userName;

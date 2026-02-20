@@ -144,6 +144,7 @@ const LoginScreen = ({ navigation }) => {
             refreshToken: resetPasswordResponse.refreshToken,
             refreshTokenExpiryTime:
               resetPasswordResponse.refreshTokenExpiryTime,
+            // unreadMessages: resetPasswordResponse.unreadMessages,
           })
         );
       }
@@ -228,6 +229,7 @@ const LoginScreen = ({ navigation }) => {
           token: loginResponse.token,
           refreshToken: loginResponse.refreshToken,
           refreshTokenExpiryTime: loginResponse.refreshTokenExpiryTime,
+          // unreadMessages: loginResponse.unreadMessages,
         })
       );
 
@@ -327,6 +329,7 @@ const LoginScreen = ({ navigation }) => {
             token: confirmResponse.token,
             refreshToken: confirmResponse.refreshToken,
             refreshTokenExpiryTime: confirmResponse.refreshTokenExpiryTime,
+            // unreadMessages: confirmResponse.unreadMessages,
           })
         );
       }

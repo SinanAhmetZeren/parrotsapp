@@ -35,7 +35,7 @@ import {
   HubConnectionState,
 } from "@microsoft/signalr";
 import { API_URL } from "@env";
-import { invokeHub } from "../signalr/signalRHub.js";
+import { initHubConnection, invokeHub } from "../signalr/signalRHub.js";
 
 export const RenderBidsComponent = ({
   bids,
@@ -56,12 +56,78 @@ export const RenderBidsComponent = ({
   // 🟢 Create hub connection ref
   const hubConnection = useRef(null);
 
+  // 🟢 Initialize and start connection
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    hubConnection.current = new HubConnectionBuilder()
+      .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
+      .withAutomaticReconnect()
+      .build();
 
 
+    // ✅ ADD THIS
+    chatReadyRef.current = false;
+
+    hubConnection.current.on("ParrotsChatHubInitialized", () => {
+      console.log("✅ ParrotsChatHubInitialized received");
+      chatReadyRef.current = true;
+    });
+
+    hubConnection.current.onreconnecting(() => {
+      console.log("⚠️ SignalR reconnecting...");
+      chatReadyRef.current = false;
+    });
+
+    hubConnection.current.onreconnected(() => {
+      console.log("🔁 SignalR reconnected");
+    });
+
+    const startHubConnection = async () => {
+      try {
+
+        if (hubConnection.current.state === HubConnectionState.Disconnected) {
+          chatReadyRef.current = false; // ✅ ADD THIS
+          await hubConnection.current.start();
+          console.log("✅ SignalR connected successfully.");
+        }
+      } catch (error) {
+        console.error("❌ Failed to start SignalR connection:", error);
+        chatReadyRef.current = false; // ✅ ADD THIS
+        setTimeout(startHubConnection, 3000);
+      }
+    };
+
+    startHubConnection();
+
+    // 🟢 Cleanup
+    return () => {
+      if (hubConnection.current) {
+        hubConnection.current.off("ParrotsChatHubInitialized"); // ✅ ADD THIS
+        hubConnection.current.stop()
+          .then(() => console.log("🔴 SignalR stopped"))
+          .catch((err) => console.error("❌ Failed to stop SignalR:", err));
+      }
+    };
+
+  }, [currentUserId]);
+
+
+  // 🟢 Accept bid handler
   const handleAcceptBid = async ({ bidId, bidUserId }) => {
     const text = `Hi there! 👋 Welcome on board to "${voyageName}" 🎉`;
     try {
-      await invokeHub("SendMessage", currentUserId, bidUserId, text);
+      if (hubConnection.current?.state === HubConnectionState.Connected) {
+        await hubConnection.current.invoke(
+          "SendMessage",
+          currentUserId,
+          bidUserId,
+          text
+        );
+      } else {
+        console.warn("⚠️ SignalR not connected. Message not sent.");
+      }
+
       await acceptBid(bidId).unwrap();
       await refetch();
     } catch (error) {
@@ -69,10 +135,21 @@ export const RenderBidsComponent = ({
     }
   };
 
+  // 🟢 Delete bid handler
   const handleDeleteBid = async ({ bidId, bidUserId }) => {
     const text = `Hi there! 👋 Your bid was deleted by ${username}`;
     try {
-      await invokeHub("SendMessage", currentUserId, bidUserId, text);
+      if (hubConnection.current?.state === HubConnectionState.Connected) {
+        await hubConnection.current.invoke(
+          "SendMessage",
+          currentUserId,
+          bidUserId,
+          text
+        );
+      } else {
+        console.warn("⚠️ SignalR not connected. Delete message not sent.");
+      }
+
       await deleteBid(bidId).unwrap();
       await refetch();
     } catch (error) {
