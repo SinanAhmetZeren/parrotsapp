@@ -50,7 +50,7 @@ import {
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotDarkBlue, parrotTextDarkBlue } from "./assets/color";
-import { initHubConnection, stopHubConnection } from "./signalr/signalRHub";
+import { initHubConnection, stopHubConnection } from "./src/signalr/signalRHub";
 import { API_URL } from "@env";
 
 
@@ -531,14 +531,27 @@ const TabNavigator = () => {
 };
 
 function App() {
+
+  // 🟢 Initialize SignalR once at the top level
+  useEffect(() => {
+    const currentUserId = "user-123"; // replace with actual userId from storage if available
+    initHubConnection(currentUserId, API_URL);
+
+    return () => {
+      stopHubConnection(); // cleanup on app unmount
+    };
+  }, []);
+
   function RenderNavigator() {
     useEffect(() => {
-      const checkTokenAndInitHub = async () => {
+      const checkToken = async () => {
         try {
           const storedToken = await AsyncStorage.getItem("storedToken");
           const storedUserId = await AsyncStorage.getItem("storedUserId");
           const storedUserName = await AsyncStorage.getItem("storedUserName");
-          const storedProfileImageUrl = await AsyncStorage.getItem("storedProfileImageUrl");
+          const storedProfileImageUrl = await AsyncStorage.getItem(
+            "storedProfileImageUrl"
+          );
 
           if (storedToken) {
             dispatch(
@@ -549,10 +562,6 @@ function App() {
                 profileImageUrl: storedProfileImageUrl,
               })
             );
-
-            // 🟢 Initialize SignalR here
-            initHubConnection(storedUserId, API_URL);
-
           } else {
             console.log("No token found.");
           }
@@ -563,13 +572,7 @@ function App() {
         }
       };
 
-
-      checkTokenAndInitHub();
-
-      return () => {
-        stopHubConnection(); // cleanup on unmount
-      };
-
+      checkToken();
     }, [dispatch]);
 
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);

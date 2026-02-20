@@ -268,6 +268,8 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+
+
   const dispatch = useDispatch();
   useEffect(() => {
     // dispatch(updateAsLoggedOut()); // Reset state on mount

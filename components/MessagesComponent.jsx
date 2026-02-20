@@ -34,9 +34,6 @@ export default function MessagesComponent({
 }) {
   const renderMessages = () => {
     if (data && Array.isArray(data) && data.length > 0) {
-
-      // console.log("Last message from inside component:   ", data[data.length - 1].text);
-      // console.log("messages length:   ", data.length);
       return data.map((item, index) => {
         return (
           <View key={index}>
