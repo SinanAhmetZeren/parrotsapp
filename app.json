@@ -3,7 +3,7 @@
     "name": "Parrots",
     "slug": "parrots",
     "owner": "ahmetzeren",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "scheme": "parrotsapp",
     "orientation": "portrait",
     "icon": "./assets/parrotsiconpadded.png",
@@ -35,7 +35,7 @@
     },
     "android": {
       "package": "com.zenforest.parrots",
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/parrotsiconpadded.png",
         "backgroundColor": "#ffffff"

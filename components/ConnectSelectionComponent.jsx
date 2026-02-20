@@ -57,6 +57,7 @@ export const ConnectSelectionComponent = ({
 const styles = StyleSheet.create({
   selectionContainer: {
     flexDirection: "row",
+    marginTop: vh(2),
   },
   currentBidsTitle: {
     fontSize: 26,
