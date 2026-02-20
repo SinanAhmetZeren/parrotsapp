@@ -15,6 +15,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   SafeAreaView,
+  TextInput
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Feather, Ionicons, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -49,6 +50,14 @@ import {
   useGetFavoriteVehicleIdsByUserIdQuery,
 } from "./slices/UserSlice";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotDarkBlue, parrotTextDarkBlue } from "./assets/color";
+
+
+// Force font scaling to stay at 100% across the whole app
+if (Text.defaultProps == null) Text.defaultProps = {};
+Text.defaultProps.allowFontScaling = false;
+
+if (TextInput.defaultProps == null) TextInput.defaultProps = {};
+TextInput.defaultProps.allowFontScaling = false;
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

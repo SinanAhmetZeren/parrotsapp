@@ -34,7 +34,7 @@ import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import he from "he";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed } from "../assets/color";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
 import { set } from "date-fns";
 
@@ -87,7 +87,7 @@ export default function ProfileScreen({ navigation }) {
 
   const handleLogout = async () => {
     dispatch(updateAsLoggedOut());
-    await GoogleSignin.signOut();
+    // await GoogleSignin.signOut();
   };
 
   /*
@@ -318,7 +318,7 @@ export default function ProfileScreen({ navigation }) {
                   <Image
                     style={styles.imageContainer}
                     resizeMode="cover"
-                    source={require("../assets/amazonforest.jpg")}
+                    source={require("../assets/amazonforestx.jpg")}
                   />
                 ) : (
                   <Image
@@ -408,7 +408,7 @@ export default function ProfileScreen({ navigation }) {
                     navigation.navigate("ProfileStack", {
                       screen: "ProfileScreenPublic",
                       // params: { userId: userId },
-                      params: { publicId: userData.publicId, userName: userData.id },
+                      params: { publicId: userData.publicId, userId: userId, userName: userData.id },
                     });
 
                   }}

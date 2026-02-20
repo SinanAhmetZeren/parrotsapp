@@ -152,7 +152,7 @@ const VehicleDetailScreen = () => {
 
     navigation.navigate(targetScreen, {
       screen: "ProfileScreenPublic",
-      params: { publicId: VehicleData?.user.publicId, username: VehicleData?.user.userName },
+      params: { publicId: VehicleData?.user.publicId, username: VehicleData?.user.userName, userId: VehicleData?.user.id },
     });
   };
 

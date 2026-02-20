@@ -190,7 +190,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
     navigation.navigate(targetScreen, {
       screen: "ProfileScreenPublic",
-      params: { publicId: VoyageData?.user.publicId, username: VoyageData?.user.userName },
+      params: { publicId: VoyageData?.user.publicId, username: VoyageData?.user.userName, userId: VoyageData?.user.id },
     });
   };
   const goToVehiclePage = (vehicleId) => {
