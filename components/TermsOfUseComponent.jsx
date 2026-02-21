@@ -119,10 +119,34 @@ export default function TermsOfUseComponent() {
             <View style={styles.wrapper}>
                 <Text style={styles.sectionTitle}>5. Communication Between Users</Text>
                 <Text style={styles.paragraph}>
-                    Messages may be false, misleading, or inappropriate. Parrots does not
-                    monitor or endorse user communications.
+                    Parrots allows users to communicate with each other through in-app messaging features.
+
+                    {"\n\n"}
+                    Messages may be false, misleading, or inappropriate, and Parrots does not monitor, control, or endorse user communications. Users are solely responsible for the content of their messages.
+                </Text>
+
+                <Text style={styles.sectionTitle2}>a. Message Notifications, Badge, and Read Status</Text>
+
+                <Text style={styles.paragraph}>
+                    Our app includes an in-app notification badge designed to inform users about new messages. This badge appears only within the app interface and is not a device-level or operating system notification.
+                    {"\n\n"}
+                    We process message status information (read/unread) to operate messaging features and notification badges.
+                    {"\n\n"}
+                    The in-app notification badge may appear in the following situations:
+                    {"\n"}
+                    • When the app is launched, if there are unread messages.
+                    {"\n"}
+                    • When a new message is received while using screens other than the Messages screen.
+                    {"\n"}
+                    • When the Messages screen is opened, messages may be automatically marked as read and the badge cleared.
+
+                    {"\n\n"}
+                    The badge is provided for informational purposes only and may not always reflect exact real-time status.
                 </Text>
             </View>
+
+
+
 
             {/* 6. Prohibited */}
             <View style={styles.wrapper}>
