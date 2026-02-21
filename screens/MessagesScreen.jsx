@@ -3,6 +3,7 @@
 /* eslint-disable no-undef */
 import React, { useRef } from "react";
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { useDispatch } from "react-redux";
 import {
   View,
   StyleSheet,
@@ -17,6 +18,7 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
 import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
+import { setUnreadMessages } from "../slices/UserSlice";
 
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
@@ -42,7 +44,7 @@ export default function MessagesScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
-
+  const dispatch = useDispatch();
   const {
     data: messagesData,
     isLoading: isLoadingMessages,
@@ -82,6 +84,7 @@ export default function MessagesScreen({ navigation }) {
 
       // Notify hub that user entered the screen
       invokeHub("EnterMessagesScreen", userId);
+      dispatch(setUnreadMessages(false));
 
       const handleReceiveMessage = (senderId, content, newTime, senderProfileUrl, senderUsername) => {
         setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
@@ -136,43 +139,47 @@ export default function MessagesScreen({ navigation }) {
 
   const chatReadyRef = useRef(false);
 
-
-
-
-
   // 🟢 Start SignalR connection & setup events
+  useFocusEffect(
+    useCallback(() => {
+
+      if (!userId) return;
+
+      // Tell hub that user entered this page
+      invokeHub("EnterMessagesScreen", userId);
+      console.log("entered messages screen <-- ");
+      dispatch(setUnreadMessages(false));
+
+      // Receive messages
+      const handleReceiveMessage = (senderId, content, newTime, senderProfileUrl, senderUsername) => {
+        setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
+      };
+
+      const handleRefetch = async () => {
+        try {
+          await refetch();
+        } catch (err) {
+          console.error("Failed to refetch messages:", err);
+        }
+      };
+
+      // Subscribe to events
+      hubConnection?.on("ReceiveMessage", handleReceiveMessage);
+      hubConnection?.on("ReceiveMessageRefetch", handleRefetch);
+
+      // Cleanup subscriptions on unmount
+      return () => {
+        hubConnection?.off("ReceiveMessage", handleReceiveMessage);
+        hubConnection?.off("ReceiveMessageRefetch", handleRefetch);
+        invokeHub("LeaveMessagesScreen", userId);
+        console.log("left messages screen --> ");
+
+      };
+    }, [userId, refetch]));
 
 
-  useEffect(() => {
-    if (!userId) return;
 
-    // Tell hub that user entered this page
-    invokeHub("EnterMessagesScreen", userId);
 
-    // Receive messages
-    const handleReceiveMessage = (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-      setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
-    };
-
-    const handleRefetch = async () => {
-      try {
-        await refetch();
-      } catch (err) {
-        console.error("Failed to refetch messages:", err);
-      }
-    };
-
-    // Subscribe to events
-    hubConnection?.on("ReceiveMessage", handleReceiveMessage);
-    hubConnection?.on("ReceiveMessageRefetch", handleRefetch);
-
-    // Cleanup subscriptions on unmount
-    return () => {
-      hubConnection?.off("ReceiveMessage", handleReceiveMessage);
-      hubConnection?.off("ReceiveMessageRefetch", handleRefetch);
-      invokeHub("LeaveMessagesScreen", userId);
-    };
-  }, [userId, refetch]);
 
   // Sync messages from API updates
   useEffect(() => {
