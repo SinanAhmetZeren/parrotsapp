@@ -7,8 +7,10 @@ let chatReadyRef = { current: false }; // global ready state
 let messageHandlers = [];
 let refetchHandlers = [];
 
+
+
 export const initHubConnection = (currentUserId, apiUrl) => {
-    if (!currentUserId) return { chatReadyRef };
+    if (!currentUserId) return Promise.resolve(null);
 
     if (!hubConnection) {
         hubConnection = new HubConnectionBuilder()
@@ -33,35 +35,25 @@ export const initHubConnection = (currentUserId, apiUrl) => {
             chatReadyRef.current = true;
         });
 
-        const startHub = async () => {
-            try {
-                if (hubConnection.state === HubConnectionState.Disconnected) {
-                    chatReadyRef.current = false;
-                    await hubConnection.start();
-
-                    // Receive events
-                    hubConnection.on("ReceiveMessage", (...args) => {
-                        messageHandlers.forEach(h => h(...args));
-                    });
-
-                    hubConnection.on("ReceiveMessageRefetch", (...args) => {
-                        refetchHandlers.forEach(h => h(...args));
-                    });
-
-                    console.log("✅ SignalR connected");
-                }
-            } catch (err) {
+        // Return a promise that resolves once hub is connected
+        return hubConnection.start()
+            .then(() => {
+                chatReadyRef.current = true;
+                console.log("✅ SignalR connected (awaitable)");
+                return hubConnection;
+            })
+            .catch(err => {
                 console.error("❌ SignalR start failed:", err);
                 chatReadyRef.current = false;
-                setTimeout(startHub, 3000);
-            }
-        };
-
-        startHub();
+                setTimeout(() => initHubConnection(currentUserId, apiUrl), 3000); // retry
+            });
     }
 
-    return { chatReadyRef };
+    // Already exists → resolve immediately
+    return Promise.resolve(hubConnection);
 };
+
+
 
 export const stopHubConnection = async () => {
     if (hubConnection) {
@@ -106,3 +98,5 @@ export const invokeHub = async (method, ...args) => {
         console.warn(`⚠️ SignalR not connected or ready: cannot invoke ${method}`);
     }
 };
+
+

@@ -12,7 +12,7 @@ const usersSlice = createSlice({
     token: "",
     userName: "",
     userProfileImage: "",
-    unreadMessages: "",
+    unreadMessages: false,
     userFavoriteVoyages: [0],
     userFavoriteVehicles: [0],
   },
@@ -65,7 +65,7 @@ const usersSlice = createSlice({
       state.token = "";
       state.userName = "";
       state.userProfileImage = "";
-      state.unreadMessages = "";
+      state.unreadMessages = false;
       AsyncStorage.removeItem("storedToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedToken:", error);
       });
@@ -134,6 +134,15 @@ const usersSlice = createSlice({
         (vehicle) => vehicle !== vehicleToRemove
       );
     },
+
+    setUnreadMessages: (state, action) => {
+      state.unreadMessages = action.payload;
+    },
+    markMessagesRead: (state) => {
+      state.unreadMessages = false;
+    },
+
+
   },
 });
 
@@ -148,7 +157,11 @@ export const {
   removeVoyageFromUserFavorites,
   addVehicleToUserFavorites,
   removeVehicleFromUserFavorites,
+  setUnreadMessages,
+  markMessagesRead
 } = usersSlice.actions;
+
+
 
 export default usersSlice.reducer;
 

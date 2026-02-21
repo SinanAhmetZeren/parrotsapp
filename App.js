@@ -14,9 +14,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
+  // SafeAreaView,
   TextInput
 } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Feather, Ionicons, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -48,9 +50,10 @@ import {
   useGetUserByIdQuery,
   useGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
+  setUnreadMessages
 } from "./slices/UserSlice";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotDarkBlue, parrotTextDarkBlue } from "./assets/color";
-import { initHubConnection, stopHubConnection } from "./signalr/signalRHub";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueTransparent, parrotDarkBlue, parrotGreen, parrotLightBlue, parrotRed, parrotTextDarkBlue, parrotYellow } from "./assets/color";
+import { initHubConnection, invokeHub, stopHubConnection, hubConnection } from "./signalr/signalRHub";
 import { API_URL } from "@env";
 
 
@@ -77,28 +80,26 @@ const styles = StyleSheet.create({
     width: vw(14),
     height: vw(13),
     borderRadius: vw(4),
+    bottom: vh(-3)
   },
 });
 
-
-const screenOptions = {
+const screenOptions1 = {
   tabBarShowLabel: false,
   headerShown: false,
   tabBarStyle: {
     position: "absolute",
-    bottom: vh(-1.5),
+    bottom: 0,
+    height: vh(8),
     right: 0,
     left: 0,
     elevation: 0,
-    height: vh(14),
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     // backgroundColor: "#fff6ec",
     backgroundColor: bottomTabColor,
   },
 };
-
-
 
 const baseTextStyle = {
   fontSize: 12,
@@ -291,7 +292,6 @@ const FavoritesStack = () => {
     </Stack.Navigator>
   );
 };
-
 const MessageStack = () => {
   return (
     <Stack.Navigator
@@ -314,7 +314,6 @@ const MessageStack = () => {
     </Stack.Navigator>
   );
 };
-
 const AuthStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -322,8 +321,11 @@ const AuthStack = () => {
     </Stack.Navigator>
   );
 };
-const TabNavigator = () => {
+const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  console.log("--->>", hasUnreadMessages);
+
+
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -331,7 +333,7 @@ const TabNavigator = () => {
 
   return (
     <>
-      <Tab.Navigator screenOptions={screenOptions}  >
+      <Tab.Navigator screenOptions={screenOptions1}  >
         <Tab.Screen
           name="Home"
           component={HomeStack}
@@ -412,10 +414,6 @@ const TabNavigator = () => {
               }
             },
           })}
-
-
-
-
         />
 
         <Tab.Screen
@@ -489,8 +487,6 @@ const TabNavigator = () => {
               }
             },
           })}
-
-
         />
 
         <Tab.Screen
@@ -499,7 +495,10 @@ const TabNavigator = () => {
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
+                <View style={{
+                  ...styles.tabIconStyle,
+                  backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor,
+                }}>
 
                   <MaterialCommunityIcons
                     name={"share-variant-outline"}
@@ -517,6 +516,22 @@ const TabNavigator = () => {
                 </View>
               );
             },
+
+            tabBarBadge: hasUnreadMessages ? <MaterialIcons name="mail-outline" size={10} color="white" /> : undefined, //"•" //"🦜" 📨 📪 📫 📬 📤 🗳️"👀"
+            tabBarBadgeStyle: {
+              backgroundColor: parrotRed,//"transparent", // your custom badge background
+              color: "white",
+              fontSize: 12,        // adjust to fit
+              minWidth: 16,
+              height: 20,
+              borderRadius: 10,    // half of height for perfect circle
+              textAlign: "center", // horizontal center
+              textAlignVertical: "center", // vertical center (Android)
+              lineHeight: 20,      // same as height for iOS vertical center
+              paddingHorizontal: 4,
+
+            },
+
           }}
         />
       </Tab.Navigator >
@@ -532,6 +547,7 @@ const TabNavigator = () => {
 
 function App() {
   function RenderNavigator() {
+    const hasUnreadMessages = useSelector((state) => state.users.unreadMessages);
     useEffect(() => {
       const checkTokenAndInitHub = async () => {
         try {
@@ -551,7 +567,19 @@ function App() {
             );
 
             // 🟢 Initialize SignalR here
-            initHubConnection(storedUserId, API_URL);
+            await initHubConnection(storedUserId, API_URL);
+
+
+            // 🟢 Check for unread messages right after login
+            try {
+              const hasUnreadMessages = await invokeHub("CheckUnreadMessages", storedUserId);
+              dispatch(setUnreadMessages(hasUnreadMessages)); // update your global state
+            } catch (err) {
+              console.error("Failed to check unread messages:", err);
+            }
+
+
+
 
           } else {
             console.log("No token found.");
@@ -562,20 +590,19 @@ function App() {
           setIsInitialLoading(false);
         }
       };
-
-
       checkTokenAndInitHub();
-
       return () => {
         stopHubConnection(); // cleanup on unmount
       };
-
     }, [dispatch]);
+
+
 
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
     const userId = useSelector((state) => state.users.userId);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const dispatch = useDispatch();
+
 
     const {
       data: userData,
@@ -640,7 +667,7 @@ function App() {
     }
 
     return isLoggedIn ? (
-      <TabNavigator isLoading={isLoadingUser} />
+      <TabNavigator isLoading={isLoadingUser} hasUnreadMessages={hasUnreadMessages} />
     ) : (
       <>
         <AuthStack />
@@ -649,14 +676,17 @@ function App() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: vh(5) }}>
-      <Provider store={store}>
-        <NavigationContainer>
-          <RenderNavigator />
-          <Toast config={toastConfig} />
-        </NavigationContainer>
-      </Provider>
-    </SafeAreaView>
+    <SafeAreaProvider  >
+      <SafeAreaView style={{ flex: 1 }}>
+        <Provider store={store}>
+          <NavigationContainer>
+            <RenderNavigator />
+            <Toast config={toastConfig} />
+          </NavigationContainer>
+        </Provider>
+      </SafeAreaView>
+    </SafeAreaProvider>
+
   );
 }
 

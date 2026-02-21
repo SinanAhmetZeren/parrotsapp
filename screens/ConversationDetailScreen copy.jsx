@@ -107,100 +107,94 @@ export const ConversationDetailScreen = ({ navigation }) => {
     }, [refetch, navigation])
   );
 
+
   // 🟢 Start connection + set up handlers
   const chatReadyRef = useRef(false);
-  useFocusEffect(
-    useCallback(() => {
-      if (!hubConnection.current) return;
 
-      const startHubConnection = async () => {
-        try {
-          chatReadyRef.current = false;
+  useEffect(() => {
+    if (!hubConnection.current) return;
 
-          hubConnection.current.on("ParrotsChatHubInitialized", () => {
-            console.log("Chat Hub initialized");
-            chatReadyRef.current = true;
+    const startHubConnection = async () => {
+      try {
+        chatReadyRef.current = false;
 
-            // Register conversation on initial connect
-            if (currentUserId && conversationUserId) {
-              hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
-              console.log("--> entered conversation page");
+        hubConnection.current.on("ParrotsChatHubInitialized", () => {
+          console.log("Chat Hub initialized");
+          chatReadyRef.current = true;
 
-            }
-          });
-
-          hubConnection.current.onreconnecting(() => {
-            console.log("SignalR reconnecting...");
-            chatReadyRef.current = false;
-          });
-
-          hubConnection.current.onreconnected(() => {
-            console.log("SignalR reconnected");
-            chatReadyRef.current = true;
-
-            // Re-register conversation after reconnect
-            if (currentUserId && conversationUserId) {
-              hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
-            }
-          });
-
-          if (hubConnection.current.state === HubConnectionState.Disconnected) {
-            await hubConnection.current.start();
-            console.log("SignalR connected");
-
-            // Register conversation after start
-            if (currentUserId && conversationUserId) {
-              hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
-            }
-          }
-        } catch (err) {
-          console.error("SignalR start failed:", err);
-        }
-      };
-
-      startHubConnection();
-
-      // Message handler
-      hubConnection.current.on(
-        "ReceiveMessage",
-        async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-          setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
-        }
-      );
-
-      // Refetch handler
-      hubConnection.current.on("ReceiveMessageRefetch", async () => {
-        try {
-          await refetch();
-        } catch (err) {
-          console.error("Failed to refetch messages:", err);
-        }
-      });
-
-      // Cleanup on unmount
-      return () => {
-        if (hubConnection.current) {
-          // Leave conversation page
+          // Register conversation on initial connect
           if (currentUserId && conversationUserId) {
-            hubConnection.current.invoke("LeaveConversationPage", currentUserId);
-            console.log("<-- left conversation page");
-
+            hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
           }
+        });
 
-          hubConnection.current.off("ParrotsChatHubInitialized");
-          hubConnection.current.off("ReceiveMessage");
-          hubConnection.current.off("ReceiveMessageRefetch");
+        hubConnection.current.onreconnecting(() => {
+          console.log("SignalR reconnecting...");
+          chatReadyRef.current = false;
+        });
 
-          hubConnection.current
-            .stop()
-            .then(() => console.log("SignalR stopped"))
-            .catch((err) => console.error("Failed to stop SignalR:", err));
+        hubConnection.current.onreconnected(() => {
+          console.log("SignalR reconnected");
+          chatReadyRef.current = true;
+
+          // Re-register conversation after reconnect
+          if (currentUserId && conversationUserId) {
+            hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
+          }
+        });
+
+        if (hubConnection.current.state === HubConnectionState.Disconnected) {
+          await hubConnection.current.start();
+          console.log("SignalR connected");
+
+          // Register conversation after start
+          if (currentUserId && conversationUserId) {
+            hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
+          }
         }
-      };
-    }, [refetch, currentUserId, conversationUserId]));
+      } catch (err) {
+        console.error("SignalR start failed:", err);
+      }
+    };
 
+    startHubConnection();
 
+    // Message handler
+    hubConnection.current.on(
+      "ReceiveMessage",
+      async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
+        setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
+      }
+    );
 
+    // Refetch handler
+    hubConnection.current.on("ReceiveMessageRefetch", async () => {
+      try {
+        await refetch();
+      } catch (err) {
+        console.error("Failed to refetch messages:", err);
+      }
+    });
+
+    // Cleanup on unmount
+    return () => {
+      if (hubConnection.current) {
+        // Leave conversation page
+        if (currentUserId && conversationUserId) {
+          hubConnection.current.invoke("LeaveConversationPage", currentUserId);
+        }
+
+        hubConnection.current.off("ParrotsChatHubInitialized");
+        hubConnection.current.off("ReceiveMessage");
+        hubConnection.current.off("ReceiveMessageRefetch");
+
+        hubConnection.current
+          .stop()
+          .then(() => console.log("SignalR stopped"))
+          .catch((err) => console.error("Failed to stop SignalR:", err));
+      }
+    };
+  }, [refetch, currentUserId, conversationUserId]);
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
