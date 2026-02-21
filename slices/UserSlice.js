@@ -134,15 +134,12 @@ const usersSlice = createSlice({
         (vehicle) => vehicle !== vehicleToRemove
       );
     },
-
     setUnreadMessages: (state, action) => {
       state.unreadMessages = action.payload;
     },
     markMessagesRead: (state) => {
       state.unreadMessages = false;
     },
-
-
   },
 });
 

@@ -60,9 +60,6 @@ import {
   stopHubConnection,
   register_ReceiveMessageRefetch,
   unregister_ReceiveMessageRefetch,
-  register_ReceiveUnreadNotification,
-  unregister_ReceiveUnreadNotification,
-
   invokeHub
 } from "./signalr/signalRHub";
 
@@ -556,10 +553,8 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
 
 function App() {
   function RenderNavigator() {
-
-    const dispatch = useDispatch();
+    const hasUnreadMessages = useSelector((state) => state.users.unreadMessages);
     useEffect(() => {
-      let unreadHandlerTrue;
       const checkTokenAndInitHub = async () => {
         try {
           const storedToken = await AsyncStorage.getItem("storedToken");
@@ -567,59 +562,54 @@ function App() {
           const storedUserName = await AsyncStorage.getItem("storedUserName");
           const storedProfileImageUrl = await AsyncStorage.getItem("storedProfileImageUrl");
 
-          if (!storedToken) return;
-          // Restore Redux state
-          dispatch(
-            updateStateFromLocalStorage({
-              token: storedToken,
-              userId: storedUserId,
-              userName: storedUserName,
-              profileImageUrl: storedProfileImageUrl,
-            })
-          );
-          // Start SignalR
-          await initHubConnection(storedUserId, API_URL);
-          // Initial unread check
-          try {
-            console.log("stored user Id:", storedUserId);
-            const hasUnread = await invokeHub(
-              "CheckUnreadMessages",
-              storedUserId
+          if (storedToken) {
+            dispatch(
+              updateStateFromLocalStorage({
+                token: storedToken,
+                userId: storedUserId,
+                userName: storedUserName,
+                profileImageUrl: storedProfileImageUrl,
+              })
             );
-            dispatch(setUnreadMessages(hasUnread));
-          } catch { }
-          finally {
-            setIsInitialLoading(false);
+
+            // 🟢 Initialize SignalR here
+            const hub = await initHubConnection(storedUserId, API_URL);
+
+            // 🟢 Check for unread messages right after login
+            try {
+              const hasUnreadMessages = await invokeHub("CheckUnreadMessages", storedUserId);
+              dispatch(setUnreadMessages(hasUnreadMessages)); // update your global state
+            } catch (err) {
+              console.error("Failed to check unread messages:", err);
+            }
+
+            // 🟢 Listen globally for UnreadMessagesStatusTrue
+            hub.on("UnreadMessagesStatusTrue", () => {
+              console.log("🔔 hello --> UnreadMessagesStatusTrue received");
+              // dispatch(setUnreadMessages(true)); // update global state
+            });
+
+          } else {
+            console.log("No token found.");
           }
-
-          // Listen for unread   event only
-          unreadHandlerTrue = () => {
-            console.log("UnreadMessagesStatusTrue received");
-            dispatch(setUnreadMessages(true)); // ReceiveUnreadNotification
-          };
-          register_ReceiveUnreadNotification(unreadHandlerTrue);
-
         } catch (error) {
-          console.log(error);
+          console.log("Error retrieving token: ", error);
+        } finally {
+          setIsInitialLoading(false);
         }
       };
-
       checkTokenAndInitHub();
-
       return () => {
-        unregister_ReceiveUnreadNotification(unreadHandlerTrue);
-        // stopHubConnection();
+        stopHubConnection(); // cleanup on unmount
       };
+    }, [dispatch]);
 
-    }, []);
+
 
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
-    console.log("logged in: ", isLoggedIn);
     const userId = useSelector((state) => state.users.userId);
-    console.log("user id: ", userId);
-
     const [isInitialLoading, setIsInitialLoading] = useState(true);
-    const hasUnreadMessages = useSelector((state) => state.users.unreadMessages);
+    const dispatch = useDispatch();
 
 
     const {

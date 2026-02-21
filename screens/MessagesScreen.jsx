@@ -28,15 +28,14 @@ import { FontAwesome } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotPistachioGreen, parrotPlaceholderGrey } from "../assets/color";
-
 import {
-  hubConnection,
-  invokeHub,
-  registerReceiveMessage,
-  unregisterReceiveMessage,
-  registerRefetchHandler,
-  unregisterRefetchHandler
+  register_ReceiveMessage,
+  unregister_ReceiveMessage,
+  register_ReceiveMessageRefetch,
+  unregister_ReceiveMessageRefetch,
+  invokeHub
 } from "../signalr/signalRHub.js";
+
 
 export default function MessagesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -80,32 +79,55 @@ export default function MessagesScreen({ navigation }) {
   // 🟢 SignalR subscriptions
   useFocusEffect(
     useCallback(() => {
+
       if (!userId) return;
 
-      // Notify hub that user entered the screen
+      // Tell hub user entered this screen
       invokeHub("EnterMessagesScreen", userId);
+      console.log("entered messages screen <-- ");
+
       dispatch(setUnreadMessages(false));
 
-      const handleReceiveMessage = (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-        setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
+
+      // Handle incoming message
+      const handleReceiveMessage = (
+        senderId,
+        content,
+        newTime,
+        senderProfileUrl,
+        senderUsername
+      ) => {
+        setReceivedMessageData([
+          senderId,
+          content,
+          newTime,
+          senderProfileUrl,
+          senderUsername
+        ]);
       };
 
+      // Handle refetch request
       const handleRefetch = async () => {
-        try { await refetch(); } catch (err) { console.error(err); }
+        try {
+          await refetch();
+        } catch (err) {
+          console.error("Failed to refetch messages:", err);
+        }
       };
 
-      registerReceiveMessage(handleReceiveMessage);
-      registerRefetchHandler(handleRefetch);
+      // ✅ register handlers
+      register_ReceiveMessage(handleReceiveMessage);
+      register_ReceiveMessageRefetch(handleRefetch);
 
+      // ✅ cleanup
       return () => {
-        // Notify hub that user left the screen
         invokeHub("LeaveMessagesScreen", userId);
-        unregisterReceiveMessage(handleReceiveMessage);
-        unregisterRefetchHandler(handleRefetch);
+        console.log("left messages screen --> ");
+        unregister_ReceiveMessage(handleReceiveMessage);
+        unregister_ReceiveMessageRefetch(handleRefetch);
       };
     }, [userId, refetch])
   );
-
 
 
   // Refetch when screen gains focus
@@ -136,46 +158,6 @@ export default function MessagesScreen({ navigation }) {
     }
   };
 
-
-  const chatReadyRef = useRef(false);
-
-  // 🟢 Start SignalR connection & setup events
-  useFocusEffect(
-    useCallback(() => {
-
-      if (!userId) return;
-
-      // Tell hub that user entered this page
-      invokeHub("EnterMessagesScreen", userId);
-      console.log("entered messages screen <-- ");
-      dispatch(setUnreadMessages(false));
-
-      // Receive messages
-      const handleReceiveMessage = (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-        setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
-      };
-
-      const handleRefetch = async () => {
-        try {
-          await refetch();
-        } catch (err) {
-          console.error("Failed to refetch messages:", err);
-        }
-      };
-
-      // Subscribe to events
-      hubConnection?.on("ReceiveMessage", handleReceiveMessage);
-      hubConnection?.on("ReceiveMessageRefetch", handleRefetch);
-
-      // Cleanup subscriptions on unmount
-      return () => {
-        hubConnection?.off("ReceiveMessage", handleReceiveMessage);
-        hubConnection?.off("ReceiveMessageRefetch", handleRefetch);
-        invokeHub("LeaveMessagesScreen", userId);
-        console.log("left messages screen --> ");
-
-      };
-    }, [userId, refetch]));
 
 
 

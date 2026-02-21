@@ -29,7 +29,14 @@ import {
   HubConnectionState
 } from "@microsoft/signalr";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
-
+import {
+  register_ReceiveMessage,
+  unregister_ReceiveMessage,
+  register_ReceiveMessageRefetch,
+  unregister_ReceiveMessageRefetch,
+  invokeHub,
+  isHubReady
+} from "../signalr/signalRHub"
 
 export const ConversationDetailScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -55,18 +62,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const scrollViewRef = useRef();
 
 
-  // 🟢 Create hubConnection reference
-  const hubConnection = useRef(null);
 
-  // 🟢 Initialize connection ONCE when currentUserId is available
-  useEffect(() => {
-    if (!currentUserId) return;
-
-    hubConnection.current = new HubConnectionBuilder()
-      .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
-      .withAutomaticReconnect()
-      .build();
-  }, [currentUserId]);
 
 
   useEffect(() => {
@@ -106,6 +102,20 @@ export const ConversationDetailScreen = ({ navigation }) => {
       };
     }, [refetch, navigation])
   );
+  /*/----------------------------------------------------//
+  // ---------------- SIGNALR CODE ---------------------//
+  // 🟢 Create hubConnection reference
+  const hubConnection = useRef(null);
+
+  // 🟢 Initialize connection ONCE when currentUserId is available
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    hubConnection.current = new HubConnectionBuilder()
+      .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
+      .withAutomaticReconnect()
+      .build();
+  }, [currentUserId]);
 
   // 🟢 Start connection + set up handlers
   const chatReadyRef = useRef(false);
@@ -199,7 +209,80 @@ export const ConversationDetailScreen = ({ navigation }) => {
       };
     }, [refetch, currentUserId, conversationUserId]));
 
+  // ---------------- SIGNALR CODE ---------------------//
+  // ---------------------------------------------------/*/
 
+
+
+  //----------------------------------------------------//
+  // ---------------- SIGNALR CODE ---------------------//
+
+
+
+  useFocusEffect(
+    useCallback(() => {
+
+      if (!currentUserId || !conversationUserId) return;
+
+      // Enter conversation
+      if (isHubReady()) {
+        invokeHub("EnterConversationPage", currentUserId, conversationUserId);
+        console.log("--> entered conversation page");
+      }
+
+      // Message handler
+      const handleReceiveMessage = (
+        senderId,
+        content,
+        newTime,
+        senderProfileUrl,
+        senderUsername
+      ) => {
+
+        setReceivedMessageData([
+          senderId,
+          content,
+          newTime,
+          senderProfileUrl,
+          senderUsername
+        ]);
+
+      };
+
+      // Refetch handler
+      const handleRefetch = async () => {
+
+        try {
+          await refetch();
+        } catch (err) {
+          console.error("Failed to refetch messages:", err);
+        }
+
+      };
+
+      // Register handlers
+      register_ReceiveMessage(handleReceiveMessage);
+      register_ReceiveMessageRefetch(handleRefetch);
+
+
+      // Cleanup
+      return () => {
+
+        invokeHub("LeaveConversationPage", currentUserId);
+
+        unregister_ReceiveMessage(handleReceiveMessage);
+        unregister_ReceiveMessageRefetch(handleRefetch);
+
+        console.log("<-- left conversation page");
+
+      };
+
+    }, [currentUserId, conversationUserId, refetch])
+  );
+
+
+  // ---------------- SIGNALR CODE ---------------------//
+  // ---------------------------------------------------//
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
