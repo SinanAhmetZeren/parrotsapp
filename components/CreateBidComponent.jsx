@@ -37,6 +37,7 @@ export const CreateBidComponent = ({
   userBidPrice,
   userBidMessage,
   refetch,
+  currency
 }) => {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [isChangeModalVisible, setIsChangeModalVisible] = useState(false);
@@ -198,7 +199,7 @@ export const CreateBidComponent = ({
             </Text>
 
             <View style={styles2.inputMainContainer}>
-              <Text style={styles2.InputName}>Offer Price: </Text>
+              <Text style={styles2.InputName}>Offer Price ({currency}):</Text>
 
               <View style={styles2.counterContainer}>
                 <TouchableOpacity
@@ -294,7 +295,7 @@ export const CreateBidComponent = ({
             </Text>
 
             <View style={styles2.inputMainContainer1}>
-              <Text style={styles2.InputName}>Offer Price: </Text>
+              <Text style={styles2.InputName}>Offer Price ({currency}):</Text>
 
               <View style={styles2.counterContainer}>
                 <TouchableOpacity
@@ -320,6 +321,8 @@ export const CreateBidComponent = ({
                 >
                   <Text style={styles2.buttonCount}>+</Text>
                 </TouchableOpacity>
+
+
               </View>
             </View>
 
@@ -436,7 +439,7 @@ const styles2 = StyleSheet.create({
     color: parrotTextDarkBlue,
     fontWeight: "bold",
     alignSelf: "center",
-    width: vw(25),
+    width: vw(28),
   },
   messageInput: {
     fontSize: 14,
