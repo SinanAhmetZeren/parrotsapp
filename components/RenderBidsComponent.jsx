@@ -46,6 +46,7 @@ export const RenderBidsComponent = ({
   currentUserId,
   refetch,
   username,
+  currency
 }) => {
   const visibleBids = bids.slice(0, 5);
   const [acceptBid] = useAcceptBidMutation();
@@ -111,7 +112,7 @@ export const RenderBidsComponent = ({
                 {bid.personCount}
               </Text>
               <Text style={styles.offerPrice}>
-                {bid.currency} {bid.offerPrice}
+                {currency} {bid.offerPrice}
               </Text>
             </View>
 
@@ -170,7 +171,7 @@ export const RenderBidsComponent = ({
                             {item.personCount}
                           </Text>
                           <Text style={styles.modalPriceText}>
-                            {item.currency} {item.offerPrice.toFixed(2)}
+                            {currency} {item.offerPrice.toFixed(2)}
                           </Text>
                         </View>
                         <View
@@ -271,7 +272,7 @@ export const RenderBidsComponent = ({
                             {item.personCount}
                           </Text>
                           <Text style={styles.modalPriceTextNotOwn}>
-                            {item.currency} {item.offerPrice}
+                            {currency} {item.offerPrice}
                           </Text>
                           {item.accepted ? (
                             <View style={styles.acceptTextContainer}>

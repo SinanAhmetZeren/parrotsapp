@@ -165,7 +165,10 @@ export default function FavoriteVehicleCardProfile({
           <View style={styles.iconAndName}>
             <View style={styles.icon}>{icon}</View>
             <View style={styles.name}>
-              <Text style={styles.headerName}>{vehiclename}</Text>
+              <Text
+                style={styles.headerName}
+                numberOfLines={1}
+              >{vehiclename}</Text>
             </View>
             <View style={styles.vacancy}>
               <Text style={styles.header}>

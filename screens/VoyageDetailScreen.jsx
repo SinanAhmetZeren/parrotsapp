@@ -455,7 +455,9 @@ const VoyageDetailScreen = ({ navigation }) => {
                           Min Price:{" "}
                         </Text>
                         <Text style={styles.propText}>
-                          €{VoyageData.minPrice}
+                          {VoyageData.currency}
+                          {VoyageData.minPrice}
+
                         </Text>
                       </View>
                     ) : null}
@@ -465,7 +467,8 @@ const VoyageDetailScreen = ({ navigation }) => {
                           Max Price:{" "}
                         </Text>
                         <Text style={styles.propText}>
-                          €{VoyageData.maxPrice}
+                          {VoyageData.currency}
+                          {VoyageData.maxPrice}
                         </Text>
                       </View>
                     ) : null}
@@ -651,6 +654,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   currentUserId={userId}
                   refetch={refetchVoyage}
                   username={userName}
+                  currency={VoyageData.currency}
                 />
               </View>
             </View>
@@ -672,6 +676,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                 userBidMessage={userBidMessage}
                 refetch={refetchVoyage}
                 ownVoyage={ownVoyage}
+                currency={VoyageData.currency}
               />
             )}
           </View>

@@ -94,7 +94,6 @@ export const CreateBidComponent = ({
       personCount: persons,
       message: message,
       offerPrice: price,
-      currency: "€",
       voyageId,
       userId,
       userProfileImage,
