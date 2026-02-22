@@ -40,6 +40,7 @@ import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
+import DropdownComponentCurrency from "../components/DropdownComponentCurrency";
 
 
 // Set lastBidDate to startDate for now, 
@@ -105,6 +106,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
   const [vehicleId, setVehicleId] = useState("");
+  const [currency, setCurrency] = useState("");
   const [voyageId, setVoyageId] = useState("");
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
@@ -223,6 +225,7 @@ const CreateVoyageScreen = ({ navigation }) => {
         isFixedPrice,
         userId,
         vehicleId,
+        currency
       });
       const createdVoyageId = response.data.data.id;
       setCreatedVoyageImage(image);
@@ -239,6 +242,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       setIsAuction("");
       setIsFixedPrice("");
       setVehicleId("");
+      setCurrency("");
       setImage("");
       setVoyageImage("");
       setAddedVoyageImages("");
@@ -612,6 +616,20 @@ const CreateVoyageScreen = ({ navigation }) => {
                     </View>
                   </View>
 
+
+
+                  {/* /// vehicle /// */}
+                  <View style={styles.latLngNameRow}>
+                    <View style={styles.latLngLabel}>
+                      <Text style={styles.latorLngtxt}>Currency:</Text>
+                    </View>
+                    <View style={styles.latorLng}>
+                      <DropdownComponentCurrency setCurrency={setCurrency} />
+                    </View>
+                  </View>
+                  {/* /// vehicle /// */}
+
+
                   {/* /// auction fixedprice  /// */}
                   <View style={styles.auctionFixedPrice}>
                     <View style={styles.mainCheckboxContainer}>
@@ -666,7 +684,8 @@ const CreateVoyageScreen = ({ navigation }) => {
                             endDate === "" ||
                             lastBidDate === "" ||
                             minPrice === "" ||
-                            maxPrice === ""
+                            maxPrice === "" ||
+                            currency === ""
                             ? styles.selection2Disabled
                             : styles.selection2
                         }

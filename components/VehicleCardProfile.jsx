@@ -195,7 +195,9 @@ export default function VehicleCardProfile({
               <View style={styles.iconAndName}>
                 <View style={styles.icon}>{icon}</View>
                 <View style={styles.name}>
-                  <Text numberOfLines={1} style={styles.headerName}>
+                  <Text
+                    numberOfLines={1}
+                    style={styles.headerName}>
                     {vehiclename}
                   </Text>
                 </View>

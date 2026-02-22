@@ -43,6 +43,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           isFixedPrice,
           userId,
           vehicleId,
+          currency
         } = data;
 
         const queryParams = new URLSearchParams({
@@ -55,6 +56,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           LastBidDate: formattedLastBidDate,
           MinPrice: minPrice,
           MaxPrice: maxPrice,
+          Currency: currency,
           Auction: isAuction.toString(), // Assuming isAuction is a boolean
           FixedPrice: isFixedPrice.toString(), // Assuming isFixedPrice is a boolean
           UserId: userId,
