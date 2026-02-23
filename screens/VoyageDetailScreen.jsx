@@ -26,6 +26,7 @@ import {
   Share,
   ActivityIndicator,
   RefreshControl,
+  useWindowDimensions,
 } from "react-native";
 import MapView from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
@@ -52,6 +53,7 @@ import RenderHtml from "react-native-render-html";
 const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const { voyageId } = route.params;
+  const { width } = useWindowDimensions();
 
   const [addVoyageToFavorites] = useAddVoyageToFavoritesMutation();
   const [deleteVoyageFromFavorites] = useDeleteVoyageFromFavoritesMutation();
@@ -522,6 +524,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                 <Text style={styles.descriptionInnerContainer}>
                   <RenderHtml
                     source={{ html: displayText }}
+                    contentWidth={width}
                     tagsStyles={{
                       strong: { fontWeight: 'bold' },
                       b: { fontWeight: 'bold' },

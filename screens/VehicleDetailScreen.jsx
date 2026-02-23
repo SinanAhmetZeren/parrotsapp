@@ -29,7 +29,8 @@ import {
   TouchableOpacity,
   Share,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  useWindowDimensions
 } from "react-native";
 import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,6 +69,7 @@ const VehicleDetailScreen = () => {
   const [hasError, setHasError] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
   const [vehicleImagesInfoVisible, setVehicleImagesInfoVisible] = useState(false);
+  const { width } = useWindowDimensions();
 
   const dispatch = useDispatch();
 
@@ -466,6 +468,7 @@ const VehicleDetailScreen = () => {
                   {/* {displayText} */}
                   <RenderHtml
                     source={{ html: displayText }}
+                    contentWidth={width}
                     tagsStyles={{
                       strong: { fontWeight: 'bold' }, // force bold
                       b: { fontWeight: 'bold' },      // just in case HTML uses <b>

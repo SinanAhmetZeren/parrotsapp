@@ -37,6 +37,12 @@ export const WaypointComponent = memo(({
   const imageIndex = index % markerImages.length;
   const markerImage = markerImages[imageIndex];
 
+  const handleLoad = () => {
+    setTimeout(() => {
+      setTracksView(false);
+    }, 200);
+  };
+
   return (
     <Marker
       coordinate={coords}
@@ -48,7 +54,7 @@ export const WaypointComponent = memo(({
         source={markerImage}
         style={{ width: 36, height: 36 }}
         resizeMode="contain"
-        onLoad={() => setTracksView(false)}
+        onLoad={() => handleLoad()}
       />
     </Marker>
   );

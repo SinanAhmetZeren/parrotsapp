@@ -14,7 +14,6 @@ import {
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
-import RenderHtml from "react-native-render-html";
 import { parrotTextDarkBlue, parrotBlue, parrotCream } from "../assets/color";
 import he from "he";
 

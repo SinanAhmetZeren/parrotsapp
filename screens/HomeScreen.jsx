@@ -170,9 +170,15 @@ export default function HomeScreen({ navigation }) {
     const [tracksView, setTracksView] = useState(true);
     const markerImage = markerImages[index % markerImages.length];
 
+    const handleLoad = () => {
+      setTimeout(() => {
+        setTracksView(false);
+      }, 200);
+    };
+
     return (
       <Marker
-        key={`item-${item.id}`}
+        key={`item-${item.id} `}
         pinColor={parrotGreen}
         coordinate={{
           latitude: item.waypoints[0]?.latitude,
@@ -185,9 +191,9 @@ export default function HomeScreen({ navigation }) {
       >
         <Image
           source={markerImage}
-          style={{ width: 36, height: 36 }}
+          style={{ width: 36, height: 36, opacity: 1 }}
           resizeMode="contain"
-          onLoad={() => setTracksView(false)} // Kill the flicker after load
+          onLoad={() => handleLoad()} // Kill the flicker after load
 
         />
       </Marker>
