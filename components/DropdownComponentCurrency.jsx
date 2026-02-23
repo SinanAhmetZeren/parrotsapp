@@ -36,7 +36,6 @@ const DropdownComponentCurrency = ({ setCurrency }) => {
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item) => {
-          console.log("item: ", item.value);
           setValue(item.value);
           setIsFocus(false);
           setCurrency(item.value)

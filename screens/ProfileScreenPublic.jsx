@@ -41,8 +41,6 @@ export default function ProfileScreenPublic({ navigation }) {
   const { publicId } = route.params;
   const { userName } = route.params;
 
-  console.log("publicId: ", publicId);
-  console.log("userid: ", userId);
   const [socialItemCount, setSocialItemCount] = useState(0);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -364,7 +362,6 @@ export default function ProfileScreenPublic({ navigation }) {
                 <TouchableOpacity
                   style={styles.editProfileBox}
                   onPress={() => {
-                    console.log("userid", userId, "profileimg", userData.profileImageUrl, "username", userData.userName);
                     navigation.navigate("Messages", {
                       screen: "ConversationDetailScreen",
                       params: {
@@ -378,7 +375,7 @@ export default function ProfileScreenPublic({ navigation }) {
                 >
 
 
-                  {/* <TouchableOpacity
+                  <TouchableOpacity
                     onPress={() => handleShareProfile()}
                     style={styles.shareContainer1}
                   >
@@ -388,7 +385,7 @@ export default function ProfileScreenPublic({ navigation }) {
                       color={parrotBlue}
                       style={styles.shareContainer2}
                     />
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
 
                   <View>
                     <View style={styles.innerProfileContainer}>

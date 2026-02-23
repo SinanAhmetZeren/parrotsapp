@@ -46,12 +46,6 @@ const FilterCalendarModal = ({
     console.log("End Date:", endDate);
   };
 
-
-
-
-
-
-
   const handleClear = () => {
     setStartDate(null);
     setEndDate(null);

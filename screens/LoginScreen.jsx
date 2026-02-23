@@ -172,7 +172,6 @@ const LoginScreen = ({ navigation }) => {
         Email: email,
         Password: password,
       }).unwrap();
-      console.log("----->", loginResponse);
 
       // Ensure token and userId exist before proceeding
       if (!loginResponse?.token || !loginResponse?.userId) {
@@ -191,7 +190,6 @@ const LoginScreen = ({ navigation }) => {
 
       try {
         // Fetch favorites safely, fall back to empty arrays if request fails
-        console.log("--->>>>", loginResponse.userId);
         const vehiclesRes = await getFavoriteVehicleIdsByUserId(
           loginResponse.userId
         ).unwrap();

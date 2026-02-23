@@ -332,10 +332,6 @@ const AuthStack = () => {
 };
 const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  console.log("--->>", hasUnreadMessages);
-
-
-
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
@@ -581,7 +577,6 @@ function App() {
           await initHubConnection(storedUserId, API_URL);
           // Initial unread check
           try {
-            console.log("stored user Id:", storedUserId);
             const hasUnread = await invokeHub(
               "CheckUnreadMessages",
               storedUserId
@@ -594,7 +589,6 @@ function App() {
 
           // Listen for unread   event only
           unreadHandlerTrue = () => {
-            console.log("UnreadMessagesStatusTrue received");
             dispatch(setUnreadMessages(true)); // ReceiveUnreadNotification
           };
           register_ReceiveUnreadNotification(unreadHandlerTrue);
@@ -614,10 +608,7 @@ function App() {
     }, []);
 
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
-    console.log("logged in: ", isLoggedIn);
     const userId = useSelector((state) => state.users.userId);
-    console.log("user id: ", userId);
-
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const hasUnreadMessages = useSelector((state) => state.users.unreadMessages);
 
