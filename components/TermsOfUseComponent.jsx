@@ -125,7 +125,9 @@ export default function TermsOfUseComponent() {
                     Messages may be false, misleading, or inappropriate, and Parrots does not monitor, control, or endorse user communications. Users are solely responsible for the content of their messages.
                 </Text>
 
-                <Text style={styles.sectionTitle2}>a. Message Notifications, Badge, and Read Status</Text>
+                <Text style={styles.sectionTitle2}>
+                    a. Message Notifications, Badge, and Read Status (mobile app)
+                </Text>
 
                 <Text style={styles.paragraph}>
                     Our app includes an in-app notification badge designed to inform users about new messages. This badge appears only within the app interface and is not a device-level or operating system notification.
@@ -139,10 +141,34 @@ export default function TermsOfUseComponent() {
                     • When a new message is received while using screens other than the Messages screen.
                     {"\n"}
                     • When the Messages screen is opened, messages may be automatically marked as read and the badge cleared.
-
                     {"\n\n"}
-                    The badge is provided for informational purposes only and may not always reflect exact real-time status.
+                    The badge is provided for informational purposes only and may not always reflect exact real-time status. Users are solely responsible for monitoring and reviewing their messages. Parrots does not guarantee that the badge will accurately reflect message status at all times and shall not be held responsible or liable for missed messages, unread messages, delayed badge updates, or any consequences arising from a user’s failure to review their messages.
                 </Text>
+
+
+                {/* b. Messages Sent After Bid Acceptance */}
+
+                <Text style={styles.sectionTitle2}>
+                    b. Messages Sent After Bid Acceptance
+                </Text>
+
+                <Text style={styles.paragraph}>
+                    When a user accepts a bid, a message will be sent through the platform’s messaging system to the
+                    creator of the bid on behalf of the accepting user.
+                    {"\n\n"}
+                    This message is a direct result of the accepting user’s action and is intended to allow users
+                    to communicate regarding the relevant voyage or listing.
+                    {"\n\n"}
+                    This is not a marketing message or notification, but a functional
+                    communication necessary for the operation of the service.
+                    {"\n\n"}
+                    By accepting or placing a bid, users acknowledge and agree that such messages
+                    are a core feature of the platform and consent to receiving and sending these communications.
+                    {"\n\n"}
+                    Parrots does not monitor, verify, or guarantee the content, accuracy, or outcome of these
+                    communications. Users are solely responsible for their interactions and any arrangements made.
+                </Text>
+
             </View>
 
 
