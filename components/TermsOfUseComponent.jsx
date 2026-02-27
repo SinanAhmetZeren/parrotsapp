@@ -169,6 +169,19 @@ export default function TermsOfUseComponent() {
                     communications. Users are solely responsible for their interactions and any arrangements made.
                 </Text>
 
+
+                {/* c. Message Delivery and Refresh Limitations */}
+
+                <Text style={styles.sectionTitle2}>
+                    c. Message Delivery and Refresh Limitations
+                </Text>
+
+                <Text style={styles.paragraph}>
+                    While the App strives to provide real-time message updates, message delivery and automatic refresh may not always occur immediately, particularly
+                    if the App has been idle, the device is in sleep mode, or network conditions are poor. Users are responsible for ensuring that they have an active
+                    connection and that the App is open to receive the latest messages.
+                </Text>
+
             </View>
 
 
