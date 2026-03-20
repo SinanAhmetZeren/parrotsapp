@@ -44,7 +44,7 @@ const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState("");
-  const [email, setEmail] = useState("sinanzen@gmail.com");
+  const [email, setEmail] = useState("sinanahmetzeren@gmail.com");
   const [password, setPassword] = useState("123456");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
@@ -217,6 +217,7 @@ const LoginScreen = ({ navigation }) => {
         })
       );
 
+      // console.log("login response - unread: ", loginResponse.unreadMessages);
       // Dispatch login state only if token is present
       // if (false)
       dispatch(

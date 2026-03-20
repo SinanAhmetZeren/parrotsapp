@@ -22,7 +22,7 @@ import MessagesComponent from "../components/MessagesComponent";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
-import { ScrollView } from "react-native-web";
+import { ScrollView } from "react-native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import {
   HubConnectionBuilder,
@@ -102,122 +102,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
       };
     }, [refetch, navigation])
   );
-  /*/----------------------------------------------------//
-  // ---------------- SIGNALR CODE ---------------------//
-  // 🟢 Create hubConnection reference
-  const hubConnection = useRef(null);
-
-  // 🟢 Initialize connection ONCE when currentUserId is available
-  useEffect(() => {
-    if (!currentUserId) return;
-
-    hubConnection.current = new HubConnectionBuilder()
-      .withUrl(`${API_URL}/chathub/11?userId=${currentUserId}`)
-      .withAutomaticReconnect()
-      .build();
-  }, [currentUserId]);
-
-  // 🟢 Start connection + set up handlers
-  const chatReadyRef = useRef(false);
-  useFocusEffect(
-    useCallback(() => {
-      if (!hubConnection.current) return;
-
-      const startHubConnection = async () => {
-        try {
-          chatReadyRef.current = false;
-
-          hubConnection.current.on("ParrotsChatHubInitialized", () => {
-            console.log("Chat Hub initialized");
-            chatReadyRef.current = true;
-
-            // Register conversation on initial connect
-            if (currentUserId && conversationUserId) {
-              hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
-              console.log("--> entered conversation page");
-
-            }
-          });
-
-          hubConnection.current.onreconnecting(() => {
-            console.log("SignalR reconnecting...");
-            chatReadyRef.current = false;
-          });
-
-          hubConnection.current.onreconnected(() => {
-            console.log("SignalR reconnected");
-            chatReadyRef.current = true;
-
-            // Re-register conversation after reconnect
-            if (currentUserId && conversationUserId) {
-              hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
-            }
-          });
-
-          if (hubConnection.current.state === HubConnectionState.Disconnected) {
-            await hubConnection.current.start();
-            console.log("SignalR connected");
-
-            // Register conversation after start
-            if (currentUserId && conversationUserId) {
-              hubConnection.current.invoke("EnterConversationPage", currentUserId, conversationUserId);
-            }
-          }
-        } catch (err) {
-          console.error("SignalR start failed:", err);
-        }
-      };
-
-      startHubConnection();
-
-      // Message handler
-      hubConnection.current.on(
-        "ReceiveMessage",
-        async (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-          setReceivedMessageData([senderId, content, newTime, senderProfileUrl, senderUsername]);
-        }
-      );
-
-      // Refetch handler
-      hubConnection.current.on("ReceiveMessageRefetch", async () => {
-        try {
-          await refetch();
-        } catch (err) {
-          console.error("Failed to refetch messages:", err);
-        }
-      });
-
-      // Cleanup on unmount
-      return () => {
-        if (hubConnection.current) {
-          // Leave conversation page
-          if (currentUserId && conversationUserId) {
-            hubConnection.current.invoke("LeaveConversationPage", currentUserId);
-            console.log("<-- left conversation page");
-
-          }
-
-          hubConnection.current.off("ParrotsChatHubInitialized");
-          hubConnection.current.off("ReceiveMessage");
-          hubConnection.current.off("ReceiveMessageRefetch");
-
-          hubConnection.current
-            .stop()
-            .then(() => console.log("SignalR stopped"))
-            .catch((err) => console.error("Failed to stop SignalR:", err));
-        }
-      };
-    }, [refetch, currentUserId, conversationUserId]));
-
-  // ---------------- SIGNALR CODE ---------------------//
-  // ---------------------------------------------------/*/
-
-
-
-  //----------------------------------------------------//
-  // ---------------- SIGNALR CODE ---------------------//
-
-
 
   useFocusEffect(
     useCallback(() => {
@@ -309,14 +193,87 @@ export const ConversationDetailScreen = ({ navigation }) => {
     if (messagesData) setMessagesToDisplay(messagesData.data);
   }, [messagesData]);
 
+  /*
+    const handleSendMessage = async () => {
+      console.log("1");
+      if (!message.trim()) return; // Don't send empty messages
+  
+      // Scroll to bottom immediately
+      scrollViewRef.current.scrollToEnd({ animated: true });
+      console.log("2");
+  
+      // Prepare message object
+      const currentDate = new Date();
+      const formattedDateTime = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}T${String(currentDate.getHours()).padStart(2, "0")}:${String(currentDate.getMinutes()).padStart(2, "0")}:${String(currentDate.getSeconds()).padStart(2, "0")}.${String(currentDate.getMilliseconds()).padStart(3, "0")}`;
+      console.log("3");
+  
+      const sentMessage = {
+        dateTime: formattedDateTime,
+        receiverId: conversationUserId,
+        senderId: currentUserId,
+        text: message,
+      };
+      console.log("4");
+  
+      // Optimistic UI update
+      setMessagesToDisplay((prev) => [...(prev ?? []), sentMessage]);
+      setMessage("");
+      setTextInputBottomMargin(0);
+      Keyboard.dismiss();
+      console.log("5");
+  
+      // Retry function
+      const sendWithRetry = async (msg, retries = 3, delay = 1000) => {
+        for (let i = 0; i < retries; i++) {
+          console.log("6");
+          console.log("hc: ", hubConnection.current.state);
+  
+          if (
+            hubConnection.current.state === "Connected" &&
+            chatReadyRef.current === true
+          ) {
+            try {
+              console.log("7");
+  
+              await hubConnection.current.invoke(
+                "SendMessage",
+                currentUserId,
+                conversationUserId,
+                msg.text
+              );
+              console.log("8");
+  
+              console.log("Message sent successfully.");
+              return true;
+            } catch (err) {
+              console.error("Send attempt failed:", err);
+            }
+          }
+          console.log("9");
+  
+          console.log(`Retrying send in ${delay}ms... (${i + 1}/${retries})`);
+          await new Promise((res) => setTimeout(res, delay));
+        }
+        return false;
+      };
+  
+      const success = await sendWithRetry(sentMessage);
+      if (!success) {
+        console.error("Failed to send message after retries.");
+        setMessagesToDisplay((prev) =>
+          prev.filter((msg) => msg.dateTime !== sentMessage.dateTime)
+        );
+        alert("Failed to send message. Please check your connection and try again.");
+      }
+    };
+  */
+
 
   const handleSendMessage = async () => {
-    if (!message.trim()) return; // Don't send empty messages
+    if (!message.trim()) return;
 
-    // Scroll to bottom immediately
     scrollViewRef.current.scrollToEnd({ animated: true });
 
-    // Prepare message object
     const currentDate = new Date();
     const formattedDateTime = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}T${String(currentDate.getHours()).padStart(2, "0")}:${String(currentDate.getMinutes()).padStart(2, "0")}:${String(currentDate.getSeconds()).padStart(2, "0")}.${String(currentDate.getMilliseconds()).padStart(3, "0")}`;
 
@@ -327,33 +284,32 @@ export const ConversationDetailScreen = ({ navigation }) => {
       text: message,
     };
 
-    // Optimistic UI update
+    // Optimistic UI
     setMessagesToDisplay((prev) => [...(prev ?? []), sentMessage]);
     setMessage("");
     setTextInputBottomMargin(0);
     Keyboard.dismiss();
 
-    // Retry function
+    // ✅ NEW: use your signalr wrapper
     const sendWithRetry = async (msg, retries = 3, delay = 1000) => {
       for (let i = 0; i < retries; i++) {
 
-        if (
-          hubConnection.current.state === "Connected" &&
-          chatReadyRef.current === true
-        ) {
+        if (isHubReady()) {
           try {
-            await hubConnection.current.invoke(
+            await invokeHub(
               "SendMessage",
               currentUserId,
               conversationUserId,
               msg.text
             );
+
             console.log("Message sent successfully.");
             return true;
           } catch (err) {
             console.error("Send attempt failed:", err);
           }
         }
+
         console.log(`Retrying send in ${delay}ms... (${i + 1}/${retries})`);
         await new Promise((res) => setTimeout(res, delay));
       }
@@ -361,15 +317,18 @@ export const ConversationDetailScreen = ({ navigation }) => {
     };
 
     const success = await sendWithRetry(sentMessage);
+
     if (!success) {
       console.error("Failed to send message after retries.");
+
+      // rollback optimistic message
       setMessagesToDisplay((prev) =>
         prev.filter((msg) => msg.dateTime !== sentMessage.dateTime)
       );
-      alert("Failed to send message. Please check your connection and try again.");
+
+      alert("Failed to send message. Please check your connection.");
     }
   };
-
 
 
   if (hasError) {

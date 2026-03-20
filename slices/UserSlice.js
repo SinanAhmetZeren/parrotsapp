@@ -23,7 +23,8 @@ const usersSlice = createSlice({
       state.token = action.payload.token;
       state.userName = action.payload.userName;
       state.userProfileImage = action.payload.profileImageUrl;
-      state.unreadMessages = action.payload.unreadMessages;
+      state.unreadMessages = action.payload.unreadMessages === "false" ? false : true;
+      console.log("action payload: ", action.payload);
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
           console.error("Error setting storedToken ", error);

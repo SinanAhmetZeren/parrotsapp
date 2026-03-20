@@ -19,6 +19,7 @@ export default function VoyageListVertical({ data, direction }) {
       enddate={item.endDate}
       vehiclename={item.vehicle.name}
       vehicletype={item.vehicle.type}
+      publicOnMap={item.publicOnMap}
     />
   );
   if (!data) return null;

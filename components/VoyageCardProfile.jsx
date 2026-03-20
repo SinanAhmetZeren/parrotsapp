@@ -12,11 +12,12 @@ import {
   FontAwesome5,
   FontAwesome,
   Ionicons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import he from "he";
-import { parrotBlue, parrotBlueMediumTransparent, parrotCream } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueTransparent, parrotCream, parrotDarkBlue } from "../assets/color";
 import { Shadow } from "react-native-shadow-2";
 
 export default function VoyageCardProfile({
@@ -29,6 +30,7 @@ export default function VoyageCardProfile({
   vehiclename,
   vehicletype,
   voyageId,
+  publicOnMap
 }) {
   const cardImageUrl = `${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
@@ -119,10 +121,17 @@ export default function VoyageCardProfile({
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
             </View>
 
-            <View style={{ ...styles.textContainer, height: vh(20) }}>
+            <View style={{ ...styles.textContainer, height: vh(20), position: "relative" }}>
               <Text numberOfLines={2} style={{ ...styles.header }}>
                 {cardHeader}
               </Text>
+
+              {publicOnMap &&
+
+                <View style={{ position: "absolute", right: "0", backgroundColor: parrotBlueTransparent, borderRadius: vw(5) }}>
+                  <MaterialIcons name="public" size={24} color={parrotBlue} />
+                </View>
+              }
 
               <View style={{ ...styles.vacancyAndVehicle }}>
                 <View>

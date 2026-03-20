@@ -523,7 +523,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               );
             },
 
-            tabBarBadge: hasUnreadMessages ? <MaterialIcons name="mail-outline" size={10} color="white" /> : undefined, //"•" //"🦜" 📨 📪 📫 📬 📤 🗳️"👀"
+            tabBarBadge: hasUnreadMessages ? <MaterialIcons name="mail-outline" size={10} color="white" /> : undefined,
             tabBarBadgeStyle: {
               backgroundColor: parrotRed,//"transparent", // your custom badge background
               color: "white",
@@ -577,7 +577,10 @@ function App() {
 
             // 🟢 Check for unread messages right after login
             try {
+              console.log("checking from hub - unread messages");
               const hasUnreadMessages = await invokeHub("CheckUnreadMessages", storedUserId);
+              console.log("checking from hub - unread messages: ", hasUnreadMessages);
+
               dispatch(setUnreadMessages(hasUnreadMessages)); // update your global state
             } catch (err) {
               console.error("Failed to check unread messages:", err);

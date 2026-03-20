@@ -36,7 +36,6 @@ import he from "he";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed } from "../assets/color";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
-import { set } from "date-fns";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -64,6 +63,14 @@ export default function ProfileScreen({ navigation }) {
     isUninitialized: userUninit,
 
   } = useGetUserByIdQuery(userId);
+
+  useEffect(() => {
+    console.log("userId:");
+    console.log(userId);
+    console.log("userData:");
+
+    console.log(userData);
+  }, [userId, userData])
 
   const {
     data: VoyagesData,
@@ -273,6 +280,11 @@ export default function ProfileScreen({ navigation }) {
       </Text>
     );
   };
+
+
+  if (!userData) {
+    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
+  }
 
   if (isLoadingUser || isLoadingVehicles || isLoadingVoyages || isLoading) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;

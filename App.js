@@ -581,13 +581,20 @@ function App() {
               "CheckUnreadMessages",
               storedUserId
             );
-            dispatch(setUnreadMessages(hasUnread));
+
+            console.log("after inithub - check unread messages: ", hasUnread);
+
+            if (hasUnread) {
+              console.log("has unread message, dispatch....");
+              dispatch(setUnreadMessages(true));
+
+            }
           } catch { }
           finally {
             setIsInitialLoading(false);
           }
 
-          // Listen for unread   event only
+          // Listen for unread event only
           unreadHandlerTrue = () => {
             dispatch(setUnreadMessages(true)); // ReceiveUnreadNotification
           };
@@ -611,6 +618,7 @@ function App() {
     const userId = useSelector((state) => state.users.userId);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const hasUnreadMessages = useSelector((state) => state.users.unreadMessages);
+    console.log("1. has unread messages from state: ", hasUnreadMessages);
 
 
     const {
