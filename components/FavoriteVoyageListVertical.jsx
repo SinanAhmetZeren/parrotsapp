@@ -30,6 +30,7 @@ export default function FavoriteVoyageList({ data, direction }) {
         enddate={item.endDate}
         vehiclename={item.vehicle.name}
         vehicletype={item.vehicle.type}
+        isPublicOnMap={item.publicOnMap}
       />
     </Shadow>
   );

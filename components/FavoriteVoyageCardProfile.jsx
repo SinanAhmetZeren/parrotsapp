@@ -12,11 +12,12 @@ import {
   FontAwesome5,
   FontAwesome,
   Ionicons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import he from "he";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotCream } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotTextDarkBlue } from "../assets/color";
 
 
 export default function FavoriteVoyageCardProfile({
@@ -29,6 +30,7 @@ export default function FavoriteVoyageCardProfile({
   vehiclename,
   vehicletype,
   voyageId,
+  isPublicOnMap
 }) {
   const cardImageUrl = `${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
@@ -92,7 +94,11 @@ export default function FavoriteVoyageCardProfile({
 
         <View style={styles.textContainer}>
           <Text style={styles.header}>{cardHeader}</Text>
-
+          {isPublicOnMap &&
+            <View style={{ position: "absolute", right: 5, top: 5, backgroundColor: parrotBlueTransparent, borderRadius: vw(5) }}>
+              <MaterialIcons name="public" size={24} color={parrotBlue} />
+            </View>
+          }
           <View style={styles.vacancyAndVehicle}>
             <View>
               <Text style={styles.subHeader}>
@@ -159,6 +165,7 @@ const styles = StyleSheet.create({
   textContainer: {
     width: vw(50),
     padding: vh(0.2),
+    position: "relative"
   },
   header: {
     marginTop: 2,

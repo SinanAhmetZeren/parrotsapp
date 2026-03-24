@@ -46,7 +46,7 @@ import {
   removeVoyageFromUserFavorites,
 } from "../slices/UserSlice";
 import { API_URL } from "@env";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotTextDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotTextDarkBlue } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import RenderHtml from "react-native-render-html";
 
@@ -372,121 +372,131 @@ const VoyageDetailScreen = ({ navigation }) => {
           <View style={styles.voyageDataWrapper}>
             <View style={styles.VoyageDataContainer}>
               {/* // VoyageName and Username */}
-
-              <View style={styles.detailsCard}>
-
-                {/* Host */}
-                <View style={styles.row}>
-                  <Text style={styles.label}>Host:</Text>
-                  <TouchableOpacity style={styles.pill}>
-                    <Image source={{ uri: VoyageData.user.profileImageUrl }} style={styles.profileImage} />
-                    <Text style={styles.value}>{VoyageData.user.userName}</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {/* Vehicle */}
-                <View style={styles.row}>
-                  <Text style={styles.label}>Vehicle:</Text>
-
-
-                  <TouchableOpacity
-                    style={styles.voyageBoat}
-                    onPress={() => {
-                      if (
-                        VoyageData.vehicleType !== 4 &&
-                        VoyageData.vehicleType !== 5 &&
-                        VoyageData.vehicleType !== 10
-                      ) {
-                        goToVehiclePage(VoyageData.vehicle.id);
-                      }
-                    }}
-                  >
-                    {VoyageData.vehicleType === 4 ? (
+              <View style={styles.VoyageNameAndUsername}>
+                <Text style={styles.voyageName}>{VoyageData.name}</Text>
+                <View style={styles.voyageDetailsContainer}>
+                  <View style={styles.OwnerAndBoat}>
+                    <TouchableOpacity
+                      style={styles.voyageOwner}
+                      onPress={() => goToProfilePage(VoyageData.user.id)}
+                    >
                       <Image
-                        source={require("../assets/walk1.jpeg")}
-                        style={styles.profileImage} />
-                    ) : VoyageData.vehicleType === 5 ? (
-                      <Image
-                        source={require("../assets/run1.jpeg")}
-                        style={styles.profileImage} />
-                    ) :
-                      VoyageData.vehicleType === 10 ? (
+                        source={{
+                          uri:
+                            VoyageData.user.profileImageUrl,
+                        }}
+                        style={styles.profileImage}
+                      />
+                      <Text style={styles.userName}>
+                        {VoyageData.user.userName}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.voyageBoat}
+                      onPress={() => {
+                        if (
+                          VoyageData.vehicleType !== 4 &&
+                          VoyageData.vehicleType !== 5 &&
+                          VoyageData.vehicleType !== 10
+                        ) {
+                          goToVehiclePage(VoyageData.vehicle.id);
+                        }
+                      }}
+                    >
+                      {VoyageData.vehicleType === 4 ? (
                         <Image
-                          source={require("../assets/train.jpeg")}
+                          source={require("../assets/walk1.jpeg")}
+                          style={styles.profileImage} />
+                      ) : VoyageData.vehicleType === 5 ? (
+                        <Image
+                          source={require("../assets/run1.jpeg")}
                           style={styles.profileImage} />
                       ) :
-                        (
+                        VoyageData.vehicleType === 10 ? (
                           <Image
-                            source={{
-                              uri:
-                                VoyageData.vehicle.profileImageUrl,
-                            }}
-                            style={styles.profileImage}
-                          />
+                            source={require("../assets/train.jpeg")}
+                            style={styles.profileImage} />
+                        ) :
+                          (
+                            <Image
+                              source={{
+                                uri:
+                                  VoyageData.vehicle.profileImageUrl,
+                              }}
+                              style={styles.profileImage}
+                            />
+                          )}
+
+                      <Text style={styles.userName}>
+                        {VoyageData.vehicle.name}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  {/*/////////////////////////////////////////*/}
+                  <View style={styles.VoyagePropsBox}>
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>Vacancy: </Text>
+                      <Text style={styles.propText}>{VoyageData.vacancy}</Text>
+                    </View>
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>
+                        Bids close:{" "}
+                      </Text>
+                      <Text style={styles.propText}>
+                        {formattedLastBidDate}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.VoyagePropsBox}>
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>Starts: </Text>
+                      <Text style={styles.propText}>{formattedStartDate}</Text>
+                    </View>
+
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>Ends: </Text>
+
+                      <Text style={styles.propText}>{formattedEndDate}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.VoyagePropsBox}>
+                    {VoyageData.minPrice ? (
+                      <View style={styles.VoyageProps}>
+                        <Text style={styles.propTextDescription}>
+                          Min Price:{" "}
+                        </Text>
+                        <Text style={styles.propText}>
+                          {VoyageData.currency}
+                          {VoyageData.minPrice}
+
+                        </Text>
+                      </View>
+                    ) : null}
+                    {VoyageData.maxPrice ? (
+                      <View style={styles.VoyageProps}>
+                        <Text style={styles.propTextDescription}>
+                          Max Price:{" "}
+                        </Text>
+                        <Text style={styles.propText}>
+                          {VoyageData.currency}
+                          {VoyageData.maxPrice}
+                        </Text>
+                      </View>
+                    ) : null}
+
+                    <View style={styles.VoyageProps}>
+                      <Text style={styles.propTextDescription}>Auction: </Text>
+                      <Text style={styles.propText}>
+                        {VoyageData.auction ? (
+                          <Feather name="check" size={20} color={parrotTextDarkBlue} />
+                        ) : (
+                          <Entypo name="cross" size={20} color={parrotTextDarkBlue} />
                         )}
-
-                    <Text style={styles.userName}>
-                      {VoyageData.vehicle.name}
-                    </Text>
-                  </TouchableOpacity>
-
-                </View>
-
-                {/* Vacancy */}
-                <View style={styles.row}>
-                  <Text style={styles.label}>Vacancy:</Text>
-                  <Text style={styles.value}>{VoyageData.vacancy}</Text>
-                </View>
-
-                {/* Dates */}
-                <View style={styles.rowSplit}>
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Starts:</Text>
-                    <Text style={styles.value}>{formattedStartDate}</Text>
-                  </View>
-
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Ends:</Text>
-                    <Text style={styles.value}>{formattedEndDate}</Text>
+                      </Text>
+                    </View>
                   </View>
                 </View>
-
-                {/* Prices */}
-                <View style={styles.rowSplit}>
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Min Price:</Text>
-                    <Text style={styles.value}>
-                      {VoyageData.currency}{VoyageData.minPrice}
-                    </Text>
-                  </View>
-
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Max Price:</Text>
-                    <Text style={styles.value}>
-                      {VoyageData.currency}{VoyageData.maxPrice}
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Flags */}
-                <View style={styles.rowSplit}>
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Auction:</Text>
-                    <Text style={styles.value}>
-                      {VoyageData.auction ? "✓" : "✕"}
-                    </Text>
-                  </View>
-
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Fixed Price:</Text>
-                    <Text style={styles.value}>
-                      {VoyageData.fixedPrice ? "✓" : "✕"}
-                    </Text>
-                  </View>
-                </View>
-
               </View>
-
 
               <View style={styles.TitleContainerVoyageImages}>
                 <View style={styles.currentBidsAndSeeAll}>
@@ -719,6 +729,7 @@ const styles = StyleSheet.create({
     height: vh(39),
   },
   voyageDetailsContainer: {
+    padding: 4,
     borderRadius: vh(2),
   },
   OwnerAndBoat: {
@@ -726,11 +737,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     margin: 1,
   },
-
+  voyageOwner: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: vh(5),
+    marginTop: vh(1),
+    marginHorizontal: vw(2),
+    paddingVertical: vh(0.3),
+    paddingHorizontal: vw(2),
+    backgroundColor: parrotBlueMediumTransparent
+  },
   voyageBoat: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: vh(5),
+    marginTop: vh(1),
+    marginHorizontal: vw(2),
     backgroundColor: parrotBlueMediumTransparent,
     paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
@@ -806,8 +828,8 @@ const styles = StyleSheet.create({
     borderRadius: vh(5),
   },
   VoyageNameAndUsername: {
-    // padding: vh(1),
-    // margin: vh(0.5),
+    padding: vh(1),
+    margin: vh(0.5),
     marginTop: vh(0.5),
   },
   DescriptionContainer: {
@@ -946,54 +968,4 @@ const styles = StyleSheet.create({
     borderRadius: vh(5),
     marginHorizontal: vw(2),
   },
-
-  detailsCard: {
-    borderRadius: 20,
-    padding: 16,
-  },
-
-
-
-  label: {
-    width: vw(22), // 🔑 fixed width for alignment
-    fontWeight: "700",
-    fontSize: 16,
-    color: "#0A1E5E",
-  },
-
-  value: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1E6FD9",
-  },
-
-  pill: {
-    flexDirection: "row",
-    alignItems: "center",
-    // backgroundColor: "#DDE3EA",
-    backgroundColor: parrotBlueMediumTransparent,
-
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 20,
-  },
-  rowSplit: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: vh(1),
-    // backgroundColor: "yellow"
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: vh(1),
-    // backgroundColor: "yellow"
-  },
-
-  rowHalfClean: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "48%",
-  },
-
 });

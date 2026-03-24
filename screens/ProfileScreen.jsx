@@ -67,13 +67,13 @@ export default function ProfileScreen({ navigation }) {
 
   } = useGetUserByIdQuery(userId);
 
-  useEffect(() => {
-    console.log("userId:");
-    console.log(userId);
-    console.log("userData:");
+  // useEffect(() => {
+  //   console.log("userId:");
+  //   console.log(userId);
+  //   console.log("userData:");
 
-    console.log(userData);
-  }, [userId, userData])
+  //   console.log(userData);
+  // }, [userId, userData])
 
   const {
     data: VoyagesData,

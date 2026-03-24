@@ -41,6 +41,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           maxPrice,
           isAuction,
           isFixedPrice,
+          isPublicOnMap,
           userId,
           vehicleId,
           currency
@@ -59,6 +60,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
           Currency: currency,
           Auction: isAuction.toString(), // Assuming isAuction is a boolean
           FixedPrice: isFixedPrice.toString(), // Assuming isFixedPrice is a boolean
+          PublicOnMap: isPublicOnMap.toString(),
           UserId: userId,
           VehicleId: vehicleId,
         });

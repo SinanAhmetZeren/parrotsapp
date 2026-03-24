@@ -105,6 +105,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [createdVoyageImage, setCreatedVoyageImage] = useState(null);
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
+  const [isPublicOnMap, setIsPublicOnMap] = useState(true);
   const [vehicleId, setVehicleId] = useState("");
   const [currency, setCurrency] = useState("");
   const [voyageId, setVoyageId] = useState("");
@@ -223,6 +224,7 @@ const CreateVoyageScreen = ({ navigation }) => {
         maxPrice,
         isAuction,
         isFixedPrice,
+        isPublicOnMap,
         userId,
         vehicleId,
         currency
@@ -241,6 +243,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       setMaxPrice("");
       setIsAuction("");
       setIsFixedPrice("");
+      setIsPublicOnMap("");
       setVehicleId("");
       setCurrency("");
       setImage("");
@@ -642,6 +645,10 @@ const CreateVoyageScreen = ({ navigation }) => {
                             color={
                               isAuction ? "rgba(0, 119, 234,0.9)" : undefined
                             }
+                            style={{
+                              borderColor: parrotBlue,
+                              borderWidth: 2,
+                            }}
                           />
                         </View>
                       </View>
@@ -655,9 +662,32 @@ const CreateVoyageScreen = ({ navigation }) => {
                             color={
                               isFixedPrice ? "rgba(0, 119, 234,0.9)" : undefined
                             }
+                            style={{
+                              borderColor: parrotBlue,
+                              borderWidth: 2,
+                            }}
                           />
                         </View>
                       </View>
+
+                      <View style={styles.checkboxContainer}>
+                        <Text style={styles.checkboxText}>Public Voyage </Text>
+                        <View>
+                          <Checkbox
+                            value={isPublicOnMap}
+                            onValueChange={setIsPublicOnMap}
+                            color={
+                              isPublicOnMap ? "rgba(0, 119, 234,0.9)" : undefined
+                            }
+                            style={{
+                              borderColor: parrotBlue,
+                              borderWidth: 2,
+                            }}
+
+                          />
+                        </View>
+                      </View>
+
                     </View>
                   </View>
                   {/* /// auction fixedprice  /// */}
@@ -1071,7 +1101,7 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: "row",
     margin: vh(0.2),
-    paddingHorizontal: vw(4),
+    paddingHorizontal: vw(2),
     paddingVertical: vh(0.5),
     borderRadius: vh(2),
   },
