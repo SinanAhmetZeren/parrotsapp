@@ -574,6 +574,7 @@ function App() {
             })
           );
           // Start SignalR
+          console.log("stored suer id", storedUserId);
           await initHubConnection(storedUserId, API_URL);
           // Initial unread check
           try {

@@ -22,7 +22,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import VoyageListVertical from "../components/VoyageListVertical";
 import VehicleList from "../components/VehicleList";
 import Toast from "react-native-toast-message";
-import { useGetUserByIdQuery } from "../slices/UserSlice";
+import { useGetUserByIdQuery, useLazyGetParrotCoinBalanceQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -33,7 +33,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import he from "he";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
 
@@ -52,6 +52,9 @@ export default function ProfileScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [coinModalVisible, setCoinModalVisible] = useState(false);
+  const [parrotCoinBalance, setParrotCoinBalance] = useState(null);
+  const [getParrotCoinBalance] = useLazyGetParrotCoinBalanceQuery();
 
   const {
     data: userData,
@@ -127,6 +130,21 @@ export default function ProfileScreen({ navigation }) {
     ])
   );
 */
+
+
+  const handleGetParrotCoinBalance = async () => {
+    try {
+
+      console.log("userId---->>", userId);
+      const response = await getParrotCoinBalance(userId).unwrap();
+      console.log("-->>>", response);
+
+      setParrotCoinBalance(response.balance); // or response.balance depending on API
+    } catch (error) {
+      console.log("Error fetching balance:", error);
+    }
+  };
+
 
   const handleCloseTermsModal = () => {
     setTermsModalVisible(false);
@@ -341,7 +359,8 @@ export default function ProfileScreen({ navigation }) {
                 )}
               </View>
 
-              <View style={styles.buttonsContainerLeft}>
+              {/* ///// terms of use /////// */}
+              <View style={styles.buttonsContainerTermsOfUse}>
 
                 {/* ///// terms of use BUTTON /////// */}
                 <TouchableOpacity
@@ -372,11 +391,6 @@ export default function ProfileScreen({ navigation }) {
                 </TouchableOpacity>
                 {/* ///// terms of use BUTTON /////// */}
               </View>
-
-
-
-
-
               <Modal
                 animationType="fade"
                 transparent={true}
@@ -393,9 +407,7 @@ export default function ProfileScreen({ navigation }) {
                   }}
                 >
                   <TermsOfUseComponent />
-
                 </View>
-
                 <TouchableOpacity
                   style={styles.closeButtonAndText2}
                   onPress={handleCloseTermsModal}
@@ -404,15 +416,13 @@ export default function ProfileScreen({ navigation }) {
                     <Text style={styles.buttonClose2}>
                       <AntDesign name="close" size={24} color="white " />
                     </Text>
-
                   </View>
                 </TouchableOpacity>
               </Modal>
+              {/* ///// terms of use /////// */}
 
 
               <View style={styles.buttonsContainerRight}>
-
-
                 {/* ///// PUBLIC PROFILE BUTTON /////// */}
                 <TouchableOpacity
                   style={styles.publicProfileBox}
@@ -505,11 +515,112 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </TouchableOpacity>
                 {/* ///// EDIT PROFILE BUTTON /////// */}
-
-
-
-
               </View>
+
+
+
+
+              <View style={styles.parrotcoinContainerLeft}>
+
+
+                {/* ///// parrotcoin BUTTON /////// */}
+
+
+                <TouchableOpacity
+                  style={styles.parrotCoinBox}
+                  onPress={async () => {
+                    setCoinModalVisible(true);
+                    await handleGetParrotCoinBalance();
+
+                  }}
+                  activeOpacity={0.5}
+                >
+                  <View>
+                    <View style={styles.parrotCoinContainer}>
+                      <Image
+                        source={require("../assets/parrotcoin.png")}
+                        style={{
+                          width: vw(12),
+                          height: vw(12),
+                        }}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
+                <Modal
+                  animationType="fade"
+                  transparent={true}
+                  visible={coinModalVisible}
+                  onRequestClose={() => setCoinModalVisible(false)}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "rgba(0,0,0,0.5)",
+                      position: "relative"
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: vw(80),
+                        padding: 20,
+                        backgroundColor: "white",
+                        borderRadius: 12,
+                        alignItems: "center",
+                        position: "relative"
+                      }}
+                    >
+                      <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                        ParrotCoin Balance
+                      </Text>
+
+                      <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+
+                        <Text style={{ fontSize: 22, fontWeight: "800", color: parrotTextDarkBlue }}>
+                          {parrotCoinBalance?.toLocaleString()}
+                        </Text>
+
+                        <Image
+                          source={require("../assets/parrotcoin.png")}
+                          style={{ width: 30, height: 30 }}
+                          resizeMode="contain"
+                        />
+                      </View>
+
+
+                      <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                        Featuring your voyage on the main map costs ParrotCoins.
+                        This is a one-time deduction based on the number of days between your posting date and
+                        the start of your voyage—at which point it is no longer visible on the map.
+                        For example, a voyage starting in 10 days will cost 10 ParrotCoins.
+                      </Text>
+
+                      <TouchableOpacity
+                        style={styles.closeButtonAndText3}
+                        onPress={() => setCoinModalVisible(false)}
+                      >
+                        <Text style={styles.buttonClose3}>
+                          <AntDesign name="close" size={24} color="white" />
+                        </Text>
+                      </TouchableOpacity>
+
+
+                    </View>
+
+
+                  </View>
+
+
+                </Modal>
+
+
+                {/* ///// parrotcoin BUTTON /////// */}
+              </View>
+
 
               <View style={styles.profileImageAndSocial}>
                 <View style={styles.profileImageAndName}>
@@ -797,6 +908,12 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     padding: vw(1),
   },
+  parrotCoinBox: {
+    backgroundColor: "white",
+    // width: vw(30),
+    flexDirection: "row",
+    borderRadius: vw(10),
+  },
   logoutBox: {
     marginTop: vh(0.5),
     backgroundColor: "white",
@@ -816,7 +933,7 @@ const styles = StyleSheet.create({
     padding: vw(1),
     zIndex: 100,
   },
-  buttonsContainerLeft: {
+  buttonsContainerTermsOfUse: {
     position: "absolute",
     top: vh(.5),
     right: vw(2),
@@ -830,11 +947,24 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: ""
   },
+
+  parrotcoinContainerLeft: {
+    position: "absolute",
+    top: vh(28),
+    left: vw(2),
+    flexDirection: "column",
+  },
   innerProfileContainer: {
     alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),
     paddingHorizontal: vw(2),
+  },
+  parrotCoinContainer: {
+    alignSelf: "flex-end",
+    flexDirection: "row",
+    borderRadius: vh(2),
+    paddingTop: 1
   },
   closeButtonAndText2: {
     flexDirection: "row",
@@ -856,4 +986,26 @@ const styles = StyleSheet.create({
     borderRadius: vh(4),
     padding: vw(1),
   },
+
+  closeButtonAndText3: {
+    flexDirection: "row",
+    position: "absolute",
+    borderRadius: vh(5),
+    alignSelf: "center",
+    top: vh(-2),
+    right: vw(-2),
+    backgroundColor: "white",
+    padding: 4
+  },
+  buttonClose3: {
+    fontSize: 18,
+    color: "white",
+    textAlign: "center",
+    alignSelf: "center",
+    backgroundColor: parrotDarkBlue,
+    // width: vw(30),
+    borderRadius: vh(4),
+    padding: vw(1),
+  },
+
 });

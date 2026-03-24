@@ -1,4 +1,4 @@
-import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
+/*import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 import { AppState } from "react-native";
 
 let hubConnection = null; // singleton hub connection
@@ -158,3 +158,4 @@ export const invokeHub = async (method, ...args) => {
 };
 
 
+*/

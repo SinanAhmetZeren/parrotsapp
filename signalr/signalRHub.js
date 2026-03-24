@@ -28,27 +28,32 @@ AppState.addEventListener("change", async (nextAppState) => {
 });
 
 export const initHubConnection = async (userId, apiUrl) => {
+    console.log("1");
     if (!userId || !apiUrl) return null;
-
     // 1. If user changed, wipe the old connection entirely
     if (hubConnection && connectionUserId !== userId) {
+        console.log("---------2");
         await stopHubConnection();
     }
 
     connectionUserId = userId;
     currentApiUrl = apiUrl;
-
     // 2. Return existing if already active
-    if (hubConnection?.state === HubConnectionState.Connected) return hubConnection;
-
+    if (hubConnection?.state === HubConnectionState.Connected) {
+        console.log("--------- 2. connected");
+        return hubConnection;
+    }
     // 3. Block redundant attempts if already transitioning
     if (hubConnection?.state === HubConnectionState.Connecting ||
         hubConnection?.state === HubConnectionState.Reconnecting) {
+        console.log("--------- 3. connecting");
+
         return hubConnection;
     }
 
     // 4. Create new connection if none exists
     if (!hubConnection) {
+        console.log("starting connection..., apiurl: ", apiUrl);
         hubConnection = new HubConnectionBuilder()
             .withUrl(`${apiUrl}/chathub/11?userId=${userId}`)
             .withAutomaticReconnect()

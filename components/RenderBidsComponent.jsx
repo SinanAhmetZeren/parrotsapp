@@ -30,11 +30,6 @@ import {
   useDeleteBidMutation,
 } from "../slices/VoyageSlice";
 import { Feather } from "@expo/vector-icons";
-import {
-  HubConnectionBuilder,
-  HubConnectionState,
-} from "@microsoft/signalr";
-import { API_URL } from "@env";
 import { invokeHub } from "../signalr/signalRHub.js";
 
 export const RenderBidsComponent = ({

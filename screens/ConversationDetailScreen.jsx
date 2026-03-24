@@ -24,10 +24,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { ScrollView } from "react-native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import {
-  HubConnectionBuilder,
-  HubConnectionState
-} from "@microsoft/signalr";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
 import {
   register_ReceiveMessage,

@@ -301,6 +301,19 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    getParrotCoinBalance: builder.query({
+      query: (userId) => {
+        if (userId) {
+          return `/api/User/parrotCoinBalance/${userId}`;
+        } else {
+          return "";
+        }
+      },
+      transformResponse: (responseData) => responseData.data,
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+    }),
+
   }),
   overrideExisting: true,
 });
@@ -310,6 +323,7 @@ export const {
   useLazyGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
   useLazyGetFavoriteVehicleIdsByUserIdQuery,
+  useLazyGetParrotCoinBalanceQuery,
   useRegisterUserMutation,
   useRequestCodeMutation,
   useConfirmUserMutation,
