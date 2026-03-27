@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Button,
+  ActivityIndicator,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
@@ -150,7 +151,7 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (err) {
       Toast.show({
-        type: "success",
+        type: "error",
         text1: "Could not log in",
         text2: "Please check your credentials ",
         visibilityTime: 1200,
@@ -297,7 +298,7 @@ const LoginScreen = ({ navigation }) => {
     } catch (err) {
       console.log(err);
       Toast.show({
-        type: "success",
+        type: "error",
         text1: "Could not register",
         text2: "Please try again",
         visibilityTime: 1200,
@@ -335,7 +336,7 @@ const LoginScreen = ({ navigation }) => {
     } catch (err) {
       console.log(err);
       Toast.show({
-        type: "success",
+        type: "error",
         text1: "Could not confirm",
         text2: "Please try again",
         visibilityTime: 1200,
@@ -448,9 +449,12 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.selection2}
                   onPress={handleLogin}
-                  disabled={isLoading}
+                  disabled={isLoading || isLoggingIn}
                 >
-                  <Text style={styles.choiceText}>Login</Text>
+                  {isLoading || isLoggingIn
+                    ? <ActivityIndicator color="white" />
+                    : <Text style={styles.choiceText}>Login</Text>
+                  }
                 </TouchableOpacity>
               </View>
 
@@ -616,7 +620,7 @@ const LoginScreen = ({ navigation }) => {
                   onPress={() => {
                     if (passwordR !== passwordR2) {
                       Toast.show({
-                        type: "success",
+                        type: "error",
                         text1: "Passwords do not match",
                         text2: "Please try again.",
                         visibilityTime: 1200,
@@ -690,7 +694,7 @@ const LoginScreen = ({ navigation }) => {
                   onPress={() => {
                     if (passwordR !== passwordR2) {
                       Toast.show({
-                        type: "success",
+                        type: "error",
                         text1: "Passwords do not match",
                         text2: "Please try again.",
                         visibilityTime: 1200,
@@ -861,7 +865,7 @@ const LoginScreen = ({ navigation }) => {
                   onPress={() => {
                     if (passwordR !== passwordR2) {
                       Toast.show({
-                        type: "success",
+                        type: "error",
                         text1: "Passwords do not match",
                         text2: "Please try again.",
                         visibilityTime: 1200,

@@ -23,7 +23,9 @@ import {
   FlatList,
   Modal,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   useAcceptBidMutation,
@@ -46,6 +48,7 @@ export const RenderBidsComponent = ({
   const visibleBids = bids.slice(0, 5);
   const [acceptBid] = useAcceptBidMutation();
   const [deleteBid] = useDeleteBidMutation();
+  const [loadingBidId, setLoadingBidId] = useState(null);
 
 
   const chatReadyRef = useRef(false);
@@ -56,23 +59,31 @@ export const RenderBidsComponent = ({
 
   const handleAcceptBid = async ({ bidId, bidUserId }) => {
     const text = `Hi there! 👋 Welcome on board to "${voyageName}" 🎉`;
+    setLoadingBidId(bidId);
     try {
       await invokeHub("SendMessage", currentUserId, bidUserId, text);
       await acceptBid(bidId).unwrap();
       await refetch();
     } catch (error) {
       console.error("❌ Failed to accept bid or send message:", error);
+      Toast.show({ type: "error", text1: "Action failed", text2: "Please try again.", visibilityTime: 1500, topOffset: 100 });
+    } finally {
+      setLoadingBidId(null);
     }
   };
 
   const handleDeleteBid = async ({ bidId, bidUserId }) => {
     const text = `Hi there! 👋 Your bid was deleted by ${username}`;
+    setLoadingBidId(bidId);
     try {
       await invokeHub("SendMessage", currentUserId, bidUserId, text);
       await deleteBid(bidId).unwrap();
       await refetch();
     } catch (error) {
       console.error("❌ Failed to delete bid or send message:", error);
+      Toast.show({ type: "error", text1: "Action failed", text2: "Please try again.", visibilityTime: 1500, topOffset: 100 });
+    } finally {
+      setLoadingBidId(null);
     }
   };
 
@@ -205,15 +216,19 @@ export const RenderBidsComponent = ({
                                   bidUserId: item.userId,
                                 })
                               }
+                              disabled={loadingBidId !== null}
                             >
                               <View style={styles.acceptTextContainer}>
-                                <Text style={styles.acceptText}>Accept</Text>
+                                {loadingBidId === item.id
+                                  ? <ActivityIndicator size="small" color={parrotBlue} />
+                                  : <Text style={styles.acceptText}>Accept</Text>
+                                }
                               </View>
                             </TouchableOpacity>
                           ) : (
                             <TouchableOpacity
                               style={{ flex: 1, alignItems: "center" }}
-                              onPress={console.log("bid accepted")}
+                              onPress={() => console.log("bid accepted")}
                             >
                               <View style={styles.acceptTextContainer}>
                                 <Text style={styles.acceptedText}>
@@ -226,15 +241,18 @@ export const RenderBidsComponent = ({
                           <TouchableOpacity
                             style={{ flex: 1, alignItems: "center" }}
                             onPress={() => {
-                              console.log("Delete bid:", item.id);
                               handleDeleteBid({
                                 bidId: item.id,
                                 bidUserId: item.userId,
                               });
                             }}
+                            disabled={loadingBidId !== null}
                           >
                             <View style={styles.acceptTextContainer}>
-                              <Text style={styles.deleteText}>Delete</Text>
+                              {loadingBidId === item.id
+                                ? <ActivityIndicator size="small" color={parrotRed} />
+                                : <Text style={styles.deleteText}>Delete</Text>
+                              }
                             </View>
                           </TouchableOpacity>
                         </View>

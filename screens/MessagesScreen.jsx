@@ -13,6 +13,7 @@ import {
   TextInput,
   RefreshControl,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
@@ -60,7 +61,7 @@ export default function MessagesScreen({ navigation }) {
     error: errorUser,
     isSuccess: isSuccessUsers,
     refetch: refetchUsers,
-  } = useGetUsersByUsernameQuery(username);
+  } = useGetUsersByUsernameQuery(username, { skip: username.length < 3 });
 
   const [receivedMessageData, setReceivedMessageData] = useState("");
   const [selectedFunction, setSelectedFunction] = useState(1);
@@ -201,6 +202,14 @@ export default function MessagesScreen({ navigation }) {
           <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         </View>
       </ScrollView>
+    );
+  }
+
+  if (isLoadingMessages) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
+        <ActivityIndicator size="large" color={parrotBlue} />
+      </View>
     );
   }
 

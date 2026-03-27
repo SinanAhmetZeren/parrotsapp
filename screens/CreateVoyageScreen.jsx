@@ -356,9 +356,9 @@ const CreateVoyageScreen = ({ navigation }) => {
     }
   };
 
-  const handleDeleteImage = (imageId) => {
+  const handleDeleteImage = async (imageId) => {
     try {
-      deleteVoyageImage(imageId);
+      await deleteVoyageImage(imageId).unwrap();
       setAddedVoyageImages((prevImages) =>
         prevImages.filter((item) => item.addedVoyageImageId !== imageId)
       );
@@ -367,6 +367,26 @@ const CreateVoyageScreen = ({ navigation }) => {
       setHasError(true)
     }
   };
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
+        <ActivityIndicator size="large" color={parrotBlue} />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
+        <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
+        <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+        <TouchableOpacity onPress={refetch} style={{ marginTop: vh(2) }}>
+          <Text style={{ color: parrotBlue, fontWeight: "600" }}>Tap to retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   if (isSuccess) {
     const dropdownData = [
