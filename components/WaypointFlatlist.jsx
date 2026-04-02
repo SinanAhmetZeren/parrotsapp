@@ -20,7 +20,9 @@ import {
   parrotBlueMediumTransparent,
   parrotBlueSemiTransparent,
   parrotBlueTransparent,
+  parrotCream,
   parrotDarkBlue,
+  parrotDarkCream,
   parrotLightBlue,
   parrotTextDarkBlue,
 } from "../assets/color";
@@ -64,32 +66,24 @@ export const WaypointFlatListVoyageDetailsScreen = ({
   return (
     <FlatList
       style={{ padding: vh(0.52) }}
+      contentContainerStyle={addedWayPoints.length === 1 ? { flex: 1, justifyContent: "center" } : {}}
       horizontal
       data={addedWayPoints}
       keyExtractor={(item, index) => `${item.order}-${index}`}
       renderItem={({ item, index }) => {
         let newUri = item.profileImage;
         return (
-          <Shadow
-            distance={2}
-            offset={[0, 0]}
-            startColor="rgba(0,0,0,0.03)"
-            finalColor="rgba(0,0,0,0.08)"
-            radius={11}
-            style={{ marginRight: vh(.5) }}
-          >
-            <View key={index} style={{ borderRadius: vh(3), marginHorizontal: vh(0.3) }}>
-              <WaypointItemVoyageDetailScreen
-                title={item.title}
-                description={item.description}
-                imageUri={newUri}
-                latitude={item.latitude}
-                longitude={item.longitude}
-                focusMap={focusMap}
-                voyageProfileImage={voyageProfileImage}
-              />
-            </View>
-          </Shadow>
+          <View key={index} style={{ borderRadius: vh(3), marginHorizontal: vh(0.3), marginRight: vh(.5), overflow: "hidden" }}>
+            <WaypointItemVoyageDetailScreen
+              title={item.title}
+              description={item.description}
+              imageUri={newUri}
+              latitude={item.latitude}
+              longitude={item.longitude}
+              focusMap={focusMap}
+              voyageProfileImage={voyageProfileImage}
+            />
+          </View>
         );
       }}
     />
@@ -393,8 +387,11 @@ const styles = StyleSheet.create({
     width: vh(40),
     flexDirection: "row",
     borderRadius: vh(3),
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
     overflow: "hidden",
+    borderWidth: 2,
+    borderColor: "transparent",
+    borderColor: "#c3c3c322",
   },
   profileImage: {
     margin: vh(1),

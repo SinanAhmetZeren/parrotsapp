@@ -78,12 +78,12 @@ const VoyageDetailScreen = ({ navigation }) => {
     refetch: refetchVoyage,
   } = useGetVoyageByIdQuery(voyageId);
 
-  useEffect(() => {
-    console.log("--> voyage data -->");
-    console.log("hello");
-    console.log(VoyageData?.publicOnMap);
+  // useEffect(() => {
+  //   console.log("--> voyage data -->");
+  //   console.log("hello");
+  //   console.log(VoyageData?.publicOnMap);
 
-  }, [VoyageData])
+  // }, [VoyageData])
 
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -93,6 +93,15 @@ const VoyageDetailScreen = ({ navigation }) => {
 
   const [hasError, setHasError] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
+
 
 
   const dispatch = useDispatch();
@@ -257,21 +266,15 @@ const VoyageDetailScreen = ({ navigation }) => {
   const handleAddVoyageToFavorites = () => {
     addVoyageToFavorites({ userId, voyageId });
     setIsFavorited(true);
-    dispatch(
-      addVoyageToUserFavorites({
-        favoriteVoyage: voyageId,
-      })
-    );
+    dispatch(addVoyageToUserFavorites({ favoriteVoyage: voyageId }));
+    showToast("Voyage added to favorites");
   };
 
   const handleDeleteVoyageFromFavorites = () => {
     deleteVoyageFromFavorites({ userId, voyageId });
     setIsFavorited(false);
-    dispatch(
-      removeVoyageFromUserFavorites({
-        favoriteVoyage: voyageId,
-      })
-    );
+    dispatch(removeVoyageFromUserFavorites({ favoriteVoyage: voyageId }));
+    showToast("Voyage removed from favorites");
   };
 
   const onRefresh = () => {
@@ -471,168 +474,199 @@ const VoyageDetailScreen = ({ navigation }) => {
                 {/* Flags */}
                 <View style={styles.rowSplit}>
                   <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Auction:</Text>
-                    <Text style={styles.value}>
-                      {VoyageData.auction ? "✓" : "✕"}
-                    </Text>
+                    <TouchableOpacity onPress={() => showToast("The host will select the most suitable bids")} style={{ marginRight: 4 }}>
+                      <Text style={styles.label}>Auction
+
+                        <MaterialIcons name="info-outline" size={14} color={parrotBlue} />
+                        :
+                      </Text>
+                    </TouchableOpacity>
+
+                    <Ionicons
+                      name={VoyageData.auction ? "checkmark-circle-outline" : "close-circle-outline"}
+                      size={22}
+                      color={parrotBlue}
+                    />
                   </View>
 
                   <View style={styles.rowHalfClean}>
                     <Text style={styles.label}>Fixed Price:</Text>
-                    <Text style={styles.value}>
-                      {VoyageData.fixedPrice ? "✓" : "✕"}
-                    </Text>
+                    <Ionicons
+                      name={VoyageData.fixedPrice ? "checkmark-circle-outline" : "close-circle-outline"}
+                      size={22}
+                      color={parrotBlue}
+                    />
                   </View>
                 </View>
 
+
               </View>
 
 
-              <View style={styles.TitleContainerVoyageImages}>
-                <View style={styles.currentBidsAndSeeAll}>
-                  <Text style={styles.currentBidsTitle}>Voyage Images</Text>
-                  <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
-                    <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
-                  </TouchableOpacity>
-                  {voyageImageInfoVisible && (
-                    <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
-                      <Text style={styles.voyageImageInfoMessage}>
-                        Tap an image to view gallery
-                      </Text>
+              <View style={styles.sectionCard}>
+                <View style={styles.TitleContainerVoyageImages}>
+                  <View style={styles.currentBidsAndSeeAll}>
+                    <Text style={styles.currentBidsTitle}>Voyage Images</Text>
+                    <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
+                      <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
                     </TouchableOpacity>
-                  )}
+                    {voyageImageInfoVisible && (
+                      <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
+                        <Text style={styles.voyageImageInfoMessage}>
+                          Tap an image to view gallery
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+
+                {/* // Voyage Images */}
+                <View style={styles.ImagesMainContainer}>
+                  <View style={styles.ImagesSubContainer}>
+                    <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
+                  </View>
                 </View>
               </View>
 
-              {/* // Voyage Images */}
-              <View style={styles.ImagesMainContainer}>
-                <View style={styles.ImagesSubContainer}>
-                  <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
-                </View>
-              </View>
-
-              <View style={styles.TitleContainerVoyageDescription}>
-                <View style={styles.currentBidsAndSeeAll}>
-                  <Text style={styles.currentBidsTitle}>
-                    Voyage Description
-                  </Text>
-                </View>
-              </View>
-              {/* // Voyage Description */}
-              <View style={styles.DescriptionContainer}>
-                <Text style={styles.descriptionInnerContainer}>
-                  <RenderHtml
-                    source={{ html: displayText }}
-                    contentWidth={width}
-                    tagsStyles={{
-                      strong: { fontWeight: 'bold' },
-                      b: { fontWeight: 'bold' },
-                    }}
-                  />
-                </Text>
-
-                {VoyageData.description.length > descriptionShortenedChars &&
-                  !showFullText && (
-                    <TouchableOpacity onPress={() => setShowFullText(true)}>
-                      <Text style={styles.ReadMoreLess}>
-                        Read more
-                        <Feather
-                          name="chevron-down"
-                          size={24}
-                          color={parrotGreen}
-                        />
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                {showFullText && (
-                  <TouchableOpacity onPress={() => setShowFullText(false)}>
-                    <Text style={styles.ReadMoreLess}>
-                      Read less
-                      <Feather name="chevron-up" size={24} color={parrotGreen} />
+              <View style={styles.sectionCard}>
+                <View style={styles.TitleContainerVoyageDescription}>
+                  <View style={styles.currentBidsAndSeeAll}>
+                    <Text style={styles.currentBidsTitle}>
+                      Voyage Description
                     </Text>
-                  </TouchableOpacity>
-                )}
+                  </View>
+                </View>
+                {/* // Voyage Description */}
+                <View style={styles.DescriptionContainer}>
+                  <Text style={styles.descriptionInnerContainer}>
+                    <RenderHtml
+                      source={{ html: displayText }}
+                      contentWidth={width}
+                      tagsStyles={{
+                        strong: { fontWeight: 'bold' },
+                        b: { fontWeight: 'bold' },
+                      }}
+                    />
+                  </Text>
+
+                  {VoyageData.description.length > descriptionShortenedChars &&
+                    !showFullText && (
+                      <TouchableOpacity onPress={() => setShowFullText(true)}>
+                        <Text style={styles.ReadMoreLess}>
+                          Read more
+                          <Feather
+                            name="chevron-down"
+                            size={24}
+                            color={parrotGreen}
+                          />
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  {showFullText && (
+                    <TouchableOpacity onPress={() => setShowFullText(false)}>
+                      <Text style={styles.ReadMoreLess}>
+                        Read less
+                        <Feather name="chevron-up" size={24} color={parrotGreen} />
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             </View>
           </View>
           {/* // map */}
 
-          <View style={styles.TitleContainerVoyageRoute}>
-            <View style={styles.currentBidsAndSeeAll}>
-              <Text style={styles.currentBidsTitle}>Voyage Route</Text>
-            </View>
-          </View>
-
-          <View style={styles.mapAndEmojisContainer}>
-            <View style={styles.mapContainer}>
-              <MapView ref={mapRef} style={styles.map} region={initialRegion}>
-                <WaypointListComponent waypoints={waypoints} />
-                <RenderPolylinesComponent waypoints={waypoints} />
-              </MapView>
+          <View style={styles.routeCard}>
+            <View style={styles.TitleContainerVoyageRoute}>
+              <View style={styles.currentBidsAndSeeAll}>
+                <Text style={styles.currentBidsTitle}>Voyage Route</Text>
+              </View>
             </View>
 
-            {isFavorited ? (
-              <TouchableOpacity
-                onPress={() => handleDeleteVoyageFromFavorites()}
-                style={styles.heartContainer1}
-              >
-                <Ionicons
-                  name="heart"
-                  size={24}
-                  color="red"
-                  style={styles.heartContainer2}
-                />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                onPress={() => handleAddVoyageToFavorites()}
-                style={styles.heartContainer1}
-              >
-                <Ionicons
-                  name="heart"
-                  size={24}
-                  color="orange"
-                  style={styles.heartContainer2}
-                />
-              </TouchableOpacity>
-            )}
+            <View style={styles.mapAndEmojisContainer}>
+              <View style={styles.mapContainer}>
+                <MapView ref={mapRef} style={styles.map} region={initialRegion}>
+                  <WaypointListComponent waypoints={waypoints} />
+                  <RenderPolylinesComponent waypoints={waypoints} />
+                </MapView>
+              </View>
 
-            <TouchableOpacity
-              onPress={() => handleShareVoyage()}
-              style={styles.shareContainer1}
-            >
-              <MaterialIcons
-                name="ios-share"
-                size={24}
-                color={parrotBlue}
-                style={styles.shareContainer2}
-              />
-            </TouchableOpacity>
-
-
-          </View>
-          <View style={styles.waypointsContainer}>
-            <View style={styles.WaypointsAndInfo}>
-              <Text style={styles.currentBidsTitle}>Waypoints </Text>
-              <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
-                <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
-              </TouchableOpacity>
-              {waypointInfoVisible && (
-                <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
-                  <Text style={styles.waypointInfoMessage}>
-                    Tap on card to focus map
-                  </Text>
+              {isFavorited ? (
+                <TouchableOpacity
+                  onPress={() => handleDeleteVoyageFromFavorites()}
+                  style={styles.heartContainer1}
+                >
+                  <Ionicons
+                    name="heart"
+                    size={24}
+                    color="red"
+                    style={styles.heartContainer2}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => handleAddVoyageToFavorites()}
+                  style={styles.heartContainer1}
+                >
+                  <Ionicons
+                    name="heart"
+                    size={24}
+                    color="orange"
+                    style={styles.heartContainer2}
+                  />
                 </TouchableOpacity>
               )}
+
+              <TouchableOpacity
+                onPress={() => showToast(VoyageData.publicOnMap ? "This voyage is publicly visible on the map" : "This voyage is not visible on the map")}
+                style={styles.earthContainer1}
+              >
+                <Ionicons
+                  name="earth"
+                  size={24}
+                  color={VoyageData.publicOnMap ? "#1E6FD9" : "#a0b8d8"}
+                  style={styles.earthContainer2}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => handleShareVoyage()}
+                style={styles.shareContainer1}
+              >
+                <MaterialIcons
+                  name="ios-share"
+                  size={24}
+                  color={parrotBlue}
+                  style={styles.shareContainer2}
+                />
+              </TouchableOpacity>
+
             </View>
           </View>
+          <View style={styles.waypointsCard}>
+            <View style={styles.waypointsContainer}>
+              <View style={styles.WaypointsAndInfo}>
+                <Text style={styles.currentBidsTitle}>Waypoints </Text>
+                <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
+                  <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
+                </TouchableOpacity>
+                {waypointInfoVisible && (
+                  <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
+                    <Text style={styles.waypointInfoMessage}>
+                      Tap on card to focus map
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
 
-          <View style={styles.waypointFlatlistContainer}>
-            <WaypointFlatListVoyageDetailsScreen
-              focusMap={focusMap}
-              addedWayPoints={waypoints}
-              voyageProfileImage={VoyageData.profileImage}
-            />
+            <View style={styles.waypointFlatlistContainer}>
+              <WaypointFlatListVoyageDetailsScreen
+                focusMap={focusMap}
+                addedWayPoints={waypoints}
+                voyageProfileImage={VoyageData.profileImage}
+              />
+            </View>
           </View>
 
           {/* // Bids */}
@@ -683,6 +717,11 @@ const VoyageDetailScreen = ({ navigation }) => {
             )}
           </View>
         </ScrollView>
+        {toastVisible && (
+          <View style={styles.toast}>
+            <Text style={styles.toastText}>{toastMessage}</Text>
+          </View>
+        )}
       </>
     );
   }
@@ -694,6 +733,23 @@ const styles = StyleSheet.create({
   waypointFlatlistContainer: {
     marginRight: vw(3),
     marginBottom: vh(3)
+  },
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
   },
   waypointInfoMessage: {
     color: parrotBlue,
@@ -794,6 +850,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(5),
   },
+  earthContainer1: {
+    position: "absolute",
+    bottom: vh(-1),
+    right: vw(25),
+  },
+  earthContainer2: {
+    padding: vw(1),
+    width: vw(8),
+    backgroundColor: "white",
+    borderRadius: vh(5),
+  },
   shareContainer1: {
     position: "absolute",
     bottom: vh(-1),
@@ -889,20 +956,27 @@ const styles = StyleSheet.create({
   },
   TitleContainerVoyageDescription: {
     marginHorizontal: vw(2),
-    marginTop: vh(2),
+    // marginTop: vh(2),
   },
   TitleContainerVoyageRoute: {
-    marginTop: vh(2),
+    // marginTop: vh(2),
     marginHorizontal: vw(4),
   },
   waypointsContainer: {
-    borderRadius: vw(5),
-    marginHorizontal: vw(4),
+    marginHorizontal: vw(2),
   },
   mainBidsContainer2: {
-    borderRadius: vw(5),
-    marginHorizontal: vw(4),
-    marginTop: vh(2),
+    borderRadius: 20,
+    marginHorizontal: vw(2),
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    paddingTop: vh(1.5),
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   voyageRoute: {
     borderRadius: vw(5),
@@ -913,20 +987,19 @@ const styles = StyleSheet.create({
     padding: vh(0),
   },
   currentBidsAndSeeAll: {
-    marginTop: vh(2),
+    marginTop: 0,
     flexDirection: "row",
-    // justifyContent: "space-between",
     justifyContent: "flex-start",
     paddingRight: vw(10),
   },
   currentBidsAndSeeAllBids: {
-    marginTop: vh(2),
+    marginTop: 0,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingRight: vw(10),
   },
   WaypointsAndInfo: {
-    marginTop: vh(2),
+    marginTop: 0,
     flexDirection: "row",
     justifyContent: "flex-start",
     paddingRight: vw(10),
@@ -950,6 +1023,57 @@ const styles = StyleSheet.create({
   detailsCard: {
     borderRadius: 20,
     padding: 16,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+  },
+
+  waypointsCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(1),
+  },
+
+  routeCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(1),
+    overflow: "hidden",
+  },
+
+  sectionCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: 0,
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(1),
   },
 
 

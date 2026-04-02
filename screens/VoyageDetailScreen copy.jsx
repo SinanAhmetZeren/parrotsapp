@@ -78,12 +78,12 @@ const VoyageDetailScreen = ({ navigation }) => {
     refetch: refetchVoyage,
   } = useGetVoyageByIdQuery(voyageId);
 
-  useEffect(() => {
-    console.log("--> voyage data -->");
-    console.log("hello");
-    console.log(VoyageData?.publicOnMap);
+  // useEffect(() => {
+  //   console.log("--> voyage data -->");
+  //   console.log("hello");
+  //   console.log(VoyageData?.publicOnMap);
 
-  }, [VoyageData])
+  // }, [VoyageData])
 
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);

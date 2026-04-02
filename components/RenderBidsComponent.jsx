@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   parrotBlue,
   parrotGreen,
@@ -103,6 +103,7 @@ export const RenderBidsComponent = ({
               width: vw(75),
               flexDirection: "column",
               padding: vh(0.1),
+              backgroundColor: "transparent",
             }}
           >
             <View
@@ -491,10 +492,7 @@ const styles = StyleSheet.create({
     margin: vh(0.3),
     alignItems: "center",
     borderRadius: vh(2),
-    // backgroundColor: "rgba(0, 119, 234,0.05)",
     backgroundColor: parrotCream,
-    // borderWidth: 1,
-    // borderColor: parrotInputTextColor,
   },
   flatlistContainer: {
     backgroundColor: "rgba(1,1,1,0.4)",
