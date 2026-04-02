@@ -13,6 +13,8 @@ import {
   StatusBar,
   Button,
   ActivityIndicator,
+  Modal,
+  ScrollView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
@@ -31,6 +33,8 @@ import {
   updateUserFavorites,
 } from "../slices/UserSlice";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import TermsOfUseComponent from "../components/TermsOfUseComponent";
+import { TERMS_VERSION } from "../constants/TermsVersion";
 //import GoogleLoginButton from "../components/GoogleAuthButton";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotDarkCream, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
 
@@ -68,6 +72,8 @@ const LoginScreen = ({ navigation }) => {
   const [isFocusedPasswordR, setIsFocusedPasswordR] = useState(false);
   const [isFocusedPasswordR2, setIsFocusedPasswordR2] = useState(false);
   const [isFocusedUserNameR, setIsFocusedUserNameR] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsModalVisible, setTermsModalVisible] = useState(false);
   const [
     registerUser,
     { isLoading: isLoadingRegisterUser, isSuccess: isSuccessRegisterUser },
@@ -269,6 +275,7 @@ const LoginScreen = ({ navigation }) => {
         Email: emailR,
         UserName: userNameR,
         Password: passwordR,
+        TermsVersion: TERMS_VERSION,
       }).unwrap();
 
       setUserNameR("");
@@ -606,17 +613,49 @@ const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
 
+              <TouchableOpacity
+                style={styles.termsRow}
+                onPress={() => setTermsAccepted(prev => !prev)}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.checkbox, termsAccepted && styles.checkboxChecked]}>
+                  {termsAccepted && <Text style={styles.checkmark}>✓</Text>}
+                </View>
+                <Text style={styles.termsText}>
+                  I have read and agree to the{" "}
+                </Text>
+                <TouchableOpacity onPress={() => setTermsModalVisible(true)}>
+                  <Text style={styles.termsLink}>Terms of Use</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+
+              <Modal
+                visible={termsModalVisible}
+                animationType="slide"
+                onRequestClose={() => setTermsModalVisible(false)}
+              >
+                <View style={{ flex: 1 }}>
+                  <TermsOfUseComponent />
+                  <TouchableOpacity
+                    style={styles.termsCloseButton}
+                    onPress={() => setTermsModalVisible(false)}
+                  >
+                    <Text style={styles.choiceText}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </Modal>
+
               <View style={styles.loginContainer}>
                 <TouchableOpacity
                   style={[
                     styles.selection2,
                     isLoadingRegisterUser ||
                       passwordR === "" ||
-                      passwordR2 === ""
+                      passwordR2 === "" ||
+                      !termsAccepted
                       ? styles.disabled
                       : null,
                   ]}
-                  // onPress={handleRegister}
                   onPress={() => {
                     if (passwordR !== passwordR2) {
                       Toast.show({
@@ -634,7 +673,8 @@ const LoginScreen = ({ navigation }) => {
                   disabled={
                     isLoadingRegisterUser ||
                     passwordR === "" ||
-                    passwordR2 === ""
+                    passwordR2 === "" ||
+                    !termsAccepted
                   }
                 >
                   <Text style={styles.choiceText}>Register</Text>
@@ -983,6 +1023,48 @@ const styles = StyleSheet.create({
   inputFocused: {
     borderColor: parrotBlueSemiTransparent3,
     borderWidth: 3,
+  },
+  termsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+    marginBottom: 4,
+    flexWrap: "wrap",
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: parrotBlue,
+    marginRight: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: parrotBlue,
+  },
+  checkmark: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  termsText: {
+    fontSize: 13,
+    color: parrotPlaceholderGrey,
+  },
+  termsLink: {
+    fontSize: 13,
+    color: parrotBlue,
+    fontWeight: "600",
+    textDecorationLine: "underline",
+  },
+  termsCloseButton: {
+    backgroundColor: parrotBlue,
+    margin: 16,
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: "center",
   },
   imagecontainer: {
     marginTop: vh(10),

@@ -456,8 +456,9 @@ const VoyageDetailScreen = ({ navigation }) => {
 
                 {/* Prices */}
                 <View style={styles.rowSplit}>
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Min Price:</Text>
+                  <View style={{ ...styles.rowHalfClean }}>
+                    <Text style={{ ...styles.label }}>Min Price:</Text>
+
                     <Text style={styles.value}>
                       {VoyageData.currency}{VoyageData.minPrice}
                     </Text>
@@ -474,28 +475,29 @@ const VoyageDetailScreen = ({ navigation }) => {
                 {/* Flags */}
                 <View style={styles.rowSplit}>
                   <View style={styles.rowHalfClean}>
-                    <TouchableOpacity onPress={() => showToast("The host will select the most suitable bids")} style={{ marginRight: 4 }}>
-                      <Text style={styles.label}>Auction
-
-                        <MaterialIcons name="info-outline" size={14} color={parrotBlue} />
-                        :
+                    <TouchableOpacity onPress={() => showToast("The host will select the most suitable bids")}>
+                      <Text style={{ ...styles.label }}>Auction
+                        <MaterialIcons name="info-outline" size={14} color={"#0A1E5E"} />:
                       </Text>
                     </TouchableOpacity>
-
-                    <Ionicons
-                      name={VoyageData.auction ? "checkmark-circle-outline" : "close-circle-outline"}
-                      size={22}
-                      color={parrotBlue}
-                    />
+                    <View  >
+                      <Ionicons
+                        name={VoyageData.auction ? "checkmark-circle-outline" : "close-circle-outline"}
+                        size={22}
+                        color={parrotBlue}
+                      />
+                    </View>
                   </View>
 
                   <View style={styles.rowHalfClean}>
                     <Text style={styles.label}>Fixed Price:</Text>
-                    <Ionicons
-                      name={VoyageData.fixedPrice ? "checkmark-circle-outline" : "close-circle-outline"}
-                      size={22}
-                      color={parrotBlue}
-                    />
+                    <View >
+                      <Ionicons
+                        name={VoyageData.fixedPrice ? "checkmark-circle-outline" : "close-circle-outline"}
+                        size={22}
+                        color={parrotBlue}
+                      />
+                    </View>
                   </View>
                 </View>
 

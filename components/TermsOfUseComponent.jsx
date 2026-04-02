@@ -92,6 +92,11 @@ export default function TermsOfUseComponent() {
                     you meet this age requirement and have the legal capacity to enter into
                     this agreement under UK law.
                 </Text>
+                <Text style={styles.paragraph}>
+                    By creating an account or continuing to use the platform, you confirm
+                    that you have read, understood, and agree to be bound by these Terms.
+                    If you do not agree, you must not use the platform.
+                </Text>
             </View>
 
             {/* 3. Profile */}
@@ -111,7 +116,40 @@ export default function TermsOfUseComponent() {
                 <Text style={styles.sectionTitle}>4. Voyages and Bids</Text>
                 <Text style={styles.paragraph}>
                     Parrots does not guarantee any voyage will occur, be safe, or as
-                    described. Participation is at users’ own risk.
+                    described. Participation is at users' own risk.
+                </Text>
+
+                <Text style={styles.sectionTitle2}>
+                    a. Accepted Bids and Voyage Owner Responsibility
+                </Text>
+                <Text style={styles.paragraph}>
+                    When a voyage owner accepts a bid, this constitutes an expression of
+                    intent between users only. It does not create a legally binding
+                    contract, and Parrots is not a party to any such arrangement.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Parrots does not guarantee that a voyage owner will follow through on
+                    an accepted bid, fulfil any stated arrangements, or communicate further
+                    after acceptance. Users who have had a bid accepted proceed entirely at
+                    their own risk.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Parrots strongly recommends that users:{"\n"}
+                    {"  "}• Confirm arrangements directly with the voyage owner before
+                    making any personal plans{"\n"}
+                    {"  "}• Do not make non-refundable bookings or financial commitments
+                    based solely on a bid acceptance within the app{"\n"}
+                    {"  "}• Exercise caution when sharing personal contact details
+                </Text>
+                <Text style={styles.paragraph}>
+                    Parrots shall not be held liable for any loss, inconvenience, or harm
+                    resulting from a voyage owner's failure to proceed following bid
+                    acceptance.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Note: Parrots does not facilitate payments. Any financial arrangements
+                    made between users occur entirely outside the platform and are the sole
+                    responsibility of the parties involved.
                 </Text>
             </View>
 
@@ -142,21 +180,18 @@ export default function TermsOfUseComponent() {
                     {"\n"}
                     • When the Messages screen is opened, messages may be automatically marked as read and the badge cleared.
                     {"\n\n"}
-                    The badge is provided for informational purposes only and may not always reflect exact real-time status. Users are solely responsible for monitoring and reviewing their messages. Parrots does not guarantee that the badge will accurately reflect message status at all times and shall not be held responsible or liable for missed messages, unread messages, delayed badge updates, or any consequences arising from a user’s failure to review their messages.
+                    The badge is provided for informational purposes only and may not always reflect exact real-time status. Users are solely responsible for monitoring and reviewing their messages. Parrots does not guarantee that the badge will accurately reflect message status at all times and shall not be held responsible or liable for missed messages, unread messages, delayed badge updates, or any consequences arising from a user's failure to review their messages.
                 </Text>
-
-
-                {/* b. Messages Sent After Bid Acceptance */}
 
                 <Text style={styles.sectionTitle2}>
                     b. Messages Sent After Bid Acceptance
                 </Text>
 
                 <Text style={styles.paragraph}>
-                    When a user accepts a bid, a message will be sent through the platform’s messaging system to the
+                    When a user accepts a bid, a message will be sent through the platform's messaging system to the
                     creator of the bid on behalf of the accepting user.
                     {"\n\n"}
-                    This message is a direct result of the accepting user’s action and is intended to allow users
+                    This message is a direct result of the accepting user's action and is intended to allow users
                     to communicate regarding the relevant voyage or listing.
                     {"\n\n"}
                     This is not a marketing message or notification, but a functional
@@ -169,9 +204,6 @@ export default function TermsOfUseComponent() {
                     communications. Users are solely responsible for their interactions and any arrangements made.
                 </Text>
 
-
-                {/* c. Message Delivery and Refresh Limitations */}
-
                 <Text style={styles.sectionTitle2}>
                     c. Message Delivery and Refresh Limitations
                 </Text>
@@ -181,11 +213,7 @@ export default function TermsOfUseComponent() {
                     if the App has been idle, the device is in sleep mode, or network conditions are poor. Users are responsible for ensuring that they have an active
                     connection and that the App is open to receive the latest messages.
                 </Text>
-
             </View>
-
-
-
 
             {/* 6. Prohibited */}
             <View style={styles.wrapper}>
@@ -193,6 +221,13 @@ export default function TermsOfUseComponent() {
                 <Text style={styles.paragraph}>
                     Users must not post illegal, harmful, or offensive content; harass or
                     threaten others; or violate intellectual property rights.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Users must not:{"\n"}
+                    {"  "}• Impersonate any real person, business, or organisation{"\n"}
+                    {"  "}• Create multiple accounts to manipulate listings, bids, or platform visibility{"\n"}
+                    {"  "}• Post content containing external links for commercial or promotional purposes without Parrots' consent{"\n"}
+                    {"  "}• Use the platform to collect personal information from other users for purposes unrelated to genuine voyage participation
                 </Text>
 
                 <Text style={styles.sectionTitle2}>Content Moderation and Removal</Text>
@@ -203,37 +238,59 @@ export default function TermsOfUseComponent() {
                     fraudulent, outdated, inactive for an extended period, or otherwise
                     inconsistent with the purpose of the platform or these Terms.
                 </Text>
-
                 <Text style={styles.paragraph}>
                     Removal of content does not imply wrongdoing by the user, and Parrots is not
                     required to provide prior notice, explanation, or justification.
                 </Text>
             </View>
 
-
-            {/* 7. IP */}
+            {/* 7. Account Suspension */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>7. Intellectual Property</Text>
+                <Text style={styles.sectionTitle}>7. Account Suspension and Termination</Text>
+                <Text style={styles.paragraph}>
+                    Parrots reserves the right to suspend, restrict, or permanently terminate
+                    any user account at its sole discretion, at any time, without prior notice,
+                    for any reason including but not limited to: breach of these Terms,
+                    suspicious activity, prolonged inactivity, or behaviour that Parrots
+                    reasonably considers harmful to the platform or its users.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Terminated users may not re-register without express permission from Parrots.
+                </Text>
+            </View>
+
+            {/* 8. IP */}
+            <View style={styles.wrapper}>
+                <Text style={styles.sectionTitle}>8. Intellectual Property</Text>
                 <Text style={styles.paragraph}>
                     Users retain ownership of content they post but grant Parrots a
                     non-exclusive, royalty-free license to display it.
                 </Text>
             </View>
 
-            {/* 8. Liability */}
+            {/* 9. Liability */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>8. Limitation of Liability</Text>
+                <Text style={styles.sectionTitle}>9. Limitation of Liability</Text>
                 <Text style={styles.paragraph}>
-                    Parrots is not liable for any losses, damages, or injuries arising from
-                    platform use.
+                    Parrots is not liable for any direct, indirect, incidental, consequential,
+                    or special losses or damages arising from use of the platform, including
+                    but not limited to loss of data, loss of opportunity, personal injury, or
+                    property damage. To the maximum extent permitted by law, Parrots' total
+                    liability to any user shall not exceed zero, as the platform is provided
+                    free of charge.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Nothing in these Terms excludes or limits liability for death or personal
+                    injury caused by negligence, fraud, or any other liability that cannot be
+                    excluded under applicable UK law.
                 </Text>
             </View>
 
-            {/* 9. Disclaimers */}
+            {/* 10. Disclaimers */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>9. Disclaimers</Text>
+                <Text style={styles.sectionTitle}>10. Disclaimers</Text>
                 <Text style={styles.paragraph}>
-                    The platform is provided “as is” without warranties.
+                    The platform is provided "as is" without warranties.
                 </Text>
 
                 <Text style={styles.sectionTitle2}>No payments</Text>
@@ -252,18 +309,22 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-
-            {/* 10. Modifications */}
+            {/* 11. Modifications */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>10. Modifications</Text>
+                <Text style={styles.sectionTitle}>11. Modifications</Text>
                 <Text style={styles.paragraph}>
-                    Parrots may update these Terms at any time. Continued use constitutes acceptance.
+                    Parrots may update these Terms at any time. Where changes are material,
+                    Parrots will make reasonable efforts to notify users, such as by displaying
+                    a notice within the app or sending an email to the registered address.
+                    Continued use of the platform after changes take effect constitutes
+                    acceptance of the updated Terms. Users who do not agree to updated Terms
+                    should stop using the platform and may request account deletion.
                 </Text>
             </View>
 
-            {/* 11. Privacy Policy */}
+            {/* 12. Privacy Policy */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>11. Privacy Policy</Text>
+                <Text style={styles.sectionTitle}>12. Privacy Policy</Text>
 
                 <Text style={styles.paragraph}>
                     Parrots respects your privacy and is committed to protecting your personal data.
@@ -310,6 +371,12 @@ export default function TermsOfUseComponent() {
                     Information is visible to other users only where users choose to make it public
                     (e.g., profiles, listings, messages).
                 </Text>
+                <Text style={styles.paragraph}>
+                    Parrots uses trusted third-party infrastructure providers to store and serve data,
+                    including file storage and hosting services. These providers act as data processors
+                    under UK GDPR and are engaged under appropriate data processing terms. They do not
+                    have independent access to your data for their own purposes.
+                </Text>
 
                 <Text style={styles.sectionTitle2}>f. User Communications</Text>
                 <Text style={styles.paragraph}>
@@ -330,7 +397,7 @@ export default function TermsOfUseComponent() {
                     personal data, and to withdraw consent at any time, in accordance with UK GDPR.
                 </Text>
 
-                <Text style={styles.sectionTitle2}>i. Children’s Privacy</Text>
+                <Text style={styles.sectionTitle2}>i. Children's Privacy</Text>
                 <Text style={styles.paragraph}>
                     Parrots is not intended for users under the age of 18 and does not knowingly
                     collect data from minors.
@@ -342,7 +409,6 @@ export default function TermsOfUseComponent() {
                     platform constitutes acceptance of the updated policy.
                 </Text>
 
-
                 <Text style={styles.sectionTitle2}>k. Local Device Storage</Text>
                 <Text style={styles.paragraph}>
                     Parrots may store certain information locally on your device,
@@ -351,20 +417,31 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-
-
-
-            {/* 12. Law */}
+            {/* 13. Dispute Resolution */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>12. Governing Law</Text>
+                <Text style={styles.sectionTitle}>13. Dispute Resolution</Text>
+                <Text style={styles.paragraph}>
+                    In the event of a dispute, users are encouraged to contact Parrots at
+                    parrotsapp@gmail.com in the first instance to seek an informal resolution.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Parrots does not currently participate in any formal Alternative Dispute
+                    Resolution (ADR) scheme. Users retain the right to bring claims before a
+                    UK court of competent jurisdiction.
+                </Text>
+            </View>
+
+            {/* 14. Law */}
+            <View style={styles.wrapper}>
+                <Text style={styles.sectionTitle}>14. Governing Law</Text>
                 <Text style={styles.paragraph}>
                     These Terms are governed by the laws of the United Kingdom.
                 </Text>
             </View>
 
-            {/* 13. Contact */}
+            {/* 15. Contact */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>13. Contact</Text>
+                <Text style={styles.sectionTitle}>15. Contact</Text>
                 <Text style={styles.paragraph}>
                     Email: parrotsapp@gmail.com{"\n"}
                     Location: United Kingdom
