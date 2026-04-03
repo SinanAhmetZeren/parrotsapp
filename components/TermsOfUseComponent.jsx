@@ -111,9 +111,31 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 4. Voyages */}
+            {/* 4. Platform Neutrality */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>4. Voyages and Bids</Text>
+                <Text style={styles.sectionTitle}>4. Platform Neutrality and No Endorsement</Text>
+                <Text style={styles.paragraph}>
+                    Parrots is a technology platform that enables users to list, discover, and bid on voyages and vehicle hire. Parrots does not create, own, operate, or control any voyage, vehicle, or service listed on the platform.
+                </Text>
+                <Text style={styles.paragraph}>
+                    We do not verify, approve, endorse, or guarantee:{"\n"}
+                    {"  "}• the accuracy or completeness of any listing{"\n"}
+                    {"  "}• the identity, credentials, or reliability of any user{"\n"}
+                    {"  "}• the quality, safety, or legality of any voyage or vehicle offered{"\n"}
+                    {"  "}• that any voyage will depart, arrive, or be completed as described{"\n"}
+                    {"  "}• any transaction, payment, or agreement made between users
+                </Text>
+                <Text style={styles.paragraph}>
+                    All arrangements are made solely between the users involved. Parrots is not a party to any agreement, booking, or transaction between users and accepts no liability arising from them.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Any reliance on listings, user profiles, or content posted by other users is at your own risk.
+                </Text>
+            </View>
+
+            {/* 5. Voyages */}
+            <View style={styles.wrapper}>
+                <Text style={styles.sectionTitle}>5. Voyages and Bids</Text>
                 <Text style={styles.paragraph}>
                     Parrots does not guarantee any voyage will occur, be safe, or as
                     described. Participation is at users' own risk.
@@ -153,9 +175,9 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 5. Communication */}
+            {/* 6. Communication */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>5. Communication Between Users</Text>
+                <Text style={styles.sectionTitle}>6. Communication Between Users</Text>
                 <Text style={styles.paragraph}>
                     Parrots allows users to communicate with each other through in-app messaging features.
 
@@ -215,9 +237,9 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 6. Prohibited */}
+            {/* 7. Prohibited */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>6. Prohibited Activities</Text>
+                <Text style={styles.sectionTitle}>7. Prohibited Activities</Text>
                 <Text style={styles.paragraph}>
                     Users must not post illegal, harmful, or offensive content; harass or
                     threaten others; or violate intellectual property rights.
@@ -244,9 +266,9 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 7. Account Suspension */}
+            {/* 8. Account Suspension */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>7. Account Suspension and Termination</Text>
+                <Text style={styles.sectionTitle}>8. Account Suspension and Termination</Text>
                 <Text style={styles.paragraph}>
                     Parrots reserves the right to suspend, restrict, or permanently terminate
                     any user account at its sole discretion, at any time, without prior notice,
@@ -259,18 +281,18 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 8. IP */}
+            {/* 9. IP */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>8. Intellectual Property</Text>
+                <Text style={styles.sectionTitle}>9. Intellectual Property</Text>
                 <Text style={styles.paragraph}>
                     Users retain ownership of content they post but grant Parrots a
                     non-exclusive, royalty-free license to display it.
                 </Text>
             </View>
 
-            {/* 9. Liability */}
+            {/* 10. Liability */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>9. Limitation of Liability</Text>
+                <Text style={styles.sectionTitle}>10. Limitation of Liability</Text>
                 <Text style={styles.paragraph}>
                     Parrots is not liable for any direct, indirect, incidental, consequential,
                     or special losses or damages arising from use of the platform, including
@@ -286,9 +308,9 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 10. Disclaimers */}
+            {/* 11. Disclaimers */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>10. Disclaimers</Text>
+                <Text style={styles.sectionTitle}>11. Disclaimers</Text>
                 <Text style={styles.paragraph}>
                     The platform is provided "as is" without warranties.
                 </Text>
@@ -309,9 +331,9 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 11. Modifications */}
+            {/* 12. Modifications */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>11. Modifications</Text>
+                <Text style={styles.sectionTitle}>12. Modifications</Text>
                 <Text style={styles.paragraph}>
                     Parrots may update these Terms at any time. Where changes are material,
                     Parrots will make reasonable efforts to notify users, such as by displaying
@@ -322,9 +344,9 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 12. Privacy Policy */}
+            {/* 13. Privacy Policy */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>12. Privacy Policy</Text>
+                <Text style={styles.sectionTitle}>13. Privacy Policy</Text>
 
                 <Text style={styles.paragraph}>
                     Parrots respects your privacy and is committed to protecting your personal data.
@@ -417,9 +439,9 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 13. Dispute Resolution */}
+            {/* 14. Dispute Resolution */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>13. Dispute Resolution</Text>
+                <Text style={styles.sectionTitle}>14. Dispute Resolution</Text>
                 <Text style={styles.paragraph}>
                     In the event of a dispute, users are encouraged to contact Parrots at
                     parrotsapp@gmail.com in the first instance to seek an informal resolution.
@@ -431,17 +453,17 @@ export default function TermsOfUseComponent() {
                 </Text>
             </View>
 
-            {/* 14. Law */}
+            {/* 15. Law */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>14. Governing Law</Text>
+                <Text style={styles.sectionTitle}>15. Governing Law</Text>
                 <Text style={styles.paragraph}>
                     These Terms are governed by the laws of the United Kingdom.
                 </Text>
             </View>
 
-            {/* 15. Contact */}
+            {/* 16. Contact */}
             <View style={styles.wrapper}>
-                <Text style={styles.sectionTitle}>15. Contact</Text>
+                <Text style={styles.sectionTitle}>16. Contact</Text>
                 <Text style={styles.paragraph}>
                     Email: parrotsapp@gmail.com{"\n"}
                     Location: United Kingdom
