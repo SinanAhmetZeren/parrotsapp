@@ -856,6 +856,7 @@ const styles = StyleSheet.create({
     backgroundColor: applyFilterChangedBackgroundColor,
     borderWidth: 2,
     borderColor: applyFilterChangedBorderColor,
+
   },
   currentBidsTitle: {
     fontSize: 20,

@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   innerContainer: {
     backgroundColor: "white",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 30,
     width: vw(90),
     height: vh(40),
   },
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     backgroundColor: parrotBlue,
     padding: 5,
     width: vw(60),
-    borderRadius: 10,
+    borderRadius: 30,
     marginTop: 5,
   },
   buttonSave: {
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     backgroundColor: parrotBlue,
     padding: 5,
     width: vw(30),
-    borderRadius: 10,
+    borderRadius: 30,
     marginTop: 5,
   },
   buttonClear: {
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     backgroundColor: parrotGreen,
     padding: 5,
     width: vw(30),
-    borderRadius: 10,
+    borderRadius: 30,
     marginTop: 5,
   },
 });

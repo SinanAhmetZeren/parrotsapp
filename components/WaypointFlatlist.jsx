@@ -388,10 +388,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderRadius: vh(3),
     backgroundColor: parrotCream,
-    overflow: "hidden",
     borderWidth: 2,
-    borderColor: "transparent",
     borderColor: "#c3c3c322",
+    overflow: "hidden",
   },
   profileImage: {
     margin: vh(1),

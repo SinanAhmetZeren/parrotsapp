@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     backgroundColor: parrotBlue,
     padding: 5,
     width: vw(30),
-    borderRadius: 10,
+    borderRadius: 30,
     marginTop: 5,
   },
   buttonClear: {
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     backgroundColor: parrotGreen,
     padding: 5,
     width: vw(30),
-    borderRadius: 10,
+    borderRadius: 30,
     marginTop: 5,
   },
 });

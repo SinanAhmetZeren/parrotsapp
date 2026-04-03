@@ -20,7 +20,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { vh, vw } from "react-native-expo-viewport-units";
-import { Feather, Ionicons, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, Ionicons, AntDesign, MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import HomeScreen from "./screens/HomeScreen";
 import VoyageDetailScreen from "./screens/VoyageDetailScreen";
@@ -105,7 +105,6 @@ const screenOptions1 = {
     elevation: 0,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    // backgroundColor: "#fff6ec",
     backgroundColor: bottomTabColor,
   },
 };
@@ -344,19 +343,39 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
           component={HomeStack}
           options={{
             tabBarIcon: ({ focused }) => {
+              const active = focused && !modalVisible;
               return (
-                <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
-                  <MaterialCommunityIcons
-                    name={"home-outline"}
-                    size={24}
-                    color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
-                  />
-                  <Text
-                    style={{
-                      ...baseTextStyle,
-                      color: focused && !modalVisible ? selectedTabColor : unselectedTabColor,
-                    }}
-                  >
+                <View style={{ bottom: vh(-3) }}>
+                  <View style={{
+                    width: vw(12),
+                    height: vw(12),
+                    borderRadius: vw(6),
+                    backgroundColor: active ? "#d4bfa0" : "#c8b5a0",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    shadowColor: "#b89e82",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.5,
+                    shadowRadius: 0,
+                    elevation: 5,
+                  }}>
+                    <View style={{
+                      width: vw(12),
+                      height: vw(12),
+                      borderRadius: vw(6),
+                      backgroundColor: active ? "#fff8f0" : "#f5ede3",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: 7,
+                    }}>
+                      <MaterialCommunityIcons
+                        name={"home-outline"}
+                        size={24}
+                        color={active ? selectedTabColor : unselectedTabColor}
+                      />
+                    </View>
+                  </View>
+                  <Text style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>
                     Home
                   </Text>
                 </View>
@@ -385,21 +404,15 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
           component={ProfileStack}
           options={{
             tabBarIcon: ({ focused }) => {
+              const active = focused && !modalVisible;
               return (
-                <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
-                  <MaterialCommunityIcons
-                    name={"account-outline"}
-                    size={24}
-                    color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
-                  />
-                  <Text
-                    style={{
-                      ...baseTextStyle,
-                      color: focused && !modalVisible ? selectedTabColor : unselectedTabColor,
-                    }}
-                  >
-                    Profile
-                  </Text>
+                <View style={{ bottom: vh(-3) }}>
+                  <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: active ? "#d4bfa0" : "#c8b5a0", alignItems: "center", justifyContent: "center", shadowColor: "#b89e82", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 0, elevation: 5 }}>
+                    <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: active ? "#fff8f0" : "#f5ede3", alignItems: "center", justifyContent: "center", marginBottom: 7 }}>
+                      <MaterialCommunityIcons name={"account-outline"} size={24} color={active ? selectedTabColor : unselectedTabColor} />
+                    </View>
+                  </View>
+                  <Text style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Profile</Text>
                 </View>
               );
             },
@@ -428,21 +441,14 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
             tabBarIcon: ({ focused }) => {
               const isActive = focused || modalVisible;
               return (
-                <TouchableOpacity onPress={toggleModal} >
-                  <View style={{ ...styles.tabIconStyle, backgroundColor: isActive ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
-                    <MaterialCommunityIcons
-                      name={"rocket-launch-outline"}
-                      size={24}
-                      color={isActive ? selectedTabColor : unselectedTabColor}
-                    />
-                    <Text
-                      style={{
-                        ...baseTextStyle,
-                        color: isActive ? selectedTabColor : unselectedTabColor,
-                      }}
-                    >
-                      Voyage
-                    </Text>
+                <TouchableOpacity onPress={toggleModal}>
+                  <View style={{ bottom: vh(-3) }}>
+                    <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: isActive ? "#d4bfa0" : "#c8b5a0", alignItems: "center", justifyContent: "center", shadowColor: "#b89e82", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 0, elevation: 5 }}>
+                      <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: isActive ? "#fff8f0" : "#f5ede3", alignItems: "center", justifyContent: "center", marginBottom: 7 }}>
+                        <MaterialCommunityIcons name={"rocket-launch-outline"} size={24} color={isActive ? selectedTabColor : unselectedTabColor} />
+                      </View>
+                    </View>
+                    <Text style={{ ...baseTextStyle, display: "none", color: isActive ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Voyage</Text>
                   </View>
                 </TouchableOpacity>)
             }
@@ -454,22 +460,15 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
           component={FavoritesStack}
           options={{
             tabBarIcon: ({ focused }) => {
+              const active = focused && !modalVisible;
               return (
-                <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
-
-                  <MaterialCommunityIcons
-                    name={"heart-outline"}
-                    size={24}
-                    color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
-                  />
-                  <Text
-                    style={{
-                      ...baseTextStyle,
-                      color: focused && !modalVisible ? selectedTabColor : unselectedTabColor,
-                    }}
-                  >
-                    Favorites
-                  </Text>
+                <View style={{ bottom: vh(-3) }}>
+                  <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: active ? "#d4bfa0" : "#c8b5a0", alignItems: "center", justifyContent: "center", shadowColor: "#b89e82", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 0, elevation: 5 }}>
+                    <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: active ? "#fff8f0" : "#f5ede3", alignItems: "center", justifyContent: "center", marginBottom: 7 }}>
+                      <MaterialCommunityIcons name={"heart-outline"} size={24} color={active ? selectedTabColor : unselectedTabColor} />
+                    </View>
+                  </View>
+                  <Text style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Favorites</Text>
                 </View>
               );
             },
@@ -499,25 +498,15 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
           component={MessageStack}
           options={{
             tabBarIcon: ({ focused }) => {
+              const active = focused && !modalVisible;
               return (
-                <View style={{
-                  ...styles.tabIconStyle,
-                  backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor,
-                }}>
-
-                  <MaterialCommunityIcons
-                    name={"share-variant-outline"}
-                    size={24}
-                    color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
-                  />
-                  <Text
-                    style={{
-                      ...baseTextStyle,
-                      color: focused && !modalVisible ? selectedTabColor : unselectedTabColor,
-                    }}
-                  >
-                    Connect
-                  </Text>
+                <View style={{ bottom: vh(-3) }}>
+                  <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: active ? "#d4bfa0" : "#c8b5a0", alignItems: "center", justifyContent: "center", shadowColor: "#b89e82", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 0, elevation: 5 }}>
+                    <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: active ? "#fff8f0" : "#f5ede3", alignItems: "center", justifyContent: "center", marginBottom: 7 }}>
+                      <MaterialCommunityIcons name={"share-variant-outline"} size={24} color={active ? selectedTabColor : unselectedTabColor} />
+                    </View>
+                  </View>
+                  <Text style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Connect</Text>
                 </View>
               );
             },

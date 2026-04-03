@@ -85,6 +85,8 @@ export default function MessagesScreen({ navigation }) {
 
       // Tell hub user entered this screen
       invokeHub("EnterMessagesScreen", userId);
+      console.log("enter messages screen --> ");
+
       dispatch(setUnreadMessages(false));
 
 
