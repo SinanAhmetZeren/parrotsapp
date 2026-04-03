@@ -574,7 +574,6 @@ function App() {
             })
           );
           // Start SignalR
-          console.log("stored suer id", storedUserId);
           await initHubConnection(storedUserId, API_URL);
           // Initial unread check
           try {
@@ -583,10 +582,8 @@ function App() {
               storedUserId
             );
 
-            console.log("after inithub - check unread messages: ", hasUnread);
 
             if (hasUnread) {
-              console.log("has unread message, dispatch....");
               dispatch(setUnreadMessages(true));
 
             }
@@ -602,7 +599,6 @@ function App() {
           register_ReceiveUnreadNotification(unreadHandlerTrue);
 
         } catch (error) {
-          console.log(error);
         }
       };
 
@@ -619,7 +615,6 @@ function App() {
     const userId = useSelector((state) => state.users.userId);
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const hasUnreadMessages = useSelector((state) => state.users.unreadMessages);
-    console.log("1. has unread messages from state: ", hasUnreadMessages);
 
 
     const {

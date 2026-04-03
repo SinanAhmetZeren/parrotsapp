@@ -30,7 +30,6 @@ export default function ConversationList({ data, userId }) {
       return { user, userName, userProfileImage, text, dateTime, publicId };
     });
   } else {
-    console.log("Data is null.");
   }
 
   const renderConversationViews = () => {

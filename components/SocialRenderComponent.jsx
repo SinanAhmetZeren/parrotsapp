@@ -22,7 +22,6 @@ export const SocialRenderComponent = ({
 }) => {
   useEffect(() => {
     setSocialItemCount(contactDataArray.length);
-    // console.log("contact data array: ", contactDataArray);
   }, [setSocialItemCount, contactDataArray]);
   let contactDataArray = [];
 

@@ -85,8 +85,6 @@ export default function MessagesScreen({ navigation }) {
 
       // Tell hub user entered this screen
       invokeHub("EnterMessagesScreen", userId);
-      console.log("entered messages screen <-- ");
-
       dispatch(setUnreadMessages(false));
 
 
@@ -112,7 +110,6 @@ export default function MessagesScreen({ navigation }) {
         try {
           await refetch();
         } catch (err) {
-          console.error("Failed to refetch messages:", err);
         }
       };
 
@@ -138,7 +135,6 @@ export default function MessagesScreen({ navigation }) {
         try {
           await refetch();
         } catch (error) {
-          console.error("Error refetching messages:", error);
         }
       };
       fetchData();
@@ -152,7 +148,6 @@ export default function MessagesScreen({ navigation }) {
       await refetch();
       setHasError(false);
     } catch (error) {
-      console.error(error);
       setHasError(true);
     } finally {
       setRefreshing(false);

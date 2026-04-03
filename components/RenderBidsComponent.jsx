@@ -150,7 +150,6 @@ export const RenderBidsComponent = ({
               data={bids}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item, index }) => {
-                // console.log("Rendering item:", item);
 
                 if (ownVoyage) {
                   return (
@@ -229,7 +228,7 @@ export const RenderBidsComponent = ({
                           ) : (
                             <TouchableOpacity
                               style={{ flex: 1, alignItems: "center" }}
-                              onPress={() => console.log("bid accepted")}
+                              onPress={() => {}}
                             >
                               <View style={styles.acceptTextContainer}>
                                 <Text style={styles.acceptedText}>

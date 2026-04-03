@@ -21,7 +21,6 @@ export const SocialRenderComponentModal = ({
 }) => {
   useEffect(() => {
     setSocialItemCount(contactDataArray.length);
-    console.log("socials length: ", contactDataArray.length);
   }, [setSocialItemCount, contactDataArray]);
 
   let contactDataArray = [];
@@ -61,7 +60,6 @@ export const SocialRenderComponentModal = ({
   const renderAllItems = () => {
     if (contactDataArray.length > 0) {
       return contactDataArray.map((x, index) => {
-        console.log(x[1]);
         switch (x[1]) {
           case 0:
             return (
@@ -237,7 +235,6 @@ const TwitterItem = ({ twitter, handleTwitterPress, style }) => {
 };
 
 const TiktokItem = ({ tiktok, handleTiktokPress, style }) => {
-  console.log(tiktok);
   return (
     <TouchableOpacity style={style} onPress={() => handleTiktokPress()}>
       <Image

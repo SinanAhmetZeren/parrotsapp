@@ -24,7 +24,7 @@ import {
 } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotDarkCream, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotDarkCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
 
 const CreateVoyageMapComponent = ({
   voyageId,
@@ -138,7 +138,6 @@ const CreateVoyageMapComponent = ({
       setTitle("");
       setDescription("")
     } catch (error) {
-      console.error("Error uploading image", error);
     }
     finally {
       setIsUploadingWaypointImage(false);
@@ -147,14 +146,12 @@ const CreateVoyageMapComponent = ({
   };
 
   const handleDeleteWaypoint = async (waypointId) => {
-    console.log("delete waypoint id:", waypointId);
     try {
       await deleteWaypoint(waypointId);
       setAddedWayPoints((prevWaypoints) =>
         prevWaypoints.filter((waypoint) => waypoint.waypointId !== waypointId)
       );
     } catch (error) {
-      console.error("Error deleting waypoint", error);
     }
   }
 
@@ -251,7 +248,6 @@ const CreateVoyageMapComponent = ({
 
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          console.error("Permission to access location was denied");
           return;
         }
 
@@ -267,7 +263,6 @@ const CreateVoyageMapComponent = ({
 
         setInitialRegion(initial);
       } catch (error) {
-        console.error("Error getting user location:", error);
       }
     };
 
@@ -312,7 +307,10 @@ const CreateVoyageMapComponent = ({
 
   return (
     <View>
-      <View style={styles.mapWrapper} >
+      <View style={styles.mapCard}>
+        <View style={styles.cardTitleRow}>
+          <Text style={styles.cardTitle}>Add Waypoints</Text>
+        </View>
         <View style={styles.mapAndEmojisContainer}>
           <View style={styles.mapContainer}>
             <MapView
@@ -344,6 +342,9 @@ const CreateVoyageMapComponent = ({
 
 
       <View style={styles.newWaypointCard}>
+        <View style={styles.cardTitleRow}>
+          <Text style={styles.cardTitle}>Waypoint Details</Text>
+        </View>
         <View style={styles.profileContainer}>
           {isUploadingWaypointImage ? (
             <View style={styles.profileImage}>
@@ -355,7 +356,7 @@ const CreateVoyageMapComponent = ({
                 <Image source={{ uri: imageUri }} style={styles.profileImage} />
               ) : (
                 <Image
-                  source={require("../assets/parrotslogo.png")}
+                  source={require("../assets/ParrotsLogoPlus.png")}
                   style={styles.profileImage}
                 />
               )}
@@ -456,12 +457,13 @@ const CreateVoyageMapComponent = ({
       </View >
 
 
-      <View style={styles.addWaypoints}>
-        <Text style={styles.selectedText}>Added Waypoints</Text>
-      </View>
-
-      <View style={styles.waypointFlatlistContainer}>
-        <WaypointFlatList addedWayPoints={addedWayPoints} handleDeleteWaypoint={handleDeleteWaypoint} />
+      <View style={styles.addedWaypointsCard}>
+        <View style={styles.cardTitleRow}>
+          <Text style={styles.cardTitle}>Added Waypoints</Text>
+        </View>
+        <View style={styles.waypointFlatlistInner}>
+          <WaypointFlatList addedWayPoints={addedWayPoints} handleDeleteWaypoint={handleDeleteWaypoint} />
+        </View>
       </View>
 
       <TouchableOpacity
@@ -492,21 +494,49 @@ export default CreateVoyageMapComponent;
 
 const styles = StyleSheet.create({
 
-  mapWrapper: {
-
+  mapCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    overflow: "hidden",
   },
-  addWaypoints: {
-    alignItems: "center",
+  addedWaypointsCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(1),
   },
-  selectedText: {
-    color: parrotBlue,
-    fontSize: 18,
+  cardTitleRow: {
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+  },
+  cardTitle: {
+    fontSize: 20,
     fontWeight: "700",
-    textAlign: "center",
-    backgroundColor: "white",
-    paddingVertical: vh(0.5),
-    borderRadius: vh(1.5),
-    width: vw(50),
+    color: parrotLightBlue,
+  },
+  waypointFlatlistInner: {
+    height: vh(38),
+    padding: vh(2),
+    paddingVertical: vh(0),
+    justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
+    marginBottom: vh(1),
   },
   messageBubble: {
     width: vw(88),
@@ -588,14 +618,18 @@ const styles = StyleSheet.create({
     marginBottom: vh(5),
   },
   newWaypointCard: {
-    marginTop: vh(3),
-    marginBottom: vh(3),
-    backgroundColor: parrotBlueMediumTransparent,
-    borderColor: parrotBlueSemiTransparent,
-    borderWidth: 2,
-    borderRadius: vh(2),
-    width: vw(94),
-    alignSelf: "center",
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(1),
+    paddingHorizontal: vw(2),
   },
   latLng: {
     width: vw(59),

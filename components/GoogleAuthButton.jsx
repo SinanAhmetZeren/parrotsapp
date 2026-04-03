@@ -45,13 +45,10 @@ export default function GoogleLoginButton() {
       // 2. Fetch the AccessToken explicitly (to match your backend tokeninfo check)
       const { accessToken } = await GoogleSignin.getTokens();
 
-      console.log("Access Token for backend: ", accessToken);
 
       if (accessToken) {
         // 3. Send the accessToken to your google-login endpoint
         const res = await googleLoginInternal(accessToken).unwrap();
-        console.log("Login Success");
-        console.log("-->", res);
 
 
         await dispatch(

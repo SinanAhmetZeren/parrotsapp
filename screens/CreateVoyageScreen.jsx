@@ -39,7 +39,7 @@ import { API_URL } from "@env";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 import DropdownComponentCurrency from "../components/DropdownComponentCurrency";
 
 
@@ -90,18 +90,6 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [lastBidDate, setLastBidDate] = useState("11/11/2111");
   const [minPrice, setMinPrice] = useState(getRandomNumberString(10, 100));
   const [maxPrice, setMaxPrice] = useState(getRandomNumberString(101, 500));
-  /*
-    const [name, setName] = useState("");
-    const [brief, setBrief] = useState("");
-    const [description, setDescription] = useState("");
-    const [vacancy, setVacancy] = useState(1);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    const [lastBidDate, setLastBidDate] = useState("");
-    const [minPrice, setMinPrice] = useState(1);
-    const [maxPrice, setMaxPrice] = useState(1);
-  */
-
   const [createdVoyageImage, setCreatedVoyageImage] = useState(null);
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);
@@ -156,7 +144,7 @@ const CreateVoyageScreen = ({ navigation }) => {
     setCurrentStep(index);
   };
 
-  function convertDateFormat(inputDate) {
+  function convertDateFormat2(inputDate) {
     const date = new Date(inputDate);
     const year = date.getUTCFullYear();
     const month = `0${date.getUTCMonth() + 1}`.slice(-2);
@@ -167,6 +155,11 @@ const CreateVoyageScreen = ({ navigation }) => {
     const milliseconds = `00${date.getUTCMilliseconds()}`.slice(-3);
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
+  }
+
+  function convertDateFormat(inputDate) {
+    const date = new Date(inputDate);
+    return date.toISOString(); // ✅ THIS FIXES EVERYTHING
   }
 
   function convertDateFormat_LastBidDate(inputDate) {
@@ -440,7 +433,12 @@ const CreateVoyageScreen = ({ navigation }) => {
 
         {currentStep == 1 && !hasError && (
           <ScrollView style={styles.scrollview}>
-            <View>
+
+            {/* Card 1: Cover Image */}
+            <View style={styles.sectionCard}>
+              <View style={styles.cardTitleRow}>
+                <Text style={styles.cardTitle}>Profile Image</Text>
+              </View>
               <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={pickProfileImage}>
                   {image ? (
@@ -450,312 +448,334 @@ const CreateVoyageScreen = ({ navigation }) => {
                     />
                   ) : (
                     <Image
-                      source={require("../assets/parrotslogo.png")}
+                      source={require("../assets/ParrotsLogoPlus.png")}
                       style={styles.backgroundImagePlaceholder}
                     />
                   )}
                 </TouchableOpacity>
               </View>
+            </View>
 
-              <View style={styles.profileImageAndSocial}>
-                <View style={styles.formContainer}>
-                  {/* Username */}
+            {/* Card 2: Voyage Details */}
+            <View style={styles.sectionCard}>
+              <View style={styles.cardTitleRow}>
+                <Text style={styles.cardTitle}>Voyage Details</Text>
+              </View>
+              <View style={styles.formContainer}>
 
-                  {/* /// name /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Name:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        placeholder="Enter voyage name"
-                        placeholderTextColor={parrotPlaceholderGrey}
-                        value={name}
-                        maxLength={50}
-                        onChangeText={(text) => setName(text)}
-                      />
-                    </View>
+                {/* /// name /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Name:</Text>
                   </View>
-                  {/* /// name  /// */}
-
-                  {/* /// brief /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Brief:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        placeholder="Enter voyage brief"
-                        placeholderTextColor={parrotPlaceholderGrey}
-                        value={brief}
-                        multiline
-                        numberOfLines={5}
-                        maxLength={135}
-                        onChangeText={(text) => setBrief(text)}
-                      />
-                    </View>
-                  </View>
-                  {/* /// brief  /// */}
-
-                  {/* /// DESC /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Description:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        multiline
-                        placeholder="Enter voyage description"
-                        placeholderTextColor={parrotPlaceholderGrey}
-                        numberOfLines={10}
-                        value={description}
-                        onChangeText={(text) => setDescription(text)}
-                      />
-                    </View>
-                  </View>
-                  {/* /// DESC  /// */}
-
-                  {/* /// VACANCY /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Vacancy:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        placeholder="Enter voyage vacancy"
-                        placeholderTextColor={parrotPlaceholderGrey}
-                        value={vacancy}
-                        onChangeText={(text) => setVacancy(text)}
-                        keyboardType="numeric"
-                      />
-                    </View>
-                  </View>
-                  {/* /// VACANCY /// */}
-
-                  {/* /// vehicle /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Vehicle:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <DropdownComponent
-                        data={dropdownData}
-                        setVehicleId={setVehicleId}
-                      />
-                    </View>
-                  </View>
-                  {/* /// vehicle /// */}
-
-                  <View style={styles.calendarContainer}>
-                    <View style={styles.voyageDatesContainer}>
-                      <Feather
-                        style={styles.icon}
-                        name="calendar"
-                        size={24}
-                        color="blue"
-                      />
-                      <Text style={styles.voyageDates}>
-                        Select Voyage Date(s)
-                      </Text>
-                    </View>
-
-                    <View style={styles.calendarStyle}>
-                      <CalendarPicker
-                        selectedRangeStartTextStyle={styles.startEndText}
-                        selectedRangeEndTextStyle={styles.startEndText}
-                        selectedRangeStyle={styles.calendarSelected}
-                        selectedRangeStartStyle={styles.calendarEndStart}
-                        selectedRangeEndStyle={styles.calendarEndStart}
-                        selectedDayStyle={styles.calendarEndStart}
-                        selectedColor={"blue"}
-                        startFromMonday={true}
-                        allowRangeSelection={calendarRangeAllowed}
-                        minDate={new Date()}
-                        selectedStartDate={startDate}
-                        selectedEndDate={endDate}
-                        onDateChange={onDateChange}
-                        width={300}
-                      />
-                    </View>
-                  </View>
-
-                  {/* /// LAST BID DATE /// */}
-                  <View style={{ ...styles.latLngNameRow, display: "none" }}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Last Bid:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        value={lastBidDate}
-                        onChangeText={handleDateChange}
-                        keyboardType="numeric"
-                        placeholder="MM/DD/YYYY"
-                        placeholderTextColor={parrotPlaceholderGrey}
-                        maxLength={10}
-                      />
-                    </View>
-                  </View>
-                  {/* /// LAST BID DATE /// */}
-
-                  {/* /// MIN PRICE /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Min Price:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        maxLength={20}
-                        placeholder="Enter Min Price"
-                        placeholderTextColor={parrotPlaceholderGrey}
-                        value={minPrice}
-                        onChangeText={(text) => setMinPrice(text)}
-                        keyboardType="numeric"
-                      />
-                    </View>
-                  </View>
-                  {/* /// MIN PRICE /// */}
-
-                  {/* /// MAX PRICE /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Max Price:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <TextInput
-                        style={styles.textInput5}
-                        maxLength={20}
-                        placeholder="Enter Max Price"
-                        placeholderTextColor={parrotPlaceholderGrey}
-                        value={maxPrice}
-                        onChangeText={(text) => setMaxPrice(text)}
-                        keyboardType="numeric"
-                      />
-                    </View>
-                  </View>
-
-
-
-                  {/* /// vehicle /// */}
-                  <View style={styles.latLngNameRow}>
-                    <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Currency:</Text>
-                    </View>
-                    <View style={styles.latorLng}>
-                      <DropdownComponentCurrency setCurrency={setCurrency} />
-                    </View>
-                  </View>
-                  {/* /// vehicle /// */}
-
-
-                  {/* /// auction fixedprice  /// */}
-                  <View style={styles.auctionFixedPrice}>
-                    <View style={styles.mainCheckboxContainer}>
-                      <View style={styles.checkboxContainer}>
-                        <Text style={styles.checkboxText}>Auction </Text>
-                        <View>
-                          <Checkbox
-                            value={isAuction}
-                            onValueChange={setIsAuction}
-                            color={
-                              isAuction ? "rgba(0, 119, 234,0.9)" : undefined
-                            }
-                            style={{
-                              borderColor: parrotBlue,
-                              borderWidth: 2,
-                            }}
-                          />
-                        </View>
-                      </View>
-
-                      <View style={styles.checkboxContainer}>
-                        <Text style={styles.checkboxText}>FixedPrice </Text>
-                        <View>
-                          <Checkbox
-                            value={isFixedPrice}
-                            onValueChange={setIsFixedPrice}
-                            color={
-                              isFixedPrice ? "rgba(0, 119, 234,0.9)" : undefined
-                            }
-                            style={{
-                              borderColor: parrotBlue,
-                              borderWidth: 2,
-                            }}
-                          />
-                        </View>
-                      </View>
-
-                      <View style={styles.checkboxContainer}>
-                        <Text style={styles.checkboxText}>Public Voyage </Text>
-                        <View>
-                          <Checkbox
-                            value={isPublicOnMap}
-                            onValueChange={setIsPublicOnMap}
-                            color={
-                              isPublicOnMap ? "rgba(0, 119, 234,0.9)" : undefined
-                            }
-                            style={{
-                              borderColor: parrotBlue,
-                              borderWidth: 2,
-                            }}
-
-                          />
-                        </View>
-                      </View>
-
-                    </View>
-                  </View>
-                  {/* /// auction fixedprice  /// */}
-
-                  <View style={styles.loginContainer}>
-                    {isCreatingVoyage ? (
-                      <View>
-                        <ActivityIndicator
-                          size="large"
-                          style={{ top: vh(2) }}
-                        />
-                      </View>
-                    ) : (
-                      <TouchableOpacity
-                        onPress={() => handleCreateVoyage()}
-                        style={
-                          image === "" ||
-                            name === "" ||
-                            brief === "" ||
-                            description === "" ||
-                            vacancy === "" ||
-                            vehicleId === "" ||
-                            startDate === "" ||
-                            endDate === "" ||
-                            lastBidDate === "" ||
-                            minPrice === "" ||
-                            maxPrice === "" ||
-                            currency === ""
-                            ? styles.selection2Disabled
-                            : styles.selection2
-                        }
-                        disabled={false}
-                      >
-                        <Text style={styles.loginText}>Create Voyage</Text>
-                      </TouchableOpacity>
-                    )}
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      placeholder="Enter voyage name"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      value={name}
+                      maxLength={50}
+                      onChangeText={(text) => setName(text)}
+                    />
                   </View>
                 </View>
+                {/* /// name  /// */}
+
+                {/* /// brief /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Brief:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      placeholder="Enter voyage brief"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      value={brief}
+                      multiline
+                      numberOfLines={5}
+                      maxLength={135}
+                      onChangeText={(text) => setBrief(text)}
+                    />
+                  </View>
+                </View>
+                {/* /// brief  /// */}
+
+                {/* /// DESC /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Description:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={[styles.textInput5, { minHeight: vh(12), textAlignVertical: "top" }]}
+                      multiline
+                      placeholder="Enter voyage description"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      value={description}
+                      onChangeText={(text) => setDescription(text)}
+                    />
+                  </View>
+                </View>
+                {/* /// DESC  /// */}
+
+                {/* /// VACANCY /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Vacancy:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      placeholder="Enter voyage vacancy"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      value={vacancy}
+                      onChangeText={(text) => setVacancy(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+                {/* /// VACANCY /// */}
+
+                {/* /// vehicle /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Vehicle:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <DropdownComponent
+                      data={dropdownData}
+                      setVehicleId={setVehicleId}
+                    />
+                  </View>
+                </View>
+                {/* /// vehicle /// */}
+
               </View>
             </View>
+
+            {/* Card 3: Voyage Dates */}
+            <View style={styles.sectionCard}>
+              <View style={styles.cardTitleRow}>
+                <Text style={styles.cardTitle}>Voyage Dates</Text>
+              </View>
+              <View style={styles.formContainer}>
+                <View style={styles.calendarContainer}>
+                  <View style={styles.voyageDatesContainer}>
+                    <Feather
+                      style={styles.icon}
+                      name="calendar"
+                      size={24}
+                      color="blue"
+                    />
+                    <Text style={styles.voyageDates}>
+                      Select Voyage Date(s)
+                    </Text>
+                  </View>
+
+                  <View style={styles.calendarStyle}>
+                    <CalendarPicker
+                      selectedRangeStartTextStyle={styles.startEndText}
+                      selectedRangeEndTextStyle={styles.startEndText}
+                      selectedRangeStyle={styles.calendarSelected}
+                      selectedRangeStartStyle={styles.calendarEndStart}
+                      selectedRangeEndStyle={styles.calendarEndStart}
+                      selectedDayStyle={styles.calendarEndStart}
+                      selectedColor={"blue"}
+                      startFromMonday={true}
+                      allowRangeSelection={calendarRangeAllowed}
+                      minDate={new Date()}
+                      selectedStartDate={startDate}
+                      selectedEndDate={endDate}
+                      onDateChange={onDateChange}
+                      width={300}
+                    />
+                  </View>
+                </View>
+
+                {/* /// LAST BID DATE /// */}
+                <View style={{ ...styles.latLngNameRow, display: "none" }}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Last Bid:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      value={lastBidDate}
+                      onChangeText={handleDateChange}
+                      keyboardType="numeric"
+                      placeholder="MM/DD/YYYY"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      maxLength={10}
+                    />
+                  </View>
+                </View>
+                {/* /// LAST BID DATE /// */}
+
+              </View>
+            </View>
+
+            {/* Card 4: Pricing & Options */}
+            <View style={styles.sectionCard}>
+              <View style={styles.cardTitleRow}>
+                <Text style={styles.cardTitle}>Pricing & Options</Text>
+              </View>
+              <View style={styles.formContainer}>
+                {/* /// MIN PRICE /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Min Price:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      maxLength={20}
+                      placeholder="Enter Min Price"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      value={minPrice}
+                      onChangeText={(text) => setMinPrice(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+                {/* /// MIN PRICE /// */}
+
+                {/* /// MAX PRICE /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Max Price:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      maxLength={20}
+                      placeholder="Enter Max Price"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      value={maxPrice}
+                      onChangeText={(text) => setMaxPrice(text)}
+                      keyboardType="numeric"
+                    />
+                  </View>
+                </View>
+
+
+
+                {/* /// vehicle /// */}
+                <View style={styles.latLngNameRow}>
+                  <View style={styles.latLngLabel}>
+                    <Text style={styles.latorLngtxt}>Currency:</Text>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <DropdownComponentCurrency setCurrency={setCurrency} />
+                  </View>
+                </View>
+                {/* /// vehicle /// */}
+
+
+                {/* /// auction fixedprice  /// */}
+                <View style={styles.auctionFixedPrice}>
+                  <View style={styles.mainCheckboxContainer}>
+                    <View style={styles.checkboxContainer}>
+                      <Text style={styles.checkboxText}>Auction </Text>
+                      <View>
+                        <Checkbox
+                          value={isAuction}
+                          onValueChange={setIsAuction}
+                          color={
+                            isAuction ? "rgba(0, 119, 234,0.9)" : undefined
+                          }
+                          style={{
+                            borderColor: parrotBlue,
+                            borderWidth: 2,
+                          }}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.checkboxContainer}>
+                      <Text style={styles.checkboxText}>FixedPrice </Text>
+                      <View>
+                        <Checkbox
+                          value={isFixedPrice}
+                          onValueChange={setIsFixedPrice}
+                          color={
+                            isFixedPrice ? "rgba(0, 119, 234,0.9)" : undefined
+                          }
+                          style={{
+                            borderColor: parrotBlue,
+                            borderWidth: 2,
+                          }}
+                        />
+                      </View>
+                    </View>
+
+                    <View style={styles.checkboxContainer}>
+                      <Text style={styles.checkboxText}>Public Voyage </Text>
+                      <View>
+                        <Checkbox
+                          value={isPublicOnMap}
+                          onValueChange={setIsPublicOnMap}
+                          color={
+                            isPublicOnMap ? "rgba(0, 119, 234,0.9)" : undefined
+                          }
+                          style={{
+                            borderColor: parrotBlue,
+                            borderWidth: 2,
+                          }}
+
+                        />
+                      </View>
+                    </View>
+
+                  </View>
+                </View>
+                {/* /// auction fixedprice  /// */}
+
+              </View>
+            </View>
+
+            <View style={styles.loginContainer}>
+              {isCreatingVoyage ? (
+                <View>
+                  <ActivityIndicator
+                    size="large"
+                    style={{ top: vh(2) }}
+                  />
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => handleCreateVoyage()}
+                  style={
+                    image === "" ||
+                      name === "" ||
+                      brief === "" ||
+                      description === "" ||
+                      vacancy === "" ||
+                      vehicleId === "" ||
+                      startDate === "" ||
+                      endDate === "" ||
+                      lastBidDate === "" ||
+                      minPrice === "" ||
+                      maxPrice === "" ||
+                      currency === ""
+                      ? styles.selection2Disabled
+                      : styles.selection2
+                  }
+                  disabled={false}
+                >
+                  <Text style={styles.loginText}>Create Voyage</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
           </ScrollView>
         )}
 
         {currentStep === 2 && !hasError && (
           <ScrollView style={styles.scrollview}>
-            <View>
-              <View style={styles.selectedChoice}>
-                <Text style={styles.selectedText}>Add Voyage Images</Text>
+            <View style={styles.sectionCard}>
+              <View style={styles.cardTitleRow}>
+                <Text style={styles.cardTitle}>Add Voyage Images</Text>
               </View>
 
               <View style={styles2.voyageImagesContainer2}>
@@ -773,7 +793,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                         />
                       ) : (
                         <Image
-                          source={require("../assets/parrotslogo.png")}
+                          source={require("../assets/ParrotsLogoPlus.png")}
                           style={styles.profileImage2}
                         />
                       )}
@@ -851,18 +871,12 @@ const CreateVoyageScreen = ({ navigation }) => {
               ) : null}
             </View>
 
-            <View style={styles.addWaypoints}>
-              <Text style={styles.selectedText}>Add Waypoints</Text>
-            </View>
-            <View style={{ marginTop: vh(3) }}>
-
-              <CreateVoyageMapComponent
-                voyageId={voyageId}
-                setCurrentStep={setCurrentStep}
-                imagesAdded={addedVoyageImages.length}
-                createdVoyageImage={createdVoyageImage}
-              />
-            </View>
+            <CreateVoyageMapComponent
+              voyageId={voyageId}
+              setCurrentStep={setCurrentStep}
+              imagesAdded={addedVoyageImages.length}
+              createdVoyageImage={createdVoyageImage}
+            />
 
           </ScrollView>
         )}
@@ -875,9 +889,6 @@ export default CreateVoyageScreen;
 
 const styles2 = StyleSheet.create({
   voyageImagesContainer2: {
-    backgroundColor: parrotBlueMediumTransparent,
-    borderColor: parrotBlueSemiTransparent,
-    borderWidth: 2,
     marginTop: vh(1),
     paddingBottom: vh(1),
     width: vw(94),
@@ -918,6 +929,7 @@ const styles = StyleSheet.create({
   loginContainer: {
     alignSelf: "center",
     marginTop: vh(1),
+    marginBottom: vh(10),
   },
 
   selection2: {
@@ -943,9 +955,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   backgroundImagePlaceholder: {
-    height: vh(30),
-    width: vw(55),
-    marginBottom: vh(5),
+    width: vw(80),
+    height: vh(35),
+    alignSelf: "center",
   },
   profileImageAndSocial: {
     flexDirection: "row",
@@ -1010,13 +1022,27 @@ const styles = StyleSheet.create({
     // backgroundColor: parrotTransparentWhite,
 
   },
-  selectedChoice: {
-    marginTop: vh(1),
-    alignItems: "center",
+  sectionCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(1),
   },
-  addWaypoints: {
-    marginTop: vh(3),
-    alignItems: "center",
+  cardTitleRow: {
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: parrotLightBlue,
   },
   selectedText: {
     color: parrotBlue,
@@ -1083,7 +1109,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginHorizontal: vh(2),
-    marginTop: vh(1),
+    // marginTop: vh(1),
     borderRadius: vh(1.5),
   },
   profileContainer2: {
@@ -1135,9 +1161,9 @@ const styles = StyleSheet.create({
   },
 
   backgroundImage: {
-    width: vw(100),
-    height: vh(30),
-    marginBottom: vh(5),
+    width: vw(80),
+    height: vh(35),
+    borderRadius: 20,
   },
 
   refetch: {

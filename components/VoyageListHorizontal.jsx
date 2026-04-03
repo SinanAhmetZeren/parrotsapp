@@ -54,7 +54,11 @@ export default function VoyageListHorizontal({ data, focusMap }) {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         horizontal
-        contentContainerStyle={styles.containerHorizontal}
+        centerContent={data.length === 1}
+        contentContainerStyle={[
+          styles.containerHorizontal,
+          data.length === 1 && { marginLeft: 0, justifyContent: "center", width: "100%" },
+        ]}
       />
     );
 }

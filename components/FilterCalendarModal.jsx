@@ -41,9 +41,6 @@ const FilterCalendarModal = ({
   };
 
   const handlePrintDates = () => {
-    console.log("printing dates...");
-    console.log("Start Date:", startDate);
-    console.log("End Date:", endDate);
   };
 
   const handleClear = () => {

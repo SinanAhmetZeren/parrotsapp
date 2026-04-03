@@ -118,7 +118,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       api,
       extraOptions
     );
-    console.log("Refresh result:", refreshResult);
     if (refreshResult.data) {
       AsyncStorage.setItem("storedToken", refreshResult.data.token);
       AsyncStorage.setItem(

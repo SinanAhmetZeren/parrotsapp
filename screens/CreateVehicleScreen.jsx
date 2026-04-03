@@ -12,6 +12,8 @@ import {
   ScrollView,
   FlatList,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   useCreateVehicleMutation,
@@ -30,7 +32,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotInputTextColor, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 
 const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -362,8 +364,14 @@ const CreateVehicleScreen = () => {
       )}
 
       {currentStep == 1 && !hasError && (
-        <ScrollView style={styles.scrollview}>
-          <View style={styles.overlay}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <ScrollView style={styles.scrollview} keyboardShouldPersistTaps="handled">
+
+          {/* Card 1: Profile Image */}
+          <View style={styles.sectionCard}>
+            <View style={styles.cardTitleRow}>
+              <Text style={styles.cardTitle}>Vehicle Profile Image</Text>
+            </View>
             <View style={styles.profileContainer}>
               {isCreatingVehicle ? (
                 <View style={styles.backgroundImage}>
@@ -378,118 +386,118 @@ const CreateVehicleScreen = () => {
                     />
                   ) : (
                     <Image
-                      // source={require("../assets/placeholder.png")}
-                      source={require("../assets/parrotslogo.png")}
+                      source={require("../assets/ParrotsLogoPlus.png")}
                       style={styles.backgroundImagePlaceholder}
                     />
                   )}
                 </TouchableOpacity>
               )}
             </View>
+          </View>
 
-            <View style={styles.profileImageAndSocial}>
-              <View style={styles.formContainer}>
-                {/* /// name /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Name:</Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Enter Vehicle Name"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={name}
-                      maxLength={50}
-                      onChangeText={(text) => setName(text)}
-                    />
-                  </View>
+          {/* Card 2: Vehicle Details */}
+          <View style={styles.sectionCard}>
+            <View style={styles.cardTitleRow}>
+              <Text style={styles.cardTitle}>Vehicle Details</Text>
+            </View>
+            <View style={styles.formContainer}>
+              {/* /// name /// */}
+              <View style={styles.latLngNameRow}>
+                <View style={styles.latLngLabel}>
+                  <Text style={styles.latorLngtxt}>Name:</Text>
                 </View>
-                {/* /// name  /// */}
-                {/* /// type /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Type:</Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <DropdownComponentType
-                      data={dropdownData}
-                      setVehicleType={setVehicleType}
-                      selected={vehicleType}
-                    />
-                  </View>
+                <View style={styles.latorLng}>
+                  <TextInput
+                    style={styles.textInput5}
+                    placeholder="Enter Vehicle Name"
+                    placeholderTextColor={parrotPlaceholderGrey}
+                    value={name}
+                    maxLength={50}
+                    onChangeText={(text) => setName(text)}
+                  />
                 </View>
-                {/* /// type /// */}
-                {/* /// DESC /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Description:</Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      multiline
-                      placeholder="Describe Your Vehicle"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      numberOfLines={10}
-                      value={description}
-                      onChangeText={(text) => setDescription(text)}
-                    />
-                  </View>
+              </View>
+              {/* /// type /// */}
+              <View style={styles.latLngNameRow}>
+                <View style={styles.latLngLabel}>
+                  <Text style={styles.latorLngtxt}>Type:</Text>
                 </View>
-                {/* /// DESC  /// */}
-                {/* /// VACANCY /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Capacity:</Text>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Enter Vehicle Capacity"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={capacity}
-                      onChangeText={(text) => setCapacity(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
+                <View style={styles.latorLng}>
+                  <DropdownComponentType
+                    data={dropdownData}
+                    setVehicleType={setVehicleType}
+                    selected={vehicleType}
+                  />
                 </View>
-                {/* /// VACANCY /// */}
-                {/* Save Button */}
-                <View style={styles.modalViewLogin}>
-                  <View style={styles.loginContainer}>
-                    <TouchableOpacity
-                      onPress={() => handleCreateVehicle()}
-                      style={
-                        name === "" ||
-                          description === "" ||
-                          capacity === "" ||
-                          vehicleType === "" ||
-                          image === ""
-                          ? styles.selection2Disabled
-                          : styles.selection2
-                      }
-                      disabled={
-                        name === "" ||
-                        description === "" ||
-                        capacity === "" ||
-                        vehicleType === "" ||
-                        image === ""
-                      }
-                    >
-                      {isCreatingVehicle ? (
-                        <ActivityIndicator size="small" color="#fff" />
-                      ) : (
-                        <Text style={styles.loginText}>Create Vehicle</Text>
-
-                      )}
-                    </TouchableOpacity>
-                  </View>
+              </View>
+              {/* /// DESC /// */}
+              <View style={styles.latLngNameRow}>
+                <View style={styles.latLngLabel}>
+                  <Text style={styles.latorLngtxt}>Description:</Text>
+                </View>
+                <View style={styles.latorLng}>
+                  <TextInput
+                    style={[styles.textInput5, { minHeight: vh(12), textAlignVertical: "top" }]}
+                    multiline
+                    placeholder="Describe Your Vehicle"
+                    placeholderTextColor={parrotPlaceholderGrey}
+                    value={description}
+                    onChangeText={(text) => setDescription(text)}
+                  />
+                </View>
+              </View>
+              {/* /// VACANCY /// */}
+              <View style={styles.latLngNameRow}>
+                <View style={styles.latLngLabel}>
+                  <Text style={styles.latorLngtxt}>Capacity:</Text>
+                </View>
+                <View style={styles.latorLng}>
+                  <TextInput
+                    style={styles.textInput5}
+                    placeholder="Enter Vehicle Capacity"
+                    placeholderTextColor={parrotPlaceholderGrey}
+                    value={capacity}
+                    onChangeText={(text) => setCapacity(text)}
+                    keyboardType="numeric"
+                  />
                 </View>
               </View>
             </View>
           </View>
+
+          {/* Create Vehicle Button */}
+          <View style={styles.modalViewLogin}>
+            <View style={styles.loginContainer}>
+              <TouchableOpacity
+                onPress={() => handleCreateVehicle()}
+                style={
+                  name === "" ||
+                    description === "" ||
+                    capacity === "" ||
+                    vehicleType === "" ||
+                    image === ""
+                    ? styles.selection2Disabled
+                    : styles.selection2
+                }
+                disabled={
+                  name === "" ||
+                  description === "" ||
+                  capacity === "" ||
+                  vehicleType === "" ||
+                  image === ""
+                }
+              >
+                {isCreatingVehicle ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={styles.loginText}>Create Vehicle</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+
         </ScrollView>
+        </KeyboardAvoidingView>
       )}
 
       {currentStep === 2 && !hasError && (
@@ -654,10 +662,12 @@ const styles = StyleSheet.create({
   modalViewLogin: {
     alignSelf: "center",
     marginTop: vh(0.8),
+    marginBottom: vh(10),
   },
   completeContainer: {
     alignSelf: "center",
     marginTop: vh(2),
+    marginBottom: vh(10),
   },
   loginText: {
     fontSize: 16,
@@ -823,14 +833,30 @@ const styles = StyleSheet.create({
     // borderColor: "rgba(190, 119, 234,0.6)",
   },
   backgroundImage: {
-    width: vw(100),
+    width: vw(80),
     height: vh(35),
+    borderRadius: 20,
   },
   backgroundImagePlaceholder: {
-    marginBottom: vh(3),
-    width: vw(70),
+    width: vw(80),
     height: vh(35),
+    alignSelf: "center",
   },
+  sectionCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(1),
+  },
+  cardTitleRow: { marginHorizontal: vw(2), marginBottom: vh(1) },
+  cardTitle: { fontSize: 20, fontWeight: "700", color: parrotLightBlue },
   profileImage2: {
     marginLeft: vw(3),
     marginVertical: vh(1),

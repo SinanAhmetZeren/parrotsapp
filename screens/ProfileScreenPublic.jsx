@@ -87,7 +87,6 @@ export default function ProfileScreenPublic({ navigation }) {
         title: "Share Link",
       });
     } catch (error) {
-      console.error("Error sharing:", error.message);
     }
   };
 
@@ -194,7 +193,6 @@ export default function ProfileScreenPublic({ navigation }) {
       };
       refreshData();
     } catch (error) {
-      console.log(error);
       setHasError(true);
     }
     setRefreshing(false);
@@ -222,7 +220,6 @@ export default function ProfileScreenPublic({ navigation }) {
           topOffset: 150,
         });
       } catch (error) {
-        console.error("Error copying to clipboard", error);
         Toast.show({
           type: "error",
           text1: "Failed to copy email to clipboard",
@@ -235,9 +232,7 @@ export default function ProfileScreenPublic({ navigation }) {
     if (userData.phoneNumber) {
       const phoneUrl = `tel:${userData.phoneNumber}`;
 
-      Linking.openURL(phoneUrl).catch((err) =>
-        console.error("Error opening phone app:", err)
-      );
+      Linking.openURL(phoneUrl).catch(() => {});
     }
   };
 
@@ -290,6 +285,12 @@ export default function ProfileScreenPublic({ navigation }) {
     );
   };
 
+
+  // useEffect(() => {
+  //   console.log('userData:', userData);
+  //   console.log('VoyagesData:', VoyagesData);
+  //   console.log('VehiclesData:', VehiclesData);
+  // }, [userData, VoyagesData, VehiclesData]);
 
   if (isLoading) {
     return (

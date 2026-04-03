@@ -67,13 +67,6 @@ export default function ProfileScreen({ navigation }) {
 
   } = useGetUserByIdQuery(userId);
 
-  // useEffect(() => {
-  //   console.log("userId:");
-  //   console.log(userId);
-  //   console.log("userData:");
-
-  //   console.log(userData);
-  // }, [userId, userData])
 
   const {
     data: VoyagesData,
@@ -135,13 +128,9 @@ export default function ProfileScreen({ navigation }) {
   const handleGetParrotCoinBalance = async () => {
     try {
 
-      console.log("userId---->>", userId);
       const response = await getParrotCoinBalance(userId).unwrap();
-      console.log("-->>>", response);
-
       setParrotCoinBalance(response.balance); // or response.balance depending on API
     } catch (error) {
-      console.log("Error fetching balance:", error);
     }
   };
 
@@ -162,7 +151,6 @@ export default function ProfileScreen({ navigation }) {
           if (!voyageUninit) await refetchVoyageData();
           if (!vehicleUninit) await refetchVehicleData();
         } catch (error) {
-          console.error("Error fetching or refetching data:", error);
         }
       };
 
@@ -202,7 +190,6 @@ export default function ProfileScreen({ navigation }) {
       };
       refreshData();
     } catch (error) {
-      console.log(error);
       setHasError(true);
     }
     setRefreshing(false);
@@ -234,7 +221,6 @@ export default function ProfileScreen({ navigation }) {
           topOffset: 150,
         });
       } catch (error) {
-        console.error("Error copying to clipboard", error);
         Toast.show({
           type: "error",
           text1: "Failed to copy email to clipboard",
@@ -247,9 +233,7 @@ export default function ProfileScreen({ navigation }) {
     if (userData.phoneNumber) {
       const phoneUrl = `tel:${userData.phoneNumber}`;
 
-      Linking.openURL(phoneUrl).catch((err) =>
-        console.error("Error opening phone app:", err)
-      );
+      Linking.openURL(phoneUrl).catch(() => {});
     }
   };
 
@@ -299,6 +283,12 @@ export default function ProfileScreen({ navigation }) {
     );
   };
 
+
+  // useEffect(() => {
+  //   console.log('userData:', userData);
+  //   console.log('VoyagesData:', VoyagesData);
+  //   console.log('VehiclesData:', VehiclesData);
+  // }, [userData, VoyagesData, VehiclesData]);
 
   if (!userData) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;

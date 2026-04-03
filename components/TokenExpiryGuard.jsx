@@ -24,7 +24,6 @@ export const TokenExpiryGuard = () => {
         const now = Date.now();
 
         if (now > expiryTime) {
-          console.log("Token expired. Logging out...");
           dispatch(updateAsLoggedOut());
         }
       };

@@ -60,7 +60,6 @@ export default function FavoritesScreen({ navigation }) {
       await refetchVehicles();
       await refetchVoyages();
     } catch (error) {
-      console.log(error);
       setHasError(true);
     }
     setRefreshing(false);
@@ -73,7 +72,6 @@ export default function FavoritesScreen({ navigation }) {
           await refetchVehicles();
           await refetchVoyages();
         } catch (error) {
-          console.error("Error refetching messages data:", error);
         }
       };
 
@@ -84,6 +82,11 @@ export default function FavoritesScreen({ navigation }) {
       };
     }, [refetchVehicles, refetchVoyages, navigation])
   );
+
+  // useEffect(() => {
+  //   console.log('VoyagesData:', VoyagesData);
+  //   console.log('VehiclesData:', VehiclesData);
+  // }, [VoyagesData, VehiclesData]);
 
   if (isLoadingVoyages || isLoadingVehicles) {
     return <ActivityIndicator size="large" style={{ top: vh(30) }} />;

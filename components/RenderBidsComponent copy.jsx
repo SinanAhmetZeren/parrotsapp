@@ -70,17 +70,14 @@ export const RenderBidsComponent = ({
     chatReadyRef.current = false;
 
     hubConnection.current.on("ParrotsChatHubInitialized", () => {
-      console.log("✅ ParrotsChatHubInitialized received");
       chatReadyRef.current = true;
     });
 
     hubConnection.current.onreconnecting(() => {
-      console.log("⚠️ SignalR reconnecting...");
       chatReadyRef.current = false;
     });
 
     hubConnection.current.onreconnected(() => {
-      console.log("🔁 SignalR reconnected");
     });
 
     const startHubConnection = async () => {
@@ -89,10 +86,8 @@ export const RenderBidsComponent = ({
         if (hubConnection.current.state === HubConnectionState.Disconnected) {
           chatReadyRef.current = false; // ✅ ADD THIS
           await hubConnection.current.start();
-          console.log("✅ SignalR connected successfully.");
         }
       } catch (error) {
-        console.error("❌ Failed to start SignalR connection:", error);
         chatReadyRef.current = false; // ✅ ADD THIS
         setTimeout(startHubConnection, 3000);
       }
@@ -105,8 +100,7 @@ export const RenderBidsComponent = ({
       if (hubConnection.current) {
         hubConnection.current.off("ParrotsChatHubInitialized"); // ✅ ADD THIS
         hubConnection.current.stop()
-          .then(() => console.log("🔴 SignalR stopped"))
-          .catch((err) => console.error("❌ Failed to stop SignalR:", err));
+          .catch(() => {});
       }
     };
 
@@ -124,14 +118,11 @@ export const RenderBidsComponent = ({
           bidUserId,
           text
         );
-      } else {
-        console.warn("⚠️ SignalR not connected. Message not sent.");
       }
 
       await acceptBid(bidId).unwrap();
       await refetch();
     } catch (error) {
-      console.error("❌ Failed to accept bid or send message:", error);
     }
   };
 
@@ -146,14 +137,11 @@ export const RenderBidsComponent = ({
           bidUserId,
           text
         );
-      } else {
-        console.warn("⚠️ SignalR not connected. Delete message not sent.");
       }
 
       await deleteBid(bidId).unwrap();
       await refetch();
     } catch (error) {
-      console.error("❌ Failed to delete bid or send message:", error);
     }
   };
 
@@ -219,8 +207,6 @@ export const RenderBidsComponent = ({
               data={bids}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item, index }) => {
-                // console.log("Rendering item:", item);
-
                 if (ownVoyage) {
                   return (
                     <View key={index} style={styles.singleBidContainerPopup}>
@@ -294,7 +280,7 @@ export const RenderBidsComponent = ({
                           ) : (
                             <TouchableOpacity
                               style={{ flex: 1, alignItems: "center" }}
-                              onPress={console.log("bid accepted")}
+                              onPress={() => {}}
                             >
                               <View style={styles.acceptTextContainer}>
                                 <Text style={styles.acceptedText}>
@@ -307,7 +293,6 @@ export const RenderBidsComponent = ({
                           <TouchableOpacity
                             style={{ flex: 1, alignItems: "center" }}
                             onPress={() => {
-                              console.log("Delete bid:", item.id);
                               handleDeleteBid({
                                 bidId: item.id,
                                 bidUserId: item.userId,

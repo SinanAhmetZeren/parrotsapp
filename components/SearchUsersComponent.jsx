@@ -16,7 +16,6 @@ export const SearchUsersComponent = ({ searchResults }) => {
     <>
       {searchResults
         && searchResults.map((item, index) => {
-          // console.log("item: ", item.publicId, item.userName, item.id);
           return (
             <View key={item.publicId} style={{ width: vw(90), marginLeft: vw(5), borderRadius: vh(6), marginTop: vh(2) }}>
               <Shadow

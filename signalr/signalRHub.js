@@ -17,22 +17,18 @@ AppState.addEventListener("change", async (nextAppState) => {
     if (nextAppState === "active" && hubConnection) {
         if (canStart(hubConnection.state)) {
             try {
-                console.log("🔄 App foregrounded: Reconnecting SignalR...");
                 await hubConnection.start();
                 chatReadyRef.current = true;
             } catch (err) {
-                console.log("Reconnect failed on foreground", err);
             }
         }
     }
 });
 
 export const initHubConnection = async (userId, apiUrl) => {
-    console.log("1");
     if (!userId || !apiUrl) return null;
     // 1. If user changed, wipe the old connection entirely
     if (hubConnection && connectionUserId !== userId) {
-        console.log("---------2");
         await stopHubConnection();
     }
 
@@ -40,20 +36,17 @@ export const initHubConnection = async (userId, apiUrl) => {
     currentApiUrl = apiUrl;
     // 2. Return existing if already active
     if (hubConnection?.state === HubConnectionState.Connected) {
-        console.log("--------- 2. connected");
         return hubConnection;
     }
     // 3. Block redundant attempts if already transitioning
     if (hubConnection?.state === HubConnectionState.Connecting ||
         hubConnection?.state === HubConnectionState.Reconnecting) {
-        console.log("--------- 3. connecting");
 
         return hubConnection;
     }
 
     // 4. Create new connection if none exists
     if (!hubConnection) {
-        console.log("starting connection..., apiurl: ", apiUrl);
         hubConnection = new HubConnectionBuilder()
             .withUrl(`${apiUrl}/chathub/11?userId=${userId}`)
             .withAutomaticReconnect()
@@ -67,10 +60,8 @@ export const initHubConnection = async (userId, apiUrl) => {
         try {
             await hubConnection.start();
             chatReadyRef.current = true;
-            console.log("✅ SignalR connected");
             return hubConnection;
         } catch (err) {
-            console.error("❌ SignalR start failed:", err);
             chatReadyRef.current = false;
 
             // Retry logic: Only retry if it's still the same user
@@ -120,9 +111,7 @@ export const stopHubConnection = async () => {
         hubConnection.off("ParrotsChatHubInitialized");
 
         await hubConnection.stop();
-        console.log("🔴 SignalR stopped");
     } catch (err) {
-        console.error("❌ Error during stop:", err);
     } finally {
         hubConnection = null;
         messageHandlers = [];
@@ -169,9 +158,7 @@ export const invokeHub = async (method, ...args) => {
         try {
             return await hubConnection.invoke(method, ...args);
         } catch (err) {
-            console.error(`❌ Invoke ${method} failed:`, err);
             throw err;
         }
     }
-    console.warn(`⚠️ Cannot invoke ${method}: Hub not ready`);
 };
