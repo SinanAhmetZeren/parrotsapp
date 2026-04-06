@@ -17,7 +17,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import he from "he";
-import { parrotBlue, parrotCream } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotCream } from "../assets/color";
 import { Shadow } from "react-native-shadow-2";
 
 export default function VehicleCardProfile({
@@ -147,6 +147,9 @@ export default function VehicleCardProfile({
       break;
   }
 
+  const vehicleTypeNames = ["Boat","Car","Caravan","Bus","Walk","Run","Motorcycle","Bicycle","TinyHouse","Airplane","Train"];
+  const vehicleTypeName = vehicleTypeNames[vehicletype] ?? "";
+
   const navigation = useNavigation();
   const handleNavigateToVehicle = (vehicleId) => {
     const parentScreen = navigation.getState().routes[0].name;
@@ -192,25 +195,19 @@ export default function VehicleCardProfile({
             </View>
 
             <View style={styles.textContainer}>
-              <View style={styles.iconAndName}>
-                <View style={styles.icon}>{icon}</View>
-                <View style={styles.name}>
-                  <Text
-                    numberOfLines={1}
-                    style={styles.headerName}>
-                    {vehiclename}
-                  </Text>
-                </View>
-                <View style={styles.vacancy}>
-                  <Text style={styles.header}>
-                    <Feather name="users" size={14} color={parrotBlue} />
-                    {" " + capacity > 100 ? "100+" : capacity}
-                  </Text>
-                </View>
+              <Text numberOfLines={1} style={styles.headerName}>
+                {vehiclename}
+              </Text>
+              <View style={styles.pillRow}>
+                <Text style={styles.pill}>{icon}{"  "}{vehicleTypeName}</Text>
+                <Text style={styles.pill}>
+                  {capacity > 100 ? "100+" : capacity}{" "}
+                  <Feather name="users" size={11} color={parrotBlue} />
+                </Text>
               </View>
               <Text
                 style={styles.cardDescription}
-                numberOfLines={8}
+                numberOfLines={4}
                 ellipsizeMode="tail"
               >
                 {he.decode(
@@ -256,41 +253,36 @@ const styles = StyleSheet.create({
   textContainer: {
     width: vw(46),
     height: vh(18),
-    paddingHorizontal: vh(0.5),
-  },
-  header: {
-    marginTop: 2,
-    fontSize: 14,
-    fontWeight: "700",
-    color: parrotBlue,
-  },
-  subHeader: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  cardDescription: {
-    paddingHorizontal: 0,
-    fontSize: 11.5,
-  },
-  iconAndName: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  icon: {
-    alignSelf: "center",
-  },
-  name: {
-    flex: 1,
-    alignSelf: "center",
-  },
-  vacancy: {
-    paddingRight: vw(1),
+    paddingHorizontal: vw(2),
+    paddingTop: vh(1),
   },
   headerName: {
     fontSize: 14,
     fontWeight: "700",
     color: parrotBlue,
-    textAlign: "center",
-    paddingHorizontal: vw(1),
+    alignSelf: "flex-start",
+    paddingVertical: vh(0.2),
+  },
+  pillRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 5,
+    marginTop: vh(0.5),
+  },
+  pill: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: parrotBlue,
+    backgroundColor: parrotBlueMediumTransparent,
+    paddingHorizontal: vw(2),
+    paddingVertical: 3,
+    borderRadius: vw(3),
+  },
+  cardDescription: {
+    paddingTop: vh(0.6),
+    paddingHorizontal: 0,
+    fontSize: 12,
+    color: "#6b7280",
+    lineHeight: 17,
   },
 });

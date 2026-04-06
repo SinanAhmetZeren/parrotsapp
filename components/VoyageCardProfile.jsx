@@ -33,8 +33,8 @@ export default function VoyageCardProfile({
   publicOnMap
 }) {
   const cardImageUrl = `${cardImage}`;
-  const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
-  const formattedEndDate = require("date-fns").format(enddate, "MMM d, yy");
+  const formattedStartDate = require("date-fns").format(startdate, "MMM d");
+  const formattedEndDate = require("date-fns").format(enddate, "MMM d");
   const navigation = useNavigation();
 
   const handleNavigation = (voyageId) => {
@@ -133,40 +133,31 @@ export default function VoyageCardProfile({
                 </View>
               }
 
-              <View style={{ ...styles.vacancyAndVehicle }}>
-                <View>
-                  <Text style={styles.subHeader}>
-                    {/* {vehiclename + "111 "} */}
-                    {vehiclename.length > 21
-                      ? vehiclename.substring(0, 21) + "..."
+              <View style={styles.pillRow}>
+                <View style={styles.pill}>
+                  <Text style={styles.pillText}>
+                    {vehiclename.length > 16
+                      ? vehiclename.substring(0, 16) + "..."
                       : vehiclename}
-                    {"  "}
-                    {icon}
                   </Text>
+                  {icon}
+                </View>
+                <View style={styles.pill}>
+                  <Text style={styles.pillText}>{vacancy}</Text>
+                  <Feather name="users" size={11} color={parrotBlue} />
+                </View>
+                <View style={styles.pill}>
+                  <Text style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</Text>
+                  <AntDesign name="calendar" size={11} color={parrotBlue} />
                 </View>
               </View>
-
-              <View style={{ ...styles.vacancyAndVehicle }}>
-                <View>
-                  <Text style={styles.subHeader2}>
-                    {vacancy + " "}
-                    <Feather name="users" size={12} color={parrotBlue} />
-                  </Text>
-                </View>
-                <Text style={styles.subHeader3}>
-                  {formattedStartDate + " - " + formattedEndDate + "  "}
-                  <AntDesign name="calendar" size={12} color={parrotBlue} />
-                </Text>
-              </View>
-              <View  >
-                <Text
-                  style={styles.cardDescription}
-                  numberOfLines={5}
-                  ellipsizeMode="tail"
-                >
-                  {he.decode(cardDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim())}
-                </Text>
-              </View>
+              <Text
+                style={styles.cardDescription}
+                numberOfLines={3}
+                ellipsizeMode="tail"
+              >
+                {he.decode(cardDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim())}
+              </Text>
             </View>
           </View>
         </TouchableOpacity >
@@ -198,7 +189,8 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     width: vw(50),
-    padding: vh(0.2),
+    paddingHorizontal: vw(2),
+    paddingVertical: vh(0.2),
   },
   header: {
     marginTop: 2,
@@ -206,39 +198,33 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: parrotBlue,
     paddingVertical: vh(0.2),
-    alignSelf: "center",
+    alignSelf: "flex-start",
   },
-  subHeader: {
-    fontSize: 12,
-    fontWeight: "600",
-    backgroundColor: parrotBlueMediumTransparent,
-    paddingHorizontal: vh(0.5),
-    marginTop: vh(0.2),
-    borderRadius: vw(2),
+  pillRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 5,
+    marginTop: vh(0.5),
   },
-  subHeader2: {
-    fontSize: 10,
-    fontWeight: "600",
+  pill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
     backgroundColor: parrotBlueMediumTransparent,
-    paddingHorizontal: vh(0.5),
-    marginTop: vh(0.2),
-    borderRadius: vw(2),
+    paddingHorizontal: vw(2),
+    paddingVertical: 3,
+    borderRadius: vw(3),
   },
-  subHeader3: {
-    fontSize: 10,
+  pillText: {
+    fontSize: 11,
     fontWeight: "600",
-    backgroundColor: parrotBlueMediumTransparent,
-    paddingHorizontal: vh(1),
-    marginTop: vh(0.1),
-    borderRadius: vw(2),
+    color: parrotBlue,
   },
   cardDescription: {
     paddingTop: vh(0.6),
     paddingHorizontal: 0,
-    fontSize: 11.5,
-  },
-  vacancyAndVehicle: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    fontSize: 12,
+    color: "#6b7280",
+    lineHeight: 17,
   },
 });

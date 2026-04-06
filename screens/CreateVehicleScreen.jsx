@@ -524,7 +524,7 @@ const CreateVehicleScreen = () => {
                     />
                   ) : (
                     <Image
-                      source={require("../assets/parrotslogo.png")}
+                      source={require("../assets/ParrotsLogoPlus.png")}
                       style={styles.profileImage2}
                     />
                   )}
