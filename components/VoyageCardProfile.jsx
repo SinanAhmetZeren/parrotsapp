@@ -127,9 +127,8 @@ export default function VoyageCardProfile({
               </Text>
 
               {publicOnMap &&
-
-                <View style={{ position: "absolute", right: 5, top: 5, backgroundColor: parrotBlueTransparent, borderRadius: vw(5) }}>
-                  <MaterialIcons name="public" size={24} color={parrotBlue} />
+                <View style={{ position: "absolute", right: 5, top: 5, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5), padding: 3 }}>
+                  <MaterialIcons name="public" size={20} color={parrotBlue} />
                 </View>
               }
 

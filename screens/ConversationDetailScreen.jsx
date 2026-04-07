@@ -25,11 +25,16 @@ import { API_URL } from "@env";
 import { ScrollView } from "react-native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
+import Toast from "react-native-toast-message";
 import {
   register_ReceiveMessage,
   unregister_ReceiveMessage,
   register_ReceiveMessageRefetch,
   unregister_ReceiveMessageRefetch,
+  register_OnReconnecting,
+  unregister_OnReconnecting,
+  register_OnReconnected,
+  unregister_OnReconnected,
   invokeHub,
   isHubReady
 } from "../signalr/signalRHub"
@@ -163,6 +168,36 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   // ---------------- SIGNALR CODE ---------------------//
   // ---------------------------------------------------//
+
+  useFocusEffect(
+    useCallback(() => {
+      const handleReconnecting = () => {
+        Toast.show({
+          type: "error",
+          text1: "Connection lost",
+          text2: "Reconnecting...",
+          autoHide: false,
+          toastId: "connection-status",
+        });
+      };
+      const handleReconnected = () => {
+        Toast.hide();
+        Toast.show({
+          type: "success",
+          text1: "Reconnected",
+          autoHide: true,
+          visibilityTime: 2000,
+        });
+      };
+      register_OnReconnecting(handleReconnecting);
+      register_OnReconnected(handleReconnected);
+      return () => {
+        Toast.hide();
+        unregister_OnReconnecting(handleReconnecting);
+        unregister_OnReconnected(handleReconnected);
+      };
+    }, [])
+  );
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -322,7 +357,13 @@ export const ConversationDetailScreen = ({ navigation }) => {
         prev.filter((msg) => msg.dateTime !== sentMessage.dateTime)
       );
 
-      alert("Failed to send message. Please check your connection.");
+      Toast.show({
+        type: "error",
+        text1: "Message not sent",
+        text2: "Please check your connection.",
+        autoHide: true,
+        visibilityTime: 3000,
+      });
     }
   };
 

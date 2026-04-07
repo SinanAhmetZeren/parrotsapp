@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     width: vw(46),
     height: vh(18),
     paddingHorizontal: vw(2),
-    paddingTop: vh(1),
+    paddingTop: vh(0.3),
   },
   headerName: {
     fontSize: 14,

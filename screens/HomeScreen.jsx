@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Modal,
   Image,
+  Animated,
   RefreshControl,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
@@ -91,6 +92,22 @@ export default function HomeScreen({ navigation }) {
   const [hasError, setHasError] = useState(false);
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
     useState(false);
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const imageScale = useRef(new Animated.Value(0.1)).current;
+  const imageTranslateX = useRef(new Animated.Value(-vw(38))).current;
+  const imageTranslateY = useRef(new Animated.Value(-vh(42))).current;
+
+  const openImageModal = () => {
+    setImageModalVisible(true);
+    imageScale.setValue(0.1);
+    imageTranslateX.setValue(-vw(38));
+    imageTranslateY.setValue(-vh(42));
+    Animated.parallel([
+      Animated.timing(imageScale, { toValue: 1, duration: 300, useNativeDriver: true }),
+      Animated.timing(imageTranslateX, { toValue: 0, duration: 300, useNativeDriver: true }),
+      Animated.timing(imageTranslateY, { toValue: 0, duration: 300, useNativeDriver: true }),
+    ]).start();
+  };
 
   const initialFilters = JSON.stringify({ // initial state for filters
     count: 1,
@@ -544,10 +561,12 @@ export default function HomeScreen({ navigation }) {
           </View>
           <View style={{ height: vh(95) }}>
             <View style={styles.welcomeandFilters}>
-              <Image
-                source={require("../assets/parrotsreallife.png")}
-                style={styles.miniLogo}
-              />
+              <TouchableOpacity onPress={openImageModal}>
+                <Image
+                  source={require("../assets/parrotsreallife.png")}
+                  style={styles.miniLogo}
+                />
+              </TouchableOpacity>
 
               <View style={styles.welcomebox}>
                 <Text style={styles.welcome}>Welcome to Parrots</Text>
@@ -640,37 +659,39 @@ export default function HomeScreen({ navigation }) {
               </View>
             </View>
 
-            <View style={styles.mapContainer}>
-              <MapView
-                style={styles.map}
-                initialRegion={initialRegion}
-                ref={mapRef}
-                onRegionChangeComplete={handleRegionChangeComplete}
-              >
-                {initialVoyages.map((item, index) => {
-                  const waypoint = item.waypoints?.[0];
-                  const latitude = waypoint?.latitude;
-                  const longitude = waypoint?.longitude;
-                  // Skip rendering if coordinates are invalid
-                  // Ensure valid coordinates for marker rendering
-                  if (latitude == null || longitude == null) {
-                    return null;
-                  }
+            <View style={styles.mapWrapper}>
+              <View style={styles.mapContainer}>
+                <MapView
+                  style={styles.map}
+                  initialRegion={initialRegion}
+                  ref={mapRef}
+                  onRegionChangeComplete={handleRegionChangeComplete}
+                >
+                  {initialVoyages.map((item, index) => {
+                    const waypoint = item.waypoints?.[0];
+                    const latitude = waypoint?.latitude;
+                    const longitude = waypoint?.longitude;
+                    // Skip rendering if coordinates are invalid
+                    // Ensure valid coordinates for marker rendering
+                    if (latitude == null || longitude == null) {
+                      return null;
+                    }
 
-                  const imageIndex = index % markerImages.length;
-                  const markerImage = markerImages[imageIndex];
+                    const imageIndex = index % markerImages.length;
+                    const markerImage = markerImages[imageIndex];
 
-                  // console.log(" marker key: ", item.id, "time now: ", new Date());
-                  return (
-                    <MapMarker
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      onPress={updateSelectedVoyageData}
-                    />
-                  );
-                })}
-              </MapView>
+                    // console.log(" marker key: ", item.id, "time now: ", new Date());
+                    return (
+                      <MapMarker
+                        key={item.id}
+                        item={item}
+                        index={index}
+                        onPress={updateSelectedVoyageData}
+                      />
+                    );
+                  })}
+                </MapView>
+              </View>
             </View>
 
 
@@ -702,6 +723,25 @@ export default function HomeScreen({ navigation }) {
 
             <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
           </View>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={imageModalVisible}
+            onRequestClose={() => setImageModalVisible(false)}
+          >
+            <TouchableOpacity
+              style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.9)", alignItems: "center", justifyContent: "center" }}
+              onPress={() => setImageModalVisible(false)}
+              activeOpacity={1}
+            >
+              <Animated.Image
+                source={require("../assets/parrotsreallife.png")}
+                style={{ width: vw(90), height: vw(90), borderRadius: vw(45), transform: [{ scale: imageScale }, { translateX: imageTranslateX }, { translateY: imageTranslateY }] }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          </Modal>
+
           <View>
             <Modal
               animationType="fade"
@@ -756,13 +796,22 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
 
+  mapWrapper: {
+    width: "94%",
+    alignSelf: "center",
+    borderRadius: 20,
+    marginBottom: 7,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
   mapContainer: {
     height: vh(50),
-    marginBottom: 7,
-    width: "94%",
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    alignSelf: "center",
     overflow: "hidden",
     borderRadius: 20,
     backgroundColor: "white",

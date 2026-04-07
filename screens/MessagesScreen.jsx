@@ -29,11 +29,16 @@ import { FontAwesome } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotPistachioGreen, parrotPlaceholderGrey } from "../assets/color";
+import Toast from "react-native-toast-message";
 import {
   register_ReceiveMessage,
   unregister_ReceiveMessage,
   register_ReceiveMessageRefetch,
   unregister_ReceiveMessageRefetch,
+  register_OnReconnecting,
+  unregister_OnReconnecting,
+  register_OnReconnected,
+  unregister_OnReconnected,
   invokeHub
 } from "../signalr/signalRHub.js";
 
@@ -129,6 +134,35 @@ export default function MessagesScreen({ navigation }) {
     }, [userId, refetch])
   );
 
+
+  useFocusEffect(
+    useCallback(() => {
+      const handleReconnecting = () => {
+        Toast.show({
+          type: "error",
+          text1: "Connection lost",
+          text2: "Reconnecting...",
+          autoHide: false,
+        });
+      };
+      const handleReconnected = () => {
+        Toast.hide();
+        Toast.show({
+          type: "success",
+          text1: "Reconnected",
+          autoHide: true,
+          visibilityTime: 2000,
+        });
+      };
+      register_OnReconnecting(handleReconnecting);
+      register_OnReconnected(handleReconnected);
+      return () => {
+        Toast.hide();
+        unregister_OnReconnecting(handleReconnecting);
+        unregister_OnReconnected(handleReconnected);
+      };
+    }, [])
+  );
 
   // Refetch when screen gains focus
   useFocusEffect(

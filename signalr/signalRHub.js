@@ -6,6 +6,8 @@ let hubConnection = null;
 let chatReadyRef = { current: false };
 let messageHandlers = [];
 let refetchHandlers = [];
+let reconnectingHandlers = [];
+let reconnectedHandlers = [];
 let connectionUserId = null;
 let currentApiUrl = null;
 
@@ -83,10 +85,12 @@ function setupInternalListeners() {
 
     hubConnection.onreconnecting(() => {
         chatReadyRef.current = false;
+        reconnectingHandlers.forEach(h => h());
     });
 
     hubConnection.onreconnected(() => {
         chatReadyRef.current = true;
+        reconnectedHandlers.forEach(h => h());
     });
 
     hubConnection.on("ReceiveMessage", (data) => {
@@ -99,8 +103,22 @@ function setupInternalListeners() {
 
     hubConnection.onclose(() => {
         chatReadyRef.current = false;
+        reconnectingHandlers.forEach(h => h());
     });
 }
+
+export const register_OnReconnecting = (handler) => {
+    if (!reconnectingHandlers.includes(handler)) reconnectingHandlers.push(handler);
+};
+export const unregister_OnReconnecting = (handler) => {
+    reconnectingHandlers = reconnectingHandlers.filter(h => h !== handler);
+};
+export const register_OnReconnected = (handler) => {
+    if (!reconnectedHandlers.includes(handler)) reconnectedHandlers.push(handler);
+};
+export const unregister_OnReconnected = (handler) => {
+    reconnectedHandlers = reconnectedHandlers.filter(h => h !== handler);
+};
 
 export const stopHubConnection = async () => {
     if (!hubConnection) return;
@@ -116,6 +134,8 @@ export const stopHubConnection = async () => {
         hubConnection = null;
         messageHandlers = [];
         refetchHandlers = [];
+        reconnectingHandlers = [];
+        reconnectedHandlers = [];
         chatReadyRef.current = false;
         connectionUserId = null;
     }
