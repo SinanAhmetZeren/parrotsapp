@@ -104,6 +104,12 @@ function setupInternalListeners() {
     hubConnection.onclose(() => {
         chatReadyRef.current = false;
         reconnectingHandlers.forEach(h => h());
+        // If automatic reconnect exhausted, retry manually after 30s
+        setTimeout(() => {
+            if (hubConnection && canStart(hubConnection.state) && connectionUserId && currentApiUrl) {
+                initHubConnection(connectionUserId, currentApiUrl);
+            }
+        }, 30000);
     });
 }
 
@@ -174,11 +180,12 @@ export const unregister_ReceiveUnreadNotification = (handler) => {
 export const isHubReady = () => chatReadyRef.current && hubConnection?.state === HubConnectionState.Connected;
 
 export const invokeHub = async (method, ...args) => {
-    if (isHubReady()) {
-        try {
-            return await hubConnection.invoke(method, ...args);
-        } catch (err) {
-            throw err;
-        }
+    if (!isHubReady()) {
+        throw new Error("Hub not ready");
+    }
+    try {
+        return await hubConnection.invoke(method, ...args);
+    } catch (err) {
+        throw err;
     }
 };

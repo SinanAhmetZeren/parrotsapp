@@ -49,6 +49,7 @@ import {
   parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
   parrotPlaceholderGrey
 } from "../assets/color";
+import Toast from "react-native-toast-message";
 
 // Define static assets outside to keep references stable
 const markerImages = [parrotMarker1, parrotMarker2, parrotMarker3, parrotMarker4, parrotMarker5, parrotMarker6];
@@ -306,10 +307,17 @@ export default function HomeScreen({ navigation }) {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          console.error("Permission to access location was denied");
+          Toast.show({ type: "error", text1: "Location permission denied", text2: "Enable location access in device settings.", autoHide: false });
           return;
         }
-        const location = await Location.getCurrentPositionAsync({});
+        let location;
+        try {
+          location = await Location.getCurrentPositionAsync({});
+        } catch (error) {
+          console.error("Error getting user location :", error);
+          Toast.show({ type: "error", text1: "Could not get location", text2: "Check your GPS settings.", autoHide: true, visibilityTime: 4000 });
+          return;
+        }
         // console.log(location, "location");
         const lat = location?.coords?.latitude;
         const lon = location?.coords?.longitude;
@@ -320,6 +328,7 @@ export default function HomeScreen({ navigation }) {
         setInitialLongitude(lon);
       } catch (error) {
         console.error("Error getting user location :", error);
+        Toast.show({ type: "error", text1: "Could not get location", text2: "Check your GPS settings.", autoHide: true, visibilityTime: 4000 });
       }
     }
 
@@ -457,6 +466,10 @@ export default function HomeScreen({ navigation }) {
       formattedEndDate,
     };
     const filteredVoyages = await getFilteredVoyages(data);
+    if (filteredVoyages.error) {
+      Toast.show({ type: "error", text1: "Could not update voyages", text2: "Check your connection.", autoHide: true, visibilityTime: 3000 });
+      return;
+    }
     setInitialVoyages(filteredVoyages.data || []);
 
     const filtersJson = JSON.stringify({
@@ -517,14 +530,12 @@ export default function HomeScreen({ navigation }) {
         <ScrollView
           style={styles.scrollview}
           refreshControl={
-            hasError ? (
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
-                tintColor={parrotBananaLeafGreen}
-              />
-            ) : undefined
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+              tintColor={parrotBananaLeafGreen}
+            />
           }
         >
           <View style={styles.countModal}>

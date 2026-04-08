@@ -51,7 +51,8 @@ import {
   useGetUserByIdQuery,
   useGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
-  setUnreadMessages
+  setUnreadMessages,
+  setHubConnected
 } from "./slices/UserSlice";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueTransparent, parrotDarkBlue, parrotGreen, parrotLightBlue, parrotRed, parrotTextDarkBlue, parrotYellow } from "./assets/color";
 import { API_URL } from "@env";
@@ -63,7 +64,10 @@ import {
   unregister_ReceiveMessageRefetch,
   register_ReceiveUnreadNotification,
   unregister_ReceiveUnreadNotification,
-
+  register_OnReconnecting,
+  unregister_OnReconnecting,
+  register_OnReconnected,
+  unregister_OnReconnected,
   invokeHub
 } from "./signalr/signalRHub";
 
@@ -335,6 +339,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
+  const isHubConnected = useSelector((state) => state.users.isHubConnected);
 
   return (
     <>
@@ -449,7 +454,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
                     height: vw(15),
                     borderRadius: vw(7.5),
                     backgroundColor: parrotBlue,
-                    backgroundColor: "white",
+                    // backgroundColor: "white",
                     alignItems: "center",
                     justifyContent: "center",
                     bottom: vh(-2.5),
@@ -574,6 +579,12 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
         toggleModal={toggleModal}
         setModalVisible={setModalVisible}
       />
+
+      {!isHubConnected && (
+        <View style={{ position: "absolute", top: 0, left: 0, right: 0, backgroundColor: "rgba(180,30,30,0.9)", paddingVertical: 6, alignItems: "center", zIndex: 999 }}>
+          <Text style={{ color: "white", fontSize: 12, fontWeight: "600" }}>No connection — retrying...</Text>
+        </View>
+      )}
     </>
   );
 };
@@ -626,14 +637,25 @@ function App() {
           };
           register_ReceiveUnreadNotification(unreadHandlerTrue);
 
+          // Global connection state handlers
+          dispatch(setHubConnected(true));
+          reconnectingHandler = () => dispatch(setHubConnected(false));
+          reconnectedHandler = () => dispatch(setHubConnected(true));
+          register_OnReconnecting(reconnectingHandler);
+          register_OnReconnected(reconnectedHandler);
+
         } catch (error) {
         }
       };
 
+      let reconnectingHandler;
+      let reconnectedHandler;
       checkTokenAndInitHub();
 
       return () => {
         unregister_ReceiveUnreadNotification(unreadHandlerTrue);
+        unregister_OnReconnecting(reconnectingHandler);
+        unregister_OnReconnected(reconnectedHandler);
         // stopHubConnection();
       };
 

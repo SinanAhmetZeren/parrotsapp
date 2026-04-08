@@ -25,9 +25,18 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-// Base query with token refresh logic
+// Base query with token refresh logic and 15s timeout
 const baseQueryWithReauth = async (args, api, extraOptions) => {
-  let result = await baseQuery(args, api, extraOptions);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  api.signal?.addEventListener("abort", () => controller.abort());
+
+  let result;
+  try {
+    result = await baseQuery(args, { ...api, signal: controller.signal }, extraOptions);
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   // Handle expired access token
   if (result.error?.status === 401) {
@@ -49,7 +58,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
       await AsyncStorage.setItem("storedToken", refreshResult.data.token);
       await AsyncStorage.setItem("storedRefreshToken", refreshResult.data.refreshToken);
 
-      // Retry the original request
+      // Retry the original request (fresh signal, no timeout needed for retry)
       result = await baseQuery(args, api, extraOptions);
     } else {
       // Failed refresh → remove stored tokens

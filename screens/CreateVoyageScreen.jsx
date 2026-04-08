@@ -183,6 +183,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   }
 
   const handleCreateVoyage = async () => {
+    if (isCreatingVoyage) return;
     if (!image) {
       return;
     }
@@ -222,6 +223,11 @@ const CreateVoyageScreen = ({ navigation }) => {
         vehicleId,
         currency
       });
+      if (response.error || !response.data?.data?.id) {
+        setIsCreatingVoyage(false);
+        setHasError(true);
+        return;
+      }
       const createdVoyageId = response.data.data.id;
       setCreatedVoyageImage(image);
       setVoyageId(createdVoyageId);
@@ -252,6 +258,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   const handleUploadImage = async () => {
+    if (isUploadingImage) return;
     if (!voyageImage) {
       return;
     }
@@ -423,9 +430,9 @@ const CreateVoyageScreen = ({ navigation }) => {
                 style={styles.logoImage}
               />
               <Text style={styles.currentBidsTitle2}>Connection Error</Text>
-              {/* <Text style={styles.currentBidsTitle3}>
-                Swipe Down to Retry
-              </Text> */}
+              <TouchableOpacity onPress={() => setHasError(false)} style={{ marginTop: vh(2), alignSelf: "center" }}>
+                <Text style={{ color: parrotBlue, fontWeight: "600", fontSize: 16 }}>Tap to retry</Text>
+              </TouchableOpacity>
             </View>
           </View>
         )}

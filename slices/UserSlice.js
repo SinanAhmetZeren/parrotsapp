@@ -13,6 +13,7 @@ const usersSlice = createSlice({
     userName: "",
     userProfileImage: "",
     unreadMessages: false,
+    isHubConnected: false,
     userFavoriteVoyages: [0],
     userFavoriteVehicles: [0],
   },
@@ -137,6 +138,9 @@ const usersSlice = createSlice({
     setUnreadMessages: (state, action) => {
       state.unreadMessages = action.payload;
     },
+    setHubConnected: (state, action) => {
+      state.isHubConnected = action.payload;
+    },
     markMessagesRead: (state) => {
       state.unreadMessages = false;
     },
@@ -155,6 +159,7 @@ export const {
   addVehicleToUserFavorites,
   removeVehicleFromUserFavorites,
   setUnreadMessages,
+  setHubConnected,
   markMessagesRead
 } = usersSlice.actions;
 

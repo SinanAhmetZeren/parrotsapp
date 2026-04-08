@@ -491,7 +491,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
                     placeholder="Write a message"
                     placeholderTextColor={parrotPlaceholderGrey}
                     value={message}
-                    numberOfLines={1}
                     maxLength={500}
                   />
                 </View>
@@ -543,8 +542,8 @@ const styles = StyleSheet.create({
   textinputStyle: {
     backgroundColor: parrotCream,
     width: vw(75),
-    maxHeight: vh(12),
     minHeight: vh(4.5),
+    maxHeight: vh(12),
     paddingLeft: vh(1.5),
     paddingVertical: vh(0.5),
     borderRadius: vh(2),
