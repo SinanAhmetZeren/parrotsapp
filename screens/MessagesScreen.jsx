@@ -362,24 +362,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
   },
 
-  currentBidsTitle: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: parrotBlue,
-    paddingLeft: vw(5),
-  },
-  selectedTitle: {
-    fontSize: 26,
-    fontWeight: "700",
-    color: parrotBlue,
-    paddingLeft: vw(5),
-  },
-  currentBidsAndSeeAll: {
-    marginTop: vh(2),
-    flexDirection: "row",
-    paddingRight: vw(10),
-  },
-
   currentBidsTitle2: {
     fontSize: 20,
     fontWeight: "700",

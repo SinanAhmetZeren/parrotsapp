@@ -582,13 +582,6 @@ export default EditVehicleScreen;
 
 const styles2 = StyleSheet.create({
 
-  currentBidsTitle3: {
-    top: vh(-3),
-    fontSize: 17,
-    fontWeight: "700",
-    color: parrotBlue,
-    textAlign: "center",
-  },
   currentBidsTitle2: {
     top: vh(-3),
     fontSize: 17,

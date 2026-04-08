@@ -875,12 +875,6 @@ const styles = StyleSheet.create({
     zIndex: 1,
     borderRadius: vh(10),
   },
-  logo: {
-    height: vh(5),
-    width: vh(5),
-    borderRadius: vh(10),
-  },
-
   imageContainerInModal: {
     top: vh(35),
     width: vw(90),
@@ -982,19 +976,6 @@ const styles = StyleSheet.create({
     padding: 7,
     margin: 2,
     borderRadius: 20,
-  },
-  popularBox: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    marginTop: 5,
-    backgroundColor: "white",
-  },
-  popular: {
-    marginLeft: 6,
-    fontWeight: "700",
-    fontSize: 18,
-    color: "grey",
   },
   filtered: {
     color: parrotBlue,

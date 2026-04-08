@@ -569,11 +569,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(4),
     zIndex: 100,
   },
-  extendedArea: {
-    paddingHorizontal: vw(1),
-    paddingVertical: vh(1),
-  },
-
   UserNameProfile: {
     fontSize: 22,
     fontWeight: "800",
@@ -648,9 +643,6 @@ const styles = StyleSheet.create({
   },
   clickableText: {
     color: "blue",
-  },
-  bio: {
-    paddingTop: 5,
   },
   profileImageAndSocial: {
     flexDirection: "row",

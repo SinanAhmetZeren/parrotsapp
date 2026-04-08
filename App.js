@@ -54,7 +54,7 @@ import {
   setUnreadMessages,
   setHubConnected
 } from "./slices/UserSlice";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueTransparent, parrotDarkBlue, parrotGreen, parrotLightBlue, parrotRed, parrotTextDarkBlue, parrotYellow } from "./assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueTransparent, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreen, parrotLightBlue, parrotRed, parrotTextDarkBlue, parrotYellow } from "./assets/color";
 import { API_URL } from "@env";
 
 import {
@@ -454,18 +454,21 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
                     height: vw(15),
                     borderRadius: vw(7.5),
                     backgroundColor: parrotBlue,
+                    backgroundColor: parrotDarkCream,
                     // backgroundColor: "white",
                     alignItems: "center",
                     justifyContent: "center",
                     bottom: vh(-2.5),
                     shadowColor: parrotBlue,
+                    shadowColor: parrotCream,
                     shadowOffset: { width: 0, height: 4 },
                     shadowOpacity: 0.4,
                     shadowRadius: 6,
                     elevation: 8,
                   }}>
                     <Image
-                      source={require("./assets/parrotwhiteoutline2.png")}
+                      // source={require("./assets/parrotwhiteoutline2.png")}
+                      source={require("./assets/parrotwhiteoutlinebg.png")}
                       style={{ width: vw(13), height: vw(13), overflow: "hidden", borderRadius: vh(5) }}
                       resizeMode="contain"
                     />

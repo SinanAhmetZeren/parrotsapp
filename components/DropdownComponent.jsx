@@ -42,15 +42,6 @@ const DropdownComponent = ({ data, setVehicleId }) => {
 export default DropdownComponent;
 
 const styles = StyleSheet.create({
-  latorLng: {
-    flexDirection: "row",
-    backgroundColor: parrotCream,
-    marginVertical: vh(0.3),
-    padding: vh(0.4),
-    borderTopRightRadius: vh(3),
-    borderBottomRightRadius: vh(3),
-    width: vw(64),
-  },
   dropdown: {
     width: vw(62),
     height: vh(5),
@@ -59,20 +50,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     paddingHorizontal: 8,
     fontSize: 12,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  label: {
-    position: "absolute",
-    left: 22,
-    zIndex: 0,
-    paddingHorizontal: 8,
-    fontSize: 12,
-    color: parrotInputTextColor,
-    fontWeight: "500",
-    width: vw(25),
-    textAlign: "center",
   },
   placeholderStyle: {
     fontSize: 12,

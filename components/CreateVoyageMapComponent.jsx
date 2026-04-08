@@ -24,7 +24,8 @@ import {
 } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotDarkCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
+import Toast from "react-native-toast-message";
 
 const CreateVoyageMapComponent = ({
   voyageId,
@@ -115,6 +116,10 @@ const CreateVoyageMapComponent = ({
           order,
         })
 
+      if (result.error || !result.data?.data) {
+        Toast.show({ type: "error", text1: "Could not add waypoint", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
+        return;
+      }
       const waypointId = result.data.data;
       setAddedWayPoints((prevWaypoints) => [
         ...prevWaypoints,
@@ -130,7 +135,6 @@ const CreateVoyageMapComponent = ({
           hasImage: !!imageUri
         },
       ]);
-      // setOrder(order + 1);
       setOrder(prev => prev + 1);
       setImageUri(null);
       setLatitude("");
@@ -138,6 +142,7 @@ const CreateVoyageMapComponent = ({
       setTitle("");
       setDescription("")
     } catch (error) {
+      Toast.show({ type: "error", text1: "Could not add waypoint", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
     }
     finally {
       setIsUploadingWaypointImage(false);
@@ -146,13 +151,14 @@ const CreateVoyageMapComponent = ({
   };
 
   const handleDeleteWaypoint = async (waypointId) => {
-    try {
-      await deleteWaypoint(waypointId);
-      setAddedWayPoints((prevWaypoints) =>
-        prevWaypoints.filter((waypoint) => waypoint.waypointId !== waypointId)
-      );
-    } catch (error) {
+    const result = await deleteWaypoint(waypointId);
+    if (result.error) {
+      Toast.show({ type: "error", text1: "Could not delete waypoint", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
+      return;
     }
+    setAddedWayPoints((prevWaypoints) =>
+      prevWaypoints.filter((waypoint) => waypoint.waypointId !== waypointId)
+    );
   }
 
   const renderPolylines = (waypoints) => {
@@ -248,6 +254,7 @@ const CreateVoyageMapComponent = ({
 
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
+          Toast.show({ type: "error", text1: "Location permission denied", text2: "Enable location in device settings.", autoHide: false });
           return;
         }
 
@@ -285,7 +292,12 @@ const CreateVoyageMapComponent = ({
     setMarkerCoords(event.nativeEvent.coordinate);
   };
 
-  const goToHomePage = () => {
+  const goToHomePage = async () => {
+    const result = await confirmVoyage(voyageId);
+    if (result.error) {
+      Toast.show({ type: "error", text1: "Could not confirm voyage", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
+      return;
+    }
     setAddedWayPoints([]);
     setMarkerCoords(null);
     setLatitude("");
@@ -295,12 +307,7 @@ const CreateVoyageMapComponent = ({
     setImageUri(null);
     setOrder(1);
     setCurrentStep(1);
-    confirmVoyage(voyageId);
-    // navigation.navigate("Home");
-
     navigation.navigate("Home", { screen: "HomeScreen" });
-
-
   };
 
 
@@ -552,10 +559,6 @@ const styles = StyleSheet.create({
     marginTop: vh(1),
     borderRadius: vh(2),
   },
-  warningText: {
-    width: vw(60),
-    marginLeft: vw(4),
-  },
   miniLogo: {
     height: vh(4),
     width: vh(4),
@@ -587,29 +590,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
     marginBottom: vh(1),
-  },
-  waypointImage: {
-    width: vh(14),
-    height: vh(14),
-    borderRadius: vh(1.5),
-    borderWidth: 3,
-    borderColor: parrotBlueSemiTransparent
-  },
-  waypointFlatlistContainer: {
-    height: vh(38),
-    padding: vh(2),
-    paddingVertical: vh(0),
-    backgroundColor: parrotBlueMediumTransparent,
-    borderColor: parrotBlueSemiTransparent,
-    borderWidth: 2,
-    borderRadius: vh(2),
-    width: vw(94),
-    alignSelf: "center",
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-    verticalAlign: "auto",
-    marginBottom: vh(2)
   },
   FinishButtonContainer: {
     borderRadius: vh(2),
@@ -736,11 +716,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
 
   },
-  textInput: {
-    fontSize: 13,
-    paddingLeft: vw(1),
-    width: "90%",
-  },
   textInputDescription: {
     fontSize: 13,
     paddingLeft: vw(1),
@@ -764,21 +739,6 @@ const styles = StyleSheet.create({
     padding: vw(1),
     width: "90%",
     color: parrotPlaceholderGrey,
-  },
-  container: {
-    flex: 1,
-    padding: vh(1),
-    margin: vh(2),
-    justifyContent: "center",
-  },
-  label: {
-    fontWeight: "bold",
-  },
-  image: {
-    width: "100%",
-    height: 200,
-    resizeMode: "cover",
-    marginBottom: 10,
   },
   mapAndEmojisContainer: {
     height: vh(40),

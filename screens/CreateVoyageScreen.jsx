@@ -41,6 +41,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 import DropdownComponentCurrency from "../components/DropdownComponentCurrency";
+import Toast from "react-native-toast-message";
 
 
 // Set lastBidDate to startDate for now, 
@@ -278,6 +279,10 @@ const CreateVoyageScreen = ({ navigation }) => {
         voyageId,
       });
 
+      if (addedVoyageResponse.error || !addedVoyageResponse.data?.imagePath) {
+        Toast.show({ type: "error", text1: "Image upload failed", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
+        return;
+      }
       const addedVoyageImageId = addedVoyageResponse.data.imagePath;
       const newItem = {
         addedVoyageImageId,
@@ -287,7 +292,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
-      setHasError(true)
+      Toast.show({ type: "error", text1: "Image upload failed", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
     }
     setIsUploadingImage(false);
   };
@@ -912,13 +917,6 @@ const styles2 = StyleSheet.create({
 
 const styles = StyleSheet.create({
 
-  currentBidsTitle3: {
-    top: vh(-3),
-    fontSize: 17,
-    fontWeight: "700",
-    color: parrotBlue,
-    textAlign: "center",
-  },
   currentBidsTitle2: {
     top: vh(-3),
     fontSize: 17,
@@ -965,18 +963,6 @@ const styles = StyleSheet.create({
     width: vw(80),
     height: vh(35),
     alignSelf: "center",
-  },
-  profileImageAndSocial: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderRadius: vh(5),
-    borderBottomLeftRadius: vh(0),
-    borderBottomRightRadius: vh(0),
-    width: "100%",
-    alignSelf: "center",
-    paddingBottom: vh(0.95),
-    backgroundColor: "white",
-    top: vh(-5),
   },
   calendarStyle: {
     backgroundColor: "white",
@@ -1050,16 +1036,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     color: parrotLightBlue,
-  },
-  selectedText: {
-    color: parrotBlue,
-    fontSize: 18,
-    fontWeight: "700",
-    textAlign: "center",
-    backgroundColor: "white",
-    paddingVertical: vh(0.5),
-    borderRadius: vh(1.5),
-    width: vw(50),
   },
   length1: {
     height: vh(13),
@@ -1171,13 +1147,6 @@ const styles = StyleSheet.create({
     width: vw(80),
     height: vh(35),
     borderRadius: 20,
-  },
-
-  refetch: {
-    padding: 3,
-    paddingHorizontal: vw(15),
-    borderRadius: vw(9),
-    // display: "none",
   },
 
   icon: {

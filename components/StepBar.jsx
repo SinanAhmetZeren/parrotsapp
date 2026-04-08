@@ -62,11 +62,6 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
     backgroundColor: parrotCream,
   },
-  stepText: {
-    fontSize: 16,
-    textAlign: "auto",
-    fontWeight: "700",
-  },
   second: {
     width: vw(45),
     marginVertical: vh(0.5),

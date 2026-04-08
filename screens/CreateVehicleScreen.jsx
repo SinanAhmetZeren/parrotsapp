@@ -633,13 +633,6 @@ export default CreateVehicleScreen;
 
 const styles = StyleSheet.create({
 
-  currentBidsTitle3: {
-    top: vh(-3),
-    fontSize: 17,
-    fontWeight: "700",
-    color: parrotBlue,
-    textAlign: "center",
-  },
   currentBidsTitle2: {
     top: vh(-3),
     fontSize: 17,
@@ -696,34 +689,6 @@ const styles = StyleSheet.create({
     backgroundColor: parrotBlueSemiTransparent,
     borderRadius: vh(4),
     width: vw(50),
-  },
-  addWaypointText: {
-    alignSelf: "center",
-    padding: vh(1),
-    borderRadius: vh(2),
-    backgroundColor: parrotBlue,
-    color: "white",
-    fontWeight: "600",
-    marginBottom: vh(2),
-  },
-  FinishButtonContainer: {
-    marginTop: vh(1),
-    borderRadius: vh(2),
-    width: vw(95),
-    alignSelf: "center",
-    marginBottom: vh(5),
-  },
-  profileImageAndSocial: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderRadius: vh(5),
-    borderBottomLeftRadius: vh(0),
-    borderBottomRightRadius: vh(0),
-    width: "100%",
-    alignSelf: "center",
-    paddingBottom: vh(0.95),
-    backgroundColor: "white",
-    top: vh(-5),
   },
   latLngNameRow: {
     flexDirection: "row",
@@ -867,12 +832,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     padding: vh(2),
-  },
-  textInput: {
-    lineHeight: 21,
-    marginVertical: 1,
-    fontSize: 14,
-    padding: vw(1),
   },
 });
 
