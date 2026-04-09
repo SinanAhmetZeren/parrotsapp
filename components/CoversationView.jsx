@@ -54,74 +54,72 @@ export default function CoversationView({
           }}
         />
       </View>
-      <View style={styles.columnContainer}>
-        <View style={styles.nameAndMessage}>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-            {message}
-          </Text>
-        </View>
+      <View style={styles.nameAndMessage}>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+          {message}
+        </Text>
       </View>
-      <View style={styles.columnContainer}>
-        <View style={styles.time}>
-          <Text style={styles.timeText1}>{formatDate(time)[0]}</Text>
-          <Text style={styles.timeText2}>{formatDate(time)[1]}</Text>
-        </View>
+      <View style={styles.time}>
+        <Text style={styles.timeText1}>{formatDate(time)[0]}</Text>
+        <Text style={styles.timeText2}>{formatDate(time)[1]}</Text>
       </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  profileImageContainer: {
-    justifyContent: "center",
-  },
   mainContainer: {
     flexDirection: "row",
-    padding: vw(2),
-    // marginBottom: vh(1),
-    // marginLeft: vh(.5),
+    alignItems: "center",
+    paddingLeft: vw(2),
+    paddingRight: vw(4),
+    paddingVertical: vh(0.6),
     backgroundColor: "white",
-    borderRadius: vh(3),
+    borderRadius: vh(6),
+    width: vw(90),
+  },
+  profileImageContainer: {
+    justifyContent: "center",
+    marginRight: vw(2),
   },
   profileImage: {
-    height: vw(13),
-    width: vw(13),
-    borderRadius: vh(10),
+    height: vw(11),
+    width: vw(11),
+    borderRadius: vw(6),
   },
-
   columnContainer: {
-    padding: vh(0.6),
+    flex: 1,
     justifyContent: "center",
   },
   name: {
-    paddingHorizontal: vh(2),
-    paddingVertical: vh(0.5),
     fontWeight: "700",
-    color: parrotLightBlue
+    fontSize: 15,
+    color: parrotLightBlue,
+    marginBottom: vh(0.4),
   },
   message: {
-    paddingHorizontal: vh(2),
-    fontWeight: "700",
+    fontWeight: "500",
+    fontSize: 13,
     color: parrotPlaceholderGrey,
   },
   nameAndMessage: {
-    padding: 1,
-    width: vw(50),
+    flex: 1,
   },
   time: {
-    width: vw(20),
+    alignItems: "flex-end",
+    justifyContent: "center",
+    paddingLeft: vw(2),
   },
   timeText1: {
     fontWeight: "700",
-    color: parrotPlaceholderGrey,
+    fontSize: 13,
     color: parrotBlueDarkTransparent2,
-    marginBottom: vh(1),
+    marginBottom: vh(0.5),
   },
   timeText2: {
-    fontWeight: "700",
-    color: parrotPlaceholderGrey,
-    color: parrotBlueDarkTransparent
+    fontWeight: "600",
+    fontSize: 12,
+    color: parrotBlueDarkTransparent,
   },
-
 });

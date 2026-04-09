@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
   imageContainer1: {
     justifyContent: "center",
     marginRight: vw(2),
+    marginLeft: vw(2),
   },
   messageText: {
     fontWeight: "500",
@@ -142,18 +143,19 @@ const styles = StyleSheet.create({
   },
   MessageMainContainer: {
     marginTop: vh(1),
-    // padding: vh(1),
     backgroundColor: parrotCream,
-    borderRadius: vh(2),
+    borderRadius: vh(4),
     width: vw(80),
+    paddingBottom: vh(0.5),
   },
   MessageMainContainerRight: {
     marginTop: vh(1),
     paddingHorizontal: vh(1),
     backgroundColor: parrotCream,
-    borderRadius: vh(2),
+    borderRadius: vh(4),
     width: vw(80),
     alignSelf: "flex-end",
+    paddingBottom: vh(0.5),
   },
   timeDisplay: {
     color: "grey",
@@ -172,6 +174,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "flex-end",
     marginTop: vh(0.3),
+    marginRight: vw(3),
   },
   userName: {
     color: parrotLightBlue,

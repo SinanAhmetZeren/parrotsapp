@@ -25,11 +25,11 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { ConnectSelectionComponent } from "../components/ConnectSelectionComponent";
 import { SearchUsersComponent } from "../components/SearchUsersComponent";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Feather } from "@expo/vector-icons";
+import { Shadow } from "react-native-shadow-2";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotPistachioGreen, parrotPlaceholderGrey } from "../assets/color";
-import Toast from "react-native-toast-message";
 import {
   register_ReceiveMessage,
   unregister_ReceiveMessage,
@@ -65,8 +65,16 @@ export default function MessagesScreen({ navigation }) {
     isError: isErrorUsers,
     error: errorUser,
     isSuccess: isSuccessUsers,
-    refetch: refetchUsers,
-  } = useGetUsersByUsernameQuery(username, { skip: username.length < 3 });
+  } = useGetUsersByUsernameQuery(username, { skip: username.length < 3, refetchOnMountOrArgChange: true });
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
 
   const [receivedMessageData, setReceivedMessageData] = useState("");
   const [selectedFunction, setSelectedFunction] = useState(1);
@@ -138,26 +146,16 @@ export default function MessagesScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const handleReconnecting = () => {
-        Toast.show({
-          type: "error",
-          text1: "Connection lost",
-          text2: "Reconnecting...",
-          autoHide: false,
-        });
+        showToast("Connection lost - Reconnecting...");
       };
       const handleReconnected = () => {
-        Toast.hide();
-        Toast.show({
-          type: "success",
-          text1: "Reconnected",
-          autoHide: true,
-          visibilityTime: 2000,
-        });
+        setToastVisible(false);
+        showToast("Reconnected");
       };
       register_OnReconnecting(handleReconnecting);
       register_OnReconnected(handleReconnected);
       return () => {
-        Toast.hide();
+        setToastVisible(false);
         unregister_OnReconnecting(handleReconnecting);
         unregister_OnReconnected(handleReconnected);
       };
@@ -171,6 +169,7 @@ export default function MessagesScreen({ navigation }) {
         try {
           await refetch();
         } catch (error) {
+          console.error("Error refetching messages:", error);
         }
       };
       fetchData();
@@ -201,13 +200,8 @@ export default function MessagesScreen({ navigation }) {
   }, [messagesData]);
 
   // Search users handler
-  const handleSearchUsers = async () => {
+  const handleSearchUsers = () => {
     setUsername(searchText);
-    try {
-      await refetchUsers();
-    } catch (err) {
-      console.error("Error refetching users:", err);
-    }
   };
 
 
@@ -246,7 +240,7 @@ export default function MessagesScreen({ navigation }) {
 
   if (isSuccessMessages) {
     return (
-      <>
+      <View style={{ flex: 1 }}>
         <TokenExpiryGuard />
 
         {selectedFunction === 1 ? (
@@ -293,38 +287,38 @@ export default function MessagesScreen({ navigation }) {
                 />
 
                 <View style={styles.messageTextContainer}>
-                  <View style={styles.searchBar}>
-                    <TextInput
-                      onChangeText={(text) => {
-                        setSearchText(text);
-                      }}
-                      style={styles.textinputStyle}
-                      numberOfLines={1}
-                      placeholder="Type username"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                    >
-                      {searchText}
-                    </TextInput>
-                    <TouchableOpacity
-                      onPress={handleSearchUsers}
-                      style={styles.magnifier}
-                    >
-                      <Text>
-                        {searchText.length > 2 ? (
-                          <FontAwesome
-                            name="search"
-                            size={24}
-                            color={parrotBlue}
-                          />
-                        ) : (
-                          <FontAwesome
-                            name="search"
-                            size={24}
-                            color={parrotBlueSemiTransparent}
-                          />
-                        )}
-                      </Text>
-                    </TouchableOpacity>
+                  <View style={{ marginHorizontal: vw(5), marginTop: vh(2) }}>
+                  <Shadow
+                    distance={8}
+                    offset={[0, 0]}
+                    startColor="rgba(0,0,0,0.08)"
+                    finalColor="rgba(0,0,0,0.13)"
+                    style={{ borderRadius: vh(6) }}
+                  >
+                    <View style={styles.searchBar}>
+                      <TextInput
+                        onChangeText={(text) => {
+                          setSearchText(text);
+                        }}
+                        style={styles.textinputStyle}
+                        numberOfLines={1}
+                        placeholder="Search by username..."
+                        placeholderTextColor={parrotPlaceholderGrey}
+                      >
+                        {searchText}
+                      </TextInput>
+                      <TouchableOpacity
+                        onPress={handleSearchUsers}
+                        style={styles.magnifier}
+                      >
+                        <Feather
+                          name="search"
+                          size={20}
+                          color={searchText.length > 2 ? parrotBlue : parrotBlueSemiTransparent}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </Shadow>
                   </View>
                   <SearchUsersComponent searchResults={usersData} />
                 </View>
@@ -332,7 +326,12 @@ export default function MessagesScreen({ navigation }) {
             }
           </View>
         )}
-      </>
+        {toastVisible && (
+          <View style={styles.toast}>
+            <Text style={styles.toastText}>{toastMessage}</Text>
+          </View>
+        )}
+      </View>
     );
   }
 }
@@ -340,26 +339,30 @@ export default function MessagesScreen({ navigation }) {
 const styles = StyleSheet.create({
   magnifier: {
     alignSelf: "center",
-    padding: vw(3),
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: vw(10),
+    width: vw(10),
+    height: vw(10),
+    backgroundColor: "rgba(30, 111, 217, 0.08)",
+    borderRadius: vw(5),
+    marginRight: vw(1),
+    alignItems: "center",
+    justifyContent: "center",
   },
-
   searchBar: {
     flexDirection: "row",
-    paddingLeft: vh(2),
+    alignItems: "center",
+    paddingLeft: vw(3),
     backgroundColor: "white",
-    marginHorizontal: vw(2),
-    borderRadius: vh(3),
+    borderRadius: vh(6),
+    width: vw(90),
+    borderWidth: 1.5,
+    borderColor: "rgba(30, 111, 217, 0.15)",
   },
   textinputStyle: {
-    padding: vh(1),
-    margin: vh(1),
-    alignSelf: "center",
-    backgroundColor: parrotCream,
-    width: vw(75),
-    height: vh(5),
-    borderRadius: vh(2),
+    flex: 1,
+    paddingVertical: vh(1.8),
+    paddingHorizontal: vw(2),
+    fontSize: 15,
+    color: "black",
   },
 
   currentBidsTitle2: {
@@ -393,5 +396,21 @@ const styles = StyleSheet.create({
     width: vw(94),
     justifyContent: "center",
     alignSelf: "center",
+  },
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
   },
 });

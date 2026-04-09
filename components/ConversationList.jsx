@@ -38,12 +38,11 @@ export default function ConversationList({ data, userId }) {
     });
     return sortedData.map((item, index) => (
       <Shadow
-        distance={7}
+        distance={8}
         offset={[0, 0]}
         startColor="rgba(0,0,0,0.08)"
-        finalColor="rgba(0,0,0,0.23)"
-        radius={12}
-        style={{ borderRadius: vh(3), marginBottom: vh(1.5) }}
+        finalColor="rgba(0,0,0,0.13)"
+        style={{ borderRadius: vh(3), marginBottom: vh(2) }}
         key={`${item.id}-${item.userName}`}
       >
         <ConversationView
@@ -67,7 +66,7 @@ export default function ConversationList({ data, userId }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: vw(0.5),
+    paddingHorizontal: vw(2),
     backgroundColor: "white",
     height: vh(85),
     paddingTop: vh(1)
