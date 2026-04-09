@@ -117,7 +117,7 @@ const VoyageDetailScreen = ({ navigation }) => {
         }
       };
       fetchData();
-    }, [refetchVoyage, navigation])
+    }, [refetchVoyage])
   );
 
 
@@ -332,7 +332,7 @@ const VoyageDetailScreen = ({ navigation }) => {
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData.user.id;
     const waypoints = VoyageData.waypoints || [];
-    const descriptionShortenedChars = 500;
+    const descriptionShortenedChars = 200;
     const displayText = showFullText || VoyageData.description.length < descriptionShortenedChars
       ? VoyageData.description
       : VoyageData.description.slice(0, descriptionShortenedChars) + "...";
@@ -381,7 +381,12 @@ const VoyageDetailScreen = ({ navigation }) => {
                 {/* Host */}
                 <View style={styles.row}>
                   <Text style={styles.label}>Host:</Text>
-                  <TouchableOpacity style={styles.pill}>
+                  <TouchableOpacity style={styles.pill}
+
+                    onPress={() => {
+                      goToProfilePage(VoyageData.user.id)
+                    }}
+                  >
                     <Image source={{ uri: VoyageData.user.profileImageUrl }} style={styles.profileImage} />
                     <Text style={styles.value}>{VoyageData.user.userName}</Text>
                   </TouchableOpacity>
@@ -558,8 +563,8 @@ const VoyageDetailScreen = ({ navigation }) => {
                           Read more
                           <Feather
                             name="chevron-down"
-                            size={24}
-                            color={parrotGreen}
+                            size={16}
+                            color={parrotBlue}
                           />
                         </Text>
                       </TouchableOpacity>
@@ -568,7 +573,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                     <TouchableOpacity onPress={() => setShowFullText(false)}>
                       <Text style={styles.ReadMoreLess}>
                         Read less
-                        <Feather name="chevron-up" size={24} color={parrotGreen} />
+                        <Feather name="chevron-up" size={16} color={parrotBlue} />
                       </Text>
                     </TouchableOpacity>
                   )}
@@ -889,13 +894,11 @@ const styles = StyleSheet.create({
     color: parrotTextDarkBlue,
   },
   ReadMoreLess: {
-    color: parrotGreen,
-    paddingHorizontal: vw(2),
-    paddingBottom: vh(1),
-    width: vw(28),
-    backgroundColor: parrotGreenTransparent,
-    borderRadius: vh(2),
-    fontWeight: "700",
+    color: parrotBlue,
+    paddingTop: vh(0.5),
+    paddingBottom: vh(0.5),
+    fontWeight: "600",
+    fontSize: 13,
   },
   subContainer: {
     backgroundColor: "blue",

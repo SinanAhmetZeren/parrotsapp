@@ -17,7 +17,6 @@ import {
   ScrollView,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { updateAsLoggedIn } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
@@ -47,6 +46,15 @@ import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, par
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
+
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState("");
   const [email, setEmail] = useState("sinanahmetzeren@gmail.com");
@@ -156,13 +164,7 @@ const LoginScreen = ({ navigation }) => {
         );
       }
     } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "Could not log in",
-        text2: "Please check your credentials ",
-        visibilityTime: 1200,
-        topOffset: 100,
-      });
+      showToast("Could not log in - Please check your credentials.");
     }
   };
 
@@ -248,21 +250,9 @@ const LoginScreen = ({ navigation }) => {
 
       // Handle common HTTP errors, else show generic error
       if (err?.status === 401) {
-        Toast.show({
-          type: "error",
-          text1: "Could not log in",
-          text2: "Incorrect email or password.",
-          visibilityTime: 1500,
-          topOffset: 100,
-        });
+        showToast("Could not log in - Incorrect email or password.");
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Login failed",
-          text2: err?.message || "Something went wrong. Please try again.",
-          visibilityTime: 1500,
-          topOffset: 100,
-        });
+        showToast(`Login failed - ${err?.message || "Something went wrong. Please try again."}`);
       }
     } finally {
       setIsLoggingIn(false); // Always reset loading state
@@ -304,13 +294,7 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (err) {
       console.log(err);
-      Toast.show({
-        type: "error",
-        text1: "Could not register",
-        text2: "Please try again",
-        visibilityTime: 1200,
-        topOffset: 100,
-      });
+      showToast("Could not register - Please try again.");
     }
   };
 
@@ -342,13 +326,7 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (err) {
       console.log(err);
-      Toast.show({
-        type: "error",
-        text1: "Could not confirm",
-        text2: "Please try again",
-        visibilityTime: 1200,
-        topOffset: 100,
-      });
+      showToast("Could not confirm - Please try again.");
     }
   };
 
@@ -388,8 +366,13 @@ const LoginScreen = ({ navigation }) => {
   }, []);
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <TokenExpiryGuard />
+      {toastVisible && (
+        <View style={styles.toast}>
+          <Text style={styles.toastText}>{toastMessage}</Text>
+        </View>
+      )}
       {loginOrRegister === "Login" ? (
         <>
           <View style={{ backgroundColor: "white" }}>
@@ -658,13 +641,7 @@ const LoginScreen = ({ navigation }) => {
                   ]}
                   onPress={() => {
                     if (passwordR !== passwordR2) {
-                      Toast.show({
-                        type: "error",
-                        text1: "Passwords do not match",
-                        text2: "Please try again.",
-                        visibilityTime: 1200,
-                        topOffset: 100,
-                      });
+                      showToast("Passwords do not match - Please try again.");
                     }
                     if (passwordR === passwordR2) {
                       handleRegister();
@@ -733,13 +710,7 @@ const LoginScreen = ({ navigation }) => {
                   ]}
                   onPress={() => {
                     if (passwordR !== passwordR2) {
-                      Toast.show({
-                        type: "error",
-                        text1: "Passwords do not match",
-                        text2: "Please try again.",
-                        visibilityTime: 1200,
-                        topOffset: 100,
-                      });
+                      showToast("Passwords do not match - Please try again.");
                     }
                     handleConfirm();
                   }}
@@ -904,13 +875,7 @@ const LoginScreen = ({ navigation }) => {
                   ]}
                   onPress={() => {
                     if (passwordR !== passwordR2) {
-                      Toast.show({
-                        type: "error",
-                        text1: "Passwords do not match",
-                        text2: "Please try again.",
-                        visibilityTime: 1200,
-                        topOffset: 100,
-                      });
+                      showToast("Passwords do not match - Please try again.");
                     }
                     if (passwordR === passwordR2) {
                       handleResetPassword();
@@ -944,7 +909,7 @@ const LoginScreen = ({ navigation }) => {
           </View>
         </>
       ) : null}
-    </>
+    </View>
   );
 };
 
@@ -1092,6 +1057,23 @@ const styles = StyleSheet.create({
     width: vw(72 * .6),
     height: vh(15 * .6),
     resizeMode: "contain",
+  },
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    zIndex: 999,
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
   },
 });
 

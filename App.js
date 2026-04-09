@@ -81,7 +81,7 @@ TextInput.defaultProps.allowFontScaling = false;
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const bottomTabColor = "#ede2d5ff";
+const bottomTabColor = parrotCream;
 const selectedTabColor = parrotBlue;
 const unselectedTabColor = "black" || "#3c9dde" || parrotBlue;
 const selectedTabBackGroundColor = "rgba(240,240,240,0.0009)"//parrotBlueSemiTransparent;
@@ -453,18 +453,11 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
                     width: vw(15),
                     height: vw(15),
                     borderRadius: vw(7.5),
-                    backgroundColor: parrotBlue,
-                    backgroundColor: parrotDarkCream,
+                    backgroundColor: "#ede2d5ff",
                     // backgroundColor: "white",
                     alignItems: "center",
                     justifyContent: "center",
                     bottom: vh(-2.5),
-                    shadowColor: parrotBlue,
-                    shadowColor: parrotCream,
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.4,
-                    shadowRadius: 6,
-                    elevation: 8,
                   }}>
                     <Image
                       // source={require("./assets/parrotwhiteoutline2.png")}
@@ -584,8 +577,8 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
       />
 
       {!isHubConnected && (
-        <View style={{ position: "absolute", top: 0, left: 0, right: 0, backgroundColor: "rgba(180,30,30,0.9)", paddingVertical: 6, alignItems: "center", zIndex: 999 }}>
-          <Text style={{ color: "white", fontSize: 12, fontWeight: "600" }}>No connection — retrying...</Text>
+        <View style={{ position: "absolute", bottom: 80, alignSelf: "center", backgroundColor: "rgba(30, 111, 217, 0.9)", paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, zIndex: 999 }}>
+          <Text style={{ color: "white", fontSize: 13, fontWeight: "600" }}>No connection — retrying...</Text>
         </View>
       )}
     </>

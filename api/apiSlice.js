@@ -25,10 +25,13 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-// Base query with token refresh logic and 15s timeout
+// Shared refresh promise — prevents parallel token refresh races
+let refreshPromise = null;
+
+// Base query with token refresh logic and 8s timeout
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
   api.signal?.addEventListener("abort", () => controller.abort());
 
   let result;
@@ -43,27 +46,39 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     const refreshToken = await AsyncStorage.getItem("storedRefreshToken");
     if (!refreshToken) return result;
 
-    const refreshResult = await baseQuery(
-      {
-        url: "/api/account/refresh-token",
-        method: "POST",
-        body: { refreshToken },
-      },
-      api,
-      extraOptions
-    );
+    // Coalesce parallel 401s into a single refresh call
+    if (!refreshPromise) {
+      refreshPromise = (async () => {
+        try {
+          const refreshResult = await baseQuery(
+            {
+              url: "/api/account/refresh-token",
+              method: "POST",
+              body: { refreshToken },
+            },
+            api,
+            extraOptions
+          );
 
-    if (refreshResult.data) {
-      // Save new tokens
-      await AsyncStorage.setItem("storedToken", refreshResult.data.token);
-      await AsyncStorage.setItem("storedRefreshToken", refreshResult.data.refreshToken);
+          if (refreshResult.data) {
+            await AsyncStorage.setItem("storedToken", refreshResult.data.token);
+            await AsyncStorage.setItem("storedRefreshToken", refreshResult.data.refreshToken);
+            return true;
+          } else {
+            await AsyncStorage.removeItem("storedToken");
+            await AsyncStorage.removeItem("storedRefreshToken");
+            return false;
+          }
+        } finally {
+          refreshPromise = null;
+        }
+      })();
+    }
 
-      // Retry the original request (fresh signal, no timeout needed for retry)
+    const refreshed = await refreshPromise;
+    if (refreshed) {
+      // Retry the original request
       result = await baseQuery(args, api, extraOptions);
-    } else {
-      // Failed refresh → remove stored tokens
-      await AsyncStorage.removeItem("storedToken");
-      await AsyncStorage.removeItem("storedRefreshToken");
     }
   }
 

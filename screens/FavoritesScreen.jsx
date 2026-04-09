@@ -72,6 +72,7 @@ export default function FavoritesScreen({ navigation }) {
           await refetchVehicles();
           await refetchVoyages();
         } catch (error) {
+          console.error("Error refetching favorites:", error);
         }
       };
 
@@ -80,7 +81,7 @@ export default function FavoritesScreen({ navigation }) {
       return () => {
         // Cleanup function if needed
       };
-    }, [refetchVehicles, refetchVoyages, navigation])
+    }, [refetchVehicles, refetchVoyages])
   );
 
   // useEffect(() => {

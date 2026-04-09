@@ -21,7 +21,6 @@ import { Ionicons, Feather, MaterialIcons, Fontisto, AntDesign } from "@expo/vec
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import VoyageListVertical from "../components/VoyageListVertical";
 import VehicleList from "../components/VehicleList";
-import Toast from "react-native-toast-message";
 import { useGetUserByIdQuery, useLazyGetParrotCoinBalanceQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
@@ -40,6 +39,16 @@ import TermsOfUseComponent from "../components/TermsOfUseComponent";
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
   const dispatch = useDispatch();
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
+
+  const [showFullBio, setShowFullBio] = useState(false);
   const [socialItemCount, setSocialItemCount] = useState(0);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
   const [termsModalVisible, setTermsModalVisible] = useState(false);
@@ -131,6 +140,7 @@ export default function ProfileScreen({ navigation }) {
       const response = await getParrotCoinBalance(userId).unwrap();
       setParrotCoinBalance(response.balance); // or response.balance depending on API
     } catch (error) {
+      console.error("Error fetching ParrotCoin balance:", error);
     }
   };
 
@@ -151,6 +161,7 @@ export default function ProfileScreen({ navigation }) {
           if (!voyageUninit) await refetchVoyageData();
           if (!vehicleUninit) await refetchVehicleData();
         } catch (error) {
+          console.error("Error refetching profile data:", error);
         }
       };
 
@@ -213,18 +224,9 @@ export default function ProfileScreen({ navigation }) {
       let emailStr = userData.displayEmail;
       try {
         await Clipboard.setStringAsync(emailStr);
-        Toast.show({
-          type: "success",
-          text1: "Email copied to clipboard",
-          text2: emailStr,
-          visibilityTime: 5000,
-          topOffset: 150,
-        });
+        showToast("Email copied to clipboard");
       } catch (error) {
-        Toast.show({
-          type: "error",
-          text1: "Failed to copy email to clipboard",
-        });
+        showToast("Failed to copy email to clipboard");
       }
     }
   };
@@ -233,7 +235,7 @@ export default function ProfileScreen({ navigation }) {
     if (userData.phoneNumber) {
       const phoneUrl = `tel:${userData.phoneNumber}`;
 
-      Linking.openURL(phoneUrl).catch(() => {});
+      Linking.openURL(phoneUrl).catch(() => { });
     }
   };
 
@@ -582,12 +584,31 @@ export default function ProfileScreen({ navigation }) {
                       </View>
 
 
-                      <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
                         Featuring your voyage on the main map costs ParrotCoins.
-                        This is a one-time deduction based on the number of days between your posting date and
-                        the start of your voyage—at which point it is no longer visible on the map.
-                        For example, a voyage starting in 10 days will cost 10 ParrotCoins.
                       </Text>
+                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                        The cost equals the number of days between today and the voyage start date.
+                      </Text>
+                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                        Example: Starts in 10 days → 10 ParrotCoins.
+                      </Text>
+                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                        The voyage will be removed from the main map once it starts.
+                      </Text>
+                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                        You can add ParrotCoins to your balance at parrotsvoyages.com.
+                      </Text>
+
+
+
+
+
+
+
+
+
+
 
                       <TouchableOpacity
                         style={styles.closeButtonAndText3}
@@ -672,7 +693,25 @@ export default function ProfileScreen({ navigation }) {
                   </Text>
                 </View>
                 <View>
-                  <BlueHashTagText originalText={userData.bio} />
+                  <BlueHashTagText originalText={
+                    showFullBio || !userData.bio || userData.bio.length <= 200
+                      ? userData.bio
+                      : userData.bio.slice(0, 200) + "..."
+                  } />
+                  {userData.bio?.length > 200 && !showFullBio && (
+                    <TouchableOpacity onPress={() => setShowFullBio(true)}>
+                      <Text style={styles.ReadMoreLess}>
+                        Read more <Feather name="chevron-down" size={16} color={parrotBlue} />
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  {userData.bio?.length > 200 && showFullBio && (
+                    <TouchableOpacity onPress={() => setShowFullBio(false)}>
+                      <Text style={styles.ReadMoreLess}>
+                        Read less <Feather name="chevron-up" size={16} color={parrotBlue} />
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
               {/* ------- BIO ------ */}
@@ -749,6 +788,11 @@ export default function ProfileScreen({ navigation }) {
               </TouchableOpacity>
             </Modal>
           </View>
+          {toastVisible && (
+            <View style={styles.toast}>
+              <Text style={styles.toastText}>{toastMessage}</Text>
+            </View>
+          )}
         </View>
       </>
     );
@@ -819,6 +863,13 @@ const styles = StyleSheet.create({
     height: vh(100),
     borderRadius: vh(0),
     backgroundColor: parrotCream,
+  },
+  ReadMoreLess: {
+    color: parrotBlue,
+    paddingTop: vh(0.5),
+    paddingBottom: vh(0.5),
+    fontWeight: "600",
+    fontSize: 13,
   },
   bioBox: {
     paddingHorizontal: 10,
@@ -996,6 +1047,22 @@ const styles = StyleSheet.create({
     // width: vw(30),
     borderRadius: vh(4),
     padding: vw(1),
+  },
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
   },
 
 });

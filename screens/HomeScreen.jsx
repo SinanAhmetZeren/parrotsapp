@@ -23,6 +23,7 @@ import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { vw, vh } from "react-native-expo-viewport-units";
 
+import { Shadow } from "react-native-shadow-2";
 import FilterCountModal from "../components/FilterCountModal";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
@@ -49,7 +50,6 @@ import {
   parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
   parrotPlaceholderGrey
 } from "../assets/color";
-import Toast from "react-native-toast-message";
 
 // Define static assets outside to keep references stable
 const markerImages = [parrotMarker1, parrotMarker2, parrotMarker3, parrotMarker4, parrotMarker5, parrotMarker6];
@@ -59,6 +59,15 @@ const markerImages = [parrotMarker1, parrotMarker2, parrotMarker3, parrotMarker4
 
 export default function HomeScreen({ navigation }) {
 
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
 
   const [countModalVisibility, setCountModalVisibility] = useState(false);
   const [calendarModalVisibility, setCalendarModalVisibility] = useState(false);
@@ -307,7 +316,7 @@ export default function HomeScreen({ navigation }) {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          Toast.show({ type: "error", text1: "Location permission denied", text2: "Enable location access in device settings.", autoHide: false });
+          showToast("Location permission denied - Enable location access in device settings.");
           return;
         }
         let location;
@@ -315,7 +324,7 @@ export default function HomeScreen({ navigation }) {
           location = await Location.getCurrentPositionAsync({});
         } catch (error) {
           console.error("Error getting user location :", error);
-          Toast.show({ type: "error", text1: "Could not get location", text2: "Check your GPS settings.", autoHide: true, visibilityTime: 4000 });
+          showToast("Could not get location - Check your GPS settings.");
           return;
         }
         // console.log(location, "location");
@@ -328,7 +337,7 @@ export default function HomeScreen({ navigation }) {
         setInitialLongitude(lon);
       } catch (error) {
         console.error("Error getting user location :", error);
-        Toast.show({ type: "error", text1: "Could not get location", text2: "Check your GPS settings.", autoHide: true, visibilityTime: 4000 });
+        showToast("Could not get location - Check your GPS settings.");
       }
     }
 
@@ -467,7 +476,7 @@ export default function HomeScreen({ navigation }) {
     };
     const filteredVoyages = await getFilteredVoyages(data);
     if (filteredVoyages.error) {
-      Toast.show({ type: "error", text1: "Could not update voyages", text2: "Check your connection.", autoHide: true, visibilityTime: 3000 });
+      showToast("Could not update voyages - Check your connection.");
       return;
     }
     setInitialVoyages(filteredVoyages.data || []);
@@ -481,6 +490,7 @@ export default function HomeScreen({ navigation }) {
     setAppliedFilters(filtersJson);
     // console.log("Applied filters:", filtersJson);
   };
+
 
   function handleCountModal() {
     setCountModalVisibility(!countModalVisibility);
@@ -512,12 +522,7 @@ export default function HomeScreen({ navigation }) {
     console.log("End Date:", endDate);
   };
 
-  if (isLoading) {
-    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
-  }
-
-  if (!isLoading) {
-    const initialRegion = {
+  const initialRegion = {
       latitude: initialLatitude,
       longitude: initialLongitude,
       latitudeDelta: 0.25,
@@ -635,20 +640,29 @@ export default function HomeScreen({ navigation }) {
 
                 <View>
                   <TouchableOpacity
-                    disabled={false}
+                    disabled={isLoadingVoyagesFiltered}
                     onPress={() => {
                       applyFilter();
                     }}
                   >
-                    <View>
-                      <Text
-                        style={[
-                          styles.applyFilter,
-                          filterComparisonState == 1 && styles.applyFilterInitial,
-                          filterComparisonState == 2 && styles.applyFilterApplied,
-                          filterComparisonState == 3 && styles.applyFilterChanged,
-                        ]}
-                      >Apply Filter</Text>
+                    <View
+                      style={[
+                        styles.applyFilter,
+                        filterComparisonState == 1 && styles.applyFilterInitial,
+                        filterComparisonState == 2 && styles.applyFilterApplied,
+                        filterComparisonState == 3 && styles.applyFilterChanged,
+                      ]}
+                    >
+                      <Text style={[
+                        styles.applyFilterText,
+                        filterComparisonState == 1 && { color: applyFilterInitialColor },
+                        filterComparisonState == 2 && { color: applyFilterAppliedColor },
+                        filterComparisonState == 3 && { color: applyFilterChangedColor },
+                        isLoadingVoyagesFiltered && { opacity: 0 },
+                      ]}>Apply Filter</Text>
+                      {isLoadingVoyagesFiltered && (
+                        <ActivityIndicator size="large" color="white" style={styles.filterSpinner} />
+                      )}
                     </View>
                   </TouchableOpacity>
 
@@ -672,7 +686,11 @@ export default function HomeScreen({ navigation }) {
 
             <View style={styles.mapWrapper}>
               <View style={styles.mapContainer}>
-                <MapView
+                {isLoading ? (
+                  <View style={styles.mapPlaceholder}>
+                    <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
+                  </View>
+                ) : <MapView
                   style={styles.map}
                   initialRegion={initialRegion}
                   ref={mapRef}
@@ -701,7 +719,7 @@ export default function HomeScreen({ navigation }) {
                       />
                     );
                   })}
-                </MapView>
+                </MapView>}
               </View>
             </View>
 
@@ -732,7 +750,23 @@ export default function HomeScreen({ navigation }) {
               </View>
             )}
 
-            <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
+            {isLoading ? (
+              <View style={styles.voyagePlaceholderWrapper}>
+                <Shadow
+                  distance={8}
+                  offset={[0, 0]}
+                  startColor="rgba(0,0,0,0.08)"
+                  finalColor="rgba(0,0,0,0.13)"
+                  style={{ borderRadius: vh(2) }}
+                >
+                  <View style={styles.voyagePlaceholder}>
+                    <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
+                  </View>
+                </Shadow>
+              </View>
+            ) : (
+              <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
+            )}
           </View>
           <Modal
             animationType="fade"
@@ -800,13 +834,37 @@ export default function HomeScreen({ navigation }) {
             </Modal>
           </View>
         </ScrollView>
+        {toastVisible && (
+          <View style={styles.toast}>
+            <Text style={styles.toastText}>{toastMessage}</Text>
+          </View>
+        )}
       </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({
 
+  mapPlaceholder: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: parrotCream,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  voyagePlaceholderWrapper: {
+    marginTop: vh(1),
+    width: vw(88),
+    alignSelf: "center",
+  },
+  voyagePlaceholder: {
+    height: vh(20),
+    width: vw(88),
+    backgroundColor: parrotCream,
+    borderRadius: vh(2),
+    justifyContent: "center",
+    alignItems: "center",
+  },
   mapWrapper: {
     width: "94%",
     alignSelf: "center",
@@ -869,7 +927,8 @@ const styles = StyleSheet.create({
   miniLogo: {
     height: vh(6),
     width: vh(6),
-    alignSelf: "center",
+    alignSelf: "flex-start",
+    marginTop: vh(1.75),
     marginLeft: vw(-1),
     marginRight: vw(2),
     zIndex: 1,
@@ -886,12 +945,23 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
   },
   applyFilter: {
-    fontSize: 14,
-    fontWeight: "700",
     alignSelf: "flex-end",
     borderRadius: vh(3),
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.7),
+    minWidth: vh(12),
+    alignItems: "center",
+  },
+  applyFilterText: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  filterSpinner: {
+    position: "absolute",
+    alignSelf: "center",
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
   },
   applyFilterInitial: {
     backgroundColor: applyFilterInitialBackgroundColor,
@@ -982,5 +1052,21 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 119, 234,0.06)",
     backgroundColor: parrotBlueMediumTransparent,
     borderRadius: vh(5),
+  },
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
   },
 });

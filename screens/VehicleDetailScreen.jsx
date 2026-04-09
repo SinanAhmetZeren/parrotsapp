@@ -64,6 +64,14 @@ const VehicleDetailScreen = () => {
   const userId = useSelector((state) => state.users.userId);
   const [showFullText, setShowFullText] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
   const [addVehicleToFavorites] = useAddVehicleToFavoritesMutation();
   const [deleteVehicleFromFavorites] = useDeleteVehicleFromFavoritesMutation();
   const [hasError, setHasError] = useState(false)
@@ -79,9 +87,7 @@ const VehicleDetailScreen = () => {
     setHasError(false);
     try {
       const refreshData = async () => {
-        setIsLoading(true);
         await refetchVehicle();
-        setIsLoading(false);
       };
       refreshData();
     } catch (error) {
@@ -212,7 +218,7 @@ const VehicleDetailScreen = () => {
 
   if (isSuccessVehicle) {
 
-    const descriptionShortenedChars = 500;
+    const descriptionShortenedChars = 200;
 
     const displayText = showFullText
       ? VehicleData.description
@@ -280,38 +286,16 @@ const VehicleDetailScreen = () => {
               <TouchableOpacity
                 style={styles.editProfileBox}
                 onPress={() => {
-                  // navigation.navigate("EditVehicleScreen", {
-                  //   currentVehicleId: vehicleId,
-                  // });
-
                   navigation.navigate("Create", {
                     screen: "EditVehicleScreen",
-                    params: {
-                      currentVehicleId: vehicleId,
-                    },
+                    params: { currentVehicleId: vehicleId },
                   });
-
-
                 }}
                 activeOpacity={0.8}
               >
-                <View>
-                  <View style={styles.innerProfileContainer}>
-                    <MaterialCommunityIcons
-                      name="account-edit-outline"
-                      size={18}
-                      color={parrotBlue}
-                    />
-                    <Text
-                      style={{
-                        lineHeight: 22,
-                        marginLeft: vw(2),
-                        fontSize: 11,
-                      }}
-                    >
-                      Edit Vehicle
-                    </Text>
-                  </View>
+                <View style={styles.innerProfileContainer}>
+                  <MaterialCommunityIcons name="account-edit-outline" size={18} color={parrotBlue} />
+                  <Text style={{ lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Edit Vehicle</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -319,203 +303,139 @@ const VehicleDetailScreen = () => {
 
           <View style={styles.voyageDataWrapper}>
             <View style={styles.VoyageDataContainer}>
-              <View style={styles.VoyageNameAndUsername}>
+
+              {/* Name + share/favorite */}
+              <View style={styles.vehicleHeader}>
                 <Text style={styles.vehicleName}>{VehicleData.name}</Text>
-              </View>
-
-              <View style={{}}>
-
-                <TouchableOpacity
-                  style={styles.extendedAreaContainer2}
-                  onPress={() => {
-                    handleShareVehicle();
-                  }}
-                >
-                  <Ionicons
-                    name="share-outline"
-                    size={24}
-                    color={parrotBlue}
-                    //color={"orange"}
-                    style={styles.shareContainer}
-                  />
-                </TouchableOpacity>
-
-
-
-                {isFavorited ? (
-                  <TouchableOpacity
-                    style={styles.extendedAreaContainer}
-                    onPress={() => handleDeleteVehicleFromFavorites()}
-                  >
-                    <View style={styles.heartIconContainer}>
-
-                      <Ionicons
-                        name="heart"
-                        size={24}
-                        color="red"
-                        style={styles.heartIcon}
-                      />
-                    </View>
+                <View style={styles.vehicleHeaderIcons}>
+                  <TouchableOpacity onPress={() => handleShareVehicle()}>
+                    <Ionicons name="share-outline" size={24} color={parrotBlue} style={styles.shareContainer} />
                   </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.extendedAreaContainer}
-                    onPress={() => handleAddVehicleToFavorites()}
-                  >
-                    <View style={styles.heartIconContainer}>
-
-                      <Ionicons
-                        name="heart-outline"
-                        size={24}
-                        color={parrotBlue}
-                        style={styles.heartIcon}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                )}
-
-              </View>
-
-
-              {/* // Vehicle Images */}
-              <View style={styles.mainBidsContainer}>
-                <View style={styles.currentBidsAndSeeAll}>
-                  <Text style={styles.currentBidsTitle}>Vehicle Images</Text>
-
-
-                  <TouchableOpacity onPress={() => toggleVehicleImagesInfo()}
-                    style={{ marginLeft: vw(1), top: vh(.8) }}>
-                    <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
-                  </TouchableOpacity>
-                  {vehicleImagesInfoVisible && (
-                    <TouchableOpacity onPress={() => toggleVehicleImagesInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
-                      <Text style={styles.waypointInfoMessage}>
-                        Tap an image to open gallery
-                      </Text>
+                  {isFavorited ? (
+                    <TouchableOpacity onPress={() => handleDeleteVehicleFromFavorites()}>
+                      <View style={styles.heartIconContainer}>
+                        <Ionicons name="heart" size={24} color="red" style={styles.heartIcon} />
+                      </View>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity onPress={() => handleAddVehicleToFavorites()}>
+                      <View style={styles.heartIconContainer}>
+                        <Ionicons name="heart-outline" size={24} color={parrotBlue} style={styles.heartIcon} />
+                      </View>
                     </TouchableOpacity>
                   )}
-
-                </View>
-              </View>
-              <View style={styles.ImagesMainContainer}>
-                <View style={styles.ImagesSubContainer}>
-                  <VehicleImagesWithCarousel
-                    vehicleImages={VehicleData.vehicleImages}
-                  />
-
                 </View>
               </View>
 
-              {/* // Vehicle Description */}
-              <View style={styles.mainBidsContainer}>
-                <View style={styles.currentBidsAndSeeAll}>
-                  <Text style={styles.currentBidsTitle}>
-                    Vehicle Description
-                  </Text>
-                </View>
-              </View>
-
-              {/* // VoyageName and Username */}
-              <View style={styles.VoyageNameAndUsername}>
-                <View style={styles.voyageDetailsContainer}>
-                  <View style={styles.OwnerAndBoat}>
-                    <TouchableOpacity
-                      style={styles.voyageOwner}
-                      onPress={() => {
-                        goToProfilePage(VehicleData.user.id);
-                      }}
-                    >
-                      <Image
-                        source={{
-                          uri:
-                            VehicleData.user.profileImageUrl,
-                        }}
-                        style={styles.profileImage}
-                      />
-                      <Text style={styles.userName}>
-                        {/* {VehicleData.user.userName} */}
-
-                        {VehicleData.user.userName.length > 20 ? (
-                          <View style={{ flexDirection: "row" }}>
-                            <Text style={styles.username}>
-                              {VehicleData.user.userName.substring(0, 17)}
-                            </Text>
-                            <Text style={styles.usernameSmall}>{"..."}</Text>
-                          </View>
-                        ) : (
-                          <Text style={styles.username}>
-                            {VehicleData.user.userName}
-                          </Text>
-                        )}
-
-                        {/* //// XXXXXXX //// */}
-                      </Text>
+              {/* Images Card */}
+              <View style={styles.sectionCard}>
+                <View style={styles.TitleContainer}>
+                  <View style={styles.currentBidsAndSeeAll}>
+                    <Text style={styles.currentBidsTitle}>Images</Text>
+                    <TouchableOpacity onPress={() => toggleVehicleImagesInfo()} style={{ marginLeft: vw(1), top: vh(0.8) }}>
+                      <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
                     </TouchableOpacity>
-
-                    <View style={styles.voyageOwner}>
-                      <Text style={styles.propTextDescription}>Capacity: </Text>
-                      <Text style={styles.propText}>
-                        {VehicleData.capacity}{" "}
-                        <Feather name="users" size={14} color="black" />
-                      </Text>
-                    </View>
+                    {vehicleImagesInfoVisible && (
+                      <TouchableOpacity onPress={() => toggleVehicleImagesInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
+                        <Text style={styles.waypointInfoMessage}>Tap an image to open gallery</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.ImagesMainContainer}>
+                  <View style={styles.ImagesSubContainer}>
+                    <VehicleImagesWithCarousel vehicleImages={VehicleData.vehicleImages} />
                   </View>
                 </View>
               </View>
 
-              <View style={styles.DescriptionContainer}>
-                <Text style={styles.descriptionInnerContainer}>
-                  {/* {displayText} */}
-                  <RenderHtml
-                    source={{ html: displayText }}
-                    contentWidth={width}
-                    tagsStyles={{
-                      strong: { fontWeight: 'bold' }, // force bold
-                      b: { fontWeight: 'bold' },      // just in case HTML uses <b>
-                    }}
-                  />
-                </Text>
-                {VehicleData.description.length > descriptionShortenedChars &&
-                  !showFullText && (
+              {/* Description Card */}
+              <View style={styles.sectionCard}>
+                <View style={styles.TitleContainer}>
+                  <View style={styles.currentBidsAndSeeAll}>
+                    <Text style={styles.currentBidsTitle}>Description</Text>
+                  </View>
+                </View>
+                <View style={styles.OwnerAndBoat}>
+                  <TouchableOpacity
+                    style={styles.voyageOwner}
+                    onPress={() => goToProfilePage(VehicleData.user.id)}
+                  >
+                    <Image source={{ uri: VehicleData.user.profileImageUrl }} style={styles.profileImage} />
+                    <Text style={styles.userName}>
+                      {VehicleData.user.userName.length > 20 ? (
+                        <View style={{ flexDirection: "row" }}>
+                          <Text style={styles.username}>{VehicleData.user.userName.substring(0, 17)}</Text>
+                          <Text style={styles.usernameSmall}>{"..."}</Text>
+                        </View>
+                      ) : (
+                        <Text style={styles.username}>{VehicleData.user.userName}</Text>
+                      )}
+                    </Text>
+                  </TouchableOpacity>
+                  <View style={styles.voyageOwner}>
+                    <Text style={styles.propTextDescription}>Capacity: </Text>
+                    <Text style={styles.propText}>
+                      {VehicleData.capacity}{" "}
+                      <Feather name="users" size={14} color="black" />
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.DescriptionContainer}>
+                  <Text style={styles.descriptionInnerContainer}>
+                    <RenderHtml
+                      source={{ html: displayText }}
+                      contentWidth={width}
+                      tagsStyles={{
+                        strong: { fontWeight: "bold" },
+                        b: { fontWeight: "bold" },
+                      }}
+                    />
+                  </Text>
+                  {VehicleData.description.length > descriptionShortenedChars && !showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
                       <Text style={styles.ReadMoreLess}>
-                        Read more
-                        <Feather
-                          name="chevron-down"
-                          size={24}
-                          color={parrotGreen}
-                        />
+                        Read more <Feather name="chevron-down" size={16} color={parrotBlue} />
                       </Text>
                     </TouchableOpacity>
                   )}
-                {showFullText && (
-                  <TouchableOpacity onPress={() => setShowFullText(false)}>
-                    <Text style={styles.ReadMoreLess}>
-                      Read less
-                      <Feather name="chevron-up" size={24} color={parrotGreen} />
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              {/* // Vehicle VOYAGES */}
-
-              <View style={styles.mainBidsContainer}>
-                <View style={styles.currentBidsAndSeeAll}>
-                  <Text style={styles.currentBidsTitle}>
-                    {VehicleData.voyages.length == 0
-                      ? null
-                      : "Vehicle's Voyages"}
-                  </Text>
+                  {showFullText && (
+                    <TouchableOpacity onPress={() => setShowFullText(false)}>
+                      <Text style={styles.ReadMoreLess}>
+                        Read less <Feather name="chevron-up" size={16} color={parrotBlue} />
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
 
-              <View style={styles.VoyagesContainer}>
-                <VehicleVoyages voyages={VehicleData.voyages} />
-              </View>
+              {VehicleData.voyages.length === 0 && <View style={{ marginBottom: vh(10) }} />}
+
+              {/* Voyages Card — only shown if voyages exist */}
+              {VehicleData.voyages.length > 0 && (
+                <>
+                  <View style={styles.sectionCard}>
+                    <View style={styles.TitleContainer}>
+                      <View style={styles.currentBidsAndSeeAll}>
+                        <Text style={styles.currentBidsTitle}>Voyages</Text>
+                      </View>
+                    </View>
+                    <View style={styles.VoyagesContainer}>
+                      <VehicleVoyages voyages={VehicleData.voyages} />
+                    </View>
+                  </View>
+                  <View style={{ marginBottom: vh(10) }} />
+                </>
+              )}
+
             </View>
           </View>
         </ScrollView>
+        {toastVisible && (
+          <View style={styles.toast}>
+            <Text style={styles.toastText}>{toastMessage}</Text>
+          </View>
+        )}
       </>
     );
   }
@@ -552,25 +472,18 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     padding: vw(1),
   },
-  extendedAreaContainer: {
-    alignSelf: "flex-end",
-    position: "absolute",
-    right: vw(2),
-    borderRadius: vh(1),
-    paddingLeft: vw(5),
-    paddingRight: vw(2),
-    paddingVertical: vh(2),
-    bottom: vh(-3),
+  vehicleHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: vh(1),
+    marginBottom: vh(1),
+    marginHorizontal: vw(3),
   },
-  extendedAreaContainer2: {
-    alignSelf: "flex-end",
-    position: "absolute",
-    right: vw(12),
-    borderRadius: vh(1),
-    paddingLeft: vw(5),
-    paddingRight: vw(2),
-    paddingVertical: vh(2),
-    bottom: vh(-3),
+  vehicleHeaderIcons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: vw(3),
   },
   shareContainer: {
     padding: vw(1),
@@ -599,26 +512,40 @@ const styles = StyleSheet.create({
   },
   vehicleName: {
     fontSize: 24,
-    alignSelf: "center",
-    color: parrotGreen,
+    color: parrotBlue,
     fontWeight: "800",
-    borderRadius: vh(3),
+    flex: 1,
+    flexShrink: 1,
+  },
+  sectionCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(2),
+  },
+  TitleContainer: {
+    marginHorizontal: vw(2),
   },
   mainBidsContainer: {
     borderRadius: vw(5),
     marginHorizontal: vw(2),
   },
   currentBidsAndSeeAll: {
-    marginTop: vh(2),
+    marginTop: 0,
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingRight: vw(10),
     justifyContent: "flex-start",
+    paddingRight: vw(10),
   },
   currentBidsTitle: {
     fontSize: 20,
     fontWeight: "700",
-    color: parrotBlue,
+    color: parrotLightBlue,
   },
   ImagesMainContainer: {
     marginTop: vh(1),
@@ -665,24 +592,37 @@ const styles = StyleSheet.create({
   DescriptionContainer: {
     paddingHorizontal: vh(1),
     marginHorizontal: vh(0.5),
+    paddingBottom: vh(2),
   },
   VoyagesContainer: {
     paddingHorizontal: vh(1),
-    margin: vh(0.5),
-    marginTop: vh(0.5),
-    marginBottom: vh(13),
+    paddingBottom: vh(2),
   },
   descriptionInnerContainer: {
     paddingVertical: vh(1),
   },
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
+  },
   ReadMoreLess: {
-    color: parrotGreen,
-    paddingHorizontal: vw(2),
-    paddingBottom: vh(1),
-    width: vw(28),
-    backgroundColor: parrotGreenMediumTransparent,
-    borderRadius: vh(2),
-    fontWeight: "700",
+    color: parrotBlue,
+    paddingTop: vh(0.5),
+    paddingBottom: vh(0.5),
+    fontWeight: "600",
+    fontSize: 13,
   },
   userName: {
     fontSize: 14,

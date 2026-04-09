@@ -25,7 +25,6 @@ import { API_URL } from "@env";
 import { ScrollView } from "react-native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
-import Toast from "react-native-toast-message";
 import {
   register_ReceiveMessage,
   unregister_ReceiveMessage,
@@ -42,6 +41,14 @@ import {
 export const ConversationDetailScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
   const currentUserName = useSelector((state) => state.users.userName);
@@ -172,27 +179,16 @@ export const ConversationDetailScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       const handleReconnecting = () => {
-        Toast.show({
-          type: "error",
-          text1: "Connection lost",
-          text2: "Reconnecting...",
-          autoHide: false,
-          toastId: "connection-status",
-        });
+        showToast("Connection lost - Reconnecting...");
       };
       const handleReconnected = () => {
-        Toast.hide();
-        Toast.show({
-          type: "success",
-          text1: "Reconnected",
-          autoHide: true,
-          visibilityTime: 2000,
-        });
+        setToastVisible(false);
+        showToast("Reconnected");
       };
       register_OnReconnecting(handleReconnecting);
       register_OnReconnected(handleReconnected);
       return () => {
-        Toast.hide();
+        setToastVisible(false);
         unregister_OnReconnecting(handleReconnecting);
         unregister_OnReconnected(handleReconnected);
       };
@@ -357,13 +353,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
         prev.filter((msg) => msg.dateTime !== sentMessage.dateTime)
       );
 
-      Toast.show({
-        type: "error",
-        text1: "Message not sent",
-        text2: "Please check your connection.",
-        autoHide: true,
-        visibilityTime: 3000,
-      });
+      showToast("Message not sent - Please check your connection.");
     }
   };
 
@@ -517,6 +507,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
           </View>
           {/* // SEND MESSAGE COMPONENT // */}
         </View>
+        {toastVisible && (
+          <View style={styles.toast}>
+            <Text style={styles.toastText}>{toastMessage}</Text>
+          </View>
+        )}
       </View>
 
 
@@ -605,5 +600,21 @@ const styles = StyleSheet.create({
     textAlign: "center",
     top: vh(0.1),
     right: vh(0.1),
+  },
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
   },
 });

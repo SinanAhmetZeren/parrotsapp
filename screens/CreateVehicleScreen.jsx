@@ -67,7 +67,15 @@ const CreateVehicleScreen = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVehicle, setIsCreatingVehicle] = useState(false);
   const [isCompletingVehicle, setIsCompletingVehicle] = useState(false);
-  const [hasError, setHasError] = useState(false)
+  const [hasError, setHasError] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
 
   const navigation = useNavigation();
 
@@ -144,6 +152,7 @@ const CreateVehicleScreen = () => {
 
     } catch (error) {
       console.error("Error completing vehicle:", error);
+      showToast("Failed to complete vehicle - Check your connection and try again.");
       setHasError(true);
     } finally {
       setIsCompletingVehicle(false);
@@ -197,6 +206,7 @@ const CreateVehicleScreen = () => {
         "Error details:",
         error?.data || error?.error || error?.message
       );
+      showToast("Failed to create vehicle - Check your connection and try again.");
       setHasError(true);
     } finally {
       setIsCreatingVehicle(false);
@@ -241,6 +251,7 @@ const CreateVehicleScreen = () => {
       setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
+      showToast("Image upload failed - Check your connection and try again.");
       setHasError(true);
     } finally {
       setIsUploadingImage(false);

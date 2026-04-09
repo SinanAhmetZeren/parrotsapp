@@ -4,6 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { updateAsLoggedOut } from "../slices/UserSlice";
+import Toast from "react-native-toast-message";
 
 export const TokenExpiryGuard = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,13 @@ export const TokenExpiryGuard = () => {
         );
 
         if (!expiry) {
+          Toast.show({
+            type: "error",
+            text1: "Session expired",
+            text2: "Please log in again.",
+            autoHide: true,
+            visibilityTime: 3000,
+          });
           dispatch(updateAsLoggedOut());
           return;
         }
@@ -24,6 +32,13 @@ export const TokenExpiryGuard = () => {
         const now = Date.now();
 
         if (now > expiryTime) {
+          Toast.show({
+            type: "error",
+            text1: "Session expired",
+            text2: "Please log in again.",
+            autoHide: true,
+            visibilityTime: 3000,
+          });
           dispatch(updateAsLoggedOut());
         }
       };

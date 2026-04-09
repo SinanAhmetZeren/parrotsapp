@@ -21,7 +21,6 @@ import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
-import Toast from "react-native-toast-message";
 import { useFocusEffect } from "@react-navigation/native";
 import { useGetUserByIdQuery, useGetUserByPublicIdQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery, useLazyGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
@@ -40,6 +39,15 @@ export default function ProfileScreenPublic({ navigation }) {
   const { userId } = route.params;
   const { publicId } = route.params;
   const { userName } = route.params;
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
 
   const [socialItemCount, setSocialItemCount] = useState(0);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
@@ -78,6 +86,7 @@ export default function ProfileScreenPublic({ navigation }) {
   } = useGetVehiclesByUserByIdQuery(receivedUserId);
 
 
+  const [showFullBio, setShowFullBio] = useState(false);
   const [selected, setSelected] = useState("voyages");
 
   const handleShareProfile = async () => {
@@ -183,13 +192,11 @@ export default function ProfileScreenPublic({ navigation }) {
     setHasError(false);
     try {
       const refreshData = async () => {
-        setIsLoading(true);
         await refetchUser();
         // await triggerVehicles();
         // await triggerVoyages();
         await refetchVehicles();
         await refetchVoyages();
-        setIsLoading(false);
       };
       refreshData();
     } catch (error) {
@@ -212,18 +219,9 @@ export default function ProfileScreenPublic({ navigation }) {
 
       try {
         await Clipboard.setStringAsync(emailStr);
-        Toast.show({
-          type: "success",
-          text1: "Email copied to clipboard",
-          text2: emailStr,
-          visibilityTime: 5000,
-          topOffset: 150,
-        });
+        showToast("Email copied to clipboard");
       } catch (error) {
-        Toast.show({
-          type: "error",
-          text1: "Failed to copy email to clipboard",
-        });
+        showToast("Failed to copy email to clipboard");
       }
     }
   };
@@ -468,7 +466,25 @@ export default function ProfileScreenPublic({ navigation }) {
                   </Text>
                 </View>
                 <View>
-                  <BlueHashTagText originalText={userData.bio} />
+                  <BlueHashTagText originalText={
+                    showFullBio || !userData.bio || userData.bio.length <= 200
+                      ? userData.bio
+                      : userData.bio.slice(0, 200) + "..."
+                  } />
+                  {userData.bio?.length > 200 && !showFullBio && (
+                    <TouchableOpacity onPress={() => setShowFullBio(true)}>
+                      <Text style={styles.ReadMoreLess}>
+                        Read more <Feather name="chevron-down" size={16} color={parrotBlue} />
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  {userData.bio?.length > 200 && showFullBio && (
+                    <TouchableOpacity onPress={() => setShowFullBio(false)}>
+                      <Text style={styles.ReadMoreLess}>
+                        Read less <Feather name="chevron-up" size={16} color={parrotBlue} />
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
               {/* ------- BIO ------ */}
@@ -544,6 +560,11 @@ export default function ProfileScreenPublic({ navigation }) {
               </TouchableOpacity>
             </Modal>
           </View>
+          {toastVisible && (
+            <View style={styles.toast}>
+              <Text style={styles.toastText}>{toastMessage}</Text>
+            </View>
+          )}
         </View>
       </>
     );
@@ -610,6 +631,13 @@ const styles = StyleSheet.create({
   scrollView: {
     height: vh(100),
     backgroundColor: parrotCream
+  },
+  ReadMoreLess: {
+    color: parrotBlue,
+    paddingTop: vh(0.5),
+    paddingBottom: vh(0.5),
+    fontWeight: "600",
+    fontSize: 13,
   },
   bioBox: {
     paddingHorizontal: 10,
@@ -711,6 +739,22 @@ const styles = StyleSheet.create({
     width: vw(8),
     backgroundColor: "white",
     borderRadius: vh(5),
+  },
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
   },
 
 });

@@ -41,7 +41,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 import DropdownComponentCurrency from "../components/DropdownComponentCurrency";
-import Toast from "react-native-toast-message";
 
 
 // Set lastBidDate to startDate for now, 
@@ -106,8 +105,15 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
 
-  const [hasError, setHasError] = useState(false)
+  const [hasError, setHasError] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
+  const showToast = (message) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
 
   useEffect(() => { }, [startDate, endDate, lastBidDate, voyageImage]);
 
@@ -280,7 +286,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       });
 
       if (addedVoyageResponse.error || !addedVoyageResponse.data?.imagePath) {
-        Toast.show({ type: "error", text1: "Image upload failed", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
+        showToast("Image upload failed - Check your connection and try again.");
         return;
       }
       const addedVoyageImageId = addedVoyageResponse.data.imagePath;
@@ -422,7 +428,7 @@ const CreateVoyageScreen = ({ navigation }) => {
         }));
 
     return (
-      <>
+      <View style={{ flex: 1 }}>
         <TokenExpiryGuard />
         <StepBar style={styles.StepBar} currentStep={currentStep} />
 
@@ -892,7 +898,12 @@ const CreateVoyageScreen = ({ navigation }) => {
 
           </ScrollView>
         )}
-      </>
+        {toastVisible && (
+          <View style={styles.toast}>
+            <Text style={styles.toastText}>{toastMessage}</Text>
+          </View>
+        )}
+      </View>
     );
   }
 };
@@ -1176,6 +1187,20 @@ const styles = StyleSheet.create({
     marginVertical: vh(1),
     alignSelf: "flex-start",
   },
-
-
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  toastText: {
+    color: "white",
+    fontSize: 13,
+    fontWeight: "600",
+  },
 });
