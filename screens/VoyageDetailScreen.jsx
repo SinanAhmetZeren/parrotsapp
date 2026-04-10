@@ -387,7 +387,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                       goToProfilePage(VoyageData.user.id)
                     }}
                   >
-                    <Image source={{ uri: VoyageData.user.profileImageUrl }} style={styles.profileImage} />
+                    <Image source={{ uri: VoyageData.user.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
                     <Text style={styles.value}>{VoyageData.user.userName}</Text>
                   </TouchableOpacity>
                 </View>

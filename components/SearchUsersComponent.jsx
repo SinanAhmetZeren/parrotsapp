@@ -31,7 +31,7 @@ export const SearchUsersComponent = ({ searchResults }) => {
                   <View style={styles.profileSection}>
                     <Image
                       source={{
-                        uri: `${item.profileImageUrl}`,
+                        uri: `${item.profileImageThumbnailUrl || item.profileImageUrl}`,
                       }}
                       style={styles.userImage}
                     />

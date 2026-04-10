@@ -597,6 +597,7 @@ function App() {
           const storedUserId = await AsyncStorage.getItem("storedUserId");
           const storedUserName = await AsyncStorage.getItem("storedUserName");
           const storedProfileImageUrl = await AsyncStorage.getItem("storedProfileImageUrl");
+          const storedProfileImageThumbnailUrl = await AsyncStorage.getItem("storedProfileImageThumbnailUrl");
 
           if (!storedToken) return;
           // Restore Redux state
@@ -606,6 +607,7 @@ function App() {
               userId: storedUserId,
               userName: storedUserName,
               profileImageUrl: storedProfileImageUrl,
+              profileImageThumbnailUrl: storedProfileImageThumbnailUrl || "",
             })
           );
           // Start SignalR

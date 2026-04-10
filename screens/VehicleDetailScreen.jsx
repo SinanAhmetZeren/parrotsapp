@@ -361,7 +361,7 @@ const VehicleDetailScreen = () => {
                     style={styles.voyageOwner}
                     onPress={() => goToProfilePage(VehicleData.user.id)}
                   >
-                    <Image source={{ uri: VehicleData.user.profileImageUrl }} style={styles.profileImage} />
+                    <Image source={{ uri: VehicleData.user.profileImageThumbnailUrl || VehicleData.user.profileImageUrl }} style={styles.profileImage} />
                     <Text style={styles.userName}>
                       {VehicleData.user.userName.length > 20 ? (
                         <View style={{ flexDirection: "row" }}>

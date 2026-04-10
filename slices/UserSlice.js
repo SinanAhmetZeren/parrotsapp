@@ -12,6 +12,7 @@ const usersSlice = createSlice({
     token: "",
     userName: "",
     userProfileImage: "",
+    userProfileImageThumbnail: "",
     unreadMessages: false,
     isHubConnected: false,
     userFavoriteVoyages: [0],
@@ -24,6 +25,7 @@ const usersSlice = createSlice({
       state.token = action.payload.token;
       state.userName = action.payload.userName;
       state.userProfileImage = action.payload.profileImageUrl;
+      state.userProfileImageThumbnail = action.payload.profileImageThumbnailUrl || "";
       state.unreadMessages = action.payload.unreadMessages === "false" ? false : true;
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
@@ -58,6 +60,12 @@ const usersSlice = createSlice({
       ).catch((error) => {
         console.error("Error setting storedProfileImageUrl:", error);
       });
+      AsyncStorage.setItem(
+        "storedProfileImageThumbnailUrl",
+        action.payload.profileImageThumbnailUrl || ""
+      ).catch((error) => {
+        console.error("Error setting storedProfileImageThumbnailUrl:", error);
+      });
 
     },
     updateAsLoggedOut: (state) => {
@@ -66,6 +74,7 @@ const usersSlice = createSlice({
       state.token = "";
       state.userName = "";
       state.userProfileImage = "";
+      state.userProfileImageThumbnail = "";
       state.unreadMessages = false;
       AsyncStorage.removeItem("storedToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedToken:", error);
@@ -91,6 +100,12 @@ const usersSlice = createSlice({
           error
         );
       });
+      AsyncStorage.removeItem("storedProfileImageThumbnailUrl").catch((error) => {
+        console.error(
+          "Error clearing AsyncStorage storedProfileImageThumbnailUrl:",
+          error
+        );
+      });
 
     },
     updateStateFromLocalStorage: (state, action) => {
@@ -99,6 +114,7 @@ const usersSlice = createSlice({
       state.token = token;
       state.userName = userName;
       state.userProfileImage = profileImageUrl;
+      state.userProfileImageThumbnail = action.payload.profileImageThumbnailUrl || "";
       state.isLoggedIn = true;
     },
     updateUserData: (state, action) => {

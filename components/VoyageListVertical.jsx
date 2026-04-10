@@ -13,7 +13,7 @@ export default function VoyageListVertical({ data, direction }) {
       voyageId={item.id}
       cardHeader={item.name}
       cardDescription={item.brief}
-      cardImage={item.profileImage}
+      cardImage={item.profileImageThumbnail || item.profileImage}
       vacancy={item.vacancy}
       startdate={item.startDate}
       enddate={item.endDate}

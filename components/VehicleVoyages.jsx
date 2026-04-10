@@ -54,7 +54,7 @@ export default function VehicleVoyages({ voyages }) {
             <View>
               <Image
                 source={{
-                  uri: item.profileImage,
+                  uri: item.profileImageThumbnail || item.profileImage,
                 }}
                 style={styles.voyageImage}
               />

@@ -155,6 +155,7 @@ const LoginScreen = ({ navigation }) => {
             userId: resetPasswordResponse.userId,
             userName: resetPasswordResponse.userName,
             profileImageUrl: resetPasswordResponse.profileImageUrl,
+            profileImageThumbnailUrl: resetPasswordResponse.profileImageThumbnailUrl || "",
             token: resetPasswordResponse.token,
             refreshToken: resetPasswordResponse.refreshToken,
             refreshTokenExpiryTime:
@@ -234,6 +235,7 @@ const LoginScreen = ({ navigation }) => {
           userId: loginResponse.userId,
           userName: loginResponse.userName || "",
           profileImageUrl: loginResponse.profileImageUrl || "",
+          profileImageThumbnailUrl: loginResponse.profileImageThumbnailUrl || "",
           token: loginResponse.token,
           refreshToken: loginResponse.refreshToken,
           refreshTokenExpiryTime: loginResponse.refreshTokenExpiryTime,
@@ -317,6 +319,7 @@ const LoginScreen = ({ navigation }) => {
             userId: confirmResponse.userId,
             userName: confirmResponse.userName,
             profileImageUrl: confirmResponse.profileImageUrl,
+            profileImageThumbnailUrl: confirmResponse.profileImageThumbnailUrl || "",
             token: confirmResponse.token,
             refreshToken: confirmResponse.refreshToken,
             refreshTokenExpiryTime: confirmResponse.refreshTokenExpiryTime,

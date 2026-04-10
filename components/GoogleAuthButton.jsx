@@ -56,6 +56,7 @@ export default function GoogleLoginButton() {
             userId: res.userId,
             userName: res.userName,
             profileImageUrl: res.profileImageUrl,
+            profileImageThumbnailUrl: res.profileImageThumbnailUrl || "",
             token: res.token,
             refreshToken: res.refreshToken,
             refreshTokenExpiryTime:

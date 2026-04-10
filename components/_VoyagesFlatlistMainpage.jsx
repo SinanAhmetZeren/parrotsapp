@@ -26,7 +26,7 @@ const VoyageItem = ({ item, index }) => {
     <View key={index} style={styles.singleBidContainer2}>
       <Image
         // source={require("../assets/parrotslogo.png")}
-        source={{ uri: item.profileImage }}
+        source={{ uri: item.profileImageThumbnail || item.profileImage }}
         style={styles.bidImage2}
       />
 

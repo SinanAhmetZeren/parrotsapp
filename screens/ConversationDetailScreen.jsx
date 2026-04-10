@@ -52,7 +52,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
   const currentUserName = useSelector((state) => state.users.userName);
-  const currentUserProfileImage = useSelector((state) => state.users.userProfileImage);
+  const currentUserProfileImageFull = useSelector((state) => state.users.userProfileImage);
+  const currentUserProfileImageThumb = useSelector((state) => state.users.userProfileImageThumbnail);
+  const currentUserProfileImage = currentUserProfileImageThumb || currentUserProfileImageFull;
   const { conversationUserId, profileImg, name, publicId } = route.params;
   // console.log("-->>", conversationUserId, profileImg, name, publicId);
   const users = { currentUserId, conversationUserId };

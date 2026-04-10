@@ -15,8 +15,8 @@ export default function ConversationList({ data, userId }) {
         message.senderId !== userId ? message.senderId : message.receiverId;
       const userProfileImage =
         message.senderId !== userId
-          ? message.senderProfileUrl
-          : message.receiverProfileUrl;
+          ? message.senderProfileThumbnailUrl || message.senderProfileUrl
+          : message.receiverProfileThumbnailUrl || message.receiverProfileUrl;
       const userName =
         message.senderId !== userId
           ? message.senderUsername

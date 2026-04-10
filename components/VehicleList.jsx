@@ -14,7 +14,7 @@ export default function VehicleList({ data }) {
           key={item.id}
           vehiclename={item.name}
           description={item.description}
-          cardImage={item.profileImageUrl}
+          cardImage={item.profileImageThumbnailUrl || item.profileImageUrl}
           vehicletype={item.type}
           capacity={item.capacity}
           vehicleId={item.id}
