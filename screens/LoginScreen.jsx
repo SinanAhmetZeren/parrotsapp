@@ -25,6 +25,7 @@ import {
   useRegisterUserMutation,
   useConfirmUserMutation,
   useLoginUserMutation,
+  useAcceptTermsMutation,
   useRequestCodeMutation,
   useResetPasswordMutation,
   useLazyGetFavoriteVoyageIdsByUserIdQuery,
@@ -68,6 +69,9 @@ const LoginScreen = ({ navigation }) => {
   const [isPasswordHidden2, setIsPasswordHidden2] = useState(true);
   const [loginOrRegister, setLoginOrRegister] = useState("Login");
   const [loginUser, { isLoading, isSuccess }] = useLoginUserMutation();
+  const [acceptTerms] = useAcceptTermsMutation();
+  const [requiresTermsReAcceptance, setRequiresTermsReAcceptance] = useState(false);
+  const [pendingLoginData, setPendingLoginData] = useState(null);
   const [requestCode] = useRequestCodeMutation();
   const [resetPassword] = useResetPasswordMutation();
   const [userNameR, setUserNameR] = useState("");
@@ -230,6 +234,13 @@ const LoginScreen = ({ navigation }) => {
       // console.log("login response - unread: ", loginResponse.unreadMessages);
       // Dispatch login state only if token is present
       // if (false)
+      if (loginResponse.requiresTermsAcceptance) {
+        setPendingLoginData(loginResponse);
+        setRequiresTermsReAcceptance(true);
+        setIsLoggingIn(false);
+        return;
+      }
+
       dispatch(
         updateAsLoggedIn({
           userId: loginResponse.userId,
@@ -258,6 +269,30 @@ const LoginScreen = ({ navigation }) => {
       }
     } finally {
       setIsLoggingIn(false); // Always reset loading state
+    }
+  };
+
+  const handleAcceptUpdatedTerms = async () => {
+    try {
+      await acceptTerms().unwrap();
+      dispatch(
+        updateAsLoggedIn({
+          userId: pendingLoginData.userId,
+          userName: pendingLoginData.userName || "",
+          profileImageUrl: pendingLoginData.profileImageUrl || "",
+          profileImageThumbnailUrl: pendingLoginData.profileImageThumbnailUrl || "",
+          token: pendingLoginData.token,
+          refreshToken: pendingLoginData.refreshToken,
+          refreshTokenExpiryTime: pendingLoginData.refreshTokenExpiryTime,
+          unreadMessages: pendingLoginData.unreadMessages,
+        })
+      );
+      setRequiresTermsReAcceptance(false);
+      setPendingLoginData(null);
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      showToast("Failed to accept terms. Please try again.");
     }
   };
 
@@ -367,6 +402,38 @@ const LoginScreen = ({ navigation }) => {
     logAllAsyncStorage();
     return;
   }, []);
+
+  if (requiresTermsReAcceptance) {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <Modal visible={true} animationType="slide">
+          <View style={{ flex: 1, padding: 20, paddingTop: 60 }}>
+            <Text style={{ fontSize: 20, fontWeight: "700", color: "#003580", marginBottom: 12, textAlign: "center" }}>
+              Our Terms of Use have been updated
+            </Text>
+            <Text style={{ fontSize: 14, color: "#555", marginBottom: 16, textAlign: "center" }}>
+              Please read and accept the updated Terms of Use to continue using Parrots.
+            </Text>
+            <ScrollView style={{ flex: 1, borderWidth: 1, borderColor: "#ddd", borderRadius: 8, marginBottom: 16 }}>
+              <TermsOfUseComponent />
+            </ScrollView>
+            <TouchableOpacity
+              onPress={handleAcceptUpdatedTerms}
+              style={{ backgroundColor: "#007bff", borderRadius: 8, padding: 14, alignItems: "center", marginBottom: 10 }}
+            >
+              <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>I Accept</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => { setRequiresTermsReAcceptance(false); setPendingLoginData(null); }}
+              style={{ alignItems: "center", padding: 10 }}
+            >
+              <Text style={{ color: "#999", fontSize: 14 }}>Decline and go back</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>

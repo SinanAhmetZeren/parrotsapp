@@ -232,6 +232,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         body: userData,
       }),
     }),
+    acceptTerms: builder.mutation({
+      query: () => ({
+        url: "/api/account/accept-terms",
+        method: "POST",
+      }),
+    }),
     googleLoginInternal: builder.mutation({
       query: (AccessToken) => ({
         url: "/api/account/google-login",
@@ -348,6 +354,7 @@ export const {
   useRequestCodeMutation,
   useConfirmUserMutation,
   useLoginUserMutation,
+  useAcceptTermsMutation,
   useGoogleLoginInternalMutation,
   useResetPasswordMutation,
   useGetUserByIdQuery,
