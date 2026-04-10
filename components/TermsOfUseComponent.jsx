@@ -235,6 +235,35 @@ export default function TermsOfUseComponent() {
                     if the App has been idle, the device is in sleep mode, or network conditions are poor. Users are responsible for ensuring that they have an active
                     connection and that the App is open to receive the latest messages.
                 </Text>
+
+                <Text style={styles.sectionTitle2}>
+                    d. Message Encryption & Data
+                </Text>
+
+                <Text style={styles.paragraph}>
+                    Messages are encrypted when stored on our servers. However, message content is transmitted to and processed on our servers as plain text before encryption, and is not end-to-end encrypted.
+                </Text>
+
+                <Text style={styles.paragraph}>
+                    We recommend you do not share sensitive personal information through the messaging feature, including:
+                    {"\n"}• Passwords
+                    {"\n"}• Financial details or bank account information
+                    {"\n"}• Payment details
+                    {"\n"}• Passport or visa information
+                    {"\n"}• Identification documents
+                    {"\n"}• Phone numbers or email addresses
+                    {"\n"}• Home addresses
+                    {"\n"}• Current location
+                    {"\n"}• Health conditions
+                </Text>
+
+                <Text style={styles.paragraph}>
+                    Message content may be accessed by Parrots staff where required by law or to enforce our policies.
+                </Text>
+
+                <Text style={styles.paragraph}>
+                    Parrots reserves the right to delete messages or conversations at its discretion, including for policy enforcement, storage management purposes, or upon account deletion. Messages may be deleted after a retention period of up to 2 years.
+                </Text>
             </View>
 
             {/* 7. Prohibited */}
@@ -409,7 +438,8 @@ export default function TermsOfUseComponent() {
                 <Text style={styles.sectionTitle2}>g. Data Retention</Text>
                 <Text style={styles.paragraph}>
                     Personal data is retained only as long as necessary to operate the service or
-                    comply with legal requirements. Users may request deletion of their account and
+                    comply with legal requirements. Message content may be deleted after a retention
+                    period of up to 2 years. Users may request deletion of their account and
                     associated data.
                 </Text>
 
