@@ -150,10 +150,10 @@ const styles2 = StyleSheet.create({
   },
 
   voyageImage1: {
-    height: vh(17),
-    width: vh(17),
+    height: vh(13),
+    width: vh(13),
     marginRight: vh(1),
-    borderRadius: vh(2.5),
+    borderRadius: vh(1.5),
   },
   closeButtonAndText: {
     flexDirection: "row",

@@ -46,7 +46,12 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreen, parrotGreenMediumTransparent, parrotLightBlue, parrotPistachioGreen, parrotTextDarkBlue } from "../assets/color";
+import {
+  parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent,
+  parrotDarkBlue,
+  parrotGreen, parrotLightBlue,
+  parrotPistachioGreen,
+} from "../assets/color";
 
 const VehicleDetailScreen = () => {
   const route = useRoute();
@@ -76,7 +81,6 @@ const VehicleDetailScreen = () => {
   const [deleteVehicleFromFavorites] = useDeleteVehicleFromFavoritesMutation();
   const [hasError, setHasError] = useState(false)
   const [refreshing, setRefreshing] = useState(false);
-  const [vehicleImagesInfoVisible, setVehicleImagesInfoVisible] = useState(false);
   const { width } = useWindowDimensions();
 
   const dispatch = useDispatch();
@@ -114,10 +118,6 @@ const VehicleDetailScreen = () => {
       };
     }, [refetchVehicle, navigation])
   );
-
-  const toggleVehicleImagesInfo = () => {
-    setVehicleImagesInfoVisible(!vehicleImagesInfoVisible);
-  }
 
   const handleShareVehicle = async () => {
     try {
@@ -218,7 +218,7 @@ const VehicleDetailScreen = () => {
 
   if (isSuccessVehicle) {
 
-    const descriptionShortenedChars = 200;
+    const descriptionShortenedChars = 450;
 
     const displayText = showFullText
       ? VehicleData.description
@@ -304,82 +304,60 @@ const VehicleDetailScreen = () => {
           <View style={styles.voyageDataWrapper}>
             <View style={styles.VoyageDataContainer}>
 
-              {/* Name + share/favorite */}
+              {/* Name */}
               <View style={styles.vehicleHeader}>
-                <Text style={styles.vehicleName}>{VehicleData.name}</Text>
-                <View style={styles.vehicleHeaderIcons}>
-                  <TouchableOpacity onPress={() => handleShareVehicle()}>
-                    <Ionicons name="share-outline" size={24} color={parrotBlue} style={styles.shareContainer} />
-                  </TouchableOpacity>
-                  {isFavorited ? (
-                    <TouchableOpacity onPress={() => handleDeleteVehicleFromFavorites()}>
-                      <View style={styles.heartIconContainer}>
-                        <Ionicons name="heart" size={24} color="red" style={styles.heartIcon} />
-                      </View>
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity onPress={() => handleAddVehicleToFavorites()}>
-                      <View style={styles.heartIconContainer}>
-                        <Ionicons name="heart-outline" size={24} color={parrotBlue} style={styles.heartIcon} />
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                </View>
+                <Text style={styles.vehicleName} adjustsFontSizeToFit numberOfLines={1}>{VehicleData.name}</Text>
               </View>
 
-              {/* Images Card */}
-              <View style={styles.sectionCard}>
-                <View style={styles.TitleContainer}>
-                  <View style={styles.currentBidsAndSeeAll}>
-                    <Text style={styles.currentBidsTitle}>Images</Text>
-                    <TouchableOpacity onPress={() => toggleVehicleImagesInfo()} style={{ marginLeft: vw(1), top: vh(0.8) }}>
-                      <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
-                    </TouchableOpacity>
-                    {vehicleImagesInfoVisible && (
-                      <TouchableOpacity onPress={() => toggleVehicleImagesInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
-                        <Text style={styles.waypointInfoMessage}>Tap an image to open gallery</Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                </View>
+              {/* Images + Description Card */}
+              <View style={[styles.sectionCard, { position: "relative" }]}>
+                <TouchableOpacity
+                  onPress={() => showToast("Tap an image to open gallery")}
+                  style={{ position: "absolute", top: -6, right: 10, zIndex: 10 }}
+                >
+                  <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
+                </TouchableOpacity>
                 <View style={styles.ImagesMainContainer}>
                   <View style={styles.ImagesSubContainer}>
                     <VehicleImagesWithCarousel vehicleImages={VehicleData.vehicleImages} />
                   </View>
                 </View>
-              </View>
-
-              {/* Description Card */}
-              <View style={styles.sectionCard}>
-                <View style={styles.TitleContainer}>
-                  <View style={styles.currentBidsAndSeeAll}>
-                    <Text style={styles.currentBidsTitle}>Description</Text>
-                  </View>
-                </View>
                 <View style={styles.OwnerAndBoat}>
+                  <Ionicons name="person-outline" size={18} color={parrotBlue} style={{ marginRight: 2, marginLeft: vw(2) }} />
                   <TouchableOpacity
                     style={styles.voyageOwner}
                     onPress={() => goToProfilePage(VehicleData.user.id)}
                   >
                     <Image source={{ uri: VehicleData.user.profileImageThumbnailUrl || VehicleData.user.profileImageUrl }} style={styles.profileImage} />
-                    <Text style={styles.userName}>
-                      {VehicleData.user.userName.length > 20 ? (
-                        <View style={{ flexDirection: "row" }}>
-                          <Text style={styles.username}>{VehicleData.user.userName.substring(0, 17)}</Text>
-                          <Text style={styles.usernameSmall}>{"..."}</Text>
-                        </View>
-                      ) : (
-                        <Text style={styles.username}>{VehicleData.user.userName}</Text>
-                      )}
+                    <Text style={styles.userName} numberOfLines={1}>
+                      {VehicleData.user.userName.length > 20
+                        ? VehicleData.user.userName.substring(0, 17) + "..."
+                        : VehicleData.user.userName}
                     </Text>
                   </TouchableOpacity>
+                  <Ionicons name="people-outline" size={18} color={parrotBlue} style={{ marginRight: 2, marginLeft: vw(3) }} />
                   <View style={styles.voyageOwner}>
-                    <Text style={styles.propTextDescription}>Capacity: </Text>
-                    <Text style={styles.propText}>
-                      {VehicleData.capacity}{" "}
-                      <Feather name="users" size={14} color="black" />
-                    </Text>
+                    <Text style={styles.propText}>{VehicleData.capacity} spots</Text>
                   </View>
+                  <View style={{ flex: 1 }} />
+                  <TouchableOpacity onPress={() => handleShareVehicle()} style={{ marginRight: vw(2) }}>
+                    <View style={styles.shareContainer}>
+                      <Ionicons name="share-outline" size={20} color={parrotBlue} />
+                    </View>
+                  </TouchableOpacity>
+                  {isFavorited ? (
+                    <TouchableOpacity onPress={() => handleDeleteVehicleFromFavorites()} style={{ marginRight: vw(2), alignSelf: "stretch" }}>
+                      <View style={styles.heartIconContainer}>
+                        <Ionicons name="heart" size={20} color="red" />
+                      </View>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity onPress={() => handleAddVehicleToFavorites()} style={{ marginRight: vw(2), alignSelf: "stretch" }}>
+                      <View style={styles.heartIconContainer}>
+                        <Ionicons name="heart-outline" size={20} color={parrotBlue} />
+                      </View>
+                    </TouchableOpacity>
+                  )}
                 </View>
                 <View style={styles.DescriptionContainer}>
                   <Text style={styles.descriptionInnerContainer}>
@@ -389,7 +367,10 @@ const VehicleDetailScreen = () => {
                       tagsStyles={{
                         strong: { fontWeight: "bold" },
                         b: { fontWeight: "bold" },
+                        p: { color: parrotDarkBlue },
+                        span: { color: parrotDarkBlue },
                       }}
+                      baseStyle={{ color: parrotDarkBlue }}
                     />
                   </Text>
                   {VehicleData.description.length > descriptionShortenedChars && !showFullText && (
@@ -415,11 +396,6 @@ const VehicleDetailScreen = () => {
               {VehicleData.voyages.length > 0 && (
                 <>
                   <View style={styles.sectionCard}>
-                    <View style={styles.TitleContainer}>
-                      <View style={styles.currentBidsAndSeeAll}>
-                        <Text style={styles.currentBidsTitle}>Voyages</Text>
-                      </View>
-                    </View>
                     <View style={styles.VoyagesContainer}>
                       <VehicleVoyages voyages={VehicleData.voyages} />
                     </View>
@@ -486,20 +462,22 @@ const styles = StyleSheet.create({
     gap: vw(3),
   },
   shareContainer: {
-    padding: vw(1),
-    width: vw(8),
+    height: vh(4),
+    width: vh(4),
     backgroundColor: parrotBlueMediumTransparent,
     borderRadius: vh(5),
-    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
   heartIconContainer: {
-    padding: vw(1),
+    height: vh(4),
+    width: vh(4),
     borderRadius: vh(5),
     backgroundColor: parrotBlueMediumTransparent,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  heartIcon: {
-    top: vh(.2),
-  },
+  heartIcon: {},
   VoyageDataContainer: {
     borderRadius: vh(5),
     marginHorizontal: vw(2),
@@ -511,8 +489,8 @@ const styles = StyleSheet.create({
     borderRadius: vh(5),
   },
   vehicleName: {
-    fontSize: 24,
-    color: parrotBlue,
+    fontSize: 22,
+    color: parrotGreen,
     fontWeight: "800",
     flex: 1,
     flexShrink: 1,
@@ -548,7 +526,7 @@ const styles = StyleSheet.create({
     color: parrotLightBlue,
   },
   ImagesMainContainer: {
-    marginTop: vh(1),
+    marginTop: vh(0.5),
   },
   rectangularBox: {
     height: vh(45),
@@ -563,16 +541,19 @@ const styles = StyleSheet.create({
   },
   OwnerAndBoat: {
     flexDirection: "row",
-    margin: 1,
+    alignItems: "center",
+    height: vh(4),
+    marginTop: vh(1.5),
+    marginHorizontal: vw(2),
+    marginBottom: vh(0.5),
   },
   voyageOwner: {
     flexDirection: "row",
     alignItems: "center",
+    height: "100%",
     borderRadius: vh(5),
-    marginHorizontal: vw(2),
-    paddingVertical: vh(0.3),
     paddingHorizontal: vw(2),
-    backgroundColor: parrotBlueTransparent,
+    backgroundColor: parrotBlueMediumTransparent,
   },
   propTextDescription: {
     fontSize: 14,
@@ -582,6 +563,7 @@ const styles = StyleSheet.create({
   propText: {
     fontSize: 14,
     fontWeight: "600",
+    color: parrotDarkBlue,
   },
   ScrollView: {
     backgroundColor: "white",
@@ -596,7 +578,8 @@ const styles = StyleSheet.create({
   },
   VoyagesContainer: {
     paddingHorizontal: vh(1),
-    paddingBottom: vh(2),
+    paddingBottom: vh(0.5),
+    paddingTop: vh(0.5),
   },
   descriptionInnerContainer: {
     paddingVertical: vh(1),
@@ -611,6 +594,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     flexDirection: "row",
     alignItems: "center",
+    marginHorizontal: vw(8),
   },
   toastText: {
     color: "white",
@@ -628,7 +612,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginTop: vh(0.2),
-    color: parrotLightBlue,
+    color: parrotDarkBlue,
   },
   ImagesSubContainer: {
     paddingHorizontal: vh(1),

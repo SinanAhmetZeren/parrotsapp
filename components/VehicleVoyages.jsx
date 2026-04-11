@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
-import { parrotCream, parrotLightBlue } from "../assets/color";
+import { parrotBlueMediumTransparent, parrotCream, parrotDarkBlue } from "../assets/color";
 import { Shadow } from "react-native-shadow-2";
 
 export default function VehicleVoyages({ voyages }) {
@@ -45,47 +45,37 @@ export default function VehicleVoyages({ voyages }) {
       const formattedEndDate = format(new Date(item.endDate), "MMM d, yy");
 
       return (
-
-        <TouchableOpacity
+        <Shadow
           key={item.id}
+          distance={8}
+          offset={[0, 0]}
+          startColor="rgba(0,0,0,0.08)"
+          finalColor="rgba(0,0,0,0.13)"
+          radius={12}
+          style={{ borderRadius: vh(3), marginBottom: vh(1), width: "100%" }}
+        >
+        <TouchableOpacity
           onPress={() => handleNavigateToVoyage(item.id)}
         >
-          <View style={styles.singleVoyage} key={item.id}>
-            <View>
-              <Image
-                source={{
-                  uri: item.profileImageThumbnail || item.profileImage,
-                }}
-                style={styles.voyageImage}
-              />
+          <View style={styles.singleVoyage}>
+            <Image
+              source={{ uri: item.profileImageThumbnail || item.profileImage }}
+              style={styles.voyageImage}
+            />
+            <Text style={styles.voyageName} numberOfLines={1} ellipsizeMode="tail">
+              {item.name}
+            </Text>
+            <View style={styles.pill}>
+              <Feather name="calendar" size={13} color={parrotDarkBlue} />
+              <Text style={styles.pillText}>{formattedStartDate} – {formattedEndDate}</Text>
             </View>
-
-            <View
-              style={{
-                paddingHorizontal: vw(3),
-                justifyContent: "center",
-              }}
-            >
-              <View style={styles.nameAndVacancyContainer}>
-                <Text style={styles.boldBlack}>
-                  {item.name}
-                  {"  "}
-                </Text>
-                <Text style={styles.boldBlue}>{item.vacancy} </Text>
-                <Feather name="users" size={18} color={parrotLightBlue} />
-              </View>
-              <View style={styles.betweenDates}>
-                <Text style={styles.boldBlack}>
-                  from <Text style={styles.boldBlue}>{formattedStartDate}</Text>
-                </Text>
-                <Text style={styles.boldBlack}>
-                  {"  "}to:{" "}
-                  <Text style={styles.boldBlue}>{formattedEndDate}</Text>
-                </Text>
-              </View>
+            <View style={styles.pill}>
+              <Feather name="users" size={13} color={parrotDarkBlue} />
+              <Text style={styles.pillText}>{item.vacancy}</Text>
             </View>
           </View>
         </TouchableOpacity>
+        </Shadow>
       );
     });
   };
@@ -95,30 +85,37 @@ export default function VehicleVoyages({ voyages }) {
 
 const styles = StyleSheet.create({
   singleVoyage: {
-    padding: vh(1),
-    margin: vh(.6),
+    paddingVertical: vh(1),
+    paddingHorizontal: vw(3),
     flexDirection: "row",
+    alignItems: "center",
     backgroundColor: parrotCream,
     borderRadius: vh(3),
-
+    gap: vw(2),
   },
   voyageImage: {
-    height: vh(6),
-    width: vh(6),
+    height: vh(5),
+    width: vh(5),
     borderRadius: vh(3),
   },
-  nameAndVacancyContainer: {
+  voyageName: {
+    flex: 1,
+    fontWeight: "600",
+    color: parrotDarkBlue,
+    fontSize: 13,
+  },
+  pill: {
     flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: parrotBlueMediumTransparent,
+    borderRadius: vw(5),
+    paddingHorizontal: vw(2),
+    paddingVertical: vh(0.5),
+    gap: 4,
   },
-  betweenDates: {
-    flexDirection: "row",
-  },
-  boldBlue: {
+  pillText: {
+    fontSize: 12,
     fontWeight: "500",
-    color: parrotLightBlue,
-  },
-  boldBlack: {
-    fontWeight: "500",
-    color: "black",
+    color: parrotDarkBlue,
   },
 });
