@@ -315,6 +315,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
     // Optimistic UI
     setMessagesToDisplay((prev) => [...(prev ?? []), sentMessage]);
+    const savedMessage = message;
     setMessage("");
     setTextInputBottomMargin(0);
     Keyboard.dismiss();
@@ -350,11 +351,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
     if (!success) {
       console.error("Failed to send message after retries.");
 
-      // rollback optimistic message
+      // rollback optimistic message and restore text
       setMessagesToDisplay((prev) =>
         prev.filter((msg) => msg.dateTime !== sentMessage.dateTime)
       );
-
+      setMessage(savedMessage);
       showToast("Message not sent - Please check your connection.");
     }
   };
