@@ -492,9 +492,10 @@ const VoyageDetailScreen = ({ navigation }) => {
               </View>
             </View>
           </View>
-          {/* // map */}
+          {/* // map + waypoints */}
 
-          <View style={styles.routeCard}>
+          <View style={[styles.routeCard, { position: "relative" }]}>
+
             <View style={styles.mapAndEmojisContainer}>
               <View style={styles.mapContainer}>
                 <MapView ref={mapRef} style={styles.map} region={initialRegion}>
@@ -503,67 +504,33 @@ const VoyageDetailScreen = ({ navigation }) => {
                 </MapView>
               </View>
 
-              {isFavorited ? (
-                <TouchableOpacity
-                  onPress={() => handleDeleteVoyageFromFavorites()}
-                  style={styles.heartContainer1}
-                >
-                  <Ionicons
-                    name="heart"
-                    size={24}
-                    color="red"
-                    style={styles.heartContainer2}
-                  />
+              {/* 3 icons top-right of map, slightly overlapping */}
+              <View style={styles.mapTopIcons}>
+                {isFavorited ? (
+                  <TouchableOpacity onPress={() => handleDeleteVoyageFromFavorites()}>
+                    <Ionicons name="heart" size={24} color="red" style={styles.heartContainer2} />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity onPress={() => handleAddVoyageToFavorites()}>
+                    <Ionicons name="heart" size={24} color="orange" style={styles.heartContainer2} />
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={() => showToast(VoyageData.publicOnMap ? "This voyage is publicly visible on the map" : "This voyage is not visible on the map")}>
+                  <Ionicons name="earth" size={24} color={VoyageData.publicOnMap ? "#1E6FD9" : "#a0b8d8"} style={styles.earthContainer2} />
                 </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  onPress={() => handleAddVoyageToFavorites()}
-                  style={styles.heartContainer1}
-                >
-                  <Ionicons
-                    name="heart"
-                    size={24}
-                    color="orange"
-                    style={styles.heartContainer2}
-                  />
-                </TouchableOpacity>
-              )}
-
-              <TouchableOpacity
-                onPress={() => showToast(VoyageData.publicOnMap ? "This voyage is publicly visible on the map" : "This voyage is not visible on the map")}
-                style={styles.earthContainer1}
-              >
-                <Ionicons
-                  name="earth"
-                  size={24}
-                  color={VoyageData.publicOnMap ? "#1E6FD9" : "#a0b8d8"}
-                  style={styles.earthContainer2}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => handleShareVoyage()}
-                style={styles.shareContainer1}
-              >
-                <MaterialIcons
-                  name="ios-share"
-                  size={24}
-                  color={parrotBlue}
-                  style={styles.shareContainer2}
-                />
-              </TouchableOpacity>
-
-            </View>
-          </View>
-          <View style={styles.waypointsCard}>
-            <View style={styles.waypointsContainer}>
-              <View style={styles.WaypointsAndInfo}>
-                <Text style={styles.currentBidsTitle}>Waypoints </Text>
-                <TouchableOpacity onPress={() => showToast("Tap on card to focus map")} style={{ marginLeft: vw(1) }}>
-                  <MaterialIcons name="info-outline" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
+                <TouchableOpacity onPress={() => handleShareVoyage()}>
+                  <MaterialIcons name="ios-share" size={24} color={parrotBlue} style={styles.shareContainer2} />
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* Info icon just below map, above waypoints */}
+            <TouchableOpacity
+              onPress={() => showToast("Tap on card to focus map")}
+              style={{ alignSelf: "flex-end", marginRight: 10, marginTop: vh(0.5), zIndex: 10 }}
+            >
+              <MaterialIcons name="info-outline" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
+            </TouchableOpacity>
 
             <View style={styles.waypointFlatlistContainer}>
               <WaypointFlatListVoyageDetailsScreen
@@ -637,7 +604,7 @@ export default VoyageDetailScreen;
 const styles = StyleSheet.create({
   waypointFlatlistContainer: {
     marginRight: vw(3),
-    marginBottom: vh(3)
+    marginBottom: vh(1),
   },
   toast: {
     position: "absolute",
@@ -731,8 +698,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    marginBottom: vh(2),
-    marginTop: vh(1),
+    marginBottom: vh(0),
+    marginTop: vh(0),
   },
   mapContainer: {
     width: "100%",
@@ -744,6 +711,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: vw(10),
+  },
+  mapTopIcons: {
+    position: "absolute",
+    top: vh(-2),
+    right: vw(2),
+    flexDirection: "row",
+    gap: 6,
+    zIndex: 10,
   },
   heartContainer1: {
     position: "absolute",
