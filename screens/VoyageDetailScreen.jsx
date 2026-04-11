@@ -371,142 +371,85 @@ const VoyageDetailScreen = ({ navigation }) => {
 
                 {/* Voyage Name */}
                 <Text style={styles.voyageName}>{VoyageData.name}</Text>
+                <View style={styles.nameDivider} />
 
-                {/* Host */}
+                {/* Host + Vehicle */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Host:</Text>
-                  <TouchableOpacity style={styles.pill}
-
-                    onPress={() => {
-                      goToProfilePage(VoyageData.user.id)
-                    }}
-                  >
+                  <Ionicons name="person-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
+                  <TouchableOpacity style={styles.pill} onPress={() => goToProfilePage(VoyageData.user.id)}>
                     <Image source={{ uri: VoyageData.user.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
                     <Text style={styles.value}>{VoyageData.user.userName}</Text>
                   </TouchableOpacity>
-                </View>
-
-                {/* Vehicle */}
-                <View style={styles.row}>
-                  <Text style={styles.label}>Vehicle:</Text>
-
-
+                  <Ionicons name="rocket-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }]} />
                   <TouchableOpacity
-                    style={styles.voyageBoat}
+                    style={styles.pill}
                     onPress={() => {
-                      if (
-                        VoyageData.vehicleType !== 4 &&
-                        VoyageData.vehicleType !== 5 &&
-                        VoyageData.vehicleType !== 10
-                      ) {
+                      if (VoyageData.vehicleType !== 4 && VoyageData.vehicleType !== 5 && VoyageData.vehicleType !== 10) {
                         goToVehiclePage(VoyageData.vehicle.id);
                       }
                     }}
                   >
                     {VoyageData.vehicleType === 4 ? (
-                      <Image
-                        source={require("../assets/walk1.jpeg")}
-                        style={styles.profileImage} />
+                      <Image source={require("../assets/walk1.jpeg")} style={styles.profileImage} />
                     ) : VoyageData.vehicleType === 5 ? (
-                      <Image
-                        source={require("../assets/run1.jpeg")}
-                        style={styles.profileImage} />
-                    ) :
-                      VoyageData.vehicleType === 10 ? (
-                        <Image
-                          source={require("../assets/train.jpeg")}
-                          style={styles.profileImage} />
-                      ) :
-                        (
-                          <Image
-                            source={{
-                              uri:
-                                VoyageData.vehicle.profileImageUrl,
-                            }}
-                            style={styles.profileImage}
-                          />
-                        )}
-
-                    <Text style={styles.userName}>
-                      {VoyageData.vehicle.name}
-                    </Text>
+                      <Image source={require("../assets/run1.jpeg")} style={styles.profileImage} />
+                    ) : VoyageData.vehicleType === 10 ? (
+                      <Image source={require("../assets/train.jpeg")} style={styles.profileImage} />
+                    ) : (
+                      <Image source={{ uri: VoyageData.vehicle.profileImageUrl }} style={styles.profileImage} />
+                    )}
+                    <Text style={styles.userName}>{VoyageData.vehicle.name}</Text>
                   </TouchableOpacity>
-
                 </View>
 
-                {/* Vacancy */}
+                {/* Vacancy + Date */}
                 <View style={styles.row}>
-                  <Text style={styles.label}>Vacancy:</Text>
-                  <Text style={styles.value}>{VoyageData.vacancy}</Text>
-                </View>
-
-                {/* Dates */}
-                <View style={styles.rowSplit}>
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Starts:</Text>
-                    <Text style={styles.value}>{formattedStartDate}</Text>
+                  <Ionicons name="people-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
+                  <View style={styles.pill}>
+                    <Text style={styles.value}>{VoyageData.vacancy} spots</Text>
                   </View>
-
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Ends:</Text>
-                    <Text style={styles.value}>{formattedEndDate}</Text>
+                  <Ionicons name="calendar-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }]} />
+                  <View style={styles.pill}>
+                    <Text style={styles.value}>{formattedStartDate}  →  {formattedEndDate}</Text>
                   </View>
                 </View>
 
-                {/* Prices */}
-                <View style={styles.rowSplit}>
-                  <View style={{ ...styles.rowHalfClean }}>
-                    <Text style={{ ...styles.label }}>Min Price:</Text>
-
+                {/* Price + Auction + Fixed Price */}
+                <View style={styles.row}>
+                  <Ionicons name="cash-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
+                  <View style={styles.pill}>
                     <Text style={styles.value}>
-                      {VoyageData.currency}{VoyageData.minPrice}
+                      {VoyageData.minPrice === VoyageData.maxPrice
+                        ? `${VoyageData.currency}${VoyageData.minPrice}`
+                        : `${VoyageData.currency}${VoyageData.minPrice}  –  ${VoyageData.currency}${VoyageData.maxPrice}`}
                     </Text>
                   </View>
-
-                  <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Max Price:</Text>
-                    <Text style={styles.value}>
-                      {VoyageData.currency}{VoyageData.maxPrice}
-                    </Text>
-                  </View>
+                  <MaterialIcons name="gavel" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }, !VoyageData.auction && { opacity: 0.35 }]} />
+                  <TouchableOpacity
+                    style={[styles.pill, !VoyageData.auction && { opacity: 0.35 }, { marginRight: 12, alignSelf: "center" }]}
+                    onPress={() => showToast(VoyageData.auction ? "This is an auction where the host will select the most suitable bids" : "This is not an auction where the host will select the most suitable bids")}
+                  >
+                    <Text style={styles.value}>Auction</Text>
+                  </TouchableOpacity>
+                  <MaterialIcons name="sell" size={18} color={parrotBlue} style={[styles.rowIcon, !VoyageData.fixedPrice && { opacity: 0.35 }]} />
+                  <TouchableOpacity
+                    style={[styles.pill, !VoyageData.fixedPrice && { opacity: 0.35 }, { alignSelf: "center" }]}
+                    onPress={() => showToast(VoyageData.fixedPrice ? "This voyage has a fixed price set by the host" : "This voyage does not have a fixed price set by the host")}
+                  >
+                    <Text style={styles.value}>Fixed Price</Text>
+                  </TouchableOpacity>
                 </View>
-
-                {/* Flags */}
-                <View style={styles.rowSplit}>
-                  <View style={styles.rowHalfClean}>
-                    <TouchableOpacity
-                      style={[styles.pill, !VoyageData.auction && { opacity: 0.35 }]}
-                      onPress={() => showToast(VoyageData.auction ? "This is an auction where the host will select the most suitable bids" : "This is not an auction where the host will select the most suitable bids")}
-                    >
-                      <MaterialIcons name="gavel" size={14} color={parrotBlue} style={{ marginRight: 4 }} />
-                      <Text style={{ color: parrotBlue, fontWeight: "600", fontSize: 13 }}>Auction</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  <View style={styles.rowHalfClean}>
-                    <TouchableOpacity
-                      style={[styles.pill, !VoyageData.fixedPrice && { opacity: 0.35 }]}
-                      onPress={() => showToast(VoyageData.fixedPrice ? "This voyage has a fixed price set by the host" : "This voyage does not have a fixed price set by the host")}
-                    >
-                      <MaterialIcons name="sell" size={14} color={parrotBlue} style={{ marginRight: 4 }} />
-                      <Text style={{ color: parrotBlue, fontWeight: "600", fontSize: 13 }}>Fixed Price</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
 
               </View>
 
 
-              <View style={styles.sectionCard}>
-                <View style={styles.TitleContainerVoyageImages}>
-                  <View style={styles.currentBidsAndSeeAll}>
-                    <Text style={styles.currentBidsTitle}>Voyage Images</Text>
-                    <TouchableOpacity onPress={() => showToast("Tap an image to view gallery")} style={{ marginLeft: vw(1) }}>
-                      <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
+              <View style={[styles.sectionCard, { position: "relative" }]}>
+                <TouchableOpacity
+                  onPress={() => showToast("Tap an image to view gallery")}
+                  style={{ position: "absolute", top: 8, right: 10, zIndex: 10 }}
+                >
+                  <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
+                </TouchableOpacity>
 
                 {/* // Voyage Images */}
                 <View style={styles.ImagesMainContainer}>
@@ -514,16 +457,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                     <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
                   </View>
                 </View>
-              </View>
 
-              <View style={styles.sectionCard}>
-                <View style={styles.TitleContainerVoyageDescription}>
-                  <View style={styles.currentBidsAndSeeAll}>
-                    <Text style={styles.currentBidsTitle}>
-                      Voyage Description
-                    </Text>
-                  </View>
-                </View>
                 {/* // Voyage Description */}
                 <View style={styles.DescriptionContainer}>
                   <Text style={styles.descriptionInnerContainer}>
@@ -542,11 +476,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                       <TouchableOpacity onPress={() => setShowFullText(true)}>
                         <Text style={styles.ReadMoreLess}>
                           Read more
-                          <Feather
-                            name="chevron-down"
-                            size={16}
-                            color={parrotBlue}
-                          />
+                          <Feather name="chevron-down" size={16} color={parrotBlue} />
                         </Text>
                       </TouchableOpacity>
                     )}
@@ -565,12 +495,6 @@ const VoyageDetailScreen = ({ navigation }) => {
           {/* // map */}
 
           <View style={styles.routeCard}>
-            <View style={styles.TitleContainerVoyageRoute}>
-              <View style={styles.currentBidsAndSeeAll}>
-                <Text style={styles.currentBidsTitle}>Voyage Route</Text>
-              </View>
-            </View>
-
             <View style={styles.mapAndEmojisContainer}>
               <View style={styles.mapContainer}>
                 <MapView ref={mapRef} style={styles.map} region={initialRegion}>
@@ -862,6 +786,7 @@ const styles = StyleSheet.create({
   DescriptionContainer: {
     paddingHorizontal: vh(1),
     margin: vh(0.5),
+    marginTop: vh(2.5),
   },
   descriptionInnerContainer: {
     marginVertical: vh(0.2),
@@ -1002,14 +927,16 @@ const styles = StyleSheet.create({
 
   detailsCard: {
     borderRadius: 20,
-    padding: 16,
+    paddingTop: 4,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
     backgroundColor: "#fdf9f5",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-    marginHorizontal: vw(2),
+    marginHorizontal: 0,
     marginBottom: vh(1),
   },
 
@@ -1091,7 +1018,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: vh(1),
-    // backgroundColor: "yellow"
+  },
+  rowIcon: {
+    marginRight: 2,
+    width: 22,
+  },
+  nameDivider: {
+    height: 1,
+    backgroundColor: "rgba(30, 111, 217, 0.1)",
+    marginBottom: vh(1.2),
+    marginTop: vh(0.4),
+  },
+  flagsDivider: {
+    height: 1,
+    backgroundColor: "rgba(30, 111, 217, 0.1)",
+    marginBottom: vh(1.2),
   },
 
   rowHalfClean: {
