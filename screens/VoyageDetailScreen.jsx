@@ -87,8 +87,6 @@ const VoyageDetailScreen = ({ navigation }) => {
 
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [waypointInfoVisible, setWayPointInfoVisible] = useState(false);
-  const [voyageImageInfoVisible, setVoyageImageInfoVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
   const [hasError, setHasError] = useState(false)
@@ -237,13 +235,6 @@ const VoyageDetailScreen = ({ navigation }) => {
     });
   };
 
-  const toggleWaypointsInfo = () => {
-    setWayPointInfoVisible(!waypointInfoVisible);
-  };
-
-  const toggleVoyageImagesInfo = () => {
-    setVoyageImageInfoVisible(!voyageImageInfoVisible);
-  };
 
   const mapRef = useRef(null);
 
@@ -378,6 +369,9 @@ const VoyageDetailScreen = ({ navigation }) => {
 
               <View style={styles.detailsCard}>
 
+                {/* Voyage Name */}
+                <Text style={styles.voyageName}>{VoyageData.name}</Text>
+
                 {/* Host */}
                 <View style={styles.row}>
                   <Text style={styles.label}>Host:</Text>
@@ -480,29 +474,23 @@ const VoyageDetailScreen = ({ navigation }) => {
                 {/* Flags */}
                 <View style={styles.rowSplit}>
                   <View style={styles.rowHalfClean}>
-                    <TouchableOpacity onPress={() => showToast("The host will select the most suitable bids")}>
-                      <Text style={{ ...styles.label }}>Auction
-                        <MaterialIcons name="info-outline" size={14} color={"#0A1E5E"} />:
-                      </Text>
+                    <TouchableOpacity
+                      style={[styles.pill, !VoyageData.auction && { opacity: 0.35 }]}
+                      onPress={() => showToast(VoyageData.auction ? "This is an auction where the host will select the most suitable bids" : "This is not an auction where the host will select the most suitable bids")}
+                    >
+                      <MaterialIcons name="gavel" size={14} color={parrotBlue} style={{ marginRight: 4 }} />
+                      <Text style={{ color: parrotBlue, fontWeight: "600", fontSize: 13 }}>Auction</Text>
                     </TouchableOpacity>
-                    <View  >
-                      <Ionicons
-                        name={VoyageData.auction ? "checkmark-circle-outline" : "close-circle-outline"}
-                        size={22}
-                        color={parrotBlue}
-                      />
-                    </View>
                   </View>
 
                   <View style={styles.rowHalfClean}>
-                    <Text style={styles.label}>Fixed Price:</Text>
-                    <View >
-                      <Ionicons
-                        name={VoyageData.fixedPrice ? "checkmark-circle-outline" : "close-circle-outline"}
-                        size={22}
-                        color={parrotBlue}
-                      />
-                    </View>
+                    <TouchableOpacity
+                      style={[styles.pill, !VoyageData.fixedPrice && { opacity: 0.35 }]}
+                      onPress={() => showToast(VoyageData.fixedPrice ? "This voyage has a fixed price set by the host" : "This voyage does not have a fixed price set by the host")}
+                    >
+                      <MaterialIcons name="sell" size={14} color={parrotBlue} style={{ marginRight: 4 }} />
+                      <Text style={{ color: parrotBlue, fontWeight: "600", fontSize: 13 }}>Fixed Price</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
 
@@ -514,16 +502,9 @@ const VoyageDetailScreen = ({ navigation }) => {
                 <View style={styles.TitleContainerVoyageImages}>
                   <View style={styles.currentBidsAndSeeAll}>
                     <Text style={styles.currentBidsTitle}>Voyage Images</Text>
-                    <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
-                      <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
+                    <TouchableOpacity onPress={() => showToast("Tap an image to view gallery")} style={{ marginLeft: vw(1) }}>
+                      <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
                     </TouchableOpacity>
-                    {voyageImageInfoVisible && (
-                      <TouchableOpacity onPress={() => toggleVoyageImagesInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
-                        <Text style={styles.voyageImageInfoMessage}>
-                          Tap an image to view gallery
-                        </Text>
-                      </TouchableOpacity>
-                    )}
                   </View>
                 </View>
 
@@ -654,16 +635,9 @@ const VoyageDetailScreen = ({ navigation }) => {
             <View style={styles.waypointsContainer}>
               <View style={styles.WaypointsAndInfo}>
                 <Text style={styles.currentBidsTitle}>Waypoints </Text>
-                <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(1), top: vh(.8) }}>
-                  <MaterialIcons name="info-outline" size={16} color={parrotBlue} />
+                <TouchableOpacity onPress={() => showToast("Tap on card to focus map")} style={{ marginLeft: vw(1) }}>
+                  <MaterialIcons name="info-outline" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
                 </TouchableOpacity>
-                {waypointInfoVisible && (
-                  <TouchableOpacity onPress={() => toggleWaypointsInfo()} style={{ marginLeft: vw(0.5), top: vh(0.3) }}>
-                    <Text style={styles.waypointInfoMessage}>
-                      Tap on card to focus map
-                    </Text>
-                  </TouchableOpacity>
-                )}
               </View>
             </View>
 
@@ -752,6 +726,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+    marginHorizontal: vw(8),
   },
   toastText: {
     color: "white",
