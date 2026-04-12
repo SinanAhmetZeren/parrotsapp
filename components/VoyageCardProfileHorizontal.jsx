@@ -197,8 +197,8 @@ const styles = StyleSheet.create({
     paddingVertical: vh(3),
   },
   seeOnMap: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    fontWeight: "700",
     color: parrotBlue,
     opacity: 0.7,
     alignSelf: "flex-end",
@@ -227,9 +227,9 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.2),
   },
   header: {
+    fontFamily: "Nunito_700Bold",
     marginTop: 2,
     fontSize: 14,
-    fontWeight: "700",
     color: parrotBlue,
     paddingVertical: vh(0.2),
     alignSelf: "flex-start",
@@ -250,11 +250,12 @@ const styles = StyleSheet.create({
     borderRadius: vw(3),
   },
   pillText: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 11,
-    fontWeight: "600",
     color: parrotBlue,
   },
   cardDescription: {
+    fontFamily: "Nunito_700Bold",
     paddingTop: vh(0.6),
     paddingHorizontal: 0,
     fontSize: 12,

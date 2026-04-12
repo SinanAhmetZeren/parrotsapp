@@ -207,7 +207,7 @@ const VehicleDetailScreen = () => {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
           <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         </View>
       </ScrollView>
@@ -220,12 +220,11 @@ const VehicleDetailScreen = () => {
 
     const descriptionShortenedChars = 450;
 
+    const plainDescription = VehicleData.description.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
     const displayText = showFullText
-      ? VehicleData.description
-      : VehicleData.description.slice(0, descriptionShortenedChars) +
-      (VehicleData.description.length > descriptionShortenedChars
-        ? "..."
-        : "");
+      ? plainDescription
+      : plainDescription.slice(0, descriptionShortenedChars) +
+      (plainDescription.length > descriptionShortenedChars ? "..." : "");
 
     let icon;
     switch (VehicleData.type) {
@@ -295,7 +294,7 @@ const VehicleDetailScreen = () => {
               >
                 <View style={styles.innerProfileContainer}>
                   <MaterialCommunityIcons name="account-edit-outline" size={18} color={parrotBlue} />
-                  <Text style={{ lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Edit Vehicle</Text>
+                  <Text style={{ lineHeight: 22, marginLeft: vw(2), fontSize: 11, fontFamily: "Nunito_700Bold" }}>Edit Vehicle</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -360,20 +359,8 @@ const VehicleDetailScreen = () => {
                   )}
                 </View>
                 <View style={styles.DescriptionContainer}>
-                  <Text style={styles.descriptionInnerContainer}>
-                    <RenderHtml
-                      source={{ html: displayText }}
-                      contentWidth={width}
-                      tagsStyles={{
-                        strong: { fontWeight: "bold" },
-                        b: { fontWeight: "bold" },
-                        p: { color: parrotDarkBlue },
-                        span: { color: parrotDarkBlue },
-                      }}
-                      baseStyle={{ color: parrotDarkBlue }}
-                    />
-                  </Text>
-                  {VehicleData.description.length > descriptionShortenedChars && !showFullText && (
+                  <Text style={styles.descriptionText}>{displayText}</Text>
+                  {plainDescription.length > descriptionShortenedChars && !showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
                       <Text style={styles.ReadMoreLess}>
                         Read more <Feather name="chevron-down" size={16} color={parrotBlue} />
@@ -489,11 +476,12 @@ const styles = StyleSheet.create({
     borderRadius: vh(5),
   },
   vehicleName: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 22,
     color: parrotGreen,
-    fontWeight: "800",
     flex: 1,
     flexShrink: 1,
+    textAlign: "center",
   },
   sectionCard: {
     borderRadius: 20,
@@ -521,8 +509,8 @@ const styles = StyleSheet.create({
     paddingRight: vw(10),
   },
   currentBidsTitle: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 20,
-    fontWeight: "700",
     color: parrotLightBlue,
   },
   ImagesMainContainer: {
@@ -556,14 +544,14 @@ const styles = StyleSheet.create({
     backgroundColor: parrotBlueMediumTransparent,
   },
   propTextDescription: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    fontWeight: "600",
     color: parrotLightBlue,
   },
   propText: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    fontWeight: "600",
-    color: parrotDarkBlue,
+    color: "#1E6FD9",
   },
   ScrollView: {
     backgroundColor: "white",
@@ -584,6 +572,14 @@ const styles = StyleSheet.create({
   descriptionInnerContainer: {
     paddingVertical: vh(1),
   },
+  descriptionText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "#3D3D3D",
+    lineHeight: 23,
+    letterSpacing: 0.2,
+    paddingVertical: vh(1),
+  },
   toast: {
     position: "absolute",
     bottom: vh(10),
@@ -597,22 +593,22 @@ const styles = StyleSheet.create({
     marginHorizontal: vw(8),
   },
   toastText: {
+    fontFamily: "Nunito_700Bold",
     color: "white",
     fontSize: 13,
-    fontWeight: "600",
   },
   ReadMoreLess: {
+    fontFamily: "Nunito_700Bold",
     color: parrotBlue,
     paddingTop: vh(0.5),
     paddingBottom: vh(0.5),
-    fontWeight: "600",
-    fontSize: 13,
+    fontSize: 15,
   },
   userName: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    fontWeight: "600",
     marginTop: vh(0.2),
-    color: parrotDarkBlue,
+    color: "#1E6FD9",
   },
   ImagesSubContainer: {
     paddingHorizontal: vh(1),

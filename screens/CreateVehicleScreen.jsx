@@ -106,7 +106,7 @@ const CreateVehicleScreen = () => {
       setImage("");
       setVoyageImage(null);
       setAddedVehicleImages([]);
-      // setCurrentStep(1);  //// RESET
+      setCurrentStep(1);
       setIsUploadingImage(false);
       setIsCreatingVehicle(false);
     }, [])
@@ -366,7 +366,8 @@ const CreateVehicleScreen = () => {
               source={require("../assets/parrotslogo.png")}
               style={styles.logoImage}
             />
-            <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+            <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
             {/* <Text style={styles.currentBidsTitle3}>
               Swipe Down to Retry
             </Text> */}
@@ -645,9 +646,9 @@ export default CreateVehicleScreen;
 const styles = StyleSheet.create({
 
   currentBidsTitle2: {
+    fontFamily: "Nunito_800ExtraBold",
     top: vh(-3),
     fontSize: 17,
-    fontWeight: "700",
     color: parrotBlue,
     textAlign: "center",
   },
@@ -674,14 +675,14 @@ const styles = StyleSheet.create({
     marginBottom: vh(10),
   },
   loginText: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 16,
-    fontWeight: "500",
     color: "white",
     textAlign: "center",
   },
   choiceText: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 16,
-    fontWeight: "500",
     color: "white",
     textAlign: "center",
   },
@@ -717,8 +718,8 @@ const styles = StyleSheet.create({
 
   },
   latorLngtxt: {
+    fontFamily: "Nunito_700Bold",
     color: parrotInputTextColor,
-    fontWeight: "500",
     width: vw(25),
     textAlign: "center",
   },
@@ -733,6 +734,7 @@ const styles = StyleSheet.create({
     width: vw(64),
   },
   textInput5: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 13,
     paddingLeft: vw(1),
     width: "90%",
@@ -743,9 +745,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedText: {
+    fontFamily: "Nunito_700Bold",
     color: parrotBlue,
     fontSize: 18,
-    fontWeight: "700",
     textAlign: "center",
   },
   length1: {
@@ -832,7 +834,7 @@ const styles = StyleSheet.create({
     paddingBottom: vh(1),
   },
   cardTitleRow: { marginHorizontal: vw(2), marginBottom: vh(1) },
-  cardTitle: { fontSize: 20, fontWeight: "700", color: parrotLightBlue },
+  cardTitle: { fontFamily: "Nunito_800ExtraBold", fontSize: 20, color: parrotBlue },
   profileImage2: {
     marginLeft: vw(3),
     marginVertical: vh(1),

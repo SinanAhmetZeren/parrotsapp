@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
     },
     titleMain: {
         fontSize: 22,
-        fontWeight: "700",
+        fontFamily: "Nunito_800ExtraBold",
         color: parrotTextDarkBlue,
         textAlign: "center",
         marginVertical: 20,
@@ -528,19 +528,20 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 18,
-        fontWeight: "600",
+        fontFamily: "Nunito_800ExtraBold",
         color: parrotTextDarkBlue,
         marginBottom: 8,
     },
     sectionTitle2: {
         fontSize: 15,
-        fontWeight: "600",
+        fontFamily: "Nunito_700Bold",
         color: parrotTextDarkBlue,
         marginTop: 12,
         marginBottom: 4,
     },
     paragraph: {
         fontSize: 14,
+        fontFamily: "Nunito_700Bold",
         color: parrotTextDarkBlue,
         lineHeight: 20,
         marginBottom: 6,

@@ -111,7 +111,8 @@ export default function FavoritesScreen({ navigation }) {
               source={require("../assets/parrotslogo.png")}
               style={styles.logoImage}
             />
-            <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+            <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
             <Text style={styles.currentBidsTitle2}>Swipe Down to Retry</Text>
           </View>
         </ScrollView>
@@ -205,8 +206,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   currentBidsTitle: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 26,
-    fontWeight: "700",
     color: parrotBlue,
     paddingLeft: vw(5),
   },

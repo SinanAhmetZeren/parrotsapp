@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     marginLeft: vw(2),
   },
   messageText: {
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     color: parrotInputTextColor,
   },
   messageBox: {
@@ -158,16 +158,13 @@ const styles = StyleSheet.create({
     paddingBottom: vh(0.5),
   },
   timeDisplay: {
-    color: "grey",
+    fontFamily: "Nunito_700Bold",
     color: parrotBlueDarkTransparent2,
-    fontWeight: "400",
     fontSize: 11,
   },
   dateDisplay: {
-    fontWeight: "400",
-    color: "grey",
+    fontFamily: "Nunito_700Bold",
     color: parrotBlueDarkTransparent,
-
     fontSize: 11,
   },
   dateBox: {
@@ -177,6 +174,7 @@ const styles = StyleSheet.create({
     marginRight: vw(3),
   },
   userName: {
+    fontFamily: "Nunito_700Bold",
     color: parrotLightBlue,
   },
   MessageContainer: {

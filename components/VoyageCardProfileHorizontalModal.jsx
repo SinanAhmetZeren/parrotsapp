@@ -180,41 +180,39 @@ const styles = StyleSheet.create({
     padding: vh(0.2),
   },
   header: {
+    fontFamily: "Nunito_700Bold",
     marginTop: 2,
     fontSize: 14,
-    fontWeight: "700",
     color: parrotBlue,
     paddingVertical: vh(0.2),
     alignSelf: "center",
   },
   subHeader: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
-    fontWeight: "600",
     backgroundColor: parrotBlueMediumTransparent,
-
     paddingHorizontal: vh(0.5),
     marginTop: vh(0.2),
     borderRadius: vw(2),
   },
   subHeader2: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 10,
-    fontWeight: "600",
     backgroundColor: parrotBlueMediumTransparent,
-
     paddingHorizontal: vh(0.5),
     marginTop: vh(0.2),
     borderRadius: vw(2),
   },
   subHeader3: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 10,
-    fontWeight: "600",
     backgroundColor: parrotBlueMediumTransparent,
-
     paddingHorizontal: vh(1),
     marginTop: vh(0.1),
     borderRadius: vw(2),
   },
   cardDescription: {
+    fontFamily: "Nunito_700Bold",
     paddingTop: vh(0.6),
     paddingHorizontal: 0,
     fontSize: 11.5,

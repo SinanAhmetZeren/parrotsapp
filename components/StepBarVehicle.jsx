@@ -52,11 +52,11 @@ const styles = StyleSheet.create({
   },
   activeStepText: {
     color: "white",
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   inactiveStepText: {
     color: parrotBlue,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   inactiveStep: {
     borderRadius: vh(3),

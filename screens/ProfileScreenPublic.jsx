@@ -269,7 +269,7 @@ export default function ProfileScreenPublic({ navigation }) {
     const words = plainText.split(" ");
 
     return (
-      <Text>
+      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#3D3D3D", lineHeight: 23, letterSpacing: 0.2 }}>
         {words.map((word, index) =>
           word.startsWith("#") ? (
             <Text key={index} style={{ color: "blue" }}>
@@ -316,7 +316,7 @@ export default function ProfileScreenPublic({ navigation }) {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
           <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         </View>
       </ScrollView>
@@ -395,6 +395,7 @@ export default function ProfileScreenPublic({ navigation }) {
                       />
                       <Text
                         style={{
+                          fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
                           marginLeft: vw(1),
                           fontSize: 11,
@@ -591,19 +592,19 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   UserNameProfile: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 22,
-    fontWeight: "800",
-    color: parrotLightBlue
+    color: parrotBlue,
   },
   TitleProfile: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 16,
-    fontWeight: "700",
-    color: parrotLightBlue
+    color: parrotBlue,
   },
   currentBidsTitle: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 20,
-    fontWeight: "700",
-    color: parrotLightBlue,
+    color: parrotBlue,
     paddingLeft: vw(5),
   },
   currentBidsAndSeeAll: {
@@ -633,11 +634,11 @@ const styles = StyleSheet.create({
     backgroundColor: parrotCream
   },
   ReadMoreLess: {
+    fontFamily: "Nunito_700Bold",
     color: parrotBlue,
     paddingTop: vh(0.5),
     paddingBottom: vh(0.5),
-    fontWeight: "600",
-    fontSize: 13,
+    fontSize: 15,
   },
   bioBox: {
     paddingHorizontal: 10,

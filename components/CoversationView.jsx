@@ -93,13 +93,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   name: {
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     fontSize: 15,
     color: parrotLightBlue,
     marginBottom: vh(0.4),
   },
   message: {
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     fontSize: 13,
     color: parrotPlaceholderGrey,
   },
@@ -112,13 +112,13 @@ const styles = StyleSheet.create({
     paddingLeft: vw(2),
   },
   timeText1: {
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     fontSize: 13,
     color: parrotBlueDarkTransparent2,
     marginBottom: vh(0.5),
   },
   timeText2: {
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: parrotBlueDarkTransparent,
   },

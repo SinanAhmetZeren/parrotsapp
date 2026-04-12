@@ -199,11 +199,11 @@ export default function VehicleCardProfile({
                 {vehiclename}
               </Text>
               <View style={styles.pillRow}>
-                <Text style={styles.pill}>{icon}{"  "}{vehicleTypeName}</Text>
-                <Text style={styles.pill}>
-                  {capacity > 100 ? "100+" : capacity}{" "}
+                <Text style={styles.pill} numberOfLines={1}>{icon}{"  "}{vehicleTypeName}</Text>
+                <View style={styles.pillView}>
+                  <Text style={styles.pillText}>{capacity > 100 ? "100+" : capacity}</Text>
                   <Feather name="users" size={11} color={parrotBlue} />
-                </Text>
+                </View>
               </View>
               <Text
                 style={styles.cardDescription}
@@ -257,28 +257,44 @@ const styles = StyleSheet.create({
     paddingTop: vh(0.3),
   },
   headerName: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    fontWeight: "700",
     color: parrotBlue,
     alignSelf: "flex-start",
     paddingVertical: vh(0.2),
   },
   pillRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
     gap: 5,
     marginTop: vh(0.5),
+    alignItems: "center",
+    height: vh(3.5),
   },
   pill: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 11,
-    fontWeight: "600",
     color: parrotBlue,
     backgroundColor: parrotBlueMediumTransparent,
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),
   },
+  pillView: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: parrotBlueMediumTransparent,
+    paddingHorizontal: vw(2),
+    paddingVertical: 3,
+    borderRadius: vw(3),
+  },
+  pillText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 11,
+    color: parrotBlue,
+  },
   cardDescription: {
+    fontFamily: "Nunito_700Bold",
     paddingTop: vh(0.6),
     paddingHorizontal: 0,
     fontSize: 12,

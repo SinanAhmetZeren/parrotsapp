@@ -53,18 +53,18 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 12,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     width: vw(25),
     left: vw(-1),
   },
   selectedTextStyle: {
     fontSize: 12,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     width: vw(25),
   },
   itemTextStyle: {
     fontSize: 12,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     width: vw(25),
   },
 
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 30,
     fontSize: 12,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     width: vw(25),
     textAlign: "center",
   },

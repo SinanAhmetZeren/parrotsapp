@@ -86,7 +86,8 @@ export default function VehicleVoyages({ voyages }) {
 const styles = StyleSheet.create({
   singleVoyage: {
     paddingVertical: vh(1),
-    paddingHorizontal: vw(3),
+    paddingLeft: vw(1),
+    paddingRight: vw(3),
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: parrotCream,
@@ -99,8 +100,8 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
   },
   voyageName: {
+    fontFamily: "Nunito_700Bold",
     flex: 1,
-    fontWeight: "600",
     color: parrotDarkBlue,
     fontSize: 13,
   },
@@ -109,13 +110,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: parrotBlueMediumTransparent,
     borderRadius: vw(5),
-    paddingHorizontal: vw(2),
+    paddingHorizontal: vw(1.5),
     paddingVertical: vh(0.5),
     gap: 4,
   },
   pillText: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
-    fontWeight: "500",
     color: parrotDarkBlue,
   },
 });

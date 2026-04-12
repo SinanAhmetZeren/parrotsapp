@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: "Nunito_800ExtraBold",
     color: parrotLightBlue,
   },
   waypointFlatlistInner: {
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     backgroundColor: parrotBlue,
     color: "white",
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     marginBottom: vh(1),
   },
   completeText: {
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     backgroundColor: parrotBlue,
     color: "white",
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     marginBottom: vh(3),
   },
   addWaypointTextDisabled: {
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     backgroundColor: parrotBlueSemiTransparent2,
     color: "white",
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     marginBottom: vh(1),
   },
   FinishButtonContainer: {
@@ -688,13 +688,13 @@ const styles = StyleSheet.create({
   },
   latorLngtxt: {
     color: parrotPlaceholderGrey,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     width: vw(12),
     textAlign: "center",
   },
   latorLngtxt2: {
     color: parrotPlaceholderGrey,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     width: vw(20),
     textAlign: "center",
   },
@@ -718,6 +718,7 @@ const styles = StyleSheet.create({
   },
   textInputDescription: {
     fontSize: 13,
+    fontFamily: "Nunito_700Bold",
     paddingLeft: vw(1),
     width: "99%",
     backgroundColor: "white",
@@ -725,17 +726,20 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     fontSize: 13,
+    fontFamily: "Nunito_700Bold",
     paddingLeft: vw(1),
     width: "90%",
   },
   latlngtextInput: {
     fontSize: 13,
+    fontFamily: "Nunito_700Bold",
     padding: vw(1),
     width: "90%",
     color: parrotPlaceholderGrey,
   },
   latlngtextInput2: {
     fontSize: 13,
+    fontFamily: "Nunito_700Bold",
     padding: vw(1),
     width: "90%",
     color: parrotPlaceholderGrey,

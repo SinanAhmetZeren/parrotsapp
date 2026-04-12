@@ -271,7 +271,7 @@ export default function ProfileScreen({ navigation }) {
     const words = plainText.split(" ");
 
     return (
-      <Text>
+      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#3D3D3D", lineHeight: 23, letterSpacing: 0.2 }}>
         {words.map((word, index) =>
           word.startsWith("#") ? (
             <Text key={index} style={{ color: "blue" }}>
@@ -318,7 +318,7 @@ export default function ProfileScreen({ navigation }) {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
           <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         </View>
       </ScrollView>
@@ -371,6 +371,7 @@ export default function ProfileScreen({ navigation }) {
                       />
                       <Text
                         style={{
+                          fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
                           marginLeft: vw(2),
                           fontSize: 11,
@@ -437,6 +438,7 @@ export default function ProfileScreen({ navigation }) {
                       />
                       <Text
                         style={{
+                          fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
                           marginLeft: vw(2),
                           fontSize: 11,
@@ -467,6 +469,7 @@ export default function ProfileScreen({ navigation }) {
                       />
                       <Text
                         style={{
+                          fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
                           marginLeft: vw(2),
                           fontSize: 11,
@@ -496,6 +499,7 @@ export default function ProfileScreen({ navigation }) {
                       />
                       <Text
                         style={{
+                          fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
                           marginLeft: vw(2),
                           fontSize: 11,
@@ -566,13 +570,13 @@ export default function ProfileScreen({ navigation }) {
                         position: "relative"
                       }}
                     >
-                      <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <Text style={{ fontSize: 18, fontFamily: "Nunito_800ExtraBold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         ParrotCoin Balance
                       </Text>
 
                       <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
 
-                        <Text style={{ fontSize: 22, fontWeight: "800", color: parrotTextDarkBlue }}>
+                        <Text style={{ fontSize: 22, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>
                           {parrotCoinBalance?.toLocaleString()}
                         </Text>
 
@@ -584,19 +588,19 @@ export default function ProfileScreen({ navigation }) {
                       </View>
 
 
-                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         Featuring your voyage on the main map costs ParrotCoins.
                       </Text>
-                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         The cost equals the number of days between today and the voyage start date.
                       </Text>
-                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         Example: Starts in 10 days → 10 ParrotCoins.
                       </Text>
-                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         The voyage will be removed from the main map once it starts.
                       </Text>
-                      <Text style={{ fontSize: 15, fontWeight: "600", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         You can add ParrotCoins to your balance at parrotsvoyages.com.
                       </Text>
 
@@ -829,20 +833,20 @@ const styles = StyleSheet.create({
   },
 
   currentBidsTitle: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 20,
-    fontWeight: "700",
-    color: parrotLightBlue,
+    color: parrotBlue,
     paddingLeft: vw(5),
   },
   UserNameProfile: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 22,
-    fontWeight: "800",
-    color: parrotLightBlue,
+    color: parrotBlue,
   },
   TitleProfile: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 16,
-    fontWeight: "700",
-    color: parrotLightBlue,
+    color: parrotBlue,
   },
   currentBidsAndSeeAll: {
     marginTop: vh(2),
@@ -865,11 +869,11 @@ const styles = StyleSheet.create({
     backgroundColor: parrotCream,
   },
   ReadMoreLess: {
+    fontFamily: "Nunito_700Bold",
     color: parrotBlue,
     paddingTop: vh(0.5),
     paddingBottom: vh(0.5),
-    fontWeight: "600",
-    fontSize: 13,
+    fontSize: 15,
   },
   bioBox: {
     paddingHorizontal: 10,

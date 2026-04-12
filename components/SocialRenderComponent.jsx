@@ -425,13 +425,12 @@ const styles = StyleSheet.create({
     // backgroundColor: "red",
   },
   moreButton: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 14,
-    fontWeight: "700",
     alignSelf: "flex-end",
     color: parrotLightBlue,
     backgroundColor: parrotBlueTransparent,
     borderRadius: vh(2),
-    paddingHorizontal: vw(2),
     paddingHorizontal: vw(2),
   },
 
@@ -630,6 +629,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   iconText: {
+    fontFamily: "Nunito_700Bold",
     lineHeight: 22,
     marginTop: vh(0.4),
     fontSize: 13,

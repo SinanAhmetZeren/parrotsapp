@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
     marginLeft: vh(2),
   },
   userName: {
+    fontFamily: "Nunito_800ExtraBold",
     color: parrotLightBlue,
     fontSize: 16,
-    fontWeight: "800",
   },
   searchUserContainer: {
     flexDirection: "row",

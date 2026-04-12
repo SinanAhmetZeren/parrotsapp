@@ -193,6 +193,7 @@ export const RenderBidsComponent = ({
                           <Text
                             style={{
                               color: parrotTextDarkBlue,
+                              fontFamily: "Nunito_700Bold",
                             }}
                           >
                             {/* {ownVoyage && item.message} */}
@@ -329,12 +330,12 @@ const styles = StyleSheet.create({
 
   modalUserNameText: {
     width: vw(43),
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     color: parrotTextDarkBlue,
   },
   modalPersonCount: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     width: vw(12),
     textAlign: "right",
     color: parrotTextDarkBlue,
@@ -342,7 +343,7 @@ const styles = StyleSheet.create({
   modalPriceText: {
     width: vw(20),
     color: parrotTextDarkBlue,
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     textAlign: "right",
   },
   nameAndPriceContainer: {
@@ -360,19 +361,19 @@ const styles = StyleSheet.create({
   },
   modalUserNameTextNotOwn: {
     width: vw(32),
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     color: parrotTextDarkBlue,
   },
   modalPriceTextNotOwn: {
     width: vw(10),
     color: parrotTextDarkBlue,
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     textAlign: "right",
     marginRight: vw(2),
   },
   modalPersonCountNotOwn: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     width: vw(12),
     textAlign: "right",
     color: parrotTextDarkBlue,
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
     paddingVertical: vw(0.5),
     paddingHorizontal: vw(2),
     color: parrotGreen,
-    fontWeight: "900",
+    fontFamily: "Nunito_800ExtraBold",
     backgroundColor: parrotGreenMediumTransparent,
     borderRadius: vh(2),
   },
@@ -392,9 +393,8 @@ const styles = StyleSheet.create({
     paddingVertical: vw(0.5),
     paddingHorizontal: vw(3),
     color: parrotBlue,
-    fontWeight: "900",
+    fontFamily: "Nunito_800ExtraBold",
     backgroundColor: parrotBlueMediumTransparent,
-    // backgroundColor: "yellow",
     borderRadius: vh(2),
     width: vw(20),
     textAlign: "center",
@@ -403,10 +403,8 @@ const styles = StyleSheet.create({
     paddingVertical: vw(0.5),
     paddingHorizontal: vw(3),
     color: parrotRed,
-    fontWeight: "900",
+    fontFamily: "Nunito_800ExtraBold",
     backgroundColor: parrotRedTransparent,
-    // backgroundColor: "white",
-    // backgroundColor: "yellow",
     borderRadius: vh(2),
     width: vw(20),
     textAlign: "center",
@@ -415,13 +413,13 @@ const styles = StyleSheet.create({
     paddingVertical: vw(0.5),
     paddingHorizontal: vw(3),
     color: parrotBlue,
-    fontWeight: "900",
+    fontFamily: "Nunito_800ExtraBold",
     backgroundColor: parrotBlueMediumTransparent,
     borderRadius: vh(2),
   },
   buttonClose: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
     alignSelf: "center",
@@ -443,10 +441,11 @@ const styles = StyleSheet.create({
     paddingBottom: vh(0.2),
     width: vw(75),
     color: parrotTextDarkBlue,
+    fontFamily: "Nunito_700Bold",
   },
   userName: {
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     marginTop: vh(0.2),
     color: "blue",
   },
@@ -466,20 +465,20 @@ const styles = StyleSheet.create({
   },
   bidUsername: {
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     width: vw(45),
     color: parrotTextDarkBlue,
   },
   personCount: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     width: vw(12),
     textAlign: "right",
     color: parrotTextDarkBlue,
   },
   offerPrice: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontFamily: "Nunito_700Bold",
     width: vw(15),
     textAlign: "right",
     color: parrotTextDarkBlue,

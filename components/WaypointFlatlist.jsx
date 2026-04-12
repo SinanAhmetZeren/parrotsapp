@@ -134,7 +134,7 @@ export const WaypointItemVoyageDetailScreen = ({
             <Text numberOfLines={1} style={styles.title}>
               {title}
             </Text>
-            <Text numberOfLines={6} style={styles.description}>
+            <Text numberOfLines={5} style={styles.description}>
               {description}
             </Text>
           </View>
@@ -332,15 +332,15 @@ const styles = StyleSheet.create({
     width: vw(15),
   },
   waypointTitleInModal2: {
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     fontSize: 18,
     marginTop: vh(0.5),
     alignSelf: "center",
     color: "white",
   },
   waypointDescriptionInModal2: {
+    fontFamily: "Nunito_700Bold",
     paddingHorizontal: vw(2),
-    fontWeight: "500",
     fontSize: 14,
     color: "white",
   },
@@ -370,11 +370,12 @@ const styles = StyleSheet.create({
     height: vh(47),
   },
   title: {
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     color: parrotTextDarkBlue,
     textAlign: "center",
   },
   description: {
+    fontFamily: "Nunito_700Bold",
     width: vw(42),
     paddingLeft: vw(2),
     color: parrotTextDarkBlue,
@@ -452,10 +453,10 @@ const styles = StyleSheet.create({
     borderRadius: vh(1),
   },
   seeDetails: {
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     position: "absolute",
     bottom: vh(1),
     right: vw(2),
-    color: parrotTextDarkBlue,
+    color: parrotBlue,
   },
 });

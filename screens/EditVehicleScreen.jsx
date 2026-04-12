@@ -284,7 +284,8 @@ const EditVehicleScreen = () => {
                 source={require("../assets/parrotslogo.png")}
                 style={styles.logoImage}
               />
-              <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+              <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
               {/* <Text style={styles.currentBidsTitle3}>
                 Swipe Down to Retry
               </Text> */}
@@ -585,7 +586,7 @@ const styles2 = StyleSheet.create({
   currentBidsTitle2: {
     top: vh(-3),
     fontSize: 17,
-    fontWeight: "700",
+    fontFamily: "Nunito_800ExtraBold",
     color: parrotBlue,
     textAlign: "center",
   },
@@ -634,7 +635,7 @@ const styles2 = StyleSheet.create({
   },
   choiceText: {
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     color: "white",
   },
 
@@ -681,7 +682,7 @@ const styles = StyleSheet.create({
   },
   choiceText3: {
     fontSize: 18,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     color: "white",
   },
   addWaypointText: {
@@ -690,7 +691,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     backgroundColor: parrotBlue,
     color: "white",
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     marginBottom: vh(2),
   },
   FinishButtonContainer: {
@@ -727,7 +728,7 @@ const styles = StyleSheet.create({
   },
   latorLngtxt: {
     color: parrotInputTextColor,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     width: vw(25),
     textAlign: "center",
   },
@@ -742,6 +743,7 @@ const styles = StyleSheet.create({
   },
   textInput5: {
     fontSize: 13,
+    fontFamily: "Nunito_700Bold",
     paddingLeft: vw(1),
     width: "90%",
   },
@@ -751,7 +753,7 @@ const styles = StyleSheet.create({
   },
   selectedText: {
     fontSize: 18,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     textAlign: "center",
   },
   length1: {

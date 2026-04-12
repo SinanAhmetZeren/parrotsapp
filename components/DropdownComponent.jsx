@@ -52,21 +52,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   placeholderStyle: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: parrotInputTextColor,
-    fontWeight: "500",
     width: vw(25),
   },
   selectedTextStyle: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: parrotInputTextColor,
-    fontWeight: "500",
     width: vw(25),
   },
   itemTextStyle: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: parrotInputTextColor,
-    fontWeight: "500",
     width: vw(25),
   },
 
@@ -75,11 +75,10 @@ const styles = StyleSheet.create({
     height: 20,
   },
   inputSearchStyle: {
+    fontFamily: "Nunito_700Bold",
     height: 30,
     fontSize: 12,
     color: parrotInputTextColor,
-    color: "red",
-    fontWeight: "500",
     width: vw(25),
     textAlign: "center",
   },

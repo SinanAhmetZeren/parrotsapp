@@ -732,7 +732,8 @@ export default function HomeScreen({ navigation }) {
                     source={require("../assets/parrotslogo.png")}
                     style={styles.logoImage}
                   />
-                  <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+                  <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
                   <Text style={styles.currentBidsTitle3}>
                     Swipe Down to Retry
                   </Text>
@@ -906,6 +907,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   buttonClose: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 18,
     color: "white",
     textAlign: "center",
@@ -954,7 +956,7 @@ const styles = StyleSheet.create({
   },
   applyFilterText: {
     fontSize: 14,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   filterSpinner: {
     position: "absolute",
@@ -983,8 +985,8 @@ const styles = StyleSheet.create({
 
   },
   currentBidsTitle: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 20,
-    fontWeight: "700",
     color: parrotBlue
   },
   mainBidsContainer: {
@@ -1012,26 +1014,24 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   welcome: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 18,
     color: parrotBlue,
-    fontWeight: "900",
   },
   usernameLarge: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 26,
-    fontWeight: "700",
     color: parrotGreen,
   },
   usernameMedium: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 18,
-    fontWeight: "700",
     color: parrotGreen,
-
   },
   usernameSmall: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 16,
-    fontWeight: "700",
     color: parrotGreen,
-
   },
   welcomebox: {
     width: vw(50),

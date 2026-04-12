@@ -378,7 +378,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
           <Text style={styles.currentBidsTitle3}>Swipe Down to Retry</Text>
         </View>
       </ScrollView>
@@ -545,6 +546,7 @@ const styles = StyleSheet.create({
     paddingLeft: vh(1.5),
     paddingVertical: vh(0.5),
     borderRadius: vh(2),
+    fontFamily: "Nunito_700Bold",
   },
   messageTextContainer: {
     flex: 1,
@@ -555,8 +557,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   nameStyle: {
-    fontWeight: "800",
-    // color: "#3c9dde",
+    fontFamily: "Nunito_800ExtraBold",
     color: parrotLightBlue,
     fontSize: 22,
     marginTop: vh(1),
@@ -616,8 +617,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   toastText: {
+    fontFamily: "Nunito_700Bold",
     color: "white",
     fontSize: 13,
-    fontWeight: "600",
   },
 });

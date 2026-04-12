@@ -5,6 +5,9 @@
 /* eslint-disable no-unused-vars */
 import * as React from "react";
 import { useState } from "react";
+import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from "@expo-google-fonts/nunito";
+import * as SplashScreen from "expo-splash-screen";
+SplashScreen.preventAutoHideAsync();
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -115,8 +118,8 @@ const screenOptions1 = {
 };
 
 const baseTextStyle = {
+  fontFamily: "Nunito_700Bold",
   fontSize: 12,
-  fontWeight: "600",
 };
 
 const toastConfig = {
@@ -460,9 +463,12 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
                     bottom: vh(-2.5),
                   }}>
                     <Image
-                      // source={require("./assets/parrotwhiteoutline2.png")}
+                      // source={require("./assets/twoparrots.png")}
                       source={require("./assets/parrotwhiteoutlinebg.png")}
-                      style={{ width: vw(13), height: vw(13), overflow: "hidden", borderRadius: vh(5) }}
+                      style={{
+                        width: vw(13), height: vw(13), overflow: "hidden", borderRadius: vh(5)
+                        // width: vw(18), height: vw(15), overflow: "hidden", borderRadius: vh(5), marginLeft: vw(1)
+                      }}
                       resizeMode="contain"
                     />
                   </View>
@@ -586,6 +592,14 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
 };
 
 function App() {
+  const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold });
+
+  React.useEffect(() => {
+    if (fontsLoaded) SplashScreen.hideAsync();
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) return null;
+
   function RenderNavigator() {
 
     const dispatch = useDispatch();

@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   choiceText: {
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Nunito_800ExtraBold",
     color: "white",
   },
   selection: {

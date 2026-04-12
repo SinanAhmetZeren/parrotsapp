@@ -306,7 +306,7 @@ const VoyageDetailScreen = ({ navigation }) => {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
           <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         </View>
       </ScrollView>
@@ -323,10 +323,11 @@ const VoyageDetailScreen = ({ navigation }) => {
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData.user.id;
     const waypoints = VoyageData.waypoints || [];
-    const descriptionShortenedChars = 200;
-    const displayText = showFullText || VoyageData.description.length < descriptionShortenedChars
-      ? VoyageData.description
-      : VoyageData.description.slice(0, descriptionShortenedChars) + "...";
+    const descriptionShortenedChars = 450;
+    const plainDescription = VoyageData.description.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
+    const displayText = showFullText || plainDescription.length < descriptionShortenedChars
+      ? plainDescription
+      : plainDescription.slice(0, descriptionShortenedChars) + "...";
 
     let allVoyageImages = [
       {
@@ -380,7 +381,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                     <Image source={{ uri: VoyageData.user.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
                     <Text style={styles.value}>{VoyageData.user.userName}</Text>
                   </TouchableOpacity>
-                  <Ionicons name="rocket-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }]} />
+                  <Ionicons name="rocket-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 6 }]} />
                   <TouchableOpacity
                     style={styles.pill}
                     onPress={() => {
@@ -460,18 +461,9 @@ const VoyageDetailScreen = ({ navigation }) => {
 
                 {/* // Voyage Description */}
                 <View style={styles.DescriptionContainer}>
-                  <Text style={styles.descriptionInnerContainer}>
-                    <RenderHtml
-                      source={{ html: displayText }}
-                      contentWidth={width}
-                      tagsStyles={{
-                        strong: { fontWeight: 'bold' },
-                        b: { fontWeight: 'bold' },
-                      }}
-                    />
-                  </Text>
+                  <Text style={styles.descriptionText}>{displayText}</Text>
 
-                  {VoyageData.description.length > descriptionShortenedChars &&
+                  {plainDescription.length > descriptionShortenedChars &&
                     !showFullText && (
                       <TouchableOpacity onPress={() => setShowFullText(true)}>
                         <Text style={styles.ReadMoreLess}>
@@ -768,12 +760,20 @@ const styles = StyleSheet.create({
     paddingBottom: vh(1),
     color: parrotTextDarkBlue,
   },
+  descriptionText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "#3D3D3D",
+    lineHeight: 23,
+    letterSpacing: 0.2,
+    paddingVertical: vh(1),
+  },
   ReadMoreLess: {
+    fontFamily: "Nunito_700Bold",
     color: parrotBlue,
     paddingTop: vh(0.5),
     paddingBottom: vh(0.5),
-    fontWeight: "600",
-    fontSize: 13,
+    fontSize: 15,
   },
   subContainer: {
     backgroundColor: "blue",
@@ -782,19 +782,20 @@ const styles = StyleSheet.create({
     marginTop: vh(0.5),
   },
   voyageName: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 24,
     alignSelf: "center",
     color: parrotGreen,
-    fontWeight: "800",
     paddingHorizontal: vh(2),
     paddingVertical: vh(0.5),
     borderRadius: vh(1),
   },
   userName: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
     marginTop: vh(0.2),
-    color: parrotTextDarkBlue,
+    color: "#1E6FD9",
+    flexShrink: 1,
   },
   voyageImage: {
     height: vh(13),
@@ -824,7 +825,7 @@ const styles = StyleSheet.create({
   },
   currentBidsTitle: {
     fontSize: 20,
-    fontWeight: "700",
+    fontFamily: "Nunito_800ExtraBold",
     color: parrotLightBlue,
   },
   mainBidsContainer: {
@@ -876,7 +877,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: vw(10),
+    paddingHorizontal: vw(3),
   },
   WaypointsAndInfo: {
     marginTop: 0,
@@ -887,7 +888,7 @@ const styles = StyleSheet.create({
 
   seeAllButton: {
     color: parrotLightBlue,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     fontSize: 16,
   },
   voyageDataWrapper: {
@@ -968,17 +969,15 @@ const styles = StyleSheet.create({
   },
 
   value: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 16,
-    fontWeight: "600",
     color: "#1E6FD9",
   },
 
   pill: {
     flexDirection: "row",
     alignItems: "center",
-    // backgroundColor: "#DDE3EA",
     backgroundColor: parrotBlueMediumTransparent,
-
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 20,

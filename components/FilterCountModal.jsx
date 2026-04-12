@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { vw, vh, vmin, vmax } from "react-native-expo-viewport-units";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotLightBlue, parrotGreen, parrotTextDarkBlue, parrotBlueTransparent } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotLightBlue, parrotGreen, parrotTextDarkBlue, parrotBlueTransparent, parrotCream, parrotInputTextColor } from "../assets/color";
 
 const FilterCountModal = ({
   isVisible,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: "800",
+    fontFamily: "Nunito_800ExtraBold",
     marginBottom: vh(2),
     textAlign: "center",
     color: parrotLightBlue,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: parrotCream,
     overflow: "hidden",
   },
   counterContainer: {
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: vh(5.5),
     width: vh(7),
-    backgroundColor: parrotBlueSemiTransparent,
+    backgroundColor: "#ede8e2",
   },
   rightFlatBorders: {
     borderTopRightRadius: 0,
@@ -174,18 +174,18 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
   },
   bidInput: {
-    color: parrotTextDarkBlue,
+    color: parrotInputTextColor,
     fontSize: 20,
-    fontWeight: "800",
+    fontFamily: "Nunito_800ExtraBold",
     width: vw(22),
     textAlign: "center",
     height: vh(5.5),
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: parrotCream,
     paddingBottom: 10,
   },
   buttonCount: {
     fontSize: 24,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     color: parrotLightBlue,
     textAlign: "center",
   },
@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
   },
   buttonClearText: {
     fontSize: 18,
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
     backgroundColor: parrotGreen,
@@ -213,13 +214,13 @@ const styles = StyleSheet.create({
     width: vw(25),
     borderRadius: 30,
     marginTop: 5,
-    fontWeight: "bold",
   },
   buttonOkContainer: {
     alignItems: "center",
   },
   buttonOkText: {
     fontSize: 18,
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
     backgroundColor: parrotBlue,
@@ -227,7 +228,6 @@ const styles = StyleSheet.create({
     width: vw(25),
     borderRadius: 30,
     marginTop: 5,
-    fontWeight: "bold",
   },
 });
 

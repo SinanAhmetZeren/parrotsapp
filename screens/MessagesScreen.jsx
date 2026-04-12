@@ -223,7 +223,7 @@ export default function MessagesScreen({ navigation }) {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
           <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         </View>
       </ScrollView>
@@ -358,6 +358,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(30, 111, 217, 0.15)",
   },
   textinputStyle: {
+    fontFamily: "Nunito_700Bold",
     flex: 1,
     paddingVertical: vh(1.8),
     paddingHorizontal: vw(2),
@@ -366,8 +367,8 @@ const styles = StyleSheet.create({
   },
 
   currentBidsTitle2: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 20,
-    fontWeight: "700",
     color: parrotBlue,
     paddingTop: vh(3),
   },
@@ -409,8 +410,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   toastText: {
+    fontFamily: "Nunito_700Bold",
     color: "white",
     fontSize: 13,
-    fontWeight: "600",
   },
 });

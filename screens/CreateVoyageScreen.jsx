@@ -391,9 +391,10 @@ const CreateVoyageScreen = ({ navigation }) => {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
         <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
-        <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+        <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         <TouchableOpacity onPress={refetch} style={{ marginTop: vh(2) }}>
-          <Text style={{ color: parrotBlue, fontWeight: "600" }}>Tap to retry</Text>
+          <Text style={{ fontFamily: "Nunito_700Bold", color: parrotBlue }}>Tap to retry</Text>
         </TouchableOpacity>
       </View>
     );
@@ -440,9 +441,10 @@ const CreateVoyageScreen = ({ navigation }) => {
                 source={require("../assets/parrotslogo.png")}
                 style={styles.logoImage}
               />
-              <Text style={styles.currentBidsTitle2}>Connection Error</Text>
+              <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
               <TouchableOpacity onPress={() => setHasError(false)} style={{ marginTop: vh(2), alignSelf: "center" }}>
-                <Text style={{ color: parrotBlue, fontWeight: "600", fontSize: 16 }}>Tap to retry</Text>
+                <Text style={{ fontFamily: "Nunito_700Bold", color: parrotBlue, fontSize: 16 }}>Tap to retry</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -600,6 +602,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                       selectedRangeEndStyle={styles.calendarEndStart}
                       selectedDayStyle={styles.calendarEndStart}
                       selectedColor={"blue"}
+                      textStyle={{ fontFamily: "Nunito_700Bold" }}
                       startFromMonday={true}
                       allowRangeSelection={calendarRangeAllowed}
                       minDate={new Date()}
@@ -929,9 +932,9 @@ const styles2 = StyleSheet.create({
 const styles = StyleSheet.create({
 
   currentBidsTitle2: {
+    fontFamily: "Nunito_800ExtraBold",
     top: vh(-3),
     fontSize: 17,
-    fontWeight: "700",
     color: parrotBlue,
     textAlign: "center",
   },
@@ -965,8 +968,8 @@ const styles = StyleSheet.create({
     width: vw(50),
   },
   loginText: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 16,
-    fontWeight: "500",
     color: "white",
     textAlign: "center",
   },
@@ -983,8 +986,8 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
   },
   checkboxText: {
+    fontFamily: "Nunito_700Bold",
     color: parrotInputTextColor,
-    fontWeight: "500",
     paddingRight: vw(2),
   },
   auctionFixedPrice: {
@@ -1005,8 +1008,8 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
   },
   latorLngtxt: {
+    fontFamily: "Nunito_700Bold",
     color: parrotInputTextColor,
-    fontWeight: "500",
     width: vw(25),
     textAlign: "center",
   },
@@ -1020,11 +1023,10 @@ const styles = StyleSheet.create({
     width: vw(64),
   },
   textInput5: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 13,
     paddingLeft: vw(1),
     width: "90%",
-    // backgroundColor: parrotTransparentWhite,
-
   },
   sectionCard: {
     borderRadius: 20,
@@ -1044,9 +1046,9 @@ const styles = StyleSheet.create({
     marginBottom: vh(1),
   },
   cardTitle: {
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 20,
-    fontWeight: "700",
-    color: parrotLightBlue,
+    color: parrotBlue,
   },
   length1: {
     height: vh(13),
@@ -1141,7 +1143,7 @@ const styles = StyleSheet.create({
   checkboxContainer: {
     flexDirection: "row",
     margin: vh(0.2),
-    paddingHorizontal: vw(2),
+    paddingHorizontal: vw(1),
     paddingVertical: vh(0.5),
     borderRadius: vh(2),
   },
@@ -1181,8 +1183,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   voyageDates: {
+    fontFamily: "Nunito_700Bold",
     color: parrotInputTextColor,
-    fontWeight: "500",
     fontSize: 13,
     marginVertical: vh(1),
     alignSelf: "flex-start",
@@ -1199,8 +1201,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   toastText: {
+    fontFamily: "Nunito_700Bold",
     color: "white",
     fontSize: 13,
-    fontWeight: "600",
   },
 });

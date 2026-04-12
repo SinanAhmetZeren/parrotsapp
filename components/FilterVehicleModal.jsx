@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "Nunito_800ExtraBold",
     marginBottom: 10,
     textAlign: "center",
   },
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     color: parrotInputTextColor,
     marginLeft: vw(5),
   },
@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
   },
   buttonSave: {
     fontSize: 18,
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
     backgroundColor: parrotBlue,
@@ -178,6 +179,7 @@ const styles = StyleSheet.create({
   },
   buttonClear: {
     fontSize: 18,
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
     backgroundColor: parrotGreen,

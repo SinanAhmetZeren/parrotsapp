@@ -100,7 +100,7 @@ const FilterCalendarModal = ({
               selectedColor={"blue"}
               selectedDayColor={parrotGreen}
               selectedDayTextColor="white"
-              textStyle={{ fontWeight: "700", color: parrotInputTextColor }}
+              textStyle={{ fontFamily: "Nunito_700Bold", color: parrotInputTextColor }}
               startFromMonday={true}
               allowRangeSelection={calendarRangeAllowed}
               minDate={new Date()}
@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     fontSize: 18,
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
     backgroundColor: parrotBlue,
@@ -201,6 +202,7 @@ const styles = StyleSheet.create({
   },
   buttonSave: {
     fontSize: 18,
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
     backgroundColor: parrotBlue,
@@ -211,6 +213,7 @@ const styles = StyleSheet.create({
   },
   buttonClear: {
     fontSize: 18,
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
     backgroundColor: parrotGreen,
