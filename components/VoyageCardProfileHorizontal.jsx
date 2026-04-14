@@ -33,6 +33,7 @@ export default function VoyageCardProfileHorizontal({
   latitude,
   longitude,
   focusMap,
+  markerImage,
 }) {
   const cardImageUrl = `${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d");
@@ -103,6 +104,13 @@ export default function VoyageCardProfileHorizontal({
         radius={12}
       >
         <View style={styles.cardContainerWrapper}>
+          {markerImage && (
+            <View style={styles.markerBadgeClip}>
+              <View style={styles.markerBadgeOffset}>
+                <Image source={markerImage} style={styles.markerBadge} resizeMode="contain" />
+              </View>
+            </View>
+          )}
           <View style={styles.cardContainer}>
             <View style={styles.shadow}>
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
@@ -178,6 +186,26 @@ const styles = StyleSheet.create({
   cardContainerWrapper: {
     backgroundColor: "white",
     borderRadius: vh(2),
+    overflow: "hidden",
+  },
+  markerBadgeClip: {
+    position: "absolute",
+    top: 6,
+    right: 2,
+    width: 30,
+    height: 30,
+    zIndex: 10,
+    overflow: "hidden",
+    borderRadius: 17,
+    backgroundColor: "rgba(0, 119, 234, 0.4)",
+  },
+  markerBadgeOffset: {
+    position: "relative",
+    left: -2,
+  },
+  markerBadge: {
+    width: 34,
+    height: 38,
   },
   containerContainer: {
     height: vh(22),
@@ -198,18 +226,12 @@ const styles = StyleSheet.create({
   },
   seeOnMap: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 14,
+    fontSize: 12,
     color: parrotBlue,
-    opacity: 0.7,
     alignSelf: "flex-end",
     position: "absolute",
     bottom: vh(0),
     right: vw(0),
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: vh(2),
-    paddingHorizontal: vw(2),
-    borderWidth: 1,
-    borderColor: "white",
   },
   cardImage: {
     width: vw(38),

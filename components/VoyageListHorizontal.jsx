@@ -4,11 +4,26 @@
 import React from "react";
 import { StyleSheet, View, FlatList, Text, Image } from "react-native";
 import VoyageCardProfileHorizontal from "./VoyageCardProfileHorizontal";
+import PlaceCardHorizontal from "./PlaceCardHorizontal";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { parrotLightBlue } from "../assets/color";
 
 export default function VoyageListHorizontal({ data, focusMap }) {
   const renderItem = ({ item }) => {
+    if (item.isPlace) {
+      return (
+        <PlaceCardHorizontal
+          key={item.id}
+          cardHeader={item.name}
+          cardDescription={item.description}
+          cardImage={item.profileImageThumbnail || item.profileImage}
+          link={item.brief}
+          latitude={item.waypoints[0]?.latitude}
+          longitude={item.waypoints[0]?.longitude}
+          focusMap={focusMap}
+        />
+      );
+    }
     return (
       <VoyageCardProfileHorizontal
         key={item.id}
@@ -24,6 +39,7 @@ export default function VoyageListHorizontal({ data, focusMap }) {
         latitude={item.waypoints[0]?.latitude}
         longitude={item.waypoints[0]?.longitude}
         focusMap={focusMap}
+        markerImage={item.markerImage}
       />
     );
   };

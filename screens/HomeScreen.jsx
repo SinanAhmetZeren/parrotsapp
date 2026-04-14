@@ -43,28 +43,28 @@ import parrotMarker4 from "../assets/parrotMarkers/parrotMarker4.png";
 import parrotMarker5 from "../assets/parrotMarkers/parrotMarker5.png";
 import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
 import goldenegg from "../assets/goldenegg.png";
+import silveregg from "../assets/silveregg.png";
 import crackedgoldenegg from "../assets/crackedgoldenegg.png";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import {
   applyFilterAppliedBackgroundColor, applyFilterAppliedBorderColor, applyFilterAppliedColor,
   applyFilterChangedBackgroundColor, applyFilterChangedBorderColor, applyFilterChangedColor,
   applyFilterInitialBackgroundColor, applyFilterInitialBorderColor, applyFilterInitialColor,
-  parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
+  parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
   parrotPlaceholderGrey
 } from "../assets/color";
 
 // Define static assets outside to keep references stable
 const markerImages = [parrotMarker1, parrotMarker2, parrotMarker3, parrotMarker4, parrotMarker5, parrotMarker6];
 
-const PlaceMarker = memo(({ item, onPress }) => {
+
+const PlaceEggMarker = memo(({ item, onPress }) => {
   const [tracksView, setTracksView] = useState(true);
   const [pressed, setPressed] = useState(false);
+
   return (
     <Marker
-      coordinate={{
-        latitude: item.waypoints[0]?.latitude,
-        longitude: item.waypoints[0]?.longitude,
-      }}
+      coordinate={{ latitude: item.waypoints[0]?.latitude, longitude: item.waypoints[0]?.longitude }}
       tracksViewChanges={tracksView}
       anchor={{ x: 0.5, y: 1 }}
       onPress={() => {
@@ -74,8 +74,7 @@ const PlaceMarker = memo(({ item, onPress }) => {
         onPress(item);
       }}
     >
-      <View style={{ alignItems: "center" }}>
-
+      <View style={{ width: 44, height: 52, overflow: "visible" }}>
         <Image
           source={pressed ? crackedgoldenegg : goldenegg}
           style={{ width: 33, height: 37 }}
@@ -456,6 +455,7 @@ export default function HomeScreen({ navigation }) {
     setSelectedPlaceModalVisible(true);
   };
 
+
   const mapRef = useRef(null);
 
   const focusMap = (latitude, longitude) => {
@@ -746,7 +746,7 @@ export default function HomeScreen({ navigation }) {
                   const markerImage = markerImages[imageIndex];
 
                   if (item.isPlace) {
-                    return <PlaceMarker key={`place-${item.id}`} item={item} onPress={updateSelectedPlaceData} />;
+                    return <PlaceEggMarker key={`egg-${item.id}`} item={item} onPress={updateSelectedPlaceData} />;
                   }
 
                   return (
@@ -802,7 +802,17 @@ export default function HomeScreen({ navigation }) {
               </Shadow>
             </View>
           ) : (
-            <VoyageListHorizontal focusMap={focusMap} data={initialVoyages.filter(v => !v.isPlace)} />
+            <VoyageListHorizontal focusMap={focusMap} data={(() => {
+              const voyages = initialVoyages.filter(v => !v.isPlace).map((v, i) => ({ ...v, markerImage: markerImages[i % markerImages.length] }));
+              const places = initialVoyages.filter(v => v.isPlace);
+              const result = [];
+              let vi = 0, pi = 0;
+              while (vi < voyages.length || pi < places.length) {
+                for (let i = 0; i < 2 && vi < voyages.length; i++) result.push(voyages[vi++]);
+                if (pi < places.length) result.push(places[pi++]);
+              }
+              return result;
+            })()} />
           )}
         </View>
         <Modal
@@ -883,25 +893,23 @@ export default function HomeScreen({ navigation }) {
             >
               <View style={styles.imageContainerInModal}>
                 {selectedPlace && (
-                  <View style={{ backgroundColor: "#fff", borderRadius: 12, overflow: "hidden", width: vw(88) }}>
-                    {(selectedPlace.profileImageThumbnail || selectedPlace.profileImage) && (
-                      <Image
-                        source={{ uri: selectedPlace.profileImageThumbnail || selectedPlace.profileImage }}
-                        style={{ width: "100%", height: vh(22) }}
-                        resizeMode="cover"
-                      />
-                    )}
-                    <View style={{ padding: 16 }}>
-                      <Text style={{ fontSize: 18, fontWeight: "700", color: "#003366", marginBottom: 8 }}>{selectedPlace.name}</Text>
+                  <View style={styles.placeCardContainer}>
+                    <Image
+                      source={{ uri: selectedPlace.profileImageThumbnail || selectedPlace.profileImage }}
+                      style={styles.placeCardImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.placeCardText}>
+                      <Text style={styles.placeCardHeader} numberOfLines={2}>{selectedPlace.name}</Text>
                       {selectedPlace.description ? (
-                        <Text style={{ fontSize: 14, color: "#334155", marginBottom: 12 }}>{selectedPlace.description}</Text>
+                        <Text style={styles.placeCardDescription} numberOfLines={5} ellipsizeMode="tail">{selectedPlace.description}</Text>
                       ) : null}
                       {selectedPlace.brief ? (
                         <TouchableOpacity onPress={() => {
                           const url = selectedPlace.brief.startsWith("http") ? selectedPlace.brief : `https://${selectedPlace.brief}`;
                           Linking.openURL(url);
                         }}>
-                          <Text style={{ fontSize: 14, color: parrotBlue, fontWeight: "600" }}>Visit Website →</Text>
+                          <Text style={styles.placeCardLink}>Visit Website →</Text>
                         </TouchableOpacity>
                       ) : null}
                     </View>
@@ -911,7 +919,9 @@ export default function HomeScreen({ navigation }) {
                   style={styles.closeButtonAndText2}
                   onPress={() => setSelectedPlaceModalVisible(false)}
                 >
-                  <Text style={styles.buttonClose}>Close</Text>
+                  <View>
+                    <Text style={styles.buttonClose}>Close</Text>
+                  </View>
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -1028,6 +1038,49 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: vh(20),
     borderRadius: vh(2),
+  },
+  placeCardContainer: {
+    marginHorizontal: vw(2),
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    flexDirection: "row",
+    height: vh(20),
+    backgroundColor: parrotCream,
+    borderRadius: vh(2),
+  },
+  placeCardImage: {
+    width: vw(38),
+    height: vh(20),
+    marginRight: vh(0.5),
+    borderRadius: vh(2),
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  placeCardText: {
+    marginTop: vh(1),
+    width: vw(50),
+    height: vh(18),
+    padding: vh(0.2),
+  },
+  placeCardHeader: {
+    fontFamily: "Nunito_700Bold",
+    marginTop: 2,
+    fontSize: 14,
+    color: parrotBlue,
+    paddingVertical: vh(0.2),
+    alignSelf: "center",
+  },
+  placeCardDescription: {
+    fontFamily: "Nunito_700Bold",
+    paddingTop: vh(0.6),
+    fontSize: 11.5,
+  },
+  placeCardLink: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: parrotBlue,
+    paddingTop: vh(0.6),
   },
   applyFilter: {
     alignSelf: "flex-end",
