@@ -135,7 +135,7 @@ export default function VoyageCardProfile({
               <View style={styles.pillRow}>
                 <View style={styles.pill}>
                   <Text style={styles.pillText}>
-                    {vehiclename.length > 16
+                    {vehiclename?.length > 16
                       ? vehiclename.substring(0, 16) + "..."
                       : vehiclename}
                   </Text>

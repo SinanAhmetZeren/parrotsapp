@@ -28,8 +28,8 @@ export default function FavoriteVoyageList({ data, direction }) {
         vacancy={item.vacancy}
         startdate={item.startDate}
         enddate={item.endDate}
-        vehiclename={item.vehicle.name}
-        vehicletype={item.vehicle.type}
+        vehiclename={item.vehicle?.name}
+        vehicletype={item.vehicle?.type}
         isPublicOnMap={item.publicOnMap}
       />
     </Shadow>

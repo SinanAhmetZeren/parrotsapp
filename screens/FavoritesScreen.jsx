@@ -112,7 +112,7 @@ export default function FavoritesScreen({ navigation }) {
               style={styles.logoImage}
             />
             <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+            <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
             <Text style={styles.currentBidsTitle2}>Swipe Down to Retry</Text>
           </View>
         </ScrollView>

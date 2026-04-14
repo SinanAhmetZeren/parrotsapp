@@ -54,27 +54,27 @@ export default function VehicleVoyages({ voyages }) {
           radius={12}
           style={{ borderRadius: vh(3), marginBottom: vh(1), width: "100%" }}
         >
-        <TouchableOpacity
-          onPress={() => handleNavigateToVoyage(item.id)}
-        >
-          <View style={styles.singleVoyage}>
-            <Image
-              source={{ uri: item.profileImageThumbnail || item.profileImage }}
-              style={styles.voyageImage}
-            />
-            <Text style={styles.voyageName} numberOfLines={1} ellipsizeMode="tail">
-              {item.name}
-            </Text>
-            <View style={styles.pill}>
-              <Feather name="calendar" size={13} color={parrotDarkBlue} />
-              <Text style={styles.pillText}>{formattedStartDate} – {formattedEndDate}</Text>
+          <TouchableOpacity
+            onPress={() => handleNavigateToVoyage(item.id)}
+          >
+            <View style={styles.singleVoyage}>
+              <Image
+                source={{ uri: item.profileImageThumbnail || item.profileImage }}
+                style={styles.voyageImage}
+              />
+              <Text style={styles.voyageName} numberOfLines={1} ellipsizeMode="tail">
+                {item.name}
+              </Text>
+              <View style={styles.pill}>
+                <Feather name="calendar" size={13} color={parrotDarkBlue} />
+                <Text style={styles.pillText}>{formattedStartDate} – {formattedEndDate}</Text>
+              </View>
+              <View style={styles.pill}>
+                <Feather name="users" size={13} color={parrotDarkBlue} />
+                <Text style={styles.pillText}>{item.vacancy}</Text>
+              </View>
             </View>
-            <View style={styles.pill}>
-              <Feather name="users" size={13} color={parrotDarkBlue} />
-              <Text style={styles.pillText}>{item.vacancy}</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
         </Shadow>
       );
     });

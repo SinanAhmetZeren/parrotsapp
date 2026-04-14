@@ -17,8 +17,8 @@ export default function VoyageListVertical({ data, direction }) {
       vacancy={item.vacancy}
       startdate={item.startDate}
       enddate={item.endDate}
-      vehiclename={item.vehicle.name}
-      vehicletype={item.vehicle.type}
+      vehiclename={item.vehicle?.name}
+      vehicletype={item.vehicle?.type}
       publicOnMap={item.publicOnMap}
     />
   );

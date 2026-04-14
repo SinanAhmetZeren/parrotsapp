@@ -392,7 +392,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
         <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
         <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+        <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
         <TouchableOpacity onPress={refetch} style={{ marginTop: vh(2) }}>
           <Text style={{ fontFamily: "Nunito_700Bold", color: parrotBlue }}>Tap to retry</Text>
         </TouchableOpacity>
@@ -442,7 +442,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 style={styles.logoImage}
               />
               <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+              <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
               <TouchableOpacity onPress={() => setHasError(false)} style={{ marginTop: vh(2), alignSelf: "center" }}>
                 <Text style={{ fontFamily: "Nunito_700Bold", color: parrotBlue, fontSize: 16 }}>Tap to retry</Text>
               </TouchableOpacity>

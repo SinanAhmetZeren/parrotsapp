@@ -108,7 +108,7 @@ export default function VoyageCardProfileHorizontalModal({
               <View>
                 <Text style={styles.subHeader}>
                   {/* {vehiclename + "111 "} */}
-                  {vehiclename.length > 21
+                  {vehiclename?.length > 21
                     ? vehiclename.substring(0, 21) + "..."
                     : vehiclename}
                   {"  "}

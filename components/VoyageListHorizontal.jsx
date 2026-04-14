@@ -19,8 +19,8 @@ export default function VoyageListHorizontal({ data, focusMap }) {
         vacancy={item.vacancy}
         startdate={item.startDate}
         enddate={item.endDate}
-        vehiclename={item.vehicle.name}
-        vehicletype={item.vehicle.type}
+        vehiclename={item.vehicle?.name}
+        vehicletype={item.vehicle?.type}
         latitude={item.waypoints[0]?.latitude}
         longitude={item.waypoints[0]?.longitude}
         focusMap={focusMap}

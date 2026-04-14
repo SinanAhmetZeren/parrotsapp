@@ -499,6 +499,58 @@ export default function TermsOfUseComponent() {
                     Location: United Kingdom
                 </Text>
             </View>
+
+            {/* 17. Service Termination */}
+            <View style={styles.wrapper}>
+                <Text style={styles.sectionTitle}>17. Service Termination and Discontinuation</Text>
+                <Text style={styles.paragraph}>
+                    Parrots reserves the right to modify, suspend, or permanently discontinue the Service, or any part thereof, at any time and for any reason, with or without prior notice. We shall not be liable to you or any third party for any such modification, suspension, or discontinuation.
+                </Text>
+                <Text style={styles.paragraph}>
+                    In the event of permanent discontinuation of the Service, we will make reasonable efforts to provide advance notice. Any unused paid credits (such as ParrotCoins) purchased prior to the discontinuation date will be eligible for a refund, subject to the refund process described in our Refund Policy. We shall have no further obligation beyond such refund.
+                </Text>
+                <Text style={styles.paragraph}>
+                    Upon termination or discontinuation, we will retain your data for a period of 30 days, during which you may request a copy of your personal data. After this period, your data may be permanently deleted in accordance with our Privacy Policy.
+                </Text>
+            </View>
+
+            {/* 18. Refund Policy */}
+            <View style={styles.wrapper}>
+                <Text style={styles.sectionTitle}>18. Refund Policy</Text>
+
+                <Text style={styles.sectionTitle2}>ParrotCoins and Paid Credits</Text>
+                <Text style={styles.paragraph}>
+                    ParrotCoins are virtual credits within the Parrots application used to access premium features, such as displaying voyages on the public map.
+                </Text>
+
+                <Text style={styles.sectionTitle2}>Current Status of ParrotCoins</Text>
+                <Text style={styles.paragraph}>
+                    ParrotCoins are currently provided free of charge until further notice. No purchase is required at this time. Should operational or infrastructure costs require a transition to a paid model, users will be notified in advance. The refund terms below apply once ParrotCoins become a paid feature.
+                </Text>
+
+                <Text style={styles.sectionTitle2}>General Policy</Text>
+                <Text style={styles.paragraph}>
+                    Once ParrotCoins become a paid feature, all purchases will be denominated in Euro (EUR) and made through the applicable app store platform (Apple App Store or Google Play Store). All purchases of ParrotCoins will be final and non-refundable, except in the following circumstances:{"\n"}
+                    {"  "}• A technical error caused by Parrots resulted in credits not being applied to your account after a successful payment.{"\n"}
+                    {"  "}• The Service is permanently discontinued, in which case unused ParrotCoins will be refunded as described above.{"\n"}
+                    {"  "}• Applicable consumer protection law in your jurisdiction grants you a statutory right to a refund that cannot be waived by this policy.
+                </Text>
+
+                <Text style={styles.sectionTitle2}>Platform Purchases</Text>
+                <Text style={styles.paragraph}>
+                    If you purchase ParrotCoins through the Apple App Store or Google Play Store, refund requests must be submitted directly to Apple or Google in accordance with their respective refund policies. Parrots has no control over and cannot process refunds for purchases made through these platforms.
+                </Text>
+
+                <Text style={styles.sectionTitle2}>How to Request a Refund</Text>
+                <Text style={styles.paragraph}>
+                    To request a refund for an eligible purchase, contact us at parrotsapp@gmail.com within 14 days of the purchase date. Please include your registered email address, the date of purchase, and a description of the issue. We will respond within 5 business days.
+                </Text>
+
+                <Text style={styles.sectionTitle2}>Unused Credits on Service Discontinuation</Text>
+                <Text style={styles.paragraph}>
+                    In the event that Parrots permanently discontinues the Service, users with a remaining ParrotCoin balance will be contacted at the email address associated with their account with instructions for claiming a refund. Refund claims must be submitted within 60 days of the discontinuation notice.
+                </Text>
+            </View>
         </ScrollView>
     );
 }

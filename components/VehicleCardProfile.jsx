@@ -147,7 +147,7 @@ export default function VehicleCardProfile({
       break;
   }
 
-  const vehicleTypeNames = ["Boat","Car","Caravan","Bus","Walk","Run","Motorcycle","Bicycle","TinyHouse","Airplane","Train"];
+  const vehicleTypeNames = ["Boat", "Car", "Caravan", "Bus", "Walk", "Run", "Motorcycle", "Bicycle", "TinyHouse", "Airplane", "Train"];
   const vehicleTypeName = vehicleTypeNames[vehicletype] ?? "";
 
   const navigation = useNavigation();

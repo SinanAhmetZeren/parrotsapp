@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
-import React, { use } from "react";
-import { useEffect, useRef, useState, memo } from "react";
+import React, { use, useEffect, useRef, useState, memo } from "react";
 import {
   View,
   StyleSheet,
@@ -14,8 +13,9 @@ import {
   Image,
   Animated,
   RefreshControl,
+  Linking,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, Callout } from "react-native-maps";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -42,6 +42,8 @@ import parrotMarker3 from "../assets/parrotMarkers/parrotMarker3.png";
 import parrotMarker4 from "../assets/parrotMarkers/parrotMarker4.png";
 import parrotMarker5 from "../assets/parrotMarkers/parrotMarker5.png";
 import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
+import goldenegg from "../assets/goldenegg.png";
+import crackedgoldenegg from "../assets/crackedgoldenegg.png";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import {
   applyFilterAppliedBackgroundColor, applyFilterAppliedBorderColor, applyFilterAppliedColor,
@@ -53,6 +55,37 @@ import {
 
 // Define static assets outside to keep references stable
 const markerImages = [parrotMarker1, parrotMarker2, parrotMarker3, parrotMarker4, parrotMarker5, parrotMarker6];
+
+const PlaceMarker = memo(({ item, onPress }) => {
+  const [tracksView, setTracksView] = useState(true);
+  const [pressed, setPressed] = useState(false);
+  return (
+    <Marker
+      coordinate={{
+        latitude: item.waypoints[0]?.latitude,
+        longitude: item.waypoints[0]?.longitude,
+      }}
+      tracksViewChanges={tracksView}
+      anchor={{ x: 0.5, y: 1 }}
+      onPress={() => {
+        setPressed(true);
+        setTracksView(true);
+        setTimeout(() => setTracksView(false), 400);
+        onPress(item);
+      }}
+    >
+      <View style={{ alignItems: "center" }}>
+
+        <Image
+          source={pressed ? crackedgoldenegg : goldenegg}
+          style={{ width: 33, height: 37 }}
+          resizeMode="contain"
+          onLoad={() => setTimeout(() => setTracksView(false), 200)}
+        />
+      </View>
+    </Marker>
+  );
+});
 
 
 
@@ -100,8 +133,9 @@ export default function HomeScreen({ navigation }) {
   const [longitudeM, setLongitudeM] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] =
-    useState(false);
+  const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] = useState(false);
+  const [selectedPlaceModalVisible, setSelectedPlaceModalVisible] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState(null);
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const imageScale = useRef(new Animated.Value(0.1)).current;
   const imageTranslateX = useRef(new Animated.Value(-vw(38))).current;
@@ -205,28 +239,25 @@ export default function HomeScreen({ navigation }) {
 
     return (
       <Marker
-        key={`item-${item.id} `}
+        key={`item-${item.id}`}
         pinColor={parrotGreen}
         coordinate={{
           latitude: item.waypoints[0]?.latitude,
           longitude: item.waypoints[0]?.longitude,
         }}
         tracksViewChanges={tracksView}
-        onPress={() => {
-          updateSelectedVoyageData(item);
-        }} // image={markerImage}
+        onPress={() => { updateSelectedVoyageData(item); }}
       >
         <Image
           source={markerImage}
           style={{ width: 36, height: 36, opacity: 1 }}
           resizeMode="contain"
-          onLoad={() => handleLoad()} // Kill the flicker after load
-
+          onLoad={() => handleLoad()}
         />
       </Marker>
-
     );
   });
+
 
 
   const vehicleIcons = [
@@ -413,11 +444,16 @@ export default function HomeScreen({ navigation }) {
     setVacancyM(item.vacancy);
     setStartDateM(item.startDate);
     setEndDateM(item.endDate);
-    setVehicleNameM(item.vehicle.name);
-    setVehicleTypeM(item.vehicle.type);
+    setVehicleNameM(item.vehicle?.name);
+    setVehicleTypeM(item.vehicle?.type);
     setLatitudeM(item.waypoints[0]?.latitude);
     setLongitudeM(item.waypoints[0]?.longitude);
     setSelectedVoyageModalVisible(true);
+  };
+
+  const updateSelectedPlaceData = (item) => {
+    setSelectedPlace(item);
+    setSelectedPlaceModalVisible(true);
   };
 
   const mapRef = useRef(null);
@@ -523,325 +559,372 @@ export default function HomeScreen({ navigation }) {
   };
 
   const initialRegion = {
-      latitude: initialLatitude,
-      longitude: initialLongitude,
-      latitudeDelta: 0.25,
-      longitudeDelta: 0.25,
-    };
+    latitude: initialLatitude,
+    longitude: initialLongitude,
+    latitudeDelta: 0.25,
+    longitudeDelta: 0.25,
+  };
 
-    return (
-      <View>
-        <TokenExpiryGuard />
-        <ScrollView
-          style={styles.scrollview}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
-              tintColor={parrotBananaLeafGreen}
-            />
-          }
-        >
-          <View style={styles.countModal}>
-            <FilterCountModal
-              isCountFiltered={isCountFiltered}
-              setIsCountFiltered={setIsCountFiltered}
-              onClose={handleCountModal}
-              isVisible={countModalVisibility}
-              count={count}
-              setCount={setCount}
-            />
-          </View>
-          <View style={styles.calendarModal}>
-            <FilterCalendarModal
-              isDatesFiltered={isDatesFiltered}
-              setIsDatesFiltered={setIsDatesFiltered}
-              onClose={handleCalendarModal}
-              isVisible={calendarModalVisibility}
-              startDate={startDate}
-              setStartDate={setStartDate}
-              endDate={endDate}
-              setEndDate={setEndDate}
-            />
-          </View>
-          <View style={styles.vehicleModal}>
-            <FilterVehicleModal
-              isVehicleFiltered={isVehicleFiltered}
-              setIsVehicleFiltered={setIsVehicleFiltered}
-              onClose={handleVehicleModal}
-              isVisible={vehicleModalVisibility}
-              selectedVehicleType={selectedVehicleType}
-              setSelectedVehicleType={setSelectedVehicleType}
-            />
-          </View>
-          <View style={{ height: vh(95) }}>
-            <View style={styles.welcomeandFilters}>
-              <TouchableOpacity onPress={openImageModal}>
-                <Image
-                  source={require("../assets/parrotsreallife.png")}
-                  style={styles.miniLogo}
-                />
-              </TouchableOpacity>
+  return (
+    <View>
+      <TokenExpiryGuard />
+      <ScrollView
+        style={styles.scrollview}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+            tintColor={parrotBananaLeafGreen}
+          />
+        }
+      >
+        <View style={styles.countModal}>
+          <FilterCountModal
+            isCountFiltered={isCountFiltered}
+            setIsCountFiltered={setIsCountFiltered}
+            onClose={handleCountModal}
+            isVisible={countModalVisibility}
+            count={count}
+            setCount={setCount}
+          />
+        </View>
+        <View style={styles.calendarModal}>
+          <FilterCalendarModal
+            isDatesFiltered={isDatesFiltered}
+            setIsDatesFiltered={setIsDatesFiltered}
+            onClose={handleCalendarModal}
+            isVisible={calendarModalVisibility}
+            startDate={startDate}
+            setStartDate={setStartDate}
+            endDate={endDate}
+            setEndDate={setEndDate}
+          />
+        </View>
+        <View style={styles.vehicleModal}>
+          <FilterVehicleModal
+            isVehicleFiltered={isVehicleFiltered}
+            setIsVehicleFiltered={setIsVehicleFiltered}
+            onClose={handleVehicleModal}
+            isVisible={vehicleModalVisibility}
+            selectedVehicleType={selectedVehicleType}
+            setSelectedVehicleType={setSelectedVehicleType}
+          />
+        </View>
+        <View style={{ height: vh(95) }}>
+          <View style={styles.welcomeandFilters}>
+            <TouchableOpacity onPress={openImageModal}>
+              <Image
+                source={require("../assets/parrotsreallife.png")}
+                style={styles.miniLogo}
+              />
+            </TouchableOpacity>
 
-              <View style={styles.welcomebox}>
-                <Text style={styles.welcome}>Welcome to Parrots</Text>
+            <View style={styles.welcomebox}>
+              <Text style={styles.welcome}>Welcome to Parrots</Text>
 
-                {username?.length < 13 ? (
-                  <Text style={styles.usernameLarge}>{username}!</Text>
-                ) : null}
-                {username?.length > 12 && username.length < 18 ? ( // 13 to 16
-                  <Text style={styles.usernameMedium}>{username}!</Text>
-                ) : null}
-                {username?.length > 17 && username.length < 21 ? ( // 17 to 24
-                  <Text style={styles.usernameSmall}>{username}!</Text>
-                ) : null}
-                {username?.length > 20 ? (
-                  <Text style={styles.usernameSmall}>
-                    {username?.substring(0, 19)}...!
-                  </Text>
-                ) : null}
-              </View>
-
-              <View>
-                <View style={styles.filterbox}>
-                  <TouchableOpacity onPress={handleCountModal}>
-                    <MaterialCommunityIcons
-                      style={[
-                        styles.icon,
-                        count !== 1 ? styles.filtered : null,
-                      ]}
-                      name={count == 1 ? "human-handsdown" : "human-greeting"}//"human-handsup"}
-                      size={24}
-                      color={parrotDarkCream}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={handleCalendarModal}>
-                    <Ionicons
-                      style={[
-                        styles.icon,
-                        startDate !== null && endDate !== null ? styles.filtered : null,
-                      ]}
-                      name="calendar-outline"
-                      size={24}
-                      color={parrotDarkCream}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={handleVehicleModal}>
-                    <VehicleIcon
-                      selectedVehicleType={selectedVehicleType}
-                      style={[
-                        styles.icon,
-                        selectedVehicleType !== null ? styles.filtered : null
-                      ]}
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                <View>
-                  <TouchableOpacity
-                    disabled={isLoadingVoyagesFiltered}
-                    onPress={() => {
-                      applyFilter();
-                    }}
-                  >
-                    <View
-                      style={[
-                        styles.applyFilter,
-                        filterComparisonState == 1 && styles.applyFilterInitial,
-                        filterComparisonState == 2 && styles.applyFilterApplied,
-                        filterComparisonState == 3 && styles.applyFilterChanged,
-                      ]}
-                    >
-                      <Text style={[
-                        styles.applyFilterText,
-                        filterComparisonState == 1 && { color: applyFilterInitialColor },
-                        filterComparisonState == 2 && { color: applyFilterAppliedColor },
-                        filterComparisonState == 3 && { color: applyFilterChangedColor },
-                        isLoadingVoyagesFiltered && { opacity: 0 },
-                      ]}>Apply Filter</Text>
-                      {isLoadingVoyagesFiltered && (
-                        <ActivityIndicator size="large" color="white" style={styles.filterSpinner} />
-                      )}
-                    </View>
-                  </TouchableOpacity>
-
-                </View>
-
-                <View style={{ display: "none" }}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      handlePrintDates();
-                    }}
-                  >
-                    <View>
-                      <Text
-                        style={styles.applyFilter}
-                      >print dates </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
+              {username?.length < 13 ? (
+                <Text style={styles.usernameLarge}>{username}!</Text>
+              ) : null}
+              {username?.length > 12 && username.length < 18 ? ( // 13 to 16
+                <Text style={styles.usernameMedium}>{username}!</Text>
+              ) : null}
+              {username?.length > 17 && username.length < 21 ? ( // 17 to 24
+                <Text style={styles.usernameSmall}>{username}!</Text>
+              ) : null}
+              {username?.length > 20 ? (
+                <Text style={styles.usernameSmall}>
+                  {username?.substring(0, 19)}...!
+                </Text>
+              ) : null}
             </View>
 
-            <View style={styles.mapWrapper}>
-              <View style={styles.mapContainer}>
-                {isLoading ? (
-                  <View style={styles.mapPlaceholder}>
-                    <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
-                  </View>
-                ) : <MapView
-                  style={styles.map}
-                  initialRegion={initialRegion}
-                  ref={mapRef}
-                  onRegionChangeComplete={handleRegionChangeComplete}
-                >
-                  {initialVoyages.map((item, index) => {
-                    const waypoint = item.waypoints?.[0];
-                    const latitude = waypoint?.latitude;
-                    const longitude = waypoint?.longitude;
-                    // Skip rendering if coordinates are invalid
-                    // Ensure valid coordinates for marker rendering
-                    if (latitude == null || longitude == null) {
-                      return null;
-                    }
-
-                    const imageIndex = index % markerImages.length;
-                    const markerImage = markerImages[imageIndex];
-
-                    // console.log(" marker key: ", item.id, "time now: ", new Date());
-                    return (
-                      <MapMarker
-                        key={item.id}
-                        item={item}
-                        index={index}
-                        onPress={updateSelectedVoyageData}
-                      />
-                    );
-                  })}
-                </MapView>}
-              </View>
-            </View>
-
-
-            {/* {isErrorVoyages ? ( */}
-            {hasError ? (
-              <View>
-                <View>
-                  <Image
-                    source={require("../assets/parrotslogo.png")}
-                    style={styles.logoImage}
+            <View>
+              <View style={styles.filterbox}>
+                <TouchableOpacity onPress={handleCountModal}>
+                  <MaterialCommunityIcons
+                    style={[
+                      styles.icon,
+                      count !== 1 ? styles.filtered : null,
+                    ]}
+                    name={count == 1 ? "human-handsdown" : "human-greeting"}//"human-handsup"}
+                    size={24}
+                    color={parrotDarkCream}
                   />
-                  <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
-                  <Text style={styles.currentBidsTitle3}>
-                    Swipe Down to Retry
-                  </Text>
-                </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleCalendarModal}>
+                  <Ionicons
+                    style={[
+                      styles.icon,
+                      startDate !== null && endDate !== null ? styles.filtered : null,
+                    ]}
+                    name="calendar-outline"
+                    size={24}
+                    color={parrotDarkCream}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleVehicleModal}>
+                  <VehicleIcon
+                    selectedVehicleType={selectedVehicleType}
+                    style={[
+                      styles.icon,
+                      selectedVehicleType !== null ? styles.filtered : null
+                    ]}
+                  />
+                </TouchableOpacity>
               </View>
-            ) : null}
 
-            {initialVoyages.length === 0 ? (
-              <Text></Text>
-            ) : (
-              <View style={styles.mainBidsContainer}>
-                <View style={styles.currentBidsAndSeeAll}>
-                  <Text style={styles.currentBidsTitle}>Voyages</Text>
-                </View>
-              </View>
-            )}
-
-            {isLoading ? (
-              <View style={styles.voyagePlaceholderWrapper}>
-                <Shadow
-                  distance={8}
-                  offset={[0, 0]}
-                  startColor="rgba(0,0,0,0.08)"
-                  finalColor="rgba(0,0,0,0.13)"
-                  style={{ borderRadius: vh(2) }}
+              <View>
+                <TouchableOpacity
+                  disabled={isLoadingVoyagesFiltered}
+                  onPress={() => {
+                    applyFilter();
+                  }}
                 >
-                  <View style={styles.voyagePlaceholder}>
-                    <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
+                  <View
+                    style={[
+                      styles.applyFilter,
+                      filterComparisonState == 1 && styles.applyFilterInitial,
+                      filterComparisonState == 2 && styles.applyFilterApplied,
+                      filterComparisonState == 3 && styles.applyFilterChanged,
+                    ]}
+                  >
+                    <Text style={[
+                      styles.applyFilterText,
+                      filterComparisonState == 1 && { color: applyFilterInitialColor },
+                      filterComparisonState == 2 && { color: applyFilterAppliedColor },
+                      filterComparisonState == 3 && { color: applyFilterChangedColor },
+                      isLoadingVoyagesFiltered && { opacity: 0 },
+                    ]}>Apply Filter</Text>
+                    {isLoadingVoyagesFiltered && (
+                      <ActivityIndicator size="large" color="white" style={styles.filterSpinner} />
+                    )}
                   </View>
-                </Shadow>
+                </TouchableOpacity>
+
               </View>
-            ) : (
-              <VoyageListHorizontal focusMap={focusMap} data={initialVoyages} />
-            )}
+
+              <View style={{ display: "none" }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    handlePrintDates();
+                  }}
+                >
+                  <View>
+                    <Text
+                      style={styles.applyFilter}
+                    >print dates </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
+
+          <View style={styles.mapWrapper}>
+            <View style={styles.mapContainer}>
+              {isLoading ? (
+                <View style={styles.mapPlaceholder}>
+                  <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
+                </View>
+              ) : <MapView
+                style={styles.map}
+                initialRegion={initialRegion}
+                ref={mapRef}
+                onRegionChangeComplete={handleRegionChangeComplete}
+              >
+                {initialVoyages.map((item, index) => {
+                  const waypoint = item.waypoints?.[0];
+                  const latitude = waypoint?.latitude;
+                  const longitude = waypoint?.longitude;
+                  // Skip rendering if coordinates are invalid
+                  // Ensure valid coordinates for marker rendering
+                  if (latitude == null || longitude == null) {
+                    return null;
+                  }
+
+                  const imageIndex = index % markerImages.length;
+                  const markerImage = markerImages[imageIndex];
+
+                  if (item.isPlace) {
+                    return <PlaceMarker key={`place-${item.id}`} item={item} onPress={updateSelectedPlaceData} />;
+                  }
+
+                  return (
+                    <MapMarker
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      onPress={updateSelectedVoyageData}
+                    />
+                  );
+                })}
+              </MapView>}
+            </View>
+          </View>
+
+
+          {/* {isErrorVoyages ? ( */}
+          {hasError ? (
+            <View>
+              <View>
+                <Image
+                  source={require("../assets/parrotslogo.png")}
+                  style={styles.logoImage}
+                />
+                <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+                <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+              </View>
+            </View>
+          ) : null}
+
+          {initialVoyages.filter(v => !v.isPlace).length === 0 ? (
+            <Text></Text>
+          ) : (
+            <View style={styles.mainBidsContainer}>
+              <View style={styles.currentBidsAndSeeAll}>
+                <Text style={styles.currentBidsTitle}>Voyages</Text>
+              </View>
+            </View>
+          )}
+
+          {isLoading ? (
+            <View style={styles.voyagePlaceholderWrapper}>
+              <Shadow
+                distance={8}
+                offset={[0, 0]}
+                startColor="rgba(0,0,0,0.08)"
+                finalColor="rgba(0,0,0,0.13)"
+                style={{ borderRadius: vh(2) }}
+              >
+                <View style={styles.voyagePlaceholder}>
+                  <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
+                </View>
+              </Shadow>
+            </View>
+          ) : (
+            <VoyageListHorizontal focusMap={focusMap} data={initialVoyages.filter(v => !v.isPlace)} />
+          )}
+        </View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={imageModalVisible}
+          onRequestClose={() => setImageModalVisible(false)}
+        >
+          <TouchableOpacity
+            style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.9)", alignItems: "center", justifyContent: "center" }}
+            onPress={() => setImageModalVisible(false)}
+            activeOpacity={1}
+          >
+            <Animated.Image
+              source={require("../assets/parrotsreallife.png")}
+              style={{ width: vw(90), height: vw(90), borderRadius: vw(45), transform: [{ scale: imageScale }, { translateX: imageTranslateX }, { translateY: imageTranslateY }] }}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+        </Modal>
+
+        <View>
           <Modal
             animationType="fade"
             transparent={true}
-            visible={imageModalVisible}
-            onRequestClose={() => setImageModalVisible(false)}
+            visible={selectedVoyageModalVisible}
+            onRequestClose={() => setSelectedVoyageModalVisible(false)}
           >
             <TouchableOpacity
-              style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.9)", alignItems: "center", justifyContent: "center" }}
-              onPress={() => setImageModalVisible(false)}
-              activeOpacity={1}
+              onPress={() => setSelectedVoyageModalVisible(false)}
+              style={{
+                flex: 1,
+                backgroundColor: "rgba(1,1,1,0.3)",
+              }}
             >
-              <Animated.Image
-                source={require("../assets/parrotsreallife.png")}
-                style={{ width: vw(90), height: vw(90), borderRadius: vw(45), transform: [{ scale: imageScale }, { translateX: imageTranslateX }, { translateY: imageTranslateY }] }}
-                resizeMode="cover"
-              />
+              <View style={styles.imageContainerInModal}>
+                <VoyageCardProfileHorizontalModal
+                  key={voyageIdM}
+                  voyageId={voyageIdM}
+                  cardHeader={cardHeaderM}
+                  cardDescription={cardDescriptionM}
+                  cardImage={cardImageM}
+                  vacancy={vacancyM}
+                  startdate={startDateM}
+                  enddate={endDateM}
+                  vehiclename={vehicleNameM}
+                  vehicletype={vehicleTypeM}
+                  latitude={latitudeM}
+                  longitude={longitudeM}
+                  focusMap={() => { }}
+                  setSelectedVoyageModalVisible={
+                    setSelectedVoyageModalVisible
+                  }
+                />
+
+                <TouchableOpacity
+                  style={styles.closeButtonAndText2}
+                  onPress={() => setSelectedVoyageModalVisible(false)}
+                >
+                  <View>
+                    <Text style={styles.buttonClose}>Close</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
           </Modal>
-
-          <View>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={selectedVoyageModalVisible}
-              onRequestClose={() => setSelectedVoyageModalVisible(false)}
+        </View>
+        <View>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={selectedPlaceModalVisible}
+            onRequestClose={() => setSelectedPlaceModalVisible(false)}
+          >
+            <TouchableOpacity
+              onPress={() => setSelectedPlaceModalVisible(false)}
+              style={{ flex: 1, backgroundColor: "rgba(1,1,1,0.3)" }}
             >
-              <TouchableOpacity
-                onPress={() => setSelectedVoyageModalVisible(false)}
-                style={{
-                  flex: 1,
-                  backgroundColor: "rgba(1,1,1,0.3)",
-                }}
-              >
-                <View style={styles.imageContainerInModal}>
-                  <VoyageCardProfileHorizontalModal
-                    key={voyageIdM}
-                    voyageId={voyageIdM}
-                    cardHeader={cardHeaderM}
-                    cardDescription={cardDescriptionM}
-                    cardImage={cardImageM}
-                    vacancy={vacancyM}
-                    startdate={startDateM}
-                    enddate={endDateM}
-                    vehiclename={vehicleNameM}
-                    vehicletype={vehicleTypeM}
-                    latitude={latitudeM}
-                    longitude={longitudeM}
-                    focusMap={() => { }}
-                    setSelectedVoyageModalVisible={
-                      setSelectedVoyageModalVisible
-                    }
-                  />
-
-                  <TouchableOpacity
-                    style={styles.closeButtonAndText2}
-                    onPress={() => setSelectedVoyageModalVisible(false)}
-                  >
-                    <View>
-                      <Text style={styles.buttonClose}>Close</Text>
+              <View style={styles.imageContainerInModal}>
+                {selectedPlace && (
+                  <View style={{ backgroundColor: "#fff", borderRadius: 12, overflow: "hidden", width: vw(88) }}>
+                    {(selectedPlace.profileImageThumbnail || selectedPlace.profileImage) && (
+                      <Image
+                        source={{ uri: selectedPlace.profileImageThumbnail || selectedPlace.profileImage }}
+                        style={{ width: "100%", height: vh(22) }}
+                        resizeMode="cover"
+                      />
+                    )}
+                    <View style={{ padding: 16 }}>
+                      <Text style={{ fontSize: 18, fontWeight: "700", color: "#003366", marginBottom: 8 }}>{selectedPlace.name}</Text>
+                      {selectedPlace.description ? (
+                        <Text style={{ fontSize: 14, color: "#334155", marginBottom: 12 }}>{selectedPlace.description}</Text>
+                      ) : null}
+                      {selectedPlace.brief ? (
+                        <TouchableOpacity onPress={() => {
+                          const url = selectedPlace.brief.startsWith("http") ? selectedPlace.brief : `https://${selectedPlace.brief}`;
+                          Linking.openURL(url);
+                        }}>
+                          <Text style={{ fontSize: 14, color: parrotBlue, fontWeight: "600" }}>Visit Website →</Text>
+                        </TouchableOpacity>
+                      ) : null}
                     </View>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </Modal>
-          </View>
-        </ScrollView>
-        {toastVisible && (
-          <View style={styles.toast}>
-            <Text style={styles.toastText}>{toastMessage}</Text>
-          </View>
-        )}
-      </View>
-    );
+                  </View>
+                )}
+                <TouchableOpacity
+                  style={styles.closeButtonAndText2}
+                  onPress={() => setSelectedPlaceModalVisible(false)}
+                >
+                  <Text style={styles.buttonClose}>Close</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </Modal>
+        </View>
+      </ScrollView>
+      {toastVisible && (
+        <View style={styles.toast}>
+          <Text style={styles.toastText}>{toastMessage}</Text>
+        </View>
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

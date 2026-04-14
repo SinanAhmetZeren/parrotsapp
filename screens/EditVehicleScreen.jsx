@@ -285,7 +285,7 @@ const EditVehicleScreen = () => {
                 style={styles.logoImage}
               />
               <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+              <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
               {/* <Text style={styles.currentBidsTitle3}>
                 Swipe Down to Retry
               </Text> */}

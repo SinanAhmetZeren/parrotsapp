@@ -229,7 +229,7 @@ export const RenderBidsComponent = ({
                           ) : (
                             <TouchableOpacity
                               style={{ flex: 1, alignItems: "center" }}
-                              onPress={() => {}}
+                              onPress={() => { }}
                             >
                               <View style={styles.acceptTextContainer}>
                                 <Text style={styles.acceptedText}>

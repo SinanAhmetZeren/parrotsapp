@@ -230,7 +230,7 @@ export default function ProfileScreenPublic({ navigation }) {
     if (userData.phoneNumber) {
       const phoneUrl = `tel:${userData.phoneNumber}`;
 
-      Linking.openURL(phoneUrl).catch(() => {});
+      Linking.openURL(phoneUrl).catch(() => { });
     }
   };
 

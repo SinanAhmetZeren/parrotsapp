@@ -386,7 +386,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                     style={styles.pill}
                     onPress={() => {
                       if (VoyageData.vehicleType !== 4 && VoyageData.vehicleType !== 5 && VoyageData.vehicleType !== 10) {
-                        goToVehiclePage(VoyageData.vehicle.id);
+                        goToVehiclePage(VoyageData.vehicle?.id);
                       }
                     }}
                   >
@@ -397,9 +397,9 @@ const VoyageDetailScreen = ({ navigation }) => {
                     ) : VoyageData.vehicleType === 10 ? (
                       <Image source={require("../assets/train.jpeg")} style={styles.profileImage} />
                     ) : (
-                      <Image source={{ uri: VoyageData.vehicle.profileImageUrl }} style={styles.profileImage} />
+                      <Image source={{ uri: VoyageData.vehicle?.profileImageUrl }} style={styles.profileImage} />
                     )}
-                    <Text style={styles.userName}>{VoyageData.vehicle.name}</Text>
+                    <Text style={styles.userName}>{VoyageData.vehicle?.name}</Text>
                   </TouchableOpacity>
                 </View>
 

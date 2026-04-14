@@ -288,37 +288,37 @@ export default function MessagesScreen({ navigation }) {
 
                 <View style={styles.messageTextContainer}>
                   <View style={{ marginHorizontal: vw(5), marginTop: vh(2) }}>
-                  <Shadow
-                    distance={8}
-                    offset={[0, 0]}
-                    startColor="rgba(0,0,0,0.08)"
-                    finalColor="rgba(0,0,0,0.13)"
-                    style={{ borderRadius: vh(6) }}
-                  >
-                    <View style={styles.searchBar}>
-                      <TextInput
-                        onChangeText={(text) => {
-                          setSearchText(text);
-                        }}
-                        style={styles.textinputStyle}
-                        numberOfLines={1}
-                        placeholder="Search by username..."
-                        placeholderTextColor={parrotPlaceholderGrey}
-                      >
-                        {searchText}
-                      </TextInput>
-                      <TouchableOpacity
-                        onPress={handleSearchUsers}
-                        style={styles.magnifier}
-                      >
-                        <Feather
-                          name="search"
-                          size={20}
-                          color={searchText.length > 2 ? parrotBlue : parrotBlueSemiTransparent}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </Shadow>
+                    <Shadow
+                      distance={8}
+                      offset={[0, 0]}
+                      startColor="rgba(0,0,0,0.08)"
+                      finalColor="rgba(0,0,0,0.13)"
+                      style={{ borderRadius: vh(6) }}
+                    >
+                      <View style={styles.searchBar}>
+                        <TextInput
+                          onChangeText={(text) => {
+                            setSearchText(text);
+                          }}
+                          style={styles.textinputStyle}
+                          numberOfLines={1}
+                          placeholder="Search by username..."
+                          placeholderTextColor={parrotPlaceholderGrey}
+                        >
+                          {searchText}
+                        </TextInput>
+                        <TouchableOpacity
+                          onPress={handleSearchUsers}
+                          style={styles.magnifier}
+                        >
+                          <Feather
+                            name="search"
+                            size={20}
+                            color={searchText.length > 2 ? parrotBlue : parrotBlueSemiTransparent}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    </Shadow>
                   </View>
                   <SearchUsersComponent searchResults={usersData} />
                 </View>
