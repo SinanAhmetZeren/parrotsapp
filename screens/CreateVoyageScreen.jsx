@@ -29,7 +29,8 @@ import {
   Fontisto,
   Feather,
 } from "@expo/vector-icons";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useAcknowledgePublicProfileMutation, setAcknowledgedPublicProfile } from "../slices/UserSlice";
 import CalendarPicker from "react-native-calendar-picker";
 import Checkbox from "expo-checkbox";
 import DropdownComponent from "../components/DropdownComponent";
@@ -47,6 +48,10 @@ import DropdownComponentCurrency from "../components/DropdownComponentCurrency";
 // since lastBidDate is hidden and not used in the form
 const CreateVoyageScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
+  const hasAcknowledgedPublicProfile = useSelector((state) => state.users.hasAcknowledgedPublicProfile);
+  const dispatch = useDispatch();
+  const [acknowledgePublicProfile] = useAcknowledgePublicProfileMutation();
+  const [showPublicProfileModal, setShowPublicProfileModal] = useState(false);
   const {
     data: userData,
     isLoading,
@@ -116,6 +121,22 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   useEffect(() => { }, [startDate, endDate, lastBidDate, voyageImage]);
+
+  useEffect(() => {
+    if (!hasAcknowledgedPublicProfile) {
+      setShowPublicProfileModal(true);
+    }
+  }, [hasAcknowledgedPublicProfile]);
+
+  const handleAcknowledge = async () => {
+    setShowPublicProfileModal(false);
+    try {
+      await acknowledgePublicProfile().unwrap();
+      dispatch(setAcknowledgedPublicProfile());
+    } catch (e) {
+      // silently ignore
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -432,6 +453,19 @@ const CreateVoyageScreen = ({ navigation }) => {
       <View style={{ flex: 1 }}>
         <TokenExpiryGuard />
         <StepBar style={styles.StepBar} currentStep={currentStep} />
+        <Modal visible={showPublicProfileModal} transparent animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalBox}>
+              <Text style={styles.modalTitle}>ℹ️ Public Visibility</Text>
+              <Text style={styles.modalText}>
+                Your voyage and profile are publicly visible — anyone can view them even if you choose not to show them on the map.
+              </Text>
+              <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledge}>
+                <Text style={styles.modalBtnText}>Got it</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
 
 
         {hasError && (
@@ -930,6 +964,50 @@ const styles2 = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalBox: {
+    backgroundColor: "white",
+    borderRadius: 14,
+    padding: 24,
+    width: "85%",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  modalTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    color: parrotBlue,
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  modalText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "#374151",
+    lineHeight: 22,
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  modalBtn: {
+    backgroundColor: parrotBlue,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 36,
+  },
+  modalBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    color: "white",
+    fontSize: 15,
+  },
 
   currentBidsTitle2: {
     fontFamily: "Nunito_800ExtraBold",

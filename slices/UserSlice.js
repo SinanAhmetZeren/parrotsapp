@@ -17,6 +17,7 @@ const usersSlice = createSlice({
     isHubConnected: false,
     userFavoriteVoyages: [0],
     userFavoriteVehicles: [0],
+    hasAcknowledgedPublicProfile: false,
   },
   reducers: {
     updateAsLoggedIn: (state, action) => {
@@ -27,6 +28,7 @@ const usersSlice = createSlice({
       state.userProfileImage = action.payload.profileImageUrl;
       state.userProfileImageThumbnail = action.payload.profileImageThumbnailUrl || "";
       state.unreadMessages = action.payload.unreadMessages === "false" ? false : true;
+      state.hasAcknowledgedPublicProfile = action.payload.hasAcknowledgedPublicProfile ?? false;
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
           console.error("Error setting storedToken ", error);
@@ -76,6 +78,7 @@ const usersSlice = createSlice({
       state.userProfileImage = "";
       state.userProfileImageThumbnail = "";
       state.unreadMessages = false;
+      state.hasAcknowledgedPublicProfile = false;
       AsyncStorage.removeItem("storedToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedToken:", error);
       });
@@ -160,6 +163,9 @@ const usersSlice = createSlice({
     markMessagesRead: (state) => {
       state.unreadMessages = false;
     },
+    setAcknowledgedPublicProfile: (state) => {
+      state.hasAcknowledgedPublicProfile = true;
+    },
   },
 });
 
@@ -176,7 +182,8 @@ export const {
   removeVehicleFromUserFavorites,
   setUnreadMessages,
   setHubConnected,
-  markMessagesRead
+  markMessagesRead,
+  setAcknowledgedPublicProfile,
 } = usersSlice.actions;
 
 
@@ -235,6 +242,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     acceptTerms: builder.mutation({
       query: () => ({
         url: "/api/account/accept-terms",
+        method: "POST",
+      }),
+    }),
+    acknowledgePublicProfile: builder.mutation({
+      query: () => ({
+        url: "/api/account/acknowledge-public-profile",
         method: "POST",
       }),
     }),
@@ -355,6 +368,7 @@ export const {
   useConfirmUserMutation,
   useLoginUserMutation,
   useAcceptTermsMutation,
+  useAcknowledgePublicProfileMutation,
   useGoogleLoginInternalMutation,
   useResetPasswordMutation,
   useGetUserByIdQuery,
