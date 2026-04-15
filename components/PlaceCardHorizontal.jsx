@@ -6,9 +6,15 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from "react-
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Shadow } from "react-native-shadow-2";
 import { parrotBlue, parrotCream } from "../assets/color";
-const goldenegg = require("../assets/goldenegg.png");
 
-export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardImage, link, latitude, longitude, focusMap }) {
+const eggConfig = {
+  1: { image: require("../assets/whiteegg.png"), background: "#e8e8e8" },
+  2: { image: require("../assets/silveregg.png"), background: "#b0b7c3" },
+  3: { image: require("../assets/goldenegg.png"), background: "#FFD700" },
+};
+
+export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardImage, link, latitude, longitude, focusMap, placeType }) {
+  const egg = eggConfig[placeType] || eggConfig[3];
   const handlePress = () => {
     if (!link) return;
     const url = link.startsWith("http") ? link : `https://${link}`;
@@ -25,9 +31,9 @@ export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardI
         radius={12}
       >
         <View style={styles.cardContainerWrapper}>
-          <View style={styles.eggBadgeClip}>
+          <View style={[styles.eggBadgeClip, { backgroundColor: egg.background }]}>
             <View style={styles.eggBadgeOffset}>
-              <Image source={goldenegg} style={styles.eggBadge} resizeMode="contain" />
+              <Image source={egg.image} style={styles.eggBadge} resizeMode="contain" />
             </View>
           </View>
           <View style={styles.cardContainer}>
@@ -73,7 +79,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     overflow: "hidden",
     borderRadius: 17,
-    backgroundColor: "#FFD700",
   },
   eggBadgeOffset: {
     position: "relative",

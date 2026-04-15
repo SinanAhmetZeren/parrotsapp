@@ -750,7 +750,7 @@ export default function ProfileScreen({ navigation }) {
                       <View style={styles.voyageListContainer}>
                         <VoyageListVertical
                           style={styles.voyageList}
-                          data={VoyagesData?.filter(v => !v.isPlace)}
+                          data={VoyagesData?.filter(v => v.placeType === 0)}
                         />
                       </View>
                     </>

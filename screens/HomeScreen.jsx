@@ -42,9 +42,18 @@ import parrotMarker3 from "../assets/parrotMarkers/parrotMarker3.png";
 import parrotMarker4 from "../assets/parrotMarkers/parrotMarker4.png";
 import parrotMarker5 from "../assets/parrotMarkers/parrotMarker5.png";
 import parrotMarker6 from "../assets/parrotMarkers/parrotMarker6.png";
-import goldenegg from "../assets/goldenegg.png";
+import whiteegg from "../assets/whiteegg.png";
+import crackedwhiteegg from "../assets/crackedwhiteegg.png";
 import silveregg from "../assets/silveregg.png";
+import crackedsilveregg from "../assets/crackedsilveregg.png";
+import goldenegg from "../assets/goldenegg.png";
 import crackedgoldenegg from "../assets/crackedgoldenegg.png";
+
+const placeEggs = {
+  1: { normal: whiteegg, cracked: crackedwhiteegg },
+  2: { normal: silveregg, cracked: crackedsilveregg },
+  3: { normal: goldenegg, cracked: crackedgoldenegg },
+};
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import {
   applyFilterAppliedBackgroundColor, applyFilterAppliedBorderColor, applyFilterAppliedColor,
@@ -76,7 +85,7 @@ const PlaceEggMarker = memo(({ item, onPress }) => {
     >
       <View style={{ width: 44, height: 52, overflow: "visible" }}>
         <Image
-          source={pressed ? crackedgoldenegg : goldenegg}
+          source={pressed ? (placeEggs[item.placeType]?.cracked || crackedgoldenegg) : (placeEggs[item.placeType]?.normal || goldenegg)}
           style={{ width: 33, height: 37 }}
           resizeMode="contain"
           onLoad={() => setTimeout(() => setTracksView(false), 200)}
@@ -131,7 +140,7 @@ export default function HomeScreen({ navigation }) {
   const [latitudeM, setLatitudeM] = useState(0);
   const [longitudeM, setLongitudeM] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [hasError, setHasError] = useState(true);
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] = useState(false);
   const [selectedPlaceModalVisible, setSelectedPlaceModalVisible] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -570,14 +579,6 @@ export default function HomeScreen({ navigation }) {
       <TokenExpiryGuard />
       <ScrollView
         style={styles.scrollview}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
-            tintColor={parrotBananaLeafGreen}
-          />
-        }
       >
         <View style={styles.countModal}>
           <FilterCountModal
@@ -745,7 +746,7 @@ export default function HomeScreen({ navigation }) {
                   const imageIndex = index % markerImages.length;
                   const markerImage = markerImages[imageIndex];
 
-                  if (item.isPlace) {
+                  if (item.placeType > 0) {
                     return <PlaceEggMarker key={`egg-${item.id}`} item={item} onPress={updateSelectedPlaceData} />;
                   }
 
@@ -769,10 +770,13 @@ export default function HomeScreen({ navigation }) {
               <View>
                 <Image
                   source={require("../assets/parrotslogo.png")}
-                  style={styles.logoImage}
+                  style={styles.logoImageSmall}
                 />
-                <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-                <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+                <Text style={{ ...styles.currentBidsTitle2, top: vh(-1) }}>Something went wrong</Text>
+                <TouchableOpacity onPress={onRefresh}
+                  style={{ alignSelf: "center", backgroundColor: parrotBlue, paddingHorizontal: 24, paddingVertical: 8, borderRadius: 20 }}>
+                  <Text style={{ color: "white", fontFamily: "Nunito_700Bold", fontSize: 14 }}>Retry</Text>
+                </TouchableOpacity>
               </View>
             </View>
           ) : null}
@@ -803,8 +807,8 @@ export default function HomeScreen({ navigation }) {
             </View>
           ) : (
             <VoyageListHorizontal focusMap={focusMap} data={(() => {
-              const voyages = initialVoyages.filter(v => !v.isPlace).map((v, i) => ({ ...v, markerImage: markerImages[i % markerImages.length] }));
-              const places = initialVoyages.filter(v => v.isPlace);
+              const voyages = initialVoyages.filter(v => v.placeType === 0).map((v, i) => ({ ...v, markerImage: markerImages[i % markerImages.length] }));
+              const places = initialVoyages.filter(v => v.placeType > 0).sort((a, b) => b.placeType - a.placeType);
               const result = [];
               let vi = 0, pi = 0;
               while (vi < voyages.length || pi < places.length) {
@@ -997,6 +1001,11 @@ const styles = StyleSheet.create({
   logoImage: {
     height: vh(23),
     width: vh(23),
+    alignSelf: "center",
+  },
+  logoImageSmall: {
+    height: vh(14),
+    width: vh(14),
     alignSelf: "center",
   },
   buttonClose: {

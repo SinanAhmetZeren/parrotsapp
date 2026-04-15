@@ -10,7 +10,7 @@ import { parrotLightBlue } from "../assets/color";
 
 export default function VoyageListHorizontal({ data, focusMap }) {
   const renderItem = ({ item }) => {
-    if (item.isPlace) {
+    if (item.placeType > 0) {
       return (
         <PlaceCardHorizontal
           key={item.id}
@@ -21,6 +21,7 @@ export default function VoyageListHorizontal({ data, focusMap }) {
           latitude={item.waypoints[0]?.latitude}
           longitude={item.waypoints[0]?.longitude}
           focusMap={focusMap}
+          placeType={item.placeType}
         />
       );
     }
@@ -53,8 +54,7 @@ export default function VoyageListHorizontal({ data, focusMap }) {
             style={styles.logoImage}
           />
           <Text style={styles.currentBidsTitle2}>
-            No voyages here... {"\n"}
-            Shove off and seek elsewhere!
+            Nothing here at this time{"\n"}Explore a different area
           </Text>
         </View>
       </View>
@@ -75,6 +75,7 @@ export default function VoyageListHorizontal({ data, focusMap }) {
           styles.containerHorizontal,
           data.length === 1 && { marginLeft: 0, justifyContent: "center", width: "100%" },
         ]}
+        ListFooterComponent={<View style={{ width: vw(4) }} />}
       />
     );
 }
