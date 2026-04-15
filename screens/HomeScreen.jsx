@@ -140,7 +140,7 @@ export default function HomeScreen({ navigation }) {
   const [latitudeM, setLatitudeM] = useState(0);
   const [longitudeM, setLongitudeM] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-  const [hasError, setHasError] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const [selectedVoyageModalVisible, setSelectedVoyageModalVisible] = useState(false);
   const [selectedPlaceModalVisible, setSelectedPlaceModalVisible] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -765,7 +765,7 @@ export default function HomeScreen({ navigation }) {
 
 
           {/* {isErrorVoyages ? ( */}
-          {hasError ? (
+          {hasError && !isLoadingVoyages ? (
             <View>
               <View>
                 <Image

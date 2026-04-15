@@ -292,12 +292,28 @@ export default function ProfileScreen({ navigation }) {
   //   console.log('VehiclesData:', VehiclesData);
   // }, [userData, VoyagesData, VehiclesData]);
 
-  if (!userData) {
-    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
-  }
+  if (!userData || isLoadingUser || isLoadingVehicles || isLoadingVoyages || isLoading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: parrotCream }}>
+        {/* background image — matches rectangularBox height vh(35) / imageContainer vh(40) */}
+        <View style={{ width: vw(100), height: vh(40), backgroundColor: "#d8d8d8" }} />
 
-  if (isLoadingUser || isLoadingVehicles || isLoadingVoyages || isLoading) {
-    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
+        {/* profile circle */}
+        <View style={{ left: vw(6), top: vh(3), backgroundColor: parrotCream, paddingBottom: vh(3) }}>
+          <View style={{ height: vh(20), width: vh(20), borderRadius: vh(15), backgroundColor: "#e0e0e0" }} />
+        </View>
+
+        {/* name bar */}
+        <View style={{ paddingHorizontal: 14, paddingTop: vh(1), paddingBottom: vh(1) }}>
+          <View style={{ width: vw(45), height: 22, borderRadius: 6, backgroundColor: "#e0e0e0" }} />
+        </View>
+
+        {/* bio rectangle — nearly full width */}
+        <View style={{ marginHorizontal: 14, height: vh(20), borderRadius: 12, backgroundColor: "#e0e0e0" }} />
+
+        <ActivityIndicator size="large" color={parrotBlue} style={{ position: "absolute", top: vh(50), alignSelf: "center" }} />
+      </View>
+    );
   }
 
   if (hasError) {
@@ -393,10 +409,12 @@ export default function ProfileScreen({ navigation }) {
                 <View
                   style={{
                     flex: 1,
-                    marginTop: vh(10),
-                    width: vw(90),
-                    height: vh(80),
-                    margin: "auto"
+                    marginTop: vh(8),
+                    width: vw(96),
+                    height: vh(86),
+                    margin: "auto",
+                    borderRadius: vh(1),
+                    overflow: "hidden",
                   }}
                 >
                   <TermsOfUseComponent />
@@ -1016,7 +1034,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     // width: vh(11.45),
     borderRadius: vh(2.5),
-    top: vh(8),
+    top: vh(7),
     alignSelf: "center",
     right: vw(2),
   },

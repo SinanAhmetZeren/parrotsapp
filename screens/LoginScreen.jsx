@@ -165,6 +165,7 @@ const LoginScreen = ({ navigation }) => {
             refreshTokenExpiryTime:
               resetPasswordResponse.refreshTokenExpiryTime,
             unreadMessages: resetPasswordResponse.unreadMessages,
+            hasAcknowledgedPublicProfile: resetPasswordResponse.hasAcknowledgedPublicProfile ?? false,
           })
         );
       }
@@ -251,6 +252,7 @@ const LoginScreen = ({ navigation }) => {
           refreshToken: loginResponse.refreshToken,
           refreshTokenExpiryTime: loginResponse.refreshTokenExpiryTime,
           unreadMessages: loginResponse.unreadMessages,
+          hasAcknowledgedPublicProfile: loginResponse.hasAcknowledgedPublicProfile ?? false,
         })
       );
 
@@ -285,6 +287,7 @@ const LoginScreen = ({ navigation }) => {
           refreshToken: pendingLoginData.refreshToken,
           refreshTokenExpiryTime: pendingLoginData.refreshTokenExpiryTime,
           unreadMessages: pendingLoginData.unreadMessages,
+          hasAcknowledgedPublicProfile: pendingLoginData.hasAcknowledgedPublicProfile ?? false,
         })
       );
       setRequiresTermsReAcceptance(false);
@@ -359,6 +362,7 @@ const LoginScreen = ({ navigation }) => {
             refreshToken: confirmResponse.refreshToken,
             refreshTokenExpiryTime: confirmResponse.refreshTokenExpiryTime,
             unreadMessages: confirmResponse.unreadMessages,
+            hasAcknowledgedPublicProfile: confirmResponse.hasAcknowledgedPublicProfile ?? false,
           })
         );
       }
