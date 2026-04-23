@@ -36,7 +36,8 @@ import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
 import { TERMS_VERSION } from "../constants/TermsVersion";
 //import GoogleLoginButton from "../components/GoogleAuthButton";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotDarkCream, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
+import GoogleAuthButtonDummy from "../components/GoogleAuthButtonDummy";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotCream, parrotDarkCream, parrotInputTextColor, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotTextDarkBlue } from "../assets/color";
 
 // import {
 //   GoogleSignin,
@@ -64,10 +65,10 @@ const LoginScreen = ({ navigation }) => {
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
   const [isFocusedPassword, setIsFocusedPassword] = useState(false);
   const [isFocusedCode, setIsFocusedCode] = useState(false);
-  const [isFocusedCode2, setIsFocusedCode2] = useState(false);
+  const [isFocusedResetCode, setIsFocusedResetCode] = useState(false);
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
-  const [isPasswordHidden2, setIsPasswordHidden2] = useState(true);
-  const [loginOrRegister, setLoginOrRegister] = useState("Login");
+  const [isConfirmPasswordHidden, setIsConfirmPasswordHidden] = useState(true);
+  const [loginOrRegister, setLoginOrRegister] = useState("Register1");
   const [loginUser, { isLoading, isSuccess }] = useLoginUserMutation();
   const [acceptTerms] = useAcceptTermsMutation();
   const [requiresTermsReAcceptance, setRequiresTermsReAcceptance] = useState(false);
@@ -77,12 +78,12 @@ const LoginScreen = ({ navigation }) => {
   const [userNameR, setUserNameR] = useState("");
   const [emailR, setEmailR] = useState("");
   const [passwordR, setPasswordR] = useState("");
-  const [passwordR2, setPasswordR2] = useState("");
+  const [confirmPasswordR, setConfirmPasswordR] = useState("");
   const [registerCode, setRegisterCode] = useState("");
-  const [registerCode2, setRegisterCode2] = useState("");
+  const [resetPasswordCode, setResetPasswordCode] = useState("");
   const [isFocusedEmailR, setIsFocusedEmailR] = useState(false);
   const [isFocusedPasswordR, setIsFocusedPasswordR] = useState(false);
-  const [isFocusedPasswordR2, setIsFocusedPasswordR2] = useState(false);
+  const [isFocusedConfirmPasswordR, setIsFocusedConfirmPasswordR] = useState(false);
   const [isFocusedUserNameR, setIsFocusedUserNameR] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsModalVisible, setTermsModalVisible] = useState(false);
@@ -109,7 +110,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const togglePasswordVisibility2 = () => {
-    setIsPasswordHidden2((prevState) => !prevState);
+    setIsConfirmPasswordHidden((prevState) => !prevState);
   };
 
   const handlePasswordChange = (text) => {
@@ -121,17 +122,17 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleRegisterCode2Change = (text) => {
-    setRegisterCode2(text);
+    setResetPasswordCode(text);
   };
 
   const handleFocusAll = () => {
     setIsFocusedEmail(false);
     setIsFocusedEmailR(false);
     setIsFocusedCode(false);
-    setIsFocusedCode2(false);
+    setIsFocusedResetCode(false);
     setIsFocusedPassword(false);
     setIsFocusedPasswordR(false);
-    setIsFocusedPasswordR2(false);
+    setIsFocusedConfirmPasswordR(false);
     setIsFocusedUserNameR(false);
   };
 
@@ -146,13 +147,13 @@ const LoginScreen = ({ navigation }) => {
       const resetPasswordResponse = await resetPassword({
         email: emailR,
         password: passwordR,
-        confirmationCode: registerCode2,
+        confirmationCode: resetPasswordCode,
       }).unwrap();
       console.log("resetpasswordresponse: --->>", resetPasswordResponse);
 
       setPasswordR("");
-      setPasswordR2("");
-      setRegisterCode2("");
+      setConfirmPasswordR("");
+      setResetPasswordCode("");
       if (resetPasswordResponse.token) {
         await dispatch(
           updateAsLoggedIn({
@@ -310,7 +311,7 @@ const LoginScreen = ({ navigation }) => {
 
       setUserNameR("");
       setPasswordR("");
-      setPasswordR2("");
+      setConfirmPasswordR("");
 
       // if registration response is 200
       // go to Registration-2
@@ -382,7 +383,7 @@ const LoginScreen = ({ navigation }) => {
     setPasswordR(text);
   };
   const handlePasswordR2Change = (text) => {
-    setPasswordR2(text);
+    setConfirmPasswordR(text);
   };
 
   const username = useSelector((state) => state.users.userName);
@@ -440,7 +441,7 @@ const LoginScreen = ({ navigation }) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <TokenExpiryGuard />
       {toastVisible && (
         <View style={styles.toast}>
@@ -449,141 +450,118 @@ const LoginScreen = ({ navigation }) => {
       )}
       {loginOrRegister === "Login" ? (
         <>
-          <View style={{ backgroundColor: "white" }}>
-            <View style={styles.imagecontainer}>
-              <LoginPageLogoComponent />
-              <Image
-                style={styles.image}
-                source={require("../assets/welcome.png")}
-              />
-            </View>
+          <View style={styles.imagecontainer}>
+            <LoginPageLogoComponent />
+            <Image
+              style={styles.image}
+              source={require("../assets/welcome.png")}
+            />
           </View>
 
           <View style={styles.container}>
             <View style={styles.formContainer}>
-              <View style={styles.inputsContainer}>
-                <TextInput
-                  onFocus={() => setIsFocusedEmail(true)}
-                  onBlur={() => setIsFocusedEmail(false)}
-                  style={[styles.input, isFocusedEmail && styles.inputFocused]}
-                  placeholder="Email"
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  value={email}
-                  onChangeText={(text) => handleEmailChange(text)}
-                />
-                <View>
+
+              {/* Login card */}
+              <View style={styles.loginCard}>
+                <View style={styles.inputsContainer}>
                   <TextInput
-                    style={[
-                      styles.input,
-                      isFocusedPassword && styles.inputFocused,
-                    ]}
-                    onFocus={() => setIsFocusedPassword(true)}
-                    onBlur={() => setIsFocusedPassword(false)}
-                    placeholder="Password"
+                    onFocus={() => setIsFocusedEmail(true)}
+                    onBlur={() => setIsFocusedEmail(false)}
+                    style={[styles.input, isFocusedEmail && styles.inputFocused]}
+                    placeholder="Email"
                     placeholderTextColor={parrotPlaceholderGrey}
-                    secureTextEntry={isPasswordHidden}
-                    value={password}
-                    onChangeText={(text) => handlePasswordChange(text)}
+                    value={email}
+                    onChangeText={(text) => handleEmailChange(text)}
                   />
+                  <View>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        isFocusedPassword && styles.inputFocused,
+                      ]}
+                      onFocus={() => setIsFocusedPassword(true)}
+                      onBlur={() => setIsFocusedPassword(false)}
+                      placeholder="Password"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      secureTextEntry={isPasswordHidden}
+                      value={password}
+                      onChangeText={(text) => handlePasswordChange(text)}
+                    />
+                    <TouchableOpacity
+                      style={styles.eyeIcon}
+                      onPressIn={() => togglePasswordVisibility()}
+                    >
+                      <Text>
+                        <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <TouchableOpacity
+                  style={styles.forgotPassword}
+                  onPress={() => {
+                    setLoginOrRegister("ForgotPassword");
+                    handleFocusAll();
+                  }}
+                >
+                  <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
+                    Forgot password?
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.loginContainer}>
                   <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPressIn={() => togglePasswordVisibility()}
-                  // onPressOut={() => setIsPasswordHidden(true)}
+                    style={styles.selection2}
+                    onPress={handleLogin}
+                    disabled={isLoading || isLoggingIn}
                   >
-                    <Text>
-                      <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </Text>
+                    {isLoading || isLoggingIn
+                      ? <ActivityIndicator color="white" />
+                      : <Text style={styles.choiceText}>Login</Text>
+                    }
                   </TouchableOpacity>
                 </View>
-              </View>
 
-              <TouchableOpacity
-                style={styles.forgotPassword}
-                onPress={() => {
-                  setLoginOrRegister("ForgotPassword");
-                  handleFocusAll();
-                }}
-              >
-                <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
-                  Forgot password?
-                </Text>
-              </TouchableOpacity>
+                <View style={{ ...styles.loginContainer, display: "none" }}>
+                  <TouchableOpacity
+                    style={styles.selection2}
+                    onPress={logAllAsyncStorage}
+                    disabled={isLoading}
+                  >
+                    <Text style={styles.choiceText}>print</Text>
+                  </TouchableOpacity>
+                </View>
 
-              <View style={styles.loginContainer}>
                 <TouchableOpacity
-                  style={styles.selection2}
-                  onPress={handleLogin}
-                  disabled={isLoading || isLoggingIn}
+                  style={styles.noAccount}
+                  onPress={() => {
+                    setLoginOrRegister("Register1");
+                    handleFocusAll();
+                  }}
                 >
-                  {isLoading || isLoggingIn
-                    ? <ActivityIndicator color="white" />
-                    : <Text style={styles.choiceText}>Login</Text>
-                  }
+                  <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
+                    Don't have an account?{" "}
+                  </Text>
+                  <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
+                    Sign up
+                  </Text>
                 </TouchableOpacity>
               </View>
 
-              <View style={{ ...styles.loginContainer, display: "none" }}>
-                <TouchableOpacity
-                  style={styles.selection2}
-                  onPress={logAllAsyncStorage}
-                  disabled={isLoading}
-                >
-                  <Text style={styles.choiceText}>print</Text>
-                </TouchableOpacity>
+              {/* Google card */}
+              <View style={styles.googleCard}>
+                <GoogleAuthButtonDummy onPress={() => { }} />
+                {/* Replace above with <GoogleLoginButton /> when building for production */}
               </View>
 
-              <TouchableOpacity
-                style={styles.noAccount}
-                onPress={() => {
-                  setLoginOrRegister("Register1");
-                  handleFocusAll();
-                }}
-              >
-                <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
-                  Don't have an account?{" "}
-                </Text>
-                <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
-                  Sign up
-                </Text>
-              </TouchableOpacity>
-
-
-              <View style={{
-                flexDirection: "row", justifyContent: "center", alignItems: "center",
-                marginTop: vh(6), marginBottom: vh(6),
-              }}>
-                <View style={{
-                  backgroundColor: parrotLightBlue, height: 1, width: vw(25), marginRight: vh(1.5)
-                }}>
-                </View>
-                <View style={{
-                  alignItems: "center", backgroundColor: "", justifyContent: "center", padding: vh(0), borderRadius: vh(3)
-                }}>
-                  <Text style={{ fontWeight: "500", color: parrotTextDarkBlue }} > or </Text>
-                </View>
-                <View style={{ backgroundColor: parrotLightBlue, height: 1, width: vw(25), marginLeft: vh(1.5) }}>
-                </View>
-              </View>
-
-
-
-              <View>
-
-
-
-                <View style={styles.googleLoginContainer}>
-                  {/* <GoogleLoginButton /> */}
-                </View>
-
-
-              </View>
             </View>
           </View>
         </>
       ) : loginOrRegister === "Register1" ? (
         // register screen - 1
         <>
-          <View style={{ backgroundColor: "white" }}>
+          <View style={{ backgroundColor: "white", alignItems: "center" }}>
             <View style={styles.imagecontainer}>
               <LoginPageLogoComponent />
 
@@ -594,11 +572,60 @@ const LoginScreen = ({ navigation }) => {
               />
             </View>
           </View>
-          <View style={styles2.container}>
+          <View style={registrationSuccessStyles.container}>
             {/* {isSuccessRegisterUser ? (
-            <Text style={styles2.successMessage}>Registration successful!</Text>
+            <Text style={registrationSuccessStyles.successMessage}>Registration successful!</Text>
           ) : ( */}
-            <View style={styles2.formContainer}>
+            <View style={registrationSuccessStyles.formContainer}>
+              {isFocusedUserNameR && (
+                <View style={[registrationSuccessStyles.usernameToast, { top: -98 }]}>
+                  {[
+                    { label: "At least 3 characters", ok: userNameR.length >= 3 },
+                    { label: "Max 25 characters", ok: userNameR.length <= 25 },
+                    { label: "Letters, numbers, underscores only", ok: userNameR.length === 0 || /^[a-zA-Z0-9_]+$/.test(userNameR) },
+                  ].map(({ label, ok }) => (
+                    <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                      {ok ? "✓" : "✗"} {label}
+                    </Text>
+                  ))}
+                </View>
+              )}
+              {isFocusedPasswordR && (
+                <View style={[registrationSuccessStyles.usernameToast, { top: -120 }]}>
+                  {[
+                    { label: "At least 8 characters", ok: passwordR.length >= 8 },
+                    { label: "One uppercase letter", ok: /[A-Z]/.test(passwordR) },
+                    { label: "One lowercase letter", ok: /[a-z]/.test(passwordR) },
+                    { label: "One number", ok: /[0-9]/.test(passwordR) },
+                  ].map(({ label, ok }) => (
+                    <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                      {ok ? "✓" : "✗"} {label}
+                    </Text>
+                  ))}
+                </View>
+              )}
+              {isFocusedConfirmPasswordR && (
+                <View style={[registrationSuccessStyles.usernameToast, { top: -46 }]}>
+                  {[
+                    { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
+                  ].map(({ label, ok }) => (
+                    <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                      {ok ? "✓" : "✗"} {label}
+                    </Text>
+                  ))}
+                </View>
+              )}
+              {isFocusedEmailR && (
+                <View style={[registrationSuccessStyles.usernameToast, { top: -46 }]}>
+                  {[
+                    { label: "Valid email format", ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailR) },
+                  ].map(({ label, ok }) => (
+                    <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                      {ok ? "✓" : "✗"} {label}
+                    </Text>
+                  ))}
+                </View>
+              )}
               <TextInput
                 style={[
                   styles.input,
@@ -607,7 +634,7 @@ const LoginScreen = ({ navigation }) => {
                 onFocus={() => setIsFocusedUserNameR(true)}
                 onBlur={() => setIsFocusedUserNameR(false)}
                 placeholderTextColor={parrotPlaceholderGrey}
-                placeholder="Username (max 25 characters)"
+                placeholder="Username (3-25 characters)"
                 value={userNameR}
                 maxLength={25}
                 onChangeText={(text) => handleUserNameRChange(text)}
@@ -650,14 +677,14 @@ const LoginScreen = ({ navigation }) => {
                 <TextInput
                   style={[
                     styles.input,
-                    isFocusedPasswordR2 && styles.inputFocused,
+                    isFocusedConfirmPasswordR && styles.inputFocused,
                   ]}
-                  onFocus={() => setIsFocusedPasswordR2(true)}
-                  onBlur={() => setIsFocusedPasswordR2(false)}
+                  onFocus={() => setIsFocusedConfirmPasswordR(true)}
+                  onBlur={() => setIsFocusedConfirmPasswordR(false)}
                   placeholderTextColor={parrotPlaceholderGrey}
                   placeholder="Re-enter Password"
-                  secureTextEntry={isPasswordHidden2}
-                  value={passwordR2}
+                  secureTextEntry={isConfirmPasswordHidden}
+                  value={confirmPasswordR}
                   onChangeText={(text) => handlePasswordR2Change(text)}
                 />
                 <TouchableOpacity
@@ -679,7 +706,7 @@ const LoginScreen = ({ navigation }) => {
                   {termsAccepted && <Text style={styles.checkmark}>✓</Text>}
                 </View>
                 <Text style={styles.termsText}>
-                  I have read and agree to the{" "}
+                  I've read and agree to the{" "}
                 </Text>
                 <TouchableOpacity onPress={() => setTermsModalVisible(true)}>
                   <Text style={styles.termsLink}>Terms of Use</Text>
@@ -707,24 +734,35 @@ const LoginScreen = ({ navigation }) => {
                   style={[
                     styles.selection2,
                     isLoadingRegisterUser ||
-                      passwordR === "" ||
-                      passwordR2 === "" ||
+                      userNameR.length < 3 ||
+                      !emailR ||
+                      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailR) ||
+                      passwordR.length < 8 ||
+                      !/[A-Z]/.test(passwordR) ||
+                      !/[a-z]/.test(passwordR) ||
+                      !/[0-9]/.test(passwordR) ||
+                      passwordR !== confirmPasswordR ||
                       !termsAccepted
                       ? styles.disabled
                       : null,
                   ]}
                   onPress={() => {
-                    if (passwordR !== passwordR2) {
+                    if (passwordR !== confirmPasswordR) {
                       showToast("Passwords do not match - Please try again.");
                     }
-                    if (passwordR === passwordR2) {
+                    if (passwordR === confirmPasswordR) {
                       handleRegister();
                     }
                   }}
                   disabled={
                     isLoadingRegisterUser ||
-                    passwordR === "" ||
-                    passwordR2 === "" ||
+                    userNameR.length < 3 ||
+                    !emailR ||
+                    passwordR.length < 8 ||
+                    !/[A-Z]/.test(passwordR) ||
+                    !/[a-z]/.test(passwordR) ||
+                    !/[0-9]/.test(passwordR) ||
+                    passwordR !== confirmPasswordR ||
                     !termsAccepted
                   }
                 >
@@ -738,20 +776,35 @@ const LoginScreen = ({ navigation }) => {
                     handleFocusAll();
                   }}
                 >
-                  <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
+                  <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                     Back to{" "}
                   </Text>
-                  <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
+                  <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                     Login
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
+            {(passwordR.length > 0 || confirmPasswordR.length > 0) && (
+              <View style={styles.passwordChecklist}>
+                {[
+                  { label: "At least 8 characters", ok: passwordR.length >= 8 },
+                  { label: "One uppercase letter", ok: /[A-Z]/.test(passwordR) },
+                  { label: "One lowercase letter", ok: /[a-z]/.test(passwordR) },
+                  { label: "One number", ok: /[0-9]/.test(passwordR) },
+                  { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
+                ].map(({ label, ok }) => (
+                  <Text key={label} style={[styles.passwordCheckItem, { color: ok ? "#2e7d32" : "#c62828" }]}>
+                    {ok ? "✓" : "✗"} {label}
+                  </Text>
+                ))}
+              </View>
+            )}
           </View>
         </>
       ) : loginOrRegister === "Register2" ? (
         <>
-          <View style={{ backgroundColor: "white" }}>
+          <View style={{ backgroundColor: "white", alignItems: "center" }}>
             <View style={styles.imagecontainer}>
               <LoginPageLogoComponent />
 
@@ -762,8 +815,8 @@ const LoginScreen = ({ navigation }) => {
             </View>
           </View>
 
-          <View style={styles2.container}>
-            <View style={styles2.formContainer}>
+          <View style={registrationSuccessStyles.container}>
+            <View style={registrationSuccessStyles.formContainer}>
               <TextInput
                 style={[styles.input, isFocusedCode && styles.inputFocused]}
                 onFocus={() => setIsFocusedCode(true)}
@@ -783,7 +836,7 @@ const LoginScreen = ({ navigation }) => {
                       : null,
                   ]}
                   onPress={() => {
-                    if (passwordR !== passwordR2) {
+                    if (passwordR !== confirmPasswordR) {
                       showToast("Passwords do not match - Please try again.");
                     }
                     handleConfirm();
@@ -800,10 +853,10 @@ const LoginScreen = ({ navigation }) => {
                     handleFocusAll();
                   }}
                 >
-                  <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
+                  <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                     Back to{" "}
                   </Text>
-                  <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
+                  <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                     Login
                   </Text>
                 </TouchableOpacity>
@@ -813,7 +866,7 @@ const LoginScreen = ({ navigation }) => {
         </>
       ) : loginOrRegister === "ForgotPassword" ? (
         <>
-          <View style={{ backgroundColor: "white" }}>
+          <View style={{ backgroundColor: "white", alignItems: "center" }}>
             <View style={styles.imagecontainer}>
               <LoginPageLogoComponent />
 
@@ -824,8 +877,8 @@ const LoginScreen = ({ navigation }) => {
             </View>
           </View>
 
-          <View style={styles2.container}>
-            <View style={styles2.formContainer}>
+          <View style={registrationSuccessStyles.container}>
+            <View style={registrationSuccessStyles.formContainer}>
               <TextInput
                 style={[styles.input, isFocusedEmailR && styles.inputFocused]}
                 onFocus={() => setIsFocusedEmailR(true)}
@@ -853,10 +906,10 @@ const LoginScreen = ({ navigation }) => {
                     handleFocusAll();
                   }}
                 >
-                  <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
+                  <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                     Back to{" "}
                   </Text>
-                  <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
+                  <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                     Login
                   </Text>
                 </TouchableOpacity>
@@ -866,7 +919,7 @@ const LoginScreen = ({ navigation }) => {
         </>
       ) : loginOrRegister === "UpdatePassword" ? (
         <>
-          <View style={{ backgroundColor: "white" }}>
+          <View style={{ backgroundColor: "white", alignItems: "center" }}>
             <View style={styles.imagecontainer}>
               <LoginPageLogoComponent />
               <Image
@@ -876,8 +929,8 @@ const LoginScreen = ({ navigation }) => {
             </View>
           </View>
 
-          <View style={styles2.container}>
-            <View style={styles2.formContainer}>
+          <View style={registrationSuccessStyles.container}>
+            <View style={registrationSuccessStyles.formContainer}>
               <View>
                 <TextInput
                   style={[
@@ -906,14 +959,14 @@ const LoginScreen = ({ navigation }) => {
                 <TextInput
                   style={[
                     styles.input,
-                    isFocusedPasswordR2 && styles.inputFocused,
+                    isFocusedConfirmPasswordR && styles.inputFocused,
                   ]}
-                  onFocus={() => setIsFocusedPasswordR2(true)}
-                  onBlur={() => setIsFocusedPasswordR2(false)}
+                  onFocus={() => setIsFocusedConfirmPasswordR(true)}
+                  onBlur={() => setIsFocusedConfirmPasswordR(false)}
                   placeholderTextColor={parrotPlaceholderGrey}
                   placeholder="Re-enter New Password"
-                  secureTextEntry={isPasswordHidden2}
-                  value={passwordR2}
+                  secureTextEntry={isConfirmPasswordHidden}
+                  value={confirmPasswordR}
                   onChangeText={(text) => handlePasswordR2Change(text)}
                 />
                 <TouchableOpacity
@@ -927,12 +980,12 @@ const LoginScreen = ({ navigation }) => {
               </View>
 
               <TextInput
-                style={[styles.input, isFocusedCode2 && styles.inputFocused]}
-                onFocus={() => setIsFocusedCode2(true)}
-                onBlur={() => setIsFocusedCode2(false)}
+                style={[styles.input, isFocusedResetCode && styles.inputFocused]}
+                onFocus={() => setIsFocusedResetCode(true)}
+                onBlur={() => setIsFocusedResetCode(false)}
                 placeholderTextColor={parrotPlaceholderGrey}
                 placeholder="Enter 6 Digit Code"
-                value={registerCode2}
+                value={resetPasswordCode}
                 onChangeText={(text) => handleRegisterCode2Change(text)}
               />
 
@@ -942,23 +995,23 @@ const LoginScreen = ({ navigation }) => {
                     styles.selection2,
                     isLoadingRegisterUser ||
                       passwordR === "" ||
-                      passwordR2 === "" ||
-                      registerCode2 === ""
+                      confirmPasswordR === "" ||
+                      resetPasswordCode === ""
                       ? styles.disabled
                       : null,
                   ]}
                   onPress={() => {
-                    if (passwordR !== passwordR2) {
+                    if (passwordR !== confirmPasswordR) {
                       showToast("Passwords do not match - Please try again.");
                     }
-                    if (passwordR === passwordR2) {
+                    if (passwordR === confirmPasswordR) {
                       handleResetPassword();
                     }
                   }}
                   disabled={
                     passwordR === "" ||
-                    passwordR2 === "" ||
-                    registerCode2 === ""
+                    confirmPasswordR === "" ||
+                    resetPasswordCode === ""
                   }
                 >
                   <Text style={styles.choiceText}>Update Password</Text>
@@ -971,15 +1024,30 @@ const LoginScreen = ({ navigation }) => {
                     handleFocusAll();
                   }}
                 >
-                  <Text style={{ fontWeight: "500", color: parrotPlaceholderGrey }}>
+                  <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                     Back to{" "}
                   </Text>
-                  <Text style={{ fontWeight: "700", color: parrotPlaceholderGrey }}>
+                  <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                     Login
                   </Text>
                 </TouchableOpacity>
               </View>
             </View>
+            {(passwordR.length > 0 || confirmPasswordR.length > 0) && (
+              <View style={styles.passwordChecklist}>
+                {[
+                  { label: "At least 8 characters", ok: passwordR.length >= 8 },
+                  { label: "One uppercase letter", ok: /[A-Z]/.test(passwordR) },
+                  { label: "One lowercase letter", ok: /[a-z]/.test(passwordR) },
+                  { label: "One number", ok: /[0-9]/.test(passwordR) },
+                  { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
+                ].map(({ label, ok }) => (
+                  <Text key={label} style={[styles.passwordCheckItem, { color: ok ? "#2e7d32" : "#c62828" }]}>
+                    {ok ? "✓" : "✗"} {label}
+                  </Text>
+                ))}
+              </View>
+            )}
           </View>
         </>
       ) : null}
@@ -1001,6 +1069,61 @@ const styles = StyleSheet.create({
   googleLoginContainer: {
     marginTop: vh(4)
   },
+  loginCard: {
+    width: vw(80),
+    backgroundColor: parrotLightCream,
+    borderRadius: vh(2),
+    padding: vh(2),
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  googleCard: {
+    width: vw(80),
+    backgroundColor: parrotLightCream,
+    borderRadius: vh(2),
+    paddingVertical: vh(1.5),
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 4,
+    marginTop: vh(4),
+  },
+  logoCard: {
+    width: vw(80),
+    backgroundColor: "white",
+    borderRadius: vh(2),
+    paddingVertical: vh(2),
+    alignItems: "center",
+    alignSelf: "center",
+    marginTop: vh(8),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  orDivider: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: vw(80),
+    marginVertical: vh(2),
+  },
+  orLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: parrotLightBlue,
+  },
+  orText: {
+    marginHorizontal: vh(1.5),
+    fontFamily: "Nunito_600SemiBold",
+    color: parrotTextDarkBlue,
+  },
   forgotPassword: {
     paddingBottom: vh(1),
     alignSelf: "flex-end",
@@ -1008,9 +1131,8 @@ const styles = StyleSheet.create({
   },
   noAccount: {
     paddingVertical: vh(1),
-    alignSelf: "flex-end",
+    alignSelf: "center",
     flexDirection: "row",
-    paddingRight: vh(1.5),
   },
   eyeIcon: {
     position: "absolute",
@@ -1019,11 +1141,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: vh(2),
   },
   inputsContainer: {
-    width: vw(75),
+    width: vw(65),
+    marginTop: vh(1),
   },
   choiceText: {
     fontSize: 16,
-    fontWeight: "500",
+    fontFamily: "Nunito_700Bold",
     color: "white",
     textAlign: "center",
   },
@@ -1033,18 +1156,18 @@ const styles = StyleSheet.create({
     paddingVertical: vh(1),
     backgroundColor: parrotBlue,
     borderRadius: vh(1.5),
-    width: vw(75),
+    width: vw(65),
   },
   container: {
     flexDirection: "row",
     flex: 1,
     backgroundColor: "white",
     justifyContent: "center",
-    padding: 16,
+    paddingTop: 12,
+    paddingHorizontal: 16,
   },
   formContainer: {
-    height: vh(60),
-    marginTop: vh(2),
+    marginTop: 0,
     width: vw(80),
     alignItems: "center",
   },
@@ -1055,13 +1178,24 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     marginBottom: vh(1),
     padding: 8,
-    width: "100%",
+    width: vw(65),
     borderRadius: vh(1.5),
     color: parrotInputTextColor,
+    fontFamily: "Nunito_400Regular",
   },
   inputFocused: {
     borderColor: parrotBlueSemiTransparent3,
     borderWidth: 3,
+  },
+  passwordChecklist: {
+    width: vw(65),
+    marginTop: vh(1.5),
+    marginBottom: vh(1),
+    gap: 2,
+  },
+  passwordCheckItem: {
+    fontSize: 12,
+    fontFamily: "Nunito_600SemiBold",
   },
   termsRow: {
     flexDirection: "row",
@@ -1069,6 +1203,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 4,
     flexWrap: "wrap",
+    marginLeft: 2,
   },
   checkbox: {
     width: 20,
@@ -1086,16 +1221,17 @@ const styles = StyleSheet.create({
   checkmark: {
     color: "white",
     fontSize: 13,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   termsText: {
     fontSize: 13,
     color: parrotPlaceholderGrey,
+    fontFamily: "Nunito_400Regular",
   },
   termsLink: {
     fontSize: 13,
     color: parrotBlue,
-    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
     textDecorationLine: "underline",
   },
   termsCloseButton: {
@@ -1106,7 +1242,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imagecontainer: {
-    marginTop: vh(10),
+    marginTop: vh(8),
     flexDirection: "row",
     justifyContent: "center",
     alignSelf: "center",
@@ -1147,22 +1283,46 @@ const styles = StyleSheet.create({
   toastText: {
     color: "white",
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
 });
 
-const styles2 = StyleSheet.create({
+const registrationSuccessStyles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    flex: 1,
-    justifyContent: "center",
-    padding: 16,
+    flexDirection: "column",
+    alignItems: "center",
+    paddingTop: 12,
+    paddingHorizontal: 16,
     backgroundColor: "white",
   },
+  usernameToast: {
+    position: "absolute",
+    alignSelf: "center",
+    zIndex: 10,
+    backgroundColor: "#1a56b0",
+    borderRadius: 20,
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+  },
+  usernameToastItem: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    lineHeight: 22,
+  },
   formContainer: {
-    marginTop: 50,
-    width: "80%",
-    backgroundColor: "white",
+    marginTop: 0,
+    width: vw(80),
+    alignItems: "center",
+    backgroundColor: parrotLightCream,
+    borderRadius: vh(2),
+    paddingTop: vh(3),
+    paddingBottom: vh(2),
+    paddingHorizontal: vh(2),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 4,
   },
 });
 
@@ -1171,8 +1331,8 @@ export default LoginScreen;
 const LoginPageLogoComponent = () => {
   return (
     <Image
-      style={{ width: vh(12), height: vh(12) }}
-      source={require("../assets/parrotslogo.png")}
+      style={{ width: vh(12), height: vh(12), borderRadius: vh(6), overflow: "hidden" }}
+      source={require("../assets/parrotslogologin.png")}
     />
   );
 };

@@ -70,6 +70,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [messagesToDisplay, setMessagesToDisplay] = useState([]);
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
   const scrollViewRef = useRef();
+  const sendTimestampsRef = useRef([]);
 
 
 
@@ -300,6 +301,12 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
+
+    // Frontend rate limit: block if 5 messages sent within 5 seconds
+    const now = Date.now();
+    sendTimestampsRef.current = sendTimestampsRef.current.filter(t => now - t < 5000);
+    if (sendTimestampsRef.current.length >= 5) return;
+    sendTimestampsRef.current.push(now);
 
     scrollViewRef.current.scrollToEnd({ animated: true });
 

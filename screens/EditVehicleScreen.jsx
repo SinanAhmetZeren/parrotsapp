@@ -300,12 +300,12 @@ const EditVehicleScreen = () => {
             <View >
               <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={pickProfileImage}>
-                  <View style={styles2.recycleBoxBG}>
+                  <View style={imageGalleryStyles.recycleBoxBG}>
                     <Entypo
                       name="image"
                       size={24}
                       color="black"
-                      style={styles2.recycleBackground}
+                      style={imageGalleryStyles.recycleBackground}
                     />
                   </View>
 
@@ -395,7 +395,7 @@ const EditVehicleScreen = () => {
                   {/* /// VACANCY /// */}
 
                   {/* Save Button */}
-                  <View style={styles2.buttonContainer}>
+                  <View style={imageGalleryStyles.buttonContainer}>
 
                     <View  >
                       <TouchableOpacity
@@ -469,7 +469,7 @@ const EditVehicleScreen = () => {
                   keyExtractor={(item, index) => `key-${index}`}
                   renderItem={({ item, index }) => {
                     return (
-                      <View key={index} style={styles2.imageContainer1}>
+                      <View key={index} style={imageGalleryStyles.imageContainer1}>
                         <TouchableOpacity
                           onPress={() => {
                             if (item.id) {
@@ -488,7 +488,7 @@ const EditVehicleScreen = () => {
                                   }
                                   : require("../assets/placeholder.png")
                             }
-                            style={styles2.voyageImage1}
+                            style={imageGalleryStyles.voyageImage1}
                           />
 
                           {item.id && (
@@ -544,28 +544,28 @@ const EditVehicleScreen = () => {
                 onPressOut={() => setDeleteModalVisible(false)}
               >
                 <View>
-                  <View style={styles2.modalView2}>
-                    <View style={styles2.modalViewRed2}>
+                  <View style={imageGalleryStyles.modalView2}>
+                    <View style={imageGalleryStyles.modalViewRed2}>
                       <TouchableOpacity
-                        style={styles2.selectionRed}
+                        style={imageGalleryStyles.selectionRed}
                         onPress={() => {
                           HandleDeleteVehicle();
                         }}
                       >
-                        <Text style={styles2.choiceText}>
+                        <Text style={imageGalleryStyles.choiceText}>
                           Yes, Delete Vehicle
                         </Text>
                       </TouchableOpacity>
                     </View>
 
-                    <View style={styles2.modalViewRed3}>
+                    <View style={imageGalleryStyles.modalViewRed3}>
                       <TouchableOpacity
-                        style={styles2.selectionGreen}
+                        style={imageGalleryStyles.selectionGreen}
                         onPress={() => {
                           handleCloseDeleteVehicleModal();
                         }}
                       >
-                        <Text style={styles2.choiceText}>Cancel</Text>
+                        <Text style={imageGalleryStyles.choiceText}>Cancel</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -581,7 +581,7 @@ const EditVehicleScreen = () => {
 
 export default EditVehicleScreen;
 
-const styles2 = StyleSheet.create({
+const imageGalleryStyles = StyleSheet.create({
 
   currentBidsTitle2: {
     top: vh(-3),

@@ -164,23 +164,23 @@ export const CreateBidComponent = ({
 
   return (
     <View>
-      <View style={styles2.bidButtonContainer}>
+      <View style={bidInputStyles.bidButtonContainer}>
         {hasBidWithUserId ? (
-          <View style={styles2.modalView2}>
+          <View style={bidInputStyles.modalView2}>
             <TouchableOpacity
-              style={styles2.buttonSendBidContainer}
+              style={bidInputStyles.buttonSendBidContainer}
               onPress={handleOpenChangeModal}
             >
-              <Text style={styles2.buttonSave}>Change Bid</Text>
+              <Text style={bidInputStyles.buttonSave}>Change Bid</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={styles2.modalView2}>
+          <View style={bidInputStyles.modalView2}>
             <TouchableOpacity
-              style={styles2.buttonSendBidContainer}
+              style={bidInputStyles.buttonSendBidContainer}
               onPress={handleOpenCreateModal}
             >
-              <Text style={styles2.buttonSave}>Create Bid</Text>
+              <Text style={bidInputStyles.buttonSave}>Create Bid</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -192,26 +192,26 @@ export const CreateBidComponent = ({
         animationType="fade"
         onRequestClose={handleCloseCreateModal}
       >
-        <View style={styles2.modalContainer}>
-          <View style={styles2.innerContainer}>
-            <Text style={[styles2.title, { color: parrotTextDarkBlue }]}>
+        <View style={bidInputStyles.modalContainer}>
+          <View style={bidInputStyles.innerContainer}>
+            <Text style={[bidInputStyles.title, { color: parrotTextDarkBlue }]}>
               Enter Your Bid
             </Text>
 
-            <View style={styles2.inputMainContainer}>
-              <Text style={styles2.InputName}>Offer Price ({currency}):</Text>
+            <View style={bidInputStyles.inputMainContainer}>
+              <Text style={bidInputStyles.InputName}>Offer Price ({currency}):</Text>
 
-              <View style={styles2.counterContainer}>
+              <View style={bidInputStyles.counterContainer}>
                 <TouchableOpacity
                   onPress={handleDecrementPrice}
-                  style={styles2.decrementButtonContainer}
+                  style={bidInputStyles.decrementButtonContainer}
                 >
-                  <Text style={styles2.buttonCount}>-</Text>
+                  <Text style={bidInputStyles.buttonCount}>-</Text>
                 </TouchableOpacity>
 
                 <TextInput
                   ref={createBidTextInputRef}
-                  style={styles2.bidInput}
+                  style={bidInputStyles.bidInput}
                   keyboardType="numeric"
                   value={price.toString()}
                   onChangeText={(text) => setPrice(parseInt(text) || 0)}
@@ -219,26 +219,26 @@ export const CreateBidComponent = ({
 
                 <TouchableOpacity
                   onPress={handleIncrementPrice}
-                  style={styles2.incrementButtonContainer}
+                  style={bidInputStyles.incrementButtonContainer}
                 >
-                  <Text style={styles2.buttonCount}>+</Text>
+                  <Text style={bidInputStyles.buttonCount}>+</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
-            <View style={styles2.inputMainContainer}>
-              <Text style={styles2.InputName}>Persons: </Text>
+            <View style={bidInputStyles.inputMainContainer}>
+              <Text style={bidInputStyles.InputName}>Persons: </Text>
 
-              <View style={styles2.counterContainer}>
+              <View style={bidInputStyles.counterContainer}>
                 <TouchableOpacity
                   onPress={handleDecrementPersons}
-                  style={styles2.decrementButtonContainer}
+                  style={bidInputStyles.decrementButtonContainer}
                 >
-                  <Text style={styles2.buttonCount}>-</Text>
+                  <Text style={bidInputStyles.buttonCount}>-</Text>
                 </TouchableOpacity>
 
                 <TextInput
-                  style={styles2.bidInput}
+                  style={bidInputStyles.bidInput}
                   keyboardType="numeric"
                   value={persons.toString()}
                   onChangeText={(text) => setPersons(parseInt(text) || 0)}
@@ -246,15 +246,15 @@ export const CreateBidComponent = ({
 
                 <TouchableOpacity
                   onPress={handleIncrementPersons}
-                  style={styles2.incrementButtonContainer}
+                  style={bidInputStyles.incrementButtonContainer}
                 >
-                  <Text style={styles2.buttonCount}>+</Text>
+                  <Text style={bidInputStyles.buttonCount}>+</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
             <TextInput
-              style={styles2.messageInput}
+              style={bidInputStyles.messageInput}
               placeholder="Enter your message"
               // placeholderTextColor={parrotTextDarkBlue}
               placeholderTextColor={"white"}
@@ -263,18 +263,18 @@ export const CreateBidComponent = ({
               onChangeText={(text) => setMessage(text)}
             />
 
-            <View style={styles2.buttonsContainer}>
+            <View style={bidInputStyles.buttonsContainer}>
               <TouchableOpacity
                 onPress={handleCloseCreateModal}
-                style={styles2.buttonCancelContainer}
+                style={bidInputStyles.buttonCancelContainer}
               >
-                <Text style={styles2.buttonClear}>Cancel</Text>
+                <Text style={bidInputStyles.buttonClear}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleSendBid(userProfileImage, userName)}
-                style={styles2.buttonSendBidContainer}
+                style={bidInputStyles.buttonSendBidContainer}
               >
-                <Text style={styles2.buttonSave}>Send Bid</Text>
+                <Text style={bidInputStyles.buttonSave}>Send Bid</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -288,26 +288,26 @@ export const CreateBidComponent = ({
         animationType="fade"
         onRequestClose={handleCloseChangeModal}
       >
-        <View style={styles2.modalContainer}>
-          <View style={styles2.innerContainer}>
-            <Text style={[styles2.title, { color: parrotTextDarkBlue }]}>
+        <View style={bidInputStyles.modalContainer}>
+          <View style={bidInputStyles.innerContainer}>
+            <Text style={[bidInputStyles.title, { color: parrotTextDarkBlue }]}>
               Change Your Bid
             </Text>
 
-            <View style={styles2.inputMainContainer1}>
-              <Text style={styles2.InputName}>Offer Price ({currency}):</Text>
+            <View style={bidInputStyles.inputMainContainer1}>
+              <Text style={bidInputStyles.InputName}>Offer Price ({currency}):</Text>
 
-              <View style={styles2.counterContainer}>
+              <View style={bidInputStyles.counterContainer}>
                 <TouchableOpacity
                   onPress={handleDecrementExistingPrice}
-                  style={styles2.decrementButtonContainer}
+                  style={bidInputStyles.decrementButtonContainer}
                 >
-                  <Text style={styles2.buttonCount}>-</Text>
+                  <Text style={bidInputStyles.buttonCount}>-</Text>
                 </TouchableOpacity>
 
                 <TextInput
                   ref={changeBidTextInputRef}
-                  style={styles2.bidInput}
+                  style={bidInputStyles.bidInput}
                   keyboardType="numeric"
                   value={existingBidPrice.toString()}
                   onChangeText={(text) =>
@@ -317,9 +317,9 @@ export const CreateBidComponent = ({
 
                 <TouchableOpacity
                   onPress={handleIncrementExistingPrice}
-                  style={styles2.incrementButtonContainer}
+                  style={bidInputStyles.incrementButtonContainer}
                 >
-                  <Text style={styles2.buttonCount}>+</Text>
+                  <Text style={bidInputStyles.buttonCount}>+</Text>
                 </TouchableOpacity>
 
 
@@ -327,19 +327,19 @@ export const CreateBidComponent = ({
             </View>
 
             {/* Person count */}
-            <View style={styles2.inputMainContainer}>
-              <Text style={styles2.InputName}>Persons: </Text>
+            <View style={bidInputStyles.inputMainContainer}>
+              <Text style={bidInputStyles.InputName}>Persons: </Text>
 
-              <View style={styles2.counterContainer}>
+              <View style={bidInputStyles.counterContainer}>
                 <TouchableOpacity
                   onPress={handleDecrementExistingPersons}
-                  style={styles2.decrementButtonContainer}
+                  style={bidInputStyles.decrementButtonContainer}
                 >
-                  <Text style={styles2.buttonCount}>-</Text>
+                  <Text style={bidInputStyles.buttonCount}>-</Text>
                 </TouchableOpacity>
 
                 <TextInput
-                  style={styles2.bidInput}
+                  style={bidInputStyles.bidInput}
                   keyboardType="numeric"
                   value={existingPersons.toString()}
                   onChangeText={(text) =>
@@ -349,16 +349,16 @@ export const CreateBidComponent = ({
 
                 <TouchableOpacity
                   onPress={handleIncrementExistingPersons}
-                  style={styles2.incrementButtonContainer}
+                  style={bidInputStyles.incrementButtonContainer}
                 >
-                  <Text style={styles2.buttonCount}>+</Text>
+                  <Text style={bidInputStyles.buttonCount}>+</Text>
                 </TouchableOpacity>
               </View>
             </View>
 
             {/* Message */}
             <TextInput
-              style={styles2.messageInput}
+              style={bidInputStyles.messageInput}
               placeholder="Enter your message"
               // placeholderTextColor={parrotTextDarkBlue}
               placeholderTextColor={"white"}
@@ -368,18 +368,18 @@ export const CreateBidComponent = ({
             />
 
             {/* Buttons */}
-            <View style={styles2.buttonsContainer}>
+            <View style={bidInputStyles.buttonsContainer}>
               <TouchableOpacity
                 onPress={handleCloseChangeModal}
-                style={styles2.buttonCancelContainer}
+                style={bidInputStyles.buttonCancelContainer}
               >
-                <Text style={styles2.buttonClear}>Cancel</Text>
+                <Text style={bidInputStyles.buttonClear}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => handleChangeBid()}
-                style={styles2.buttonSendBidContainer}
+                style={bidInputStyles.buttonSendBidContainer}
               >
-                <Text style={styles2.buttonSave}>Change Bid</Text>
+                <Text style={bidInputStyles.buttonSave}>Change Bid</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -389,7 +389,7 @@ export const CreateBidComponent = ({
   );
 };
 
-const styles2 = StyleSheet.create({
+const bidInputStyles = StyleSheet.create({
   decrementButtonContainer: {
     justifyContent: "center",
     alignItems: "center",

@@ -613,7 +613,7 @@ function App() {
           const storedProfileImageUrl = await AsyncStorage.getItem("storedProfileImageUrl");
           const storedProfileImageThumbnailUrl = await AsyncStorage.getItem("storedProfileImageThumbnailUrl");
 
-          if (!storedToken) return;
+          if (!storedToken) { setIsInitialLoading(false); return; }
           // Restore Redux state
           dispatch(
             updateStateFromLocalStorage({

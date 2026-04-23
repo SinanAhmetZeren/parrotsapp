@@ -76,7 +76,6 @@ export default {
             "expo-font",
             "expo-build-properties",
             "expo-web-browser",
-            "@react-native-google-signin/google-signin"
         ],
         "extra": {
             "eas": {

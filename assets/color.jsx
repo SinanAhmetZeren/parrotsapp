@@ -18,6 +18,7 @@ export const parrotPlaceholderGrey = "#a3b4c5";
 export const parrotRed = "#CB0404";
 export const parrotRedTransparent = "#CB040411";
 export const parrotYellow = "#FFB800";
+export const parrotLightCream = "#fdfbf9";
 export const parrotCream = "#f9f5f1";
 export const parrotDarkCream = "#c3c3c3";
 export const parrotInputTextColor = "#6b7f9d";

@@ -47,7 +47,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
                 source={{
                   uri: `${item.voyageImagePath}`,
                 }}
-                style={styles2.voyageImage1}
+                style={carouselStyles.voyageImage1}
               />
             </View>
           </TouchableOpacity>
@@ -80,12 +80,12 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
               return null;
             }}
             renderItem={({ item, index }) => (
-              <View style={styles2.imageContainerInModal}>
+              <View style={carouselStyles.imageContainerInModal}>
                 <Image
                   source={{
                     uri: `${item.voyageImagePath}`,
                   }}
-                  style={styles2.voyageImageInModal}
+                  style={carouselStyles.voyageImageInModal}
                 />
               </View>
             )}
@@ -94,11 +94,11 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
         </View>
 
         <TouchableOpacity
-          style={styles2.closeButtonAndText}
+          style={carouselStyles.closeButtonAndText}
           onPress={handleCloseModal}
         >
           <View>
-            <Text style={styles2.buttonClose}>Close</Text>
+            <Text style={carouselStyles.buttonClose}>Close</Text>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -106,7 +106,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
   );
 };
 
-const styles2 = StyleSheet.create({
+const carouselStyles = StyleSheet.create({
   buttonClose: {
     fontSize: 18,
     color: "white",

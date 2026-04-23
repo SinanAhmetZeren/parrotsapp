@@ -65,8 +65,8 @@ const EditProfileScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [title, setTitle] = useState("");
   const [bio, setBio] = useState("");
-  const [image, setImage] = useState(null);
-  const [image2, setImage2] = useState(null);
+  const [profileImageUri, setProfileImageUri] = useState(null);
+  const [backgroundImageUri, setBackgroundImageUri] = useState(null);
   const [emailHidden, setEmailHidden] = useState(true);
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
   const [hasError, setHasError] = useState(false)
@@ -90,12 +90,12 @@ const EditProfileScreen = ({ navigation }) => {
   );
 
   const handleUploadProfile = async () => {
-    if (!image) {
+    if (!profileImageUri) {
       return;
     }
     const formData = new FormData();
     formData.append("imageFile", {
-      uri: image,
+      uri: profileImageUri,
       type: "image/jpeg",
       name: "profileImage.jpg",
     });
@@ -108,12 +108,12 @@ const EditProfileScreen = ({ navigation }) => {
   };
 
   const handleUploadBackground = async () => {
-    if (!image2) {
+    if (!backgroundImageUri) {
       return;
     }
     const formData = new FormData();
     formData.append("imageFile", {
-      uri: image2,
+      uri: backgroundImageUri,
       type: "image/jpeg",
       name: "backgroundImage.jpg",
     });
@@ -168,7 +168,7 @@ const EditProfileScreen = ({ navigation }) => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setProfileImageUri(result.assets[0].uri);
     }
   };
 
@@ -181,7 +181,7 @@ const EditProfileScreen = ({ navigation }) => {
     });
 
     if (!result.canceled) {
-      setImage2(result.assets[0].uri);
+      setBackgroundImageUri(result.assets[0].uri);
     }
   };
 
@@ -262,11 +262,11 @@ const EditProfileScreen = ({ navigation }) => {
         <ScrollView style={{ ...styles.scrollview, top: -textInputBottomMargin }}>
           <TouchableOpacity onPress={pickBackgroundImage}>
             <View style={styles.rectangularBox}>
-              {image2 ? (
+              {backgroundImageUri ? (
                 <Image
                   style={styles.imageContainer}
                   resizeMode="cover"
-                  source={{ uri: image2 }}
+                  source={{ uri: backgroundImageUri }}
                 />
               ) : (
                 <Image
@@ -287,8 +287,8 @@ const EditProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
           <View style={styles.profileBackGround}>
             <TouchableOpacity onPress={pickProfileImage}>
-              {image ? (
-                <Image source={{ uri: image }} style={styles.profileImage} />
+              {profileImageUri ? (
+                <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
               ) : (
                 <Image
                   source={{ uri: profileImageUrl }}
@@ -560,10 +560,10 @@ const EditProfileScreen = ({ navigation }) => {
                 }}
                 onPress={() => {
                   {
-                    image ? handleUploadProfile() : null;
+                    profileImageUri ? handleUploadProfile() : null;
                   }
                   {
-                    image2 ? handleUploadBackground() : null;
+                    backgroundImageUri ? handleUploadBackground() : null;
                   }
                   handlePatchUser();
                   navigation.navigate("ProfileScreen");

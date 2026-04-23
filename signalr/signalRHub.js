@@ -50,7 +50,7 @@ export const initHubConnection = async (userId, apiUrl) => {
     // 4. Create new connection if none exists
     if (!hubConnection) {
         hubConnection = new HubConnectionBuilder()
-            .withUrl(`${apiUrl}/chathub/11?userId=${userId}`)
+            .withUrl(`${apiUrl}/chathub/81?userId=${userId}`)
             .withAutomaticReconnect()
             .build();
 

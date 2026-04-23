@@ -791,21 +791,7 @@ export default function HomeScreen({ navigation }) {
             </View>
           )}
 
-          {isLoading ? (
-            <View style={styles.voyagePlaceholderWrapper}>
-              <Shadow
-                distance={8}
-                offset={[0, 0]}
-                startColor="rgba(0,0,0,0.08)"
-                finalColor="rgba(0,0,0,0.13)"
-                style={{ borderRadius: vh(2) }}
-              >
-                <View style={styles.voyagePlaceholder}>
-                  <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
-                </View>
-              </Shadow>
-            </View>
-          ) : (
+          {!isLoading && (
             <VoyageListHorizontal focusMap={focusMap} data={(() => {
               const voyages = initialVoyages.filter(v => v.placeType === 0).map((v, i) => ({ ...v, markerImage: markerImages[i % markerImages.length] }));
               const places = initialVoyages.filter(v => v.placeType > 0).sort((a, b) => b.placeType - a.placeType);

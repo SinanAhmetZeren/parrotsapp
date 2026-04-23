@@ -833,7 +833,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 <Text style={styles.cardTitle}>Add Voyage Images</Text>
               </View>
 
-              <View style={styles2.voyageImagesContainer2}>
+              <View style={voyageImagesStyles.voyageImagesContainer2}>
                 <View style={styles.profileContainer2}>
                   {isUploadingImage ? (
                     <View style={styles.profileImage}>
@@ -897,7 +897,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                                   ? { uri: item.voyageImage }
                                   : require("../assets/placeholder.png")
                               }
-                              style={styles2.voyageImage1}
+                              style={voyageImagesStyles.voyageImage1}
                             />
 
                             {item.addedVoyageImageId && (
@@ -947,7 +947,7 @@ const CreateVoyageScreen = ({ navigation }) => {
 
 export default CreateVoyageScreen;
 
-const styles2 = StyleSheet.create({
+const voyageImagesStyles = StyleSheet.create({
   voyageImagesContainer2: {
     marginTop: vh(1),
     paddingBottom: vh(1),
