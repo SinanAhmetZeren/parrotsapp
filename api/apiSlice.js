@@ -89,7 +89,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["User", "Voyage"],
+  tagTypes: ["User", "Voyage", "Bookmarks"],
   endpoints: (builder) => ({}),
 });
 
@@ -160,7 +160,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["User", "Voyage"],
+  tagTypes: ["User", "Voyage", "Bookmarks"],
   endpoints: (builder) => ({}),
 });
 
@@ -178,7 +178,7 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery,
-  tagTypes: ["User", "Voyage"],
+  tagTypes: ["User", "Voyage", "Bookmarks"],
   endpoints: (builder) => ({}),
 });
 */

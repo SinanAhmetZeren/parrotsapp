@@ -31,6 +31,8 @@ import {
   useLazyGetFavoriteVoyageIdsByUserIdQuery,
   useLazyGetFavoriteVehicleIdsByUserIdQuery,
   updateUserFavorites,
+  useLazyGetBookmarkedUserIdsQuery,
+  setBookmarkedUserIds,
 } from "../slices/UserSlice";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
@@ -77,6 +79,7 @@ const LoginScreen = ({ navigation }) => {
   const [resetPassword] = useResetPasswordMutation();
   const [userNameR, setUserNameR] = useState("");
   const [emailR, setEmailR] = useState("");
+  const [emailForgotPassword, setEmailForgotPassword] = useState("");
   const [passwordR, setPasswordR] = useState("");
   const [confirmPasswordR, setConfirmPasswordR] = useState("");
   const [registerCode, setRegisterCode] = useState("");
@@ -100,6 +103,7 @@ const LoginScreen = ({ navigation }) => {
     useLazyGetFavoriteVehicleIdsByUserIdQuery();
   const [getFavoriteVoyageIdsByUserId] =
     useLazyGetFavoriteVoyageIdsByUserIdQuery();
+  const [getBookmarkedUserIds] = useLazyGetBookmarkedUserIdsQuery();
 
   const handleEmailChange = (text) => {
     setEmail(text);
@@ -136,16 +140,27 @@ const LoginScreen = ({ navigation }) => {
     setIsFocusedUserNameR(false);
   };
 
-  const handleSendResetCode = async () => {
-    requestCode(emailR);
-    setLoginOrRegister("UpdatePassword");
+  const resetAllForms = () => {
+    setUserNameR("");
+    setEmailR("");
+    setEmailForgotPassword("");
+    setPasswordR("");
+    setConfirmPasswordR("");
+    setRegisterCode("");
+    setResetPasswordCode("");
+    setTermsAccepted(false);
     handleFocusAll();
+  };
+
+  const handleSendResetCode = async () => {
+    requestCode(emailForgotPassword);
+    setLoginOrRegister("UpdatePassword");
   };
 
   const handleResetPassword = async () => {
     try {
       const resetPasswordResponse = await resetPassword({
-        email: emailR,
+        email: emailForgotPassword,
         password: passwordR,
         confirmationCode: resetPasswordCode,
       }).unwrap();
@@ -232,6 +247,13 @@ const LoginScreen = ({ navigation }) => {
           favoriteVoyages,
         })
       );
+
+      try {
+        const bookmarkedIds = await getBookmarkedUserIds().unwrap();
+        dispatch(setBookmarkedUserIds(bookmarkedIds || []));
+      } catch {
+        // non-critical, silently ignore
+      }
 
       // console.log("login response - unread: ", loginResponse.unreadMessages);
       // Dispatch login state only if token is present
@@ -320,8 +342,8 @@ const LoginScreen = ({ navigation }) => {
       // then updateasLoggedIn
 
       if (registerResponse.token) {
+        resetAllForms();
         setLoginOrRegister("Register2");
-        handleFocusAll();
         /*
         await dispatch(
           updateAsLoggedIn({
@@ -350,8 +372,8 @@ const LoginScreen = ({ navigation }) => {
       setEmailR("");
 
       if (confirmResponse.token) {
+        resetAllForms();
         setLoginOrRegister("Login");
-        handleFocusAll();
 
         await dispatch(
           updateAsLoggedIn({
@@ -501,8 +523,8 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.forgotPassword}
                   onPress={() => {
+                    resetAllForms();
                     setLoginOrRegister("ForgotPassword");
-                    handleFocusAll();
                   }}
                 >
                   <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
@@ -536,8 +558,8 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.noAccount}
                   onPress={() => {
+                    resetAllForms();
                     setLoginOrRegister("Register1");
-                    handleFocusAll();
                   }}
                 >
                   <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
@@ -590,23 +612,13 @@ const LoginScreen = ({ navigation }) => {
                   ))}
                 </View>
               )}
-              {isFocusedPasswordR && (
-                <View style={[registrationSuccessStyles.usernameToast, { top: -120 }]}>
+              {(isFocusedPasswordR || isFocusedConfirmPasswordR) && (
+                <View style={[registrationSuccessStyles.usernameToast, { top: -144 }]}>
                   {[
                     { label: "At least 8 characters", ok: passwordR.length >= 8 },
                     { label: "One uppercase letter", ok: /[A-Z]/.test(passwordR) },
                     { label: "One lowercase letter", ok: /[a-z]/.test(passwordR) },
                     { label: "One number", ok: /[0-9]/.test(passwordR) },
-                  ].map(({ label, ok }) => (
-                    <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
-                      {ok ? "✓" : "✗"} {label}
-                    </Text>
-                  ))}
-                </View>
-              )}
-              {isFocusedConfirmPasswordR && (
-                <View style={[registrationSuccessStyles.usernameToast, { top: -46 }]}>
-                  {[
                     { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
                   ].map(({ label, ok }) => (
                     <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
@@ -772,8 +784,8 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.noAccount}
                   onPress={() => {
+                    resetAllForms();
                     setLoginOrRegister("Login");
-                    handleFocusAll();
                   }}
                 >
                   <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
@@ -785,21 +797,6 @@ const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             </View>
-            {(passwordR.length > 0 || confirmPasswordR.length > 0) && (
-              <View style={styles.passwordChecklist}>
-                {[
-                  { label: "At least 8 characters", ok: passwordR.length >= 8 },
-                  { label: "One uppercase letter", ok: /[A-Z]/.test(passwordR) },
-                  { label: "One lowercase letter", ok: /[a-z]/.test(passwordR) },
-                  { label: "One number", ok: /[0-9]/.test(passwordR) },
-                  { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
-                ].map(({ label, ok }) => (
-                  <Text key={label} style={[styles.passwordCheckItem, { color: ok ? "#2e7d32" : "#c62828" }]}>
-                    {ok ? "✓" : "✗"} {label}
-                  </Text>
-                ))}
-              </View>
-            )}
           </View>
         </>
       ) : loginOrRegister === "Register2" ? (
@@ -849,8 +846,8 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.noAccount}
                   onPress={() => {
+                    resetAllForms();
                     setLoginOrRegister("Login");
-                    handleFocusAll();
                   }}
                 >
                   <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
@@ -885,8 +882,8 @@ const LoginScreen = ({ navigation }) => {
                 onBlur={() => setIsFocusedEmailR(false)}
                 placeholderTextColor={parrotPlaceholderGrey}
                 placeholder="Email"
-                value={emailR}
-                onChangeText={(text) => handleEmailRChange(text)}
+                value={emailForgotPassword}
+                onChangeText={(text) => setEmailForgotPassword(text)}
               />
 
               <View style={styles.loginContainer}>
@@ -902,8 +899,8 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.noAccount}
                   onPress={() => {
+                    resetAllForms();
                     setLoginOrRegister("Login");
-                    handleFocusAll();
                   }}
                 >
                   <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
@@ -1020,8 +1017,8 @@ const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={styles.noAccount}
                   onPress={() => {
+                    resetAllForms();
                     setLoginOrRegister("Login");
-                    handleFocusAll();
                   }}
                 >
                   <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>

@@ -22,7 +22,8 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
 import { useFocusEffect } from "@react-navigation/native";
-import { useGetUserByIdQuery, useGetUserByPublicIdQuery } from "../slices/UserSlice";
+import { useGetUserByIdQuery, useGetUserByPublicIdQuery, useAddBookmarkMutation, useRemoveBookmarkMutation } from "../slices/UserSlice";
+import { addBookmarkedUserId, removeBookmarkedUserId } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery, useLazyGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery, useLazyGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useRoute } from "@react-navigation/native";
@@ -33,12 +34,19 @@ import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen } from "../assets/color";
 import { skipToken } from '@reduxjs/toolkit/query';
+import { useSelector, useDispatch } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ProfileScreenPublic({ navigation }) {
   const route = useRoute();
   const { userId } = route.params;
   const { publicId } = route.params;
   const { userName } = route.params;
+  const dispatch = useDispatch();
+  const bookmarkedUserIds = useSelector((state) => state.users.bookmarkedUserIds);
+  const [addBookmark] = useAddBookmarkMutation();
+  const [removeBookmark] = useRemoveBookmarkMutation();
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -88,6 +96,27 @@ export default function ProfileScreenPublic({ navigation }) {
 
   const [showFullBio, setShowFullBio] = useState(false);
   const [selected, setSelected] = useState("voyages");
+
+  const internalUserId = userData?.id ?? null;
+  const isBookmarked = internalUserId ? bookmarkedUserIds.includes(internalUserId) : false;
+
+  const handleToggleBookmark = async () => {
+    if (!internalUserId || bookmarkLoading) return;
+    setBookmarkLoading(true);
+    try {
+      if (isBookmarked) {
+        await removeBookmark(internalUserId).unwrap();
+        dispatch(removeBookmarkedUserId(internalUserId));
+      } else {
+        await addBookmark(internalUserId).unwrap();
+        dispatch(addBookmarkedUserId(internalUserId));
+      }
+    } catch {
+      showToast("Bookmark action failed");
+    } finally {
+      setBookmarkLoading(false);
+    }
+  };
 
   const handleShareProfile = async () => {
     try {
@@ -386,6 +415,23 @@ export default function ProfileScreenPublic({ navigation }) {
                     />
                   </TouchableOpacity>
 
+                  <TouchableOpacity
+                    onPress={handleToggleBookmark}
+                    disabled={bookmarkLoading}
+                    style={styles.bookmarkContainer1}
+                  >
+                    {bookmarkLoading ? (
+                      <ActivityIndicator size="small" color={parrotBlue} style={styles.shareContainer2} />
+                    ) : (
+                      <Ionicons
+                        name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                        size={24}
+                        color={parrotBlue}
+                        style={styles.shareContainer2}
+                      />
+                    )}
+                  </TouchableOpacity>
+
                   <View>
                     <View style={styles.innerProfileContainer}>
                       <Feather
@@ -453,17 +499,8 @@ export default function ProfileScreenPublic({ navigation }) {
                   </Text>
                 </View>
                 <View>
-                  <Text style={styles.TitleProfile}>
-                    {userData.title?.length <= 35 ? (
-                      userData.title
-                    ) : (
-                      <>
-                        <Text>{userData.title?.slice(0, 3)}</Text>
-                        {userData.title?.length > 30 ? (
-                          <Text style={styles.clickableText}>...</Text>
-                        ) : null}
-                      </>
-                    )}
+                  <Text style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
+                    {userData.title}
                   </Text>
                 </View>
                 <View>
@@ -734,6 +771,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: vh(0),
     right: vw(32),
+  },
+  bookmarkContainer1: {
+    position: "absolute",
+    bottom: vh(0),
+    right: vw(42),
   },
   shareContainer2: {
     padding: vw(1),

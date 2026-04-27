@@ -49,6 +49,24 @@ export const ConnectSelectionComponent = ({
             </Text>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedFunction(3);
+          }}
+          style={styles.mainBidsContainer5}
+        >
+          <View style={styles.currentBidsAndSeeAll}>
+            <Text
+              style={
+                selectedFunction === 3
+                  ? styles.selectedTitle
+                  : styles.nonSelectedTitle
+              }
+            >
+              Bookmarks
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
     </>
   );
@@ -58,6 +76,7 @@ const styles = StyleSheet.create({
   selectionContainer: {
     flexDirection: "row",
     marginTop: vh(2),
+    width: vw(100),
   },
   currentBidsTitle: {
     fontFamily: "Nunito_800ExtraBold",
@@ -67,32 +86,36 @@ const styles = StyleSheet.create({
   },
   selectedTitle: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 22,
+    fontSize: 20,
     color: parrotLightBlue,
-    paddingLeft: vw(5),
   },
   nonSelectedTitle: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 22,
+    fontSize: 20,
     color: parrotBlueSemiTransparent3,
-    paddingLeft: vw(5),
   },
   currentBidsAndSeeAll: {
-    // marginTop: vh(2),
     flexDirection: "row",
-    paddingRight: vw(10),
+    justifyContent: "center",
+    alignItems: "center",
   },
   mainBidsContainer: {
     borderRadius: vw(5),
   },
   mainBidsContainer3: {
-    borderRadius: vw(5),
-    width: vw(55),
+    flex: 3,
     alignItems: "center",
+    paddingVertical: vh(0.4),
   },
   mainBidsContainer4: {
-    borderRadius: vw(5),
-    width: vw(40),
+    flex: 1,
+    paddingVertical: vh(0.4),
+    alignItems: "center",
+  },
+  mainBidsContainer5: {
+    flex: 2,
+    paddingVertical: vh(0.4),
+    alignItems: "center",
   },
   container: {
     marginTop: vh(5),

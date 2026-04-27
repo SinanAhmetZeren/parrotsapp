@@ -18,7 +18,7 @@ import {
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
-import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
+import { useGetUsersByUsernameQuery, useGetBookmarksQuery } from "../slices/UserSlice";
 import { setUnreadMessages } from "../slices/UserSlice";
 
 import { useSelector } from "react-redux";
@@ -78,6 +78,15 @@ export default function MessagesScreen({ navigation }) {
 
   const [receivedMessageData, setReceivedMessageData] = useState("");
   const [selectedFunction, setSelectedFunction] = useState(1);
+
+  const { data: bookmarksRaw, isLoading: isLoadingBookmarks } = useGetBookmarksQuery(undefined, { skip: selectedFunction !== 3 });
+  const bookmarksData = React.useMemo(() => bookmarksRaw?.map(b => ({
+    id: b.bookmarkedUserId,
+    publicId: b.publicId,
+    userName: b.userName,
+    profileImageUrl: b.profileImageUrl,
+    profileImageThumbnailUrl: b.profileImageThumbnailUrl,
+  })) ?? [], [bookmarksRaw]);
 
   const recipientId = userId;
 
@@ -277,7 +286,7 @@ export default function MessagesScreen({ navigation }) {
               </>
             )}
           </View>
-        ) : (
+        ) : selectedFunction === 2 ? (
           <View style={styles.container}>
             {
               <>
@@ -324,6 +333,25 @@ export default function MessagesScreen({ navigation }) {
                 </View>
               </>
             }
+          </View>
+        ) : (
+          <View style={styles.container}>
+            <ConnectSelectionComponent
+              selectedFunction={selectedFunction}
+              setSelectedFunction={setSelectedFunction}
+            />
+            <ScrollView style={styles.messageTextContainer}>
+              {isLoadingBookmarks ? (
+                <ActivityIndicator size="large" color={parrotBlue} style={{ marginTop: vh(5) }} />
+              ) : bookmarksData.length === 0 ? (
+                <View style={styles.currentBidsAndSeeAll2}>
+                  <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
+                  <Text style={styles.currentBidsTitle2}>No bookmarks yet</Text>
+                </View>
+              ) : (
+                <SearchUsersComponent searchResults={bookmarksData} />
+              )}
+            </ScrollView>
           </View>
         )}
         {toastVisible && (

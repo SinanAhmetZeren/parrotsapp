@@ -18,6 +18,7 @@ const usersSlice = createSlice({
     userFavoriteVoyages: [0],
     userFavoriteVehicles: [0],
     hasAcknowledgedPublicProfile: false,
+    bookmarkedUserIds: [],
   },
   reducers: {
     updateAsLoggedIn: (state, action) => {
@@ -109,6 +110,7 @@ const usersSlice = createSlice({
           error
         );
       });
+      AsyncStorage.removeItem("storedHasAcknowledgedPublicProfile").catch(() => {});
 
     },
     updateStateFromLocalStorage: (state, action) => {
@@ -118,6 +120,7 @@ const usersSlice = createSlice({
       state.userName = userName;
       state.userProfileImage = profileImageUrl;
       state.userProfileImageThumbnail = action.payload.profileImageThumbnailUrl || "";
+      state.hasAcknowledgedPublicProfile = action.payload.hasAcknowledgedPublicProfile ?? false;
       state.isLoggedIn = true;
     },
     updateUserData: (state, action) => {
@@ -165,6 +168,21 @@ const usersSlice = createSlice({
     },
     setAcknowledgedPublicProfile: (state) => {
       state.hasAcknowledgedPublicProfile = true;
+      AsyncStorage.setItem("storedHasAcknowledgedPublicProfile", "true").catch(() => {});
+    },
+    setBookmarkedUserIds: (state, action) => {
+      state.bookmarkedUserIds = action.payload;
+      AsyncStorage.setItem("storedBookmarkedUserIds", JSON.stringify(action.payload)).catch(() => {});
+    },
+    addBookmarkedUserId: (state, action) => {
+      if (!state.bookmarkedUserIds.includes(action.payload)) {
+        state.bookmarkedUserIds = [...state.bookmarkedUserIds, action.payload];
+        AsyncStorage.setItem("storedBookmarkedUserIds", JSON.stringify(state.bookmarkedUserIds)).catch(() => {});
+      }
+    },
+    removeBookmarkedUserId: (state, action) => {
+      state.bookmarkedUserIds = state.bookmarkedUserIds.filter(id => id !== action.payload);
+      AsyncStorage.setItem("storedBookmarkedUserIds", JSON.stringify(state.bookmarkedUserIds)).catch(() => {});
     },
   },
 });
@@ -184,6 +202,9 @@ export const {
   setHubConnected,
   markMessagesRead,
   setAcknowledgedPublicProfile,
+  setBookmarkedUserIds,
+  addBookmarkedUserId,
+  removeBookmarkedUserId,
 } = usersSlice.actions;
 
 
@@ -340,6 +361,29 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
     }),
+    getBookmarkedUserIds: builder.query({
+      query: () => `/api/Bookmark/getBookmarkedUserIds`,
+      transformResponse: (responseData) => responseData.data,
+    }),
+    getBookmarks: builder.query({
+      query: () => `/api/Bookmark/getBookmarks`,
+      transformResponse: (responseData) => responseData.data,
+      providesTags: ["Bookmarks"],
+    }),
+    addBookmark: builder.mutation({
+      query: (bookmarkedUserId) => ({
+        url: `/api/Bookmark/addBookmark/${bookmarkedUserId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Bookmarks"],
+    }),
+    removeBookmark: builder.mutation({
+      query: (bookmarkedUserId) => ({
+        url: `/api/Bookmark/removeBookmark/${bookmarkedUserId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Bookmarks"],
+    }),
     getParrotCoinBalance: builder.query({
       query: (userId) => {
         if (userId) {
@@ -358,6 +402,11 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
 });
 export const {
   useGetUsersByUsernameQuery,
+  useGetBookmarkedUserIdsQuery,
+  useLazyGetBookmarkedUserIdsQuery,
+  useGetBookmarksQuery,
+  useAddBookmarkMutation,
+  useRemoveBookmarkMutation,
   useGetFavoriteVoyageIdsByUserIdQuery,
   useLazyGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
