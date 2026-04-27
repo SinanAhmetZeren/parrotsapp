@@ -343,6 +343,17 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
     setModalVisible(!modalVisible);
   };
   const isHubConnected = useSelector((state) => state.users.isHubConnected);
+  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
+  const [showConnectionPill, setShowConnectionPill] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn || isHubConnected) {
+      setShowConnectionPill(false);
+      return;
+    }
+    const timer = setTimeout(() => setShowConnectionPill(true), 4000);
+    return () => clearTimeout(timer);
+  }, [isLoggedIn, isHubConnected]);
 
   return (
     <>
@@ -350,6 +361,9 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
         <Tab.Screen
           name="Home"
           component={HomeStack}
+          listeners={({ navigation }) => ({
+            blur: () => navigation.navigate("Home", { screen: "HomeScreen" }),
+          })}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -582,7 +596,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
         setModalVisible={setModalVisible}
       />
 
-      {!isHubConnected && (
+      {showConnectionPill && (
         <View style={{ position: "absolute", bottom: 80, alignSelf: "center", backgroundColor: "rgba(30, 111, 217, 0.9)", paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, zIndex: 999 }}>
           <Text style={{ color: "white", fontSize: 13, fontWeight: "600" }}>No connection — retrying...</Text>
         </View>
@@ -612,9 +626,11 @@ function App() {
           const storedUserName = await AsyncStorage.getItem("storedUserName");
           const storedProfileImageUrl = await AsyncStorage.getItem("storedProfileImageUrl");
           const storedProfileImageThumbnailUrl = await AsyncStorage.getItem("storedProfileImageThumbnailUrl");
+          const storedHasAcknowledgedPublicProfile = await AsyncStorage.getItem("storedHasAcknowledgedPublicProfile");
 
-          if (!storedToken) { setIsInitialLoading(false); return; }
-          // Restore Redux state
+          if (!storedToken) return;
+
+          // Restore Redux state immediately — navigate to home screen right away
           dispatch(
             updateStateFromLocalStorage({
               token: storedToken,
@@ -622,42 +638,28 @@ function App() {
               userName: storedUserName,
               profileImageUrl: storedProfileImageUrl,
               profileImageThumbnailUrl: storedProfileImageThumbnailUrl || "",
+              hasAcknowledgedPublicProfile: storedHasAcknowledgedPublicProfile === "true",
             })
           );
-          // Start SignalR
-          await initHubConnection(storedUserId, API_URL);
-          // Initial unread check
-          try {
-            const hasUnread = await invokeHub(
-              "CheckUnreadMessages",
-              storedUserId
-            );
 
+          // Hub init + unread check in background — don't block navigation
+          initHubConnection(storedUserId, API_URL).then(async () => {
+            try {
+              const hasUnread = await invokeHub("CheckUnreadMessages", storedUserId);
+              if (hasUnread) dispatch(setUnreadMessages(true));
+            } catch { }
 
-            if (hasUnread) {
-              dispatch(setUnreadMessages(true));
+            dispatch(setHubConnected(true));
+            reconnectingHandler = () => dispatch(setHubConnected(false));
+            reconnectedHandler = () => dispatch(setHubConnected(true));
+            register_OnReconnecting(reconnectingHandler);
+            register_OnReconnected(reconnectedHandler);
 
-            }
-          } catch { }
-          finally {
-            setIsInitialLoading(false);
-          }
+            unreadHandlerTrue = () => dispatch(setUnreadMessages(true));
+            register_ReceiveUnreadNotification(unreadHandlerTrue);
+          }).catch(() => { });
 
-          // Listen for unread event only
-          unreadHandlerTrue = () => {
-            dispatch(setUnreadMessages(true)); // ReceiveUnreadNotification
-          };
-          register_ReceiveUnreadNotification(unreadHandlerTrue);
-
-          // Global connection state handlers
-          dispatch(setHubConnected(true));
-          reconnectingHandler = () => dispatch(setHubConnected(false));
-          reconnectedHandler = () => dispatch(setHubConnected(true));
-          register_OnReconnecting(reconnectingHandler);
-          register_OnReconnected(reconnectedHandler);
-
-        } catch (error) {
-        }
+        } catch (error) { }
       };
 
       let reconnectingHandler;
@@ -675,7 +677,6 @@ function App() {
 
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
     const userId = useSelector((state) => state.users.userId);
-    const [isInitialLoading, setIsInitialLoading] = useState(true);
     const hasUnreadMessages = useSelector((state) => state.users.unreadMessages);
 
 
@@ -726,20 +727,6 @@ function App() {
       userData,
     ]);
 
-    if (
-      isInitialLoading ||
-      isLoadingFavoriteVehicles ||
-      isLoadingFavoriteVoyages ||
-      isLoadingUser
-    ) {
-      return (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
-      );
-    }
 
     return isLoggedIn ? (
       <TabNavigator isLoading={isLoadingUser} hasUnreadMessages={hasUnreadMessages} />

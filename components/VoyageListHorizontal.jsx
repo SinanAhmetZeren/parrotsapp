@@ -8,7 +8,7 @@ import PlaceCardHorizontal from "./PlaceCardHorizontal";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { parrotLightBlue } from "../assets/color";
 
-export default function VoyageListHorizontal({ data, focusMap }) {
+export default function VoyageListHorizontal({ data, focusMap, navigation }) {
   const renderItem = ({ item }) => {
     if (item.placeType > 0) {
       return (
@@ -41,6 +41,7 @@ export default function VoyageListHorizontal({ data, focusMap }) {
         longitude={item.waypoints[0]?.longitude}
         focusMap={focusMap}
         markerImage={item.markerImage}
+        navigation={navigation}
       />
     );
   };

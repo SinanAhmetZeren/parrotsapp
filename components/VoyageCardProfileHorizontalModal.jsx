@@ -32,19 +32,16 @@ export default function VoyageCardProfileHorizontalModal({
   longitude,
   focusMap,
   setSelectedVoyageModalVisible,
+  navigation: navProp,
 }) {
   const cardImageUrl = `${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
   const formattedEndDate = require("date-fns").format(enddate, "MMM d, yy");
-  const navigation = useNavigation();
+  const navHook = useNavigation();
+  const navigation = navProp || navHook;
 
   const handleNavigation = (voyageId) => {
-    // navigation.navigate("VoyageDetail", { voyageId });
-
-    navigation.navigate("Home", {
-      screen: "VoyageDetail",
-      params: { voyageId: voyageId },
-    });
+    navigation.push("VoyageDetail", { voyageId });
   };
 
   let icon;

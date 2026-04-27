@@ -333,9 +333,10 @@ const EditVehicleScreen = () => {
                     <View style={styles.latorLng}>
                       <TextInput
                         style={styles.textInput5}
-                        placeholder="Enter voyage name"
+                        placeholder="Vehicle name (max 20)"
                         placeholderTextColor={parrotPlaceholderGrey}
                         value={name}
+                        maxLength={20}
                         onChangeText={(text) => setName(text)}
                       />
                     </View>

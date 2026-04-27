@@ -792,7 +792,7 @@ export default function HomeScreen({ navigation }) {
           )}
 
           {!isLoading && (
-            <VoyageListHorizontal focusMap={focusMap} data={(() => {
+            <VoyageListHorizontal navigation={navigation} focusMap={focusMap} data={(() => {
               const voyages = initialVoyages.filter(v => v.placeType === 0).map((v, i) => ({ ...v, markerImage: markerImages[i % markerImages.length] }));
               const places = initialVoyages.filter(v => v.placeType > 0).sort((a, b) => b.placeType - a.placeType);
               const result = [];
@@ -853,6 +853,7 @@ export default function HomeScreen({ navigation }) {
                   latitude={latitudeM}
                   longitude={longitudeM}
                   focusMap={() => { }}
+                  navigation={navigation}
                   setSelectedVoyageModalVisible={
                     setSelectedVoyageModalVisible
                   }

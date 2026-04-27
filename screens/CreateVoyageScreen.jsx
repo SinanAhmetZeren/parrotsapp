@@ -525,10 +525,10 @@ const CreateVoyageScreen = ({ navigation }) => {
                   <View style={styles.latorLng}>
                     <TextInput
                       style={styles.textInput5}
-                      placeholder="Enter voyage name"
+                      placeholder="Voyage name (max 30)"
                       placeholderTextColor={parrotPlaceholderGrey}
                       value={name}
-                      maxLength={50}
+                      maxLength={30}
                       onChangeText={(text) => setName(text)}
                     />
                   </View>
@@ -543,12 +543,12 @@ const CreateVoyageScreen = ({ navigation }) => {
                   <View style={styles.latorLng}>
                     <TextInput
                       style={styles.textInput5}
-                      placeholder="Enter voyage brief"
+                      placeholder="Voyage brief (max 300)"
                       placeholderTextColor={parrotPlaceholderGrey}
                       value={brief}
                       multiline
                       numberOfLines={5}
-                      maxLength={135}
+                      maxLength={300}
                       onChangeText={(text) => setBrief(text)}
                     />
                   </View>

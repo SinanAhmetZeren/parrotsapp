@@ -34,17 +34,16 @@ export default function VoyageCardProfileHorizontal({
   longitude,
   focusMap,
   markerImage,
+  navigation: navProp,
 }) {
   const cardImageUrl = `${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d");
   const formattedEndDate = require("date-fns").format(enddate, "MMM d");
-  const navigation = useNavigation();
+  const navHook = useNavigation();
+  const navigation = navProp || navHook;
 
   const handleNavigation = (voyageId) => {
-    navigation.navigate("Home", {
-      screen: "VoyageDetail",
-      params: { voyageId: voyageId },
-    });
+    navigation.push("VoyageDetail", { voyageId });
   };
 
   let icon;

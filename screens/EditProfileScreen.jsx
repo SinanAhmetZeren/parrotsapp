@@ -523,9 +523,9 @@ const EditProfileScreen = ({ navigation }) => {
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your title"
+                placeholder="Enter your title (max 50 characters)"
                 value={title}
-                maxLength={40}
+                maxLength={50}
                 multiline
                 onChangeText={(text) => {
                   setTitle(text);
@@ -544,7 +544,7 @@ const EditProfileScreen = ({ navigation }) => {
               <Text style={styles.inputDescription}>Bio</Text>
               <TextInput
                 style={styles.textInputBio}
-                placeholder="Enter your bio"
+                placeholder="Enter your bio (max 500 characters)"
                 value={bio}
                 onChangeText={(text) => setBio(text)}
                 multiline

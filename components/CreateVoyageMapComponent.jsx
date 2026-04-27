@@ -412,13 +412,13 @@ const CreateVoyageMapComponent = ({
               <View style={styles.nameInputContainer}>
                 <TextInput
                   style={styles.nameInput}
-                  placeholder="Enter title for waypoint"
+                  placeholder="Waypoint title (max 25)"
                   value={title}
                   multiline
                   placeholderTextColor={parrotPlaceholderGrey}
                   numberOfLines={1}
                   onChangeText={(text) => setTitle(text)}
-                  maxLength={35}
+                  maxLength={25}
                 />
               </View>
             </View>
@@ -432,13 +432,13 @@ const CreateVoyageMapComponent = ({
           <View style={styles.latorLng2}>
             <TextInput
               style={styles.textInputDescription}
-              placeholder="Enter description for waypoint"
+              placeholder="Waypoint description (max 300)"
               value={description}
               placeholderTextColor={parrotPlaceholderGrey}
               multiline
               numberOfLines={3}
               onChangeText={(text) => setDescription(text)}
-              maxLength={200}
+              maxLength={300}
             />
           </View>
         </View>

@@ -38,6 +38,7 @@ import TermsOfUseComponent from "../components/TermsOfUseComponent";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
+  const isHubConnected = useSelector((state) => state.users.isHubConnected);
   const dispatch = useDispatch();
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -181,6 +182,16 @@ export default function ProfileScreen({ navigation }) {
   );
 
 
+
+  const prevHubConnected = React.useRef(isHubConnected);
+  useEffect(() => {
+    if (isHubConnected && prevHubConnected.current === false) {
+      refetchUserData();
+      refetchVoyageData();
+      refetchVehicleData();
+    }
+    prevHubConnected.current = isHubConnected;
+  }, [isHubConnected, refetchUserData, refetchVoyageData, refetchVehicleData]);
 
   useEffect(() => {
     if (isErrorUser || isErrorVehicles || isErrorVoyages) {
@@ -701,17 +712,8 @@ export default function ProfileScreen({ navigation }) {
                   </Text>
                 </View>
                 <View>
-                  <Text style={styles.TitleProfile}>
-                    {userData.title?.length <= 35 ? (
-                      userData.title
-                    ) : (
-                      <>
-                        <Text>{userData.title?.slice(0, 3)}</Text>
-                        {userData.title?.length > 30 ? (
-                          <Text style={styles.clickableText}>...</Text>
-                        ) : null}
-                      </>
-                    )}
+                  <Text style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
+                    {userData.title}
                   </Text>
                 </View>
                 <View>
