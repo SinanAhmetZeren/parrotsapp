@@ -46,6 +46,7 @@ export default function GoogleLoginButton() {
             token: res.token,
             refreshToken: res.refreshToken,
             refreshTokenExpiryTime: res.refreshTokenExpiryTime,
+            unreadMessages: res.unreadMessages,
           })
         );
       } else {

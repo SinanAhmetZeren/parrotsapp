@@ -550,6 +550,16 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
         <Tab.Screen
           name="Messages"
           component={MessageStack}
+          listeners={({ navigation }) => ({
+            tabPress: (e) => {
+              e.preventDefault();
+              const state = navigation.getState();
+              const messagesStackKey = state.routes.find((r) => r.name === "Messages")?.key;
+              if (messagesStackKey) {
+                navigation.navigate("Messages", { screen: "MessagesScreen" });
+              }
+            },
+          })}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
@@ -682,6 +692,18 @@ function App() {
     const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
     const userId = useSelector((state) => state.users.userId);
     const hasUnreadMessages = useSelector((state) => state.users.unreadMessages);
+    const isHubConnectedLocal = useSelector((state) => state.users.isHubConnected);
+
+    useEffect(() => {
+      if (!isLoggedIn || !userId || isHubConnectedLocal) return;
+      initHubConnection(userId, API_URL).then(async () => {
+        try {
+          const hasUnread = await invokeHub("CheckUnreadMessages", userId);
+          if (hasUnread) dispatch(setUnreadMessages(true));
+        } catch { }
+        dispatch(setHubConnected(true));
+      }).catch(() => { });
+    }, [isLoggedIn, userId]);
 
 
     const {

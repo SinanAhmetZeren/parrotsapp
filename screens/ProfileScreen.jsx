@@ -303,26 +303,59 @@ export default function ProfileScreen({ navigation }) {
   //   console.log('VehiclesData:', VehiclesData);
   // }, [userData, VoyagesData, VehiclesData]);
 
-  if (!userData || isLoadingUser || isLoadingVehicles || isLoadingVoyages || isLoading) {
+  if (isLoadingUser || !userData) {
     return (
       <View style={{ flex: 1, backgroundColor: parrotCream }}>
-        {/* background image — matches rectangularBox height vh(35) / imageContainer vh(40) */}
         <View style={{ width: vw(100), height: vh(40), backgroundColor: "#d8d8d8" }} />
-
-        {/* profile circle */}
         <View style={{ left: vw(6), top: vh(3), backgroundColor: parrotCream, paddingBottom: vh(3) }}>
           <View style={{ height: vh(20), width: vh(20), borderRadius: vh(15), backgroundColor: "#e0e0e0" }} />
         </View>
-
-        {/* name bar */}
         <View style={{ paddingHorizontal: 14, paddingTop: vh(1), paddingBottom: vh(1) }}>
           <View style={{ width: vw(45), height: 22, borderRadius: 6, backgroundColor: "#e0e0e0" }} />
         </View>
-
-        {/* bio rectangle — nearly full width */}
         <View style={{ marginHorizontal: 14, height: vh(20), borderRadius: 12, backgroundColor: "#e0e0e0" }} />
-
         <ActivityIndicator size="large" color={parrotBlue} style={{ position: "absolute", top: vh(50), alignSelf: "center" }} />
+
+        {/* Terms of Use */}
+        <View style={styles.buttonsContainerTermsOfUse}>
+          <TouchableOpacity style={styles.publicProfileBox} onPress={() => setTermsModalVisible(true)} activeOpacity={0.8}>
+            <View style={styles.innerProfileContainer}>
+              <MaterialIcons name="web-asset" size={18} color={parrotBlue} />
+              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Terms of Use</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Public Profile / Logout / Edit Profile */}
+        <View style={styles.buttonsContainerRight}>
+          <TouchableOpacity style={styles.publicProfileBox} onPress={() => { }} activeOpacity={0.8}>
+            <View style={styles.innerProfileContainer}>
+              <MaterialIcons name="public" size={18} color={parrotBlue} />
+              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Public Profile</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.logoutBox} onPress={handleLogout} activeOpacity={0.8}>
+            <View style={styles.innerProfileContainer}>
+              <MaterialCommunityIcons name="logout" size={18} color={parrotBlue} />
+              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Logout</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.editProfileBox} onPress={() => navigation.navigate("EditProfile")} activeOpacity={0.8}>
+            <View style={styles.innerProfileContainer}>
+              <MaterialCommunityIcons name="account-edit-outline" size={18} color={parrotBlue} />
+              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Edit Profile</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <Modal animationType="fade" transparent={true} visible={termsModalVisible} onRequestClose={handleCloseTermsModal}>
+          <View style={{ flex: 1, marginTop: vh(8), width: vw(96), height: vh(86), margin: "auto", borderRadius: vh(1), overflow: "hidden" }}>
+            <TermsOfUseComponent />
+          </View>
+          <TouchableOpacity style={styles.closeButtonAndText2} onPress={handleCloseTermsModal}>
+            <Text style={styles.buttonClose2}><AntDesign name="close" size={24} color="white" /></Text>
+          </TouchableOpacity>
+        </Modal>
       </View>
     );
   }
@@ -352,7 +385,7 @@ export default function ProfileScreen({ navigation }) {
     );
   }
 
-  if (isSuccessUser && isSuccessVehicles && isSuccessVoyages) {
+  if (isSuccessUser || userData) {
     const profileImageUrl = `${userData.profileImageUrl}`;
     const backgroundImageUrl = `${userData.backgroundImageUrl}`;
 
@@ -419,10 +452,10 @@ export default function ProfileScreen({ navigation }) {
               >
                 <View
                   style={{
-                    flex: 1,
+                    // flex: 1,
                     marginTop: vh(8),
                     width: vw(96),
-                    height: vh(86),
+                    height: vh(96),
                     margin: "auto",
                     borderRadius: vh(1),
                     overflow: "hidden",
@@ -740,41 +773,36 @@ export default function ProfileScreen({ navigation }) {
               </View>
               {/* ------- BIO ------ */}
 
-              {isLoadingVoyages ? (
-                <ActivityIndicator size="large" />
-              ) : isSuccessVoyages ? (
+              {isLoadingVehicles ? (
+                <ActivityIndicator size="large" color={parrotBlue} style={{ marginTop: vh(3) }} />
+              ) : isSuccessVehicles && VehiclesData?.[0] !== undefined ? (
                 <>
-                  {VehiclesData?.[0] !== undefined ? (
-                    <>
-                      <View style={styles.mainBidsContainer}>
-                        <View style={styles.currentBidsAndSeeAll}>
-                          <Text style={styles.currentBidsTitle}>Vehicles</Text>
-                        </View>
-                      </View>
-                      <View style={styles.vehicleListContainer}>
-                        <VehicleList
-                          style={styles.voyageList}
-                          data={VehiclesData}
-                        />
-                      </View>
-                    </>
-                  ) : null}
+                  <View style={styles.mainBidsContainer}>
+                    <View style={styles.currentBidsAndSeeAll}>
+                      <Text style={styles.currentBidsTitle}>Vehicles</Text>
+                    </View>
+                  </View>
+                  <View style={styles.vehicleListContainer}>
+                    <VehicleList style={styles.voyageList} data={VehiclesData} />
+                  </View>
+                </>
+              ) : null}
 
-                  {VoyagesData !== null ? (
-                    <>
-                      <View style={styles.mainBidsContainer}>
-                        <View style={styles.currentBidsAndSeeAll}>
-                          <Text style={styles.currentBidsTitle}>Voyages</Text>
-                        </View>
-                      </View>
-                      <View style={styles.voyageListContainer}>
-                        <VoyageListVertical
-                          style={styles.voyageList}
-                          data={VoyagesData?.filter(v => v.placeType === 0)}
-                        />
-                      </View>
-                    </>
-                  ) : null}
+              {isLoadingVoyages ? (
+                <ActivityIndicator size="large" color={parrotBlue} style={{ marginTop: vh(3) }} />
+              ) : isSuccessVoyages && VoyagesData !== null ? (
+                <>
+                  <View style={styles.mainBidsContainer}>
+                    <View style={styles.currentBidsAndSeeAll}>
+                      <Text style={styles.currentBidsTitle}>Voyages</Text>
+                    </View>
+                  </View>
+                  <View style={styles.voyageListContainer}>
+                    <VoyageListVertical
+                      style={styles.voyageList}
+                      data={VoyagesData?.filter(v => v.placeType === 0)}
+                    />
+                  </View>
                 </>
               ) : null}
             </View>

@@ -17,9 +17,9 @@ export const ConnectSelectionComponent = ({
           onPress={() => {
             setSelectedFunction(1);
           }}
-          style={styles.mainBidsContainer3}
+          style={styles.recentChatsTab}
         >
-          <View style={styles.currentBidsAndSeeAll}>
+          <View style={styles.tabLabelRow}>
             <Text
               style={
                 selectedFunction === 1
@@ -35,9 +35,9 @@ export const ConnectSelectionComponent = ({
           onPress={() => {
             setSelectedFunction(2);
           }}
-          style={styles.mainBidsContainer4}
+          style={styles.findTab}
         >
-          <View style={styles.currentBidsAndSeeAll}>
+          <View style={styles.tabLabelRow}>
             <Text
               style={
                 selectedFunction === 2
@@ -53,9 +53,9 @@ export const ConnectSelectionComponent = ({
           onPress={() => {
             setSelectedFunction(3);
           }}
-          style={styles.mainBidsContainer5}
+          style={styles.bookmarksTab}
         >
-          <View style={styles.currentBidsAndSeeAll}>
+          <View style={styles.tabLabelRow}>
             <Text
               style={
                 selectedFunction === 3
@@ -76,13 +76,8 @@ const styles = StyleSheet.create({
   selectionContainer: {
     flexDirection: "row",
     marginTop: vh(2),
-    width: vw(100),
-  },
-  currentBidsTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 22,
-    color: parrotLightBlue,
-    paddingLeft: vw(5),
+    width: vw(90),
+    marginHorizontal: "auto",
   },
   selectedTitle: {
     fontFamily: "Nunito_800ExtraBold",
@@ -94,34 +89,27 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: parrotBlueSemiTransparent3,
   },
-  currentBidsAndSeeAll: {
+  tabLabelRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
-  mainBidsContainer: {
-    borderRadius: vw(5),
-  },
-  mainBidsContainer3: {
-    flex: 3,
+  recentChatsTab: {
+    flex: 2,
     alignItems: "center",
     paddingVertical: vh(0.4),
+    // backgroundColor: "rgba(30, 111, 217, 0.1)",
   },
-  mainBidsContainer4: {
+  findTab: {
     flex: 1,
     paddingVertical: vh(0.4),
     alignItems: "center",
+    // backgroundColor: "rgba(76, 175, 80, 0.1)",
   },
-  mainBidsContainer5: {
+  bookmarksTab: {
     flex: 2,
     paddingVertical: vh(0.4),
     alignItems: "center",
-  },
-  container: {
-    marginTop: vh(5),
-    backgroundColor: "white",
-    width: vw(100),
-    alignSelf: "center",
-    height: vh(100),
+    // backgroundColor: "rgba(255, 152, 0, 0.1)",
   },
 });

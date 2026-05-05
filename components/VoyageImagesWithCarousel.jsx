@@ -72,13 +72,14 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
           <FlatList
             ref={flatListRef}
             horizontal
-            data={voyageImages
-              .slice(currentIndex)
-              .concat(voyageImages.slice(0, currentIndex))}
-            initialScrollIndex={0}
-            onScrollToIndexFailed={(error) => {
-              return null;
-            }}
+            data={voyageImages}
+            initialScrollIndex={currentIndex}
+            getItemLayout={(data, index) => ({
+              length: vw(80) + vh(1),
+              offset: (vw(80) + vh(1)) * index,
+              index,
+            })}
+            onScrollToIndexFailed={() => null}
             renderItem={({ item, index }) => (
               <View style={carouselStyles.imageContainerInModal}>
                 <Image
