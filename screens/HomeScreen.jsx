@@ -116,7 +116,8 @@ export default function HomeScreen({ navigation }) {
   const [isCountFiltered, setIsCountFiltered] = useState(false);
   const [isDatesFiltered, setIsDatesFiltered] = useState(false);
   const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isMapLoading, setIsMapLoading] = useState(true);
+  const [isMarkersLoading, setIsMarkersLoading] = useState(false);
   const [initialLatitude, setInitialLatitude] = useState(0);
   const [initialLongitude, setInitialLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
@@ -381,9 +382,9 @@ export default function HomeScreen({ navigation }) {
     }
 
     const fetchLocation = async () => {
-      setIsLoading(true);
+      setIsMapLoading(true);
       await getLocation();
-      setIsLoading(false);
+      setIsMapLoading(false);
     };
 
     fetchLocation();
@@ -401,11 +402,11 @@ export default function HomeScreen({ navigation }) {
       const lon1 = initialLongitude - 0.2;
       const lon2 = initialLongitude + 0.2;
 
-      setIsLoading(true);
+      setIsMarkersLoading(true);
 
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
       setInitialVoyages(voyages.data || []);
-      setIsLoading(false);
+      setIsMarkersLoading(false);
     };
 
     if (initialLatitude !== 0 && initialLongitude !== 0) {
@@ -429,12 +430,11 @@ export default function HomeScreen({ navigation }) {
         const lon1 = initialLongitude - 0.2;
         const lon2 = initialLongitude + 0.2;
 
-        setIsLoading(true);
+        setIsMarkersLoading(true);
 
         const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
-        // console.log("voyages -->>", voyages);
         setInitialVoyages(voyages.data || []);
-        setIsLoading(false);
+        setIsMarkersLoading(false);
       };
 
       await getVoyages();
@@ -724,43 +724,43 @@ export default function HomeScreen({ navigation }) {
 
           <View style={styles.mapWrapper}>
             <View style={styles.mapContainer}>
-              {isLoading ? (
+              {isMapLoading ? (
                 <View style={styles.mapPlaceholder}>
                   <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
                 </View>
-              ) : <MapView
-                style={styles.map}
-                initialRegion={initialRegion}
-                ref={mapRef}
-                onRegionChangeComplete={handleRegionChangeComplete}
-              >
-                {initialVoyages.map((item, index) => {
-                  const waypoint = item.waypoints?.[0];
-                  const latitude = waypoint?.latitude;
-                  const longitude = waypoint?.longitude;
-                  // Skip rendering if coordinates are invalid
-                  // Ensure valid coordinates for marker rendering
-                  if (latitude == null || longitude == null) {
-                    return null;
-                  }
-
-                  const imageIndex = index % markerImages.length;
-                  const markerImage = markerImages[imageIndex];
-
-                  if (item.placeType > 0) {
-                    return <PlaceEggMarker key={`egg-${item.id}`} item={item} onPress={updateSelectedPlaceData} />;
-                  }
-
-                  return (
-                    <MapMarker
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      onPress={updateSelectedVoyageData}
-                    />
-                  );
-                })}
-              </MapView>}
+              ) : (
+                <>
+                  <MapView
+                    style={styles.map}
+                    initialRegion={initialRegion}
+                    ref={mapRef}
+                    onRegionChangeComplete={handleRegionChangeComplete}
+                  >
+                    {!isMarkersLoading && initialVoyages.map((item, index) => {
+                      const waypoint = item.waypoints?.[0];
+                      const latitude = waypoint?.latitude;
+                      const longitude = waypoint?.longitude;
+                      if (latitude == null || longitude == null) return null;
+                      if (item.placeType > 0) {
+                        return <PlaceEggMarker key={`egg-${item.id}`} item={item} onPress={updateSelectedPlaceData} />;
+                      }
+                      return (
+                        <MapMarker
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          onPress={updateSelectedVoyageData}
+                        />
+                      );
+                    })}
+                  </MapView>
+                  {isMarkersLoading && (
+                    <View style={{ position: "absolute", top: 10, alignSelf: "center" }}>
+                      <ActivityIndicator size="small" color={parrotDarkCream} />
+                    </View>
+                  )}
+                </>
+              )}
             </View>
           </View>
 
@@ -782,7 +782,7 @@ export default function HomeScreen({ navigation }) {
             </View>
           ) : null}
 
-          {isLoading ? (
+          {isMarkersLoading ? (
             <View style={{ alignItems: "center", justifyContent: "center", marginTop: vh(3) }}>
               <Image source={require("../assets/parrotslogo.png")} style={styles.logoImageSmall} />
             </View>

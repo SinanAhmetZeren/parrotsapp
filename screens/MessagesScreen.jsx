@@ -214,79 +214,50 @@ export default function MessagesScreen({ navigation }) {
   };
 
 
-  if (hasError) {
-    return (
-      <ScrollView
-        style={styles.mainBidsContainer2}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
-            tintColor={parrotBananaLeafGreen}
+  return (
+    <View style={{ flex: 1 }}>
+      <TokenExpiryGuard />
+
+      {selectedFunction === 1 ? (
+        <View style={styles.container}>
+          <ConnectSelectionComponent
+            selectedFunction={selectedFunction}
+            setSelectedFunction={setSelectedFunction}
           />
-        }
-      >
-        <View style={styles.currentBidsAndSeeAll2}>
-          <Image
-            source={require("../assets/parrotslogo.png")}
-            style={styles.logoImage}
-          />
-          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+          {hasError ? (
+            <ScrollView
+              style={styles.mainBidsContainer2}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+                  tintColor={parrotBananaLeafGreen}
+                />
+              }
+            >
+              <View style={styles.currentBidsAndSeeAll2}>
+                <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
+                <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
+                <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+              </View>
+            </ScrollView>
+          ) : isLoadingMessages ? (
+            <ActivityIndicator size="large" color={parrotBlue} style={{ marginTop: vh(5) }} />
+          ) : messagesData?.length > 0 ? (
+            <View style={styles.flatlist}>
+              <ConversationList data={messagesData} userId={userId} />
+            </View>
+          ) : (
+            <View style={styles.mainBidsContainer2}>
+              <View style={styles.currentBidsAndSeeAll2}>
+                <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
+                <Text style={styles.currentBidsTitle2}>No messages yet...</Text>
+              </View>
+            </View>
+          )}
         </View>
-      </ScrollView>
-    );
-  }
-
-  if (isLoadingMessages) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
-        <ActivityIndicator size="large" color={parrotBlue} />
-      </View>
-    );
-  }
-
-  if (isSuccessMessages) {
-    return (
-      <View style={{ flex: 1 }}>
-        <TokenExpiryGuard />
-
-        {selectedFunction === 1 ? (
-          <View style={styles.container}>
-            {messagesData ? (
-              <>
-                <ConnectSelectionComponent
-                  selectedFunction={selectedFunction}
-                  setSelectedFunction={setSelectedFunction}
-                />
-                <View style={styles.flatlist}>
-                  <ConversationList data={messagesData} userId={userId} />
-                </View>
-              </>
-            ) : (
-              <>
-                <ConnectSelectionComponent
-                  selectedFunction={selectedFunction}
-                  setSelectedFunction={setSelectedFunction}
-                />
-
-                <View style={styles.mainBidsContainer2}>
-                  <View style={styles.currentBidsAndSeeAll2}>
-                    <Image
-                      source={require("../assets/parrotslogo.png")}
-                      style={styles.logoImage}
-                    />
-
-                    <Text style={styles.currentBidsTitle2}>
-                      No messages yet...
-                    </Text>
-                  </View>
-                </View>
-              </>
-            )}
-          </View>
-        ) : selectedFunction === 2 ? (
+      ) : selectedFunction === 2 ? (
           <View style={styles.container}>
             {
               <>
@@ -361,7 +332,6 @@ export default function MessagesScreen({ navigation }) {
         )}
       </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({
