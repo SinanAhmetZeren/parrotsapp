@@ -2,12 +2,13 @@
 import React, { useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateAsLoggedOut } from "../slices/UserSlice";
 import Toast from "react-native-toast-message";
 
 export const TokenExpiryGuard = () => {
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
 
   useFocusEffect(
     useCallback(() => {
@@ -17,14 +18,16 @@ export const TokenExpiryGuard = () => {
         );
 
         if (!expiry) {
-          Toast.show({
-            type: "error",
-            text1: "Session expired",
-            text2: "Please log in again.",
-            autoHide: true,
-            visibilityTime: 3000,
-          });
-          dispatch(updateAsLoggedOut());
+          if (isLoggedIn) {
+            Toast.show({
+              type: "error",
+              text1: "Session expired",
+              text2: "Please log in again.",
+              autoHide: true,
+              visibilityTime: 3000,
+            });
+            dispatch(updateAsLoggedOut());
+          }
           return;
         }
 
@@ -44,7 +47,7 @@ export const TokenExpiryGuard = () => {
       };
 
       checkTokenExpiry();
-    }, [dispatch])
+    }, [dispatch, isLoggedIn])
   );
 
   return;

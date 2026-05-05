@@ -104,13 +104,26 @@ function setupInternalListeners() {
     hubConnection.onclose(() => {
         chatReadyRef.current = false;
         reconnectingHandlers.forEach(h => h());
-        // If automatic reconnect exhausted, retry manually after 30s
-        setTimeout(() => {
-            if (hubConnection && canStart(hubConnection.state) && connectionUserId && currentApiUrl) {
-                initHubConnection(connectionUserId, currentApiUrl);
-            }
-        }, 30000);
+        scheduleReconnect();
     });
+}
+
+function scheduleReconnect() {
+    setTimeout(async () => {
+        if (hubConnection && canStart(hubConnection.state) && connectionUserId && currentApiUrl) {
+            try {
+                await hubConnection.start();
+                chatReadyRef.current = true;
+                reconnectedHandlers.forEach(h => h());
+            } catch {
+                scheduleReconnect();
+            }
+        } else if (hubConnection && (hubConnection.state === HubConnectionState.Connected)) {
+            reconnectedHandlers.forEach(h => h());
+        } else {
+            scheduleReconnect();
+        }
+    }, 30000);
 }
 
 export const register_OnReconnecting = (handler) => {

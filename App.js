@@ -351,7 +351,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
       setShowConnectionPill(false);
       return;
     }
-    const timer = setTimeout(() => setShowConnectionPill(true), 4000);
+    const timer = setTimeout(() => setShowConnectionPill(true), 20000);
     return () => clearTimeout(timer);
   }, [isLoggedIn, isHubConnected]);
 
@@ -617,6 +617,8 @@ function App() {
   function RenderNavigator() {
 
     const dispatch = useDispatch();
+    const [isAuthChecking, setIsAuthChecking] = useState(true);
+
     useEffect(() => {
       let unreadHandlerTrue;
       const checkTokenAndInitHub = async () => {
@@ -628,38 +630,40 @@ function App() {
           const storedProfileImageThumbnailUrl = await AsyncStorage.getItem("storedProfileImageThumbnailUrl");
           const storedHasAcknowledgedPublicProfile = await AsyncStorage.getItem("storedHasAcknowledgedPublicProfile");
 
-          if (!storedToken) return;
+          if (storedToken) {
+            // Restore Redux state immediately — navigate to home screen right away
+            dispatch(
+              updateStateFromLocalStorage({
+                token: storedToken,
+                userId: storedUserId,
+                userName: storedUserName,
+                profileImageUrl: storedProfileImageUrl,
+                profileImageThumbnailUrl: storedProfileImageThumbnailUrl || "",
+                hasAcknowledgedPublicProfile: storedHasAcknowledgedPublicProfile === "true",
+              })
+            );
 
-          // Restore Redux state immediately — navigate to home screen right away
-          dispatch(
-            updateStateFromLocalStorage({
-              token: storedToken,
-              userId: storedUserId,
-              userName: storedUserName,
-              profileImageUrl: storedProfileImageUrl,
-              profileImageThumbnailUrl: storedProfileImageThumbnailUrl || "",
-              hasAcknowledgedPublicProfile: storedHasAcknowledgedPublicProfile === "true",
-            })
-          );
+            // Hub init + unread check in background — don't block navigation
+            initHubConnection(storedUserId, API_URL).then(async () => {
+              try {
+                const hasUnread = await invokeHub("CheckUnreadMessages", storedUserId);
+                if (hasUnread) dispatch(setUnreadMessages(true));
+              } catch { }
 
-          // Hub init + unread check in background — don't block navigation
-          initHubConnection(storedUserId, API_URL).then(async () => {
-            try {
-              const hasUnread = await invokeHub("CheckUnreadMessages", storedUserId);
-              if (hasUnread) dispatch(setUnreadMessages(true));
-            } catch { }
+              dispatch(setHubConnected(true));
+              reconnectingHandler = () => dispatch(setHubConnected(false));
+              reconnectedHandler = () => dispatch(setHubConnected(true));
+              register_OnReconnecting(reconnectingHandler);
+              register_OnReconnected(reconnectedHandler);
 
-            dispatch(setHubConnected(true));
-            reconnectingHandler = () => dispatch(setHubConnected(false));
-            reconnectedHandler = () => dispatch(setHubConnected(true));
-            register_OnReconnecting(reconnectingHandler);
-            register_OnReconnected(reconnectedHandler);
-
-            unreadHandlerTrue = () => dispatch(setUnreadMessages(true));
-            register_ReceiveUnreadNotification(unreadHandlerTrue);
-          }).catch(() => { });
-
+              unreadHandlerTrue = () => dispatch(setUnreadMessages(true));
+              register_ReceiveUnreadNotification(unreadHandlerTrue);
+            }).catch(() => { });
+          }
         } catch (error) { }
+        finally {
+          setIsAuthChecking(false);
+        }
       };
 
       let reconnectingHandler;
@@ -727,6 +731,8 @@ function App() {
       userData,
     ]);
 
+
+    if (isAuthChecking) return null;
 
     return isLoggedIn ? (
       <TabNavigator isLoading={isLoadingUser} hasUnreadMessages={hasUnreadMessages} />

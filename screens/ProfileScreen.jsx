@@ -158,9 +158,9 @@ export default function ProfileScreen({ navigation }) {
         try {
           if (!isActive) return;
 
-          if (!userUninit) await refetchUserData();
-          if (!voyageUninit) await refetchVoyageData();
-          if (!vehicleUninit) await refetchVehicleData();
+          if (!userUninit && userId) await refetchUserData();
+          if (!voyageUninit && userId) await refetchVoyageData();
+          if (!vehicleUninit && userId) await refetchVehicleData();
         } catch (error) {
           console.error("Error refetching profile data:", error);
         }

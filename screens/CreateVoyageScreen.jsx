@@ -76,25 +76,25 @@ const CreateVoyageScreen = ({ navigation }) => {
 
 
 
-  const getRandomString = (length = 6) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-  };
+  // const getRandomString = (length = 6) => {
+  //   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  //   return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  // };
 
-  const getRandomNumberString = (min = 1, max = 999) => {
-    return String(Math.floor(Math.random() * (max - min + 1)) + min);
-  };
+  // const getRandomNumberString = (min = 1, max = 999) => {
+  //   return String(Math.floor(Math.random() * (max - min + 1)) + min);
+  // };
 
 
-  const [name, setName] = useState(getRandomString(6));
-  const [brief, setBrief] = useState(getRandomString(8));
-  const [description, setDescription] = useState(getRandomString(12));
-  const [vacancy, setVacancy] = useState(getRandomNumberString(1, 100));
+  const [name, setName] = useState("");
+  const [brief, setBrief] = useState("");
+  const [description, setDescription] = useState("");
+  const [vacancy, setVacancy] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [lastBidDate, setLastBidDate] = useState("11/11/2111");
-  const [minPrice, setMinPrice] = useState(getRandomNumberString(10, 100));
-  const [maxPrice, setMaxPrice] = useState(getRandomNumberString(101, 500));
+  const [lastBidDate, setLastBidDate] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [createdVoyageImage, setCreatedVoyageImage] = useState(null);
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(true);

@@ -6,7 +6,7 @@ export default function GoogleAuthButtonDummy({ onPress }) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.button}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Image source={gooogleSignin} style={{ height: 23, width: 23 }} />
+        <Image source={gooogleSignin} style={{ height: 30, width: 30 }} />
         <Text style={styles.text}>Sign in with Google</Text>
       </View>
     </TouchableOpacity>

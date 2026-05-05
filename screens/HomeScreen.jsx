@@ -390,6 +390,7 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
+    if (initialLatitude === 0 && initialLongitude === 0) return;
     applyFilter();
   }, [latitude, longitude, latitudeDelta, longitudeDelta]);
 
@@ -781,18 +782,20 @@ export default function HomeScreen({ navigation }) {
             </View>
           ) : null}
 
-          {initialVoyages.filter(v => !v.isPlace).length === 0 ? (
-            <Text></Text>
-          ) : (
-            <View style={styles.mainBidsContainer}>
-              <View style={styles.currentBidsAndSeeAll}>
-                <Text style={styles.currentBidsTitle}>Voyages</Text>
-              </View>
+          {isLoading ? (
+            <View style={{ alignItems: "center", justifyContent: "center", marginTop: vh(3) }}>
+              <Image source={require("../assets/parrotslogo.png")} style={styles.logoImageSmall} />
             </View>
-          )}
-
-          {!isLoading && (
-            <VoyageListHorizontal navigation={navigation} focusMap={focusMap} data={(() => {
+          ) : (
+            <>
+              {initialVoyages.filter(v => !v.isPlace).length > 0 && (
+                <View style={styles.mainBidsContainer}>
+                  <View style={styles.currentBidsAndSeeAll}>
+                    <Text style={styles.currentBidsTitle}>Voyages</Text>
+                  </View>
+                </View>
+              )}
+              <VoyageListHorizontal navigation={navigation} focusMap={focusMap} data={(() => {
               const voyages = initialVoyages.filter(v => v.placeType === 0).map((v, i) => ({ ...v, markerImage: markerImages[i % markerImages.length] }));
               const places = initialVoyages.filter(v => v.placeType > 0).sort((a, b) => b.placeType - a.placeType);
               const result = [];
@@ -803,6 +806,7 @@ export default function HomeScreen({ navigation }) {
               }
               return result;
             })()} />
+            </>
           )}
         </View>
         <Modal

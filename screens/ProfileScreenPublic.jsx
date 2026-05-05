@@ -32,7 +32,7 @@ import { SocialRenderComponentModal } from "../components/SocialRenderComponentM
 import VoyageListVertical from "../components/VoyageListVertical";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotLightBlue, parrotPistachioGreen, parrotRed } from "../assets/color";
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useSelector, useDispatch } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
@@ -421,12 +421,12 @@ export default function ProfileScreenPublic({ navigation }) {
                     style={styles.bookmarkContainer1}
                   >
                     {bookmarkLoading ? (
-                      <ActivityIndicator size="small" color={parrotBlue} style={styles.shareContainer2} />
+                      <ActivityIndicator size="small" color={parrotRed} style={styles.shareContainer2} />
                     ) : (
                       <Ionicons
                         name={isBookmarked ? "bookmark" : "bookmark-outline"}
                         size={24}
-                        color={parrotBlue}
+                        color={parrotRed}
                         style={styles.shareContainer2}
                       />
                     )}

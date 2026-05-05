@@ -1,17 +1,9 @@
-
-// iosClientId: "938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq.apps.googleusercontent.com",
-// androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
-//webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
-
-
-/*
-import { useEffect } from 'react'; // Added React import
-import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, Image, View } from 'react-native'; // Added Text and ActivityIndicator
+import { useEffect } from 'react';
+import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, Image, View } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useGoogleLoginInternalMutation } from "../slices/UserSlice";
 import { useDispatch } from "react-redux";
 import { updateAsLoggedIn } from "../slices/UserSlice";
-import { parrotBlue, parrotDarkBlue, parrotGreen } from '../assets/color';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import gooogleSignin from "../assets/googleg.png";
 
@@ -20,8 +12,7 @@ export default function GoogleLoginButton() {
 
   useEffect(() => {
     GoogleSignin.configure({
-      // Ensure this is your WEB Client ID from Google Console
-      androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
+      // androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
       webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
       offlineAccess: true,
     });
@@ -36,20 +27,15 @@ export default function GoogleLoginButton() {
       try {
         await GoogleSignin.signOut();
       } catch (e) {
-        // Ignore error if no one was signed in
+        // ignore if no one was signed in
       }
 
-      // 1. Initial Sign In to get the user context
       await GoogleSignin.signIn();
 
-      // 2. Fetch the AccessToken explicitly (to match your backend tokeninfo check)
       const { accessToken } = await GoogleSignin.getTokens();
 
-
       if (accessToken) {
-        // 3. Send the accessToken to your google-login endpoint
         const res = await googleLoginInternal(accessToken).unwrap();
-
 
         await dispatch(
           updateAsLoggedIn({
@@ -59,12 +45,9 @@ export default function GoogleLoginButton() {
             profileImageThumbnailUrl: res.profileImageThumbnailUrl || "",
             token: res.token,
             refreshToken: res.refreshToken,
-            refreshTokenExpiryTime:
-              res.refreshTokenExpiryTime,
+            refreshTokenExpiryTime: res.refreshTokenExpiryTime,
           })
         );
-
-
       } else {
         console.error("No Access Token received from Google");
       }
@@ -83,10 +66,9 @@ export default function GoogleLoginButton() {
         <ActivityIndicator color="#fff" />
       ) : (
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={gooogleSignin} style={{ height: 23, width: 23 }} />
+          <Image source={gooogleSignin} style={{ height: 30, width: 30 }} />
           <Text style={styles.text}>Sign in with Google</Text>
-        </ View>
-
+        </View>
       )}
     </TouchableOpacity>
   );
@@ -95,28 +77,22 @@ export default function GoogleLoginButton() {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: "#f2f2f2",
-    padding: 12,
-    borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 200,
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
     paddingVertical: vh(1),
     borderRadius: vh(1.5),
-    width: vw(75),
+    width: vw(65),
   },
   disabled: {
     backgroundColor: '#a1c2fa',
   },
   text: {
     fontSize: 16,
-    fontWeight: "500",
+    fontFamily: "Nunito_600SemiBold",
     color: "black",
     textAlign: "center",
-
-  }
+    marginLeft: 10,
+  },
 });
-
-
-*/
