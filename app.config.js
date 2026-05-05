@@ -5,7 +5,7 @@ export default {
         "name": "Parrots",
         "slug": "parrots",
         "owner": "ahmetzeren",
-        "version": "1.0.2",
+        "version": "1.0.3",
         "scheme": "parrotsapp",
         "orientation": "portrait",
         "icon": "./assets/parrotsiconpadded.png",
@@ -37,7 +37,7 @@ export default {
         },
         "android": {
             "package": "com.zenforest.parrots",
-            "versionCode": 3,
+            "versionCode": 4,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/parrotsiconpadded.png",
                 "backgroundColor": "#ffffff"
