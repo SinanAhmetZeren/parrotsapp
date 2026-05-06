@@ -117,7 +117,7 @@ export default function HomeScreen({ navigation }) {
   const [isDatesFiltered, setIsDatesFiltered] = useState(false);
   const [isVehicleFiltered, setIsVehicleFiltered] = useState(false);
   const [isMapLoading, setIsMapLoading] = useState(true);
-  const [isMarkersLoading, setIsMarkersLoading] = useState(false);
+  const [isMarkersLoading, setIsMarkersLoading] = useState(true);
   const [initialLatitude, setInitialLatitude] = useState(0);
   const [initialLongitude, setInitialLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);

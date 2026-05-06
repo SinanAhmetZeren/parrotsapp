@@ -11,7 +11,7 @@ export default {
         "icon": "./assets/parrotsiconpadded.png",
         "userInterfaceStyle": "light",
         "splash": {
-            "image": "./assets/parrotsiconpadded.png",
+            "image": "./assets/parrotsiconpaddedtransparent.png",
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },
