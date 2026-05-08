@@ -37,6 +37,7 @@ import CreateVoyageScreen from "./screens/CreateVoyageScreen";
 import CreateVehicleScreen from "./screens/CreateVehicleScreen";
 import MessagesScreen from "./screens/MessagesScreen";
 import { ConversationDetailScreen } from "./screens/ConversationDetailScreen";
+import GroupConversationDetail from "./components/GroupConversationDetail";
 import FavoritesScreen from "./screens/FavoritesScreen";
 import LoginScreen from "./screens/LoginScreen";
 import { CreateChoiceModal } from "./components/CreateChoiceModal";
@@ -319,6 +320,11 @@ const MessageStack = () => {
       <Stack.Screen
         name="ConversationDetailScreen"
         component={ConversationDetailScreen}
+      />
+      <Stack.Screen
+        name="GroupConversationDetailScreen"
+        component={GroupConversationDetail}
+        options={{ unmountOnBlur: true }}
       />
       <Stack.Screen
         name="ProfileScreenPublic"

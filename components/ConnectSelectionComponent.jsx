@@ -27,7 +27,25 @@ export const ConnectSelectionComponent = ({
                   : styles.nonSelectedTitle
               }
             >
-              Recent Chats
+              Chats
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedFunction(4);
+          }}
+          style={styles.groupsTab}
+        >
+          <View style={styles.tabLabelRow}>
+            <Text
+              style={
+                selectedFunction === 4
+                  ? styles.selectedTitle
+                  : styles.nonSelectedTitle
+              }
+            >
+              Groups
             </Text>
           </View>
         </TouchableOpacity>
@@ -95,7 +113,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   recentChatsTab: {
-    flex: 2,
+    flex: 1,
     alignItems: "center",
     paddingVertical: vh(0.4),
     // backgroundColor: "rgba(30, 111, 217, 0.1)",
@@ -107,9 +125,15 @@ const styles = StyleSheet.create({
     // backgroundColor: "rgba(76, 175, 80, 0.1)",
   },
   bookmarksTab: {
-    flex: 2,
+    flex: 1.5,
     paddingVertical: vh(0.4),
     alignItems: "center",
     // backgroundColor: "rgba(255, 152, 0, 0.1)",
+  },
+  groupsTab: {
+    flex: 1,
+    paddingVertical: vh(0.4),
+    alignItems: "center",
+    // backgroundColor: "pink"
   },
 });

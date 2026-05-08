@@ -6,6 +6,8 @@ let hubConnection = null;
 let chatReadyRef = { current: false };
 let messageHandlers = [];
 let refetchHandlers = [];
+let groupMessageHandlers = [];
+let groupMessageRefetchHandlers = [];
 let reconnectingHandlers = [];
 let reconnectedHandlers = [];
 let connectionUserId = null;
@@ -101,6 +103,14 @@ function setupInternalListeners() {
         refetchHandlers.forEach(h => h(data));
     });
 
+    hubConnection.on("ReceiveGroupMessage", (data) => {
+        groupMessageHandlers.forEach(h => h(data));
+    });
+
+    hubConnection.on("ReceiveGroupMessageRefetch", (groupId) => {
+        groupMessageRefetchHandlers.forEach(h => h(groupId));
+    });
+
     hubConnection.onclose(() => {
         chatReadyRef.current = false;
         reconnectingHandlers.forEach(h => h());
@@ -145,6 +155,8 @@ export const stopHubConnection = async () => {
         // Remove SignalR internal subscriptions
         hubConnection.off("ReceiveMessage");
         hubConnection.off("ReceiveMessageRefetch");
+        hubConnection.off("ReceiveGroupMessage");
+        hubConnection.off("ReceiveGroupMessageRefetch");
         hubConnection.off("ParrotsChatHubInitialized");
 
         await hubConnection.stop();
@@ -153,6 +165,8 @@ export const stopHubConnection = async () => {
         hubConnection = null;
         messageHandlers = [];
         refetchHandlers = [];
+        groupMessageHandlers = [];
+        groupMessageRefetchHandlers = [];
         reconnectingHandlers = [];
         reconnectedHandlers = [];
         chatReadyRef.current = false;
@@ -176,6 +190,20 @@ export const register_ReceiveMessageRefetch = (handler) => {
 
 export const unregister_ReceiveMessageRefetch = (handler) => {
     refetchHandlers = refetchHandlers.filter(h => h !== handler);
+};
+
+export const register_ReceiveGroupMessage = (handler) => {
+    if (!groupMessageHandlers.includes(handler)) groupMessageHandlers.push(handler);
+};
+export const unregister_ReceiveGroupMessage = (handler) => {
+    groupMessageHandlers = groupMessageHandlers.filter(h => h !== handler);
+};
+
+export const register_ReceiveGroupMessageRefetch = (handler) => {
+    if (!groupMessageRefetchHandlers.includes(handler)) groupMessageRefetchHandlers.push(handler);
+};
+export const unregister_ReceiveGroupMessageRefetch = (handler) => {
+    groupMessageRefetchHandlers = groupMessageRefetchHandlers.filter(h => h !== handler);
 };
 
 export const register_ReceiveUnreadNotification = (handler) => {
