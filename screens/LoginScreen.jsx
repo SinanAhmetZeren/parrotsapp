@@ -37,8 +37,8 @@ import {
 } from "../slices/UserSlice";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
 import { TERMS_VERSION } from "../constants/TermsVersion";
-import GoogleLoginButton from "../components/GoogleAuthButton";
-// import GoogleAuthButtonDummy from "../components/GoogleAuthButtonDummy";
+// import GoogleLoginButton from "../components/GoogleAuthButton";
+import GoogleLoginButton from "../components/GoogleAuthButtonDummy";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotRed, parrotTextDarkBlue, parrotYellow } from "../assets/color";
 
 // import {
