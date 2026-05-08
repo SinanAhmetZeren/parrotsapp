@@ -22,12 +22,17 @@ import {
   StyleSheet,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   Share,
   ActivityIndicator,
   RefreshControl,
+  KeyboardAvoidingView,
+  Platform,
   useWindowDimensions,
 } from "react-native";
+import Toast from "react-native-toast-message";
+import { invokeHub } from "../signalr/signalRHub.js";
 import MapView from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
 import { RenderBidsComponent } from "../components/RenderBidsComponent";
@@ -64,6 +69,32 @@ const VoyageDetailScreen = ({ navigation }) => {
     (state) => state.users.userFavoriteVoyages
   );
   const [bids, setBids] = useState([]);
+  const [broadcastMessage, setBroadcastMessage] = useState("");
+  const [isBroadcasting, setIsBroadcasting] = useState(false);
+
+  const handleBroadcast = async () => {
+    const acceptedUserIds = bids.filter((b) => b.accepted).map((b) => b.userId);
+    console.log("[Broadcast] acceptedUserIds:", acceptedUserIds);
+    console.log("[Broadcast] message:", broadcastMessage.trim());
+    console.log("[Broadcast] senderId (userId):", userId);
+    if (!broadcastMessage.trim() || acceptedUserIds.length === 0) {
+      console.log("[Broadcast] Guard hit - empty message or no accepted users");
+      return;
+    }
+    setIsBroadcasting(true);
+    try {
+      console.log("[Broadcast] Invoking hub BroadcastMessage...");
+      await invokeHub("BroadcastMessage", userId, acceptedUserIds, broadcastMessage.trim());
+      console.log("[Broadcast] Success");
+      setBroadcastMessage("");
+      Toast.show({ type: "success", text1: "Message sent", text2: `Sent to ${acceptedUserIds.length} accepted user(s).`, visibilityTime: 2000, topOffset: 100 });
+    } catch (error) {
+      console.error("[Broadcast] Error:", error);
+      Toast.show({ type: "error", text1: "Failed to send", text2: "Please try again.", visibilityTime: 1500, topOffset: 100 });
+    } finally {
+      setIsBroadcasting(false);
+    }
+  };
   const [hasBidWithUserId, setHasBidWithUserId] = useState(false);
   const [userBid, setUserBid] = useState("");
   const [userBidId, setUserBidId] = useState("");
@@ -237,6 +268,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
 
   const mapRef = useRef(null);
+  const scrollRef = useRef(null);
 
   const focusMap = (latitude, longitude) => {
     if (mapRef.current) {
@@ -355,7 +387,8 @@ const VoyageDetailScreen = ({ navigation }) => {
     return (
       <>
         <TokenExpiryGuard />
-        <ScrollView style={styles.ScrollView}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+        <ScrollView style={styles.ScrollView} ref={scrollRef}>
           <View style={styles.rectangularBox}>
             <Image
               style={styles.imageContainer}
@@ -560,6 +593,31 @@ const VoyageDetailScreen = ({ navigation }) => {
             </View>
           ) : null}
 
+          {ownVoyage && bids.some((b) => b.accepted) && (
+            <View style={styles.broadcastCard}>
+              <View style={styles.broadcastInputRow}>
+                <TextInput
+                  style={styles.broadcastInput}
+                  placeholder="Message accepted users..."
+                  placeholderTextColor="#aaa"
+                  value={broadcastMessage}
+                  onChangeText={setBroadcastMessage}
+                  multiline
+                  onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 400)}
+                />
+                <TouchableOpacity
+                  style={[styles.broadcastSendBtn, (!broadcastMessage.trim() || isBroadcasting) && { opacity: 0.5 }]}
+                  onPress={handleBroadcast}
+                  disabled={!broadcastMessage.trim() || isBroadcasting}
+                >
+                  {isBroadcasting
+                    ? <ActivityIndicator size="small" color="white" />
+                    : <Feather name="send" size={18} color="white" />}
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
           {/* // enter bid */}
 
           <View style={{ paddingBottom: ownVoyage ? vh(11) : vh(11) }}>
@@ -581,6 +639,7 @@ const VoyageDetailScreen = ({ navigation }) => {
             )}
           </View>
         </ScrollView>
+        </KeyboardAvoidingView>
         {toastVisible && (
           <View style={styles.toast}>
             <Text style={styles.toastText}>{toastMessage}</Text>
@@ -594,6 +653,41 @@ const VoyageDetailScreen = ({ navigation }) => {
 export default VoyageDetailScreen;
 
 const styles = StyleSheet.create({
+  broadcastCard: {
+    borderRadius: 20,
+    marginHorizontal: vw(2),
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    padding: vh(2),
+    marginTop: vh(2),
+  },
+  broadcastInputRow: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: vw(2),
+  },
+  broadcastInput: {
+    flex: 1,
+    backgroundColor: "white",
+    borderRadius: vh(2),
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(1),
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 14,
+    maxHeight: vh(12),
+  },
+  broadcastSendBtn: {
+    backgroundColor: parrotBlue,
+    borderRadius: vh(3),
+    width: vw(11),
+    height: vw(11),
+    alignItems: "center",
+    justifyContent: "center",
+  },
   waypointFlatlistContainer: {
     marginRight: vw(3),
     marginBottom: vh(1),

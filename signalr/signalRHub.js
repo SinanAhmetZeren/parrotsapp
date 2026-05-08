@@ -221,12 +221,8 @@ export const unregister_ReceiveUnreadNotification = (handler) => {
 export const isHubReady = () => chatReadyRef.current && hubConnection?.state === HubConnectionState.Connected;
 
 export const invokeHub = async (method, ...args) => {
-    if (!isHubReady()) {
+    if (hubConnection?.state !== HubConnectionState.Connected) {
         throw new Error("Hub not ready");
     }
-    try {
-        return await hubConnection.invoke(method, ...args);
-    } catch (err) {
-        throw err;
-    }
+    return await hubConnection.invoke(method, ...args);
 };
