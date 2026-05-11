@@ -17,6 +17,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Keyboard,
+  BackHandler,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
@@ -212,6 +213,17 @@ export default function MessagesScreen({ navigation }) {
     });
     return unsubscribe;
   }, [navigation]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (selectedFunction === 1) return;
+      const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+        setSelectedFunction(1);
+        return true;
+      });
+      return () => sub.remove();
+    }, [selectedFunction])
+  );
 
   // Refetch when screen gains focus
   useFocusEffect(

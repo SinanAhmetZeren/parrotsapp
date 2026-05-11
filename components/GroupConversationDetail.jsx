@@ -45,7 +45,7 @@ export default function GroupConversationDetail({ route, navigation }) {
 
   const [message, setMessage] = useState("");
   const [messagesToDisplay, setMessagesToDisplay] = useState([]);
-  const [membersModalVisible, setMembersModalVisible] = useState(false);
+  const [membersDropdownVisible, setMembersDropdownVisible] = useState(false);
   const [memberSearch, setMemberSearch] = useState("");
   const [memberQuery, setMemberQuery] = useState("");
   const [members, setMembers] = useState([]);
@@ -63,7 +63,7 @@ export default function GroupConversationDetail({ route, navigation }) {
 
   const { data: groupData } = useGetGroupByIdQuery(
     { groupId, userId: currentUserId },
-    { skip: !groupId || !currentUserId }
+    { skip: !groupId || !currentUserId, refetchOnMountOrArgChange: true }
   );
 
   const { data: groupMessagesData, refetch: refetchMessages } = useGetGroupMessagesQuery(
@@ -79,7 +79,7 @@ export default function GroupConversationDetail({ route, navigation }) {
   const [removeMember] = useRemoveGroupMemberMutation();
   const [exitGroup] = useExitGroupMutation();
 
-  const isCreator = groupData?.creatorId === currentUserId;
+  const isCreator = (groupData?.CreatorId ?? groupData?.creatorId) === currentUserId;
   const memberUserIds = members.map((m) => m.userId);
 
   useEffect(() => {
@@ -87,7 +87,8 @@ export default function GroupConversationDetail({ route, navigation }) {
   }, [groupMessagesData]);
 
   useEffect(() => {
-    if (groupData?.members) setMembers(groupData.members);
+    const m = groupData?.Members ?? groupData?.members;
+    if (m) setMembers(m);
   }, [groupData]);
 
   useEffect(() => {
@@ -157,32 +158,105 @@ export default function GroupConversationDetail({ route, navigation }) {
 
   const handleAddMember = async (userId) => {
     const result = await addMember({ groupId, userId, requesterId: currentUserId });
-    if (result.data?.members) setMembers(result.data.members);
+    const updated = result.data?.Members ?? result.data?.members;
+    if (updated) setMembers(updated);
+    setMemberSearch("");
+    setMemberQuery("");
   };
 
   const handleRemoveMember = async (userId) => {
     const result = await removeMember({ groupId, userId, requesterId: currentUserId });
-    if (result.data?.members) setMembers(result.data.members);
+    const updated = result.data?.Members ?? result.data?.members;
+    if (updated) setMembers(updated);
   };
 
   const handleExitGroup = async () => {
     await exitGroup({ groupId, userId: currentUserId });
-    setMembersModalVisible(false);
+    setMembersDropdownVisible(false);
     navigation.goBack();
   };
+
+  const stackedAvatars = members.slice(0, 3);
+  const extraCount = members.length > 3 ? members.length - 3 : 0;
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Feather name="arrow-left" size={22} color={parrotLightBlue} />
-        </TouchableOpacity>
+        <View style={styles.groupAvatar}>
+          <Text style={styles.groupAvatarText}>{groupName?.charAt(0)?.toUpperCase() ?? "G"}</Text>
+        </View>
         <Text style={styles.headerTitle} numberOfLines={1}>{groupName}</Text>
-        <TouchableOpacity onPress={() => setMembersModalVisible(true)} style={styles.membersBtn}>
-          <Feather name="users" size={22} color={parrotLightBlue} />
+        <TouchableOpacity onPress={() => setMembersDropdownVisible(v => !v)} style={styles.stackedAvatarsBtn}>
+          {stackedAvatars.map((m, i) => (
+            <Image
+              key={m.userId}
+              source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }}
+              style={[styles.stackedAvatar, { marginLeft: i === 0 ? 0 : -vw(3) }]}
+            />
+          ))}
+          {extraCount > 0 && (
+            <View style={[styles.stackedAvatar, styles.extraCountCircle, { marginLeft: -vw(3) }]}>
+              <Text style={styles.extraCountText}>+{extraCount}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
+
+      {/* Members dropdown */}
+      {membersDropdownVisible && (
+        <View style={styles.dropdown}>
+          {isCreator && (
+            <View style={styles.addMemberRow}>
+              <TextInput
+                style={styles.addMemberInput}
+                placeholder="Search by username..."
+                placeholderTextColor={parrotPlaceholderGrey}
+                value={memberSearch}
+                onChangeText={setMemberSearch}
+                onSubmitEditing={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
+              />
+              <TouchableOpacity
+                style={[styles.searchBtn, memberSearch.length < 3 && styles.searchBtnDisabled]}
+                onPress={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
+                disabled={memberSearch.length < 3}
+              >
+                <Text style={styles.searchBtnText}>Search</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          {searchResults?.filter((u) => !memberUserIds.includes(u.id ?? u.Id)).map((u) => (
+            <View key={u.id ?? u.Id} style={styles.memberRow}>
+              <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.memberAvatar} />
+              <Text style={styles.memberName}>{u.userName}</Text>
+              <TouchableOpacity style={styles.addBtn} onPress={() => handleAddMember(u.id ?? u.Id)}>
+                <Text style={styles.addBtnText}>Add</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          <ScrollView style={styles.memberList} nestedScrollEnabled>
+            {members.map((m) => (
+              <View key={m.userId} style={styles.memberRow}>
+                <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.memberAvatar} />
+                <Text style={styles.memberName}>{m.username}</Text>
+                {isCreator && m.userId !== currentUserId && (
+                  <TouchableOpacity onPress={() => handleRemoveMember(m.userId)}>
+                    <Feather name="x" size={18} color={parrotRed} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            ))}
+          </ScrollView>
+
+          {!isCreator && (
+            <TouchableOpacity style={styles.leaveBtn} onPress={handleExitGroup}>
+              <Text style={styles.leaveBtnText}>Leave Group</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
 
       {/* Messages */}
       <ScrollView
@@ -225,75 +299,6 @@ export default function GroupConversationDetail({ route, navigation }) {
         </TouchableOpacity>
       </View>
 
-      {/* Members modal */}
-      <Modal
-        visible={membersModalVisible}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setMembersModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Members</Text>
-              <TouchableOpacity onPress={() => setMembersModalVisible(false)}>
-                <Feather name="x" size={22} color={parrotLightBlue} />
-              </TouchableOpacity>
-            </View>
-
-            {isCreator && (
-              <View style={styles.addMemberRow}>
-                <TextInput
-                  style={styles.addMemberInput}
-                  placeholder="Search by username..."
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  value={memberSearch}
-                  onChangeText={setMemberSearch}
-                  onSubmitEditing={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
-                />
-                <TouchableOpacity
-                  style={[styles.searchBtn, memberSearch.length < 3 && styles.searchBtnDisabled]}
-                  onPress={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
-                  disabled={memberSearch.length < 3}
-                >
-                  <Text style={styles.searchBtnText}>Search</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {searchResults?.filter((u) => !memberUserIds.includes(u.id)).map((u) => (
-              <View key={u.id} style={styles.memberRow}>
-                <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.memberAvatar} />
-                <Text style={styles.memberName}>{u.userName}</Text>
-                <TouchableOpacity style={styles.addBtn} onPress={() => handleAddMember(u.id)}>
-                  <Text style={styles.addBtnText}>Add</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-
-            <ScrollView style={styles.memberList}>
-              {members.map((m) => (
-                <View key={m.userId} style={styles.memberRow}>
-                  <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.memberAvatar} />
-                  <Text style={styles.memberName}>{m.username}</Text>
-                  {isCreator && m.userId !== currentUserId && (
-                    <TouchableOpacity onPress={() => handleRemoveMember(m.userId)}>
-                      <Feather name="x" size={18} color={parrotRed} />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              ))}
-            </ScrollView>
-
-            {!isCreator && (
-              <TouchableOpacity style={styles.leaveBtn} onPress={handleExitGroup}>
-                <Text style={styles.leaveBtnText}>Leave Group</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </Modal>
-
       {toastVisible && (
         <View style={styles.toast}>
           <Text style={styles.toastText}>{toastMessage}</Text>
@@ -316,8 +321,51 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#e8f0f8",
   },
-  backBtn: { paddingRight: vw(3) },
-  membersBtn: { paddingLeft: vw(3) },
+  groupAvatar: {
+    width: vw(9),
+    height: vw(9),
+    borderRadius: vw(4.5),
+    backgroundColor: parrotLightBlue,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: vw(3),
+  },
+  groupAvatarText: {
+    color: "white",
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 16,
+  },
+  stackedAvatarsBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: vw(3),
+  },
+  stackedAvatar: {
+    width: vw(9),
+    height: vw(9),
+    borderRadius: vw(4.5),
+    borderWidth: 2,
+    borderColor: "white",
+  },
+  extraCountCircle: {
+    backgroundColor: parrotLightBlue,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  extraCountText: {
+    color: "white",
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+  },
+  dropdown: {
+    backgroundColor: "white",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e8f0f8",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1.5),
+    maxHeight: vh(45),
+    zIndex: 10,
+  },
   headerTitle: {
     flex: 1,
     fontFamily: "Nunito_800ExtraBold",
@@ -442,7 +490,7 @@ const styles = StyleSheet.create({
   },
   searchBtnDisabled: { opacity: 0.4 },
   searchBtnText: { color: "white", fontFamily: "Nunito_700Bold", fontSize: 14 },
-  memberList: { marginTop: vh(1) },
+  memberList: { marginTop: vh(1), maxHeight: vh(30) },
   memberRow: {
     flexDirection: "row",
     alignItems: "center",
