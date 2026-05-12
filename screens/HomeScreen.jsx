@@ -25,6 +25,7 @@ import { vw, vh } from "react-native-expo-viewport-units";
 
 import { Shadow } from "react-native-shadow-2";
 import FilterCountModal from "../components/FilterCountModal";
+import LoadingLogo from "../components/LoadingLogo";
 import FilterCalendarModal from "../components/FilterCalendarModal";
 import FilterVehicleModal from "../components/FilterVehicleModal";
 import { useSelector, useDispatch } from "react-redux";
@@ -149,7 +150,6 @@ export default function HomeScreen({ navigation }) {
   const imageScale = useRef(new Animated.Value(0.1)).current;
   const imageTranslateX = useRef(new Animated.Value(-vw(38))).current;
   const imageTranslateY = useRef(new Animated.Value(-vh(42))).current;
-
   const openImageModal = () => {
     setImageModalVisible(true);
     imageScale.setValue(0.1);
@@ -782,9 +782,9 @@ export default function HomeScreen({ navigation }) {
             </View>
           ) : null}
 
-          {isMarkersLoading ? (
-            <View style={{ alignItems: "center", justifyContent: "center", marginTop: vh(3) }}>
-              <Image source={require("../assets/parrotslogo.png")} style={styles.logoImageSmall} />
+          {!hasError && isMarkersLoading ? (
+            <View style={{ alignItems: "center", justifyContent: "center", marginTop: vh(8) }}>
+              <LoadingLogo size={80} />
             </View>
           ) : (
             <>

@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from "react-native";
+import LoadingLogo from "../components/LoadingLogo";
 import { vw, vh } from "react-native-expo-viewport-units";
 import FavoriteVoyageListVertical from "../components/FavoriteVoyageListVertical";
 import FavoriteVehicleList from "../components/FavoriteVehicleList";
@@ -90,7 +91,11 @@ export default function FavoritesScreen({ navigation }) {
   // }, [VoyagesData, VehiclesData]);
 
   if (isLoadingVoyages || isLoadingVehicles) {
-    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <LoadingLogo size={160} />
+      </View>
+    );
   }
 
   {

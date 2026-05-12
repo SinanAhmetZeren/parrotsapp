@@ -38,6 +38,7 @@ import { FontAwesome, Feather } from "@expo/vector-icons";
 import { Shadow } from "react-native-shadow-2";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import LoadingLogo from "../components/LoadingLogo";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotPistachioGreen, parrotPlaceholderGrey, parrotLightBlue, parrotRed } from "../assets/color";
 import {
   register_ReceiveMessage,
@@ -320,7 +321,9 @@ export default function MessagesScreen({ navigation }) {
               </View>
             </ScrollView>
           ) : (isLoadingMessages || messagesData === undefined) ? (
-            <ActivityIndicator size="large" color={parrotBlue} style={{ marginTop: vh(5) }} />
+            <View style={{ alignItems: "center", marginTop: vh(10) }}>
+              <LoadingLogo size={160} />
+            </View>
           ) : messagesData?.length > 0 ? (
             <View style={styles.flatlist}>
               <ConversationList
@@ -394,7 +397,9 @@ export default function MessagesScreen({ navigation }) {
           />
           <ScrollView style={styles.messageTextContainer}>
             {isLoadingBookmarks ? (
-              <ActivityIndicator size="large" color={parrotBlue} style={{ marginTop: vh(5) }} />
+              <View style={{ alignItems: "center", marginTop: vh(10) }}>
+                <LoadingLogo size={160} />
+              </View>
             ) : bookmarksData.length === 0 ? (
               <View style={styles.currentBidsAndSeeAll2}>
                 <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />

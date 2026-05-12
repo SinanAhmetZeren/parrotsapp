@@ -35,6 +35,7 @@ import he from "he";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
+import LoadingLogo from "../components/LoadingLogo";
 
 export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
@@ -308,7 +309,7 @@ export default function ProfileScreen({ navigation }) {
   if (isLoadingUser || !userData) {
     return (
       <View style={{ flex: 1, backgroundColor: parrotCream }}>
-        <View style={{ width: vw(100), height: vh(40), backgroundColor: "#d8d8d8" }} />
+        <View style={{ width: vw(100), height: vh(37), backgroundColor: "#d8d8d8" }} />
         <View style={{ left: vw(6), top: vh(3), backgroundColor: parrotCream, paddingBottom: vh(3) }}>
           <View style={{ height: vh(20), width: vh(20), borderRadius: vh(15), backgroundColor: "#e0e0e0" }} />
         </View>
@@ -316,12 +317,12 @@ export default function ProfileScreen({ navigation }) {
           <View style={{ width: vw(45), height: 22, borderRadius: 6, backgroundColor: "#e0e0e0" }} />
         </View>
         <View style={{ marginHorizontal: 14, height: vh(20), borderRadius: 12, backgroundColor: "#e0e0e0" }} />
-        <ActivityIndicator size="large" color={parrotBlue} style={{ position: "absolute", top: vh(50), alignSelf: "center" }} />
+        <LoadingLogo size={160} style={{ position: "absolute", top: vh(40), right: vw(12) }} />
 
         {/* Terms of Use */}
         <View style={styles.buttonsContainerTermsOfUse}>
           <TouchableOpacity style={styles.publicProfileBox} onPress={() => setTermsModalVisible(true)} activeOpacity={0.8}>
-            <View style={styles.innerProfileContainer}>
+            <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialIcons name="web-asset" size={18} color={parrotBlue} />
               <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Terms of Use</Text>
             </View>
@@ -331,19 +332,19 @@ export default function ProfileScreen({ navigation }) {
         {/* Public Profile / Logout / Edit Profile */}
         <View style={styles.buttonsContainerRight}>
           <TouchableOpacity style={styles.publicProfileBox} onPress={() => { }} activeOpacity={0.8}>
-            <View style={styles.innerProfileContainer}>
+            <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialIcons name="public" size={18} color={parrotBlue} />
               <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Public Profile</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.logoutBox} onPress={handleLogout} activeOpacity={0.8}>
-            <View style={styles.innerProfileContainer}>
+            <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialCommunityIcons name="logout" size={18} color={parrotBlue} />
               <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Logout</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.editProfileBox} onPress={() => navigation.navigate("EditProfile")} activeOpacity={0.8}>
-            <View style={styles.innerProfileContainer}>
+            <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialCommunityIcons name="account-edit-outline" size={18} color={parrotBlue} />
               <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Edit Profile</Text>
             </View>
