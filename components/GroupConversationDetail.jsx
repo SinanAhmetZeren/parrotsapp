@@ -28,19 +28,23 @@ import {
   parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotPlaceholderGrey, parrotRed,
 } from "../assets/color";
 
+const GROUP_COLORS = ["#a020a0", "#6a0dad", "#1e88e5", "#29b6f6", "#00bfa5", "#ffa726", "#e53935"];
+const groupColor = (id) => GROUP_COLORS[(id ?? 0) % GROUP_COLORS.length];
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
-  const day = date.getDate();
-  const month = date.toLocaleString("en-US", { month: "short" });
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear().toString().slice(-2);
-  return [`${hours}:${minutes}`, `${day}-${month}-${year}`];
+  return [`${hours}:${minutes}`, `${day}/${month}/${year}`];
 };
 
 export default function GroupConversationDetail({ route, navigation }) {
+  const groupId = route?.params?.groupId;
+  const groupName = route?.params?.groupName;
   console.log("entered GroupConversationDetail");
-  const { groupId, groupName } = route.params;
   const currentUserId = useSelector((state) => state.users.userId);
 
   const [message, setMessage] = useState("");
@@ -68,7 +72,7 @@ export default function GroupConversationDetail({ route, navigation }) {
 
   const { data: groupMessagesData, refetch: refetchMessages } = useGetGroupMessagesQuery(
     { groupId, userId: currentUserId },
-    { skip: !groupId || !currentUserId }
+    { skip: !groupId || !currentUserId, refetchOnMountOrArgChange: true }
   );
 
   const { data: searchResults } = useGetUsersByUsernameQuery(memberQuery, {
@@ -106,11 +110,19 @@ export default function GroupConversationDetail({ route, navigation }) {
   useEffect(() => {
     if (!groupId) return;
     const handler = (incomingGroupId) => {
-      if (incomingGroupId === groupId) refetchMessages();
+      if (String(incomingGroupId) === String(groupId)) refetchMessages();
     };
     register_ReceiveGroupMessageRefetch(handler);
     return () => unregister_ReceiveGroupMessageRefetch(handler);
   }, [groupId, refetchMessages]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetchMessages().then(result => {
+        if (result.data) setMessagesToDisplay(result.data);
+      });
+    }, [refetchMessages])
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -165,8 +177,11 @@ export default function GroupConversationDetail({ route, navigation }) {
   };
 
   const handleRemoveMember = async (userId) => {
+    console.log("handleRemoveMember called, userId:", userId, "groupId:", groupId);
     const result = await removeMember({ groupId, userId, requesterId: currentUserId });
+    console.log("removeMember result:", JSON.stringify(result));
     const updated = result.data?.Members ?? result.data?.members;
+    console.log("updated members:", updated);
     if (updated) setMembers(updated);
   };
 
@@ -183,8 +198,8 @@ export default function GroupConversationDetail({ route, navigation }) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.groupAvatar}>
-          <Text style={styles.groupAvatarText}>{groupName?.charAt(0)?.toUpperCase() ?? "G"}</Text>
+        <View style={[styles.groupAvatar, { backgroundColor: groupColor(groupId) }]}>
+          <Text style={styles.groupAvatarText}>{groupName?.split(" ").map(w => w.charAt(0).toUpperCase()).join("")}</Text>
         </View>
         <Text style={styles.headerTitle} numberOfLines={1}>{groupName}</Text>
         <TouchableOpacity onPress={() => setMembersDropdownVisible(v => !v)} style={styles.stackedAvatarsBtn}>
@@ -196,7 +211,7 @@ export default function GroupConversationDetail({ route, navigation }) {
             />
           ))}
           {extraCount > 0 && (
-            <View style={[styles.stackedAvatar, styles.extraCountCircle, { marginLeft: -vw(3) }]}>
+            <View style={[styles.stackedAvatar, styles.extraCountCircle, { marginLeft: -vw(3), backgroundColor: groupColor(groupId) }]}>
               <Text style={styles.extraCountText}>+{extraCount}</Text>
             </View>
           )}
@@ -242,8 +257,11 @@ export default function GroupConversationDetail({ route, navigation }) {
                 <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.memberAvatar} />
                 <Text style={styles.memberName}>{m.username}</Text>
                 {isCreator && m.userId !== currentUserId && (
-                  <TouchableOpacity onPress={() => handleRemoveMember(m.userId)}>
-                    <Feather name="x" size={18} color={parrotRed} />
+                  <TouchableOpacity
+                    onPress={() => handleRemoveMember(m.userId)}
+                    style={styles.removeBtn}
+                  >
+                    <Feather name="x" size={16} color={parrotRed} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -263,39 +281,65 @@ export default function GroupConversationDetail({ route, navigation }) {
         ref={scrollViewRef}
         style={styles.messagesList}
         contentContainerStyle={{ paddingBottom: vh(2) }}
+        keyboardShouldPersistTaps="handled"
       >
         {messagesToDisplay?.map((msg, index) => {
           const isMe = msg.senderId === currentUserId;
+          const [time, date] = formatDate(msg.dateTime);
+          const prevMsg = messagesToDisplay[index - 1];
+          const prevDate = prevMsg ? formatDate(prevMsg.dateTime)[1] : null;
+          const showDateSeparator = date !== prevDate;
+          const isFirstInGroup = !prevMsg || prevMsg.senderId !== msg.senderId || showDateSeparator;
           return (
-            <View key={index} style={isMe ? styles.msgRight : styles.msgLeft}>
-              <Text style={styles.msgSender}>{isMe ? "You" : msg.senderUsername}</Text>
-              <View style={styles.msgBox}>
-                <Text style={styles.msgText}>{msg.text}</Text>
-              </View>
-              <View style={styles.dateBox}>
-                <Text style={styles.timeDisplay}>{formatDate(msg.dateTime)[0]}{"  "}</Text>
-                <Text style={styles.dateDisplay}>{formatDate(msg.dateTime)[1]}</Text>
-              </View>
+            <View key={index}>
+              {showDateSeparator && (
+                <View style={styles.dateSeparator}>
+                  <Text style={styles.dateSeparatorText}>{date}</Text>
+                </View>
+              )}
+              {isMe ? (
+                <View style={styles.msgRight}>
+                  <Text style={styles.msgText}>{msg.text}</Text>
+                  <Text style={styles.timeDisplay}>{time}</Text>
+                </View>
+              ) : (
+                <View style={styles.msgRowLeft}>
+                  {isFirstInGroup ? (
+                    <Image
+                      source={{ uri: msg.senderProfileThumbnailUrl || msg.senderProfileImageUrl }}
+                      style={styles.msgAvatar}
+                    />
+                  ) : (
+                    <View style={styles.msgAvatarPlaceholder} />
+                  )}
+                  <View style={styles.msgColumn}>
+                    {isFirstInGroup && <Text style={styles.msgSender}>{msg.senderUsername}</Text>}
+                    <View style={styles.msgLeft}>
+                      <Text style={styles.msgText}>{msg.text}</Text>
+                      <Text style={styles.timeDisplay}>{time}</Text>
+                    </View>
+                  </View>
+                </View>
+              )}
             </View>
           );
         })}
       </ScrollView>
 
       {/* Send box */}
-      <View style={[styles.sendRow, { marginBottom: textInputBottomMargin }]}>
+      <View style={[styles.sendRow, { marginBottom: textInputBottomMargin || vh(8) }]}>
         <TextInput
           onChangeText={setMessage}
           style={styles.textInput}
           multiline
-          placeholder="Write a message"
+          placeholder={`Message ${groupName}...`}
           placeholderTextColor={parrotPlaceholderGrey}
           value={message}
           maxLength={500}
+          returnKeyType="default"
         />
-        <TouchableOpacity disabled={!message} onPress={handleSend}>
-          <View style={message ? styles.sendBtn : styles.sendBtnDisabled}>
-            <Feather name="send" size={22} color="white" />
-          </View>
+        <TouchableOpacity disabled={!message.trim()} onPress={handleSend} style={message.trim() ? styles.sendBtn : styles.sendBtnDisabled}>
+          <Feather name="send" size={20} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -325,7 +369,6 @@ const styles = StyleSheet.create({
     width: vw(9),
     height: vw(9),
     borderRadius: vw(4.5),
-    backgroundColor: parrotLightBlue,
     alignItems: "center",
     justifyContent: "center",
     marginRight: vw(3),
@@ -348,7 +391,6 @@ const styles = StyleSheet.create({
     borderColor: "white",
   },
   extraCountCircle: {
-    backgroundColor: parrotLightBlue,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -378,72 +420,118 @@ const styles = StyleSheet.create({
     paddingTop: vh(1),
   },
   msgLeft: {
-    marginTop: vh(1),
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: parrotCream,
     borderRadius: vh(4),
-    width: vw(80),
-    paddingBottom: vh(0.5),
+    maxWidth: vw(70),
+    paddingVertical: vh(0.5),
+    paddingHorizontal: vw(3),
+    gap: vw(2),
+    marginTop: vh(0.4),
   },
   msgRight: {
-    marginTop: vh(1),
-    paddingHorizontal: vh(1),
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: vh(0.5),
+    marginHorizontal: vw(2),
     backgroundColor: parrotCream,
     borderRadius: vh(4),
-    width: vw(80),
+    maxWidth: vw(80),
     alignSelf: "flex-end",
-    paddingBottom: vh(0.5),
+    paddingVertical: vh(0.5),
+    paddingHorizontal: vw(3),
+    gap: vw(2),
+  },
+  msgRowLeft: {
+    flexDirection: "row",
+    alignSelf: "flex-start",
+    marginTop: vh(0.5),
+    marginHorizontal: vw(2),
+    gap: vw(2),
+    maxWidth: vw(85),
+  },
+  msgAvatar: {
+    width: vw(8),
+    height: vw(8),
+    borderRadius: vw(4),
+    marginTop: vh(2),
+    flexShrink: 0,
+  },
+  msgAvatarPlaceholder: {
+    width: vw(8),
+    flexShrink: 0,
+  },
+  msgColumn: {
+    flexDirection: "column",
+    flexShrink: 1,
   },
   msgSender: {
     fontFamily: "Nunito_700Bold",
     color: parrotLightBlue,
-    paddingLeft: vw(4),
-    paddingTop: vh(0.5),
+    fontSize: 12,
+    marginBottom: vh(0.3),
+    marginLeft: vw(3),
   },
-  msgBox: { paddingHorizontal: vw(4) },
-  msgText: { fontFamily: "Nunito_700Bold", color: "#333" },
-  dateBox: {
-    flexDirection: "row",
-    alignSelf: "flex-end",
-    marginTop: vh(0.3),
-    marginRight: vw(3),
-  },
+  msgText: { flexShrink: 1, fontFamily: "Nunito_700Bold", color: "#333", fontSize: 14, marginRight: vw(2) },
   timeDisplay: {
     fontFamily: "Nunito_700Bold",
     color: parrotBlueDarkTransparent2,
     fontSize: 11,
+    flexShrink: 0,
   },
-  dateDisplay: {
+  dateSeparator: {
+    alignSelf: "center",
+    backgroundColor: parrotCream,
+    borderRadius: vh(2),
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(0.4),
+    marginVertical: vh(1),
+  },
+  dateSeparatorText: {
     fontFamily: "Nunito_700Bold",
     color: parrotBlueDarkTransparent,
-    fontSize: 11,
+    fontSize: 12,
   },
   sendRow: {
     flexDirection: "row",
     alignItems: "center",
-    padding: vh(1),
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(1),
     borderTopWidth: 1,
     borderTopColor: "#e8f0f8",
+    backgroundColor: parrotCream,
     gap: vw(2),
   },
   textInput: {
     flex: 1,
-    backgroundColor: parrotCream,
-    minHeight: vh(4.5),
-    maxHeight: vh(12),
-    paddingLeft: vh(1.5),
-    paddingVertical: vh(0.5),
-    borderRadius: vh(2),
+    backgroundColor: "white",
+    minHeight: vh(5),
+    maxHeight: vh(14),
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: vh(4),
     fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "black",
   },
   sendBtn: {
     backgroundColor: parrotLightBlue,
-    padding: vh(1),
-    borderRadius: vh(3),
+    width: vh(5),
+    height: vh(5),
+    borderRadius: vh(2.5),
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   sendBtnDisabled: {
     backgroundColor: parrotBlueSemiTransparent,
-    padding: vh(1),
-    borderRadius: vh(3),
+    width: vh(5),
+    height: vh(5),
+    borderRadius: vh(2.5),
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   modalOverlay: {
     flex: 1,
@@ -503,6 +591,14 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: parrotLightBlue,
     fontSize: 15,
+  },
+  removeBtn: {
+    width: vw(8),
+    height: vw(8),
+    borderRadius: vw(4),
+    backgroundColor: "rgba(220,50,50,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   addBtn: {
     backgroundColor: parrotBlue,

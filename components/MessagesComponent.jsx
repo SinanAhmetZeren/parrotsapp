@@ -12,15 +12,10 @@ const formatDate = (dateString) => {
   const date = new Date(dateString);
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
-  const day = date.getDate();
-  // const month = date.toLocaleString("default", { month: "short" });
-  const month = date.toLocaleString("en-US", { month: "short" });
-  // const year = date.getFullYear();
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear().toString().slice(-2);
-  const formattedDate1 = `${hours}:${minutes}`;
-  const formattedDate2 = `${day}-${month}-${year}`;
-
-  return [formattedDate1, formattedDate2];
+  return [`${hours}:${minutes}`, `${day}/${month}/${year}`];
 };
 
 export default function MessagesComponent({
@@ -34,70 +29,28 @@ export default function MessagesComponent({
 }) {
   const renderMessages = () => {
     if (data && Array.isArray(data) && data.length > 0) {
+      let lastDate = null;
       return data.map((item, index) => {
+        const [time, date] = formatDate(item.dateTime);
+        const showDateSeparator = date !== lastDate;
+        lastDate = date;
+        const isMe = item.senderId === currentUserId;
         return (
           <View key={index}>
-            {item.senderId === currentUserId ? (
+            {showDateSeparator && (
+              <View style={styles.dateSeparator}>
+                <Text style={styles.dateSeparatorText}>{date}</Text>
+              </View>
+            )}
+            {isMe ? (
               <View style={styles.MessageMainContainerRight}>
-                <View style={styles.MessageContainer}>
-                  <View style={styles.imageContainer1}>
-                    <Image
-                      source={{
-                        uri: `${userProfileImage}`,
-                      }}
-                      style={styles.voyageImage1}
-                    />
-                  </View>
-
-                  <View>
-                    <Text style={styles.userName}>{userName}</Text>
-
-                    <View style={styles.messageBox}>
-                      <Text style={styles.messageText}>{item.text}</Text>
-                    </View>
-
-                    <View style={styles.dateBox}>
-                      <Text style={styles.timeDisplay}>
-                        {formatDate(item.dateTime)[0]}
-                        {"  "}
-                      </Text>
-                      <Text style={styles.dateDisplay}>
-                        {formatDate(item.dateTime)[1]}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
+                <Text style={styles.messageText}>{item.text}</Text>
+                <Text style={styles.timeDisplay}>{time}</Text>
               </View>
             ) : (
               <View style={styles.MessageMainContainer}>
-                <View style={styles.MessageContainer}>
-                  <View style={styles.imageContainer1}>
-                    <Image
-                      source={{
-                        uri: `${otherUserProfileImg}`,
-                      }}
-                      style={styles.voyageImage1}
-                    />
-                  </View>
-
-                  <View>
-                    <Text style={styles.userName}>{otherUserName}</Text>
-
-                    <View style={styles.messageBox}>
-                      <Text style={styles.messageText}>{item.text}</Text>
-                    </View>
-
-                    <View style={styles.dateBox}>
-                      <Text style={styles.timeDisplay}>
-                        {formatDate(item.dateTime)[0]}
-                        {"  "}
-                      </Text>
-                      <Text style={styles.dateDisplay}>
-                        {formatDate(item.dateTime)[1]}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
+                <Text style={styles.messageText}>{item.text}</Text>
+                <Text style={styles.timeDisplay}>{time}</Text>
               </View>
             )}
           </View>
@@ -134,60 +87,60 @@ const styles = StyleSheet.create({
     marginRight: vw(2),
     marginLeft: vw(2),
   },
-  messageText: {
-    fontFamily: "Nunito_700Bold",
-    color: parrotInputTextColor,
-  },
-  messageBox: {
-    width: vw(60),
-  },
   MessageMainContainer: {
-    marginTop: vh(1),
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: vh(0.5),
+    marginHorizontal: vw(2),
     backgroundColor: parrotCream,
     borderRadius: vh(4),
-    width: vw(80),
-    paddingBottom: vh(0.5),
+    maxWidth: vw(80),
+    alignSelf: "flex-start",
+    paddingVertical: vh(0.5),
+    paddingHorizontal: vw(3),
+    gap: vw(2),
   },
   MessageMainContainerRight: {
-    marginTop: vh(1),
-    paddingHorizontal: vh(1),
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: vh(0.5),
+    marginHorizontal: vw(2),
     backgroundColor: parrotCream,
     borderRadius: vh(4),
-    width: vw(80),
+    maxWidth: vw(80),
     alignSelf: "flex-end",
-    paddingBottom: vh(0.5),
+    paddingVertical: vh(0.5),
+    paddingHorizontal: vw(3),
+    gap: vw(2),
+  },
+  messageText: {
+    flexShrink: 1,
+    fontFamily: "Nunito_700Bold",
+    color: parrotInputTextColor,
+    fontSize: 14,
+    marginRight: vw(2),
   },
   timeDisplay: {
     fontFamily: "Nunito_700Bold",
     color: parrotBlueDarkTransparent2,
     fontSize: 11,
+    flexShrink: 0,
   },
-  dateDisplay: {
+  dateSeparator: {
+    alignSelf: "center",
+    backgroundColor: parrotCream,
+    borderRadius: vh(2),
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(0.4),
+    marginVertical: vh(1),
+  },
+  dateSeparatorText: {
     fontFamily: "Nunito_700Bold",
     color: parrotBlueDarkTransparent,
-    fontSize: 11,
-  },
-  dateBox: {
-    flexDirection: "row",
-    alignSelf: "flex-end",
-    marginTop: vh(0.3),
-    marginRight: vw(3),
-  },
-  userName: {
-    fontFamily: "Nunito_700Bold",
-    color: parrotLightBlue,
-  },
-  MessageContainer: {
-    flexDirection: "row",
+    fontSize: 12,
   },
   container: {
     backgroundColor: "white",
     marginBottom: vh(2),
-  },
-  voyageImage1: {
-    height: vh(4),
-    width: vh(4),
-    marginRight: vh(1),
-    borderRadius: vh(3),
   },
 });

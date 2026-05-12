@@ -16,6 +16,7 @@ let currentApiUrl = null;
 // Helper to check if we can actually attempt a start
 const canStart = (state) => state === HubConnectionState.Disconnected;
 
+
 // 📱 Handle App State (Foreground/Background)
 AppState.addEventListener("change", async (nextAppState) => {
     if (nextAppState === "active" && hubConnection) {
