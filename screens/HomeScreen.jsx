@@ -351,12 +351,17 @@ export default function HomeScreen({ navigation }) {
 
   const username = useSelector((state) => state.users.userName);
   // 1. GET LOCATION //
+  const FALLBACK_LAT = 52.20551962389507;
+  const FALLBACK_LNG = 0.11798991656591876;
+
   useEffect(() => {
     async function getLocation() {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          showToast("Location permission denied - Enable location access in device settings.");
+          showToast("Using default location, enable location access to see nearby results.");
+          setInitialLatitude(FALLBACK_LAT);
+          setInitialLongitude(FALLBACK_LNG);
           return;
         }
         let location;
@@ -364,20 +369,20 @@ export default function HomeScreen({ navigation }) {
           location = await Location.getCurrentPositionAsync({});
         } catch (error) {
           console.error("Error getting user location :", error);
-          showToast("Could not get location - Check your GPS settings.");
+          showToast("Using default location, enable location access to see nearby results.");
+          setInitialLatitude(FALLBACK_LAT);
+          setInitialLongitude(FALLBACK_LNG);
           return;
         }
-        // console.log(location, "location");
         const lat = location?.coords?.latitude;
         const lon = location?.coords?.longitude;
-
-        //const lat = 52.2;  // cambridge
-        //const lon = 0.13;  // cambridge
         setInitialLatitude(lat);
         setInitialLongitude(lon);
       } catch (error) {
         console.error("Error getting user location :", error);
-        showToast("Could not get location - Check your GPS settings.");
+        showToast("Using default location, enable location access to see nearby results.");
+        setInitialLatitude(FALLBACK_LAT);
+        setInitialLongitude(FALLBACK_LNG);
       }
     }
 

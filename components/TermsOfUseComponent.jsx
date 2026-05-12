@@ -333,6 +333,21 @@ export default function TermsOfUseComponent() {
                         Parrots reserves the right to delete messages or conversations at its discretion, including for policy enforcement, storage management purposes, or upon account deletion. Messages may be deleted after a retention period of up to 2 years.
                     </Text>
                 </View>
+
+                <View style={{ marginTop: 12 }}>
+                    <Text style={styles.sectionTitle2}>e. Group Conversations</Text>
+                    <Text style={styles.paragraph}>
+                        Parrots supports group conversations that allow multiple users to communicate within a shared chat. The following terms apply to group conversations:
+                    </Text>
+                    <Text style={styles.paragraph}>
+                        {"\n"}• Group conversations can be created by any registered user.
+                        {"\n"}• The creator of a group conversation is designated as the group administrator and may add or remove members at any time.
+                        {"\n"}• All members of a group conversation, including those added after the conversation has begun, have access to the full message history of that group from its creation.
+                        {"\n"}• By accepting an invitation to join a group conversation, users acknowledge and consent to viewing messages sent before their membership.
+                        {"\n"}• Group administrators are responsible for managing membership and ensuring appropriate use of the group conversation feature.
+                        {"\n"}• Parrots does not monitor group conversations but reserves the right to remove content or terminate group conversations that violate our policies.
+                    </Text>
+                </View>
             </View>
 
             {/* 7. Prohibited */}

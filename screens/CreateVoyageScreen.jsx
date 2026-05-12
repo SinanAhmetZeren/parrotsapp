@@ -564,10 +564,10 @@ const CreateVoyageScreen = ({ navigation }) => {
                     <TextInput
                       style={[styles.textInput5, { minHeight: vh(12), textAlignVertical: "top" }]}
                       multiline
-                      placeholder="Enter voyage description"
+                      placeholder="Voyage description (max 10,000 characters)"
                       placeholderTextColor={parrotPlaceholderGrey}
                       value={description}
-                      onChangeText={(text) => setDescription(text)}
+                      onChangeText={(text) => setDescription(text.slice(0, 10000))}
                     />
                   </View>
                 </View>
