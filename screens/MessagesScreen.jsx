@@ -397,20 +397,22 @@ export default function MessagesScreen({ navigation }) {
             selectedFunction={selectedFunction}
             setSelectedFunction={setSelectedFunction}
           />
-          <ScrollView style={styles.messageTextContainer}>
-            {isLoadingBookmarks ? (
-              <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                <LoadingLogo size={220} />
-              </View>
-            ) : bookmarksData.length === 0 ? (
-              <View style={styles.currentBidsAndSeeAll2}>
-                <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
-                <Text style={styles.currentBidsTitle2}>No bookmarks yet</Text>
-              </View>
-            ) : (
-              <SearchUsersComponent searchResults={bookmarksData} />
-            )}
-          </ScrollView>
+          {isLoadingBookmarks ? (
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+              <LoadingLogo size={220} />
+            </View>
+          ) : (
+            <ScrollView style={styles.messageTextContainer}>
+              {bookmarksData.length === 0 ? (
+                <View style={styles.currentBidsAndSeeAll2}>
+                  <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
+                  <Text style={styles.currentBidsTitle2}>No bookmarks yet</Text>
+                </View>
+              ) : (
+                <SearchUsersComponent searchResults={bookmarksData} />
+              )}
+            </ScrollView>
+          )}
         </View>
       ) : (
         /* Groups tab — create new group */
