@@ -89,6 +89,8 @@ export default function MessagesScreen({ navigation }) {
   const [groupMemberSearch, setGroupMemberSearch] = useState("");
   const [groupMemberQuery, setGroupMemberQuery] = useState("");
   const [addedMembers, setAddedMembers] = useState([]);
+  const [addingMemberId, setAddingMemberId] = useState(null);
+  const [removingMemberId, setRemovingMemberId] = useState(null);
   const [firstGroupMessage, setFirstGroupMessage] = useState("");
   const [createGroup] = useCreateGroupMutation();
   const [addGroupMember] = useAddGroupMemberMutation();
@@ -441,7 +443,8 @@ export default function MessagesScreen({ navigation }) {
               {/* 2. Search bar + floating results */}
               <View style={styles.groupSearchWrapper}>
                 <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.13)" style={{ borderRadius: vh(6) }}>
-                  <View style={[styles.searchBar, { width: vw(85), backgroundColor: "white" }]}>
+                  <View style={[styles.searchBar,
+                  { width: vw(85), backgroundColor: "white" }]}>
                     <TextInput
                       style={styles.textinputStyle}
                       placeholder="Search users to add..."
@@ -478,8 +481,24 @@ export default function MessagesScreen({ navigation }) {
                                       <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.pillAvatar} />
                                       <Text style={styles.pillName}>{u.userName}</Text>
                                     </View>
-                                    <TouchableOpacity style={styles.addMemberBtn} onPress={() => { setAddedMembers((prev) => [...prev, u]); setGroupDropdownVisible(false); setGroupMemberSearch(""); setGroupMemberQuery(""); }}>
-                                      <Text style={styles.addMemberBtnText}>Add</Text>
+                                    <TouchableOpacity
+                                      style={addingMemberId === (u.Id ?? u.id) ? styles.addedMemberBtn : styles.addMemberBtn}
+                                      disabled={!!addingMemberId}
+                                      onPress={() => {
+                                        const uid = u.Id ?? u.id;
+                                        setAddingMemberId(uid);
+                                        setTimeout(() => {
+                                          setAddedMembers((prev) => [...prev, u]);
+                                          setGroupDropdownVisible(false);
+                                          setGroupMemberSearch("");
+                                          setGroupMemberQuery("");
+                                          setAddingMemberId(null);
+                                        }, 600);
+                                      }}
+                                    >
+                                      {addingMemberId === (u.Id ?? u.id)
+                                        ? <Feather name="check" size={18} color="#4caf50" />
+                                        : <Feather name="plus" size={18} color={parrotBlue} />}
                                     </TouchableOpacity>
                                   </View>
                                 </Shadow>
@@ -515,8 +534,21 @@ export default function MessagesScreen({ navigation }) {
                           <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.pillAvatar} />
                           <Text style={styles.pillName}>{m.userName}</Text>
                         </View>
-                        <TouchableOpacity style={styles.pillAction} onPress={() => setAddedMembers((prev) => prev.filter((x) => (x.Id ?? x.id) !== (m.Id ?? m.id)))}>
-                          <Feather name="x" size={18} color={parrotRed} />
+                        <TouchableOpacity
+                          style={styles.pillAction}
+                          disabled={!!removingMemberId}
+                          onPress={() => {
+                            const mid = m.Id ?? m.id;
+                            setRemovingMemberId(mid);
+                            setTimeout(() => {
+                              setAddedMembers((prev) => prev.filter((x) => (x.Id ?? x.id) !== mid));
+                              setRemovingMemberId(null);
+                            }, 600);
+                          }}
+                        >
+                          {removingMemberId === (m.Id ?? m.id)
+                            ? <ActivityIndicator size={18} color={parrotRed} />
+                            : <Feather name="x" size={18} color={parrotRed} />}
                         </TouchableOpacity>
                       </View>
                     </Shadow>
@@ -659,7 +691,7 @@ const styles = StyleSheet.create({
     left: vw(5),
     right: vw(5),
     maxHeight: vh(50),
-    backgroundColor: parrotCream,
+    // backgroundColor: parrotCream,
     borderRadius: vh(2),
     padding: vh(1),
   },
@@ -707,15 +739,20 @@ const styles = StyleSheet.create({
     marginVertical: vh(1),
   },
   addMemberBtn: {
-    backgroundColor: parrotBlue,
-    borderRadius: vh(2),
-    paddingHorizontal: vw(3),
-    paddingVertical: vh(0.5),
+    width: vw(9),
+    height: vw(9),
+    borderRadius: vw(4.5),
+    backgroundColor: "rgba(0,119,234,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  addMemberBtnText: {
-    color: "white",
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
+  addedMemberBtn: {
+    width: vw(9),
+    height: vw(9),
+    borderRadius: vw(4.5),
+    backgroundColor: "rgba(76,175,80,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   groupSendRow: {
     flexDirection: "row",
@@ -778,9 +815,12 @@ const styles = StyleSheet.create({
     marginLeft: vh(2),
   },
   pillAction: {
-    padding: vh(1),
-    borderRadius: vh(4),
-    backgroundColor: "rgba(30, 111, 217, 0.08)",
+    width: vw(9),
+    height: vw(9),
+    borderRadius: vw(4.5),
+    backgroundColor: "rgba(220,50,50,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
     marginLeft: vh(1),
   },
 });

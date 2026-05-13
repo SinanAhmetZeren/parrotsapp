@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, Image, StyleSheet,
-  ScrollView, Modal, Keyboard,
+  ScrollView, Modal, Keyboard, ActivityIndicator,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
@@ -57,6 +57,9 @@ export default function GroupConversationDetail({ route, navigation }) {
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMsg] = useState("");
+  const [addingUserId, setAddingUserId] = useState(null);
+  const [addedUserId, setAddedUserId] = useState(null);
+  const [removingUserId, setRemovingUserId] = useState(null);
   const scrollViewRef = useRef();
   const sendTimestampsRef = useRef([]);
 
@@ -174,20 +177,25 @@ export default function GroupConversationDetail({ route, navigation }) {
   };
 
   const handleAddMember = async (userId) => {
+    setAddingUserId(userId);
     const result = await addMember({ groupId, userId, requesterId: currentUserId });
     const updated = result.data?.Members ?? result.data?.members;
-    if (updated) setMembers(updated);
-    setMemberSearch("");
-    setMemberQuery("");
+    setAddingUserId(null);
+    setAddedUserId(userId);
+    setTimeout(() => {
+      if (updated) setMembers(updated);
+      setMemberSearch("");
+      setMemberQuery("");
+      setAddedUserId(null);
+    }, 2000);
   };
 
   const handleRemoveMember = async (userId) => {
-    console.log("handleRemoveMember called, userId:", userId, "groupId:", groupId);
+    setRemovingUserId(userId);
     const result = await removeMember({ groupId, userId, requesterId: currentUserId });
-    console.log("removeMember result:", JSON.stringify(result));
     const updated = result.data?.Members ?? result.data?.members;
-    console.log("updated members:", updated);
     if (updated) setMembers(updated);
+    setRemovingUserId(null);
   };
 
   const handleExitGroup = async () => {
@@ -254,12 +262,16 @@ export default function GroupConversationDetail({ route, navigation }) {
             </View>
           )}
 
-          {searchResults?.filter((u) => !memberUserIds.includes(u.id ?? u.Id)).map((u) => (
+          {searchResults?.filter((u) => !memberUserIds.includes(u.id ?? u.Id) || addedUserId === (u.id ?? u.Id)).map((u) => (
             <View key={u.id ?? u.Id} style={styles.memberRow}>
               <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.memberAvatar} />
               <Text style={styles.memberName}>{u.userName}</Text>
-              <TouchableOpacity style={styles.addBtn} onPress={() => handleAddMember(u.id ?? u.Id)}>
-                <Text style={styles.addBtnText}>Add</Text>
+              <TouchableOpacity style={addedUserId === (u.id ?? u.Id) ? styles.addedBtn : styles.addBtn} disabled={!!addingUserId || !!addedUserId} onPress={() => handleAddMember(u.id ?? u.Id)}>
+                {addingUserId === (u.id ?? u.Id)
+                  ? <ActivityIndicator size={18} color={parrotBlue} />
+                  : addedUserId === (u.id ?? u.Id)
+                    ? <Feather name="check" size={18} color="#4caf50" />
+                    : <Feather name="plus" size={18} color={parrotBlue} />}
               </TouchableOpacity>
             </View>
           ))}
@@ -272,9 +284,12 @@ export default function GroupConversationDetail({ route, navigation }) {
                 {isCreator && m.userId !== currentUserId && (
                   <TouchableOpacity
                     onPress={() => handleRemoveMember(m.userId)}
+                    disabled={!!removingUserId}
                     style={styles.removeBtn}
                   >
-                    <Feather name="x" size={16} color={parrotRed} />
+                    {removingUserId === m.userId
+                      ? <ActivityIndicator size={18} color={parrotRed} />
+                      : <Feather name="x" size={18} color={parrotRed} />}
                   </TouchableOpacity>
                 )}
               </View>
@@ -612,12 +627,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   addBtn: {
-    backgroundColor: parrotBlue,
-    borderRadius: vh(2),
-    paddingHorizontal: vw(3),
-    paddingVertical: vh(0.5),
+    width: vw(8),
+    height: vw(8),
+    borderRadius: vw(4),
+    backgroundColor: "rgba(0,119,234,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  addBtnText: { color: "white", fontFamily: "Nunito_700Bold", fontSize: 13 },
+  addedBtn: {
+    width: vw(8),
+    height: vw(8),
+    borderRadius: vw(4),
+    backgroundColor: "rgba(76,175,80,0.12)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   leaveBtn: {
     backgroundColor: parrotRed,
     borderRadius: vh(2),
