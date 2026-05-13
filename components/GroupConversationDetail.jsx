@@ -122,7 +122,11 @@ export default function GroupConversationDetail({ route, navigation }) {
       refetchMessages().then(result => {
         if (result.data) setMessagesToDisplay(result.data);
       });
-    }, [refetchMessages])
+      if (isHubReady()) invokeHub("EnterGroupConversationPage", currentUserId, String(groupId));
+      return () => {
+        if (isHubReady()) invokeHub("LeaveGroupConversationPage", currentUserId);
+      };
+    }, [refetchMessages, currentUserId, groupId])
   );
 
   useFocusEffect(
