@@ -310,43 +310,59 @@ export default function ProfileScreen({ navigation }) {
     return (
       <View style={{ flex: 1, backgroundColor: parrotCream }}>
         <View style={{ width: vw(100), height: vh(37), backgroundColor: "#d8d8d8" }} />
-        <View style={{ left: vw(6), top: vh(3), backgroundColor: parrotCream, paddingBottom: vh(3) }}>
+        <View style={{ left: vw(6), top: vh(3), backgroundColor: parrotCream, paddingBottom: vh(3), opacity: 0 }}>
           <View style={{ height: vh(20), width: vh(20), borderRadius: vh(15), backgroundColor: "#e0e0e0" }} />
         </View>
         <View style={{ paddingHorizontal: 14, paddingTop: vh(1), paddingBottom: vh(1) }}>
           <View style={{ width: vw(45), height: 22, borderRadius: 6, backgroundColor: "#e0e0e0" }} />
         </View>
         <View style={{ marginHorizontal: 14, height: vh(20), borderRadius: 12, backgroundColor: "#e0e0e0" }} />
-        <LoadingLogo size={160} style={{ position: "absolute", top: vh(40), right: vw(12) }} />
+        <LoadingLogo size={240}
+          style={{
+            position: "absolute", top: vh(32) + 10,
+            left: vw(50) - 120
+          }} />
 
         {/* Terms of Use */}
         <View style={styles.buttonsContainerTermsOfUse}>
           <TouchableOpacity style={styles.publicProfileBox} onPress={() => setTermsModalVisible(true)} activeOpacity={0.8}>
             <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialIcons name="web-asset" size={18} color={parrotBlue} />
-              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Terms of Use</Text>
+              <Text style={{
+                fontFamily: "Nunito_700Bold", lineHeight: 22,
+                marginLeft: vw(2), fontSize: 11
+              }}>Terms of Use</Text>
             </View>
           </TouchableOpacity>
         </View>
 
         {/* Public Profile / Logout / Edit Profile */}
-        <View style={styles.buttonsContainerRight}>
+        <View style={{ ...styles.buttonsContainerRight, top: vh(23) }}>
           <TouchableOpacity style={styles.publicProfileBox} onPress={() => { }} activeOpacity={0.8}>
             <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialIcons name="public" size={18} color={parrotBlue} />
-              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Public Profile</Text>
+              <Text style={{
+                fontFamily: "Nunito_700Bold", lineHeight: 22,
+                marginLeft: vw(2), fontSize: 11
+              }}>Public Profile</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.logoutBox} onPress={handleLogout} activeOpacity={0.8}>
             <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialCommunityIcons name="logout" size={18} color={parrotBlue} />
-              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Logout</Text>
+              <Text style={{
+                fontFamily: "Nunito_700Bold", lineHeight: 22,
+                marginLeft: vw(2), fontSize: 11
+              }}>Logout</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.editProfileBox} onPress={() => navigation.navigate("EditProfile")} activeOpacity={0.8}>
             <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialCommunityIcons name="account-edit-outline" size={18} color={parrotBlue} />
-              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11 }}>Edit Profile</Text>
+              <Text style={{
+                fontFamily: "Nunito_700Bold", lineHeight: 22,
+                marginLeft: vw(2), fontSize: 11
+              }}>Edit Profile</Text>
             </View>
           </TouchableOpacity>
         </View>

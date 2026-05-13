@@ -116,13 +116,13 @@ const styles = StyleSheet.create({
   messageText: {
     flexShrink: 1,
     fontFamily: "Nunito_700Bold",
-    color: parrotInputTextColor,
+    color: "#333",
     fontSize: 14,
     marginRight: vw(2),
   },
   timeDisplay: {
     fontFamily: "Nunito_700Bold",
-    color: parrotBlueDarkTransparent2,
+    color: "#aaa",
     fontSize: 11,
     flexShrink: 0,
   },
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   },
   dateSeparatorText: {
     fontFamily: "Nunito_700Bold",
-    color: parrotBlueDarkTransparent,
+    color: "#aaa",
     fontSize: 12,
   },
   container: {

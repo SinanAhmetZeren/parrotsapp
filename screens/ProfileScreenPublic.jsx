@@ -18,6 +18,7 @@ import {
   Share
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import LoadingLogo from "../components/LoadingLogo";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
@@ -321,8 +322,32 @@ export default function ProfileScreenPublic({ navigation }) {
 
   if (isLoading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" style={{ top: vh(30) }} />
+      <View style={{ flex: 1, backgroundColor: parrotCream }}>
+        <View style={{ width: vw(100), height: vh(37), backgroundColor: "#d8d8d8" }} />
+        <View style={{ left: vw(6), top: vh(3), backgroundColor: parrotCream, paddingBottom: vh(3), opacity: 0 }}>
+          <View style={{ height: vh(20), width: vh(20), borderRadius: vh(15), backgroundColor: "#e0e0e0" }} />
+        </View>
+        <View style={{ paddingHorizontal: 14, paddingTop: vh(1), paddingBottom: vh(1) }}>
+          <View style={{ width: vw(45), height: 22, borderRadius: 6, backgroundColor: "#e0e0e0" }} />
+        </View>
+        <View style={{ marginHorizontal: 14, height: vh(20), borderRadius: 12, backgroundColor: "#e0e0e0" }} />
+        <LoadingLogo size={240}
+          style={{
+            position: "absolute",
+            top: vh(32) + 10,
+            left: vw(50) - 120
+          }} />
+        <View style={{ position: "absolute", top: vh(31), right: vw(2) }}>
+          <TouchableOpacity style={{
+            marginTop: vh(0.5), backgroundColor: "white", flexDirection: "row",
+            borderRadius: vh(2), padding: vw(1), opacity: 0.4
+          }} activeOpacity={0.8}>
+            <View style={{ alignSelf: "flex-end", flexDirection: "row", borderRadius: vh(2), paddingHorizontal: vw(2) }}>
+              <Feather name="message-circle" size={18} color={"white"} />
+              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11, color: "white" }}>Send Message</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -486,12 +511,12 @@ export default function ProfileScreenPublic({ navigation }) {
               <View style={styles.bioBox}>
                 <View style={styles.nameContainer}>
                   <Text style={styles.UserNameProfile}>
-                    {userData.userName.length <= 30 ? (
+                    {userData?.userName?.length <= 30 ? (
                       userData.userName
                     ) : (
                       <>
-                        <Text>{userData.userName.slice(0, 30)}</Text>
-                        {userData.userName.length > 30 ? (
+                        <Text>{userData?.userName?.slice(0, 30)}</Text>
+                        {userData?.userName?.length > 30 ? (
                           <Text style={styles.clickableText}>...</Text>
                         ) : null}
                       </>
@@ -505,9 +530,9 @@ export default function ProfileScreenPublic({ navigation }) {
                 </View>
                 <View>
                   <BlueHashTagText originalText={
-                    showFullBio || !userData.bio || userData.bio.length <= 200
+                    showFullBio || !userData.bio || userData?.bio?.length <= 200
                       ? userData.bio
-                      : userData.bio.slice(0, 200) + "..."
+                      : userData?.bio?.slice(0, 200) + "..."
                   } />
                   {userData.bio?.length > 200 && !showFullBio && (
                     <TouchableOpacity onPress={() => setShowFullBio(true)}>

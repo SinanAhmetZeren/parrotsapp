@@ -321,8 +321,8 @@ export default function MessagesScreen({ navigation }) {
               </View>
             </ScrollView>
           ) : (isLoadingMessages || messagesData === undefined) ? (
-            <View style={{ alignItems: "center", marginTop: vh(10) }}>
-              <LoadingLogo size={160} />
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+              <LoadingLogo size={220} />
             </View>
           ) : messagesData?.length > 0 ? (
             <View style={styles.flatlist}>
@@ -397,8 +397,8 @@ export default function MessagesScreen({ navigation }) {
           />
           <ScrollView style={styles.messageTextContainer}>
             {isLoadingBookmarks ? (
-              <View style={{ alignItems: "center", marginTop: vh(10) }}>
-                <LoadingLogo size={160} />
+              <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                <LoadingLogo size={220} />
               </View>
             ) : bookmarksData.length === 0 ? (
               <View style={styles.currentBidsAndSeeAll2}>

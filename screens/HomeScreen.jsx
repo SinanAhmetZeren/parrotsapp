@@ -622,7 +622,7 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.welcomeandFilters}>
             <TouchableOpacity onPress={openImageModal}>
               <Image
-                source={require("../assets/parrotsreallife.png")}
+                source={require("../assets/parrotsreallife.jpg")}
                 style={styles.miniLogo}
               />
             </TouchableOpacity>
@@ -633,10 +633,10 @@ export default function HomeScreen({ navigation }) {
               {username?.length < 13 ? (
                 <Text style={styles.usernameLarge}>{username}!</Text>
               ) : null}
-              {username?.length > 12 && username.length < 18 ? ( // 13 to 16
+              {username?.length > 12 && username?.length < 18 ? ( // 13 to 16
                 <Text style={styles.usernameMedium}>{username}!</Text>
               ) : null}
-              {username?.length > 17 && username.length < 21 ? ( // 17 to 24
+              {username?.length > 17 && username?.length < 21 ? ( // 17 to 24
                 <Text style={styles.usernameSmall}>{username}!</Text>
               ) : null}
               {username?.length > 20 ? (
@@ -788,8 +788,8 @@ export default function HomeScreen({ navigation }) {
           ) : null}
 
           {!hasError && isMarkersLoading ? (
-            <View style={{ alignItems: "center", justifyContent: "center", marginTop: vh(8) }}>
-              <LoadingLogo size={80} />
+            <View style={{ alignItems: "center", justifyContent: "center", marginTop: vh(4) }}>
+              <LoadingLogo size={160} />
             </View>
           ) : (
             <>
@@ -826,7 +826,7 @@ export default function HomeScreen({ navigation }) {
             activeOpacity={1}
           >
             <Animated.Image
-              source={require("../assets/parrotsreallife.png")}
+              source={require("../assets/parrotsreallife.jpg")}
               style={{ width: vw(90), height: vw(90), borderRadius: vw(45), transform: [{ scale: imageScale }, { translateX: imageTranslateX }, { translateY: imageTranslateY }] }}
               resizeMode="cover"
             />

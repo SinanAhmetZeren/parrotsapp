@@ -33,6 +33,7 @@ import {
   useWindowDimensions
 } from "react-native";
 import VehicleImagesWithCarousel from "../components/VehicleImagesWithCarousel";
+import LoadingLogo from "../components/LoadingLogo";
 import { useDispatch, useSelector } from "react-redux";
 import VehicleVoyages from "../components/VehicleVoyages";
 import {
@@ -185,7 +186,11 @@ const VehicleDetailScreen = () => {
   };
 
   if (isLoadingVehicle) {
-    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <LoadingLogo size={200} />
+      </View>
+    );
   }
 
   if (isErrorVehicle) {
@@ -327,10 +332,10 @@ const VehicleDetailScreen = () => {
                     style={styles.voyageOwner}
                     onPress={() => goToProfilePage(VehicleData.user.id)}
                   >
-                    <Image source={{ uri: VehicleData.user.profileImageThumbnailUrl || VehicleData.user.profileImageUrl }} style={styles.profileImage} />
+                    <Image source={{ uri: VehicleData?.user?.profileImageThumbnailUrl || VehicleData?.user?.profileImageUrl }} style={styles.profileImage} />
                     <Text style={styles.userName} numberOfLines={1}>
-                      {VehicleData.user.userName.length > 20
-                        ? VehicleData.user.userName.substring(0, 17) + "..."
+                      {VehicleData?.user?.userName?.length > 20
+                        ? VehicleData?.user?.userName?.substring(0, 17) + "..."
                         : VehicleData.user.userName}
                     </Text>
                   </TouchableOpacity>
@@ -377,10 +382,10 @@ const VehicleDetailScreen = () => {
                 </View>
               </View>
 
-              {VehicleData.voyages.length === 0 && <View style={{ marginBottom: vh(10) }} />}
+              {(!VehicleData.voyages || VehicleData.voyages.length === 0) && <View style={{ marginBottom: vh(10) }} />}
 
               {/* Voyages Card — only shown if voyages exist */}
-              {VehicleData.voyages.length > 0 && (
+              {VehicleData.voyages && VehicleData.voyages.length > 0 && (
                 <>
                   <View style={styles.sectionCard}>
                     <View style={styles.VoyagesContainer}>

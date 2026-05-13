@@ -97,7 +97,7 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
 const styles = StyleSheet.create({
   centeredView: {
     position: "absolute",
-    bottom: vh(12), // stays fixed above the bottom
+    bottom: vh(8), // stays fixed above the bottom
     alignSelf: "center",
     width: vw(75),
     height: vh(6.5),

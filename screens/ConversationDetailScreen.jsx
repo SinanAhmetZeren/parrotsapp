@@ -19,6 +19,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { useSelector } from "react-redux";
 import { useRoute } from "@react-navigation/native";
 import MessagesComponent from "../components/MessagesComponent";
+import LoadingLogo from "../components/LoadingLogo";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
@@ -394,7 +395,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
   }
 
   if (isLoadingMessages) {
-    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <LoadingLogo size={200} />
+      </View>
+    );
   }
 
   if (isSuccessMessages) {
@@ -467,56 +472,24 @@ export const ConversationDetailScreen = ({ navigation }) => {
           </View>
           {/* // MESSAGES COMPONENT // */}
 
-          {/* // SEND MESSAGE COMPONENT // */}
-          <View
-            style={
-              textInputBottomMargin === 0
-                ? {
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-                : {
-                  top: vh(15) - textInputBottomMargin,
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-            }
+        </View>
+        <View style={[styles.sendRow, { bottom: textInputBottomMargin || vh(8) }]}>
+          <TextInput
+            onChangeText={(text) => setMessage(text)}
+            style={styles.textinputStyle}
+            multiline
+            placeholder="Write a message"
+            placeholderTextColor={parrotPlaceholderGrey}
+            value={message}
+            maxLength={500}
+          />
+          <TouchableOpacity
+            disabled={!message.trim()}
+            onPress={() => handleSendMessage()}
+            style={message.trim() ? styles.sendBtn : styles.sendBtnDisabled}
           >
-            <View style={styles.sendMessageContainer}>
-              <View style={styles.messageTextContainer}>
-                <View>
-                  <TextInput
-                    onChangeText={(text) => setMessage(text)}
-                    style={styles.textinputStyle}
-                    multiline
-                    placeholder="Write a message"
-                    placeholderTextColor={parrotPlaceholderGrey}
-                    value={message}
-                    maxLength={500}
-                  />
-                </View>
-              </View>
-
-              <View style={styles.buttonsContainer}>
-                <TouchableOpacity
-                  disabled={message ? false : true}
-                  onPress={() => handleSendMessage()}
-                  style={styles.buttonCancelContainer}
-                >
-                  <View
-                    style={
-                      message ? styles.buttonClear : styles.buttonClearDisabled
-                    }
-                  >
-                    <Text style={styles.buttonText}>
-                      <Feather name="send" size={24} color="white" />
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-          {/* // SEND MESSAGE COMPONENT // */}
+            <Feather name="send" size={20} color="white" />
+          </TouchableOpacity>
         </View>
         {toastVisible && (
           <View style={styles.toast}>
@@ -546,22 +519,45 @@ const styles = StyleSheet.create({
 
   },
   textinputStyle: {
-    backgroundColor: parrotCream,
-    width: vw(75),
-    minHeight: vh(4.5),
-    maxHeight: vh(12),
-    paddingLeft: vh(1.5),
-    paddingVertical: vh(0.5),
-    borderRadius: vh(2),
-    fontFamily: "Nunito_700Bold",
-  },
-  messageTextContainer: {
     flex: 1,
-    padding: vh(0.3),
+    backgroundColor: "white",
+    minHeight: vh(5),
+    maxHeight: vh(14),
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: vh(4),
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "black",
   },
-  sendMessageContainer: {
-    padding: vh(1),
+  sendRow: {
+    position: "absolute",
+    left: 0,
+    right: 0,
     flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(1),
+    backgroundColor: parrotCream,
+    gap: vw(2),
+  },
+  sendBtn: {
+    backgroundColor: parrotLightBlue,
+    width: vh(5),
+    height: vh(5),
+    borderRadius: vh(2.5),
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
+  sendBtnDisabled: {
+    backgroundColor: parrotBlueSemiTransparent,
+    width: vh(5),
+    height: vh(5),
+    borderRadius: vh(2.5),
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
   },
   nameStyle: {
     fontFamily: "Nunito_800ExtraBold",

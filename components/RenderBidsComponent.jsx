@@ -45,7 +45,7 @@ export const RenderBidsComponent = ({
   username,
   currency
 }) => {
-  const visibleBids = bids.slice(0, 5);
+  const visibleBids = bids?.slice(0, 5);
   const [acceptBid] = useAcceptBidMutation();
   const [deleteBid] = useDeleteBidMutation();
   const [loadingBidId, setLoadingBidId] = useState(null);

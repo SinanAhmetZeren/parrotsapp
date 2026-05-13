@@ -93,7 +93,7 @@ export default function FavoritesScreen({ navigation }) {
   if (isLoadingVoyages || isLoadingVehicles) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <LoadingLogo size={160} />
+        <LoadingLogo size={240} />
       </View>
     );
   }

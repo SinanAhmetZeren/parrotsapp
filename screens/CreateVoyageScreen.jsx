@@ -427,7 +427,7 @@ const CreateVoyageScreen = ({ navigation }) => {
       { label: "Train", value: 2 },
       { label: "Run", value: 3 },
     ].concat(
-      userData.usersVehicles.map((vehicle) => ({
+      userData?.usersVehicles?.map((vehicle) => ({
         label: vehicle.name,
         value: vehicle.id,
       }))

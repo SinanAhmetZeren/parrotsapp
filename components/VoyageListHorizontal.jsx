@@ -71,10 +71,10 @@ export default function VoyageListHorizontal({ data, focusMap, navigation }) {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         horizontal
-        centerContent={data.length === 1}
+        centerContent={data?.length === 1}
         contentContainerStyle={[
           styles.containerHorizontal,
-          data.length === 1 && { marginLeft: 0, justifyContent: "center", width: "100%" },
+          data?.length === 1 && { marginLeft: 0, justifyContent: "center", width: "100%" },
         ]}
         ListFooterComponent={<View style={{ width: vw(4) }} />}
       />

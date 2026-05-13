@@ -27,6 +27,7 @@ import {
   parrotBlue, parrotCream, parrotLightBlue, parrotBlueSemiTransparent,
   parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotPlaceholderGrey, parrotRed,
 } from "../assets/color";
+import LoadingLogo from "./LoadingLogo";
 
 const GROUP_COLORS = ["#a020a0", "#6a0dad", "#1e88e5", "#29b6f6", "#00bfa5", "#ffa726", "#e53935"];
 const groupColor = (id) => GROUP_COLORS[(id ?? 0) % GROUP_COLORS.length];
@@ -70,7 +71,7 @@ export default function GroupConversationDetail({ route, navigation }) {
     { skip: !groupId || !currentUserId, refetchOnMountOrArgChange: true }
   );
 
-  const { data: groupMessagesData, refetch: refetchMessages } = useGetGroupMessagesQuery(
+  const { data: groupMessagesData, refetch: refetchMessages, isLoading: isLoadingMessages } = useGetGroupMessagesQuery(
     { groupId, userId: currentUserId },
     { skip: !groupId || !currentUserId, refetchOnMountOrArgChange: true }
   );
@@ -194,6 +195,14 @@ export default function GroupConversationDetail({ route, navigation }) {
   const stackedAvatars = members.slice(0, 3);
   const extraCount = members.length > 3 ? members.length - 3 : 0;
 
+  if (isLoadingMessages) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <LoadingLogo size={200} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -312,7 +321,7 @@ export default function GroupConversationDetail({ route, navigation }) {
                   ) : (
                     <View style={styles.msgAvatarPlaceholder} />
                   )}
-                  <View style={styles.msgColumn}>
+                  <View style={[styles.msgColumn, isFirstInGroup && { marginTop: vh(1) }]}>
                     {isFirstInGroup && <Text style={styles.msgSender}>{msg.senderUsername}</Text>}
                     <View style={styles.msgLeft}>
                       <Text style={styles.msgText}>{msg.text}</Text>
@@ -470,13 +479,13 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: parrotLightBlue,
     fontSize: 12,
-    marginBottom: vh(0.3),
+    marginBottom: -vh(0.1),
     marginLeft: vw(3),
   },
   msgText: { flexShrink: 1, fontFamily: "Nunito_700Bold", color: "#333", fontSize: 14, marginRight: vw(2) },
   timeDisplay: {
     fontFamily: "Nunito_700Bold",
-    color: parrotBlueDarkTransparent2,
+    color: "#aaa",
     fontSize: 11,
     flexShrink: 0,
   },
@@ -490,7 +499,7 @@ const styles = StyleSheet.create({
   },
   dateSeparatorText: {
     fontFamily: "Nunito_700Bold",
-    color: parrotBlueDarkTransparent,
+    color: "#aaa",
     fontSize: 12,
   },
   sendRow: {
@@ -498,8 +507,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: vw(3),
     paddingVertical: vh(1),
-    borderTopWidth: 1,
-    borderTopColor: "#e8f0f8",
     backgroundColor: parrotCream,
     gap: vw(2),
   },

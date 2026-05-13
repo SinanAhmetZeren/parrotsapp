@@ -54,6 +54,7 @@ import { API_URL } from "@env";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotTextDarkBlue } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import RenderHtml from "react-native-render-html";
+import LoadingLogo from "../components/LoadingLogo";
 
 const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -73,7 +74,7 @@ const VoyageDetailScreen = ({ navigation }) => {
   const [isBroadcasting, setIsBroadcasting] = useState(false);
 
   const handleBroadcast = async () => {
-    const acceptedUserIds = bids.filter((b) => b.accepted).map((b) => b.userId);
+    const acceptedUserIds = bids?.filter((b) => b.accepted).map((b) => b.userId);
     console.log("[Broadcast] acceptedUserIds:", acceptedUserIds);
     console.log("[Broadcast] message:", broadcastMessage.trim());
     console.log("[Broadcast] senderId (userId):", userId);
@@ -349,14 +350,14 @@ const VoyageDetailScreen = ({ navigation }) => {
 
 
   if (isLoadingVoyages) {
-    return <ActivityIndicator size="large" style={{ top: vh(30) }} />;
+    return <LoadingLogo size={200} style={{ position: "absolute", top: vh(30), left: vw(50) - 100 }} />;
   }
 
   if (isSuccessVoyages) {
-    const ownVoyage = userId == VoyageData.user.id;
+    const ownVoyage = userId == VoyageData?.user?.id;
     const waypoints = VoyageData.waypoints || [];
     const descriptionShortenedChars = 450;
-    const plainDescription = VoyageData.description.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
+    const plainDescription = VoyageData?.description?.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
     const displayText = showFullText || plainDescription.length < descriptionShortenedChars
       ? plainDescription
       : plainDescription.slice(0, descriptionShortenedChars) + "...";
@@ -410,9 +411,9 @@ const VoyageDetailScreen = ({ navigation }) => {
                 {/* Host + Vehicle */}
                 <View style={styles.row}>
                   <Ionicons name="person-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
-                  <TouchableOpacity style={styles.pill} onPress={() => goToProfilePage(VoyageData.user.id)}>
-                    <Image source={{ uri: VoyageData.user.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
-                    <Text style={styles.value}>{VoyageData.user.userName}</Text>
+                  <TouchableOpacity style={styles.pill} onPress={() => goToProfilePage(VoyageData?.user?.id)}>
+                    <Image source={{ uri: VoyageData?.user?.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
+                    <Text style={styles.value}>{VoyageData?.user?.userName}</Text>
                   </TouchableOpacity>
                   <Ionicons name="rocket-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 6 }]} />
                   <TouchableOpacity
