@@ -791,7 +791,7 @@ export default function HomeScreen({ navigation }) {
             <View style={{ alignItems: "center", justifyContent: "center", marginTop: vh(4) }}>
               <LoadingLogo size={160} />
             </View>
-          ) : (
+          ) : !hasError ? (
             <>
               {initialVoyages.filter(v => !v.isPlace).length > 0 && (
                 <View style={styles.mainBidsContainer}>
@@ -812,7 +812,7 @@ export default function HomeScreen({ navigation }) {
               return result;
             })()} />
             </>
-          )}
+          ) : null}
         </View>
         <Modal
           animationType="fade"

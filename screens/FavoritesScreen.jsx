@@ -102,23 +102,20 @@ export default function FavoritesScreen({ navigation }) {
     if (hasError)
       return (
         <ScrollView
+          style={styles.mainBidsContainer2}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={[parrotPistachioGreen, parrotBananaLeafGreen]} // Android
-              tintColor={parrotBananaLeafGreen} // iOS
+              colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
+              tintColor={parrotBananaLeafGreen}
             />
           }
         >
-          <View style={styles.errorComponentContainer}>
-            <Image
-              source={require("../assets/parrotslogo.png")}
-              style={styles.logoImage}
-            />
+          <View style={styles.currentBidsAndSeeAll2}>
+            <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
             <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-            <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
-            <Text style={styles.currentBidsTitle2}>Swipe Down to Retry</Text>
+            <Text style={[styles.currentBidsTitle2, { paddingTop: vh(1) }]}>Swipe down to retry</Text>
           </View>
         </ScrollView>
       );
@@ -236,10 +233,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   currentBidsTitle2: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 20,
     color: parrotBlue,
-    paddingTop: vh(0),
+    paddingTop: vh(3),
   },
   NoFavoritesText: {
     fontSize: 20,

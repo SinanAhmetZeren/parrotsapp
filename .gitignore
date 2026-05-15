@@ -75,3 +75,6 @@ yarn-error.*
 *.tsbuildinfo
 
 # @end expo-cli
+
+# Firebase Admin SDK key
+*firebase-adminsdk*.json

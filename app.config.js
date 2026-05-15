@@ -5,7 +5,7 @@ export default {
         "name": "Parrots",
         "slug": "parrots",
         "owner": "ahmetzeren",
-        "version": "1.0.3",
+        "version": "1.0.5",
         "scheme": "parrotsapp",
         "orientation": "portrait",
         "icon": "./assets/parrotsiconpadded.png",
@@ -37,7 +37,8 @@ export default {
         },
         "android": {
             "package": "com.zenforest.parrots",
-            "versionCode": 4,
+            "googleServicesFile": "./google-services.json",
+            "versionCode": 6,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/parrotsiconpadded.png",
                 "backgroundColor": "#ffffff"
@@ -72,6 +73,10 @@ export default {
             [
                 "expo-image-picker",
                 { "photosPermission": "The app accesses your photos to let you share them with your friends." }
+            ],
+            [
+                "expo-notifications",
+                { "icon": "./assets/parrotsiconpadded.png", "color": "#ffffff" }
             ],
             "expo-font",
             "expo-build-properties",

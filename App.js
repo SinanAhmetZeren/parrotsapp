@@ -7,6 +7,8 @@ import * as React from "react";
 import { useState } from "react";
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from "@expo-google-fonts/nunito";
 import * as SplashScreen from "expo-splash-screen";
+import * as Notifications from "expo-notifications";
+import * as Device from "expo-device";
 SplashScreen.preventAutoHideAsync();
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -74,6 +76,31 @@ import {
   unregister_OnReconnected,
   invokeHub
 } from "./signalr/signalRHub";
+
+async function registerPushTokenAsync(token) {
+  try {
+    if (!Device.isDevice) return;
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") return;
+
+    const tokenData = await Notifications.getExpoPushTokenAsync({ projectId: "5f4ee090-1e51-4228-b36b-23715333bcc4" });
+    const pushToken = tokenData.data;
+
+    await fetch(`${API_URL}/api/account/push-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(pushToken),
+    });
+  } catch { }
+}
 
 // Force font scaling to stay at 100% across the whole app
 if (Text.defaultProps == null) Text.defaultProps = {};
@@ -647,6 +674,8 @@ function App() {
           const storedHasAcknowledgedPublicProfile = await AsyncStorage.getItem("storedHasAcknowledgedPublicProfile");
 
           if (storedToken) {
+            registerPushTokenAsync(storedToken);
+
             // Restore Redux state immediately — navigate to home screen right away
             dispatch(
               updateStateFromLocalStorage({

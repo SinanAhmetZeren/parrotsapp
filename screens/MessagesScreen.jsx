@@ -319,7 +319,7 @@ export default function MessagesScreen({ navigation }) {
               <View style={styles.currentBidsAndSeeAll2}>
                 <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
                 <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-                <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+                <Text style={[styles.currentBidsTitle2, { paddingTop: vh(1) }]}>Swipe down to retry</Text>
               </View>
             </ScrollView>
           ) : (isLoadingMessages || messagesData === undefined) ? (
