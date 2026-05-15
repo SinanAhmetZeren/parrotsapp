@@ -77,4 +77,4 @@ yarn-error.*
 # @end expo-cli
 
 # Firebase Admin SDK key
-*firebase-adminsdk*.json
+*firebase-adminsdk*.jsongoogle-services.json

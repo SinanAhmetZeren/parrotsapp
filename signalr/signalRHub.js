@@ -1,4 +1,4 @@
-import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
+import { HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { AppState } from "react-native";
 import { API_URL } from "@env";
 
@@ -55,6 +55,7 @@ export const initHubConnection = async (userId, apiUrl) => {
         hubConnection = new HubConnectionBuilder()
             .withUrl(`${apiUrl}/chathub/81?userId=${userId}`)
             .withAutomaticReconnect()
+            .configureLogging(LogLevel.None)
             .build();
 
         setupInternalListeners();

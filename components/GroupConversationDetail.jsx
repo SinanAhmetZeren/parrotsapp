@@ -25,7 +25,9 @@ import {
 } from "../signalr/signalRHub";
 import {
   parrotBlue, parrotCream, parrotLightBlue, parrotBlueSemiTransparent,
-  parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotPlaceholderGrey, parrotRed,
+  parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotPlaceholderGrey, parrotRed, parrotGreen,
+  parrotBlueSemiTransparent2,
+  parrotBlueSemiTransparent3,
 } from "../assets/color";
 import LoadingLogo from "./LoadingLogo";
 
@@ -60,6 +62,7 @@ export default function GroupConversationDetail({ route, navigation }) {
   const [addingUserId, setAddingUserId] = useState(null);
   const [addedUserId, setAddedUserId] = useState(null);
   const [removingUserId, setRemovingUserId] = useState(null);
+  const [confirmLeave, setConfirmLeave] = useState(false);
   const scrollViewRef = useRef();
   const sendTimestampsRef = useRef([]);
 
@@ -223,7 +226,7 @@ export default function GroupConversationDetail({ route, navigation }) {
           <Text style={styles.groupAvatarText}>{groupName?.split(" ").map(w => w.charAt(0).toUpperCase()).join("")}</Text>
         </View>
         <Text style={styles.headerTitle} numberOfLines={1}>{groupName}</Text>
-        <TouchableOpacity onPress={() => setMembersDropdownVisible(v => !v)} style={styles.stackedAvatarsBtn}>
+        <TouchableOpacity onPress={() => { setMembersDropdownVisible(v => !v); setConfirmLeave(false); }} style={styles.stackedAvatarsBtn}>
           {stackedAvatars.map((m, i) => (
             <Image
               key={m.userId}
@@ -297,9 +300,23 @@ export default function GroupConversationDetail({ route, navigation }) {
           </ScrollView>
 
           {!isCreator && (
-            <TouchableOpacity style={styles.leaveBtn} onPress={handleExitGroup}>
-              <Text style={styles.leaveBtnText}>Leave Group</Text>
-            </TouchableOpacity>
+            confirmLeave ? (
+              <View style={styles.confirmLeaveRow}>
+                <Text style={styles.confirmLeaveText}>Are you sure?</Text>
+                <TouchableOpacity style={styles.noStayBtn} onPress={() => setConfirmLeave(false)}>
+                  <Text style={styles.leaveBtnText}>No, Stay</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.confirmLeaveBtn} onPress={handleExitGroup}>
+                  <Text style={styles.leaveBtnText}>Yes, Leave</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.confirmLeaveRow}>
+                <TouchableOpacity style={styles.leaveBtn} onPress={() => setConfirmLeave(true)}>
+                  <Text style={styles.leaveBtnText}>Leave Group</Text>
+                </TouchableOpacity>
+              </View>
+            )
           )}
         </View>
       )}
@@ -643,13 +660,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   leaveBtn: {
-    backgroundColor: parrotRed,
+    backgroundColor: "#F5A623",
     borderRadius: vh(2),
-    padding: vh(1.5),
+    paddingVertical: vh(0.8),
+    paddingHorizontal: vw(6),
     alignItems: "center",
-    marginTop: vh(2),
   },
-  leaveBtnText: { color: "white", fontFamily: "Nunito_700Bold", fontSize: 16 },
+  leaveBtnText: { color: "white", fontFamily: "Nunito_700Bold", fontSize: 13 },
+  confirmLeaveRow: {
+    flexDirection: "row",
+    // backgroundColor: parrotCream,
+    paddingVertical: vh(1),
+    paddingHorizontal: vw(4),
+    borderRadius: vh(2),
+    alignItems: "center", justifyContent: "center", gap: vw(3), marginTop: vh(1.5)
+  },
+  confirmLeaveText: { fontFamily: "Nunito_700Bold", fontSize: 13, color: parrotLightBlue },
+  confirmLeaveBtn: { backgroundColor: parrotRed, borderRadius: vh(2), paddingVertical: vh(0.8), paddingHorizontal: vw(4), alignItems: "center" },
+  noStayBtn: { backgroundColor: parrotLightBlue, borderRadius: vh(2), paddingVertical: vh(0.8), paddingHorizontal: vw(4), alignItems: "center" },
   toast: {
     position: "absolute",
     bottom: vh(2),

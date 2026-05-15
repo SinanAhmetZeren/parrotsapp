@@ -50,7 +50,7 @@ function GroupPreviewView({ item, onOpenGroup }) {
       <View style={styles.nameAndMessage}>
         <Text style={styles.name}>{item.groupName}</Text>
         <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-          {item.text || "No messages yet"}
+          {item.text ? `${item.senderUsername}: ${item.text}` : "No messages yet"}
         </Text>
       </View>
       <View style={styles.time}>
