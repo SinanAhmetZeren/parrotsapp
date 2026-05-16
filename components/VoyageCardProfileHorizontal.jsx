@@ -17,7 +17,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import he from "he";
 import { Shadow } from 'react-native-shadow-2';
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotLightBlue } from "../assets/color";
 
 
 export default function VoyageCardProfileHorizontal({

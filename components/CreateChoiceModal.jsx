@@ -7,9 +7,11 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { parrotBlue, parrotCream } from "../assets/color";
 import { Shadow } from "react-native-shadow-2";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [opacityAnim] = useState(new Animated.Value(0));
   const [isVisible, setIsVisible] = useState(false);
 
@@ -55,7 +57,7 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
       onRequestClose={() => setModalVisible(false)}
     >
       <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPressOut={handlePressOut}>
-        <Animated.View style={[styles.centeredView, { opacity: opacityAnim }]}>
+        <Animated.View style={[styles.centeredView, { opacity: opacityAnim, bottom: insets.bottom + 60 }]}>
           <View style={styles.modalView}>
             <Shadow
               distance={8}
@@ -97,7 +99,7 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
 const styles = StyleSheet.create({
   centeredView: {
     position: "absolute",
-    bottom: vh(8), // stays fixed above the bottom
+    bottom: 0, // overridden inline with insets.bottom + 60
     alignSelf: "center",
     width: vw(75),
     height: vh(6.5),

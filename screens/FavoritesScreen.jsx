@@ -12,7 +12,9 @@ import {
   Image,
   TouchableOpacity,
   RefreshControl,
+  Platform,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import LoadingLogo from "../components/LoadingLogo";
 import { vw, vh } from "react-native-expo-viewport-units";
 import FavoriteVoyageListVertical from "../components/FavoriteVoyageListVertical";
@@ -24,6 +26,7 @@ import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBananaLeafGreen, parrotBlue, parrotPistachioGreen } from "../assets/color";
 
 export default function FavoritesScreen({ navigation }) {
+  const insets = useSafeAreaInsets();
   const userId = useSelector((state) => state.users.userId);
   const [hasError, setHasError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -127,7 +130,7 @@ export default function FavoritesScreen({ navigation }) {
         <TokenExpiryGuard />
 
         <View style={styles.mainContainer}>
-          <ScrollView style={styles.scrollView}>
+          <ScrollView style={styles.scrollView} contentContainerStyle={Platform.OS === "ios" ? { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 } : undefined}>
             <View style={styles.innerContainer}>
               {isLoadingVoyages || isLoadingVehicles ? (
                 <ActivityIndicator size="large" />

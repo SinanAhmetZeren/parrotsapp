@@ -14,8 +14,10 @@ import {
   Animated,
   RefreshControl,
   Linking,
+  Platform,
 } from "react-native";
-import MapView, { Marker, Callout } from "react-native-maps";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -100,7 +102,7 @@ const PlaceEggMarker = memo(({ item, onPress }) => {
 
 
 export default function HomeScreen({ navigation }) {
-
+  const insets = useSafeAreaInsets();
 
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -618,7 +620,7 @@ export default function HomeScreen({ navigation }) {
             setSelectedVehicleType={setSelectedVehicleType}
           />
         </View>
-        <View style={{ height: vh(95) }}>
+        <View style={{ height: vh(95) - (Platform.OS === "ios" ? insets.top + insets.bottom : 0) }}>
           <View style={styles.welcomeandFilters}>
             <TouchableOpacity onPress={openImageModal}>
               <Image
@@ -728,7 +730,7 @@ export default function HomeScreen({ navigation }) {
           </View>
 
           <View style={styles.mapWrapper}>
-            <View style={styles.mapContainer}>
+            <View style={[styles.mapContainer, { height: vh(50) - (Platform.OS === "ios" ? insets.top + insets.bottom - vh(2) : 0) }]}>
               {isMapLoading ? (
                 <View style={styles.mapPlaceholder}>
                   <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
@@ -736,6 +738,7 @@ export default function HomeScreen({ navigation }) {
               ) : (
                 <>
                   <MapView
+                    provider={PROVIDER_GOOGLE}
                     style={styles.map}
                     initialRegion={initialRegion}
                     ref={mapRef}
@@ -966,7 +969,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   mapContainer: {
-    height: vh(50),
+    height: vh(50), // overridden inline on iOS
     width: "100%",
     alignItems: "center",
     justifyContent: "center",

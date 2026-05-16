@@ -21,9 +21,10 @@ import {
   ActivityIndicator,
   Image,
   // SafeAreaView,
-  TextInput
+  TextInput,
+  Platform,
 } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Feather, Ionicons, AntDesign, MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
@@ -371,6 +372,10 @@ const AuthStack = () => {
   );
 };
 const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
+  const insets = useSafeAreaInsets();
+  const tabBarHeight = Platform.OS === "ios"
+    ? (vh(100) - insets.top - insets.bottom) * 0.08
+    : vh(8);
   const [modalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -390,7 +395,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
 
   return (
     <>
-      <Tab.Navigator screenOptions={screenOptions1}  >
+      <Tab.Navigator screenOptions={{ ...screenOptions1, tabBarStyle: { ...screenOptions1.tabBarStyle, height: tabBarHeight }, tabBarItemStyle: Platform.OS === "ios" ? { marginBottom: insets.bottom * 0.5 } : undefined }}  >
         <Tab.Screen
           name="Home"
           component={HomeStack}

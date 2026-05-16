@@ -15,8 +15,10 @@ import {
   ActivityIndicator,
   Modal,
   RefreshControl,
-  Share
+  Share,
+  Platform,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Clipboard from "expo-clipboard";
 import LoadingLogo from "../components/LoadingLogo";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -39,6 +41,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function ProfileScreenPublic({ navigation }) {
+  const insets = useSafeAreaInsets();
   const route = useRoute();
   const { userId } = route.params;
   const { publicId } = route.params;
@@ -386,7 +389,7 @@ export default function ProfileScreenPublic({ navigation }) {
         <TokenExpiryGuard />
 
         <View style={styles.mainContainer}>
-          <ScrollView style={styles.scrollView}>
+          <ScrollView style={styles.scrollView} contentContainerStyle={Platform.OS === "ios" ? { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 } : undefined}>
             <View style={styles.innerContainer}>
               <View style={styles.rectangularBox}>
                 {/* <Image

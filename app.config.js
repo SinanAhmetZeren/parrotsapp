@@ -11,7 +11,7 @@ export default {
         "icon": "./assets/parrotsiconpadded.png",
         "userInterfaceStyle": "light",
         "splash": {
-            "image": "./assets/parrotsiconpaddedtransparent.png",
+            "image": "./assets/parrotslogofullsize.jpg",
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },
@@ -21,6 +21,9 @@ export default {
         "ios": {
             "bundleIdentifier": "com.zenforest.parrots",
             "supportsTablet": true,
+            "config": {
+                "googleMapsApiKey": process.env.GOOGLE_MAPS_API_KEY
+            },
             "associatedDomains": [
                 "applinks:parrotsvoyages.com"
             ],
@@ -40,7 +43,7 @@ export default {
             "googleServicesFile": "./google-services.json",
             "versionCode": 6,
             "adaptiveIcon": {
-                "foregroundImage": "./assets/parrotsiconpadded.png",
+                "foregroundImage": "./assets/parrotslogofullsize.jpg",
                 "backgroundColor": "#ffffff"
             },
             "intentFilters": [

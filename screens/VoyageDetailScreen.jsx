@@ -33,7 +33,7 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { invokeHub } from "../signalr/signalRHub.js";
-import MapView from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import VoyageImagesWithCarousel from "../components/VoyageImagesWithCarousel";
 import { RenderBidsComponent } from "../components/RenderBidsComponent";
 import { WaypointListComponent } from "../components/WaypointListComponent";
@@ -524,7 +524,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
             <View style={styles.mapAndEmojisContainer}>
               <View style={styles.mapContainer}>
-                <MapView ref={mapRef} style={styles.map} region={initialRegion}>
+                <MapView provider={PROVIDER_GOOGLE} ref={mapRef} style={styles.map} region={initialRegion}>
                   <WaypointListComponent waypoints={waypoints} />
                   <RenderPolylinesComponent waypoints={waypoints} />
                 </MapView>

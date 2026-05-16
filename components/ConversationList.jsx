@@ -2,7 +2,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ConversationView from "./CoversationView";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Shadow } from "react-native-shadow-2";
@@ -62,6 +63,7 @@ function GroupPreviewView({ item, onOpenGroup }) {
 }
 
 export default function ConversationList({ data, userId, onOpenGroup }) {
+  const insets = useSafeAreaInsets();
   const items = [];
 
   if (data) {
@@ -94,7 +96,7 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
   const sorted = [...items].sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={Platform.OS === "ios" ? { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 } : undefined}>
       {sorted.map((item, index) =>
         item._type === "group" ? (
           <View

@@ -18,6 +18,7 @@ import {
   ActivityIndicator,
   Keyboard,
   BackHandler,
+  Platform,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
@@ -109,13 +110,15 @@ export default function MessagesScreen({ navigation }) {
   const [selectedFunction, setSelectedFunction] = useState(1);
 
   const { data: bookmarksRaw, isLoading: isLoadingBookmarks } = useGetBookmarksQuery(undefined, { skip: selectedFunction !== 3 });
-  const bookmarksData = React.useMemo(() => bookmarksRaw?.map(b => ({
-    id: b.bookmarkedUserId,
-    publicId: b.publicId,
-    userName: b.userName,
-    profileImageUrl: b.profileImageUrl,
-    profileImageThumbnailUrl: b.profileImageThumbnailUrl,
-  })) ?? [], [bookmarksRaw]);
+  const bookmarksData = React.useMemo(() => [
+    ...(bookmarksRaw?.map(b => ({
+      id: b.bookmarkedUserId,
+      publicId: b.publicId,
+      userName: b.userName,
+      profileImageUrl: b.profileImageUrl,
+      profileImageThumbnailUrl: b.profileImageThumbnailUrl,
+    })) ?? []),
+  ], [bookmarksRaw]);
 
   const recipientId = userId;
 
@@ -380,7 +383,7 @@ export default function MessagesScreen({ navigation }) {
                     </View>
                   </View>
                 </View>
-                <SearchUsersComponent searchResults={isLoadingUsers ? null : usersData} />
+                <SearchUsersComponent searchResults={isLoadingUsers ? null : (usersData ?? [])} />
               </View>
             </>
           }
@@ -403,7 +406,7 @@ export default function MessagesScreen({ navigation }) {
                   <Text style={styles.currentBidsTitle2}>No bookmarks yet</Text>
                 </View>
               ) : (
-                <SearchUsersComponent searchResults={bookmarksData} />
+                <SearchUsersComponent searchResults={bookmarksData} height={Platform.OS === "ios" ? vh(70) : vh(80)} />
               )}
             </ScrollView>
           )}

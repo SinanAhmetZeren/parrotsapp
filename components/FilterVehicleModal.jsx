@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from "react";
-import { View, Text, Modal, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Modal, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { Ionicons } from "@expo/vector-icons";
-import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor, parrotTextDarkBlue } from "../assets/color";
 
 const FilterVehicleModal = ({
   isVisible,
@@ -14,37 +13,22 @@ const FilterVehicleModal = ({
   setSelectedVehicleType: setSelectedValue,
 }) => {
 
-  const vehicleTypes2 = [
-    "Boat",
-    "Car",
-    "Caravan",
-    "Bus",
-    "Walk",
-    "Run",
-    "Motorcycle",
-    "Bicycle",
-    "TinyHouse",
-    "Airplane",
-    "Train",
-  ];
-
   const vehicleTypes = {
-    Boat: 0,
-    Car: 1,
-    Caravan: 2,
-    Bus: 3,
     Walk: 4,
     Run: 5,
-    Motorcycle: 6,
     Bicycle: 7,
+    Motorcycle: 6,
+    Caravan: 2,
+    Boat: 0,
+    Car: 1,
+    Bus: 3,
     TinyHouse: 8,
     Airplane: 9,
     Train: 10,
   };
 
-  const handleSelect = (value) => {
-    setSelectedValue(value);
-  };
+  const handleSelect = (value) => setSelectedValue(value);
+
   const handleClear = () => {
     setSelectedValue(null);
     setIsVehicleFiltered(false);
@@ -52,11 +36,7 @@ const FilterVehicleModal = ({
   };
 
   const handleSave = () => {
-    if (selectedValue !== null && selectedValue !== undefined) {
-      setIsVehicleFiltered(true);
-    } else {
-      setIsVehicleFiltered(false);
-    }
+    setIsVehicleFiltered(selectedValue !== null && selectedValue !== undefined);
     onClose();
   };
 
@@ -67,46 +47,39 @@ const FilterVehicleModal = ({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
+      <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={onClose}>
+        <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Select Vehicle Type</Text>
+          <Text style={styles.title}>Vehicle Type</Text>
+          <Text style={styles.subtitle}>Filter voyages by transport type</Text>
 
-          {Object.entries(vehicleTypes).map(([type, value]) => (
-            <TouchableOpacity
-              key={value} // Assuming values are unique
-              style={[
-                styles.option,
-                selectedValue === value && styles.selectedOption,
-              ]}
-              onPress={() => handleSelect(value)}
-            >
-              <Text
-                style={[
-                  styles.optionText,
-                  selectedValue === value && styles.selectedOptionText,
-                ]}
-              >
-                {type}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          <ScrollView style={{ maxHeight: vh(40) }} showsVerticalScrollIndicator={false}>
+            <View style={styles.optionsGrid}>
+              {Object.entries(vehicleTypes).map(([type, value]) => (
+                <TouchableOpacity
+                  key={value}
+                  style={[styles.option, selectedValue === value && styles.selectedOption]}
+                  onPress={() => handleSelect(value)}
+                >
+                  <Text style={[styles.optionText, selectedValue === value && styles.selectedOptionText]}>
+                    {type}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
 
           <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              onPress={handleClear}
-              style={styles.buttonClearContainer}
-            >
+            <TouchableOpacity onPress={handleClear} style={styles.buttonCancelContainer}>
               <Text style={styles.buttonClear}>Clear</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleSave}
-              style={styles.buttonSaveContainer}
-            >
+            <TouchableOpacity onPress={handleSave} style={styles.buttonSendBidContainer}>
               <Text style={styles.buttonSave}>Ok</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 };
@@ -118,75 +91,85 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     position: "absolute",
-    left: 0,
-    right: 0,
-    paddingTop: vh(17),
-    paddingBottom: vh(70),
+    left: 0, right: 0, top: 0, bottom: 0,
   },
   innerContainer: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    width: 300,
+    backgroundColor: "#ffffff",
+    padding: 24,
+    borderRadius: 24,
+    width: vw(88),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: "Nunito_800ExtraBold",
-    marginBottom: 10,
-    textAlign: "center",
+    color: parrotTextDarkBlue,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 15,
+    fontFamily: "Nunito_400Regular",
+    color: "#9aa0aa",
+    marginBottom: 16,
+  },
+  optionsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
   },
   option: {
     padding: 10,
-    backgroundColor: parrotCream,
-    borderRadius: 10,
-    marginVertical: 2,
+    backgroundColor: "#f2f4f7",
+    borderRadius: 50,
+    width: "48%",
+    alignItems: "center",
   },
   selectedOption: {
     backgroundColor: parrotGreen,
-    borderRadius: 8,
-  },
-  selectedOptionText: {
-    color: "white", // Change the text color for selected option
   },
   optionText: {
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: "Nunito_700Bold",
     color: parrotInputTextColor,
-    marginLeft: vw(5),
+  },
+  selectedOptionText: {
+    color: "white",
   },
   buttonsContainer: {
     flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "space-around",
+    gap: 10,
+    marginTop: 16,
   },
-
-  buttonSaveContainer: {
-    alignItems: "center",
-  },
-  buttonClearContainer: {
+  buttonSendBidContainer: {
+    flex: 1,
+    backgroundColor: parrotBlue,
+    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     alignItems: "center",
   },
   buttonSave: {
-    fontSize: 18,
-    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
     color: "white",
+    fontFamily: "Nunito_700Bold",
     textAlign: "center",
-    backgroundColor: parrotBlue,
-    padding: 5,
-    width: vw(30),
-    borderRadius: 30,
-    marginTop: 5,
+  },
+  buttonCancelContainer: {
+    flex: 1,
+    backgroundColor: "#f2f4f7",
+    borderRadius: 50,
+    paddingVertical: 10,
+    alignItems: "center",
   },
   buttonClear: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: "Nunito_700Bold",
-    color: "white",
+    color: "#9aa0aa",
     textAlign: "center",
-    backgroundColor: parrotGreen,
-    padding: 5,
-    width: vw(30),
-    borderRadius: 30,
-    marginTop: 5,
   },
 });
 

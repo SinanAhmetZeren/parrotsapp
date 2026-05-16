@@ -63,7 +63,7 @@ const CreateVehicleScreen = () => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVehicleImages, setAddedVehicleImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVehicle, setIsCreatingVehicle] = useState(false);
   const [isCompletingVehicle, setIsCompletingVehicle] = useState(false);
@@ -198,7 +198,7 @@ const CreateVehicleScreen = () => {
       setAddedVehicleImages([]);
 
       console.log("1. Vehicle created successfully, moving to step 2");
-      setCurrentStep(2);
+      setCurrentStep(1);
       console.log("2. Vehicle created successfully, moving to step 2");
     } catch (error) {
       console.error("Error in or after createVehicle:", error);
@@ -509,6 +509,8 @@ const CreateVehicleScreen = () => {
             </View>
 
           </ScrollView>
+
+
         </KeyboardAvoidingView>
       )}
 
@@ -785,9 +787,9 @@ const styles = StyleSheet.create({
     borderColor: "white",
   },
   scrollview: {
-    height: vh(140),
+    // height: vh(200),
     marginBottom: vh(5),
-    backgroundColor: "white",
+
   },
   overlay: {
     marginTop: vh(0),

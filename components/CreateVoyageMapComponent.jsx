@@ -10,9 +10,10 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
-import MapView, { Marker, Callout, Polyline } from "react-native-maps";
+import MapView, { Marker, Callout, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
 
 import * as ImagePicker from "expo-image-picker";
@@ -33,6 +34,7 @@ const CreateVoyageMapComponent = ({
   imagesAdded,
   createdVoyageImage
 }) => {
+  const [waypointInfoVisible, setWaypointInfoVisible] = useState(false);
   const [addedWayPoints, setAddedWayPoints] = useState([]);
   const [markerCoords, setMarkerCoords] = useState(null);
   const [latitude, setLatitude] = useState("");
@@ -321,6 +323,7 @@ const CreateVoyageMapComponent = ({
         <View style={styles.mapAndEmojisContainer}>
           <View style={styles.mapContainer}>
             <MapView
+              provider={PROVIDER_GOOGLE}
               style={styles.map}
               initialRegion={initialRegion}
               onPress={handleMapPress}
@@ -335,22 +338,25 @@ const CreateVoyageMapComponent = ({
         </View>
 
 
-        <View style={styles.warningTextContainer}>
-          <Image
-            source={require("../assets/parrotslogo.png")}
-            style={styles.miniLogo}
-          />
-          <Image
-            source={require("../assets/parrot_message.png")}
-            style={styles.messageBubble}
-          />
-        </View>
       </View>
 
 
+      <Modal transparent animationType="fade" visible={waypointInfoVisible} onRequestClose={() => setWaypointInfoVisible(false)}>
+        <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.3)", justifyContent: "center", alignItems: "center" }} activeOpacity={1} onPress={() => setWaypointInfoVisible(false)}>
+          <View style={{ backgroundColor: "white", borderRadius: vh(2), borderWidth: 2, borderColor: parrotLightBlue, paddingHorizontal: vw(6), paddingVertical: vh(3), width: vw(80) }}>
+            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: parrotLightBlue, textAlign: "center", lineHeight: 22 }}>
+              {"Tap the map to mark your waypoint, then give it a name and a description. If a city label's in the way, just zoom in for a better look."}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
       <View style={styles.newWaypointCard}>
-        <View style={styles.cardTitleRow}>
+        <View style={[styles.cardTitleRow, { flexDirection: "row", alignItems: "center", gap: vw(2) }]}>
           <Text style={styles.cardTitle}>Waypoint Details</Text>
+          <TouchableOpacity onPress={() => setWaypointInfoVisible(true)}>
+            <Text style={{ fontSize: 16, color: parrotLightBlue, fontFamily: "Nunito_800ExtraBold" }}>ⓘ</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.profileContainer}>
           {isUploadingWaypointImage ? (
@@ -412,7 +418,7 @@ const CreateVoyageMapComponent = ({
               <View style={styles.nameInputContainer}>
                 <TextInput
                   style={styles.nameInput}
-                  placeholder="Waypoint title (max 25)"
+                  placeholder="Title (max 25 chars)"
                   value={title}
                   multiline
                   placeholderTextColor={parrotPlaceholderGrey}
@@ -695,7 +701,7 @@ const styles = StyleSheet.create({
   latorLngtxt2: {
     color: parrotPlaceholderGrey,
     fontFamily: "Nunito_700Bold",
-    width: vw(20),
+    width: vw(21),
     textAlign: "center",
   },
   profileContainer: {

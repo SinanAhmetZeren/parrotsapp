@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import CalendarPicker from "react-native-calendar-picker";
-import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor } from "../assets/color";
+import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor, parrotTextDarkBlue } from "../assets/color";
 
 const FilterCalendarModal = ({
   isVisible,
@@ -88,8 +88,11 @@ const FilterCalendarModal = ({
         animationType="fade"
         onRequestClose={onClose}
       >
-        <View style={styles.modalContainer}>
+        <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={onClose}>
+          <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
           <View style={styles.innerContainer}>
+            <Text style={styles.title}>Date Range</Text>
+            <Text style={styles.subtitle}>Show voyages within your selected dates</Text>
             <CalendarPicker
               selectedRangeStartTextStyle={styles.startEndText}
               selectedRangeEndTextStyle={styles.startEndText}
@@ -112,46 +115,23 @@ const FilterCalendarModal = ({
 
             {startDate || endDate ? (
               <View style={styles.buttonsContainer}>
-                <TouchableOpacity
-                  onPress={handleClear}
-                  style={styles.buttonClearContainer}
-                >
-                  <Text style={styles.buttonClear}>Clear</Text>
+                <TouchableOpacity onPress={handleClear} style={styles.buttonCancelContainer}>
+                  <Text style={styles.buttonClearText}>Clear</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={handleSave}
-                  style={styles.buttonSaveContainer}
-                >
-                  <Text style={styles.buttonSave}>Ok</Text>
+                <TouchableOpacity onPress={handleSave} style={styles.buttonSendBidContainer}>
+                  <Text style={styles.buttonSaveText}>Ok</Text>
                 </TouchableOpacity>
-
-                {/* <TouchableOpacity
-                  onPress={handlePrintDates}
-                  style={styles.buttonSaveContainer}
-                >
-                  <Text style={styles.buttonClose}>print dates</Text>
-                </TouchableOpacity> */}
               </View>
             ) : (
-              <>
-                <TouchableOpacity
-                  onPress={handleClose}
-                  style={styles.buttonSaveContainer}
-                >
-                  <Text style={styles.buttonClose}>Close</Text>
+              <View style={styles.buttonsContainer}>
+                <TouchableOpacity onPress={handleClose} style={styles.buttonSendBidContainer}>
+                  <Text style={styles.buttonSaveText}>Close</Text>
                 </TouchableOpacity>
-
-                {/* <TouchableOpacity
-                  onPress={handlePrintDates}
-                  style={styles.buttonSaveContainer}
-                >
-                  <Text style={styles.buttonClose}>print dates</Text>
-                </TouchableOpacity> */}
-              </>
-
+              </View>
             )}
           </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     </>
   );
@@ -164,63 +144,62 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     position: "absolute",
-    left: 0,
-    right: 0,
-    paddingTop: vh(17),
-    paddingBottom: vh(70),
+    left: 0, right: 0, top: 0, bottom: 0,
   },
   innerContainer: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 30,
-    width: vw(90),
-    height: vh(40),
+    backgroundColor: "#ffffff",
+    padding: 24,
+    borderRadius: 24,
+    width: vw(88),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
-
+  title: {
+    fontSize: 20,
+    fontFamily: "Nunito_800ExtraBold",
+    color: parrotTextDarkBlue,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 15,
+    fontFamily: "Nunito_400Regular",
+    color: "#9aa0aa",
+    marginBottom: 12,
+  },
   buttonsContainer: {
     flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "space-around",
+    gap: 10,
+    marginTop: 16,
   },
-
-  buttonSaveContainer: {
+  buttonSendBidContainer: {
+    flex: 2,
+    backgroundColor: parrotBlue,
+    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     alignItems: "center",
   },
-  buttonClearContainer: {
+  buttonSaveText: {
+    fontSize: 16,
+    color: "white",
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+  },
+  buttonCancelContainer: {
+    flex: 1,
+    backgroundColor: "#f2f4f7",
+    borderRadius: 50,
+    paddingVertical: 10,
     alignItems: "center",
   },
-  buttonClose: {
-    fontSize: 18,
+  buttonClearText: {
+    fontSize: 16,
     fontFamily: "Nunito_700Bold",
-    color: "white",
+    color: "#9aa0aa",
     textAlign: "center",
-    backgroundColor: parrotBlue,
-    padding: 5,
-    width: vw(60),
-    borderRadius: 30,
-    marginTop: 5,
-  },
-  buttonSave: {
-    fontSize: 18,
-    fontFamily: "Nunito_700Bold",
-    color: "white",
-    textAlign: "center",
-    backgroundColor: parrotBlue,
-    padding: 5,
-    width: vw(30),
-    borderRadius: 30,
-    marginTop: 5,
-  },
-  buttonClear: {
-    fontSize: 18,
-    fontFamily: "Nunito_700Bold",
-    color: "white",
-    textAlign: "center",
-    backgroundColor: parrotGreen,
-    padding: 5,
-    width: vw(30),
-    borderRadius: 30,
-    marginTop: 5,
   },
 });
 
