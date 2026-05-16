@@ -299,7 +299,7 @@ export default function ProfileScreenPublic({ navigation }) {
     const words = plainText.split(" ");
 
     return (
-      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#3D3D3D", lineHeight: 23, letterSpacing: 0.2 }}>
+      <Text selectable style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#3D3D3D", lineHeight: 23, letterSpacing: 0.2 }}>
         {words.map((word, index) =>
           word.startsWith("#") ? (
             <Text key={index} style={{ color: "blue" }}>
@@ -510,7 +510,7 @@ export default function ProfileScreenPublic({ navigation }) {
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
                 <View style={styles.nameContainer}>
-                  <Text style={styles.UserNameProfile}>
+                  <Text selectable style={styles.UserNameProfile}>
                     {userData?.userName?.length <= 30 ? (
                       userData.userName
                     ) : (
@@ -524,7 +524,7 @@ export default function ProfileScreenPublic({ navigation }) {
                   </Text>
                 </View>
                 <View>
-                  <Text style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
+                  <Text selectable style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
                     {userData.title}
                   </Text>
                 </View>

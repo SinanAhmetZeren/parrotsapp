@@ -319,7 +319,7 @@ const VehicleDetailScreen = () => {
                   onPress={() => showToast("Tap an image to open gallery")}
                   style={{ position: "absolute", top: -6, right: 10, zIndex: 10 }}
                 >
-                  <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
+                  <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: "rgba(0, 119, 234, 0.06)", borderRadius: vw(5) }} />
                 </TouchableOpacity>
                 <View style={styles.ImagesMainContainer}>
                   <View style={styles.ImagesSubContainer}>
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   shareContainer: {
     height: vh(4),
     width: vh(4),
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     borderRadius: vh(5),
     alignItems: "center",
     justifyContent: "center",
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     height: vh(4),
     width: vh(4),
     borderRadius: vh(5),
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: vh(5),
     paddingHorizontal: vw(2),
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
   },
   propTextDescription: {
     fontFamily: "Nunito_700Bold",

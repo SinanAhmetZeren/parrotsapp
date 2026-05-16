@@ -19,14 +19,7 @@ export const SearchUsersComponent = ({ searchResults }) => {
         && searchResults.map((item, index) => {
           return (
             <View key={item.publicId} style={{ width: vw(90), marginLeft: vw(5), borderRadius: vh(6), marginTop: vh(2) }}>
-              <Shadow
-                distance={7}
-                offset={[0, 0]}
-                startColor="rgba(0,0,0,0.08)"
-                finalColor="rgba(0,0,0,0.23)"
-                radius={12}
-                key={item.id}
-              >
+              <View>
                 <View style={styles.searchUserContainer}>
                   <View style={styles.profileSection}>
                     <Image
@@ -67,7 +60,7 @@ export const SearchUsersComponent = ({ searchResults }) => {
                     <Feather name="mail" size={18} color={parrotBlue} />
                   </TouchableOpacity>
                 </View>
-              </Shadow>
+              </View>
             </View>
           );
         })
@@ -88,7 +81,7 @@ const styles = StyleSheet.create({
   },
   searchUserContainer: {
     flexDirection: "row",
-    backgroundColor: "white",
+    backgroundColor: "rgba(0, 119, 234, 0.02)",
     padding: vh(.5),
     paddingHorizontal: vh(1),
     borderRadius: vh(6),

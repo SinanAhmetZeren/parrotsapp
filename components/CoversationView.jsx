@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     paddingLeft: vw(2),
     paddingRight: vw(4),
     paddingVertical: vh(0.6),
-    backgroundColor: "white",
+    backgroundColor: "rgba(0, 119, 234, 0.02)",
     borderRadius: vh(6),
     width: vw(90),
   },

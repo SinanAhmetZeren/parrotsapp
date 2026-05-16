@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   subHeader: {
     fontFamily: "Nunito_700Bold",
     fontSize: 12,
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     paddingHorizontal: vh(0.5),
     marginTop: vh(0.2),
     borderRadius: vw(2),
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   subHeader2: {
     fontFamily: "Nunito_700Bold",
     fontSize: 10,
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     paddingHorizontal: vh(0.5),
     marginTop: vh(0.2),
     borderRadius: vw(2),
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   subHeader3: {
     fontFamily: "Nunito_700Bold",
     fontSize: 10,
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     paddingHorizontal: vh(1),
     marginTop: vh(0.1),
     borderRadius: vw(2),

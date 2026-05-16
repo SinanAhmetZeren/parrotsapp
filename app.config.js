@@ -29,7 +29,7 @@ export default {
                     {
                         "CFBundleURLSchemes": [
                             "parrotsapp",
-                            "com.googleusercontent.apps.938579686654-3l1dc47s6i61d0s2qif1cvajh3fnfkvq"
+                            "com.googleusercontent.apps.938579686654-ol0d3lf5omaubr3j91l7t0dgbhfbr6mo"
                         ]
                     }
                 ]

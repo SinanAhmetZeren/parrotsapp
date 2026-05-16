@@ -964,11 +964,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 20,
     marginBottom: 7,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
   },
   mapContainer: {
     height: vh(50),

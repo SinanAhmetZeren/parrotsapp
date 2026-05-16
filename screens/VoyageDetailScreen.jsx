@@ -1072,7 +1072,7 @@ const styles = StyleSheet.create({
   pill: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 20,

@@ -10,15 +10,7 @@ import { Shadow } from "react-native-shadow-2";
 export default function FavoriteVoyageList({ data, direction }) {
   const renderItem = ({ item }) => (
 
-    <Shadow
-      distance={6}
-      offset={[0, 0]}
-      startColor="rgba(0,0,0,0.08)"
-      finalColor="rgba(0,0,0,0.23)"
-      radius={12}
-      style={{ borderRadius: vh(2), marginBottom: vh(1.3) }}
-      key={item.id}
-    >
+    <View style={{ borderRadius: vh(2), marginBottom: vh(1.3) }} key={item.id}>
       <FavoriteVoyageCardProfile
         key={item.id}
         voyageId={item.id}
@@ -32,7 +24,7 @@ export default function FavoriteVoyageList({ data, direction }) {
         vehicletype={item.vehicle?.type}
         isPublicOnMap={item.publicOnMap}
       />
-    </Shadow>
+    </View>
   );
   if (!data) return null;
 

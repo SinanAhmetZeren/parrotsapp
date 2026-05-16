@@ -11,15 +11,7 @@ export default function FavoriteVehicleList({ data }) {
   const renderVehicleCards = () => {
     return data.map((item) => {
       return (
-        <Shadow
-          distance={6}
-          offset={[0, 0]}
-          startColor="rgba(0,0,0,0.08)"
-          finalColor="rgba(0,0,0,0.23)"
-          radius={12}
-          style={{ borderRadius: vh(2), marginBottom: vh(1.3) }}
-          key={item.id}
-        >
+        <View key={item.id} style={{ marginBottom: vh(1.3) }}>
           <FavoriteVehicleCardProfile
             key={item.id}
             vehiclename={item.name}
@@ -29,7 +21,7 @@ export default function FavoriteVehicleList({ data }) {
             capacity={item.capacity}
             vehicleId={item.id}
           />
-        </Shadow>
+        </View>
       );
     });
   };

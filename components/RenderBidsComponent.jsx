@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
     margin: vh(0.3),
     alignItems: "center",
     borderRadius: vh(2),
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
   },
   flatlistContainer: {
     backgroundColor: "rgba(1,1,1,0.4)",
@@ -511,8 +511,7 @@ const styles = StyleSheet.create({
     marginVertical: vh(0.6),
     alignItems: "center",
     borderRadius: vh(2),
-    // backgroundColor: "rgba(0, 119, 234,0.05)",
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     width: "98%",
     margin: "auto",
     // borderWidth: 1,

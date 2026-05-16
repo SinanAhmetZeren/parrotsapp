@@ -354,13 +354,7 @@ export default function MessagesScreen({ navigation }) {
 
               <View style={styles.messageTextContainer}>
                 <View style={{ marginHorizontal: vw(5), marginTop: vh(2) }}>
-                  <Shadow
-                    distance={8}
-                    offset={[0, 0]}
-                    startColor="rgba(0,0,0,0.08)"
-                    finalColor="rgba(0,0,0,0.13)"
-                    style={{ borderRadius: vh(6) }}
-                  >
+                  <View>
                     <View style={styles.searchBar}>
                       <TextInput
                         onChangeText={(text) => {
@@ -384,7 +378,7 @@ export default function MessagesScreen({ navigation }) {
                         />
                       </TouchableOpacity>
                     </View>
-                  </Shadow>
+                  </View>
                 </View>
                 <SearchUsersComponent searchResults={isLoadingUsers ? null : usersData} />
               </View>
@@ -425,11 +419,11 @@ export default function MessagesScreen({ navigation }) {
 
             <Text style={styles.groupsTabTitle}>Create New Group</Text>
 
-            <View style={{ backgroundColor: parrotCream, borderRadius: vh(2), paddingTop: vh(1.5), paddingBottom: vh(0.5), paddingHorizontal: vw(2), marginBottom: vh(1) }}>
+            <View style={{ backgroundColor: "white", borderRadius: vh(2), paddingTop: vh(1.5), paddingBottom: vh(0.5), paddingHorizontal: vw(2), marginBottom: vh(1) }}>
               {/* 1. Group name */}
               <View style={styles.groupInputRow}>
-                <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.13)" style={{ borderRadius: vh(6) }}>
-                  <View style={[styles.searchBar, { width: vw(85), backgroundColor: "white" }]}>
+                <View>
+                  <View style={[styles.searchBar, { width: vw(85), backgroundColor: "rgba(0, 119, 234, 0.02)", borderWidth: 0 }]}>
                     <TextInput
                       style={styles.textinputStyle}
                       placeholder="Group name..."
@@ -439,14 +433,14 @@ export default function MessagesScreen({ navigation }) {
                       numberOfLines={1}
                     />
                   </View>
-                </Shadow>
+                </View>
               </View>
 
               {/* 2. Search bar + floating results */}
               <View style={styles.groupSearchWrapper}>
-                <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.13)" style={{ borderRadius: vh(6) }}>
+                <View>
                   <View style={[styles.searchBar,
-                  { width: vw(85), backgroundColor: "white" }]}>
+                  { width: vw(85), backgroundColor: "rgba(0, 119, 234, 0.02)", borderWidth: 0 }]}>
                     <TextInput
                       style={styles.textinputStyle}
                       placeholder="Search users to add..."
@@ -464,7 +458,7 @@ export default function MessagesScreen({ navigation }) {
                       <Feather name="search" size={20} color={groupMemberSearch.length > 2 ? parrotBlue : parrotBlueSemiTransparent} />
                     </TouchableOpacity>
                   </View>
-                </Shadow>
+                </View>
 
                 {/* Floating dropdown */}
                 <Modal visible={groupDropdownVisible} transparent animationType="none" onRequestClose={() => setGroupDropdownVisible(false)}>
@@ -477,7 +471,7 @@ export default function MessagesScreen({ navigation }) {
                             .filter((u) => !addedMembers.find((m) => (m.Id ?? m.id) === (u.Id ?? u.id)) && (u.Id ?? u.id) !== userId)
                             .map((u) => (
                               <View key={u.Id ?? u.id} style={{ borderRadius: vh(6), marginBottom: vh(1), alignItems: "center" }}>
-                                <Shadow distance={7} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.23)">
+                                <View style={{ backgroundColor: "white", borderRadius: vh(6), padding: vh(0.5) }}>
                                   <View style={styles.pillContainer}>
                                     <View style={styles.pillProfile}>
                                       <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.pillAvatar} />
@@ -503,7 +497,7 @@ export default function MessagesScreen({ navigation }) {
                                         : <Feather name="plus" size={18} color={parrotBlue} />}
                                     </TouchableOpacity>
                                   </View>
-                                </Shadow>
+                                </View>
                               </View>
                             ))}
                         </ScrollView>
@@ -517,20 +511,18 @@ export default function MessagesScreen({ navigation }) {
             {/* 3. Added users */}
             <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: parrotLightBlue, marginTop: vh(2), marginLeft: vw(5) }}>Members</Text>
             <View style={{ height: vh(45), marginTop: vh(1), opacity: groupDropdownVisible ? 0.1 : 1 }}>
-              <ScrollView style={{ flex: 1, backgroundColor: parrotCream, borderRadius: vh(2) }} contentContainerStyle={{ alignItems: "center", paddingTop: vh(2), paddingBottom: vh(1) }} nestedScrollEnabled>
+              <ScrollView style={{ flex: 1, backgroundColor: "white", borderRadius: vh(2) }} contentContainerStyle={{ alignItems: "center", paddingTop: vh(2), paddingBottom: vh(1) }} nestedScrollEnabled>
                 <View style={{ borderRadius: vh(6), marginBottom: vh(1) }}>
-                  <Shadow distance={7} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.23)">
-                    <View style={styles.pillContainer}>
-                      <View style={styles.pillProfile}>
-                        <Image source={{ uri: currentUserImage }} style={styles.pillAvatar} />
-                        <Text style={styles.pillName}>{currentUserName} (you)</Text>
-                      </View>
+                  <View style={styles.pillContainer}>
+                    <View style={styles.pillProfile}>
+                      <Image source={{ uri: currentUserImage }} style={styles.pillAvatar} />
+                      <Text style={styles.pillName}>{currentUserName} (you)</Text>
                     </View>
-                  </Shadow>
+                  </View>
                 </View>
                 {addedMembers.map((m) => (
                   <View key={m.Id ?? m.id} style={{ borderRadius: vh(6), marginBottom: vh(1) }}>
-                    <Shadow distance={7} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.23)">
+                    <View>
                       <View style={styles.pillContainer}>
                         <View style={styles.pillProfile}>
                           <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.pillAvatar} />
@@ -553,7 +545,7 @@ export default function MessagesScreen({ navigation }) {
                             : <Feather name="x" size={18} color={parrotRed} />}
                         </TouchableOpacity>
                       </View>
-                    </Shadow>
+                    </View>
                   </View>
                 ))}
               </ScrollView>
@@ -609,10 +601,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: vw(3),
-    backgroundColor: "white",
+    backgroundColor: "rgba(0, 119, 234, 0.02)",
     borderRadius: vh(6),
     width: vw(90),
-    borderWidth: 0,
   },
   textinputStyle: {
     fontFamily: "Nunito_700Bold",
@@ -793,7 +784,7 @@ const styles = StyleSheet.create({
   },
   pillContainer: {
     flexDirection: "row",
-    backgroundColor: "white",
+    backgroundColor: "rgba(0, 119, 234, 0.02)",
     padding: vh(0.5),
     paddingHorizontal: vh(1),
     borderRadius: vh(6),

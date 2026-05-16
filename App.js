@@ -476,17 +476,10 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
           }}
           listeners={({ navigation }) => ({
             tabPress: (e) => {
-              const state = navigation.getState();
-
-              const homeStackKey = state.routes.find(
-                (r) => r.name === "ProfileScreen"
-              )?.key;
-
-              if (homeStackKey) {
-                navigation.navigate("ProfileStack", {
-                  screen: "ProfileScreen",
-                });
-              }
+              e.preventDefault();
+              navigation.navigate("ProfileStack", {
+                screen: "ProfileScreen",
+              });
             },
           })}
         />

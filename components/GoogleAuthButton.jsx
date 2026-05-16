@@ -14,6 +14,7 @@ export default function GoogleLoginButton() {
     GoogleSignin.configure({
       // androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
       webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
+      iosClientId: "938579686654-ol0d3lf5omaubr3j91l7t0dgbhfbr6mo.apps.googleusercontent.com",
       offlineAccess: true,
     });
   }, []);

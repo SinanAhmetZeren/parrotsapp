@@ -282,8 +282,13 @@ export default function GroupConversationDetail({ route, navigation }) {
           <ScrollView style={styles.memberList} nestedScrollEnabled>
             {members.map((m) => (
               <View key={m.userId} style={styles.memberRow}>
-                <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.memberAvatar} />
-                <Text style={styles.memberName}>{m.username}</Text>
+                <TouchableOpacity
+                  style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: vw(3) }}
+                  onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: m.publicId, userName: m.username, userId: m.userId } })}>
+                  <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.memberAvatar} />
+                  <Text style={styles.memberName}>{m.username} {">"}</Text>
+                </TouchableOpacity>
+
                 {isCreator && m.userId !== currentUserId && (
                   <TouchableOpacity
                     onPress={() => handleRemoveMember(m.userId)}
@@ -350,17 +355,19 @@ export default function GroupConversationDetail({ route, navigation }) {
               ) : (
                 <View style={styles.msgRowLeft}>
                   {isFirstInGroup ? (
-                    <Image
-                      source={{ uri: msg.senderProfileThumbnailUrl || msg.senderProfileImageUrl }}
-                      style={styles.msgAvatar}
-                    />
+                    <TouchableOpacity onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: msg.senderPublicId, userName: msg.senderUsername, userId: msg.senderId } })}>
+                      <Image
+                        source={{ uri: msg.senderProfileThumbnailUrl || msg.senderProfileImageUrl }}
+                        style={styles.msgAvatar}
+                      />
+                    </TouchableOpacity>
                   ) : (
                     <View style={styles.msgAvatarPlaceholder} />
                   )}
                   <View style={[styles.msgColumn, isFirstInGroup && { marginTop: vh(1) }]}>
                     {isFirstInGroup && <Text style={styles.msgSender}>{msg.senderUsername}</Text>}
                     <View style={styles.msgLeft}>
-                      <Text style={styles.msgText}>{msg.text}</Text>
+                      <Text selectable style={styles.msgText}>{msg.text}</Text>
                       <Text style={styles.timeDisplay}>{time}</Text>
                     </View>
                   </View>
@@ -467,7 +474,7 @@ const styles = StyleSheet.create({
   msgLeft: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(4),
     maxWidth: vw(70),
     paddingVertical: vh(0.5),
@@ -480,7 +487,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: vh(0.5),
     marginHorizontal: vw(2),
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(4),
     maxWidth: vw(80),
     alignSelf: "flex-end",
@@ -521,13 +528,13 @@ const styles = StyleSheet.create({
   msgText: { flexShrink: 1, fontFamily: "Nunito_700Bold", color: "#333", fontSize: 14, marginRight: vw(2) },
   timeDisplay: {
     fontFamily: "Nunito_700Bold",
-    color: "#aaa",
+    color: "rgba(0, 119, 234, 0.5)",
     fontSize: 11,
     flexShrink: 0,
   },
   dateSeparator: {
     alignSelf: "center",
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(2),
     paddingHorizontal: vw(3),
     paddingVertical: vh(0.4),
@@ -535,7 +542,7 @@ const styles = StyleSheet.create({
   },
   dateSeparatorText: {
     fontFamily: "Nunito_700Bold",
-    color: "#aaa",
+    color: "rgba(0, 119, 234, 0.5)",
     fontSize: 12,
   },
   sendRow: {

@@ -180,14 +180,7 @@ export default function VehicleCardProfile({
       marginBottom: 0, borderRadius: vh(2), padding: vh(1)
     }}>
 
-      <Shadow
-        distance={8}
-        offset={[0, 0]}
-        startColor="rgba(0,0,0,0.08)"
-        finalColor="rgba(0,0,0,0.13)"
-        radius={12}
-        style={{ borderRadius: vh(2) }}
-      >
+      <View>
         <TouchableOpacity onPress={() => handleNavigateToVehicle(vehicleId)}>
           <View style={styles.cardContainer}>
             <View style={styles.shadow}>
@@ -220,8 +213,7 @@ export default function VehicleCardProfile({
             </View>
           </View>
         </TouchableOpacity>
-
-      </Shadow>
+      </View>
     </View>
   );
 }
@@ -234,10 +226,8 @@ const styles = StyleSheet.create({
     // marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: parrotCream,
-    // backgroundColor: "white",
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(2),
-
   },
   imageContainer: {
     backgroundColor: "white",
@@ -274,7 +264,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
     color: parrotBlue,
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),
@@ -283,7 +273,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),

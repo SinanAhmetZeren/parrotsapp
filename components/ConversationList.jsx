@@ -97,23 +97,15 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
     <ScrollView style={styles.container}>
       {sorted.map((item, index) =>
         item._type === "group" ? (
-          <Shadow
+          <View
             key={`group-${item.groupConversationId}`}
-            distance={8}
-            offset={[0, 0]}
-            startColor="rgba(0,0,0,0.08)"
-            finalColor="rgba(0,0,0,0.13)"
             style={{ borderRadius: vh(3), marginBottom: vh(2) }}
           >
             <GroupPreviewView item={item} onOpenGroup={onOpenGroup} />
-          </Shadow>
+          </View>
         ) : (
-          <Shadow
+          <View
             key={`dm-${item.user}-${index}`}
-            distance={8}
-            offset={[0, 0]}
-            startColor="rgba(0,0,0,0.08)"
-            finalColor="rgba(0,0,0,0.13)"
             style={{ borderRadius: vh(3), marginBottom: vh(2) }}
           >
             <ConversationView
@@ -124,7 +116,7 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
               time={item.dateTime}
               publicId={item.publicId}
             />
-          </Shadow>
+          </View>
         )
       )}
     </ScrollView>
@@ -144,7 +136,7 @@ const styles = StyleSheet.create({
     paddingLeft: vw(2),
     paddingRight: vw(4),
     paddingVertical: vh(0.6),
-    backgroundColor: "white",
+    backgroundColor: "rgba(0, 119, 234, 0.02)",
     borderRadius: vh(6),
     width: vw(90),
   },

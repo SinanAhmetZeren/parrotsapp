@@ -23,13 +23,7 @@ export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardI
 
   return (
     <TouchableOpacity onPress={handlePress} style={styles.touchable}>
-      <Shadow
-        distance={12}
-        offset={[0, 0]}
-        startColor="rgba(0,0,0,0.08)"
-        finalColor="rgba(0,0,0,0.13)"
-        radius={12}
-      >
+      <View>
         <View style={styles.cardContainerWrapper}>
           <View style={[styles.eggBadgeClip, { backgroundColor: egg.background }]}>
             <View style={styles.eggBadgeOffset}>
@@ -56,7 +50,7 @@ export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardI
             </View>
           </View>
         </View>
-      </Shadow>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -95,7 +89,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(42, 200, 152, 0.04)",
     borderRadius: vh(2),
   },
   containerContainer: {

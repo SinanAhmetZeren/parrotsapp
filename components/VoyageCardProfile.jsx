@@ -107,14 +107,7 @@ export default function VoyageCardProfile({
       marginBottom: 0, borderRadius: vh(2), padding: vh(1)
     }}>
 
-      <Shadow
-        distance={8}
-        offset={[0, 0]}
-        startColor="rgba(0,0,0,0.08)"
-        finalColor="rgba(0,0,0,0.13)"
-        radius={12}
-        style={{ borderRadius: vh(2) }}
-      >
+      <View>
         <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
           <View style={{ ...styles.cardContainer }}>
             <View style={{ ...styles.shadow }}>
@@ -159,8 +152,8 @@ export default function VoyageCardProfile({
               </Text>
             </View>
           </View>
-        </TouchableOpacity >
-      </Shadow>
+        </TouchableOpacity>
+      </View>
 
     </View>
 
@@ -174,9 +167,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(2),
-
   },
   cardImage: {
     width: vw(42),
@@ -209,7 +201,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),

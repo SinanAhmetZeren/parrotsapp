@@ -371,7 +371,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "Nunito_700Bold",
-    color: parrotTextDarkBlue,
+    fontSize: 14,
+    color: parrotBlue,
     textAlign: "center",
   },
   description: {
@@ -388,8 +389,9 @@ const styles = StyleSheet.create({
     width: vh(40),
     flexDirection: "row",
     borderRadius: vh(3),
-    backgroundColor: parrotCream,
-    borderWidth: 2,
+    // backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
+    borderWidth: 0,
     borderColor: "#c3c3c322",
     overflow: "hidden",
   },

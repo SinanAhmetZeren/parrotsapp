@@ -44,12 +44,12 @@ export default function MessagesComponent({
             )}
             {isMe ? (
               <View style={styles.MessageMainContainerRight}>
-                <Text style={styles.messageText}>{item.text}</Text>
+                <Text selectable style={styles.messageText}>{item.text}</Text>
                 <Text style={styles.timeDisplay}>{time}</Text>
               </View>
             ) : (
               <View style={styles.MessageMainContainer}>
-                <Text style={styles.messageText}>{item.text}</Text>
+                <Text selectable style={styles.messageText}>{item.text}</Text>
                 <Text style={styles.timeDisplay}>{time}</Text>
               </View>
             )}
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: vh(0.5),
     marginHorizontal: vw(2),
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(4),
     maxWidth: vw(80),
     alignSelf: "flex-start",
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: vh(0.5),
     marginHorizontal: vw(2),
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(4),
     maxWidth: vw(80),
     alignSelf: "flex-end",
@@ -122,13 +122,13 @@ const styles = StyleSheet.create({
   },
   timeDisplay: {
     fontFamily: "Nunito_700Bold",
-    color: "#aaa",
+    color: "rgba(0, 119, 234, 0.5)",
     fontSize: 11,
     flexShrink: 0,
   },
   dateSeparator: {
     alignSelf: "center",
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(2),
     paddingHorizontal: vw(3),
     paddingVertical: vh(0.4),
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   },
   dateSeparatorText: {
     fontFamily: "Nunito_700Bold",
-    color: "#aaa",
+    color: "rgba(0, 119, 234, 0.5)",
     fontSize: 12,
   },
   container: {

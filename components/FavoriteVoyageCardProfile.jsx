@@ -95,7 +95,7 @@ export default function FavoriteVoyageCardProfile({
         <View style={styles.textContainer}>
           <Text style={styles.header}>{cardHeader}</Text>
           {isPublicOnMap &&
-            <View style={{ position: "absolute", right: 5, top: 5, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5), padding: 3 }}>
+            <View style={{ position: "absolute", right: 5, top: 5, backgroundColor: "rgba(0, 119, 234, 0.06)", borderRadius: vw(5), padding: 3 }}>
               <MaterialIcons name="public" size={20} color={parrotBlue} />
             </View>
           }
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     // marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: parrotCream,
+    backgroundColor: "rgba(0, 119, 234, 0.04)",
     borderRadius: vh(2),
 
   },
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: parrotBlueMediumTransparent,
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),

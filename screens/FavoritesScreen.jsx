@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   },
   currentBidsTitle: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 26,
+    fontSize: 20,
     color: parrotBlue,
     paddingLeft: vw(5),
   },
