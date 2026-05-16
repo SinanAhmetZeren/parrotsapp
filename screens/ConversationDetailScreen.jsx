@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Keyboard,
+  Platform,
 } from "react-native";
 import { useGetMessagesBetweenUsersQuery } from "../slices/MessageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
@@ -38,7 +39,9 @@ import {
   invokeHub,
   isHubReady
 } from "../signalr/signalRHub"
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// Inside your component:
 export const ConversationDetailScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -57,7 +60,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const currentUserProfileImageThumb = useSelector((state) => state.users.userProfileImageThumbnail);
   const currentUserProfileImage = currentUserProfileImageThumb || currentUserProfileImageFull;
   const { conversationUserId, profileImg, name, publicId } = route.params;
-  // console.log("-->>", conversationUserId, profileImg, name, publicId);
   const users = { currentUserId, conversationUserId };
   const {
     data: messagesData,
@@ -72,10 +74,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
   const scrollViewRef = useRef();
   const sendTimestampsRef = useRef([]);
-
-
-
-
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (isErrorMessages) {
@@ -224,80 +223,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
     if (messagesData) setMessagesToDisplay(messagesData.data);
   }, [messagesData]);
 
-  /*
-    const handleSendMessage = async () => {
-      console.log("1");
-      if (!message.trim()) return; // Don't send empty messages
-  
-      // Scroll to bottom immediately
-      scrollViewRef.current.scrollToEnd({ animated: true });
-      console.log("2");
-  
-      // Prepare message object
-      const currentDate = new Date();
-      const formattedDateTime = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}T${String(currentDate.getHours()).padStart(2, "0")}:${String(currentDate.getMinutes()).padStart(2, "0")}:${String(currentDate.getSeconds()).padStart(2, "0")}.${String(currentDate.getMilliseconds()).padStart(3, "0")}`;
-      console.log("3");
-  
-      const sentMessage = {
-        dateTime: formattedDateTime,
-        receiverId: conversationUserId,
-        senderId: currentUserId,
-        text: message,
-      };
-      console.log("4");
-  
-      // Optimistic UI update
-      setMessagesToDisplay((prev) => [...(prev ?? []), sentMessage]);
-      setMessage("");
-      setTextInputBottomMargin(0);
-      Keyboard.dismiss();
-      console.log("5");
-  
-      // Retry function
-      const sendWithRetry = async (msg, retries = 3, delay = 1000) => {
-        for (let i = 0; i < retries; i++) {
-          console.log("6");
-          console.log("hc: ", hubConnection.current.state);
-  
-          if (
-            hubConnection.current.state === "Connected" &&
-            chatReadyRef.current === true
-          ) {
-            try {
-              console.log("7");
-  
-              await hubConnection.current.invoke(
-                "SendMessage",
-                currentUserId,
-                conversationUserId,
-                msg.text
-              );
-              console.log("8");
-  
-              console.log("Message sent successfully.");
-              return true;
-            } catch (err) {
-              console.error("Send attempt failed:", err);
-            }
-          }
-          console.log("9");
-  
-          console.log(`Retrying send in ${delay}ms... (${i + 1}/${retries})`);
-          await new Promise((res) => setTimeout(res, delay));
-        }
-        return false;
-      };
-  
-      const success = await sendWithRetry(sentMessage);
-      if (!success) {
-        console.error("Failed to send message after retries.");
-        setMessagesToDisplay((prev) =>
-          prev.filter((msg) => msg.dateTime !== sentMessage.dateTime)
-        );
-        alert("Failed to send message. Please check your connection and try again.");
-      }
-    };
-  */
+
 
 
   const handleSendMessage = async () => {
@@ -407,15 +333,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
       <View style={{ flex: 1, backgroundColor: "white" }} >
         <TokenExpiryGuard />
 
-        <View
-          style={[
-            styles.mainContainer, // 🟢 base styles
-            textInputBottomMargin !== 0 ? { paddingTop: vh(1) } : { paddingTop: vh(6) } // 🟢 conditional paddingTop
-          ]}
-        >
+        <View style={styles.mainContainer}>
           {/* // HEADER // */}
-          <View
-            style={styles.headerStyle}>
+          <View style={styles.headerStyle}>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate("Messages", {
@@ -427,9 +347,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
             >
               <View style={styles.imageContainer}>
                 <Image
-                  source={{
-                    uri: `${profileImg}`,
-                  }}
+                  source={{ uri: `${profileImg}` }}
                   style={styles.profileImage}
                 />
               </View>
@@ -443,54 +361,44 @@ export const ConversationDetailScreen = ({ navigation }) => {
           {/* // HEADER // */}
 
           {/* // MESSAGES COMPONENT // */}
-          <View
-            style={
-              textInputBottomMargin === 0
-                ? {
-                  zIndex: 100,
-                  backgroundColor: "white",
-                  marginTop: vh(5),
-                }
-                : {
-                  top: vh(15) - textInputBottomMargin,
-                  zIndex: 100,
-                  backgroundColor: "white",
-                }
-            }
-          >
-            <View style={styles.scrollViewMessages}>
-              <MessagesComponent
-                data={messagesToDisplay}
-                currentUserId={currentUserId}
-                userName={currentUserName}
-                userProfileImage={currentUserProfileImage}
-                otherUserProfileImg={profileImg}
-                otherUserName={name}
-                scrollViewRef={scrollViewRef}
-              />
-            </View>
+          <View style={[styles.messagesWrapper, {
+            bottom: textInputBottomMargin ? textInputBottomMargin - vh(8) : vh(0),
+            height: vh(76) - (Platform.OS === "ios" ? insets.top + insets.bottom : 0),
+          }]}>
+            <MessagesComponent
+              data={messagesToDisplay}
+              currentUserId={currentUserId}
+              userName={currentUserName}
+              userProfileImage={currentUserProfileImage}
+              otherUserProfileImg={profileImg}
+              otherUserName={name}
+              scrollViewRef={scrollViewRef}
+            />
           </View>
           {/* // MESSAGES COMPONENT // */}
 
+          <View style={[styles.sendRow, { bottom: textInputBottomMargin ? textInputBottomMargin - vh(8) : vh(0) }]}>
+            <TextInput
+              onChangeText={(text) => setMessage(text)}
+              style={styles.textinputStyle}
+              multiline
+              placeholder="Write a message"
+              placeholderTextColor={parrotPlaceholderGrey}
+              value={message}
+              maxLength={500}
+            />
+            <TouchableOpacity
+              disabled={!message.trim()}
+              onPress={() => handleSendMessage()}
+              style={message.trim() ? styles.sendBtn : styles.sendBtnDisabled}
+            >
+              <Feather name="send" size={20} color="white" />
+            </TouchableOpacity>
+          </View>
+
+
         </View>
-        <View style={[styles.sendRow, { bottom: textInputBottomMargin || vh(8) }]}>
-          <TextInput
-            onChangeText={(text) => setMessage(text)}
-            style={styles.textinputStyle}
-            multiline
-            placeholder="Write a message"
-            placeholderTextColor={parrotPlaceholderGrey}
-            value={message}
-            maxLength={500}
-          />
-          <TouchableOpacity
-            disabled={!message.trim()}
-            onPress={() => handleSendMessage()}
-            style={message.trim() ? styles.sendBtn : styles.sendBtnDisabled}
-          >
-            <Feather name="send" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
+
         {toastVisible && (
           <View style={styles.toast}>
             <Text style={styles.toastText}>{toastMessage}</Text>
@@ -507,16 +415,21 @@ const styles = StyleSheet.create({
   headerStyle: {
     position: "absolute",
     top: 0,
+    left: 0,
+    right: 0,
     zIndex: 110,
     paddingLeft: vh(2),
     paddingTop: vh(2),
     backgroundColor: "white",
   },
-  mainContainer:
-  {
+  mainContainer: {
     backgroundColor: "white",
     padding: vh(2),
-
+  },
+  messagesWrapper: {
+    marginTop: vh(7),
+    backgroundColor: "white",
+    marginBottom: vh(0),
   },
   textinputStyle: {
     flex: 1,
@@ -531,12 +444,14 @@ const styles = StyleSheet.create({
     color: "black",
   },
   sendRow: {
-    position: "absolute",
-    left: 0,
-    right: 0,
+    // position: "absolute",
+    // left: 0,
+    // right: 0,
+    zIndex: 200,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: vw(3),
+    marginHorizontal: -vh(2),
     paddingVertical: vh(1),
     backgroundColor: parrotCream,
     gap: vw(2),
@@ -580,8 +495,9 @@ const styles = StyleSheet.create({
     width: vh(8),
   },
   scrollViewMessages: {
-    height: vh(74),
-    backgroundColor: "white",
+    minHeight: vh(50),
+    backgroundColor: "green",
+    padding: 1
   },
 
   buttonsContainer: {
