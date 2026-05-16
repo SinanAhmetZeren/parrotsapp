@@ -5,10 +5,10 @@ export default {
         "name": "Parrots",
         "slug": "parrots",
         "owner": "ahmetzeren",
-        "version": "1.0.5",
+        "version": "1.0.6",
         "scheme": "parrotsapp",
         "orientation": "portrait",
-        "icon": "./assets/parrotsiconpadded.png",
+        "icon": "./assets/parrotslogofullsize.jpg",
         "userInterfaceStyle": "light",
         "splash": {
             "image": "./assets/parrotslogofullsize.jpg",
@@ -41,7 +41,7 @@ export default {
         "android": {
             "package": "com.zenforest.parrots",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 6,
+            "versionCode": 7,
             "adaptiveIcon": {
                 "foregroundImage": "./assets/parrotslogofullsize.jpg",
                 "backgroundColor": "#ffffff"
@@ -79,7 +79,7 @@ export default {
             ],
             [
                 "expo-notifications",
-                { "icon": "./assets/parrotsiconpadded.png", "color": "#ffffff" }
+                { "icon": "./assets/parrotslogofullsize.jpg", "color": "#ffffff" }
             ],
             "expo-font",
             "expo-build-properties",
