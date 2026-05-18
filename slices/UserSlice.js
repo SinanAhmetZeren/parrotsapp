@@ -80,6 +80,10 @@ const usersSlice = createSlice({
       state.userProfileImageThumbnail = "";
       state.unreadMessages = false;
       state.hasAcknowledgedPublicProfile = false;
+      state.userFavoriteVoyages = [0];
+      state.userFavoriteVehicles = [0];
+      state.bookmarkedUserIds = [];
+      state.isHubConnected = false;
       AsyncStorage.removeItem("storedToken").catch((error) => {
         console.error("Error clearing AsyncStorage storedToken:", error);
       });
