@@ -29,16 +29,13 @@ import {
   useAcceptTermsMutation,
   useRequestCodeMutation,
   useResetPasswordMutation,
-  useLazyGetFavoriteVoyageIdsByUserIdQuery,
-  useLazyGetFavoriteVehicleIdsByUserIdQuery,
   updateUserFavorites,
-  useLazyGetBookmarkedUserIdsQuery,
   setBookmarkedUserIds,
 } from "../slices/UserSlice";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
 import { TERMS_VERSION } from "../constants/TermsVersion";
-import GoogleLoginButton from "../components/GoogleAuthButton";
-// import GoogleLoginButton from "../components/GoogleAuthButtonDummy";
+// import GoogleLoginButton from "../components/GoogleAuthButton";
+import GoogleLoginButton from "../components/GoogleAuthButtonDummy";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotRed, parrotTextDarkBlue, parrotYellow } from "../assets/color";
 
 // import {
@@ -98,12 +95,6 @@ const LoginScreen = ({ navigation }) => {
     confirmUser,
     { isLoading: isLoadingConfirmUser, isSuccess: isSuccessConfirmUser },
   ] = useConfirmUserMutation();
-
-  const [getFavoriteVehicleIdsByUserId] =
-    useLazyGetFavoriteVehicleIdsByUserIdQuery();
-  const [getFavoriteVoyageIdsByUserId] =
-    useLazyGetFavoriteVoyageIdsByUserIdQuery();
-  const [getBookmarkedUserIds] = useLazyGetBookmarkedUserIdsQuery();
 
   const handleEmailChange = (text) => {
     setEmail(text);
@@ -178,12 +169,17 @@ const LoginScreen = ({ navigation }) => {
             profileImageThumbnailUrl: resetPasswordResponse.profileImageThumbnailUrl || "",
             token: resetPasswordResponse.token,
             refreshToken: resetPasswordResponse.refreshToken,
-            refreshTokenExpiryTime:
-              resetPasswordResponse.refreshTokenExpiryTime,
+            refreshTokenExpiryTime: resetPasswordResponse.refreshTokenExpiryTime,
             unreadMessages: resetPasswordResponse.unreadMessages,
+            isAdmin: resetPasswordResponse.isAdmin,
             hasAcknowledgedPublicProfile: resetPasswordResponse.hasAcknowledgedPublicProfile ?? false,
           })
         );
+        dispatch(updateUserFavorites({
+          favoriteVehicles: resetPasswordResponse.favoriteVehicleIds || [],
+          favoriteVoyages: resetPasswordResponse.favoriteVoyageIds || [],
+        }));
+        dispatch(setBookmarkedUserIds(resetPasswordResponse.bookmarkedUserIds || []));
       }
     } catch (err) {
       showToast("Could not log in - Please check your credentials.");
@@ -216,48 +212,12 @@ const LoginScreen = ({ navigation }) => {
       //   loginResponse.refreshToken
       // );
 
-      let favoriteVehicles = [];
-      let favoriteVoyages = [];
+      dispatch(updateUserFavorites({
+        favoriteVehicles: loginResponse.favoriteVehicleIds || [],
+        favoriteVoyages: loginResponse.favoriteVoyageIds || [],
+      }));
+      dispatch(setBookmarkedUserIds(loginResponse.bookmarkedUserIds || []));
 
-      try {
-        // Fetch favorites safely, fall back to empty arrays if request fails
-        const vehiclesRes = await getFavoriteVehicleIdsByUserId(
-          loginResponse.userId
-        ).unwrap();
-        favoriteVehicles = vehiclesRes?.data || [];
-        console.log("Favorite Vehicles:", favoriteVehicles);
-      } catch (vehicleErr) {
-        console.warn("Failed to fetch favorite vehicles:", vehicleErr);
-      }
-
-      try {
-        const voyagesRes = await getFavoriteVoyageIdsByUserId(
-          loginResponse.userId
-        ).unwrap();
-        console.log("Favorite Voyages Response:", voyagesRes);
-        favoriteVoyages = voyagesRes?.data || [];
-      } catch (voyageErr) {
-        console.warn("Failed to fetch favorite voyages:", voyageErr);
-      }
-
-      // Update Redux state
-      dispatch(
-        updateUserFavorites({
-          favoriteVehicles,
-          favoriteVoyages,
-        })
-      );
-
-      try {
-        const bookmarkedIds = await getBookmarkedUserIds().unwrap();
-        dispatch(setBookmarkedUserIds(bookmarkedIds || []));
-      } catch {
-        // non-critical, silently ignore
-      }
-
-      // console.log("login response - unread: ", loginResponse.unreadMessages);
-      // Dispatch login state only if token is present
-      // if (false)
       if (loginResponse.requiresTermsAcceptance) {
         setPendingLoginData(loginResponse);
         setRequiresTermsReAcceptance(true);
@@ -275,6 +235,7 @@ const LoginScreen = ({ navigation }) => {
           refreshToken: loginResponse.refreshToken,
           refreshTokenExpiryTime: loginResponse.refreshTokenExpiryTime,
           unreadMessages: loginResponse.unreadMessages,
+          isAdmin: loginResponse.isAdmin,
           hasAcknowledgedPublicProfile: loginResponse.hasAcknowledgedPublicProfile ?? false,
         })
       );
@@ -310,9 +271,15 @@ const LoginScreen = ({ navigation }) => {
           refreshToken: pendingLoginData.refreshToken,
           refreshTokenExpiryTime: pendingLoginData.refreshTokenExpiryTime,
           unreadMessages: pendingLoginData.unreadMessages,
+          isAdmin: pendingLoginData.isAdmin,
           hasAcknowledgedPublicProfile: pendingLoginData.hasAcknowledgedPublicProfile ?? false,
         })
       );
+      dispatch(updateUserFavorites({
+        favoriteVehicles: pendingLoginData.favoriteVehicleIds || [],
+        favoriteVoyages: pendingLoginData.favoriteVoyageIds || [],
+      }));
+      dispatch(setBookmarkedUserIds(pendingLoginData.bookmarkedUserIds || []));
       setRequiresTermsReAcceptance(false);
       setPendingLoginData(null);
       setEmail("");
@@ -385,9 +352,15 @@ const LoginScreen = ({ navigation }) => {
             refreshToken: confirmResponse.refreshToken,
             refreshTokenExpiryTime: confirmResponse.refreshTokenExpiryTime,
             unreadMessages: confirmResponse.unreadMessages,
+            isAdmin: confirmResponse.isAdmin,
             hasAcknowledgedPublicProfile: confirmResponse.hasAcknowledgedPublicProfile ?? false,
           })
         );
+        dispatch(updateUserFavorites({
+          favoriteVehicles: confirmResponse.favoriteVehicleIds || [],
+          favoriteVoyages: confirmResponse.favoriteVoyageIds || [],
+        }));
+        dispatch(setBookmarkedUserIds(confirmResponse.bookmarkedUserIds || []));
       }
     } catch (err) {
       console.log(err);

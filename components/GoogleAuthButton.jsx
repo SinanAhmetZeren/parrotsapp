@@ -1,15 +1,18 @@
 import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, Image, View } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useGoogleLoginInternalMutation } from "../slices/UserSlice";
+import {
+  useGoogleLoginInternalMutation,
+  updateAsLoggedIn,
+  updateUserFavorites,
+  setBookmarkedUserIds,
+} from "../slices/UserSlice";
 import { useDispatch } from "react-redux";
-import { updateAsLoggedIn } from "../slices/UserSlice";
 import { vh, vw } from 'react-native-expo-viewport-units';
 import gooogleSignin from "../assets/googleg.png";
 
 export default function GoogleLoginButton() {
   const [googleLoginInternal, { isLoading }] = useGoogleLoginInternalMutation();
-
   useEffect(() => {
     GoogleSignin.configure({
       // androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
@@ -48,8 +51,16 @@ export default function GoogleLoginButton() {
             refreshToken: res.refreshToken,
             refreshTokenExpiryTime: res.refreshTokenExpiryTime,
             unreadMessages: res.unreadMessages,
+            isAdmin: res.isAdmin,
+            hasAcknowledgedPublicProfile: res.hasAcknowledgedPublicProfile ?? false,
           })
         );
+
+        dispatch(updateUserFavorites({
+          favoriteVehicles: res.favoriteVehicleIds || [],
+          favoriteVoyages: res.favoriteVoyageIds || [],
+        }));
+        dispatch(setBookmarkedUserIds(res.bookmarkedUserIds || []));
       } else {
         console.error("No Access Token received from Google");
       }
