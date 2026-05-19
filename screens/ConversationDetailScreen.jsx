@@ -365,6 +365,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
             bottom: textInputBottomMargin ? textInputBottomMargin - vh(8) : vh(0),
             height: vh(76) - (Platform.OS === "ios" ? insets.top + insets.bottom : 0),
           }]}>
+
+            {/* 76 android
+            77 ios */}
             <MessagesComponent
               data={messagesToDisplay}
               currentUserId={currentUserId}
@@ -377,7 +380,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
           </View>
           {/* // MESSAGES COMPONENT // */}
 
-          <View style={[styles.sendRow, { bottom: textInputBottomMargin ? textInputBottomMargin - vh(8) : vh(0) }]}>
+          <View style={[styles.sendRow,
+          {
+            bottom: textInputBottomMargin ? textInputBottomMargin - vh(8) : vh(0),
+            paddingBottom: insets.bottom
+          }]}>
             <TextInput
               onChangeText={(text) => setMessage(text)}
               style={styles.textinputStyle}

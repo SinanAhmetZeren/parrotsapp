@@ -555,6 +555,10 @@ export default function ProfileScreenPublic({ navigation }) {
               </View>
               {/* ------- BIO ------ */}
 
+              {isSuccessVoyages && VehiclesData?.[0] === undefined && VoyagesData === null && (
+                <View style={{ paddingBottom: vh(10) }} />
+              )}
+
               {isLoadingVoyages ? (
                 <ActivityIndicator size="large" />
               ) : isSuccessVoyages ? (

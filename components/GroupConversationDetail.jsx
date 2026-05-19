@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View, Text, TextInput, TouchableOpacity, Image, StyleSheet,
-  ScrollView, Modal, Keyboard, ActivityIndicator,
+  ScrollView, Modal, Keyboard, ActivityIndicator, Platform,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Feather } from "@expo/vector-icons";
 import {
@@ -207,6 +208,7 @@ export default function GroupConversationDetail({ route, navigation }) {
     navigation.goBack();
   };
 
+  const insets = useSafeAreaInsets();
   const stackedAvatars = members.slice(0, 3);
   const extraCount = members.length > 3 ? members.length - 3 : 0;
 
@@ -327,59 +329,71 @@ export default function GroupConversationDetail({ route, navigation }) {
       )}
 
       {/* Messages */}
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.messagesList}
-        contentContainerStyle={{ paddingBottom: vh(2) }}
-        keyboardShouldPersistTaps="handled"
-      >
-        {messagesToDisplay?.map((msg, index) => {
-          const isMe = msg.senderId === currentUserId;
-          const [time, date] = formatDate(msg.dateTime);
-          const prevMsg = messagesToDisplay[index - 1];
-          const prevDate = prevMsg ? formatDate(prevMsg.dateTime)[1] : null;
-          const showDateSeparator = date !== prevDate;
-          const isFirstInGroup = !prevMsg || prevMsg.senderId !== msg.senderId || showDateSeparator;
-          return (
-            <View key={index}>
-              {showDateSeparator && (
-                <View style={styles.dateSeparator}>
-                  <Text style={styles.dateSeparatorText}>{date}</Text>
-                </View>
-              )}
-              {isMe ? (
-                <View style={styles.msgRight}>
-                  <Text style={styles.msgText}>{msg.text}</Text>
-                  <Text style={styles.timeDisplay}>{time}</Text>
-                </View>
-              ) : (
-                <View style={styles.msgRowLeft}>
-                  {isFirstInGroup ? (
-                    <TouchableOpacity onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: msg.senderPublicId, userName: msg.senderUsername, userId: msg.senderId } })}>
-                      <Image
-                        source={{ uri: msg.senderProfileThumbnailUrl || msg.senderProfileImageUrl }}
-                        style={styles.msgAvatar}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <View style={styles.msgAvatarPlaceholder} />
-                  )}
-                  <View style={[styles.msgColumn, isFirstInGroup && { marginTop: vh(1) }]}>
-                    {isFirstInGroup && <Text style={styles.msgSender}>{msg.senderUsername}</Text>}
-                    <View style={styles.msgLeft}>
-                      <Text selectable style={styles.msgText}>{msg.text}</Text>
-                      <Text style={styles.timeDisplay}>{time}</Text>
+      {/* <View style={[styles.messagesWrapper,
+      { height: vh(76) - (Platform.OS === "ios" ? insets.top + insets.bottom : 0) }]}> */}
+
+      <View style={[styles.messagesWrapper, {
+        bottom: textInputBottomMargin ? textInputBottomMargin - vh(8) : vh(0),
+        height: vh(78) - (Platform.OS === "ios" ? insets.top + insets.bottom : 0),
+      }]}>
+        {/* 77 android */}
+        {/* 79 ios */}
+
+
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.messagesList}
+          contentContainerStyle={{ paddingBottom: vh(2) }}
+          keyboardShouldPersistTaps="handled"
+        >
+          {messagesToDisplay?.map((msg, index) => {
+            const isMe = msg.senderId === currentUserId;
+            const [time, date] = formatDate(msg.dateTime);
+            const prevMsg = messagesToDisplay[index - 1];
+            const prevDate = prevMsg ? formatDate(prevMsg.dateTime)[1] : null;
+            const showDateSeparator = date !== prevDate;
+            const isFirstInGroup = !prevMsg || prevMsg.senderId !== msg.senderId || showDateSeparator;
+            return (
+              <View key={index}>
+                {showDateSeparator && (
+                  <View style={styles.dateSeparator}>
+                    <Text style={styles.dateSeparatorText}>{date}</Text>
+                  </View>
+                )}
+                {isMe ? (
+                  <View style={styles.msgRight}>
+                    <Text style={styles.msgText}>{msg.text}</Text>
+                    <Text style={styles.timeDisplay}>{time}</Text>
+                  </View>
+                ) : (
+                  <View style={styles.msgRowLeft}>
+                    {isFirstInGroup ? (
+                      <TouchableOpacity onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: msg.senderPublicId, userName: msg.senderUsername, userId: msg.senderId } })}>
+                        <Image
+                          source={{ uri: msg.senderProfileThumbnailUrl || msg.senderProfileImageUrl }}
+                          style={styles.msgAvatar}
+                        />
+                      </TouchableOpacity>
+                    ) : (
+                      <View style={styles.msgAvatarPlaceholder} />
+                    )}
+                    <View style={[styles.msgColumn, isFirstInGroup && { marginTop: vh(1) }]}>
+                      {isFirstInGroup && <Text style={styles.msgSender}>{msg.senderUsername}</Text>}
+                      <View style={styles.msgLeft}>
+                        <Text selectable style={styles.msgText}>{msg.text}</Text>
+                        <Text style={styles.timeDisplay}>{time}</Text>
+                      </View>
                     </View>
                   </View>
-                </View>
-              )}
-            </View>
-          );
-        })}
-      </ScrollView>
+                )}
+              </View>
+            );
+          })}
+        </ScrollView>
+      </View>
 
       {/* Send box */}
-      <View style={[styles.sendRow, { marginBottom: textInputBottomMargin || vh(8) }]}>
+      <View style={[styles.sendRow, { paddingBottom: insets.bottom }]}>
         <TextInput
           onChangeText={setMessage}
           style={styles.textInput}
@@ -407,6 +421,9 @@ export default function GroupConversationDetail({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
+  },
+  messagesWrapper: {
     backgroundColor: "white",
   },
   header: {

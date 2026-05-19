@@ -8,10 +8,10 @@ export default {
         "version": "1.0.6",
         "scheme": "parrotsapp",
         "orientation": "portrait",
-        "icon": "./assets/parrotslogofullsize.jpg",
+        "icon": "./assets/parrotsandsun.jpg",
         "userInterfaceStyle": "light",
         "splash": {
-            "image": "./assets/parrotslogofullsize.jpg",
+            "image": "./assets/parrotsandsun.jpg",
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },
@@ -43,7 +43,7 @@ export default {
             "googleServicesFile": "./google-services.json",
             "versionCode": 7,
             "adaptiveIcon": {
-                "foregroundImage": "./assets/parrotslogofullsize.jpg",
+                "foregroundImage": "./assets/parrotsandsunpadded.jpeg",
                 "backgroundColor": "#ffffff"
             },
             "intentFilters": [
@@ -79,7 +79,7 @@ export default {
             ],
             [
                 "expo-notifications",
-                { "icon": "./assets/parrotslogofullsize.jpg", "color": "#ffffff" }
+                { "icon": "./assets/parrotsandsun.jpg", "color": "#ffffff" }
             ],
             "expo-font",
             "expo-build-properties",
