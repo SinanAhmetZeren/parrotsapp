@@ -9,14 +9,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  Modal,
   Image,
   TextInput,
   RefreshControl,
   ScrollView,
-  ActivityIndicator,
-  Keyboard,
   BackHandler,
   Platform,
 } from "react-native";
@@ -25,7 +21,7 @@ import ConversationList from "../components/ConversationList";
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
 import { useGetUsersByUsernameQuery, useGetBookmarksQuery } from "../slices/UserSlice";
 import { setUnreadMessages } from "../slices/UserSlice";
-import { useCreateGroupMutation, useAddGroupMemberMutation } from "../slices/GroupSlice";
+import CreateNewGroupTab from "../components/CreateNewGroupTab";
 import {
   register_ReceiveGroupMessageRefetch,
   unregister_ReceiveGroupMessageRefetch,
@@ -35,12 +31,11 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { ConnectSelectionComponent } from "../components/ConnectSelectionComponent";
 import { SearchUsersComponent } from "../components/SearchUsersComponent";
-import { FontAwesome, Feather } from "@expo/vector-icons";
-import { Shadow } from "react-native-shadow-2";
+import { Feather } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import LoadingLogo from "../components/LoadingLogo";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotPistachioGreen, parrotPlaceholderGrey, parrotLightBlue, parrotRed } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotPistachioGreen, parrotPlaceholderGrey } from "../assets/color";
 import {
   register_ReceiveMessage,
   unregister_ReceiveMessage,
@@ -83,22 +78,6 @@ export default function MessagesScreen({ navigation }) {
 
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [groupKeyboardOffset, setGroupKeyboardOffset] = useState(vh(8));
-  const [groupDropdownVisible, setGroupDropdownVisible] = useState(false);
-  // Groups tab state
-  const [newGroupName, setNewGroupName] = useState("");
-  const [groupMemberSearch, setGroupMemberSearch] = useState("");
-  const [groupMemberQuery, setGroupMemberQuery] = useState("");
-  const [addedMembers, setAddedMembers] = useState([]);
-  const [addingMemberId, setAddingMemberId] = useState(null);
-  const [removingMemberId, setRemovingMemberId] = useState(null);
-  const [firstGroupMessage, setFirstGroupMessage] = useState("");
-  const [createGroup] = useCreateGroupMutation();
-  const [addGroupMember] = useAddGroupMemberMutation();
-
-  const { data: groupMemberResults, isFetching: isFetchingGroupMembers } = useGetUsersByUsernameQuery(groupMemberQuery, {
-    skip: groupMemberQuery.length < 3,
-  });
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -123,12 +102,6 @@ export default function MessagesScreen({ navigation }) {
   const recipientId = userId;
 
 
-
-  useEffect(() => {
-    const show = Keyboard.addListener("keyboardDidShow", (e) => setGroupKeyboardOffset(e.endCoordinates.height));
-    const hide = Keyboard.addListener("keyboardDidHide", () => setGroupKeyboardOffset(vh(8)));
-    return () => { show.remove(); hide.remove(); };
-  }, []);
 
   // Handle API error state
   useEffect(() => {
@@ -272,29 +245,6 @@ export default function MessagesScreen({ navigation }) {
     setUsername(searchText);
   };
 
-  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
-  const handleCreateGroupAndSend = async () => {
-    if (!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0) return;
-    setIsCreatingGroup(true);
-    try {
-      const groupResult = await createGroup({ name: newGroupName.trim(), creatorId: userId }).unwrap();
-      const groupId = groupResult.id ?? groupResult.Id ?? groupResult.data?.id;
-      if (!groupId) return;
-      await Promise.all(addedMembers.map((m) => addGroupMember({ groupId, userId: m.Id ?? m.id, requesterId: userId })));
-      await invokeHub("SendGroupMessage", userId, groupId, firstGroupMessage.trim());
-      await refetch();
-      setSelectedFunction(1);
-      setNewGroupName("");
-      setFirstGroupMessage("");
-      setAddedMembers([]);
-      setGroupMemberSearch("");
-      setGroupMemberQuery("");
-    } catch (e) {
-      showToast("Could not create group - Please try again.");
-    } finally {
-      setIsCreatingGroup(false);
-    }
-  };
 
 
   return (
@@ -418,166 +368,10 @@ export default function MessagesScreen({ navigation }) {
             selectedFunction={selectedFunction}
             setSelectedFunction={setSelectedFunction}
           />
-          <View style={styles.groupsTabContainer}>
-
-            <Text style={styles.groupsTabTitle}>Create New Group</Text>
-
-            <View style={{ backgroundColor: "white", borderRadius: vh(2), paddingTop: vh(1.5), paddingBottom: vh(0.5), paddingHorizontal: vw(2), marginBottom: vh(1) }}>
-              {/* 1. Group name */}
-              <View style={styles.groupInputRow}>
-                <View>
-                  <View style={[styles.searchBar, { width: vw(85), backgroundColor: "rgba(0, 119, 234, 0.02)", borderWidth: 0 }]}>
-                    <TextInput
-                      style={styles.textinputStyle}
-                      placeholder="Group name..."
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={newGroupName}
-                      onChangeText={setNewGroupName}
-                      numberOfLines={1}
-                    />
-                  </View>
-                </View>
-              </View>
-
-              {/* 2. Search bar + floating results */}
-              <View style={styles.groupSearchWrapper}>
-                <View>
-                  <View style={[styles.searchBar,
-                  { width: vw(85), backgroundColor: "rgba(0, 119, 234, 0.02)", borderWidth: 0 }]}>
-                    <TextInput
-                      style={styles.textinputStyle}
-                      placeholder="Search users to add..."
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={groupMemberSearch}
-                      onChangeText={setGroupMemberSearch}
-                      numberOfLines={1}
-                      onSubmitEditing={() => { if (groupMemberSearch.length >= 3) { setGroupMemberQuery(groupMemberSearch); setGroupDropdownVisible(true); } }}
-                    />
-                    <TouchableOpacity
-                      style={styles.magnifier}
-                      onPress={() => { if (groupMemberSearch.length >= 3) { setGroupMemberQuery(groupMemberSearch); setGroupDropdownVisible(true); } }}
-                      disabled={groupMemberSearch.length < 3}
-                    >
-                      <Feather name="search" size={20} color={groupMemberSearch.length > 2 ? parrotBlue : parrotBlueSemiTransparent} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                {/* Floating dropdown */}
-                <Modal visible={groupDropdownVisible} transparent animationType="none" onRequestClose={() => setGroupDropdownVisible(false)}>
-                  <TouchableWithoutFeedback onPress={() => setGroupDropdownVisible(false)}>
-                    <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.3)" }}>
-                      <View style={styles.groupSearchDropdown} onStartShouldSetResponder={() => true}>
-                        <ScrollView keyboardShouldPersistTaps="handled">
-                          {/* [...Array.from({ length: 20 }, (_, i) => ({ id: `dummy-${i}`, Id: `dummy-${i}`, userName: `user_${i + 1}`, profileImageUrl: `https://i.pravatar.cc/150?img=${i + 1}`, profileImageThumbnailUrl: `https://i.pravatar.cc/150?img=${i + 1}` }))] */}
-                          {(isFetchingGroupMembers ? [] : (groupMemberResults ?? []))
-                            .filter((u) => !addedMembers.find((m) => (m.Id ?? m.id) === (u.Id ?? u.id)) && (u.Id ?? u.id) !== userId)
-                            .map((u) => (
-                              <View key={u.Id ?? u.id} style={{ borderRadius: vh(6), marginBottom: vh(1), alignItems: "center" }}>
-                                <View style={{ backgroundColor: "white", borderRadius: vh(6), padding: vh(0.5) }}>
-                                  <View style={styles.pillContainer}>
-                                    <View style={styles.pillProfile}>
-                                      <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.pillAvatar} />
-                                      <Text style={styles.pillName}>{u.userName}</Text>
-                                    </View>
-                                    <TouchableOpacity
-                                      style={addingMemberId === (u.Id ?? u.id) ? styles.addedMemberBtn : styles.addMemberBtn}
-                                      disabled={!!addingMemberId}
-                                      onPress={() => {
-                                        const uid = u.Id ?? u.id;
-                                        setAddingMemberId(uid);
-                                        setTimeout(() => {
-                                          setAddedMembers((prev) => [...prev, u]);
-                                          setGroupDropdownVisible(false);
-                                          setGroupMemberSearch("");
-                                          setGroupMemberQuery("");
-                                          setAddingMemberId(null);
-                                        }, 600);
-                                      }}
-                                    >
-                                      {addingMemberId === (u.Id ?? u.id)
-                                        ? <Feather name="check" size={18} color="#4caf50" />
-                                        : <Feather name="plus" size={18} color={parrotBlue} />}
-                                    </TouchableOpacity>
-                                  </View>
-                                </View>
-                              </View>
-                            ))}
-                        </ScrollView>
-                      </View>
-                    </View>
-                  </TouchableWithoutFeedback>
-                </Modal>
-              </View>
-            </View>
-
-            {/* 3. Added users */}
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: parrotLightBlue, marginTop: vh(2), marginLeft: vw(5) }}>Members</Text>
-            <View style={{ height: vh(45), marginTop: vh(1), opacity: groupDropdownVisible ? 0.1 : 1 }}>
-              <ScrollView style={{ flex: 1, backgroundColor: "white", borderRadius: vh(2) }} contentContainerStyle={{ alignItems: "center", paddingTop: vh(2), paddingBottom: vh(1) }} nestedScrollEnabled>
-                <View style={{ borderRadius: vh(6), marginBottom: vh(1) }}>
-                  <View style={styles.pillContainer}>
-                    <View style={styles.pillProfile}>
-                      <Image source={{ uri: currentUserImage }} style={styles.pillAvatar} />
-                      <Text style={styles.pillName}>{currentUserName} (you)</Text>
-                    </View>
-                  </View>
-                </View>
-                {addedMembers.map((m) => (
-                  <View key={m.Id ?? m.id} style={{ borderRadius: vh(6), marginBottom: vh(1) }}>
-                    <View>
-                      <View style={styles.pillContainer}>
-                        <View style={styles.pillProfile}>
-                          <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.pillAvatar} />
-                          <Text style={styles.pillName}>{m.userName}</Text>
-                        </View>
-                        <TouchableOpacity
-                          style={styles.pillAction}
-                          disabled={!!removingMemberId}
-                          onPress={() => {
-                            const mid = m.Id ?? m.id;
-                            setRemovingMemberId(mid);
-                            setTimeout(() => {
-                              setAddedMembers((prev) => prev.filter((x) => (x.Id ?? x.id) !== mid));
-                              setRemovingMemberId(null);
-                            }, 600);
-                          }}
-                        >
-                          {removingMemberId === (m.Id ?? m.id)
-                            ? <ActivityIndicator size={18} color={parrotRed} />
-                            : <Feather name="x" size={18} color={parrotRed} />}
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </View>
-                ))}
-              </ScrollView>
-            </View>
-
-          </View>
-
-          {/* 4. Send message — pinned above tab bar */}
-          <View style={{ position: "absolute", bottom: groupKeyboardOffset, left: 0, right: 0, backgroundColor: parrotCream, paddingHorizontal: vw(5) }}>
-            <View style={styles.groupSendRow}>
-              <TextInput
-                style={styles.groupMessageInput}
-                placeholder="Write first message..."
-                placeholderTextColor={parrotPlaceholderGrey}
-                value={firstGroupMessage}
-                onChangeText={setFirstGroupMessage}
-              />
-              <TouchableOpacity
-                style={[
-                  styles.groupSendBtn,
-                  (!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0) && styles.groupSendBtnDisabled,
-                ]}
-                onPress={handleCreateGroupAndSend}
-                disabled={!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0 || isCreatingGroup}
-              >
-                {isCreatingGroup ? <ActivityIndicator size="small" color="white" /> : <Feather name="send" size={20} color="white" />}
-              </TouchableOpacity>
-            </View>
-          </View>
+          <CreateNewGroupTab
+            onGroupCreated={async () => { await refetch(); setSelectedFunction(1); }}
+            showToast={showToast}
+          />
         </View>
       )}
       {toastVisible && (
@@ -664,159 +458,5 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: "white",
     fontSize: 13,
-  },
-  groupsTabContainer: {
-    flex: 1,
-    paddingHorizontal: vw(5),
-    paddingTop: vh(2),
-    paddingBottom: vh(9),
-  },
-  groupInputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: vh(1.5),
-    gap: vw(2),
-  },
-  groupSearchWrapper: {
-    marginBottom: vh(1.5),
-    zIndex: 10,
-  },
-  groupSearchDropdown: {
-    position: "absolute",
-    top: vh(25),
-    left: vw(5),
-    right: vw(5),
-    maxHeight: vh(50),
-    // backgroundColor: parrotCream,
-    borderRadius: vh(2),
-    padding: vh(1),
-  },
-  groupNameInput: {
-    flex: 1,
-    backgroundColor: parrotCream,
-    borderRadius: vh(3),
-    paddingHorizontal: vw(4),
-    paddingVertical: vh(1),
-    fontFamily: "Nunito_700Bold",
-    fontSize: 15,
-    color: "black",
-  },
-  groupSearchBtn: {
-    backgroundColor: parrotBlue,
-    borderRadius: vh(3),
-    padding: vh(1),
-    alignItems: "center",
-    justifyContent: "center",
-    width: vw(10),
-    height: vw(10),
-  },
-  groupSearchBtnDisabled: { opacity: 0.35 },
-  memberPreviewRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: vh(0.8),
-    gap: vw(3),
-    paddingHorizontal: vw(1),
-  },
-  memberPreviewAvatar: {
-    width: vw(10),
-    height: vw(10),
-    borderRadius: vw(5),
-  },
-  memberPreviewName: {
-    flex: 1,
-    fontFamily: "Nunito_700Bold",
-    color: parrotLightBlue,
-    fontSize: 15,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#e8f0f8",
-    marginVertical: vh(1),
-  },
-  addMemberBtn: {
-    width: vw(9),
-    height: vw(9),
-    borderRadius: vw(4.5),
-    backgroundColor: "rgba(0,119,234,0.12)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  addedMemberBtn: {
-    width: vw(9),
-    height: vw(9),
-    borderRadius: vw(4.5),
-    backgroundColor: "rgba(76,175,80,0.12)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  groupSendRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: vh(1),
-    borderTopWidth: 1,
-    borderTopColor: "#e8f0f8",
-    gap: vw(2),
-  },
-  groupMessageInput: {
-    flex: 1,
-    backgroundColor: "white",
-    borderRadius: vh(3),
-    paddingHorizontal: vw(4),
-    paddingVertical: vh(1),
-    fontFamily: "Nunito_700Bold",
-    fontSize: 15,
-    color: "black",
-  },
-  groupSendBtn: {
-    backgroundColor: parrotLightBlue,
-    borderRadius: vh(3),
-    padding: vh(1),
-    alignItems: "center",
-    justifyContent: "center",
-    width: vw(10),
-    height: vw(10),
-  },
-  groupSendBtnDisabled: { opacity: 0.35 },
-  groupsTabTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 18,
-    color: parrotLightBlue,
-    marginBottom: vh(2),
-    textAlign: "center",
-  },
-  pillContainer: {
-    flexDirection: "row",
-    backgroundColor: "rgba(0, 119, 234, 0.02)",
-    padding: vh(0.5),
-    paddingHorizontal: vh(1),
-    borderRadius: vh(6),
-    width: vw(80),
-    alignItems: "center",
-  },
-  pillProfile: {
-    flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-  },
-  pillAvatar: {
-    height: vh(6),
-    width: vh(6),
-    borderRadius: vh(6),
-  },
-  pillName: {
-    fontFamily: "Nunito_800ExtraBold",
-    color: parrotLightBlue,
-    fontSize: 16,
-    marginLeft: vh(2),
-  },
-  pillAction: {
-    width: vw(9),
-    height: vw(9),
-    borderRadius: vw(4.5),
-    backgroundColor: "rgba(220,50,50,0.12)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: vh(1),
   },
 });

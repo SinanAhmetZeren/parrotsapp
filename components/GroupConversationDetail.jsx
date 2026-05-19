@@ -221,7 +221,8 @@ export default function GroupConversationDetail({ route, navigation }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.outerContainer}>
+      <View style={styles.mainContainer}>
       {/* Header */}
       <View style={styles.header}>
         <View style={[styles.groupAvatar, { backgroundColor: groupColor(groupId) }]}>
@@ -329,15 +330,7 @@ export default function GroupConversationDetail({ route, navigation }) {
       )}
 
       {/* Messages */}
-      {/* <View style={[styles.messagesWrapper,
-      { height: vh(76) - (Platform.OS === "ios" ? insets.top + insets.bottom : 0) }]}> */}
-
-      <View style={[styles.messagesWrapper, {
-        bottom: textInputBottomMargin ? textInputBottomMargin - vh(8) : vh(0),
-        height: vh(78) - (Platform.OS === "ios" ? insets.top + insets.bottom : 0),
-      }]}>
-        {/* 77 android */}
-        {/* 79 ios */}
+      <View style={styles.messagesWrapper}>
 
 
         <ScrollView
@@ -414,25 +407,33 @@ export default function GroupConversationDetail({ route, navigation }) {
           <Text style={styles.toastText}>{toastMessage}</Text>
         </View>
       )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  outerContainer: {
     flex: 1,
     backgroundColor: "white",
   },
+  mainContainer: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: "white",
+    paddingHorizontal: vh(2),
+  },
   messagesWrapper: {
+    flex: 1,
     backgroundColor: "white",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: vw(4),
-    paddingVertical: vh(1.5),
-    borderBottomWidth: 1,
-    borderBottomColor: "#e8f0f8",
+    paddingLeft: vh(2),
+    paddingTop: vh(2),
+    paddingBottom: vh(1),
+    backgroundColor: "yellow",
   },
   groupAvatar: {
     width: vw(9),
@@ -563,11 +564,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   sendRow: {
+    zIndex: 200,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: vw(3),
+    marginHorizontal: -vh(2),
     paddingVertical: vh(1),
-    backgroundColor: parrotCream,
+    backgroundColor: "red",
     gap: vw(2),
   },
   textInput: {
