@@ -47,7 +47,7 @@ export const WaypointComponent = memo(({
     <Marker
       coordinate={coords}
       pinColor={pinColor}
-      anchor={{ x: 0.5, y: 0.5 }}
+      anchor={{ x: 0.5, y: 1 }}
       tracksViewChanges={tracksView}
     >
       <Image

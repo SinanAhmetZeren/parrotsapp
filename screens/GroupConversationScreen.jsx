@@ -20,7 +20,7 @@ import { useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native";
-import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotLightBlue, parrotPlaceholderGrey, parrotRed } from "../assets/color";
+import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotRed } from "../assets/color";
 import { useAddGroupMemberMutation, useRemoveGroupMemberMutation, useExitGroupMutation } from "../slices/GroupSlice";
 import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
 import { ActivityIndicator } from "react-native";
@@ -571,7 +571,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: vw(3),
     marginHorizontal: -vh(0),
     paddingVertical: vh(1),
-    backgroundColor: parrotBlueSemiTransparent,
+    backgroundColor: parrotLightCream,
     gap: vw(2),
   },
   sendBtn: {

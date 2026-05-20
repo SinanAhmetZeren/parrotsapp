@@ -24,8 +24,8 @@ import { invokeHub } from "../signalr/signalRHub";
 import {
   parrotBlue,
   parrotBlueSemiTransparent,
-  parrotCream,
   parrotLightBlue,
+  parrotLightCream,
   parrotPlaceholderGrey,
   parrotRed,
 } from "../assets/color";
@@ -48,15 +48,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
   const [newGroupName, setNewGroupName] = useState("");
   const [groupMemberSearch, setGroupMemberSearch] = useState("");
   const [groupMemberQuery, setGroupMemberQuery] = useState("");
-  const [addedMembers, setAddedMembers] = useState(
-    Array.from({ length: 10 }, (_, i) => ({
-      id: `dummy-${i}`,
-      Id: `dummy-${i}`,
-      userName: `user_${i + 1}`,
-      profileImageUrl: `https://i.pravatar.cc/150?img=${i + 1}`,
-      profileImageThumbnailUrl: `https://i.pravatar.cc/150?img=${i + 1}`,
-    }))
-  );
+  const [addedMembers, setAddedMembers] = useState([]);
   const [addingMemberId, setAddingMemberId] = useState(null);
   const [removingMemberId, setRemovingMemberId] = useState(null);
   const [firstGroupMessage, setFirstGroupMessage] = useState("");
@@ -234,7 +226,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
       {/* 6. Send row */}
       <View style={[styles.sendRow, {
         width: "100%", alignSelf: "center",
-        backgroundColor: parrotBlueSemiTransparent,
+        backgroundColor: parrotLightCream,
         paddingBottom: insets.bottom,
       }]}>
         <TextInput
@@ -346,7 +338,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: vw(5),
     borderTopWidth: 1,
     borderTopColor: "#e8f0f8",
-    backgroundColor: parrotCream,
+    backgroundColor: parrotLightCream,
     gap: vw(2),
   },
   groupMessageInput: {

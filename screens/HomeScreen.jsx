@@ -905,7 +905,7 @@ export default function HomeScreen({ navigation }) {
                     <View style={styles.placeCardText}>
                       <Text style={styles.placeCardHeader} numberOfLines={2}>{selectedPlace.name}</Text>
                       {selectedPlace.description ? (
-                        <Text style={styles.placeCardDescription} numberOfLines={5} ellipsizeMode="tail">{selectedPlace.description}</Text>
+                        <Text style={styles.placeCardDescription} numberOfLines={6} ellipsizeMode="tail">{selectedPlace.description}</Text>
                       ) : null}
                       {selectedPlace.brief ? (
                         <TouchableOpacity onPress={() => {
@@ -1004,21 +1004,17 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 18,
+    fontSize: 16,
     color: "white",
     textAlign: "center",
-    alignSelf: "center",
     backgroundColor: parrotBlue,
-    width: vw(30),
-    borderRadius: vh(4),
-    padding: vw(1),
+    borderRadius: 50,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
   },
   closeButtonAndText2: {
-    flexDirection: "row",
     position: "absolute",
-    width: vh(11.45),
-    borderRadius: vh(2.5),
-    bottom: vh(-5),
+    bottom: vh(-6),
     alignSelf: "center",
   },
 
@@ -1061,10 +1057,10 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 0,
   },
   placeCardText: {
-    marginTop: vh(1),
     width: vw(50),
     height: vh(18),
-    padding: vh(0.2),
+    padding: vh(0.5),
+    paddingTop: 0,
   },
   placeCardHeader: {
     fontFamily: "Nunito_700Bold",
@@ -1072,12 +1068,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: parrotBlue,
     paddingVertical: vh(0.2),
-    alignSelf: "center",
+    alignSelf: "flex-start",
   },
   placeCardDescription: {
     fontFamily: "Nunito_700Bold",
     paddingTop: vh(0.6),
     fontSize: 11.5,
+    lineHeight: 17,
   },
   placeCardLink: {
     fontFamily: "Nunito_700Bold",

@@ -154,7 +154,7 @@ export const RenderBidsComponent = ({
                 if (ownVoyage) {
                   return (
                     <View key={index} style={styles.singleBidContainerPopup}>
-                      <View>
+                      <View style={{ alignSelf: "flex-start" }}>
                         <Image
                           source={{
                             uri: item.userProfileImage,
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   modalUserNameText: {
     width: vw(43),
     fontFamily: "Nunito_700Bold",
-    color: parrotTextDarkBlue,
+    color: parrotBlue,
   },
   modalPersonCount: {
     fontSize: 14,
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   modalUserNameTextNotOwn: {
     width: vw(32),
     fontFamily: "Nunito_700Bold",
-    color: parrotTextDarkBlue,
+    color: parrotBlue,
   },
   modalPriceTextNotOwn: {
     width: vw(10),
@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Nunito_700Bold",
     width: vw(45),
-    color: parrotTextDarkBlue,
+    color: parrotBlue,
   },
   personCount: {
     fontSize: 14,

@@ -25,6 +25,7 @@ import {
   parrotDarkCream,
   parrotLightBlue,
   parrotTextDarkBlue,
+  parrotYellow,
 } from "../assets/color";
 import { useDeleteWaypointMutation } from "../slices/VoyageSlice";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -123,10 +124,8 @@ export const WaypointItemVoyageDetailScreen = ({
         <View style={styles.waypointCard}>
           <View>
             <Image
-              // source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
-
-              source={hasImage ? { uri: imageUri } : require("../assets/parrotslogo.png")}
-              style={hasImage ? styles.waypointCardImage : { ...styles.waypointCardImage, opacity: 0.25 }}
+              source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
+              style={hasImage ? styles.waypointCardImage : { ...styles.waypointCardImage, opacity: 0.5 }}
             />
           </View>
 
@@ -159,9 +158,8 @@ export const WaypointItemVoyageDetailScreen = ({
           {/* // modal edited // */}
           <View style={styles.imageContainerInModal}>
             <Image
-              // source={{ uri: imageUri }}
-              source={hasImage ? { uri: imageUri } : require("../assets/parrotslogo.png")}
-              style={hasImage ? styles.voyageImageInModal : { ...styles.voyageImageInModal, opacity: 0.25 }}
+              source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
+              style={hasImage ? styles.voyageImageInModal : { ...styles.voyageImageInModal, opacity: 0.5 }}
 
             />
             <ScrollView style={styles.scrollView}>
@@ -298,9 +296,12 @@ const styles = StyleSheet.create({
   scrollView: {
     height: vh(15),
     top: vh(-15) - 2,
-    backgroundColor: "rgba(11,11,11,0.5)",
+    width: vh(40) - 4,
     marginLeft: 2,
+    backgroundColor: "rgba(11,11,11,0.5)",
     borderRadius: vh(1),
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
   },
   scrollViewX: {
     height: vh(12),
@@ -336,7 +337,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: vh(0.5),
     alignSelf: "center",
-    color: "white",
+    color: parrotYellow,
   },
   waypointDescriptionInModal2: {
     fontFamily: "Nunito_700Bold",
@@ -403,7 +404,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   waypointCardImage: {
-    width: vh(17),
+    width: vh(20),
     height: vh(20),
     borderRadius: vh(3),
     borderTopRightRadius: 0,

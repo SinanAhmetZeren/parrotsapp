@@ -13,6 +13,7 @@ import {
   TextInput,
   RefreshControl,
   ScrollView,
+  ActivityIndicator,
   BackHandler,
   Platform,
 } from "react-native";
@@ -70,7 +71,7 @@ export default function MessagesScreen({ navigation }) {
 
   const {
     data: usersData,
-    isLoading: isLoadingUsers,
+    isFetching: isFetchingUsers,
     isError: isErrorUsers,
     error: errorUser,
     isSuccess: isSuccessUsers,
@@ -276,7 +277,7 @@ export default function MessagesScreen({ navigation }) {
               </View>
             </ScrollView>
           ) : (isLoadingMessages || messagesData === undefined) ? (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: Platform.OS === "ios" ? vh(20) : 0 }}>
               <LoadingLogo size={220} />
             </View>
           ) : messagesData?.length > 0 ? (
@@ -324,16 +325,14 @@ export default function MessagesScreen({ navigation }) {
                         onPress={handleSearchUsers}
                         style={styles.magnifier}
                       >
-                        <Feather
-                          name="search"
-                          size={20}
-                          color={searchText.length > 2 ? parrotBlue : parrotBlueSemiTransparent}
-                        />
+                        {isFetchingUsers
+                          ? <ActivityIndicator size="small" color={parrotBlue} />
+                          : <Feather name="search" size={20} color={searchText.length > 2 ? parrotBlue : parrotBlueSemiTransparent} />}
                       </TouchableOpacity>
                     </View>
                   </View>
                 </View>
-                <SearchUsersComponent searchResults={isLoadingUsers ? null : (usersData ?? [])} />
+                <SearchUsersComponent searchResults={isFetchingUsers ? null : (usersData ?? [])} />
               </View>
             </>
           }
@@ -345,7 +344,7 @@ export default function MessagesScreen({ navigation }) {
             setSelectedFunction={setSelectedFunction}
           />
           {isLoadingBookmarks ? (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: Platform.OS === "ios" ? vh(20) : 0 }}>
               <LoadingLogo size={220} />
             </View>
           ) : (

@@ -36,7 +36,7 @@ export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardI
               <View style={styles.textContainer}>
                 <Text style={styles.header} numberOfLines={2}>{cardHeader}</Text>
                 {cardDescription ? (
-                  <Text style={styles.cardDescription} numberOfLines={5} ellipsizeMode="tail">
+                  <Text style={styles.cardDescription} numberOfLines={6} ellipsizeMode="tail">
                     {cardDescription}
                   </Text>
                 ) : null}
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontFamily: "Nunito_700Bold",
     paddingTop: vh(0.6),
+    marginTop: vh(0.5),
     fontSize: 12,
     color: "#6b7280",
     lineHeight: 17,

@@ -355,7 +355,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData?.user?.id;
-    const waypoints = VoyageData.waypoints || [];
+    const waypoints = [...(VoyageData.waypoints || [])].sort((a, b) => a.order - b.order);
     const descriptionShortenedChars = 450;
     const plainDescription = VoyageData?.description?.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
     const displayText = showFullText || plainDescription.length < descriptionShortenedChars
@@ -406,7 +406,6 @@ const VoyageDetailScreen = ({ navigation }) => {
 
                 {/* Voyage Name */}
                 <Text style={styles.voyageName}>{VoyageData.name}</Text>
-                <View style={styles.nameDivider} />
 
                 {/* Host + Vehicle */}
                 <View style={styles.row}>
@@ -684,8 +683,8 @@ const styles = StyleSheet.create({
   broadcastSendBtn: {
     backgroundColor: parrotBlue,
     borderRadius: vh(3),
-    width: vw(11),
-    height: vw(11),
+    width: vw(9),
+    height: vw(9),
     alignItems: "center",
     justifyContent: "center",
   },
