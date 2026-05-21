@@ -17,7 +17,21 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import he from "he";
 import { Shadow } from 'react-native-shadow-2';
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotLightBlue } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotLightBlue, parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen, parrotWalkTurquoise, parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen, parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink } from "../assets/color";
+
+const vehicleColors = {
+  0: parrotBoatPurple,
+  1: parrotCarRed,
+  2: parrotCaravanOrangeRed,
+  3: parrotBusYellowGreen,
+  4: parrotWalkTurquoise,
+  5: parrotRunLightOrange,
+  6: parrotMotorcycleDarkRed,
+  7: parrotBicycleTealGreen,
+  8: parrotTinyHouseLightYellow,
+  9: parrotAirplaneLightGreen,
+  10: parrotTrainPink,
+};
 
 
 export default function VoyageCardProfileHorizontal({
@@ -47,43 +61,55 @@ export default function VoyageCardProfileHorizontal({
   };
 
   let icon;
+  let dotIcon;
   switch (vehicletype) {
     case 0:
       icon = <FontAwesome6 name="sailboat" size={12} color={parrotBlue} />;
+      dotIcon = <FontAwesome6 name="sailboat" size={13} color="white" />;
       break;
     case 1:
       icon = <AntDesign name="car" size={12} color={parrotBlue} />;
+      dotIcon = <AntDesign name="car" size={13} color="white" />;
       break;
     case 2:
       icon = <FontAwesome5 name="caravan" size={12} color={parrotBlue} />;
+      dotIcon = <FontAwesome5 name="caravan" size={13} color="white" />;
       break;
     case 3:
       icon = <Ionicons name="bus-outline" size={12} color={parrotBlue} />;
+      dotIcon = <Ionicons name="bus-outline" size={13} color="white" />;
       break;
     case 4:
       icon = <FontAwesome5 name="walking" size={12} color={parrotBlue} />;
+      dotIcon = <FontAwesome5 name="walking" size={13} color="white" />;
       break;
     case 5:
       icon = <FontAwesome5 name="running" size={12} color={parrotBlue} />;
+      dotIcon = <FontAwesome5 name="running" size={13} color="white" />;
       break;
     case 6:
       icon = <FontAwesome name="motorcycle" size={12} color={parrotBlue} />;
+      dotIcon = <FontAwesome name="motorcycle" size={13} color="white" />;
       break;
     case 7:
       icon = <FontAwesome name="bicycle" size={12} color={parrotBlue} />;
+      dotIcon = <FontAwesome name="bicycle" size={13} color="white" />;
       break;
     case 8:
       icon = <FontAwesome6 name="house" size={12} color={parrotBlue} />;
+      dotIcon = <FontAwesome6 name="house" size={13} color="white" />;
       break;
     case 9:
       icon = <Ionicons name="airplane-outline" size={12} color={parrotBlue} />;
+      dotIcon = <Ionicons name="airplane-outline" size={13} color="white" />;
       break;
     case 10:
       icon = <Ionicons name="train-outline" size={12} color={parrotBlue} />;
+      dotIcon = <Ionicons name="train-outline" size={13} color="white" />;
       break;
-
     default:
-      icon = "help-circle";
+      icon = null;
+      dotIcon = null;
       break;
   }
 
@@ -97,13 +123,9 @@ export default function VoyageCardProfileHorizontal({
     <TouchableOpacity onPress={() => handleNavigation(voyageId)} style={styles.TouchableOpacityStyle}>
       <View>
         <View style={styles.cardContainerWrapper}>
-          {markerImage && (
-            <View style={styles.markerBadgeClip}>
-              <View style={styles.markerBadgeOffset}>
-                <Image source={markerImage} style={styles.markerBadge} resizeMode="contain" />
-              </View>
-            </View>
-          )}
+          <View style={[styles.vehicleColorCircle, { backgroundColor: vehicleColors[vehicletype] ?? parrotBlue }]}>
+            <View style={{ opacity: 0.4 }}>{dotIcon}</View>
+          </View>
           <View style={styles.cardContainer}>
             <View style={styles.shadow}>
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
@@ -181,24 +203,16 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     overflow: "hidden",
   },
-  markerBadgeClip: {
+  vehicleColorCircle: {
     position: "absolute",
-    top: 6,
-    right: 2,
-    width: 30,
-    height: 30,
+    top: 8,
+    right: 8,
+    width: 21,
+    height: 21,
+    borderRadius: 10.5,
     zIndex: 10,
-    overflow: "hidden",
-    borderRadius: 17,
-    backgroundColor: "rgba(0, 119, 234, 0.4)",
-  },
-  markerBadgeOffset: {
-    position: "relative",
-    left: -2,
-  },
-  markerBadge: {
-    width: 34,
-    height: 38,
+    alignItems: "center",
+    justifyContent: "center",
   },
   containerContainer: {
     height: vh(22),

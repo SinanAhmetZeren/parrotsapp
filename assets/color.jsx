@@ -1,4 +1,31 @@
 
+export const parrotAirplaneLightGreen = "#ABDDA4";
+export const parrotCarRed = "#D53E4F";
+export const parrotCaravanOrangeRed = "#F46D43";
+export const parrotBusYellowGreen = "#E6F598";
+export const parrotWalkTurquoise = "#06B6D4"
+export const parrotRunLightOrange = "#FDAE61";
+export const parrotMotorcycleDarkRed = "#9E0142";
+export const parrotBicycleTealGreen = "#66C2A5";
+export const parrotTinyHouseLightYellow = "#FEE08B";
+export const parrotBoatPurple = "#3b2697";
+export const parrotTrainPink = "#F781BF";
+/*
+  #9E0142
+  #D53E4F
+  #F46D43  
+  #5E4FA2
+  #9B59B6
+  #E91E8C
+  #1ABC9C
+  #00BCD4
+  #2ECC71
+  #AEEA00
+  #FFD700
+  #1565C0
+  #2196F3
+*/
+
 export const parrotDarkBlue = "#003366";
 export const parrotTextDarkBlue = "#00008B";
 export const parrotBlue = "rgb(10, 119, 234)";

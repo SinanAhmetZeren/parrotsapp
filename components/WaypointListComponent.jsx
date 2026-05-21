@@ -8,12 +8,11 @@ export const WaypointListComponent = ({ waypoints }) => {
   return (
     <>
       {waypoints.map((waypoint, index) => {
-        // let pinColor = "#cfc200";
-        let pinColor = "orange";
+        let pinColor = "#06B6D4";
         if (index === 0) {
-          pinColor = "#115500";
+          pinColor = "green";
         } else if (index === waypoints.length - 1) {
-          pinColor = "#610101";
+          pinColor = "red";
         }
 
 

@@ -3,7 +3,23 @@
 import React from "react";
 import { View, Text, Modal, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor, parrotTextDarkBlue } from "../assets/color";
+import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor, parrotTextDarkBlue, parrotAirplaneLightGreen, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen, parrotWalkTurquoise, parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen, parrotTinyHouseLightYellow, parrotBoatPurple, parrotTrainPink } from "../assets/color";
+
+const vehicleColors = {
+  0: parrotBoatPurple,
+  1: parrotCarRed,
+  2: parrotCaravanOrangeRed,
+  3: parrotBusYellowGreen,
+  4: parrotWalkTurquoise,
+  5: parrotRunLightOrange,
+  6: parrotMotorcycleDarkRed,
+  7: parrotBicycleTealGreen,
+  8: parrotTinyHouseLightYellow,
+  9: parrotAirplaneLightGreen,
+  10: parrotTrainPink,
+};
+
+const lightColors = new Set([4, 5, 6, 7, 10]);
 
 const FilterVehicleModal = ({
   isVisible,
@@ -55,17 +71,22 @@ const FilterVehicleModal = ({
 
           <ScrollView style={{ maxHeight: vh(40) }} showsVerticalScrollIndicator={false}>
             <View style={styles.optionsGrid}>
-              {Object.entries(vehicleTypes).map(([type, value]) => (
-                <TouchableOpacity
-                  key={value}
-                  style={[styles.option, selectedValue === value && styles.selectedOption]}
-                  onPress={() => handleSelect(value)}
-                >
-                  <Text style={[styles.optionText, selectedValue === value && styles.selectedOptionText]}>
-                    {type}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {Object.entries(vehicleTypes).map(([type, value]) => {
+                const color = vehicleColors[value];
+                const isSelected = selectedValue === value;
+                const isLight = lightColors.has(value);
+                return (
+                  <TouchableOpacity
+                    key={value}
+                    style={[styles.option, { backgroundColor: isSelected ? color : color + "0D", borderWidth: 1, borderColor: isSelected ? "transparent" : "rgba(150,150,150,0.5)" }]}
+                    onPress={() => handleSelect(value)}
+                  >
+                    <Text style={[styles.optionText, { color: isSelected ? "white" : "#555" }]}>
+                      {type}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
           </ScrollView>
 
@@ -128,16 +149,9 @@ const styles = StyleSheet.create({
     width: "48%",
     alignItems: "center",
   },
-  selectedOption: {
-    backgroundColor: parrotGreen,
-  },
   optionText: {
     fontSize: 15,
     fontFamily: "Nunito_700Bold",
-    color: parrotInputTextColor,
-  },
-  selectedOptionText: {
-    color: "white",
   },
   buttonsContainer: {
     flexDirection: "row",

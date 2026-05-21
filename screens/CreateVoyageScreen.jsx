@@ -23,6 +23,7 @@ import {
 } from "../slices/VoyageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import {
   MaterialIcons,
   AntDesign,
@@ -332,11 +333,18 @@ const CreateVoyageScreen = ({ navigation }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      quality: 1,
+      aspect: [1, 1],
+      quality: 0.7,
     });
     console.log("result-> ", result.assets[0].uri);
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const asset = result.assets[0];
+      const manipulated = await ImageManipulator.manipulateAsync(
+        asset.uri,
+        [{ resize: { width: 1080, height: 1080 } }],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      setImage(manipulated.uri);
     }
   };
 
@@ -344,12 +352,18 @@ const CreateVoyageScreen = ({ navigation }) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      //aspect: [4, 3],
-      quality: 1,
+      aspect: [1, 1],
+      quality: 0.7,
     });
 
     if (!result.canceled) {
-      setVoyageImage(result.assets[0].uri);
+      const asset = result.assets[0];
+      const manipulated = await ImageManipulator.manipulateAsync(
+        asset.uri,
+        [{ resize: { width: 1080, height: 1080 } }],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      setVoyageImage(manipulated.uri);
     }
   };
 
@@ -809,7 +823,6 @@ const CreateVoyageScreen = ({ navigation }) => {
                       vehicleId === "" ||
                       startDate === "" ||
                       endDate === "" ||
-                      lastBidDate === "" ||
                       minPrice === "" ||
                       maxPrice === "" ||
                       currency === ""

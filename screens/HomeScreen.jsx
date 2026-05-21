@@ -63,8 +63,25 @@ import {
   applyFilterChangedBackgroundColor, applyFilterChangedBorderColor, applyFilterChangedColor,
   applyFilterInitialBackgroundColor, applyFilterInitialBorderColor, applyFilterInitialColor,
   parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueTransparent, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
-  parrotPlaceholderGrey
+  parrotPlaceholderGrey,
+  parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen, parrotWalkTurquoise,
+  parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen, parrotTinyHouseLightYellow,
+  parrotAirplaneLightGreen, parrotTrainPink,
 } from "../assets/color";
+
+const vehicleColors = {
+  0: parrotBoatPurple,
+  1: parrotCarRed,
+  2: parrotCaravanOrangeRed,
+  3: parrotBusYellowGreen,
+  4: parrotWalkTurquoise,
+  5: parrotRunLightOrange,
+  6: parrotMotorcycleDarkRed,
+  7: parrotBicycleTealGreen,
+  8: parrotTinyHouseLightYellow,
+  9: parrotAirplaneLightGreen,
+  10: parrotTrainPink,
+};
 
 // Define static assets outside to keep references stable
 const markerImages = [parrotMarker1, parrotMarker2, parrotMarker3, parrotMarker4, parrotMarker5, parrotMarker6];
@@ -245,34 +262,21 @@ export default function HomeScreen({ navigation }) {
 
 
   // Create a memoized sub-component to prevent unnecessary redraws
-  const MapMarker = memo(({ item, index, onPress }) => {
-    const [tracksView, setTracksView] = useState(true);
-    const markerImage = markerImages[index % markerImages.length];
-
-    const handleLoad = () => {
-      setTimeout(() => {
-        setTracksView(false);
-      }, 200);
-    };
+  const MapMarker = memo(({ item, onPress }) => {
+    const vehicleType = item.vehicle?.type;
+    const pinColor = vehicleColors[vehicleType] ?? parrotGreen;
 
     return (
       <Marker
         key={`item-${item.id}`}
-        pinColor={parrotGreen}
+        pinColor={pinColor}
         coordinate={{
           latitude: item.waypoints[0]?.latitude,
           longitude: item.waypoints[0]?.longitude,
         }}
-        tracksViewChanges={tracksView}
+        tracksViewChanges={false}
         onPress={() => { updateSelectedVoyageData(item); }}
-      >
-        <Image
-          source={markerImage}
-          style={{ width: 36, height: 36, opacity: 1 }}
-          resizeMode="contain"
-          onLoad={() => handleLoad()}
-        />
-      </Marker>
+      />
     );
   });
 
@@ -758,7 +762,7 @@ export default function HomeScreen({ navigation }) {
                     ref={mapRef}
                     onRegionChangeComplete={handleRegionChangeComplete}
                   >
-                    {!isMarkersLoading && initialVoyages.map((item, index) => {
+{!isMarkersLoading && initialVoyages.map((item, index) => {
                       const waypoint = item.waypoints?.[0];
                       const latitude = waypoint?.latitude;
                       const longitude = waypoint?.longitude;
@@ -770,7 +774,6 @@ export default function HomeScreen({ navigation }) {
                         <MapMarker
                           key={item.id}
                           item={item}
-                          index={index}
                           onPress={updateSelectedVoyageData}
                         />
                       );
@@ -789,8 +792,17 @@ export default function HomeScreen({ navigation }) {
                         style={styles.searchAreaButton}
                         onPress={() => { startRefreshSpin(); applyFilter(); }}
                       >
-                        <Animated.View style={{ transform: [{ rotate: refreshSpin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }) }] }}>
-                          <FontAwesome name="refresh" size={16} color={parrotBlue} />
+                        <Animated.View
+                          style={{
+                            backgroundColor: "white",
+                            height: 20,
+                            width: 20,
+                            borderRadius: 16,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transform: [{ rotate: refreshSpin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }) }]
+                          }}>
+                          <FontAwesome name="refresh" size={20} color={parrotBlue} />
                         </Animated.View>
                       </TouchableOpacity>
                     )}
@@ -1013,19 +1025,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     borderRadius: 20,
     gap: 5,
     borderWidth: 1,
     borderColor: "rgba(10, 119, 234, 0.15)",
   },
-  searchAreaText: {
-    color: "white",
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
-
-  },
-
   currentBidsTitle3: {
     top: vh(-3),
     fontSize: 17,

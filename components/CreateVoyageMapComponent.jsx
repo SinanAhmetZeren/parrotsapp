@@ -27,6 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
 import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
 import Toast from "react-native-toast-message";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const CreateVoyageMapComponent = ({
   voyageId,
@@ -171,7 +172,7 @@ const CreateVoyageMapComponent = ({
     return (
       <Polyline
         coordinates={coordinates}
-        strokeColor="#1468fb" // Change the color as needed
+        strokeColor={parrotBlue}
         strokeWidth={3}
         lineCap="butt"
         lineDashPattern={[20, 7]}
@@ -185,11 +186,11 @@ const CreateVoyageMapComponent = ({
     return (
       <>
         {waypoints.map((waypoint, index) => {
-          let pinColor = "orange";
+          let pinColor = "#06B6D4";
           if (index === 0) {
-            pinColor = "#115500";
+            pinColor = "green";
           } else if (index === waypoints.length - 1) {
-            pinColor = "#610101";
+            pinColor = "red";
           }
 
           return (
@@ -212,12 +213,20 @@ const CreateVoyageMapComponent = ({
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      // aspect: [4, 3],
-      quality: 1,
+      aspect: [1, 1],
+      quality: 0.7,
     });
 
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+      const asset = result.assets[0];
+      console.log("[waypoint pickImage] fileSize:", asset.fileSize, "width:", asset.width, "height:", asset.height);
+      const manipulated = await ImageManipulator.manipulateAsync(
+        asset.uri,
+        [{ resize: { width: 1080, height: 1080 } }],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      console.log("[waypoint pickImage] resized uri:", manipulated.uri);
+      setImageUri(manipulated.uri);
     }
   };
 
