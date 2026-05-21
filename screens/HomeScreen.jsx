@@ -21,7 +21,7 @@ import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { MaterialCommunityIcons, FontAwesome6 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome6, FontAwesome } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { vw, vh } from "react-native-expo-viewport-units";
 
@@ -62,7 +62,7 @@ import {
   applyFilterAppliedBackgroundColor, applyFilterAppliedBorderColor, applyFilterAppliedColor,
   applyFilterChangedBackgroundColor, applyFilterChangedBorderColor, applyFilterChangedColor,
   applyFilterInitialBackgroundColor, applyFilterInitialBorderColor, applyFilterInitialColor,
-  parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
+  parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueTransparent, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreen, parrotInputTextColor, parrotPistachioGreen,
   parrotPlaceholderGrey
 } from "../assets/color";
 
@@ -152,6 +152,13 @@ export default function HomeScreen({ navigation }) {
   const imageScale = useRef(new Animated.Value(0.1)).current;
   const imageTranslateX = useRef(new Animated.Value(-vw(38))).current;
   const imageTranslateY = useRef(new Animated.Value(-vh(42))).current;
+  const refreshSpin = useRef(new Animated.Value(0)).current;
+  const startRefreshSpin = () => {
+    refreshSpin.setValue(0);
+    Animated.loop(
+      Animated.timing(refreshSpin, { toValue: 1, duration: 1250, useNativeDriver: true })
+    ).start();
+  };
   const openImageModal = () => {
     setImageModalVisible(true);
     imageScale.setValue(0.1);
@@ -397,10 +404,8 @@ export default function HomeScreen({ navigation }) {
     fetchLocation();
   }, []);
 
-  useEffect(() => {
-    if (initialLatitude === 0 && initialLongitude === 0) return;
-    applyFilter();
-  }, [latitude, longitude, latitudeDelta, longitudeDelta]);
+  const [lastLoadedCoordinates, setLastLoadedCoordinates] = useState(null);
+  const mapReadyRef = useRef(false);
 
   useEffect(() => {
     const getVoyages = async () => {
@@ -413,6 +418,9 @@ export default function HomeScreen({ navigation }) {
 
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
       setInitialVoyages(voyages.data || []);
+      setLastLoadedCoordinates({ latitude: initialLatitude, longitude: initialLongitude });
+      setLatitude(initialLatitude);
+      setLongitude(initialLongitude);
       setIsMarkersLoading(false);
     };
 
@@ -517,11 +525,15 @@ export default function HomeScreen({ navigation }) {
     const formattedEndDate = convertDateFormat(endDate, "endDate");
 
     // console.log("Applying filters with parameters:", formattedStartDate, "---", formattedEndDate);
+    const lat = latitude == 0 ? initialLatitude : latitude;
+    const lon = longitude == 0 ? initialLongitude : longitude;
+    const latDelta = (latitude == 0 ? 0.25 : latitudeDelta) + 0.15;
+    const lonDelta = (longitude == 0 ? 0.25 : longitudeDelta) + 0.2;
     const data = {
-      latitude: latitude == 0 ? initialLatitude : latitude,
-      longitude: longitude == 0 ? initialLongitude : longitude,
-      latitudeDelta: latitude == 0 ? 0.25 : latitudeDelta,
-      longitudeDelta: longitude == 0 ? 0.25 : longitudeDelta,
+      latitude: lat,
+      longitude: lon,
+      latitudeDelta: latDelta,
+      longitudeDelta: lonDelta,
       count,
       selectedVehicleType,
       formattedStartDate,
@@ -533,6 +545,7 @@ export default function HomeScreen({ navigation }) {
       return;
     }
     setInitialVoyages(filteredVoyages.data || []);
+    setLastLoadedCoordinates({ latitude: lat, longitude: lon });
 
     const filtersJson = JSON.stringify({
       count,
@@ -562,6 +575,7 @@ export default function HomeScreen({ navigation }) {
     setLongitude(newRegion?.longitude);
     setLatitudeDelta(newRegion?.latitudeDelta);
     setLongitudeDelta(newRegion?.longitudeDelta);
+    if (!mapReadyRef.current) { mapReadyRef.current = true; return; }
   };
 
   const handleLogout = async () => {
@@ -767,6 +781,19 @@ export default function HomeScreen({ navigation }) {
                       <ActivityIndicator size="small" color={parrotDarkCream} />
                     </View>
                   )}
+                  {!isMarkersLoading && lastLoadedCoordinates && (
+                    latitude !== lastLoadedCoordinates.latitude ||
+                    longitude !== lastLoadedCoordinates.longitude
+                  ) && (
+                      <TouchableOpacity
+                        style={styles.searchAreaButton}
+                        onPress={() => { startRefreshSpin(); applyFilter(); }}
+                      >
+                        <Animated.View style={{ transform: [{ rotate: refreshSpin.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "360deg"] }) }] }}>
+                          <FontAwesome name="refresh" size={16} color={parrotBlue} />
+                        </Animated.View>
+                      </TouchableOpacity>
+                    )}
                 </>
               )}
             </View>
@@ -804,16 +831,16 @@ export default function HomeScreen({ navigation }) {
                 </View>
               )}
               <VoyageListHorizontal navigation={navigation} focusMap={focusMap} data={(() => {
-              const voyages = initialVoyages.filter(v => v.placeType === 0).map((v, i) => ({ ...v, markerImage: markerImages[i % markerImages.length] }));
-              const places = initialVoyages.filter(v => v.placeType > 0).sort((a, b) => b.placeType - a.placeType);
-              const result = [];
-              let vi = 0, pi = 0;
-              while (vi < voyages.length || pi < places.length) {
-                for (let i = 0; i < 2 && vi < voyages.length; i++) result.push(voyages[vi++]);
-                if (pi < places.length) result.push(places[pi++]);
-              }
-              return result;
-            })()} />
+                const voyages = initialVoyages.filter(v => v.placeType === 0).map((v, i) => ({ ...v, markerImage: markerImages[i % markerImages.length] }));
+                const places = initialVoyages.filter(v => v.placeType > 0).sort((a, b) => b.placeType - a.placeType);
+                const result = [];
+                let vi = 0, pi = 0;
+                while (vi < voyages.length || pi < places.length) {
+                  for (let i = 0; i < 2 && vi < voyages.length; i++) result.push(voyages[vi++]);
+                  if (pi < places.length) result.push(places[pi++]);
+                }
+                return result;
+              })()} />
             </>
           ) : null}
         </View>
@@ -976,6 +1003,27 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 20,
     backgroundColor: "white",
+  },
+
+  searchAreaButton: {
+    position: "absolute",
+    bottom: 6,
+    right: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    gap: 5,
+    borderWidth: 1,
+    borderColor: "rgba(10, 119, 234, 0.15)",
+  },
+  searchAreaText: {
+    color: "white",
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+
   },
 
   currentBidsTitle3: {
