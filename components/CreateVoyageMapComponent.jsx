@@ -53,6 +53,8 @@ const CreateVoyageMapComponent = ({
   const [confirmVoyage] = useConfirmVoyageMutation();
   const navigation = useNavigation();
   const [isUploadingWaypointImage, setIsUploadingWaypointImage] = useState(false);
+  const [isAddingWaypoint, setIsAddingWaypoint] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [initialRegion, setInitialRegion] = useState(null)
 
   const WaypointComponent = ({
@@ -304,9 +306,11 @@ const CreateVoyageMapComponent = ({
   };
 
   const goToHomePage = async () => {
+    setIsConfirming(true);
     const result = await confirmVoyage(voyageId);
     if (result.error) {
       Toast.show({ type: "error", text1: "Could not confirm voyage", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
+      setIsConfirming(false);
       return;
     }
     setAddedWayPoints([]);
@@ -321,6 +325,7 @@ const CreateVoyageMapComponent = ({
     navigation.navigate("Home", { screen: "HomeScreen" });
   };
 
+  const canAddWaypoint = latitude && longitude && description && title;
 
 
   return (
@@ -459,23 +464,28 @@ const CreateVoyageMapComponent = ({
         </View>
 
 
-        <View style={{ marginTop: vh(.5), marginBottom: vh(.05) }}>
-          {(latitude && longitude && description && title) ? (
-            <TouchableOpacity
-              style={styles.addWaypointButtonContainer}
-              onPress={() => {
-                handleAddWaypoint();
-              }}
-            >
-              <Text style={styles.addWaypointText}> Add Waypoint </Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity disabled>
-              <Text style={styles.addWaypointTextDisabled}> Add Waypoint </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
+        <TouchableOpacity
+          style={styles.AddWaypointButtonContainer}
+          onPress={() => {
+            if (latitude && longitude && description && title) {
+              handleAddWaypoint();
+            }
+          }}
+          disabled={!(latitude && longitude && description && title) || isAddingWaypoint}
+        >
+          <View
+            style={[
+              styles.completeText,
+              { alignItems: "center", justifyContent: "center" },
+              (latitude && longitude && description && title)
+                ? { backgroundColor: parrotBlue }
+                : { backgroundColor: parrotBlueSemiTransparent },
+            ]}
+          >
+            <Text style={{ color: "white", fontFamily: "Nunito_700Bold", opacity: isAddingWaypoint ? 0 : 1 }}>Add Waypoint</Text>
+            {isAddingWaypoint && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
+          </View>
+        </TouchableOpacity>
       </View >
 
 
@@ -495,18 +505,20 @@ const CreateVoyageMapComponent = ({
             goToHomePage();
           }
         }}
-        disabled={!(addedWayPoints.length > 0 && imagesAdded > 0)}
+        disabled={!(addedWayPoints.length > 0 && imagesAdded > 0) || isConfirming}
       >
-        <Text
+        <View
           style={[
             styles.completeText,
+            { alignItems: "center", justifyContent: "center" },
             addedWayPoints.length > 0 && imagesAdded > 0
               ? { backgroundColor: parrotBlue }
               : { backgroundColor: parrotBlueSemiTransparent },
           ]}
         >
-          Complete
-        </Text>
+          <Text style={{ color: "white", fontFamily: "Nunito_700Bold", opacity: isConfirming ? 0 : 1 }}>Complete</Text>
+          {isConfirming && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -612,6 +624,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: vh(5),
   },
+  AddWaypointButtonContainer: {
+    borderRadius: vh(2),
+    width: vw(95),
+    alignSelf: "center",
+  },
   newWaypointCard: {
     borderRadius: 20,
     backgroundColor: "#fdf9f5",
@@ -623,7 +640,6 @@ const styles = StyleSheet.create({
     marginHorizontal: vw(2),
     marginBottom: vh(1),
     paddingTop: vh(1.5),
-    paddingBottom: vh(1),
     paddingHorizontal: vw(2),
   },
   latLng: {

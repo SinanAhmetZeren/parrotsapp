@@ -5,13 +5,13 @@ export default {
         "name": "Parrots",
         "slug": "parrots",
         "owner": "ahmetzeren",
-        "version": "1.0.6",
+        "version": "1.0.8",
         "scheme": "parrotsapp",
         "orientation": "portrait",
-        "icon": "./assets/parrotsandsun.jpg",
+        "icon": "./assets/parrotslogoblue_iconpadded.jpeg",
         "userInterfaceStyle": "light",
         "splash": {
-            "image": "./assets/parrotsandsun.jpg",
+            "image": "./assets/parrotslogoblue_icon.png",
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },
@@ -41,11 +41,7 @@ export default {
         "android": {
             "package": "com.zenforest.parrots",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 7,
-            "adaptiveIcon": {
-                "foregroundImage": "./assets/parrotsandsunpadded.jpeg",
-                "backgroundColor": "#ffffff"
-            },
+            "versionCode": 9,
             "intentFilters": [
                 {
                     "action": "VIEW",

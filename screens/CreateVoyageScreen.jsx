@@ -108,7 +108,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [isCreatingVoyage, setIsCreatingVoyage] = useState(0);
+  const [isCreatingVoyage, setIsCreatingVoyage] = useState(false);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
 
   const [hasError, setHasError] = useState(false);
@@ -804,14 +804,7 @@ const CreateVoyageScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.loginContainer}>
-              {isCreatingVoyage ? (
-                <View>
-                  <ActivityIndicator
-                    size="large"
-                    style={{ top: vh(2) }}
-                  />
-                </View>
-              ) : (
+              {(
                 <TouchableOpacity
                   onPress={() => handleCreateVoyage()}
                   style={
@@ -829,9 +822,13 @@ const CreateVoyageScreen = ({ navigation }) => {
                       ? styles.selection2Disabled
                       : styles.selection2
                   }
-                  disabled={false}
+                  disabled={isCreatingVoyage}
                 >
-                  <Text style={styles.loginText}>Create Voyage</Text>
+                  {isCreatingVoyage ? (
+                    <ActivityIndicator size="small" color="#ffffff" />
+                  ) : (
+                    <Text style={styles.loginText}>Create Voyage</Text>
+                  )}
                 </TouchableOpacity>
               )}
             </View>
