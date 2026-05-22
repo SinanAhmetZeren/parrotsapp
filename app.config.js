@@ -75,7 +75,7 @@ export default {
             ],
             [
                 "expo-notifications",
-                { "icon": "./assets/parrotsandsun.jpg", "color": "#ffffff" }
+                { "icon": "./assets/parrotslogoblue_icon.png", "color": "#ffffff" }
             ],
             "expo-font",
             "expo-build-properties",
