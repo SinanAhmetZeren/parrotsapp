@@ -21,7 +21,7 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
 import { useGetUsersByUsernameQuery, useGetBookmarksQuery } from "../slices/UserSlice";
-import { setUnreadMessages } from "../slices/UserSlice";
+import { setUnreadMessages, markMessagesRead } from "../slices/UserSlice";
 import CreateNewGroupTab from "../components/CreateNewGroupTab";
 import {
   register_ReceiveGroupMessageRefetch,
@@ -120,9 +120,6 @@ export default function MessagesScreen({ navigation }) {
       // Tell hub user entered this screen
       invokeHub("EnterMessagesScreen", userId);
       console.log("enter messages screen --> ");
-
-      dispatch(setUnreadMessages(false));
-
 
       // Handle incoming message
       const handleReceiveMessage = (
@@ -241,6 +238,12 @@ export default function MessagesScreen({ navigation }) {
   useEffect(() => {
     if (messagesData) setReceivedMessageData(messagesData);
   }, [messagesData]);
+
+  useEffect(() => {
+    if (!messagesData) return;
+    const hasUnread = messagesData.some(m => (m.unreadCount ?? 0) > 0);
+    if (!hasUnread) dispatch(markMessagesRead());
+  }, [messagesData, dispatch]);
 
   const handleSearchUsers = () => {
     setUsername(searchText);

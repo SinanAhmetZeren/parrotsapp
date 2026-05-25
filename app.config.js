@@ -8,10 +8,10 @@ export default {
         "version": "1.0.8",
         "scheme": "parrotsapp",
         "orientation": "portrait",
-        "icon": "./assets/parrotslogoblue_iconpadded.jpeg",
+        "icon": "./assets/parrotslogoblue_icon.png",
         "userInterfaceStyle": "light",
         "splash": {
-            "image": "./assets/parrotslogoblue_icon.png",
+            "image": "./assets/parrotslogoblue_iconpadded.jpeg",
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
         },

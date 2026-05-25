@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ConversationView from "./CoversationView";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Shadow } from "react-native-shadow-2";
-import { parrotLightBlue, parrotPlaceholderGrey, parrotBlueDarkTransparent2, parrotBlueDarkTransparent } from "../assets/color";
+import { parrotLightBlue, parrotPlaceholderGrey, parrotBlueDarkTransparent2, parrotBlueDarkTransparent, parrotGreen } from "../assets/color";
 
 const GROUP_COLORS = ["#a020a0", "#6a0dad", "#1e88e5", "#29b6f6", "#00bfa5", "#ffa726", "#e53935"];
 
@@ -35,10 +35,11 @@ function formatDate(timestamp) {
   return [`${hours}:${minutes}`, `${day}/${month}/${year}`];
 }
 
-function GroupPreviewView({ item, onOpenGroup }) {
+function GroupPreviewView({ item, onOpenGroup, unreadCount }) {
   const color = groupColor(item.groupConversationId);
   const initials = groupInitials(item.groupName);
   const [time, date] = formatDate(item.dateTime);
+  const hasUnread = unreadCount > 0;
 
   return (
     <TouchableOpacity
@@ -49,7 +50,7 @@ function GroupPreviewView({ item, onOpenGroup }) {
         <Text style={styles.initialsText}>{initials}</Text>
       </View>
       <View style={styles.nameAndMessage}>
-        <Text style={styles.name}>{item.groupName}</Text>
+        <Text style={[styles.name, hasUnread && styles.nameUnread]}>{item.groupName}</Text>
         <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
           {item.text ? `${item.senderUsername}: ${item.text}` : "No messages yet"}
         </Text>
@@ -57,6 +58,11 @@ function GroupPreviewView({ item, onOpenGroup }) {
       <View style={styles.time}>
         <Text style={styles.timeText1}>{time}</Text>
         <Text style={styles.timeText2}>{date}</Text>
+        {hasUnread && (
+          <View style={styles.unreadBadge}>
+            <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -88,6 +94,7 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
           text: message.text,
           dateTime: message.dateTime,
           publicId,
+          unreadCount: message.unreadCount ?? 0,
         });
       }
     });
@@ -103,7 +110,7 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
             key={`group-${item.groupConversationId}`}
             style={{ borderRadius: vh(3), marginBottom: vh(2) }}
           >
-            <GroupPreviewView item={item} onOpenGroup={onOpenGroup} />
+            <GroupPreviewView item={item} onOpenGroup={onOpenGroup} unreadCount={item.unreadCount ?? 0} />
           </View>
         ) : (
           <View
@@ -117,6 +124,7 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
               message={item.text}
               time={item.dateTime}
               publicId={item.publicId}
+              unreadCount={item.unreadCount ?? 0}
             />
           </View>
         )
@@ -185,5 +193,25 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: parrotBlueDarkTransparent,
+  },
+  nameUnread: {
+    fontFamily: "Nunito_800ExtraBold",
+    color: parrotLightBlue,
+  },
+  unreadBadge: {
+    marginTop: vh(0.5),
+    minWidth: vw(5),
+    height: vw(5),
+    borderRadius: vw(2.5),
+    backgroundColor: parrotGreen,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-end",
+    paddingHorizontal: vw(1),
+  },
+  unreadBadgeText: {
+    color: "white",
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 11,
   },
 });

@@ -8,7 +8,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { MessagesComponent } from "../components/MessagesComponent";
 import { API_URL } from "@env";
-import { parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotCream, parrotGreen, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
@@ -27,10 +27,12 @@ export default function CoversationView({
   message,
   time,
   userId,
-  publicId
+  publicId,
+  unreadCount = 0,
 }) {
   const navigation = useNavigation();
 
+  const hasUnread = unreadCount > 0;
   const handleNavigate = (conversationUserId) => {
     navigation.navigate("ConversationDetailScreen", {
       conversationUserId,
@@ -55,7 +57,7 @@ export default function CoversationView({
         />
       </View>
       <View style={styles.nameAndMessage}>
-        <Text style={styles.name}>{name}</Text>
+        <Text style={[styles.name, hasUnread && styles.nameUnread]}>{name}</Text>
         <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
           {message}
         </Text>
@@ -63,6 +65,11 @@ export default function CoversationView({
       <View style={styles.time}>
         <Text style={styles.timeText1}>{formatDate(time)[0]}</Text>
         <Text style={styles.timeText2}>{formatDate(time)[1]}</Text>
+        {hasUnread && (
+          <View style={styles.unreadBadge}>
+            <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -121,5 +128,25 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 12,
     color: parrotBlueDarkTransparent,
+  },
+  nameUnread: {
+    fontFamily: "Nunito_800ExtraBold",
+    color: parrotLightBlue,
+  },
+  unreadBadge: {
+    marginTop: vh(0.5),
+    minWidth: vw(5),
+    height: vw(5),
+    borderRadius: vw(2.5),
+    backgroundColor: parrotGreen,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-end",
+    paddingHorizontal: vw(1),
+  },
+  unreadBadgeText: {
+    color: "white",
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 11,
   },
 });
