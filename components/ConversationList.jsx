@@ -4,6 +4,8 @@
 import React from "react";
 import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import { markMessagesRead } from "../slices/UserSlice";
 import ConversationView from "./CoversationView";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { Shadow } from "react-native-shadow-2";
@@ -70,6 +72,7 @@ function GroupPreviewView({ item, onOpenGroup, unreadCount }) {
 
 export default function ConversationList({ data, userId, onOpenGroup }) {
   const insets = useSafeAreaInsets();
+  const dispatch = useDispatch();
   const items = [];
 
   if (data) {
@@ -101,6 +104,7 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
   }
 
   const sorted = [...items].sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+  const totalUnreadItems = sorted.filter(i => (i.unreadCount ?? 0) > 0).length;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={Platform.OS === "ios" ? { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 } : undefined}>
@@ -125,6 +129,8 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
               time={item.dateTime}
               publicId={item.publicId}
               unreadCount={item.unreadCount ?? 0}
+              isLastUnread={(item.unreadCount ?? 0) > 0 && totalUnreadItems === 1}
+              onRead={() => dispatch(markMessagesRead())}
             />
           </View>
         )

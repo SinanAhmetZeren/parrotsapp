@@ -23,6 +23,7 @@ import {
   // SafeAreaView,
   TextInput,
   Platform,
+  AppState,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -751,6 +752,14 @@ function App() {
         dispatch(setHubConnected(true));
       }).catch(() => { });
     }, [isLoggedIn, userId]);
+
+    useEffect(() => {
+      const subscription = AppState.addEventListener("change", (nextState) => {
+        const isForeground = nextState === "active";
+        invokeHub("UpdatePresence", isForeground).catch(() => {});
+      });
+      return () => subscription.remove();
+    }, []);
 
 
     const {

@@ -29,11 +29,14 @@ export default function CoversationView({
   userId,
   publicId,
   unreadCount = 0,
+  isLastUnread = false,
+  onRead,
 }) {
   const navigation = useNavigation();
 
   const hasUnread = unreadCount > 0;
   const handleNavigate = (conversationUserId) => {
+    if (isLastUnread && onRead) onRead();
     navigation.navigate("ConversationDetailScreen", {
       conversationUserId,
       profileImg,
