@@ -31,6 +31,8 @@ import {
   register_OnReconnected, unregister_OnReconnected,
 } from "../signalr/signalRHub";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
+const DeviceInfo = Constants.appOwnership === "expo" ? null : require('react-native-device-info').default;
 
 const GROUP_COLORS = ["#a020a0", "#6a0dad", "#1e88e5", "#29b6f6", "#00bfa5", "#ffa726", "#e53935"];
 const groupColor = (id) => GROUP_COLORS[(id ?? 0) % GROUP_COLORS.length];
@@ -65,7 +67,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const tabBarHeight = Platform.OS === "ios"
     ? (vh(100) - insets.top - insets.bottom) * 0.08
     : vh(8);
-  const containerHeight = Platform.OS === "ios"
+  const isTablet = DeviceInfo ? DeviceInfo.isTablet() : false;
+  const containerHeight = Platform.OS === "ios" || isTablet
     ? vh(103) - tabBarHeight - insets.top - insets.bottom
     : vh(105) - tabBarHeight;
 

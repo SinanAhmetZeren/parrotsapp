@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49987024758",
+    "project_id": "parrots-app-9aa99",
+    "storage_bucket": "parrots-app-9aa99.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49987024758:android:e7eece79ebc7c91e5cec57",
+        "android_client_info": {
+          "package_name": "com.zenforest.parrots"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmsJm1_hxtTyRql7Ma9oC_eKAyWh8DMdw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

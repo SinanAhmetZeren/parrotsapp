@@ -29,6 +29,8 @@ import {
   register_OnReconnected, unregister_OnReconnected,
 } from "../signalr/signalRHub";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
+const DeviceInfo = Constants.appOwnership === "expo" ? null : require('react-native-device-info').default;
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -52,7 +54,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const tabBarHeight = Platform.OS === "ios"
     ? (vh(100) - insets.top - insets.bottom) * 0.08
     : vh(8);
-  const containerHeight = Platform.OS === "ios"
+  const isTablet = DeviceInfo ? DeviceInfo.isTablet() : false;
+  const containerHeight = Platform.OS === "ios" || isTablet
     ? vh(103) - tabBarHeight - insets.top - insets.bottom
     : vh(105) - tabBarHeight;
 

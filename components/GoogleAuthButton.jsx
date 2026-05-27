@@ -1,66 +1,68 @@
 import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, Image, View } from 'react-native';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import {
-  useGoogleLoginInternalMutation,
-  updateAsLoggedIn,
-  updateUserFavorites,
-  setBookmarkedUserIds,
-} from "../slices/UserSlice";
-import { useDispatch } from "react-redux";
 import { vh, vw } from 'react-native-expo-viewport-units';
+import Constants from 'expo-constants';
+import { useDispatch } from 'react-redux';
+import { registerPushTokenAsync } from '../utils/registerPushToken';
+import { updateAsLoggedIn, updateUserFavorites, setBookmarkedUserIds } from '../slices/UserSlice';
 import gooogleSignin from "../assets/googleg.png";
+
+const isExpoGo = Constants.appOwnership === "expo";
+const GoogleSignin = isExpoGo ? null : require('@react-native-google-signin/google-signin').GoogleSignin;
+const useGoogleLoginInternalMutation = isExpoGo ? () => [null, { isLoading: false }] : require('../slices/UserSlice').useGoogleLoginInternalMutation;
+
+function ButtonContent({ isLoading }) {
+  return isLoading ? (
+    <ActivityIndicator color="#fff" />
+  ) : (
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Image source={gooogleSignin} style={{ height: 30, width: 30 }} />
+      <Text style={styles.text}>Sign in with Google</Text>
+    </View>
+  );
+}
 
 export default function GoogleLoginButton() {
   const [googleLoginInternal, { isLoading }] = useGoogleLoginInternalMutation();
-  useEffect(() => {
-    GoogleSignin.configure({
-      // androidClientId: "938579686654-kepneq1uk9lk4ac58t715qi282jf8c5f.apps.googleusercontent.com",
-      webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
-      iosClientId: "938579686654-ol0d3lf5omaubr3j91l7t0dgbhfbr6mo.apps.googleusercontent.com",
-      offlineAccess: true,
-    });
-  }, []);
-
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (!isExpoGo) {
+      GoogleSignin.configure({
+        webClientId: "938579686654-cbtphp6rl5eu4gdlh1002s8ttj1hqpat.apps.googleusercontent.com",
+        iosClientId: "938579686654-ol0d3lf5omaubr3j91l7t0dgbhfbr6mo.apps.googleusercontent.com",
+        offlineAccess: true,
+      });
+    }
+  }, []);
+
   const handleSignIn = async () => {
+    if (isExpoGo) return;
     try {
       await GoogleSignin.hasPlayServices();
-
-      try {
-        await GoogleSignin.signOut();
-      } catch (e) {
-        // ignore if no one was signed in
-      }
-
+      try { await GoogleSignin.signOut(); } catch (e) {}
       await GoogleSignin.signIn();
-
       const { accessToken } = await GoogleSignin.getTokens();
-
       if (accessToken) {
         const res = await googleLoginInternal(accessToken).unwrap();
-
-        await dispatch(
-          updateAsLoggedIn({
-            userId: res.userId,
-            userName: res.userName,
-            profileImageUrl: res.profileImageUrl,
-            profileImageThumbnailUrl: res.profileImageThumbnailUrl || "",
-            token: res.token,
-            refreshToken: res.refreshToken,
-            refreshTokenExpiryTime: res.refreshTokenExpiryTime,
-            unreadMessages: res.unreadMessages,
-            isAdmin: res.isAdmin,
-            hasAcknowledgedPublicProfile: res.hasAcknowledgedPublicProfile ?? false,
-          })
-        );
-
+        await dispatch(updateAsLoggedIn({
+          userId: res.userId,
+          userName: res.userName,
+          profileImageUrl: res.profileImageUrl,
+          profileImageThumbnailUrl: res.profileImageThumbnailUrl || "",
+          token: res.token,
+          refreshToken: res.refreshToken,
+          refreshTokenExpiryTime: res.refreshTokenExpiryTime,
+          unreadMessages: res.unreadMessages,
+          isAdmin: res.isAdmin,
+          hasAcknowledgedPublicProfile: res.hasAcknowledgedPublicProfile ?? false,
+        }));
         dispatch(updateUserFavorites({
           favoriteVehicles: res.favoriteVehicleIds || [],
           favoriteVoyages: res.favoriteVoyageIds || [],
         }));
         dispatch(setBookmarkedUserIds(res.bookmarkedUserIds || []));
+        registerPushTokenAsync(res.token);
       } else {
         console.error("No Access Token received from Google");
       }
@@ -75,14 +77,7 @@ export default function GoogleLoginButton() {
       disabled={isLoading}
       style={[styles.button, isLoading && styles.disabled]}
     >
-      {isLoading ? (
-        <ActivityIndicator color="#fff" />
-      ) : (
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={gooogleSignin} style={{ height: 30, width: 30 }} />
-          <Text style={styles.text}>Sign in with Google</Text>
-        </View>
-      )}
+      <ButtonContent isLoading={isLoading} />
     </TouchableOpacity>
   );
 }
@@ -94,9 +89,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
-    paddingVertical: vh(1),
+    paddingVertical: vh(0.25),
     borderRadius: vh(1.5),
     width: vw(65),
+    minHeight: vh(4.5),
   },
   disabled: {
     backgroundColor: '#a1c2fa',

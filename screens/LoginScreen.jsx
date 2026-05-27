@@ -33,11 +33,9 @@ import {
   setBookmarkedUserIds,
 } from "../slices/UserSlice";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
+import { registerPushTokenAsync } from "../utils/registerPushToken";
 import { TERMS_VERSION } from "../constants/TermsVersion";
-import Constants from "expo-constants";
-const GoogleLoginButton = Constants.appOwnership === "expo"
-  ? require("../components/GoogleAuthButtonDummy").default
-  : require("../components/GoogleAuthButton").default;
+import GoogleLoginButton from "../components/GoogleAuthButton";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotRed, parrotTextDarkBlue, parrotYellow } from "../assets/color";
 
 // import {
@@ -242,6 +240,8 @@ const LoginScreen = ({ navigation }) => {
         })
       );
 
+      registerPushTokenAsync(loginResponse.token);
+
       // Reset inputs
       setEmail("");
       setPassword("");
@@ -282,6 +282,7 @@ const LoginScreen = ({ navigation }) => {
         favoriteVoyages: pendingLoginData.favoriteVoyageIds || [],
       }));
       dispatch(setBookmarkedUserIds(pendingLoginData.bookmarkedUserIds || []));
+      registerPushTokenAsync(pendingLoginData.token);
       setRequiresTermsReAcceptance(false);
       setPendingLoginData(null);
       setEmail("");
@@ -1142,6 +1143,9 @@ const styles = StyleSheet.create({
     backgroundColor: parrotBlue,
     borderRadius: vh(1.5),
     width: vw(65),
+    alignItems: "center",
+    minHeight: vh(4.5),
+    justifyContent: "center",
   },
   container: {
     flexDirection: "row",

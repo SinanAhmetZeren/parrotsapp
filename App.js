@@ -85,43 +85,7 @@ import {
   invokeHub
 } from "./signalr/signalRHub";
 
-async function registerPushTokenAsync(token) {
-  try {
-    if (!Device.isDevice) return;
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    console.log("[PUSH] Existing permission status:", existingStatus); // 3.1
-    let finalStatus = existingStatus;
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-      console.log("[PUSH] Permission status after request:", finalStatus); // 3.2
-    }
-    if (finalStatus !== "granted") {
-      console.log("[PUSH] Permission not granted, aborting");
-      return;
-    }
-
-    const tokenData = await Notifications.getExpoPushTokenAsync({ projectId: "5f4ee090-1e51-4228-b36b-23715333bcc4" });
-    const pushToken = tokenData.data;
-    console.log("[PUSH] Token obtained:", pushToken); // 3.3
-
-    const response = await fetch(`${API_URL}/api/account/push-token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(pushToken),
-    });
-    if (response.ok) {
-      console.log("[PUSH] Token saved to server successfully"); // 3.4
-    } else {
-      console.log("[PUSH] Token save failed, status:", response.status); // 3.5
-    }
-  } catch (err) {
-    console.log("[PUSH] Registration error:", err); // 3.5
-  }
-}
+import { registerPushTokenAsync } from "./utils/registerPushToken";
 
 // Force font scaling to stay at 100% across the whole app
 if (Text.defaultProps == null) Text.defaultProps = {};

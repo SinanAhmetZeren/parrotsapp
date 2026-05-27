@@ -2,6 +2,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Constants from 'expo-constants';
+const DeviceInfo = Constants.appOwnership === "expo" ? null : require('react-native-device-info').default;
 import {
   View,
   Text,
@@ -37,7 +39,8 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
   const tabBarHeight = Platform.OS === "ios"
     ? (vh(100) - insets.top - insets.bottom) * 0.08
     : vh(8);
-  const containerHeight = Platform.OS === "ios"
+  const isTablet = DeviceInfo ? DeviceInfo.isTablet() : false;
+  const containerHeight = Platform.OS === "ios" || isTablet
     ? vh(99.5) - SELECTOR_HEIGHT - tabBarHeight - insets.top
     : vh(99.5) - SELECTOR_HEIGHT - tabBarHeight + insets.bottom;
 

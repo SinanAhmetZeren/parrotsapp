@@ -45,6 +45,7 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
     "react-native-calendar-picker": "^8.0.0",
+    "react-native-device-info": "^15.0.2",
     "react-native-dotenv": "^3.4.11",
     "react-native-element-dropdown": "^2.10.1",
     "react-native-expo-viewport-units": "^0.0.8",
