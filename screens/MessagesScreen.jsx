@@ -23,11 +23,6 @@ import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
 import { useGetUsersByUsernameQuery, useGetBookmarksQuery } from "../slices/UserSlice";
 import { setUnreadMessages, markMessagesRead } from "../slices/UserSlice";
 import CreateNewGroupTab from "../components/CreateNewGroupTab";
-import {
-  register_ReceiveGroupMessageRefetch,
-  unregister_ReceiveGroupMessageRefetch,
-} from "../signalr/signalRHub.js";
-
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { ConnectSelectionComponent } from "../components/ConnectSelectionComponent";
@@ -40,8 +35,8 @@ import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotPis
 import {
   register_ReceiveMessage,
   unregister_ReceiveMessage,
-  register_ReceiveMessageRefetch,
-  unregister_ReceiveMessageRefetch,
+  register_ReceiveGroupMessage,
+  unregister_ReceiveGroupMessage,
   register_OnReconnecting,
   unregister_OnReconnecting,
   register_OnReconnected,
@@ -86,7 +81,6 @@ export default function MessagesScreen({ navigation }) {
     setTimeout(() => setToastVisible(false), 2500);
   };
 
-  const [receivedMessageData, setReceivedMessageData] = useState("");
   const [selectedFunction, setSelectedFunction] = useState(1);
 
   const { data: bookmarksRaw, isLoading: isLoadingBookmarks } = useGetBookmarksQuery(undefined, { skip: selectedFunction !== 3 });
@@ -121,45 +115,22 @@ export default function MessagesScreen({ navigation }) {
       invokeHub("EnterMessagesScreen", userId);
       console.log("enter messages screen --> ");
 
-      // Handle incoming message
-      const handleReceiveMessage = (
-        senderId,
-        content,
-        newTime,
-        senderProfileUrl,
-        senderUsername
-      ) => {
-        setReceivedMessageData([
-          senderId,
-          content,
-          newTime,
-          senderProfileUrl,
-          senderUsername
-        ]);
+      const handleReceiveMessage = async () => {
+        try { await refetch(); } catch {}
       };
 
-      // Handle refetch request
-      const handleRefetch = async () => {
-        try {
-          await refetch();
-        } catch (err) {
-        }
-      };
-
-      const handleGroupRefetch = async () => {
-        try { await refetch(); } catch { }
+      const handleGroupMessage = async () => {
+        try { await refetch(); } catch {}
       };
 
       register_ReceiveMessage(handleReceiveMessage);
-      register_ReceiveMessageRefetch(handleRefetch);
-      register_ReceiveGroupMessageRefetch(handleGroupRefetch);
+      register_ReceiveGroupMessage(handleGroupMessage);
 
       return () => {
         invokeHub("LeaveMessagesScreen", userId);
         console.log("left messages screen --> ");
         unregister_ReceiveMessage(handleReceiveMessage);
-        unregister_ReceiveMessageRefetch(handleRefetch);
-        unregister_ReceiveGroupMessageRefetch(handleGroupRefetch);
+        unregister_ReceiveGroupMessage(handleGroupMessage);
       };
     }, [userId, refetch])
   );
@@ -233,11 +204,6 @@ export default function MessagesScreen({ navigation }) {
 
 
 
-
-  // Sync messages from API updates
-  useEffect(() => {
-    if (messagesData) setReceivedMessageData(messagesData);
-  }, [messagesData]);
 
   useEffect(() => {
     if (!messagesData) return;

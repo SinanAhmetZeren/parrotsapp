@@ -58,13 +58,15 @@ function GroupPreviewView({ item, onOpenGroup, unreadCount }) {
         </Text>
       </View>
       <View style={styles.time}>
-        <Text style={styles.timeText1}>{time}</Text>
+        <View style={styles.timeRow}>
+          {hasUnread && (
+            <View style={styles.unreadBadge}>
+              <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
+            </View>
+          )}
+          <Text style={styles.timeText1}>{time}</Text>
+        </View>
         <Text style={styles.timeText2}>{date}</Text>
-        {hasUnread && (
-          <View style={styles.unreadBadge}>
-            <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
-          </View>
-        )}
       </View>
     </TouchableOpacity>
   );
@@ -189,11 +191,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingLeft: vw(2),
   },
+  timeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: vw(1.5),
+    marginBottom: vh(0.5),
+  },
   timeText1: {
     fontFamily: "Nunito_700Bold",
     fontSize: 13,
     color: parrotBlueDarkTransparent2,
-    marginBottom: vh(0.5),
   },
   timeText2: {
     fontFamily: "Nunito_700Bold",
@@ -205,7 +212,6 @@ const styles = StyleSheet.create({
     color: parrotLightBlue,
   },
   unreadBadge: {
-    marginTop: vh(0.5),
     minWidth: vw(5),
     height: vw(5),
     borderRadius: vw(2.5),
