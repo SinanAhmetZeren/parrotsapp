@@ -110,22 +110,17 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      const handleReceiveMessage = (senderId, content, newTime, senderProfileUrl, senderUsername) => {
-        const incoming = {
-          senderId,
-          text: content,
-          dateTime: newTime,
-          senderProfileImageUrl: senderProfileUrl,
-          senderUsername,
-        };
-        setMessagesToDisplay((prev) => [...(prev ?? []), incoming]);
+      const handleReceiveMessage = (last5) => {
+        if (!Array.isArray(last5)) return;
+        setMessagesToDisplay((prev) => {
+          const existingIds = new Set(last5.map(m => m.id));
+          const kept = (prev ?? []).filter(m => !m.id || !existingIds.has(m.id));
+          return [...kept, ...last5];
+        });
       };
-      const handleRefetch = async () => { try { await refetch(); } catch (e) { console.error(e); } };
       register_ReceiveMessage(handleReceiveMessage);
-      register_ReceiveMessageRefetch(handleRefetch);
       return () => {
         unregister_ReceiveMessage(handleReceiveMessage);
-        unregister_ReceiveMessageRefetch(handleRefetch);
       };
     }, [refetch])
   );
@@ -246,7 +241,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
         </View>
         {/* // MESSAGES // */}
 
-        <View style={[styles.sendRow, { paddingBottom: insets.bottom }]}>
+        <View style={[styles.sendRow, {
+          paddingBottom: insets.bottom,
+        }]}>
           <TextInput
             onChangeText={(text) => setMessage(text)}
             style={styles.textinputStyle}

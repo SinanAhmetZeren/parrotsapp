@@ -97,8 +97,8 @@ function setupInternalListeners() {
         reconnectedHandlers.forEach(h => h());
     });
 
-    hubConnection.on("ReceiveMessage", (data) => {
-        messageHandlers.forEach(h => h(data));
+    hubConnection.on("ReceiveMessage", (...args) => {
+        messageHandlers.forEach(h => h(...args));
     });
 
     hubConnection.on("ReceiveMessageRefetch", (data) => {

@@ -26,7 +26,7 @@ import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
 import { ActivityIndicator } from "react-native";
 import {
   invokeHub, isHubReady,
-  register_ReceiveGroupMessageRefetch, unregister_ReceiveGroupMessageRefetch,
+  register_ReceiveGroupMessage, unregister_ReceiveGroupMessage,
   register_OnReconnecting, unregister_OnReconnecting,
   register_OnReconnected, unregister_OnReconnected,
 } from "../signalr/signalRHub";
@@ -158,12 +158,17 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!groupId) return;
-    const handler = (incomingGroupId) => {
-      if (String(incomingGroupId) === String(groupId)) refetchMessages();
+    const handler = (last5) => {
+      if (!Array.isArray(last5)) return;
+      setMessagesToDisplay((prev) => {
+        const existingIds = new Set(last5.map(m => m.id));
+        const kept = (prev ?? []).filter(m => !m.id || !existingIds.has(m.id));
+        return [...kept, ...last5];
+      });
     };
-    register_ReceiveGroupMessageRefetch(handler);
-    return () => unregister_ReceiveGroupMessageRefetch(handler);
-  }, [groupId, refetchMessages]);
+    register_ReceiveGroupMessage(handler);
+    return () => unregister_ReceiveGroupMessage(handler);
+  }, [groupId]);
 
   useFocusEffect(
     useCallback(() => {
