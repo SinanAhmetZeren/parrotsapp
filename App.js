@@ -726,6 +726,7 @@ function App() {
       const subscription = AppState.addEventListener("change", (nextState) => {
         const isForeground = nextState === "active";
         invokeHub("UpdatePresence", isForeground).catch(() => {});
+        if (isForeground) Notifications.setBadgeCountAsync(0).catch(() => {});
       });
       return () => subscription.remove();
     }, []);
