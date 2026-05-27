@@ -654,6 +654,7 @@ function App() {
           const storedProfileImageUrl = await AsyncStorage.getItem("storedProfileImageUrl");
           const storedProfileImageThumbnailUrl = await AsyncStorage.getItem("storedProfileImageThumbnailUrl");
           const storedHasAcknowledgedPublicProfile = await AsyncStorage.getItem("storedHasAcknowledgedPublicProfile");
+          const storedBookmarkedUserIds = await AsyncStorage.getItem("storedBookmarkedUserIds");
 
           if (storedToken) {
             registerPushTokenAsync(storedToken);
@@ -667,6 +668,7 @@ function App() {
                 profileImageUrl: storedProfileImageUrl,
                 profileImageThumbnailUrl: storedProfileImageThumbnailUrl || "",
                 hasAcknowledgedPublicProfile: storedHasAcknowledgedPublicProfile === "true",
+                bookmarkedUserIds: storedBookmarkedUserIds ? JSON.parse(storedBookmarkedUserIds) : [],
               })
             );
 

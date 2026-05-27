@@ -125,6 +125,7 @@ const usersSlice = createSlice({
       state.userProfileImage = profileImageUrl;
       state.userProfileImageThumbnail = action.payload.profileImageThumbnailUrl || "";
       state.hasAcknowledgedPublicProfile = action.payload.hasAcknowledgedPublicProfile ?? false;
+      state.bookmarkedUserIds = action.payload.bookmarkedUserIds ?? [];
       state.isLoggedIn = true;
     },
     updateUserData: (state, action) => {
