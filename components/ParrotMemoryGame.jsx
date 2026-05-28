@@ -17,29 +17,34 @@ const PARROT_IMAGES = [
   require("../assets/game-parrots/bestrongenoughtoletgo-beautiful-macaw-4488679_small.jpg"),
   require("../assets/game-parrots/bestrongenoughtoletgo-rare-parakeets-4462423_small.jpg"),
   require("../assets/game-parrots/biobush-bird-3052985_small.jpg"),
-  require("../assets/game-parrots/blumary-bird-7623184_small.jpg"),
   require("../assets/game-parrots/christels-parrot-2796741_small.jpg"),
   require("../assets/game-parrots/christels-parrot-2875363_small.jpg"),
   require("../assets/game-parrots/couleur-parrot-3417217_small.jpg"),
   require("../assets/game-parrots/couleur-parrot-3601194_small.jpg"),
-  require("../assets/game-parrots/davidclode-double-eyed-fig-parrot-10256968_small.jpg"),
   require("../assets/game-parrots/davidclode-parrot-9295172_small.jpg"),
   require("../assets/game-parrots/davidclode-parrot-9897724_small.jpg"),
-  require("../assets/game-parrots/farka87-eclectus-10154509_small.jpg"),
   require("../assets/game-parrots/jlkramer-cockatiel-4064348_1920_small.jpg"),
+  require("../assets/game-parrots/manfredrichter-bird-6955201_small.jpg"),
   require("../assets/game-parrots/manfredrichter-lorikeet-6969471_small.jpg"),
   require("../assets/game-parrots/rlleslie-parrot-7527071_small.jpg"),
   require("../assets/game-parrots/tirriko-bird-3491624_small.jpg"),
   require("../assets/game-parrots/yancabrera-bird-1823839_small.jpg"),
+  require("../assets/game-parrots/zaidoopro-parrot-6238905_small.jpg"),
+  require("../assets/game-parrots/zsolt71-zoo-8378189_small.jpg"),
 ];
 
-const COLS = 6;
-const ROWS = 6;
-const TOTAL = COLS * ROWS; // 36 cards = 18 pairs
+const MODES = {
+  "4x4": { cols: 4, pairs: 8, centerIdx: null },
+  "5x5": { cols: 5, pairs: 12, centerIdx: 12 },
+  "6x6": { cols: 6, pairs: 18, centerIdx: null },
+};
 
 const CARD_MARGIN = 1;
-const MODAL_PADDING = 10; // 3px each side
-const CARD_SIZE = Math.floor((SCREEN_WIDTH - MODAL_PADDING - CARD_MARGIN * 2 * COLS) / COLS);
+const MODAL_PADDING = 10;
+
+function cardSize(cols) {
+  return Math.floor((SCREEN_WIDTH - MODAL_PADDING - CARD_MARGIN * 2 * cols) / cols);
+}
 
 function shuffle(arr) {
   const a = [...arr];
@@ -50,12 +55,21 @@ function shuffle(arr) {
   return a;
 }
 
-function buildDeck() {
-  const pairs = PARROT_IMAGES.map((img, idx) => [
-    { id: idx * 2, imageIdx: idx, image: img },
-    { id: idx * 2 + 1, imageIdx: idx, image: img },
-  ]).flat();
-  return shuffle(pairs);
+function buildDeck(mode) {
+  const { pairs, centerIdx } = MODES[mode];
+  const images = pairs === PARROT_IMAGES.length
+    ? PARROT_IMAGES
+    : shuffle([...PARROT_IMAGES]).slice(0, pairs);
+  const cards = shuffle(
+    images.flatMap((img, idx) => [
+      { id: idx * 2, imageIdx: idx, image: img },
+      { id: idx * 2 + 1, imageIdx: idx, image: img },
+    ])
+  );
+  if (centerIdx !== null) {
+    cards.splice(centerIdx, 0, { id: -1, imageIdx: -1, isLogo: true });
+  }
+  return cards;
 }
 
 function Card({ card, isFlipped, isMatched, onPress, size }) {
@@ -75,6 +89,14 @@ function Card({ card, isFlipped, isMatched, onPress, size }) {
   const frontOpacity = anim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 0, 1] });
   const backOpacity = anim.interpolate({ inputRange: [0, 0.5, 1], outputRange: [1, 0, 0] });
 
+  if (card.isLogo) {
+    return (
+      <View style={[styles.card, styles.logoTile, { width: size, height: size, margin: CARD_MARGIN }]}>
+        <Image source={require("../assets/parrotslogoblue_iconpadded.jpeg")} style={{ width: size, height: size }} resizeMode="contain" />
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -82,7 +104,6 @@ function Card({ card, isFlipped, isMatched, onPress, size }) {
       activeOpacity={0.8}
       style={{ width: size, height: size, margin: CARD_MARGIN }}
     >
-      {/* Back */}
       <Animated.View
         style={[
           styles.card,
@@ -92,8 +113,6 @@ function Card({ card, isFlipped, isMatched, onPress, size }) {
       >
         <Image source={require("../assets/ParrotLogoHead.png")} style={{ width: size * 0.5, height: size * 0.5 }} resizeMode="contain" />
       </Animated.View>
-
-      {/* Front */}
       <Animated.View
         style={[
           styles.card,
@@ -106,8 +125,31 @@ function Card({ card, isFlipped, isMatched, onPress, size }) {
   );
 }
 
+function ModeSelector({ onSelect, onClose }) {
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity onPress={onClose} style={[styles.closeBtn,
+      { position: "absolute", top: -15, right: -3, zIndex: 10 }]}>
+        <Text style={styles.closeText}>✕</Text>
+      </TouchableOpacity>
+      <Text style={styles.tagline}>Match the parrots before your next voyage</Text>
+      <View style={styles.modeSelectorContainer}>
+        {["4x4", "5x5", "6x6"].map((m) => (
+          <TouchableOpacity key={m} style={styles.modeBtn} onPress={() => onSelect(m)}>
+            <Text style={styles.modeBtnText}>{m}</Text>
+            <Text style={styles.modeBtnSub}>
+              {m === "4x4" ? "8 pairs" : m === "5x5" ? "12 pairs" : "18 pairs"}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 export function ParrotMemoryGame({ onClose }) {
-  const [deck, setDeck] = useState(() => buildDeck());
+  const [mode, setMode] = useState(null);
+  const [deck, setDeck] = useState([]);
   const [flipped, setFlipped] = useState([]);
   const [matched, setMatched] = useState([]);
   const [moves, setMoves] = useState(0);
@@ -115,14 +157,27 @@ export function ParrotMemoryGame({ onClose }) {
   const [won, setWon] = useState(false);
   const flipBackTimer = useRef(null);
 
+  const startGame = (m) => {
+    setMode(m);
+    setDeck(buildDeck(m));
+    setFlipped([]);
+    setMatched([]);
+    setMoves(0);
+    setLocked(false);
+    setWon(false);
+  };
+
   const handlePress = useCallback((card) => {
     if (flipped.find(c => c.id === card.id) || matched.includes(card.imageIdx)) return;
 
     if (locked && flipBackTimer.current) {
       clearTimeout(flipBackTimer.current);
       flipBackTimer.current = null;
-      setFlipped([card]);
-      setLocked(false);
+      setFlipped([]);
+      setTimeout(() => {
+        setFlipped([card]);
+        setLocked(false);
+      }, 50);
       return;
     }
 
@@ -140,7 +195,7 @@ export function ParrotMemoryGame({ onClose }) {
         setMatched(newMatched);
         setFlipped([]);
         setLocked(false);
-        if (newMatched.length === PARROT_IMAGES.length) setWon(true);
+        if (newMatched.length === MODES[mode].pairs) setTimeout(() => setWon(true), 2000);
       } else {
         flipBackTimer.current = setTimeout(() => {
           setFlipped([]);
@@ -149,16 +204,14 @@ export function ParrotMemoryGame({ onClose }) {
         }, 1200);
       }
     }
-  }, [flipped, matched, locked]);
+  }, [flipped, matched, locked, mode]);
 
-  const handleRestart = () => {
-    setDeck(buildDeck());
-    setFlipped([]);
-    setMatched([]);
-    setMoves(0);
-    setLocked(false);
-    setWon(false);
-  };
+  if (!mode) {
+    return <ModeSelector onSelect={startGame} onClose={onClose} />;
+  }
+
+  const size = cardSize(MODES[mode].cols);
+  const totalPairs = MODES[mode].pairs;
 
   if (won) {
     return (
@@ -166,7 +219,7 @@ export function ParrotMemoryGame({ onClose }) {
         <Text style={styles.wonEmoji}>🎉</Text>
         <Text style={styles.wonTitle}>You matched all parrots!</Text>
         <Text style={styles.wonMoves}>Completed in {moves} moves</Text>
-        <TouchableOpacity style={styles.btn} onPress={handleRestart}>
+        <TouchableOpacity style={styles.btn} onPress={() => setMode(null)}>
           <Text style={styles.btnText}>Play Again</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.btn, styles.btnSecondary]} onPress={onClose}>
@@ -178,23 +231,27 @@ export function ParrotMemoryGame({ onClose }) {
 
   return (
     <View style={styles.container}>
+
+      <View style={{ position: "absolute", top: -15, right: 2, zIndex: 10 }}>
+        <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+          <Text style={styles.closeText}>✕</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.tagline}>Match the parrots before your next voyage</Text>
       <View style={styles.header}>
-        <View style={{ flex: 2 }}>
+        <View style={{ flex: 1, alingItems: "flex-end" }}>
           <Text style={styles.moves}>Moves: {moves}</Text>
         </View>
-        <View style={{ flex: 5, alignItems: "flex-start" }}>
-          <Text style={styles.progress}>{matched.length}/{PARROT_IMAGES.length} matched</Text>
-        </View>
         <View style={{ flex: 1, alignItems: "center" }}>
-          <TouchableOpacity onPress={handleRestart} style={styles.restartBtn}>
+          <Text style={styles.progress}>{matched.length}/{totalPairs} matched</Text>
+        </View>
+        <View style={{ flex: 1, alignItems: "flex-end" }}>
+          <TouchableOpacity onPress={() => setMode(null)} style={styles.restartBtn}>
             <Text style={styles.restartText}>Restart</Text>
           </TouchableOpacity>
         </View>
-        <View style={{ flex: 1, alignItems: "center" }}>
-          <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <Text style={styles.closeText}>✕</Text>
-          </TouchableOpacity>
-        </View>
+
       </View>
       <View style={styles.grid}>
         {deck.map((card) => (
@@ -204,7 +261,7 @@ export function ParrotMemoryGame({ onClose }) {
             isFlipped={!!flipped.find(c => c.id === card.id)}
             isMatched={matched.includes(card.imageIdx)}
             onPress={() => handlePress(card)}
-            size={CARD_SIZE}
+            size={size}
           />
         ))}
       </View>
@@ -221,6 +278,39 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     width: vw(99),
   },
+  tagline: {
+    color: "#ffffff",
+    fontSize: 16,
+    letterSpacing: 0.4,
+    marginBottom: vh(0.8),
+    textAlign: "center",
+    fontFamily: "Nunito_600SemiBold",
+  },
+  modeSelectorContainer: {
+    flexDirection: "row",
+    gap: 16,
+    marginVertical: vh(4),
+  },
+  modeBtn: {
+    backgroundColor: "#1e3a5f",
+    borderRadius: 14,
+    paddingVertical: 20,
+    paddingHorizontal: 24,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#2d5a9e",
+  },
+  modeBtnText: {
+    color: "white",
+    fontSize: 22,
+    fontFamily: "Nunito_700Bold",
+  },
+  modeBtnSub: {
+    color: "#94a3b8",
+    fontSize: 11,
+    fontFamily: "Nunito_600SemiBold",
+    marginTop: 4,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -231,12 +321,14 @@ const styles = StyleSheet.create({
   moves: {
     color: "#e2e8f0",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
     marginRight: 10,
+    textAlign: "center",
   },
   progress: {
     color: "#94a3b8",
     fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
   },
   restartBtn: {
     paddingHorizontal: 14,
@@ -248,7 +340,7 @@ const styles = StyleSheet.create({
   restartText: {
     color: "white",
     fontSize: 13,
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
   },
   closeBtn: {
     paddingHorizontal: 12,
@@ -259,7 +351,7 @@ const styles = StyleSheet.create({
   closeText: {
     color: "white",
     fontSize: 14,
-    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
   },
   grid: {
     flexDirection: "row",
@@ -277,16 +369,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#2d5a9e",
   },
-  cardMatched: {
-    borderWidth: 2,
-    borderColor: "#22c55e21",
+  logoTile: {
+    backgroundColor: "#1e3a5f",
+    borderWidth: 1,
+    borderColor: "#2d5a9e",
   },
   wonContainer: {
-    flex: 1,
+    height: vh(50),
     backgroundColor: "#0f172a",
     alignItems: "center",
     justifyContent: "center",
     padding: 32,
+    borderRadius: 16,
+    width: vw(99),
   },
   wonEmoji: {
     fontSize: 64,
@@ -295,13 +390,14 @@ const styles = StyleSheet.create({
   wonTitle: {
     color: "white",
     fontSize: 24,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
     marginBottom: 8,
     textAlign: "center",
   },
   wonMoves: {
     color: "#94a3b8",
     fontSize: 16,
+    fontFamily: "Nunito_600SemiBold",
     marginBottom: 32,
   },
   btn: {
@@ -318,6 +414,6 @@ const styles = StyleSheet.create({
   btnText: {
     color: "white",
     fontSize: 16,
-    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
 });
