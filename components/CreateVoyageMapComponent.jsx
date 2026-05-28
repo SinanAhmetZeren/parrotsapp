@@ -28,6 +28,7 @@ import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
 import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
 import Toast from "react-native-toast-message";
 import * as ImageManipulator from "expo-image-manipulator";
+import { USE_CAMBRIDGE_DEFAULT_LOCATION, CAMBRIDGE_REGION } from "../constants/defaultLocationFlag";
 
 const CreateVoyageMapComponent = ({
   voyageId,
@@ -263,6 +264,10 @@ const CreateVoyageMapComponent = ({
   // 1. GET LOCATION & SET INITIAL REGION //
   useEffect(() => {
     const fetchLocation = async () => {
+      if (USE_CAMBRIDGE_DEFAULT_LOCATION) {
+        setInitialRegion(CAMBRIDGE_REGION);
+        return;
+      }
       try {
 
         const { status } = await Location.requestForegroundPermissionsAsync();

@@ -37,6 +37,7 @@ import {
 } from "../slices/VoyageSlice";
 import { updateAsLoggedOut } from "../slices/UserSlice";
 import * as Location from "expo-location";
+import { USE_CAMBRIDGE_DEFAULT_LOCATION, CAMBRIDGE_REGION } from "../constants/defaultLocationFlag";
 import VoyageListHorizontal from "../components/VoyageListHorizontal";
 import VoyageCardProfileHorizontalModal from "../components/VoyageCardProfileHorizontalModal";
 import parrotMarker1 from "../assets/parrotMarkers/parrotMarker1.png";
@@ -58,6 +59,7 @@ const placeEggs = {
   3: { normal: goldenegg, cracked: crackedgoldenegg },
 };
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { ParrotMemoryGame } from "../components/ParrotMemoryGame";
 import {
   applyFilterAppliedBackgroundColor, applyFilterAppliedBorderColor, applyFilterAppliedColor,
   applyFilterChangedBackgroundColor, applyFilterChangedBorderColor, applyFilterChangedColor,
@@ -369,6 +371,11 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     async function getLocation() {
+      if (USE_CAMBRIDGE_DEFAULT_LOCATION) {
+        setInitialLatitude(CAMBRIDGE_REGION.latitude);
+        setInitialLongitude(CAMBRIDGE_REGION.longitude);
+        return;
+      }
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
@@ -862,17 +869,9 @@ export default function HomeScreen({ navigation }) {
           visible={imageModalVisible}
           onRequestClose={() => setImageModalVisible(false)}
         >
-          <TouchableOpacity
-            style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.9)", alignItems: "center", justifyContent: "center" }}
-            onPress={() => setImageModalVisible(false)}
-            activeOpacity={1}
-          >
-            <Animated.Image
-              source={require("../assets/parrotsreallife.jpg")}
-              style={{ width: vw(90), height: vw(90), borderRadius: vw(45), transform: [{ scale: imageScale }, { translateX: imageTranslateX }, { translateY: imageTranslateY }] }}
-              resizeMode="cover"
-            />
-          </TouchableOpacity>
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.6)", alignItems: "center", justifyContent: "center" }}>
+            <ParrotMemoryGame onClose={() => setImageModalVisible(false)} />
+          </View>
         </Modal>
 
         <View>
