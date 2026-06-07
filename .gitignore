@@ -79,3 +79,4 @@ yarn-error.*
 # Firebase Admin SDK key
 *firebase-adminsdk*.jsongoogle-services.json
 firebase-service-account.json
+parrots-app-5056e-firebase-adminsdk-fbsvc-cbea376d7f.json
