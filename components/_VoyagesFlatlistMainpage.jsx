@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
   voyageBrief: {
     width: vw(50),
     padding: vw(2),
-    backgroundColor: "yellow",
   },
   voyageName: {
     paddingHorizontal: vw(2),

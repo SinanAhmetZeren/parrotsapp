@@ -170,7 +170,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ backgroundColor: "orange" }}>
+    <View>
       <View style={[styles.mainContainer, { height: keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight }]}>
         {/* // HEADER // */}
         <TouchableOpacity

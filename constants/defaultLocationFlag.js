@@ -1,4 +1,4 @@
-export const USE_CAMBRIDGE_DEFAULT_LOCATION = 1;
+export const USE_CAMBRIDGE_DEFAULT_LOCATION = 0;
 
 export const CAMBRIDGE_REGION = {
   latitude: 52.20551962389507,

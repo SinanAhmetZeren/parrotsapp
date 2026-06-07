@@ -230,7 +230,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const extraCount = members.length > 3 ? members.length - 3 : 0;
 
   return (
-    <View style={{ backgroundColor: "orange" }}>
+    <View>
       <View style={[styles.mainContainer, { height: keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight }]}>
         {/* // HEADER // */}
         <View style={styles.headerStyle}>

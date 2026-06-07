@@ -1,0 +1,33 @@
+Day | # | College                  | Lat      | Lng     | Description
+----|---|--------------------------|----------|---------|------------
+1   | 1 | King's College           | 52.2049  | 0.1166  | Iconic chapel, biggest crowds, get it done early
+1   | 2 | Clare College            | 52.2044  | 0.1149  | Beautiful bridge over the Cam
+1   | 3 | Trinity Hall             | 52.2051  | 0.1152  | Tiny lane, very hidden gem
+1   | 4 | Gonville & Caius         | 52.2053  | 0.1181  | Gate of Honour — Stephen Hawking's college
+1   | 5 | Trinity College          | 52.2058  | 0.1169  | Largest college, Great Court — allow extra time here
+1   | 6 | St John's College        | 52.2082  | 0.1170  | Bridge of Sighs — right next to Trinity
+1   | 7 | Magdalene College        | 52.2103  | 0.1154  | Northernmost of the river colleges
+1   | 8 | Queens' College          | 52.2031  | 0.1134  | Mathematical Bridge — head south to finish day 1
+2   | 9 | Peterhouse               | 52.2003  | 0.1190  | Oldest college in Cambridge (1284)
+2   | 10| Pembroke College         | 52.2019  | 0.1183  | Free entry, beautiful gardens
+2   | 11| Corpus Christi           | 52.2028  | 0.1167  | Parker Library has medieval manuscripts
+2   | 12| St Catharine's           | 52.2033  | 0.1175  | Right next to Corpus — grand symmetrical courtyard
+2   | 13| Downing College          | 52.2000  | 0.1242  | Neoclassical — very different feel, wide open lawns
+2   | 14| Emmanuel College         | 52.2036  | 0.1244  | Beautiful pond garden — Harvard connection
+2   | 15| Christ's College         | 52.2050  | 0.1215  | Darwin's college
+2   | 16| Darwin College           | 52.2017  | 0.1127  | Graduate-only college on a river island
+3   | 17| Newnham College          | 52.1994  | 0.1094  | Beautiful gardens, famous women's college
+3   | 18| Selwyn College           | 52.2008  | 0.1056  | Quiet and charming, often overlooked
+3   | 19| Wolfson College          | 52.2029  | 0.0995  | Modern with Asian-influenced architecture, Chinese lions
+3   | 20| Robinson College         | 52.2059  | 0.1025  | Distinctive red brick, modern chapel with coloured glass
+3   | 21| Clare Hall               | 52.2100  | 0.0997  | Tiny postgrad college, very relaxed vibe
+3   | 22| Churchill College        | 52.2107  | 0.1036  | Brutalist, duck pond at entrance
+3   | 23| Fitzwilliam College      | 52.2152  | 0.1020  | Modern, next door to Churchill
+3   | 24| St Edmund's College      | 52.2128  | 0.1071  | Catholic foundation, mixed architecture
+4   | 25| Lucy Cavendish           | 52.2131  | 0.1080  | Small, quiet, garden college
+4   | 26| Murray Edwards           | 52.2120  | 0.1048  | Iconic modernist dome, great women's art collection
+4   | 27| Jesus College            | 52.2087  | 0.1193  | Large grounds, horse sculpture, free entry
+4   | 28| Sidney Sussex            | 52.2073  | 0.1208  | Oliver Cromwell buried here
+4   | 29| Hughes Hall              | 52.1988  | 0.1315  | Near Mill Road — mature students college
+4   | 30| Homerton College         | 52.1865  | 0.1398  | Furthest south — massive grounds, apple trees and ducks
+4   | 31| Girton College           | 52.2274  | 0.0837  | ~3km northwest of centre — longest ride of the trip, swimming pool on site

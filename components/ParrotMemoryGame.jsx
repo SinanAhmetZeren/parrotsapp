@@ -92,7 +92,7 @@ function Card({ card, isFlipped, isMatched, onPress, size }) {
   if (card.isLogo) {
     return (
       <View style={[styles.card, styles.logoTile, { width: size, height: size, margin: CARD_MARGIN }]}>
-        <Image source={require("../assets/parrotslogoblue_iconpadded.jpeg")} style={{ width: size, height: size }} resizeMode="contain" />
+        <Image source={require("../assets/parrotsiconpaddedtransparent.png")} style={{ width: size, height: size }} resizeMode="contain" />
       </View>
     );
   }
@@ -111,7 +111,7 @@ function Card({ card, isFlipped, isMatched, onPress, size }) {
           styles.cardBack,
         ]}
       >
-        <Image source={require("../assets/ParrotLogoHead.png")} style={{ width: size * 0.5, height: size * 0.5 }} resizeMode="contain" />
+        <Image source={require("../assets/ParrotLogoHead.png")} style={{ width: size * 0.35, height: size * 0.35 }} resizeMode="contain" />
       </Animated.View>
       <Animated.View
         style={[
