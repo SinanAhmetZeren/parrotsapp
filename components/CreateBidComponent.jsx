@@ -16,7 +16,10 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import {
   useSendBidMutation,
   useChangeBidMutation,
+  useAddVoyageToFavoritesMutation,
 } from "../slices/VoyageSlice";
+import { useDispatch } from "react-redux";
+import { addVoyageToUserFavorites } from "../slices/UserSlice";
 import {
   parrotTextDarkBlue,
   parrotBlueSemiTransparent,
@@ -49,8 +52,10 @@ export const CreateBidComponent = ({
   const [existingPersons, setExistingPersons] = useState(String(userBidPersons ?? 0));
   const createBidTextInputRef = useRef(null);
   const changeBidTextInputRef = useRef(null);
+  const dispatch = useDispatch();
   const [sendBid] = useSendBidMutation();
   const [changeBid] = useChangeBidMutation();
+  const [addVoyageToFavorites] = useAddVoyageToFavoritesMutation();
 
   useEffect(() => {
     setExistingBidPrice(String(userBidPrice ?? 0));
@@ -76,6 +81,8 @@ export const CreateBidComponent = ({
     };
 
     sendBid(bidData);
+    addVoyageToFavorites({ userId, voyageId });
+    dispatch(addVoyageToUserFavorites({ favoriteVoyage: voyageId }));
     setIsCreateModalVisible(false);
     refetch();
   };
