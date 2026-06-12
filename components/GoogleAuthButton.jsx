@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, ActivityIndicator, Image, View } from 'react-native';
+import { ParrotsStdText } from './ParrotsStdText';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Constants from 'expo-constants';
 import { useDispatch } from 'react-redux';

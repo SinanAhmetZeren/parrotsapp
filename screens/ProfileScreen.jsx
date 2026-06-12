@@ -674,19 +674,19 @@ export default function ProfileScreen({ navigation }) {
 
 
                       <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        Featuring your voyage on the main map costs ParrotCoins.
+                        ParrotCoins are used to feature your voyage on the main map.
                       </ParrotsStdText>
                       <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        The cost equals the number of days between today and the voyage start date.
+                        Each coin keeps your voyage featured for a day.
                       </ParrotsStdText>
                       <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        Example: Starts in 10 days → 10 ParrotCoins.
+                        1 ParrotCoin per day is deducted from your balance, from your posting date to your end date. The total amount is deducted all at once when you post your voyage.
                       </ParrotsStdText>
                       <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        The voyage will be removed from the main map once it starts.
+                        The voyage will be removed from the map once it ends.
                       </ParrotsStdText>
                       <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        You can add ParrotCoins to your balance at parrotsvoyages.com.
+                        Need more coins? Top up your balance at <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", color: parrotLightBlue }}>parrotsvoyages.com</ParrotsStdText>.
                       </ParrotsStdText>
 
 

@@ -253,9 +253,11 @@ export default function TermsOfUseComponent() {
                     </ParrotsStdText>
 
                     <ParrotsStdText style={styles.paragraph}>
-                        Our app includes notification features designed to inform users about new messages. This includes an in-app badge as well as device-level push notifications when the app is in the background or inactive.
+                        Our app includes notification features designed to inform users about new messages. This includes an in-app badge as well as device-level push notifications when the app is in the background or inactive. Push notifications require permission to be granted on your device and can be managed through your device settings at any time.
                         {"\n\n"}
                         We process message status information (read/unread) to operate messaging features and notification badges.
+                        {"\n\n"}
+                        In addition, a numeric badge may appear on the app icon on your device's home screen to indicate unread messages. This badge aims to reflect unread message status in real time, though it may not always be exact. It is cleared when you open the app.
                         {"\n\n"}
                         The in-app notification badge may appear in the following situations:
                         {"\n"}
@@ -346,6 +348,7 @@ export default function TermsOfUseComponent() {
                         {"\n"}• All members of a group conversation, including those added after the conversation has begun, have access to the full message history of that group from its creation.
                         {"\n"}• By accepting an invitation to join a group conversation, users acknowledge and consent to viewing messages sent before their membership.
                         {"\n"}• Group administrators are responsible for managing membership and ensuring appropriate use of the group conversation feature.
+                        {"\n"}• Users who are removed from a group conversation will immediately lose access to that group and its message history.
                         {"\n"}• Parrots does not monitor group conversations but reserves the right to remove content or terminate group conversations that violate our policies.
                     </ParrotsStdText>
                 </View>
