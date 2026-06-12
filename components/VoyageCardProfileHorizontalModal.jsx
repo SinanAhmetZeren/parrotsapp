@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import {
@@ -99,32 +100,32 @@ export default function VoyageCardProfileHorizontalModal({
 
         <View style={styles.containerContainer}>
           <View style={styles.textContainer}>
-            <Text style={styles.header}>{cardHeader}</Text>
+            <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
 
             <View style={styles.vacancyAndVehicle}>
               <View>
-                <Text style={styles.subHeader}>
+                <ParrotsStdText style={styles.subHeader}>
                   {/* {vehiclename + "111 "} */}
                   {vehiclename?.length > 21
                     ? vehiclename.substring(0, 21) + "..."
                     : vehiclename}
                   {"  "}
                   {icon}
-                </Text>
+                </ParrotsStdText>
               </View>
             </View>
 
             <View style={styles.vacancyAndVehicle}>
               <View>
-                <Text style={styles.subHeader2}>
+                <ParrotsStdText style={styles.subHeader2}>
                   {vacancy + " "}
                   <Feather name="users" size={12} color={parrotBlue} />
-                </Text>
+                </ParrotsStdText>
               </View>
-              <Text style={styles.subHeader3}>
+              <ParrotsStdText style={styles.subHeader3}>
                 {formattedStartDate + " - " + formattedEndDate + "  "}
                 <AntDesign name="calendar" size={12} color={parrotBlue} />
-              </Text>
+              </ParrotsStdText>
             </View>
             <Text
               style={styles.cardDescription}
@@ -137,7 +138,7 @@ export default function VoyageCardProfileHorizontalModal({
                   .replace(/\s+/g, ' ')
                   .trim()
               )}
-            </Text>
+            </ParrotsStdText>
           </View>
         </View>
       </View>

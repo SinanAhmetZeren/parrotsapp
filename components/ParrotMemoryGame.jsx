@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   View,
@@ -130,16 +131,16 @@ function ModeSelector({ onSelect, onClose }) {
     <View style={styles.container}>
       <TouchableOpacity onPress={onClose} style={[styles.closeBtn,
       { position: "absolute", top: -15, right: -3, zIndex: 10 }]}>
-        <Text style={styles.closeText}>✕</Text>
+        <ParrotsStdText style={styles.closeText}>✕</ParrotsStdText>
       </TouchableOpacity>
-      <Text style={styles.tagline}>Match the parrots before your next voyage</Text>
+      <ParrotsStdText style={styles.tagline}>Match the parrots before your next voyage</ParrotsStdText>
       <View style={styles.modeSelectorContainer}>
         {["4x4", "5x5", "6x6"].map((m) => (
           <TouchableOpacity key={m} style={styles.modeBtn} onPress={() => onSelect(m)}>
-            <Text style={styles.modeBtnText}>{m}</Text>
-            <Text style={styles.modeBtnSub}>
+            <ParrotsStdText style={styles.modeBtnText}>{m}</ParrotsStdText>
+            <ParrotsStdText style={styles.modeBtnSub}>
               {m === "4x4" ? "8 pairs" : m === "5x5" ? "12 pairs" : "18 pairs"}
-            </Text>
+            </ParrotsStdText>
           </TouchableOpacity>
         ))}
       </View>
@@ -216,14 +217,14 @@ export function ParrotMemoryGame({ onClose }) {
   if (won) {
     return (
       <View style={styles.wonContainer}>
-        <Text style={styles.wonEmoji}>🎉</Text>
-        <Text style={styles.wonTitle}>You matched all parrots!</Text>
-        <Text style={styles.wonMoves}>Completed in {moves} moves</Text>
+        <ParrotsStdText style={styles.wonEmoji}>🎉</ParrotsStdText>
+        <ParrotsStdText style={styles.wonTitle}>You matched all parrots!</ParrotsStdText>
+        <ParrotsStdText style={styles.wonMoves}>Completed in {moves} moves</ParrotsStdText>
         <TouchableOpacity style={styles.btn} onPress={() => setMode(null)}>
-          <Text style={styles.btnText}>Play Again</Text>
+          <ParrotsStdText style={styles.btnText}>Play Again</ParrotsStdText>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.btn, styles.btnSecondary]} onPress={onClose}>
-          <Text style={[styles.btnText, { color: "#334155" }]}>Close</Text>
+          <ParrotsStdText style={[styles.btnText, { color: "#334155" }]}>Close</ParrotsStdText>
         </TouchableOpacity>
       </View>
     );
@@ -234,21 +235,21 @@ export function ParrotMemoryGame({ onClose }) {
 
       <View style={{ position: "absolute", top: -15, right: 2, zIndex: 10 }}>
         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-          <Text style={styles.closeText}>✕</Text>
+          <ParrotsStdText style={styles.closeText}>✕</ParrotsStdText>
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.tagline}>Match the parrots before your next voyage</Text>
+      <ParrotsStdText style={styles.tagline}>Match the parrots before your next voyage</ParrotsStdText>
       <View style={styles.header}>
         <View style={{ flex: 1, alingItems: "flex-end" }}>
-          <Text style={styles.moves}>Moves: {moves}</Text>
+          <ParrotsStdText style={styles.moves}>Moves: {moves}</ParrotsStdText>
         </View>
         <View style={{ flex: 1, alignItems: "center" }}>
-          <Text style={styles.progress}>{matched.length}/{totalPairs} matched</Text>
+          <ParrotsStdText style={styles.progress}>{matched.length}/{totalPairs} matched</ParrotsStdText>
         </View>
         <View style={{ flex: 1, alignItems: "flex-end" }}>
           <TouchableOpacity onPress={() => setMode(null)} style={styles.restartBtn}>
-            <Text style={styles.restartText}>Restart</Text>
+            <ParrotsStdText style={styles.restartText}>Restart</ParrotsStdText>
           </TouchableOpacity>
         </View>
 

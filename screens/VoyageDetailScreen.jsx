@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
@@ -339,8 +340,8 @@ const VoyageDetailScreen = ({ navigation }) => {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
         </View>
       </ScrollView>
 
@@ -405,14 +406,14 @@ const VoyageDetailScreen = ({ navigation }) => {
               <View style={styles.detailsCard}>
 
                 {/* Voyage Name */}
-                <Text style={styles.voyageName}>{VoyageData.name}</Text>
+                <ParrotsStdText style={styles.voyageName}>{VoyageData.name}</ParrotsStdText>
 
                 {/* Host + Vehicle */}
                 <View style={styles.row}>
                   <Ionicons name="person-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
                   <TouchableOpacity style={styles.pill} onPress={() => goToProfilePage(VoyageData?.user?.id)}>
                     <Image source={{ uri: VoyageData?.user?.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
-                    <Text style={styles.value}>{VoyageData?.user?.userName}</Text>
+                    <ParrotsStdText style={styles.value}>{VoyageData?.user?.userName}</ParrotsStdText>
                   </TouchableOpacity>
                   <Ionicons name="rocket-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 6 }]} />
                   <TouchableOpacity
@@ -432,7 +433,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                     ) : (
                       <Image source={{ uri: VoyageData.vehicle?.profileImageUrl }} style={styles.profileImage} />
                     )}
-                    <Text style={styles.userName}>{VoyageData.vehicle?.name}</Text>
+                    <ParrotsStdText style={styles.userName}>{VoyageData.vehicle?.name}</ParrotsStdText>
                   </TouchableOpacity>
                 </View>
 
@@ -440,11 +441,11 @@ const VoyageDetailScreen = ({ navigation }) => {
                 <View style={styles.row}>
                   <Ionicons name="people-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
                   <View style={styles.pill}>
-                    <Text style={styles.value}>{VoyageData.vacancy} spots</Text>
+                    <ParrotsStdText style={styles.value}>{VoyageData.vacancy} spots</ParrotsStdText>
                   </View>
                   <Ionicons name="calendar-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }]} />
                   <View style={styles.pill}>
-                    <Text style={styles.value}>{formattedStartDate}  →  {formattedEndDate}</Text>
+                    <ParrotsStdText style={styles.value}>{formattedStartDate}  →  {formattedEndDate}</ParrotsStdText>
                   </View>
                 </View>
 
@@ -452,25 +453,25 @@ const VoyageDetailScreen = ({ navigation }) => {
                 <View style={styles.row}>
                   <Ionicons name="cash-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
                   <View style={styles.pill}>
-                    <Text style={styles.value}>
+                    <ParrotsStdText style={styles.value}>
                       {VoyageData.minPrice === VoyageData.maxPrice
                         ? `${VoyageData.currency}${VoyageData.minPrice}`
                         : `${VoyageData.currency}${VoyageData.minPrice}  –  ${VoyageData.currency}${VoyageData.maxPrice}`}
-                    </Text>
+                    </ParrotsStdText>
                   </View>
                   <MaterialIcons name="gavel" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }, !VoyageData.auction && { opacity: 0.35 }]} />
                   <TouchableOpacity
                     style={[styles.pill, !VoyageData.auction && { opacity: 0.35 }, { marginRight: 12, alignSelf: "center" }]}
                     onPress={() => showToast(VoyageData.auction ? "This is an auction where the host will select the most suitable bids" : "This is not an auction where the host will select the most suitable bids")}
                   >
-                    <Text style={styles.value}>Auction</Text>
+                    <ParrotsStdText style={styles.value}>Auction</ParrotsStdText>
                   </TouchableOpacity>
                   <MaterialIcons name="sell" size={18} color={parrotBlue} style={[styles.rowIcon, !VoyageData.fixedPrice && { opacity: 0.35 }]} />
                   <TouchableOpacity
                     style={[styles.pill, !VoyageData.fixedPrice && { opacity: 0.35 }, { alignSelf: "center" }]}
                     onPress={() => showToast(VoyageData.fixedPrice ? "This voyage has a fixed price set by the host" : "This voyage does not have a fixed price set by the host")}
                   >
-                    <Text style={styles.value}>Fixed Price</Text>
+                    <ParrotsStdText style={styles.value}>Fixed Price</ParrotsStdText>
                   </TouchableOpacity>
                 </View>
 
@@ -494,23 +495,23 @@ const VoyageDetailScreen = ({ navigation }) => {
 
                 {/* // Voyage Description */}
                 <View style={styles.DescriptionContainer}>
-                  <Text style={styles.descriptionText}>{displayText}</Text>
+                  <ParrotsStdText style={styles.descriptionText}>{displayText}</ParrotsStdText>
 
                   {plainDescription.length > descriptionShortenedChars &&
                     !showFullText && (
                       <TouchableOpacity onPress={() => setShowFullText(true)}>
-                        <Text style={styles.ReadMoreLess}>
+                        <ParrotsStdText style={styles.ReadMoreLess}>
                           Read more
                           <Feather name="chevron-down" size={16} color={parrotBlue} />
-                        </Text>
+                        </ParrotsStdText>
                       </TouchableOpacity>
                     )}
                   {showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(false)}>
-                      <Text style={styles.ReadMoreLess}>
+                      <ParrotsStdText style={styles.ReadMoreLess}>
                         Read less
                         <Feather name="chevron-up" size={16} color={parrotBlue} />
-                      </Text>
+                      </ParrotsStdText>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -571,9 +572,9 @@ const VoyageDetailScreen = ({ navigation }) => {
           {bids.length !== 0 ? (
             <View style={styles.mainBidsContainer2}>
               <View style={styles.currentBidsAndSeeAllBids}>
-                <Text style={styles.currentBidsTitle}>Current Bids</Text>
+                <ParrotsStdText style={styles.currentBidsTitle}>Current Bids</ParrotsStdText>
                 <TouchableOpacity onPress={handleSeeAll}>
-                  <Text style={styles.seeAllButton}>See All</Text>
+                  <ParrotsStdText style={styles.seeAllButton}>See All</ParrotsStdText>
                 </TouchableOpacity>
               </View>
 
@@ -642,7 +643,7 @@ const VoyageDetailScreen = ({ navigation }) => {
         </KeyboardAvoidingView>
         {toastVisible && (
           <View style={styles.toast}>
-            <Text style={styles.toastText}>{toastMessage}</Text>
+            <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
           </View>
         )}
       </>

@@ -17,7 +17,7 @@ function ButtonContent({ isLoading }) {
   ) : (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <Image source={gooogleSignin} style={{ height: 30, width: 30 }} />
-      <Text style={styles.text}>Sign in with Google</Text>
+      <ParrotsStdText style={styles.text}>Sign in with Google</ParrotsStdText>
     </View>
   );
 }

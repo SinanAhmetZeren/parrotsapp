@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import {
@@ -115,9 +116,9 @@ export default function VoyageCardProfile({
             </View>
 
             <View style={{ ...styles.textContainer, height: vh(20), position: "relative" }}>
-              <Text numberOfLines={2} style={{ ...styles.header }}>
+              <ParrotsStdText numberOfLines={2} style={{ ...styles.header }}>
                 {cardHeader}
-              </Text>
+              </ParrotsStdText>
 
               {publicOnMap &&
                 <View style={{ position: "absolute", right: 5, top: 5, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5), padding: 3 }}>
@@ -127,19 +128,19 @@ export default function VoyageCardProfile({
 
               <View style={styles.pillRow}>
                 <View style={styles.pill}>
-                  <Text style={styles.pillText}>
+                  <ParrotsStdText style={styles.pillText}>
                     {vehiclename?.length > 20
                       ? vehiclename.substring(0, 20) + "..."
                       : vehiclename}
-                  </Text>
+                  </ParrotsStdText>
                   {icon}
                 </View>
                 <View style={styles.pill}>
-                  <Text style={styles.pillText}>{vacancy}</Text>
+                  <ParrotsStdText style={styles.pillText}>{vacancy}</ParrotsStdText>
                   <Feather name="users" size={11} color={parrotBlue} />
                 </View>
                 <View style={styles.pill}>
-                  <Text style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</Text>
+                  <ParrotsStdText style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</ParrotsStdText>
                   <AntDesign name="calendar" size={11} color={parrotBlue} />
                 </View>
               </View>
@@ -149,7 +150,7 @@ export default function VoyageCardProfile({
                 ellipsizeMode="tail"
               >
                 {he.decode(cardDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim())}
-              </Text>
+              </ParrotsStdText>
             </View>
           </View>
         </TouchableOpacity>

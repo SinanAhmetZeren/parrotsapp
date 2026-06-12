@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, FlatList, StyleSheet } from "react-native";
+import { View,  Image, FlatList, StyleSheet } from "react-native";
 
 import { vw, vh } from "react-native-expo-viewport-units";
 import { API_URL } from "@env";
@@ -30,8 +31,8 @@ const VoyageItem = ({ item, index }) => {
         style={styles.bidImage2}
       />
 
-      <Text style={styles.voyageName}>{item.name}</Text>
-      <Text style={styles.voyageBrief}>{item.brief}</Text>
+      <ParrotsStdText style={styles.voyageName}>{item.name}</ParrotsStdText>
+      <ParrotsStdText style={styles.voyageBrief}>{item.brief}</ParrotsStdText>
     </View>
   );
 };

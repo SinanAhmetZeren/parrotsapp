@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { StyleSheet, View, FlatList, Text, Image } from "react-native";
+import { StyleSheet, View, FlatList,  Image } from "react-native";
 import VoyageCardProfileHorizontal from "./VoyageCardProfileHorizontal";
 import PlaceCardHorizontal from "./PlaceCardHorizontal";
 import { vh, vw } from "react-native-expo-viewport-units";
@@ -54,9 +55,9 @@ export default function VoyageListHorizontal({ data, focusMap, navigation }) {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>
+          <ParrotsStdText style={styles.currentBidsTitle2}>
             Nothing here at this time{"\n"}Explore a different area
-          </Text>
+          </ParrotsStdText>
         </View>
       </View>
     );

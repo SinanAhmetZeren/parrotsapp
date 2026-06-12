@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Platform } from "react-native";
+import { ScrollView, StyleSheet, View,  TouchableOpacity, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { markMessagesRead } from "../slices/UserSlice";
@@ -49,24 +50,24 @@ function GroupPreviewView({ item, onOpenGroup, unreadCount }) {
       onPress={() => onOpenGroup(item.groupConversationId, item.groupName)}
     >
       <View style={[styles.initialsCircle, { backgroundColor: color }]}>
-        <Text style={styles.initialsText}>{initials}</Text>
+        <ParrotsStdText style={styles.initialsText}>{initials}</ParrotsStdText>
       </View>
       <View style={styles.nameAndMessage}>
-        <Text style={[styles.name, hasUnread && styles.nameUnread]}>{item.groupName}</Text>
-        <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+        <ParrotsStdText style={[styles.name, hasUnread && styles.nameUnread]}>{item.groupName}</ParrotsStdText>
+        <ParrotsStdText style={styles.message} numberOfLines={1} ellipsizeMode="tail">
           {item.text ? `${item.senderUsername}: ${item.text}` : "No messages yet"}
-        </Text>
+        </ParrotsStdText>
       </View>
       <View style={styles.time}>
         <View style={styles.timeRow}>
           {hasUnread && (
             <View style={styles.unreadBadge}>
-              <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
+              <ParrotsStdText style={styles.unreadBadgeText}>{unreadCount}</ParrotsStdText>
             </View>
           )}
-          <Text style={styles.timeText1}>{time}</Text>
+          <ParrotsStdText style={styles.timeText1}>{time}</ParrotsStdText>
         </View>
-        <Text style={styles.timeText2}>{date}</Text>
+        <ParrotsStdText style={styles.timeText2}>{date}</ParrotsStdText>
       </View>
     </TouchableOpacity>
   );

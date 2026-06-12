@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, Platform } from "react-native";
+import { View,  TouchableOpacity, Image, StyleSheet, ScrollView, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
@@ -31,7 +32,7 @@ export const SearchUsersComponent = ({ searchResults, height = Platform.OS === "
                       style={styles.userImage}
                     />
                     <View style={styles.userNameContainer}>
-                      <Text style={styles.userName}>{item.userName}</Text>
+                      <ParrotsStdText style={styles.userName}>{item.userName}</ParrotsStdText>
                     </View>
                   </View>
                   <TouchableOpacity

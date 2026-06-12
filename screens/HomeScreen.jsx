@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
@@ -655,21 +656,21 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
 
             <View style={styles.welcomebox}>
-              <Text style={styles.welcome}>Welcome to Parrots</Text>
+              <ParrotsStdText style={styles.welcome}>Welcome to Parrots</ParrotsStdText>
 
               {username?.length < 13 ? (
-                <Text style={styles.usernameLarge}>{username}!</Text>
+                <ParrotsStdText style={styles.usernameLarge}>{username}!</ParrotsStdText>
               ) : null}
               {username?.length > 12 && username?.length < 18 ? ( // 13 to 16
-                <Text style={styles.usernameMedium}>{username}!</Text>
+                <ParrotsStdText style={styles.usernameMedium}>{username}!</ParrotsStdText>
               ) : null}
               {username?.length > 17 && username?.length < 21 ? ( // 17 to 24
-                <Text style={styles.usernameSmall}>{username}!</Text>
+                <ParrotsStdText style={styles.usernameSmall}>{username}!</ParrotsStdText>
               ) : null}
               {username?.length > 20 ? (
-                <Text style={styles.usernameSmall}>
+                <ParrotsStdText style={styles.usernameSmall}>
                   {username?.substring(0, 19)}...!
-                </Text>
+                </ParrotsStdText>
               ) : null}
             </View>
 
@@ -723,13 +724,13 @@ export default function HomeScreen({ navigation }) {
                       filterComparisonState == 3 && styles.applyFilterChanged,
                     ]}
                   >
-                    <Text style={[
+                    <ParrotsStdText style={[
                       styles.applyFilterText,
                       filterComparisonState == 1 && { color: applyFilterInitialColor },
                       filterComparisonState == 2 && { color: applyFilterAppliedColor },
                       filterComparisonState == 3 && { color: applyFilterChangedColor },
                       isLoadingVoyagesFiltered && { opacity: 0 },
-                    ]}>Apply Filter</Text>
+                    ]}>Apply Filter</ParrotsStdText>
                     {isLoadingVoyagesFiltered && (
                       <ActivityIndicator size="large" color="white" style={styles.filterSpinner} />
                     )}
@@ -747,7 +748,7 @@ export default function HomeScreen({ navigation }) {
                   <View>
                     <Text
                       style={styles.applyFilter}
-                    >print dates </Text>
+                    >print dates </ParrotsStdText>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -827,10 +828,10 @@ export default function HomeScreen({ navigation }) {
                   source={require("../assets/parrotslogo.png")}
                   style={styles.logoImageSmall}
                 />
-                <Text style={{ ...styles.currentBidsTitle2, top: vh(-1) }}>Something went wrong</Text>
+                <ParrotsStdText style={{ ...styles.currentBidsTitle2, top: vh(-1) }}>Something went wrong</ParrotsStdText>
                 <TouchableOpacity onPress={onRefresh}
                   style={{ alignSelf: "center", backgroundColor: parrotBlue, paddingHorizontal: 24, paddingVertical: 8, borderRadius: 20 }}>
-                  <Text style={{ color: "white", fontFamily: "Nunito_700Bold", fontSize: 14 }}>Retry</Text>
+                  <ParrotsStdText style={{ color: "white", fontFamily: "Nunito_700Bold", fontSize: 14 }}>Retry</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </View>
@@ -845,7 +846,7 @@ export default function HomeScreen({ navigation }) {
               {initialVoyages.filter(v => !v.isPlace).length > 0 && (
                 <View style={styles.mainBidsContainer}>
                   <View style={styles.currentBidsAndSeeAll}>
-                    <Text style={styles.currentBidsTitle}>Voyages</Text>
+                    <ParrotsStdText style={styles.currentBidsTitle}>Voyages</ParrotsStdText>
                   </View>
                 </View>
               )}
@@ -914,7 +915,7 @@ export default function HomeScreen({ navigation }) {
                   onPress={() => setSelectedVoyageModalVisible(false)}
                 >
                   <View>
-                    <Text style={styles.buttonClose}>Close</Text>
+                    <ParrotsStdText style={styles.buttonClose}>Close</ParrotsStdText>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -941,16 +942,16 @@ export default function HomeScreen({ navigation }) {
                       resizeMode="cover"
                     />
                     <View style={styles.placeCardText}>
-                      <Text style={styles.placeCardHeader} numberOfLines={2}>{selectedPlace.name}</Text>
+                      <ParrotsStdText style={styles.placeCardHeader} numberOfLines={2}>{selectedPlace.name}</ParrotsStdText>
                       {selectedPlace.description ? (
-                        <Text style={styles.placeCardDescription} numberOfLines={6} ellipsizeMode="tail">{selectedPlace.description}</Text>
+                        <ParrotsStdText style={styles.placeCardDescription} numberOfLines={6} ellipsizeMode="tail">{selectedPlace.description}</ParrotsStdText>
                       ) : null}
                       {selectedPlace.brief ? (
                         <TouchableOpacity onPress={() => {
                           const url = selectedPlace.brief.startsWith("http") ? selectedPlace.brief : `https://${selectedPlace.brief}`;
                           Linking.openURL(url);
                         }}>
-                          <Text style={styles.placeCardLink}>Visit Website →</Text>
+                          <ParrotsStdText style={styles.placeCardLink}>Visit Website →</ParrotsStdText>
                         </TouchableOpacity>
                       ) : null}
                     </View>
@@ -961,7 +962,7 @@ export default function HomeScreen({ navigation }) {
                   onPress={() => setSelectedPlaceModalVisible(false)}
                 >
                   <View>
-                    <Text style={styles.buttonClose}>Close</Text>
+                    <ParrotsStdText style={styles.buttonClose}>Close</ParrotsStdText>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -971,7 +972,7 @@ export default function HomeScreen({ navigation }) {
       </ScrollView>
       {toastVisible && (
         <View style={styles.toast}>
-          <Text style={styles.toastText}>{toastMessage}</Text>
+          <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
         </View>
       )}
     </View>

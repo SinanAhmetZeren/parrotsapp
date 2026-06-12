@@ -1,9 +1,10 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 
 import React from "react";
-import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image,  StyleSheet, TouchableOpacity } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { MessagesComponent } from "../components/MessagesComponent";
@@ -60,21 +61,21 @@ export default function CoversationView({
         />
       </View>
       <View style={styles.nameAndMessage}>
-        <Text style={[styles.name, hasUnread && styles.nameUnread]}>{name}</Text>
-        <Text style={styles.message} numberOfLines={1} ellipsizeMode="tail">
+        <ParrotsStdText style={[styles.name, hasUnread && styles.nameUnread]}>{name}</ParrotsStdText>
+        <ParrotsStdText style={styles.message} numberOfLines={1} ellipsizeMode="tail">
           {message}
-        </Text>
+        </ParrotsStdText>
       </View>
       <View style={styles.time}>
         <View style={styles.timeRow}>
           {hasUnread && (
             <View style={styles.unreadBadge}>
-              <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
+              <ParrotsStdText style={styles.unreadBadgeText}>{unreadCount}</ParrotsStdText>
             </View>
           )}
-          <Text style={styles.timeText1}>{formatDate(time)[0]}</Text>
+          <ParrotsStdText style={styles.timeText1}>{formatDate(time)[0]}</ParrotsStdText>
         </View>
-        <Text style={styles.timeText2}>{formatDate(time)[1]}</Text>
+        <ParrotsStdText style={styles.timeText2}>{formatDate(time)[1]}</ParrotsStdText>
       </View>
     </TouchableOpacity>
   );

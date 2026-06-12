@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 
-export function AppText({ style, children, ...props }) {
+export function ParrotsStdText({ style, children, ...props }) {
   return (
     <Text
       style={style}

@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   Feather,
@@ -164,17 +165,17 @@ export default function FavoriteVehicleCardProfile({
         </View>
 
         <View style={styles.textContainer}>
-          <Text numberOfLines={1} style={styles.headerName}>
+          <ParrotsStdText numberOfLines={1} style={styles.headerName}>
             {vehiclename}
-          </Text>
+          </ParrotsStdText>
           <View style={styles.pillRow}>
-            <Text style={styles.pill}>{icon}{"  "}{vehicleTypeName}</Text>
+            <ParrotsStdText style={styles.pill}>{icon}{"  "}{vehicleTypeName}</ParrotsStdText>
             <View style={styles.pillView}>
-              <Text style={styles.pillText}>{capacity > 100 ? "100+" : capacity}</Text>
+              <ParrotsStdText style={styles.pillText}>{capacity > 100 ? "100+" : capacity}</ParrotsStdText>
               <Feather name="users" size={11} color={parrotBlue} />
             </View>
           </View>
-          <Text style={styles.cardDescription}
+          <ParrotsStdText style={styles.cardDescription}
             numberOfLines={4}
             ellipsizeMode="tail"
           >
@@ -184,7 +185,7 @@ export default function FavoriteVehicleCardProfile({
                 .replace(/\s+/g, ' ')
                 .trim()
             )}
-          </Text>
+          </ParrotsStdText>
         </View>
       </View>
     </TouchableOpacity>

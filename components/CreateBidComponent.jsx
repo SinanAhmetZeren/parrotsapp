@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/prop-types */
@@ -134,13 +135,13 @@ export const CreateBidComponent = ({
         {hasBidWithUserId ? (
           <View style={bidInputStyles.modalView2}>
             <TouchableOpacity style={bidInputStyles.buttonSendBidContainer} onPress={handleOpenChangeModal}>
-              <Text style={bidInputStyles.buttonSave}>Change Bid</Text>
+              <ParrotsStdText style={bidInputStyles.buttonSave}>Change Bid</ParrotsStdText>
             </TouchableOpacity>
           </View>
         ) : (
           <View style={bidInputStyles.modalView2}>
             <TouchableOpacity style={bidInputStyles.buttonSendBidContainer} onPress={handleOpenCreateModal}>
-              <Text style={bidInputStyles.buttonSave}>Create Bid</Text>
+              <ParrotsStdText style={bidInputStyles.buttonSave}>Create Bid</ParrotsStdText>
             </TouchableOpacity>
           </View>
         )}
@@ -154,14 +155,14 @@ export const CreateBidComponent = ({
       >
         <View style={bidInputStyles.modalContainer}>
           <View style={bidInputStyles.innerContainer}>
-            <Text style={bidInputStyles.title}>Enter Your Bid</Text>
-            <Text style={bidInputStyles.subtitle}>Set your offer price and number of guests</Text>
+            <ParrotsStdText style={bidInputStyles.title}>Enter Your Bid</ParrotsStdText>
+            <ParrotsStdText style={bidInputStyles.subtitle}>Set your offer price and number of guests</ParrotsStdText>
 
             <View style={bidInputStyles.inputMainContainer}>
-              <Text style={bidInputStyles.InputName}>Offer Price ({currency})</Text>
+              <ParrotsStdText style={bidInputStyles.InputName}>Offer Price ({currency})</ParrotsStdText>
               <View style={bidInputStyles.counterContainer}>
                 <TouchableOpacity onPress={handleDecrementPrice} style={bidInputStyles.decrementButtonContainer}>
-                  <Text style={bidInputStyles.buttonCount}>-</Text>
+                  <ParrotsStdText style={bidInputStyles.buttonCount}>-</ParrotsStdText>
                 </TouchableOpacity>
                 <TextInput
                   ref={createBidTextInputRef}
@@ -174,16 +175,16 @@ export const CreateBidComponent = ({
                   onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setPrice(n === "" ? "" : String(parseInt(n, 10))); }}
                 />
                 <TouchableOpacity onPress={handleIncrementPrice} style={bidInputStyles.incrementButtonContainer}>
-                  <Text style={bidInputStyles.buttonCount}>+</Text>
+                  <ParrotsStdText style={bidInputStyles.buttonCount}>+</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </View>
 
             <View style={bidInputStyles.inputMainContainer}>
-              <Text style={bidInputStyles.InputName}>Guests</Text>
+              <ParrotsStdText style={bidInputStyles.InputName}>Guests</ParrotsStdText>
               <View style={bidInputStyles.counterContainer}>
                 <TouchableOpacity onPress={handleDecrementPersons} style={bidInputStyles.decrementButtonContainer}>
-                  <Text style={bidInputStyles.buttonCount}>-</Text>
+                  <ParrotsStdText style={bidInputStyles.buttonCount}>-</ParrotsStdText>
                 </TouchableOpacity>
                 <TextInput
                   style={bidInputStyles.bidInput}
@@ -195,7 +196,7 @@ export const CreateBidComponent = ({
                   onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setPersons(n === "" ? "" : String(parseInt(n, 10))); }}
                 />
                 <TouchableOpacity onPress={handleIncrementPersons} style={bidInputStyles.incrementButtonContainer}>
-                  <Text style={bidInputStyles.buttonCount}>+</Text>
+                  <ParrotsStdText style={bidInputStyles.buttonCount}>+</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </View>
@@ -211,10 +212,10 @@ export const CreateBidComponent = ({
 
             <View style={bidInputStyles.buttonsContainer}>
               <TouchableOpacity onPress={handleCloseCreateModal} style={bidInputStyles.buttonCancelContainer}>
-                <Text style={bidInputStyles.buttonClear}>Cancel</Text>
+                <ParrotsStdText style={bidInputStyles.buttonClear}>Cancel</ParrotsStdText>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleSendBid(userProfileImage, userName)} style={bidInputStyles.buttonSendBidContainer}>
-                <Text style={bidInputStyles.buttonSave}>Send Bid</Text>
+                <ParrotsStdText style={bidInputStyles.buttonSave}>Send Bid</ParrotsStdText>
               </TouchableOpacity>
             </View>
           </View>
@@ -230,14 +231,14 @@ export const CreateBidComponent = ({
       >
         <View style={bidInputStyles.modalContainer}>
           <View style={bidInputStyles.innerContainer}>
-            <Text style={bidInputStyles.title}>Change Your Bid</Text>
-            <Text style={bidInputStyles.subtitle}>Update your offer price and number of guests</Text>
+            <ParrotsStdText style={bidInputStyles.title}>Change Your Bid</ParrotsStdText>
+            <ParrotsStdText style={bidInputStyles.subtitle}>Update your offer price and number of guests</ParrotsStdText>
 
             <View style={bidInputStyles.inputMainContainer1}>
-              <Text style={bidInputStyles.InputName}>Offer Price ({currency})</Text>
+              <ParrotsStdText style={bidInputStyles.InputName}>Offer Price ({currency})</ParrotsStdText>
               <View style={bidInputStyles.counterContainer}>
                 <TouchableOpacity onPress={handleDecrementExistingPrice} style={bidInputStyles.decrementButtonContainer}>
-                  <Text style={bidInputStyles.buttonCount}>-</Text>
+                  <ParrotsStdText style={bidInputStyles.buttonCount}>-</ParrotsStdText>
                 </TouchableOpacity>
                 <TextInput
                   ref={changeBidTextInputRef}
@@ -250,16 +251,16 @@ export const CreateBidComponent = ({
                   onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setExistingBidPrice(n === "" ? "" : String(parseInt(n, 10))); }}
                 />
                 <TouchableOpacity onPress={handleIncrementExistingPrice} style={bidInputStyles.incrementButtonContainer}>
-                  <Text style={bidInputStyles.buttonCount}>+</Text>
+                  <ParrotsStdText style={bidInputStyles.buttonCount}>+</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </View>
 
             <View style={bidInputStyles.inputMainContainer}>
-              <Text style={bidInputStyles.InputName}>Guests</Text>
+              <ParrotsStdText style={bidInputStyles.InputName}>Guests</ParrotsStdText>
               <View style={bidInputStyles.counterContainer}>
                 <TouchableOpacity onPress={handleDecrementExistingPersons} style={bidInputStyles.decrementButtonContainer}>
-                  <Text style={bidInputStyles.buttonCount}>-</Text>
+                  <ParrotsStdText style={bidInputStyles.buttonCount}>-</ParrotsStdText>
                 </TouchableOpacity>
                 <TextInput
                   style={bidInputStyles.bidInput}
@@ -271,7 +272,7 @@ export const CreateBidComponent = ({
                   onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setExistingPersons(n === "" ? "" : String(parseInt(n, 10))); }}
                 />
                 <TouchableOpacity onPress={handleIncrementExistingPersons} style={bidInputStyles.incrementButtonContainer}>
-                  <Text style={bidInputStyles.buttonCount}>+</Text>
+                  <ParrotsStdText style={bidInputStyles.buttonCount}>+</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </View>
@@ -287,10 +288,10 @@ export const CreateBidComponent = ({
 
             <View style={bidInputStyles.buttonsContainer}>
               <TouchableOpacity onPress={handleCloseChangeModal} style={bidInputStyles.buttonCancelContainer}>
-                <Text style={bidInputStyles.buttonClear}>Cancel</Text>
+                <ParrotsStdText style={bidInputStyles.buttonClear}>Cancel</ParrotsStdText>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleChangeBid()} style={bidInputStyles.buttonSendBidContainer}>
-                <Text style={bidInputStyles.buttonSave}>Change Bid</Text>
+                <ParrotsStdText style={bidInputStyles.buttonSave}>Change Bid</ParrotsStdText>
               </TouchableOpacity>
             </View>
           </View>

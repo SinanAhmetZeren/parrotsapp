@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import { View,  TouchableOpacity, StyleSheet, Image } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useEffect } from "react";
 import { parrotBlueMediumTransparent, parrotBlueTransparent, parrotLightBlue } from "../assets/color";
@@ -271,7 +272,7 @@ export const SocialRenderComponent = ({
             style={styles.extendedAreaContainer}
           >
             <View style={styles.extendedArea}>
-              <Text style={styles.moreButton}>see more</Text>
+              <ParrotsStdText style={styles.moreButton}>see more</ParrotsStdText>
             </View>
           </TouchableOpacity>
         )}
@@ -289,9 +290,9 @@ const EmailItem = ({ email, handleEmailPress, style }) => {
         source={require("../assets/email_logo.png")}
       />
 
-      <Text style={styles.iconText}>
+      <ParrotsStdText style={styles.iconText}>
         {email.length > 17 ? `${email.substring(0, 14)}...` : email}
-      </Text>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };
@@ -303,9 +304,9 @@ const InstagramItem = ({ instagram, handleInstagramPress, style }) => {
         style={styles.iconLogo}
         source={require("../assets/instagram_icon.png")}
       />
-      <Text style={styles.iconText}>
+      <ParrotsStdText style={styles.iconText}>
         {instagram.length > 17 ? `${instagram.substring(0, 14)}...` : instagram}
-      </Text>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };
@@ -317,9 +318,9 @@ const YoutubeItem = ({ youtube, handleYoutubePress, style }) => {
         style={styles.iconLogo}
         source={require("../assets/youtube_icon.png")}
       />
-      <Text style={styles.iconText}>
+      <ParrotsStdText style={styles.iconText}>
         {youtube.length > 17 ? `${youtube.substring(0, 14)}...` : youtube}
-      </Text>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };
@@ -331,9 +332,9 @@ const FacebookItem = ({ facebook, handleFacebookPress, style }) => {
         style={styles.iconLogo}
         source={require("../assets/facebook_logo.png")}
       />
-      <Text style={styles.iconText}>
+      <ParrotsStdText style={styles.iconText}>
         {facebook.length > 17 ? `${facebook.substring(0, 14)}...` : facebook}
-      </Text>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };
@@ -345,11 +346,11 @@ const PhoneItem = ({ phoneNumber, handlePhonePress, style }) => {
         style={styles.iconLogo}
         source={require("../assets/phone_logo.jpeg")}
       />
-      <Text style={styles.iconText}>
+      <ParrotsStdText style={styles.iconText}>
         {phoneNumber.length > 17
           ? `${phoneNumber.substring(0, 14)}...`
           : phoneNumber}
-      </Text>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };
@@ -361,9 +362,9 @@ const TwitterItem = ({ twitter, handleTwitterPress, style }) => {
         style={styles.iconLogo}
         source={require("../assets/twitter_logo.png")}
       />
-      <Text style={styles.iconText}>
+      <ParrotsStdText style={styles.iconText}>
         {twitter.length > 17 ? `${twitter.substring(0, 14)}...` : twitter}
-      </Text>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };
@@ -375,9 +376,9 @@ const TiktokItem = ({ tiktok, handleTiktokPress, style }) => {
         style={styles.iconLogo}
         source={require("../assets/tiktok_logo.png")}
       />
-      <Text style={styles.iconText}>
+      <ParrotsStdText style={styles.iconText}>
         {tiktok.length > 17 ? `${tiktok.substring(0, 14)}...` : tiktok}
-      </Text>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };
@@ -389,9 +390,9 @@ const LinkedinItem = ({ linkedin, handleLinkedinPress, style }) => {
         style={styles.iconLogo}
         source={require("../assets/linkedin_logo.png")}
       />
-      <Text style={styles.iconText}>
+      <ParrotsStdText style={styles.iconText}>
         {linkedin.length > 17 ? `${linkedin.substring(0, 14)}...` : linkedin}
-      </Text>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };
@@ -401,8 +402,8 @@ const ShadowItem = ({ style }) => {
   return (
     <TouchableOpacity style={{ ...style, opacity: 0.6 }} >
       <View style={styles.iconLogoPlaceHolder} />
-      <Text style={styles.iconText}>
-      </Text>
+      <ParrotsStdText style={styles.iconText}>
+      </ParrotsStdText>
     </TouchableOpacity>
   );
 };

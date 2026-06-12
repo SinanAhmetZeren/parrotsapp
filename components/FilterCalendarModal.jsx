@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
@@ -91,8 +92,8 @@ const FilterCalendarModal = ({
         <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={onClose}>
           <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
           <View style={styles.innerContainer}>
-            <Text style={styles.title}>Date Range</Text>
-            <Text style={styles.subtitle}>Show voyages within your selected dates</Text>
+            <ParrotsStdText style={styles.title}>Date Range</ParrotsStdText>
+            <ParrotsStdText style={styles.subtitle}>Show voyages within your selected dates</ParrotsStdText>
             <CalendarPicker
               selectedRangeStartTextStyle={styles.startEndText}
               selectedRangeEndTextStyle={styles.startEndText}
@@ -116,16 +117,16 @@ const FilterCalendarModal = ({
             {startDate || endDate ? (
               <View style={styles.buttonsContainer}>
                 <TouchableOpacity onPress={handleClear} style={styles.buttonCancelContainer}>
-                  <Text style={styles.buttonClearText}>Clear</Text>
+                  <ParrotsStdText style={styles.buttonClearText}>Clear</ParrotsStdText>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleSave} style={styles.buttonSendBidContainer}>
-                  <Text style={styles.buttonSaveText}>Ok</Text>
+                  <ParrotsStdText style={styles.buttonSaveText}>Ok</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             ) : (
               <View style={styles.buttonsContainer}>
                 <TouchableOpacity onPress={handleClose} style={styles.buttonSendBidContainer}>
-                  <Text style={styles.buttonSaveText}>Close</Text>
+                  <ParrotsStdText style={styles.buttonSaveText}>Close</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             )}

@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { View,  TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotLightBlue } from "../assets/color";
 
@@ -28,7 +29,7 @@ export const ConnectSelectionComponent = ({
               }
             >
               Chats
-            </Text>
+            </ParrotsStdText>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -46,7 +47,7 @@ export const ConnectSelectionComponent = ({
               }
             >
               Groups
-            </Text>
+            </ParrotsStdText>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -64,7 +65,7 @@ export const ConnectSelectionComponent = ({
               }
             >
               Find
-            </Text>
+            </ParrotsStdText>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -82,7 +83,7 @@ export const ConnectSelectionComponent = ({
               }
             >
               Bookmarks
-            </Text>
+            </ParrotsStdText>
           </View>
         </TouchableOpacity>
       </View>

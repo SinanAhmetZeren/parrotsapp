@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -235,11 +236,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
         {/* // HEADER // */}
         <View style={styles.headerStyle}>
           <View style={[styles.groupAvatar, { backgroundColor: groupColor(groupId) }]}>
-            <Text style={styles.groupAvatarText}>
+            <ParrotsStdText style={styles.groupAvatarText}>
               {groupName?.split(" ").map(w => w.charAt(0).toUpperCase()).join("")}
-            </Text>
+            </ParrotsStdText>
           </View>
-          <Text style={styles.nameStyle} numberOfLines={1}>{groupName}</Text>
+          <ParrotsStdText style={styles.nameStyle} numberOfLines={1}>{groupName}</ParrotsStdText>
           <TouchableOpacity onPress={() => { setMembersDropdownVisible(v => !v); setConfirmLeave(false); }} style={styles.stackedAvatarsBtn}>
             {stackedAvatars.map((m, i) => (
               <Image
@@ -250,7 +251,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
             ))}
             {extraCount > 0 && (
               <View style={[styles.stackedAvatar, styles.extraCountCircle, { marginLeft: -vw(3), backgroundColor: groupColor(groupId) }]}>
-                <Text style={styles.extraCountText}>+{extraCount}</Text>
+                <ParrotsStdText style={styles.extraCountText}>+{extraCount}</ParrotsStdText>
               </View>
             )}
           </TouchableOpacity>
@@ -282,7 +283,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
                   onPress={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
                   disabled={memberSearch.length < 3}
                 >
-                  <Text style={styles.searchBtnText}>Search</Text>
+                  <ParrotsStdText style={styles.searchBtnText}>Search</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             )}
@@ -290,7 +291,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
             {searchResults?.filter((u) => !memberUserIds.includes(u.id ?? u.Id) || addedUserId === (u.id ?? u.Id)).map((u) => (
               <View key={u.id ?? u.Id} style={styles.memberRow}>
                 <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.memberAvatar} />
-                <Text style={styles.memberName}>{u.userName}</Text>
+                <ParrotsStdText style={styles.memberName}>{u.userName}</ParrotsStdText>
                 <TouchableOpacity style={addedUserId === (u.id ?? u.Id) ? styles.addedBtn : styles.addBtn} disabled={!!addingUserId || !!addedUserId} onPress={() => handleAddMember(u.id ?? u.Id)}>
                   {addingUserId === (u.id ?? u.Id)
                     ? <ActivityIndicator size={18} color={parrotBlue} />
@@ -308,7 +309,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
                     style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: vw(3) }}
                     onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: m.publicId, userName: m.username, userId: m.userId } })}>
                     <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.memberAvatar} />
-                    <Text style={styles.memberName}>{m.username} {">"}</Text>
+                    <ParrotsStdText style={styles.memberName}>{m.username} {">"}</ParrotsStdText>
                   </TouchableOpacity>
                   {isCreator && m.userId !== currentUserId && (
                     <TouchableOpacity onPress={() => handleRemoveMember(m.userId)} disabled={!!removingUserId} style={styles.removeBtn}>
@@ -324,18 +325,18 @@ export const ConversationDetailScreen = ({ navigation }) => {
             {!isCreator && (
               confirmLeave ? (
                 <View style={styles.confirmLeaveRow}>
-                  <Text style={styles.confirmLeaveText}>Are you sure?</Text>
+                  <ParrotsStdText style={styles.confirmLeaveText}>Are you sure?</ParrotsStdText>
                   <TouchableOpacity style={styles.noStayBtn} onPress={() => setConfirmLeave(false)}>
-                    <Text style={styles.leaveBtnText}>No, Stay</Text>
+                    <ParrotsStdText style={styles.leaveBtnText}>No, Stay</ParrotsStdText>
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.confirmLeaveBtn} onPress={handleExitGroup}>
-                    <Text style={styles.leaveBtnText}>Yes, Leave</Text>
+                    <ParrotsStdText style={styles.leaveBtnText}>Yes, Leave</ParrotsStdText>
                   </TouchableOpacity>
                 </View>
               ) : (
                 <View style={styles.confirmLeaveRow}>
                   <TouchableOpacity style={styles.leaveBtn} onPress={() => setConfirmLeave(true)}>
-                    <Text style={styles.leaveBtnText}>Leave Group</Text>
+                    <ParrotsStdText style={styles.leaveBtnText}>Leave Group</ParrotsStdText>
                   </TouchableOpacity>
                 </View>
               )
@@ -363,13 +364,13 @@ export const ConversationDetailScreen = ({ navigation }) => {
                 <View key={index}>
                   {showDateSeparator && (
                     <View style={styles.dateSeparator}>
-                      <Text style={styles.dateSeparatorText}>{date}</Text>
+                      <ParrotsStdText style={styles.dateSeparatorText}>{date}</ParrotsStdText>
                     </View>
                   )}
                   {isMe ? (
                     <View style={styles.msgRight}>
-                      <Text style={styles.msgText}>{msg.text}</Text>
-                      <Text style={styles.timeDisplay}>{time}</Text>
+                      <ParrotsStdText style={styles.msgText}>{msg.text}</ParrotsStdText>
+                      <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
                     </View>
                   ) : (
                     <View style={styles.msgRowLeft}>
@@ -384,10 +385,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
                         <View style={styles.msgAvatarPlaceholder} />
                       )}
                       <View style={[styles.msgColumn, isFirstInGroup && { marginTop: vh(1) }]}>
-                        {isFirstInGroup && <Text style={styles.msgSender}>{msg.senderUsername}</Text>}
+                        {isFirstInGroup && <ParrotsStdText style={styles.msgSender}>{msg.senderUsername}</ParrotsStdText>}
                         <View style={styles.msgLeft}>
-                          <Text selectable style={styles.msgText}>{msg.text}</Text>
-                          <Text style={styles.timeDisplay}>{time}</Text>
+                          <ParrotsStdText selectable style={styles.msgText}>{msg.text}</ParrotsStdText>
+                          <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
                         </View>
                       </View>
                     </View>
@@ -421,7 +422,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
       {toastVisible && (
         <View style={styles.toast}>
-          <Text style={styles.toastText}>{toastMessage}</Text>
+          <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
         </View>
       )}
     </View>

@@ -1,7 +1,8 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from "react";
-import { View, Text, Modal, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View,  Modal, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { parrotBlue, parrotCream, parrotGreen, parrotInputTextColor, parrotTextDarkBlue, parrotAirplaneLightGreen, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen, parrotWalkTurquoise, parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen, parrotTinyHouseLightYellow, parrotBoatPurple, parrotTrainPink } from "../assets/color";
 
@@ -66,8 +67,8 @@ const FilterVehicleModal = ({
       <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={onClose}>
         <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Vehicle Type</Text>
-          <Text style={styles.subtitle}>Filter voyages by transport type</Text>
+          <ParrotsStdText style={styles.title}>Vehicle Type</ParrotsStdText>
+          <ParrotsStdText style={styles.subtitle}>Filter voyages by transport type</ParrotsStdText>
 
           <ScrollView style={{ maxHeight: vh(40) }} showsVerticalScrollIndicator={false}>
             <View style={styles.optionsGrid}>
@@ -81,9 +82,9 @@ const FilterVehicleModal = ({
                     style={[styles.option, { backgroundColor: isSelected ? color : color + "0D", borderWidth: 1, borderColor: isSelected ? "transparent" : "rgba(150,150,150,0.5)" }]}
                     onPress={() => handleSelect(value)}
                   >
-                    <Text style={[styles.optionText, { color: isSelected ? "white" : "#555" }]}>
+                    <ParrotsStdText style={[styles.optionText, { color: isSelected ? "white" : "#555" }]}>
                       {type}
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 );
               })}
@@ -92,10 +93,10 @@ const FilterVehicleModal = ({
 
           <View style={styles.buttonsContainer}>
             <TouchableOpacity onPress={handleClear} style={styles.buttonCancelContainer}>
-              <Text style={styles.buttonClear}>Clear</Text>
+              <ParrotsStdText style={styles.buttonClear}>Clear</ParrotsStdText>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleSave} style={styles.buttonSendBidContainer}>
-              <Text style={styles.buttonSave}>Ok</Text>
+              <ParrotsStdText style={styles.buttonSave}>Ok</ParrotsStdText>
             </TouchableOpacity>
           </View>
         </View>

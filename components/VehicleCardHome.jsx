@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View,  Image, StyleSheet } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 
 export default function VehicleCardHome({
@@ -19,15 +20,15 @@ export default function VehicleCardHome({
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.header}>{cardHeader}</Text>
-          <Text style={styles.subHeader}>{cardSubHeader}</Text>
+          <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
+          <ParrotsStdText style={styles.subHeader}>{cardSubHeader}</ParrotsStdText>
           <Text
             style={styles.cardDescription}
             numberOfLines={5}
             ellipsizeMode="tail"
           >
             {cardDescription}
-          </Text>
+          </ParrotsStdText>
         </View>
       </View>
     </>

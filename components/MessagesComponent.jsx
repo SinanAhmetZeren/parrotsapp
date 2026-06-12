@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { StyleSheet, View, Text, ScrollView, Image } from "react-native";
+import { StyleSheet, View,  ScrollView, Image } from "react-native";
 import { useRef, useEffect } from "react";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { API_URL } from "@env";
@@ -39,18 +40,18 @@ export default function MessagesComponent({
           <View key={index}>
             {showDateSeparator && (
               <View style={styles.dateSeparator}>
-                <Text style={styles.dateSeparatorText}>{date}</Text>
+                <ParrotsStdText style={styles.dateSeparatorText}>{date}</ParrotsStdText>
               </View>
             )}
             {isMe ? (
               <View style={styles.MessageMainContainerRight}>
-                <Text selectable style={styles.messageText}>{item.text}</Text>
-                <Text style={styles.timeDisplay}>{time}</Text>
+                <ParrotsStdText selectable style={styles.messageText}>{item.text}</ParrotsStdText>
+                <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
               </View>
             ) : (
               <View style={styles.MessageMainContainer}>
-                <Text selectable style={styles.messageText}>{item.text}</Text>
-                <Text style={styles.timeDisplay}>{time}</Text>
+                <ParrotsStdText selectable style={styles.messageText}>{item.text}</ParrotsStdText>
+                <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
               </View>
             )}
           </View>

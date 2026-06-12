@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
@@ -212,8 +213,8 @@ const VehicleDetailScreen = () => {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
         </View>
       </ScrollView>
 
@@ -299,7 +300,7 @@ const VehicleDetailScreen = () => {
               >
                 <View style={styles.innerProfileContainer}>
                   <MaterialCommunityIcons name="account-edit-outline" size={18} color={parrotBlue} />
-                  <Text style={{ lineHeight: 22, marginLeft: vw(2), fontSize: 11, fontFamily: "Nunito_700Bold" }}>Edit Vehicle</Text>
+                  <ParrotsStdText style={{ lineHeight: 22, marginLeft: vw(2), fontSize: 11, fontFamily: "Nunito_700Bold" }}>Edit Vehicle</ParrotsStdText>
                 </View>
               </TouchableOpacity>
             </View>
@@ -310,7 +311,7 @@ const VehicleDetailScreen = () => {
 
               {/* Name */}
               <View style={styles.vehicleHeader}>
-                <Text style={styles.vehicleName} adjustsFontSizeToFit numberOfLines={1}>{VehicleData.name}</Text>
+                <ParrotsStdText style={styles.vehicleName} adjustsFontSizeToFit numberOfLines={1}>{VehicleData.name}</ParrotsStdText>
               </View>
 
               {/* Images + Description Card */}
@@ -333,15 +334,15 @@ const VehicleDetailScreen = () => {
                     onPress={() => goToProfilePage(VehicleData.user.id)}
                   >
                     <Image source={{ uri: VehicleData?.user?.profileImageThumbnailUrl || VehicleData?.user?.profileImageUrl }} style={styles.profileImage} />
-                    <Text style={styles.userName} numberOfLines={1}>
+                    <ParrotsStdText style={styles.userName} numberOfLines={1}>
                       {VehicleData?.user?.userName?.length > 20
                         ? VehicleData?.user?.userName?.substring(0, 17) + "..."
                         : VehicleData.user.userName}
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                   <Ionicons name="people-outline" size={18} color={parrotBlue} style={{ marginRight: 2, marginLeft: vw(3) }} />
                   <View style={styles.voyageOwner}>
-                    <Text style={styles.propText}>{VehicleData.capacity} spots</Text>
+                    <ParrotsStdText style={styles.propText}>{VehicleData.capacity} spots</ParrotsStdText>
                   </View>
                   <View style={{ flex: 1 }} />
                   <TouchableOpacity onPress={() => handleShareVehicle()} style={{ marginRight: vw(2) }}>
@@ -364,19 +365,19 @@ const VehicleDetailScreen = () => {
                   )}
                 </View>
                 <View style={styles.DescriptionContainer}>
-                  <Text style={styles.descriptionText}>{displayText}</Text>
+                  <ParrotsStdText style={styles.descriptionText}>{displayText}</ParrotsStdText>
                   {plainDescription.length > descriptionShortenedChars && !showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
-                      <Text style={styles.ReadMoreLess}>
+                      <ParrotsStdText style={styles.ReadMoreLess}>
                         Read more <Feather name="chevron-down" size={16} color={parrotBlue} />
-                      </Text>
+                      </ParrotsStdText>
                     </TouchableOpacity>
                   )}
                   {showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(false)}>
-                      <Text style={styles.ReadMoreLess}>
+                      <ParrotsStdText style={styles.ReadMoreLess}>
                         Read less <Feather name="chevron-up" size={16} color={parrotBlue} />
-                      </Text>
+                      </ParrotsStdText>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -401,7 +402,7 @@ const VehicleDetailScreen = () => {
         </ScrollView>
         {toastVisible && (
           <View style={styles.toast}>
-            <Text style={styles.toastText}>{toastMessage}</Text>
+            <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
           </View>
         )}
       </>

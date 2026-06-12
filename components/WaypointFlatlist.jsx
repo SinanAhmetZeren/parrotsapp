@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
@@ -130,17 +131,17 @@ export const WaypointItemVoyageDetailScreen = ({
           </View>
 
           <View style={styles.titleAndDescription}>
-            <Text numberOfLines={1} style={styles.title}>
+            <ParrotsStdText numberOfLines={1} style={styles.title}>
               {title}
-            </Text>
-            <Text numberOfLines={5} style={styles.description}>
+            </ParrotsStdText>
+            <ParrotsStdText numberOfLines={5} style={styles.description}>
               {description}
-            </Text>
+            </ParrotsStdText>
           </View>
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => handleShowModal()}>
-        <Text style={styles.seeDetails}>See Details</Text>
+        <ParrotsStdText style={styles.seeDetails}>See Details</ParrotsStdText>
       </TouchableOpacity>
 
       <Modal
@@ -163,12 +164,12 @@ export const WaypointItemVoyageDetailScreen = ({
 
             />
             <ScrollView style={styles.scrollView}>
-              <Text numberOfLines={2} style={styles.waypointTitleInModal2}>
+              <ParrotsStdText numberOfLines={2} style={styles.waypointTitleInModal2}>
                 {title}
-              </Text>
-              <Text style={styles.waypointDescriptionInModal2}>
+              </ParrotsStdText>
+              <ParrotsStdText style={styles.waypointDescriptionInModal2}>
                 {description}
-              </Text>
+              </ParrotsStdText>
             </ScrollView>
 
             <TouchableOpacity
@@ -176,7 +177,7 @@ export const WaypointItemVoyageDetailScreen = ({
               onPress={() => setModalVisible(false)}
             >
               <View>
-                <Text style={styles.buttonClose}>Close</Text>
+                <ParrotsStdText style={styles.buttonClose}>Close</ParrotsStdText>
               </View>
             </TouchableOpacity>
           </View>
@@ -199,23 +200,23 @@ export const WaypointItem = ({ title, description, imageUri, waypointId, handleD
       >
         <Image source={{ uri: imageUri }} style={{ ...styles.voyageImageInModalX, opacity: hasImage ? 1 : 0.25 }} />
         <ScrollView style={styles.scrollViewX}>
-          <Text numberOfLines={1} style={styles.waypointTitleInModal2}>
+          <ParrotsStdText numberOfLines={1} style={styles.waypointTitleInModal2}>
             {title}
-          </Text>
-          <Text numberOfLines={6} style={styles.waypointDescriptionInModal2}>
+          </ParrotsStdText>
+          <ParrotsStdText numberOfLines={6} style={styles.waypointDescriptionInModal2}>
             {description}
-          </Text>
+          </ParrotsStdText>
         </ScrollView>
         <TouchableOpacity
           onPress={() => handleDeleteWaypoint(waypointId)}
           style={styles.deleteAddedWaypointContainer}>
-          <Text style={styles.deleteAddedWaypoint}>
+          <ParrotsStdText style={styles.deleteAddedWaypoint}>
             <MaterialIcons
               name="cancel"
               size={24}
               color="darkred"
             />
-          </Text>
+          </ParrotsStdText>
         </TouchableOpacity>
       </TouchableOpacity >
 
@@ -240,10 +241,10 @@ export const WaypointItem = ({ title, description, imageUri, waypointId, handleD
               style={styles.voyageImageInModal}
             />
             <ScrollView style={styles.scrollView}>
-              <Text style={styles.waypointTitleInModal2}>{title}</Text>
-              <Text style={styles.waypointDescriptionInModal2}>
+              <ParrotsStdText style={styles.waypointTitleInModal2}>{title}</ParrotsStdText>
+              <ParrotsStdText style={styles.waypointDescriptionInModal2}>
                 {description}
-              </Text>
+              </ParrotsStdText>
             </ScrollView>
 
             <TouchableOpacity
@@ -251,7 +252,7 @@ export const WaypointItem = ({ title, description, imageUri, waypointId, handleD
               onPress={() => setModalVisibleX(false)}
             >
               <View>
-                <Text style={styles.buttonClose}>Close</Text>
+                <ParrotsStdText style={styles.buttonClose}>Close</ParrotsStdText>
               </View>
             </TouchableOpacity>
           </View>

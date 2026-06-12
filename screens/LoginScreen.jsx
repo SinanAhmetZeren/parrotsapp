@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
@@ -411,12 +412,12 @@ const LoginScreen = ({ navigation }) => {
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <Modal visible={true} animationType="slide">
           <View style={{ flex: 1, padding: 20, paddingTop: 60 }}>
-            <Text style={{ fontSize: 20, fontWeight: "700", color: "#003580", marginBottom: 12, textAlign: "center" }}>
+            <ParrotsStdText style={{ fontSize: 20, fontWeight: "700", color: "#003580", marginBottom: 12, textAlign: "center" }}>
               Our Terms of Use have been updated
-            </Text>
-            <Text style={{ fontSize: 14, color: "#555", marginBottom: 16, textAlign: "center" }}>
+            </ParrotsStdText>
+            <ParrotsStdText style={{ fontSize: 14, color: "#555", marginBottom: 16, textAlign: "center" }}>
               Please read and accept the updated Terms of Use to continue using Parrots.
-            </Text>
+            </ParrotsStdText>
             <ScrollView style={{ flex: 1, borderWidth: 1, borderColor: "#ddd", borderRadius: 8, marginBottom: 16 }}>
               <TermsOfUseComponent />
             </ScrollView>
@@ -424,13 +425,13 @@ const LoginScreen = ({ navigation }) => {
               onPress={handleAcceptUpdatedTerms}
               style={{ backgroundColor: "#007bff", borderRadius: 8, padding: 14, alignItems: "center", marginBottom: 10 }}
             >
-              <Text style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>I Accept</Text>
+              <ParrotsStdText style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>I Accept</ParrotsStdText>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => { setRequiresTermsReAcceptance(false); setPendingLoginData(null); }}
               style={{ alignItems: "center", padding: 10 }}
             >
-              <Text style={{ color: "#999", fontSize: 14 }}>Decline and go back</Text>
+              <ParrotsStdText style={{ color: "#999", fontSize: 14 }}>Decline and go back</ParrotsStdText>
             </TouchableOpacity>
           </View>
         </Modal>
@@ -443,7 +444,7 @@ const LoginScreen = ({ navigation }) => {
       resizeMode="cover" imageStyle={{ left: 0 }}>
       {toastVisible && (
         <View style={styles.toast}>
-          <Text style={styles.toastText}>{toastMessage}</Text>
+          <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
         </View>
       )}
       {loginOrRegister === "Login" ? (
@@ -493,9 +494,9 @@ const LoginScreen = ({ navigation }) => {
                         style={styles.eyeIcon}
                         onPressIn={() => togglePasswordVisibility()}
                       >
-                        <Text>
+                        <ParrotsStdText>
                           <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                        </Text>
+                        </ParrotsStdText>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -507,9 +508,9 @@ const LoginScreen = ({ navigation }) => {
                       setLoginOrRegister("ForgotPassword");
                     }}
                   >
-                    <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                       Forgot password?
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
 
                   <View style={styles.loginContainer}>
@@ -520,7 +521,7 @@ const LoginScreen = ({ navigation }) => {
                     >
                       {isLoading || isLoggingIn
                         ? <ActivityIndicator color="white" />
-                        : <Text style={styles.choiceText}>Login</Text>
+                        : <ParrotsStdText style={styles.choiceText}>Login</ParrotsStdText>
                       }
                     </TouchableOpacity>
                   </View>
@@ -531,7 +532,7 @@ const LoginScreen = ({ navigation }) => {
                       onPress={logAllAsyncStorage}
                       disabled={isLoading}
                     >
-                      <Text style={styles.choiceText}>print</Text>
+                      <ParrotsStdText style={styles.choiceText}>print</ParrotsStdText>
                     </TouchableOpacity>
                   </View>
 
@@ -542,12 +543,12 @@ const LoginScreen = ({ navigation }) => {
                       setLoginOrRegister("Register1");
                     }}
                   >
-                    <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                       Don't have an account?{" "}
-                    </Text>
-                    <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
+                    </ParrotsStdText>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                       Sign up
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
 
@@ -578,7 +579,7 @@ const LoginScreen = ({ navigation }) => {
             </View>
             <View style={[registrationSuccessStyles.container, { backgroundColor: "transparent" }]}>
               {/* {isSuccessRegisterUser ? (
-            <Text style={registrationSuccessStyles.successMessage}>Registration successful!</Text>
+            <ParrotsStdText style={registrationSuccessStyles.successMessage}>Registration successful!</ParrotsStdText>
           ) : ( */}
               <View style={registrationSuccessStyles.formContainer}>
                 {isFocusedUserNameR && (
@@ -588,9 +589,9 @@ const LoginScreen = ({ navigation }) => {
                       { label: "Max 25 characters", ok: userNameR.length <= 25 },
                       { label: "Letters, numbers, underscores only", ok: userNameR.length === 0 || /^[a-zA-Z0-9_]+$/.test(userNameR) },
                     ].map(({ label, ok }) => (
-                      <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                      <ParrotsStdText key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
                         {ok ? "✓" : "✗"} {label}
-                      </Text>
+                      </ParrotsStdText>
                     ))}
                   </View>
                 )}
@@ -603,9 +604,9 @@ const LoginScreen = ({ navigation }) => {
                       { label: "One number", ok: /[0-9]/.test(passwordR) },
                       { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
                     ].map(({ label, ok }) => (
-                      <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                      <ParrotsStdText key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
                         {ok ? "✓" : "✗"} {label}
-                      </Text>
+                      </ParrotsStdText>
                     ))}
                   </View>
                 )}
@@ -614,9 +615,9 @@ const LoginScreen = ({ navigation }) => {
                     {[
                       { label: "Valid email format", ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailR) },
                     ].map(({ label, ok }) => (
-                      <Text key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                      <ParrotsStdText key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
                         {ok ? "✓" : "✗"} {label}
-                      </Text>
+                      </ParrotsStdText>
                     ))}
                   </View>
                 )}
@@ -661,9 +662,9 @@ const LoginScreen = ({ navigation }) => {
                     style={styles.eyeIcon}
                     onPressIn={() => togglePasswordVisibility()}
                   >
-                    <Text>
+                    <ParrotsStdText>
                       <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
 
@@ -685,9 +686,9 @@ const LoginScreen = ({ navigation }) => {
                     style={styles.eyeIcon}
                     onPressIn={() => togglePasswordVisibility2()}
                   >
-                    <Text>
+                    <ParrotsStdText>
                       <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
 
@@ -697,13 +698,13 @@ const LoginScreen = ({ navigation }) => {
                   activeOpacity={0.7}
                 >
                   <View style={[styles.checkbox, termsAccepted && styles.checkboxChecked]}>
-                    {termsAccepted && <Text style={styles.checkmark}>✓</Text>}
+                    {termsAccepted && <ParrotsStdText style={styles.checkmark}>✓</ParrotsStdText>}
                   </View>
-                  <Text style={styles.termsText}>
+                  <ParrotsStdText style={styles.termsText}>
                     I've read and agree to the{" "}
-                  </Text>
+                  </ParrotsStdText>
                   <TouchableOpacity onPress={() => setTermsModalVisible(true)}>
-                    <Text style={styles.termsLink}>Terms of Use</Text>
+                    <ParrotsStdText style={styles.termsLink}>Terms of Use</ParrotsStdText>
                   </TouchableOpacity>
                 </TouchableOpacity>
 
@@ -718,7 +719,7 @@ const LoginScreen = ({ navigation }) => {
                       style={styles.termsCloseButton}
                       onPress={() => setTermsModalVisible(false)}
                     >
-                      <Text style={styles.choiceText}>Close</Text>
+                      <ParrotsStdText style={styles.choiceText}>Close</ParrotsStdText>
                     </TouchableOpacity>
                   </View>
                 </Modal>
@@ -760,7 +761,7 @@ const LoginScreen = ({ navigation }) => {
                       !termsAccepted
                     }
                   >
-                    <Text style={styles.choiceText}>Register</Text>
+                    <ParrotsStdText style={styles.choiceText}>Register</ParrotsStdText>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -770,12 +771,12 @@ const LoginScreen = ({ navigation }) => {
                       setLoginOrRegister("Login");
                     }}
                   >
-                    <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                       Back to{" "}
-                    </Text>
-                    <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
+                    </ParrotsStdText>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                       Login
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -823,7 +824,7 @@ const LoginScreen = ({ navigation }) => {
                     }}
                     disabled={isLoadingConfirmUser || registerCode === ""}
                   >
-                    <Text style={styles.choiceText}>Confirm</Text>
+                    <ParrotsStdText style={styles.choiceText}>Confirm</ParrotsStdText>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -833,12 +834,12 @@ const LoginScreen = ({ navigation }) => {
                       setLoginOrRegister("Login");
                     }}
                   >
-                    <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                       Back to{" "}
-                    </Text>
-                    <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
+                    </ParrotsStdText>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                       Login
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -877,7 +878,7 @@ const LoginScreen = ({ navigation }) => {
                       handleSendResetCode();
                     }}
                   >
-                    <Text style={styles.choiceText}>Send Reset Code</Text>
+                    <ParrotsStdText style={styles.choiceText}>Send Reset Code</ParrotsStdText>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -887,12 +888,12 @@ const LoginScreen = ({ navigation }) => {
                       setLoginOrRegister("Login");
                     }}
                   >
-                    <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                       Back to{" "}
-                    </Text>
-                    <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
+                    </ParrotsStdText>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                       Login
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -932,9 +933,9 @@ const LoginScreen = ({ navigation }) => {
                     style={styles.eyeIcon}
                     onPressIn={() => togglePasswordVisibility()}
                   >
-                    <Text>
+                    <ParrotsStdText>
                       <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
 
@@ -956,9 +957,9 @@ const LoginScreen = ({ navigation }) => {
                     style={styles.eyeIcon}
                     onPressIn={() => togglePasswordVisibility2()}
                   >
-                    <Text>
+                    <ParrotsStdText>
                       <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
 
@@ -997,7 +998,7 @@ const LoginScreen = ({ navigation }) => {
                       resetPasswordCode === ""
                     }
                   >
-                    <Text style={styles.choiceText}>Update Password</Text>
+                    <ParrotsStdText style={styles.choiceText}>Update Password</ParrotsStdText>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -1007,12 +1008,12 @@ const LoginScreen = ({ navigation }) => {
                       setLoginOrRegister("Login");
                     }}
                   >
-                    <Text style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
                       Back to{" "}
-                    </Text>
-                    <Text style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
+                    </ParrotsStdText>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
                       Login
-                    </Text>
+                    </ParrotsStdText>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -1025,9 +1026,9 @@ const LoginScreen = ({ navigation }) => {
                     { label: "One number", ok: /[0-9]/.test(passwordR) },
                     { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
                   ].map(({ label, ok }) => (
-                    <Text key={label} style={[styles.passwordCheckItem, { color: ok ? "#2e7d32" : "#c62828" }]}>
+                    <ParrotsStdText key={label} style={[styles.passwordCheckItem, { color: ok ? "#2e7d32" : "#c62828" }]}>
                       {ok ? "✓" : "✗"} {label}
-                    </Text>
+                    </ParrotsStdText>
                   ))}
                 </View>
               )}

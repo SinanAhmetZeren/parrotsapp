@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
@@ -95,7 +96,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
     }}>
 
       {/* 1. Title */}
-      <Text style={[styles.membersLabel, { backgroundColor: "white", marginTop: vh(1.5) }]}>Create New Group</Text>
+      <ParrotsStdText style={[styles.membersLabel, { backgroundColor: "white", marginTop: vh(1.5) }]}>Create New Group</ParrotsStdText>
 
       {/* 2. Group name */}
       <View style={[styles.groupInputRow, { backgroundColor: "white" }]}>
@@ -149,7 +150,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
                           <View style={styles.pillContainer}>
                             <View style={styles.pillProfile}>
                               <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.pillAvatar} />
-                              <Text style={styles.pillName}>{u.userName}</Text>
+                              <ParrotsStdText style={styles.pillName}>{u.userName}</ParrotsStdText>
                             </View>
                             <TouchableOpacity
                               style={addingMemberId === (u.Id ?? u.id) ? styles.addedMemberBtn : styles.addMemberBtn}
@@ -182,7 +183,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
       </View>
 
       {/* 4. Members title */}
-      <Text style={[styles.membersLabel, { backgroundColor: "white" }]}>Members</Text>
+      <ParrotsStdText style={[styles.membersLabel, { backgroundColor: "white" }]}>Members</ParrotsStdText>
 
       {/* 5. Members scroll */}
       <ScrollView
@@ -194,7 +195,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
           <View style={styles.pillContainer}>
             <View style={styles.pillProfile}>
               <Image source={{ uri: currentUserImage }} style={styles.pillAvatar} />
-              <Text style={styles.pillName}>{currentUserName} (you)</Text>
+              <ParrotsStdText style={styles.pillName}>{currentUserName} (you)</ParrotsStdText>
             </View>
           </View>
         </View>
@@ -203,7 +204,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
             <View style={styles.pillContainer}>
               <View style={styles.pillProfile}>
                 <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.pillAvatar} />
-                <Text style={styles.pillName}>{m.userName}</Text>
+                <ParrotsStdText style={styles.pillName}>{m.userName}</ParrotsStdText>
               </View>
               <TouchableOpacity
                 style={styles.pillAction}

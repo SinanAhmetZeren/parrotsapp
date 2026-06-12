@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View,  TouchableOpacity, Image } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import { Feather } from "@expo/vector-icons";
@@ -62,16 +63,16 @@ export default function VehicleVoyages({ voyages }) {
                 source={{ uri: item.profileImageThumbnail || item.profileImage }}
                 style={styles.voyageImage}
               />
-              <Text style={styles.voyageName} numberOfLines={1} ellipsizeMode="tail">
+              <ParrotsStdText style={styles.voyageName} numberOfLines={1} ellipsizeMode="tail">
                 {item.name}
-              </Text>
+              </ParrotsStdText>
               <View style={styles.pill}>
                 <Feather name="calendar" size={13} color={parrotDarkBlue} />
-                <Text style={styles.pillText}>{formattedStartDate} – {formattedEndDate}</Text>
+                <ParrotsStdText style={styles.pillText}>{formattedStartDate} – {formattedEndDate}</ParrotsStdText>
               </View>
               <View style={styles.pill}>
                 <Feather name="users" size={13} color={parrotDarkBlue} />
-                <Text style={styles.pillText}>{item.vacancy}</Text>
+                <ParrotsStdText style={styles.pillText}>{item.vacancy}</ParrotsStdText>
               </View>
             </View>
           </TouchableOpacity>

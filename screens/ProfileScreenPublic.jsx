@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
@@ -302,17 +303,17 @@ export default function ProfileScreenPublic({ navigation }) {
     const words = plainText.split(" ");
 
     return (
-      <Text selectable style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#3D3D3D", lineHeight: 23, letterSpacing: 0.2 }}>
+      <ParrotsStdText selectable style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#3D3D3D", lineHeight: 23, letterSpacing: 0.2 }}>
         {words.map((word, index) =>
           word.startsWith("#") ? (
-            <Text key={index} style={{ color: "blue" }}>
+            <ParrotsStdText key={index} style={{ color: "blue" }}>
               {word + " "}
-            </Text>
+            </ParrotsStdText>
           ) : (
-            <Text key={index}>{word + " "}</Text>
+            <ParrotsStdText key={index}>{word + " "}</ParrotsStdText>
           )
         )}
-      </Text>
+      </ParrotsStdText>
     );
   };
 
@@ -347,7 +348,7 @@ export default function ProfileScreenPublic({ navigation }) {
           }} activeOpacity={0.8}>
             <View style={{ alignSelf: "flex-end", flexDirection: "row", borderRadius: vh(2), paddingHorizontal: vw(2) }}>
               <Feather name="message-circle" size={18} color={"white"} />
-              <Text style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11, color: "white" }}>Send Message</Text>
+              <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11, color: "white" }}>Send Message</ParrotsStdText>
             </View>
           </TouchableOpacity>
         </View>
@@ -373,8 +374,8 @@ export default function ProfileScreenPublic({ navigation }) {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
         </View>
       </ScrollView>
     );
@@ -476,7 +477,7 @@ export default function ProfileScreenPublic({ navigation }) {
                         }}
                       >
                         Send Message
-                      </Text>
+                      </ParrotsStdText>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -513,23 +514,23 @@ export default function ProfileScreenPublic({ navigation }) {
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
                 <View style={styles.nameContainer}>
-                  <Text selectable style={styles.UserNameProfile}>
+                  <ParrotsStdText selectable style={styles.UserNameProfile}>
                     {userData?.userName?.length <= 30 ? (
                       userData.userName
                     ) : (
                       <>
-                        <Text>{userData?.userName?.slice(0, 30)}</Text>
+                        <ParrotsStdText>{userData?.userName?.slice(0, 30)}</ParrotsStdText>
                         {userData?.userName?.length > 30 ? (
-                          <Text style={styles.clickableText}>...</Text>
+                          <ParrotsStdText style={styles.clickableText}>...</ParrotsStdText>
                         ) : null}
                       </>
                     )}
-                  </Text>
+                  </ParrotsStdText>
                 </View>
                 <View>
-                  <Text selectable style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
+                  <ParrotsStdText selectable style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
                     {userData.title}
-                  </Text>
+                  </ParrotsStdText>
                 </View>
                 <View>
                   <BlueHashTagText originalText={
@@ -539,16 +540,16 @@ export default function ProfileScreenPublic({ navigation }) {
                   } />
                   {userData.bio?.length > 200 && !showFullBio && (
                     <TouchableOpacity onPress={() => setShowFullBio(true)}>
-                      <Text style={styles.ReadMoreLess}>
+                      <ParrotsStdText style={styles.ReadMoreLess}>
                         Read more <Feather name="chevron-down" size={16} color={parrotBlue} />
-                      </Text>
+                      </ParrotsStdText>
                     </TouchableOpacity>
                   )}
                   {userData.bio?.length > 200 && showFullBio && (
                     <TouchableOpacity onPress={() => setShowFullBio(false)}>
-                      <Text style={styles.ReadMoreLess}>
+                      <ParrotsStdText style={styles.ReadMoreLess}>
                         Read less <Feather name="chevron-up" size={16} color={parrotBlue} />
-                      </Text>
+                      </ParrotsStdText>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -567,7 +568,7 @@ export default function ProfileScreenPublic({ navigation }) {
                     <>
                       <View style={styles.mainBidsContainer}>
                         <View style={styles.currentBidsAndSeeAll}>
-                          <Text style={styles.currentBidsTitle}>Vehicles</Text>
+                          <ParrotsStdText style={styles.currentBidsTitle}>Vehicles</ParrotsStdText>
                         </View>
                       </View>
                       <View style={styles.vehicleListContainer}>
@@ -583,7 +584,7 @@ export default function ProfileScreenPublic({ navigation }) {
                     <>
                       <View style={styles.mainBidsContainer}>
                         <View style={styles.currentBidsAndSeeAll}>
-                          <Text style={styles.currentBidsTitle}>Voyages</Text>
+                          <ParrotsStdText style={styles.currentBidsTitle}>Voyages</ParrotsStdText>
                         </View>
                       </View>
                       <View style={styles.voyageListContainer}>
@@ -632,7 +633,7 @@ export default function ProfileScreenPublic({ navigation }) {
           </View>
           {toastVisible && (
             <View style={styles.toast}>
-              <Text style={styles.toastText}>{toastMessage}</Text>
+              <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
             </View>
           )}
         </View>

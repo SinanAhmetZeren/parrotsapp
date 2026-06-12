@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import {
@@ -133,23 +134,23 @@ export default function VoyageCardProfileHorizontal({
 
             <View style={styles.containerContainer}>
               <View style={styles.textContainer}>
-                <Text style={styles.header}>{cardHeader}</Text>
+                <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
 
                 <View style={styles.pillRow}>
                   <View style={styles.pill}>
-                    <Text style={styles.pillText}>
+                    <ParrotsStdText style={styles.pillText}>
                       {vehiclename?.length > 16
                         ? vehiclename.substring(0, 16) + "..."
                         : vehiclename}
-                    </Text>
+                    </ParrotsStdText>
                     {icon}
                   </View>
                   <View style={styles.pill}>
-                    <Text style={styles.pillText}>{vacancy}</Text>
+                    <ParrotsStdText style={styles.pillText}>{vacancy}</ParrotsStdText>
                     <Feather name="users" size={11} color={parrotBlue} />
                   </View>
                   <View style={styles.pill}>
-                    <Text style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</Text>
+                    <ParrotsStdText style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</ParrotsStdText>
                     <AntDesign name="calendar" size={11} color={parrotBlue} />
                   </View>
                 </View>
@@ -164,7 +165,7 @@ export default function VoyageCardProfileHorizontal({
                       .replace(/\s+/g, ' ')
                       .trim()
                   )}
-                </Text>
+                </ParrotsStdText>
               </View>
             </View>
 
@@ -175,7 +176,7 @@ export default function VoyageCardProfileHorizontal({
               style={styles.extendedAreaContainer}
             >
               <View style={styles.extendedArea}>
-                <Text style={styles.seeOnMap}>View on map</Text>
+                <ParrotsStdText style={styles.seeOnMap}>View on map</ParrotsStdText>
               </View>
             </TouchableOpacity>
           </View>

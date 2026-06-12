@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
@@ -288,17 +289,17 @@ export default function ProfileScreen({ navigation }) {
     const words = plainText.split(" ");
 
     return (
-      <Text selectable style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#3D3D3D", lineHeight: 23, letterSpacing: 0.2 }}>
+      <ParrotsStdText selectable style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#3D3D3D", lineHeight: 23, letterSpacing: 0.2 }}>
         {words.map((word, index) =>
           word.startsWith("#") ? (
-            <Text key={index} style={{ color: "blue" }}>
+            <ParrotsStdText key={index} style={{ color: "blue" }}>
               {word + " "}
-            </Text>
+            </ParrotsStdText>
           ) : (
-            <Text key={index}>{word + " "}</Text>
+            <ParrotsStdText key={index}>{word + " "}</ParrotsStdText>
           )
         )}
-      </Text>
+      </ParrotsStdText>
     );
   };
 
@@ -331,10 +332,10 @@ export default function ProfileScreen({ navigation }) {
           <TouchableOpacity style={styles.publicProfileBox} onPress={() => setTermsModalVisible(true)} activeOpacity={0.8}>
             <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialIcons name="web-asset" size={18} color={parrotBlue} />
-              <Text style={{
+              <ParrotsStdText style={{
                 fontFamily: "Nunito_700Bold", lineHeight: 22,
                 marginLeft: vw(2), fontSize: 11
-              }}>Terms of Use</Text>
+              }}>Terms of Use</ParrotsStdText>
             </View>
           </TouchableOpacity>
         </View>
@@ -344,28 +345,28 @@ export default function ProfileScreen({ navigation }) {
           <TouchableOpacity style={styles.publicProfileBox} onPress={() => { }} activeOpacity={0.8}>
             <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialIcons name="public" size={18} color={parrotBlue} />
-              <Text style={{
+              <ParrotsStdText style={{
                 fontFamily: "Nunito_700Bold", lineHeight: 22,
                 marginLeft: vw(2), fontSize: 11
-              }}>Public Profile</Text>
+              }}>Public Profile</ParrotsStdText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.logoutBox} onPress={handleLogout} activeOpacity={0.8}>
             <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialCommunityIcons name="logout" size={18} color={parrotBlue} />
-              <Text style={{
+              <ParrotsStdText style={{
                 fontFamily: "Nunito_700Bold", lineHeight: 22,
                 marginLeft: vw(2), fontSize: 11
-              }}>Logout</Text>
+              }}>Logout</ParrotsStdText>
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.editProfileBox} onPress={() => navigation.navigate("EditProfile")} activeOpacity={0.8}>
             <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
               <MaterialCommunityIcons name="account-edit-outline" size={18} color={parrotBlue} />
-              <Text style={{
+              <ParrotsStdText style={{
                 fontFamily: "Nunito_700Bold", lineHeight: 22,
                 marginLeft: vw(2), fontSize: 11
-              }}>Edit Profile</Text>
+              }}>Edit Profile</ParrotsStdText>
             </View>
           </TouchableOpacity>
         </View>
@@ -375,7 +376,7 @@ export default function ProfileScreen({ navigation }) {
             <TermsOfUseComponent />
           </View>
           <TouchableOpacity style={styles.closeButtonAndText2} onPress={handleCloseTermsModal}>
-            <Text style={styles.buttonClose2}><AntDesign name="close" size={24} color="white" /></Text>
+            <ParrotsStdText style={styles.buttonClose2}><AntDesign name="close" size={24} color="white" /></ParrotsStdText>
           </TouchableOpacity>
         </Modal>
       </View>
@@ -400,8 +401,8 @@ export default function ProfileScreen({ navigation }) {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
         </View>
       </ScrollView>
     );
@@ -460,7 +461,7 @@ export default function ProfileScreen({ navigation }) {
                         }}
                       >
                         Terms of Use
-                      </Text>
+                      </ParrotsStdText>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -490,9 +491,9 @@ export default function ProfileScreen({ navigation }) {
                   onPress={handleCloseTermsModal}
                 >
                   <View>
-                    <Text style={styles.buttonClose2}>
+                    <ParrotsStdText style={styles.buttonClose2}>
                       <AntDesign name="close" size={24} color="white " />
-                    </Text>
+                    </ParrotsStdText>
                   </View>
                 </TouchableOpacity>
               </Modal>
@@ -529,7 +530,7 @@ export default function ProfileScreen({ navigation }) {
                         }}
                       >
                         Public Profile
-                      </Text>
+                      </ParrotsStdText>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -560,7 +561,7 @@ export default function ProfileScreen({ navigation }) {
                         }}
                       >
                         Logout
-                      </Text>
+                      </ParrotsStdText>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -590,7 +591,7 @@ export default function ProfileScreen({ navigation }) {
                         }}
                       >
                         Edit Profile
-                      </Text>
+                      </ParrotsStdText>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -654,15 +655,15 @@ export default function ProfileScreen({ navigation }) {
                         position: "relative"
                       }}
                     >
-                      <Text style={{ fontSize: 18, fontFamily: "Nunito_800ExtraBold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <ParrotsStdText style={{ fontSize: 18, fontFamily: "Nunito_800ExtraBold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         ParrotCoin Balance
-                      </Text>
+                      </ParrotsStdText>
 
                       <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
 
-                        <Text style={{ fontSize: 22, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>
+                        <ParrotsStdText style={{ fontSize: 22, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>
                           {parrotCoinBalance?.toLocaleString()}
-                        </Text>
+                        </ParrotsStdText>
 
                         <Image
                           source={require("../assets/parrotcoin.png")}
@@ -672,21 +673,21 @@ export default function ProfileScreen({ navigation }) {
                       </View>
 
 
-                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         Featuring your voyage on the main map costs ParrotCoins.
-                      </Text>
-                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      </ParrotsStdText>
+                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         The cost equals the number of days between today and the voyage start date.
-                      </Text>
-                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      </ParrotsStdText>
+                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         Example: Starts in 10 days → 10 ParrotCoins.
-                      </Text>
-                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      </ParrotsStdText>
+                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         The voyage will be removed from the main map once it starts.
-                      </Text>
-                      <Text style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
+                      </ParrotsStdText>
+                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
                         You can add ParrotCoins to your balance at parrotsvoyages.com.
-                      </Text>
+                      </ParrotsStdText>
 
 
 
@@ -702,9 +703,9 @@ export default function ProfileScreen({ navigation }) {
                         style={styles.closeButtonAndText3}
                         onPress={() => setCoinModalVisible(false)}
                       >
-                        <Text style={styles.buttonClose3}>
+                        <ParrotsStdText style={styles.buttonClose3}>
                           <AntDesign name="close" size={24} color="white" />
-                        </Text>
+                        </ParrotsStdText>
                       </TouchableOpacity>
 
 
@@ -753,23 +754,23 @@ export default function ProfileScreen({ navigation }) {
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
                 <View style={styles.nameContainer}>
-                  <Text selectable style={styles.UserNameProfile}>
+                  <ParrotsStdText selectable style={styles.UserNameProfile}>
                     {userData.userName.length <= 30 ? (
                       userData.userName
                     ) : (
                       <>
-                        <Text>{userData.userName.slice(0, 30)}</Text>
+                        <ParrotsStdText>{userData.userName.slice(0, 30)}</ParrotsStdText>
                         {userData.userName?.length > 30 ? (
-                          <Text style={styles.clickableText}>...</Text>
+                          <ParrotsStdText style={styles.clickableText}>...</ParrotsStdText>
                         ) : null}
                       </>
                     )}
-                  </Text>
+                  </ParrotsStdText>
                 </View>
                 <View>
-                  <Text selectable style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
+                  <ParrotsStdText selectable style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
                     {userData.title}
-                  </Text>
+                  </ParrotsStdText>
                 </View>
                 <View>
                   <BlueHashTagText originalText={
@@ -779,16 +780,16 @@ export default function ProfileScreen({ navigation }) {
                   } />
                   {userData.bio?.length > 200 && !showFullBio && (
                     <TouchableOpacity onPress={() => setShowFullBio(true)}>
-                      <Text style={styles.ReadMoreLess}>
+                      <ParrotsStdText style={styles.ReadMoreLess}>
                         Read more <Feather name="chevron-down" size={16} color={parrotBlue} />
-                      </Text>
+                      </ParrotsStdText>
                     </TouchableOpacity>
                   )}
                   {userData.bio?.length > 200 && showFullBio && (
                     <TouchableOpacity onPress={() => setShowFullBio(false)}>
-                      <Text style={styles.ReadMoreLess}>
+                      <ParrotsStdText style={styles.ReadMoreLess}>
                         Read less <Feather name="chevron-up" size={16} color={parrotBlue} />
-                      </Text>
+                      </ParrotsStdText>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -801,7 +802,7 @@ export default function ProfileScreen({ navigation }) {
                 <>
                   <View style={styles.mainBidsContainer}>
                     <View style={styles.currentBidsAndSeeAll}>
-                      <Text style={styles.currentBidsTitle}>Vehicles</Text>
+                      <ParrotsStdText style={styles.currentBidsTitle}>Vehicles</ParrotsStdText>
                     </View>
                   </View>
                   <View style={styles.vehicleListContainer}>
@@ -816,7 +817,7 @@ export default function ProfileScreen({ navigation }) {
                 <>
                   <View style={styles.mainBidsContainer}>
                     <View style={styles.currentBidsAndSeeAll}>
-                      <Text style={styles.currentBidsTitle}>Voyages</Text>
+                      <ParrotsStdText style={styles.currentBidsTitle}>Voyages</ParrotsStdText>
                     </View>
                   </View>
                   <View style={styles.voyageListContainer}>
@@ -864,7 +865,7 @@ export default function ProfileScreen({ navigation }) {
           </View>
           {toastVisible && (
             <View style={styles.toast}>
-              <Text style={styles.toastText}>{toastMessage}</Text>
+              <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
             </View>
           )}
         </View>

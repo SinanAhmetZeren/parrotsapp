@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-constant-condition */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -284,11 +285,11 @@ const EditVehicleScreen = () => {
                 source={require("../assets/parrotslogo.png")}
                 style={styles.logoImage}
               />
-              <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-              <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
-              {/* <Text style={styles.currentBidsTitle3}>
+              <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+              <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
+              {/* <ParrotsStdText style={styles.currentBidsTitle3}>
                 Swipe Down to Retry
-              </Text> */}
+              </ParrotsStdText> */}
             </View>
           </View>
         )}
@@ -328,7 +329,7 @@ const EditVehicleScreen = () => {
                   {/* /// name /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Name:</Text>
+                      <ParrotsStdText style={styles.latorLngtxt}>Name:</ParrotsStdText>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
@@ -346,7 +347,7 @@ const EditVehicleScreen = () => {
                   {/* /// type /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Type:</Text>
+                      <ParrotsStdText style={styles.latorLngtxt}>Type:</ParrotsStdText>
                     </View>
                     <View style={styles.latorLng}>
                       <DropdownComponentType
@@ -361,7 +362,7 @@ const EditVehicleScreen = () => {
                   {/* /// DESC /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Description:</Text>
+                      <ParrotsStdText style={styles.latorLngtxt}>Description:</ParrotsStdText>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
@@ -380,7 +381,7 @@ const EditVehicleScreen = () => {
                   {/* /// VACANCY /// */}
                   <View style={styles.latLngNameRow}>
                     <View style={styles.latLngLabel}>
-                      <Text style={styles.latorLngtxt}>Capacity:</Text>
+                      <ParrotsStdText style={styles.latorLngtxt}>Capacity:</ParrotsStdText>
                     </View>
                     <View style={styles.latorLng}>
                       <TextInput
@@ -407,7 +408,7 @@ const EditVehicleScreen = () => {
                           setCurrentStep(2);
                         }}
                       >
-                        <Text style={styles.choiceText3}>Save Changes</Text>
+                        <ParrotsStdText style={styles.choiceText3}>Save Changes</ParrotsStdText>
                       </TouchableOpacity>
                     </View>
 
@@ -419,7 +420,7 @@ const EditVehicleScreen = () => {
                           handleOpenDeleteVehicleModal();
                         }}
                       >
-                        <Text style={styles.choiceText3}>Delete Vehicle</Text>
+                        <ParrotsStdText style={styles.choiceText3}>Delete Vehicle</ParrotsStdText>
                       </TouchableOpacity>
                     </View>
 
@@ -435,7 +436,7 @@ const EditVehicleScreen = () => {
           <ScrollView style={styles.scrollview}>
             <View  >
               <View style={styles.selectedChoice}>
-                <Text style={styles.selectedText}>Add Vehicle Images</Text>
+                <ParrotsStdText style={styles.selectedText}>Add Vehicle Images</ParrotsStdText>
               </View>
 
               <View style={styles.profileContainer}>
@@ -493,13 +494,13 @@ const EditVehicleScreen = () => {
                           />
 
                           {item.id && (
-                            <Text style={styles.deleteAddedImage}>
+                            <ParrotsStdText style={styles.deleteAddedImage}>
                               <MaterialIcons
                                 name="cancel"
                                 size={24}
                                 color="darkred"
                               />
-                            </Text>
+                            </ParrotsStdText>
                           )}
                         </TouchableOpacity>
                       </View>
@@ -521,7 +522,7 @@ const EditVehicleScreen = () => {
                   goToProfilePage();
                 }}
               >
-                <Text style={styles.addWaypointText}> Complete </Text>
+                <ParrotsStdText style={styles.addWaypointText}> Complete </ParrotsStdText>
               </TouchableOpacity>
             </View>
           </ScrollView>
@@ -553,9 +554,9 @@ const EditVehicleScreen = () => {
                           HandleDeleteVehicle();
                         }}
                       >
-                        <Text style={imageGalleryStyles.choiceText}>
+                        <ParrotsStdText style={imageGalleryStyles.choiceText}>
                           Yes, Delete Vehicle
-                        </Text>
+                        </ParrotsStdText>
                       </TouchableOpacity>
                     </View>
 
@@ -566,7 +567,7 @@ const EditVehicleScreen = () => {
                           handleCloseDeleteVehicleModal();
                         }}
                       >
-                        <Text style={imageGalleryStyles.choiceText}>Cancel</Text>
+                        <ParrotsStdText style={imageGalleryStyles.choiceText}>Cancel</ParrotsStdText>
                       </TouchableOpacity>
                     </View>
                   </View>

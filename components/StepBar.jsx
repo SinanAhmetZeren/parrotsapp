@@ -1,7 +1,8 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet,  View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { vh, vw } from "react-native-expo-viewport-units";
@@ -22,7 +23,7 @@ const StepBar = ({ currentStep }) => {
           style={[isActive ? styles.activeStepText : styles.inactiveStepText]}
         >
           {displayText}
-        </Text>
+        </ParrotsStdText>
       </View>
     );
   };

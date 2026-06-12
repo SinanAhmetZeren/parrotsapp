@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
@@ -113,24 +114,24 @@ export const RenderBidsComponent = ({
                 padding: vh(0.1),
               }}
             >
-              <Text style={styles.bidUsername}>{bid.userName}</Text>
-              <Text style={styles.personCount}>
+              <ParrotsStdText style={styles.bidUsername}>{bid.userName}</ParrotsStdText>
+              <ParrotsStdText style={styles.personCount}>
                 <Feather name="users" size={14} color={parrotTextDarkBlue} />{" "}
                 {bid.personCount}
-              </Text>
-              <Text style={styles.offerPrice}>
+              </ParrotsStdText>
+              <ParrotsStdText style={styles.offerPrice}>
                 {currency} {bid.offerPrice}
-              </Text>
+              </ParrotsStdText>
             </View>
 
             {ownVoyage && bid.message ? (
               <View>
-                <Text style={styles.seeMessage}>
+                <ParrotsStdText style={styles.seeMessage}>
                   {bid.message &&
                     (bid.message.length > 50
                       ? `${bid.message.substring(0, 47)}...`
                       : bid.message.substring(0, 50))}
-                </Text>
+                </ParrotsStdText>
               </View>
             ) : null}
           </View>
@@ -165,20 +166,20 @@ export const RenderBidsComponent = ({
 
                       <View style={styles.modalDataContainer}>
                         <View style={styles.nameAndPriceContainer}>
-                          <Text style={styles.modalUserNameText}>
+                          <ParrotsStdText style={styles.modalUserNameText}>
                             {item.userName}
-                          </Text>
-                          <Text style={styles.modalPersonCount}>
+                          </ParrotsStdText>
+                          <ParrotsStdText style={styles.modalPersonCount}>
                             <Feather
                               name="users"
                               size={14}
                               color={parrotTextDarkBlue}
                             />{" "}
                             {item.personCount}
-                          </Text>
-                          <Text style={styles.modalPriceText}>
+                          </ParrotsStdText>
+                          <ParrotsStdText style={styles.modalPriceText}>
                             {currency} {item.offerPrice.toFixed(2)}
-                          </Text>
+                          </ParrotsStdText>
                         </View>
                         <View
                           style={
@@ -198,7 +199,7 @@ export const RenderBidsComponent = ({
                           >
                             {/* {ownVoyage && item.message} */}
                             {item.message}
-                          </Text>
+                          </ParrotsStdText>
                         </View>
 
                         <View
@@ -222,7 +223,7 @@ export const RenderBidsComponent = ({
                               <View style={styles.acceptTextContainer}>
                                 {loadingBidId === item.id
                                   ? <ActivityIndicator size="small" color={parrotBlue} />
-                                  : <Text style={styles.acceptText}>Accept</Text>
+                                  : <ParrotsStdText style={styles.acceptText}>Accept</ParrotsStdText>
                                 }
                               </View>
                             </TouchableOpacity>
@@ -232,9 +233,9 @@ export const RenderBidsComponent = ({
                               onPress={() => { }}
                             >
                               <View style={styles.acceptTextContainer}>
-                                <Text style={styles.acceptedText}>
+                                <ParrotsStdText style={styles.acceptedText}>
                                   Accepted
-                                </Text>
+                                </ParrotsStdText>
                               </View>
                             </TouchableOpacity>
                           )}
@@ -252,7 +253,7 @@ export const RenderBidsComponent = ({
                             <View style={styles.acceptTextContainer}>
                               {loadingBidId === item.id
                                 ? <ActivityIndicator size="small" color={parrotRed} />
-                                : <Text style={styles.deleteText}>Delete</Text>
+                                : <ParrotsStdText style={styles.deleteText}>Delete</ParrotsStdText>
                               }
                             </View>
                           </TouchableOpacity>
@@ -274,27 +275,27 @@ export const RenderBidsComponent = ({
 
                       <View style={styles.modalDataContainerNotOwn}>
                         <View style={styles.nameAndPriceContainerNotOwn}>
-                          <Text style={styles.modalUserNameTextNotOwn}>
+                          <ParrotsStdText style={styles.modalUserNameTextNotOwn}>
                             {item.userName}
-                          </Text>
-                          <Text style={styles.modalPersonCountNotOwn}>
+                          </ParrotsStdText>
+                          <ParrotsStdText style={styles.modalPersonCountNotOwn}>
                             <Feather
                               name="users"
                               size={14}
                               color={parrotTextDarkBlue}
                             />{" "}
                             {item.personCount}
-                          </Text>
-                          <Text style={styles.modalPriceTextNotOwn}>
+                          </ParrotsStdText>
+                          <ParrotsStdText style={styles.modalPriceTextNotOwn}>
                             {currency} {item.offerPrice}
-                          </Text>
+                          </ParrotsStdText>
                           {item.accepted ? (
                             <View style={styles.acceptTextContainer}>
-                              <Text style={styles.acceptedText}>Accepted</Text>
+                              <ParrotsStdText style={styles.acceptedText}>Accepted</ParrotsStdText>
                             </View>
                           ) : (
                             <View style={styles.acceptTextContainer}>
-                              <Text style={styles.acceptText}>Pending</Text>
+                              <ParrotsStdText style={styles.acceptText}>Pending</ParrotsStdText>
                             </View>
                           )}
                         </View>
@@ -307,7 +308,7 @@ export const RenderBidsComponent = ({
           </View>
 
           <TouchableOpacity onPress={() => setModalVisible(false)}>
-            <Text style={styles.buttonClose}>Close</Text>
+            <ParrotsStdText style={styles.buttonClose}>Close</ParrotsStdText>
           </TouchableOpacity>
         </View>
       </Modal>

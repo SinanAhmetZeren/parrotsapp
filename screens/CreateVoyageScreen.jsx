@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
@@ -426,10 +427,10 @@ const CreateVoyageScreen = ({ navigation }) => {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
         <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
-        <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-        <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+        <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+        <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
         <TouchableOpacity onPress={refetch} style={{ marginTop: vh(2) }}>
-          <Text style={{ fontFamily: "Nunito_700Bold", color: parrotBlue }}>Tap to retry</Text>
+          <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotBlue }}>Tap to retry</ParrotsStdText>
         </TouchableOpacity>
       </View>
     );
@@ -470,12 +471,12 @@ const CreateVoyageScreen = ({ navigation }) => {
         <Modal visible={showPublicProfileModal} transparent animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalBox}>
-              <Text style={styles.modalTitle}>ℹ️ Public Visibility</Text>
-              <Text style={styles.modalText}>
+              <ParrotsStdText style={styles.modalTitle}>ℹ️ Public Visibility</ParrotsStdText>
+              <ParrotsStdText style={styles.modalText}>
                 Your voyage and profile are publicly visible — anyone can view them even if you choose not to show them on the map.
-              </Text>
+              </ParrotsStdText>
               <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledge}>
-                <Text style={styles.modalBtnText}>Got it</Text>
+                <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
               </TouchableOpacity>
             </View>
           </View>
@@ -489,10 +490,10 @@ const CreateVoyageScreen = ({ navigation }) => {
                 source={require("../assets/parrotslogo.png")}
                 style={styles.logoImage}
               />
-              <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-              <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
+              <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+              <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
               <TouchableOpacity onPress={() => setHasError(false)} style={{ marginTop: vh(2), alignSelf: "center" }}>
-                <Text style={{ fontFamily: "Nunito_700Bold", color: parrotBlue, fontSize: 16 }}>Tap to retry</Text>
+                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotBlue, fontSize: 16 }}>Tap to retry</ParrotsStdText>
               </TouchableOpacity>
             </View>
           </View>
@@ -505,7 +506,7 @@ const CreateVoyageScreen = ({ navigation }) => {
             {/* Card 1: Cover Image */}
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>Profile Image</Text>
+                <ParrotsStdText style={styles.cardTitle}>Profile Image</ParrotsStdText>
               </View>
               <View style={styles.profileContainer}>
                 <TouchableOpacity onPress={pickProfileImage}>
@@ -527,14 +528,14 @@ const CreateVoyageScreen = ({ navigation }) => {
             {/* Card 2: Voyage Details */}
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>Voyage Details</Text>
+                <ParrotsStdText style={styles.cardTitle}>Voyage Details</ParrotsStdText>
               </View>
               <View style={styles.formContainer}>
 
                 {/* /// name /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Name:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Name:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -552,7 +553,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 {/* /// brief /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Brief:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Brief:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -572,7 +573,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 {/* /// DESC /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Description:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Description:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -590,7 +591,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 {/* /// VACANCY /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Vacancy:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Vacancy:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -608,7 +609,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 {/* /// vehicle /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Vehicle:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Vehicle:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <DropdownComponent
@@ -625,7 +626,7 @@ const CreateVoyageScreen = ({ navigation }) => {
             {/* Card 3: Voyage Dates */}
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>Voyage Dates</Text>
+                <ParrotsStdText style={styles.cardTitle}>Voyage Dates</ParrotsStdText>
               </View>
               <View style={styles.formContainer}>
                 <View style={styles.calendarContainer}>
@@ -636,9 +637,9 @@ const CreateVoyageScreen = ({ navigation }) => {
                       size={24}
                       color="blue"
                     />
-                    <Text style={styles.voyageDates}>
+                    <ParrotsStdText style={styles.voyageDates}>
                       Select Voyage Date(s)
-                    </Text>
+                    </ParrotsStdText>
                   </View>
 
                   <View style={styles.calendarStyle}>
@@ -665,7 +666,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 {/* /// LAST BID DATE /// */}
                 <View style={{ ...styles.latLngNameRow, display: "none" }}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Last Bid:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Last Bid:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -687,13 +688,13 @@ const CreateVoyageScreen = ({ navigation }) => {
             {/* Card 4: Pricing & Options */}
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>Pricing & Options</Text>
+                <ParrotsStdText style={styles.cardTitle}>Pricing & Options</ParrotsStdText>
               </View>
               <View style={styles.formContainer}>
                 {/* /// MIN PRICE /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Min Price:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Min Price:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -712,7 +713,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 {/* /// MAX PRICE /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Max Price:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Max Price:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -732,7 +733,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 {/* /// vehicle /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Currency:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Currency:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <DropdownComponentCurrency setCurrency={setCurrency} />
@@ -745,7 +746,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 <View style={styles.auctionFixedPrice}>
                   <View style={styles.mainCheckboxContainer}>
                     <View style={styles.checkboxContainer}>
-                      <Text style={styles.checkboxText}>Auction </Text>
+                      <ParrotsStdText style={styles.checkboxText}>Auction </ParrotsStdText>
                       <View>
                         <Checkbox
                           value={isAuction}
@@ -762,7 +763,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.checkboxContainer}>
-                      <Text style={styles.checkboxText}>FixedPrice </Text>
+                      <ParrotsStdText style={styles.checkboxText}>FixedPrice </ParrotsStdText>
                       <View>
                         <Checkbox
                           value={isFixedPrice}
@@ -779,7 +780,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                     </View>
 
                     <View style={styles.checkboxContainer}>
-                      <Text style={styles.checkboxText}>Public Voyage </Text>
+                      <ParrotsStdText style={styles.checkboxText}>Public Voyage </ParrotsStdText>
                       <View>
                         <Checkbox
                           value={isPublicOnMap}
@@ -827,7 +828,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                   {isCreatingVoyage ? (
                     <ActivityIndicator size="small" color="#ffffff" />
                   ) : (
-                    <Text style={styles.loginText}>Create Voyage</Text>
+                    <ParrotsStdText style={styles.loginText}>Create Voyage</ParrotsStdText>
                   )}
                 </TouchableOpacity>
               )}
@@ -840,7 +841,7 @@ const CreateVoyageScreen = ({ navigation }) => {
           <ScrollView style={styles.scrollview}>
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>Add Voyage Images</Text>
+                <ParrotsStdText style={styles.cardTitle}>Add Voyage Images</ParrotsStdText>
               </View>
 
               <View style={voyageImagesStyles.voyageImagesContainer2}>
@@ -911,13 +912,13 @@ const CreateVoyageScreen = ({ navigation }) => {
                             />
 
                             {item.addedVoyageImageId && (
-                              <Text style={styles.deleteAddedImage}>
+                              <ParrotsStdText style={styles.deleteAddedImage}>
                                 <MaterialIcons
                                   name="cancel"
                                   size={24}
                                   color="darkred"
                                 />
-                              </Text>
+                              </ParrotsStdText>
                             )}
                           </TouchableOpacity>
                         </View>
@@ -947,7 +948,7 @@ const CreateVoyageScreen = ({ navigation }) => {
         )}
         {toastVisible && (
           <View style={styles.toast}>
-            <Text style={styles.toastText}>{toastMessage}</Text>
+            <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
           </View>
         )}
       </View>

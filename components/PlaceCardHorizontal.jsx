@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { View,  Image, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Shadow } from "react-native-shadow-2";
 import { parrotBlue, parrotCream } from "../assets/color";
@@ -34,18 +35,18 @@ export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardI
             <Image style={styles.cardImage} source={{ uri: cardImage }} resizeMode="cover" />
             <View style={styles.containerContainer}>
               <View style={styles.textContainer}>
-                <Text style={styles.header} numberOfLines={2}>{cardHeader}</Text>
+                <ParrotsStdText style={styles.header} numberOfLines={2}>{cardHeader}</ParrotsStdText>
                 {cardDescription ? (
-                  <Text style={styles.cardDescription} numberOfLines={6} ellipsizeMode="tail">
+                  <ParrotsStdText style={styles.cardDescription} numberOfLines={6} ellipsizeMode="tail">
                     {cardDescription}
-                  </Text>
+                  </ParrotsStdText>
                 ) : null}
               </View>
             </View>
             <View style={styles.bottomRow}>
               <View style={styles.visitButton} />
               <TouchableOpacity onPress={() => focusMap && focusMap(latitude, longitude)} style={styles.mapButton}>
-                <Text style={styles.seeOnMap}>View on map</Text>
+                <ParrotsStdText style={styles.seeOnMap}>View on map</ParrotsStdText>
               </TouchableOpacity>
             </View>
           </View>

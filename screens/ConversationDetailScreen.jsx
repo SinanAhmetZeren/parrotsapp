@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -185,7 +186,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
           })}
         >
           <Image source={{ uri: profileImg }} style={styles.profileImage} />
-          <Text style={styles.nameStyle} numberOfLines={1}>{name} {">"}</Text>
+          <ParrotsStdText style={styles.nameStyle} numberOfLines={1}>{name} {">"}</ParrotsStdText>
         </TouchableOpacity>
         {/* // HEADER // */}
 
@@ -209,13 +210,13 @@ export const ConversationDetailScreen = ({ navigation }) => {
                 <View key={index}>
                   {showDateSeparator && (
                     <View style={styles.dateSeparator}>
-                      <Text style={styles.dateSeparatorText}>{date}</Text>
+                      <ParrotsStdText style={styles.dateSeparatorText}>{date}</ParrotsStdText>
                     </View>
                   )}
                   {isMe ? (
                     <View style={styles.msgRight}>
-                      <Text style={styles.msgText}>{msg.text}</Text>
-                      <Text style={styles.timeDisplay}>{time}</Text>
+                      <ParrotsStdText style={styles.msgText}>{msg.text}</ParrotsStdText>
+                      <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
                     </View>
                   ) : (
                     <View style={styles.msgRowLeft}>
@@ -230,10 +231,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
                         <View style={styles.msgAvatarPlaceholder} />
                       )}
                       <View style={[styles.msgColumn, isFirstInGroup && { marginTop: vh(1) }]}>
-                        {isFirstInGroup && <Text style={styles.msgSender}>{msg.senderUsername}</Text>}
+                        {isFirstInGroup && <ParrotsStdText style={styles.msgSender}>{msg.senderUsername}</ParrotsStdText>}
                         <View style={styles.msgLeft}>
-                          <Text selectable style={styles.msgText}>{msg.text}</Text>
-                          <Text style={styles.timeDisplay}>{time}</Text>
+                          <ParrotsStdText selectable style={styles.msgText}>{msg.text}</ParrotsStdText>
+                          <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
                         </View>
                       </View>
                     </View>
@@ -269,7 +270,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
       {toastVisible && (
         <View style={styles.toast}>
-          <Text style={styles.toastText}>{toastMessage}</Text>
+          <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
         </View>
       )}
     </View>

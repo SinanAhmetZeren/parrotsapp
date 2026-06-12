@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-constant-condition */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -379,11 +380,11 @@ const CreateVehicleScreen = () => {
               source={require("../assets/parrotslogo.png")}
               style={styles.logoImage}
             />
-            <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-            <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
-            {/* <Text style={styles.currentBidsTitle3}>
+            <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+            <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
+            {/* <ParrotsStdText style={styles.currentBidsTitle3}>
               Swipe Down to Retry
-            </Text> */}
+            </ParrotsStdText> */}
           </View>
         </View>
       )}
@@ -395,7 +396,7 @@ const CreateVehicleScreen = () => {
             {/* Card 1: Profile Image */}
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>Vehicle Profile Image</Text>
+                <ParrotsStdText style={styles.cardTitle}>Vehicle Profile Image</ParrotsStdText>
               </View>
               <View style={styles.profileContainer}>
                 {isCreatingVehicle ? (
@@ -423,13 +424,13 @@ const CreateVehicleScreen = () => {
             {/* Card 2: Vehicle Details */}
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
-                <Text style={styles.cardTitle}>Vehicle Details</Text>
+                <ParrotsStdText style={styles.cardTitle}>Vehicle Details</ParrotsStdText>
               </View>
               <View style={styles.formContainer}>
                 {/* /// name /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Name:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Name:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -445,7 +446,7 @@ const CreateVehicleScreen = () => {
                 {/* /// type /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Type:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Type:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <DropdownComponentType
@@ -458,7 +459,7 @@ const CreateVehicleScreen = () => {
                 {/* /// DESC /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Description:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Description:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -474,7 +475,7 @@ const CreateVehicleScreen = () => {
                 {/* /// VACANCY /// */}
                 <View style={styles.latLngNameRow}>
                   <View style={styles.latLngLabel}>
-                    <Text style={styles.latorLngtxt}>Capacity:</Text>
+                    <ParrotsStdText style={styles.latorLngtxt}>Capacity:</ParrotsStdText>
                   </View>
                   <View style={styles.latorLng}>
                     <TextInput
@@ -515,7 +516,7 @@ const CreateVehicleScreen = () => {
                   {isCreatingVehicle ? (
                     <ActivityIndicator size="small" color="#fff" />
                   ) : (
-                    <Text style={styles.loginText}>Create Vehicle</Text>
+                    <ParrotsStdText style={styles.loginText}>Create Vehicle</ParrotsStdText>
                   )}
                 </TouchableOpacity>
               </View>
@@ -534,7 +535,7 @@ const CreateVehicleScreen = () => {
 
           <View style={styles.overlay}>
             <View style={styles.selectedChoice}>
-              <Text style={styles.selectedText}>Add Vehicle Images</Text>
+              <ParrotsStdText style={styles.selectedText}>Add Vehicle Images</ParrotsStdText>
             </View>
 
             <View style={styles.profileContainer}>
@@ -596,13 +597,13 @@ const CreateVehicleScreen = () => {
                         />
 
                         {item.addedVoyageImageId && (
-                          <Text style={styles.deleteAddedImage}>
+                          <ParrotsStdText style={styles.deleteAddedImage}>
                             <MaterialIcons
                               name="cancel"
                               size={24}
                               color="darkred"
                             />
-                          </Text>
+                          </ParrotsStdText>
                         )}
                       </TouchableOpacity>
                     </View>
@@ -624,7 +625,7 @@ const CreateVehicleScreen = () => {
                   goToProfilePage();
                 }}
               >
-                <Text style={styles.addWaypointText}> Complete </Text>
+                <ParrotsStdText style={styles.addWaypointText}> Complete </ParrotsStdText>
               </TouchableOpacity> */}
 
             <View style={styles.completeContainer}>
@@ -639,12 +640,12 @@ const CreateVehicleScreen = () => {
                 }
                 disabled={data[0].key === "placeholder_1"}
               >
-                {/* <Text style={styles.loginText}>Complete</Text> */}
+                {/* <ParrotsStdText style={styles.loginText}>Complete</ParrotsStdText> */}
 
                 {isCompletingVehicle ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.loginText}>Complete</Text>
+                  <ParrotsStdText style={styles.loginText}>Complete</ParrotsStdText>
                 )}
 
               </TouchableOpacity>

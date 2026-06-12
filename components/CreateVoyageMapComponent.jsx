@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
@@ -73,8 +74,8 @@ const CreateVoyageMapComponent = ({
         <Marker coordinate={coords} pinColor={pinColor}>
           <Callout>
             <View>
-              <Text>{title}</Text>
-              <Text>{description}</Text>
+              <ParrotsStdText>{title}</ParrotsStdText>
+              <ParrotsStdText>{description}</ParrotsStdText>
               {profileImage && (
                 <Image
                   source={{ uri: profileImage }}
@@ -337,7 +338,7 @@ const CreateVoyageMapComponent = ({
     <View>
       <View style={styles.mapCard}>
         <View style={styles.cardTitleRow}>
-          <Text style={styles.cardTitle}>Add Waypoints</Text>
+          <ParrotsStdText style={styles.cardTitle}>Add Waypoints</ParrotsStdText>
         </View>
         <View style={styles.mapAndEmojisContainer}>
           <View style={styles.mapContainer}>
@@ -363,18 +364,18 @@ const CreateVoyageMapComponent = ({
       <Modal transparent animationType="fade" visible={waypointInfoVisible} onRequestClose={() => setWaypointInfoVisible(false)}>
         <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.3)", justifyContent: "center", alignItems: "center" }} activeOpacity={1} onPress={() => setWaypointInfoVisible(false)}>
           <View style={{ backgroundColor: "white", borderRadius: vh(2), borderWidth: 2, borderColor: parrotLightBlue, paddingHorizontal: vw(6), paddingVertical: vh(3), width: vw(80) }}>
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: parrotLightBlue, textAlign: "center", lineHeight: 22 }}>
+            <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: parrotLightBlue, textAlign: "center", lineHeight: 22 }}>
               {"Tap the map to mark your waypoint, then give it a name and a description. If a city label's in the way, just zoom in for a better look."}
-            </Text>
+            </ParrotsStdText>
           </View>
         </TouchableOpacity>
       </Modal>
 
       <View style={styles.newWaypointCard}>
         <View style={[styles.cardTitleRow, { flexDirection: "row", alignItems: "center", gap: vw(2) }]}>
-          <Text style={styles.cardTitle}>Waypoint Details</Text>
+          <ParrotsStdText style={styles.cardTitle}>Waypoint Details</ParrotsStdText>
           <TouchableOpacity onPress={() => setWaypointInfoVisible(true)}>
-            <Text style={{ fontSize: 16, color: parrotLightBlue, fontFamily: "Nunito_800ExtraBold" }}>ⓘ</Text>
+            <ParrotsStdText style={{ fontSize: 16, color: parrotLightBlue, fontFamily: "Nunito_800ExtraBold" }}>ⓘ</ParrotsStdText>
           </TouchableOpacity>
         </View>
         <View style={styles.profileContainer}>
@@ -398,7 +399,7 @@ const CreateVoyageMapComponent = ({
           <View style={styles.latLng}>
             <View style={styles.latLngNameRow}>
               <View style={styles.latLngLabel}>
-                <Text style={styles.latorLngtxt}>Lat:</Text>
+                <ParrotsStdText style={styles.latorLngtxt}>Lat:</ParrotsStdText>
               </View>
               <View style={styles.latorLng}>
                 <Text
@@ -409,13 +410,13 @@ const CreateVoyageMapComponent = ({
                   {latitude
                     ? latitude.toString().substring(0, 20)
                     : "tap on map"}
-                </Text>
+                </ParrotsStdText>
               </View>
             </View>
 
             <View style={styles.latLngNameRow}>
               <View style={styles.latLngLabel}>
-                <Text style={styles.latorLngtxt}>Lng:</Text>
+                <ParrotsStdText style={styles.latorLngtxt}>Lng:</ParrotsStdText>
               </View>
               <View style={styles.latorLng}>
                 <Text
@@ -426,13 +427,13 @@ const CreateVoyageMapComponent = ({
                   {longitude
                     ? longitude.toString().substring(0, 20)
                     : "tap on map"}
-                </Text>
+                </ParrotsStdText>
               </View>
             </View>
 
             <View style={styles.latLngNameRow}>
               <View style={styles.nameLabel}>
-                <Text style={styles.latorLngtxt}>Name:</Text>
+                <ParrotsStdText style={styles.latorLngtxt}>Name:</ParrotsStdText>
               </View>
               <View style={styles.nameInputContainer}>
                 <TextInput
@@ -452,7 +453,7 @@ const CreateVoyageMapComponent = ({
 
         <View style={styles.latLngNameRow2}>
           <View style={styles.latLngLabel2}>
-            <Text style={styles.latorLngtxt2}>Description:</Text>
+            <ParrotsStdText style={styles.latorLngtxt2}>Description:</ParrotsStdText>
           </View>
           <View style={styles.latorLng2}>
             <TextInput
@@ -487,7 +488,7 @@ const CreateVoyageMapComponent = ({
                 : { backgroundColor: parrotBlueSemiTransparent },
             ]}
           >
-            <Text style={{ color: "white", fontFamily: "Nunito_700Bold", opacity: isAddingWaypoint ? 0 : 1 }}>Add Waypoint</Text>
+            <ParrotsStdText style={{ color: "white", fontFamily: "Nunito_700Bold", opacity: isAddingWaypoint ? 0 : 1 }}>Add Waypoint</ParrotsStdText>
             {isAddingWaypoint && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
           </View>
         </TouchableOpacity>
@@ -496,7 +497,7 @@ const CreateVoyageMapComponent = ({
 
       <View style={styles.addedWaypointsCard}>
         <View style={styles.cardTitleRow}>
-          <Text style={styles.cardTitle}>Added Waypoints</Text>
+          <ParrotsStdText style={styles.cardTitle}>Added Waypoints</ParrotsStdText>
         </View>
         <View style={styles.waypointFlatlistInner}>
           <WaypointFlatList addedWayPoints={addedWayPoints} handleDeleteWaypoint={handleDeleteWaypoint} />
@@ -521,7 +522,7 @@ const CreateVoyageMapComponent = ({
               : { backgroundColor: parrotBlueSemiTransparent },
           ]}
         >
-          <Text style={{ color: "white", fontFamily: "Nunito_700Bold", opacity: isConfirming ? 0 : 1 }}>Complete</Text>
+          <ParrotsStdText style={{ color: "white", fontFamily: "Nunito_700Bold", opacity: isConfirming ? 0 : 1 }}>Complete</ParrotsStdText>
           {isConfirming && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
         </View>
       </TouchableOpacity>

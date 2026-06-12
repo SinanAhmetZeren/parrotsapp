@@ -395,9 +395,9 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
                     size={24}
                     color={focused && !modalVisible ? selectedTabColor : unselectedTabColor}
                   />
-                  <Text style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>
+                  <ParrotsStdText style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>
                     Home
-                  </Text>
+                  </ParrotsStdText>
                 </View>
               );
               // const active = focused && !modalVisible;
@@ -417,7 +417,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               //         <MaterialCommunityIcons name={"home-outline"} size={24} color={active ? selectedTabColor : unselectedTabColor} />
               //       </View>
               //     </View>
-              //     <Text style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Home</Text>
+              //     <ParrotsStdText style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Home</ParrotsStdText>
               //   </View>
               // );
             },
@@ -447,7 +447,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               return (
                 <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
                   <MaterialCommunityIcons name={"account-outline"} size={24} color={focused && !modalVisible ? selectedTabColor : unselectedTabColor} />
-                  <Text style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>Profile</Text>
+                  <ParrotsStdText style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>Profile</ParrotsStdText>
                 </View>
               );
               // const active = focused && !modalVisible;
@@ -458,7 +458,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               //         <MaterialCommunityIcons name={"account-outline"} size={24} color={active ? selectedTabColor : unselectedTabColor} />
               //       </View>
               //     </View>
-              //     <Text style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Profile</Text>
+              //     <ParrotsStdText style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Profile</ParrotsStdText>
               //   </View>
               // );
             },
@@ -501,7 +501,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
                       resizeMode="contain"
                     />
                   </View>
-                  {/* <Text style={{ ...baseTextStyle, color: isActive ? selectedTabColor : unselectedTabColor, bottom: vh(-2.3) }}>Voyage</Text> */}
+                  {/* <ParrotsStdText style={{ ...baseTextStyle, color: isActive ? selectedTabColor : unselectedTabColor, bottom: vh(-2.3) }}>Voyage</ParrotsStdText> */}
                 </TouchableOpacity>);
               // return (
               //   <TouchableOpacity onPress={toggleModal}>
@@ -511,7 +511,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               //           <MaterialCommunityIcons name={"rocket-launch-outline"} size={24} color={isActive ? selectedTabColor : unselectedTabColor} />
               //         </View>
               //       </View>
-              //       <Text style={{ ...baseTextStyle, display: "none", color: isActive ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Voyage</Text>
+              //       <ParrotsStdText style={{ ...baseTextStyle, display: "none", color: isActive ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Voyage</ParrotsStdText>
               //     </View>
               //   </TouchableOpacity>)
             }
@@ -526,7 +526,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               return (
                 <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
                   <MaterialCommunityIcons name={"heart-outline"} size={24} color={focused && !modalVisible ? selectedTabColor : unselectedTabColor} />
-                  <Text style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>Favorites</Text>
+                  <ParrotsStdText style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>Favorites</ParrotsStdText>
                 </View>
               );
               // const active = focused && !modalVisible;
@@ -537,7 +537,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               //         <MaterialCommunityIcons name={"heart-outline"} size={24} color={active ? selectedTabColor : unselectedTabColor} />
               //       </View>
               //     </View>
-              //     <Text style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Favorites</Text>
+              //     <ParrotsStdText style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Favorites</ParrotsStdText>
               //   </View>
               // );
             },
@@ -580,7 +580,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               return (
                 <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
                   <MaterialCommunityIcons name={"share-variant-outline"} size={24} color={focused && !modalVisible ? selectedTabColor : unselectedTabColor} />
-                  <Text style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>Connect</Text>
+                  <ParrotsStdText style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>Connect</ParrotsStdText>
                 </View>
               );
               // const active = focused && !modalVisible;
@@ -591,7 +591,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               //         <MaterialCommunityIcons name={"share-variant-outline"} size={24} color={active ? selectedTabColor : unselectedTabColor} />
               //       </View>
               //     </View>
-              //     <Text style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Connect</Text>
+              //     <ParrotsStdText style={{ ...baseTextStyle, display: "none", color: active ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Connect</ParrotsStdText>
               //   </View>
               // );
             },
@@ -623,7 +623,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
 
       {showConnectionPill && (
         <View style={{ position: "absolute", bottom: 80, alignSelf: "center", backgroundColor: "rgba(30, 111, 217, 0.9)", paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, zIndex: 999 }}>
-          <Text style={{ color: "white", fontSize: 13, fontWeight: "600" }}>No connection — retrying...</Text>
+          <ParrotsStdText style={{ color: "white", fontSize: 13, fontWeight: "600" }}>No connection — retrying...</ParrotsStdText>
         </View>
       )}
     </>

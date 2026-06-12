@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Animated } from "react-native";
+import { View,  TouchableOpacity, Modal, StyleSheet, Animated } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { parrotBlue, parrotCream } from "../assets/color";
@@ -69,7 +70,7 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
             >
               <View style={styles.modalView}>
                 <TouchableOpacity style={styles.selection} onPress={handleAddVehicle}>
-                  <Text style={styles.choiceText}>New Vehicle</Text>
+                  <ParrotsStdText style={styles.choiceText}>New Vehicle</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </Shadow>
@@ -85,7 +86,7 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
             >
               <View style={styles.modalView2}>
                 <TouchableOpacity style={styles.selection2} onPress={handleAddVoyage}>
-                  <Text style={styles.choiceText}>New Voyage</Text>
+                  <ParrotsStdText style={styles.choiceText}>New Voyage</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </Shadow>

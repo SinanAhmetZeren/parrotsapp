@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
@@ -48,14 +49,14 @@ const FilterCountModal = ({
       <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={onClose}>
         <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Vacancy</Text>
-          <Text style={styles.subtitle}>Spots needed for your group</Text>
+          <ParrotsStdText style={styles.title}>Vacancy</ParrotsStdText>
+          <ParrotsStdText style={styles.subtitle}>Spots needed for your group</ParrotsStdText>
 
           <View style={styles.inputMainContainer}>
-            <Text style={styles.inputLabel}>Spots</Text>
+            <ParrotsStdText style={styles.inputLabel}>Spots</ParrotsStdText>
             <View style={styles.counterContainer}>
               <TouchableOpacity onPress={handleDecrement} style={styles.decrementButtonContainer}>
-                <Text style={styles.buttonCount}>-</Text>
+                <ParrotsStdText style={styles.buttonCount}>-</ParrotsStdText>
               </TouchableOpacity>
               <TextInput
                 style={styles.bidInput}
@@ -64,17 +65,17 @@ const FilterCountModal = ({
                 onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setCount(n === "" ? 1 : Math.max(1, parseInt(n, 10))); }}
               />
               <TouchableOpacity onPress={handleIncrement} style={styles.incrementButtonContainer}>
-                <Text style={styles.buttonCount}>+</Text>
+                <ParrotsStdText style={styles.buttonCount}>+</ParrotsStdText>
               </TouchableOpacity>
             </View>
           </View>
 
           <View style={styles.buttonsContainer}>
             <TouchableOpacity onPress={handleClear} style={styles.buttonCancelContainer}>
-              <Text style={styles.buttonClear}>Clear</Text>
+              <ParrotsStdText style={styles.buttonClear}>Clear</ParrotsStdText>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleSave} style={styles.buttonSendBidContainer}>
-              <Text style={styles.buttonSave}>Ok</Text>
+              <ParrotsStdText style={styles.buttonSave}>Ok</ParrotsStdText>
             </TouchableOpacity>
           </View>
         </View>

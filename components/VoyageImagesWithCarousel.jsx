@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
@@ -104,7 +105,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
         </View>
 
         <View style={carouselStyles.counterContainer}>
-          <Text style={carouselStyles.counterText}>{modalIndex + 1} / {voyageImages.length}</Text>
+          <ParrotsStdText style={carouselStyles.counterText}>{modalIndex + 1} / {voyageImages.length}</ParrotsStdText>
         </View>
 
         <TouchableOpacity
@@ -112,7 +113,7 @@ const VoyageImagesWithCarousel = ({ voyageImages }) => {
           onPress={handleCloseModal}
         >
           <View>
-            <Text style={carouselStyles.buttonClose}>Close</Text>
+            <ParrotsStdText style={carouselStyles.buttonClose}>Close</ParrotsStdText>
           </View>
         </TouchableOpacity>
       </Modal>

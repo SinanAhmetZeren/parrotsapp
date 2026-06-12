@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
@@ -117,8 +118,8 @@ export default function FavoritesScreen({ navigation }) {
         >
           <View style={styles.currentBidsAndSeeAll2}>
             <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
-            <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-            <Text style={[styles.currentBidsTitle2, { paddingTop: vh(1) }]}>Swipe down to retry</Text>
+            <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+            <ParrotsStdText style={[styles.currentBidsTitle2, { paddingTop: vh(1) }]}>Swipe down to retry</ParrotsStdText>
           </View>
         </ScrollView>
       );
@@ -141,7 +142,7 @@ export default function FavoritesScreen({ navigation }) {
                     <>
                       <View style={styles.mainBidsContainer}>
                         <View style={styles.currentBidsAndSeeAll}>
-                          <Text style={styles.currentBidsTitle}>Favorite Vehicles</Text>
+                          <ParrotsStdText style={styles.currentBidsTitle}>Favorite Vehicles</ParrotsStdText>
                         </View>
                       </View>
                       <View style={styles.voyageListContainer}>
@@ -159,7 +160,7 @@ export default function FavoritesScreen({ navigation }) {
                     <>
                       <View style={styles.mainBidsContainer}>
                         <View style={styles.currentBidsAndSeeAll}>
-                          <Text style={styles.currentBidsTitle}>Favorite Voyages</Text>
+                          <ParrotsStdText style={styles.currentBidsTitle}>Favorite Voyages</ParrotsStdText>
                         </View>
                       </View>
                       <View style={styles.voyageListContainer}>
@@ -180,9 +181,9 @@ export default function FavoritesScreen({ navigation }) {
                           source={require("../assets/parrotslogo.png")}
                           style={styles.logoImageNoFavorites}
                         />
-                        <Text style={styles.NoFavoritesText}>
+                        <ParrotsStdText style={styles.NoFavoritesText}>
                           No favorites yet
-                        </Text>
+                        </ParrotsStdText>
                       </View>
                     </View>
                   )}

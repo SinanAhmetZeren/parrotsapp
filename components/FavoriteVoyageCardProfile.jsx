@@ -1,8 +1,9 @@
+import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import {
@@ -93,7 +94,7 @@ export default function FavoriteVoyageCardProfile({
         </View>
 
         <View style={styles.textContainer}>
-          <Text style={styles.header}>{cardHeader}</Text>
+          <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
           {isPublicOnMap &&
             <View style={{ position: "absolute", right: 5, top: 5, backgroundColor: "rgba(0, 119, 234, 0.06)", borderRadius: vw(5), padding: 3 }}>
               <MaterialIcons name="public" size={20} color={parrotBlue} />
@@ -101,23 +102,23 @@ export default function FavoriteVoyageCardProfile({
           }
           <View style={styles.pillRow}>
             <View style={styles.pill}>
-              <Text style={styles.pillText}>
+              <ParrotsStdText style={styles.pillText}>
                 {vehiclename?.length > 16
                   ? vehiclename.substring(0, 16) + "..."
                   : vehiclename}
-              </Text>
+              </ParrotsStdText>
               {icon}
             </View>
             <View style={styles.pill}>
-              <Text style={styles.pillText}>{vacancy}</Text>
+              <ParrotsStdText style={styles.pillText}>{vacancy}</ParrotsStdText>
               <Feather name="users" size={11} color={parrotBlue} />
             </View>
             <View style={styles.pill}>
-              <Text style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</Text>
+              <ParrotsStdText style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</ParrotsStdText>
               <AntDesign name="calendar" size={11} color={parrotBlue} />
             </View>
           </View>
-          <Text style={styles.cardDescription}
+          <ParrotsStdText style={styles.cardDescription}
             numberOfLines={3}
             ellipsizeMode="tail"
           >
@@ -127,7 +128,7 @@ export default function FavoriteVoyageCardProfile({
                 .replace(/\s+/g, ' ')
                 .trim()
             )}
-          </Text>
+          </ParrotsStdText>
         </View>
       </View>
     </TouchableOpacity>

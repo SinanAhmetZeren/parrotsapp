@@ -1,3 +1,4 @@
+import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -242,11 +243,11 @@ const EditProfileScreen = ({ navigation }) => {
             source={require("../assets/parrotslogo.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.currentBidsTitle2}>Something went wrong</Text>
-          <Text style={styles.currentBidsTitle2}>Swipe down to retry</Text>
-          {/* <Text style={styles.currentBidsTitle3}>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
+          <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
+          {/* <ParrotsStdText style={styles.currentBidsTitle3}>
               Swipe Down to Retry
-            </Text> */}
+            </ParrotsStdText> */}
         </View>
       </View>
     )
@@ -316,7 +317,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Username</Text>
+              <ParrotsStdText style={styles.inputDescription}>Username</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -336,7 +337,7 @@ const EditProfileScreen = ({ navigation }) => {
                   color="black"
                 />
                 <View style={styles.emailInfoWrapper}  >
-                  <Text style={styles.inputDescription}>Email</Text>
+                  <ParrotsStdText style={styles.inputDescription}>Email</ParrotsStdText>
                   <TouchableOpacity
                     style={styles.infoIcon}
                     onPress={() => {
@@ -375,7 +376,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Hide Email</Text>
+              <ParrotsStdText style={styles.inputDescription}>Hide Email</ParrotsStdText>
               <View style={styles.checkboxContainer}>
                 <Checkbox
                   value={emailHidden}
@@ -393,7 +394,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Phone</Text>
+              <ParrotsStdText style={styles.inputDescription}>Phone</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -411,7 +412,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Facebook</Text>
+              <ParrotsStdText style={styles.inputDescription}>Facebook</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -429,7 +430,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Instagram</Text>
+              <ParrotsStdText style={styles.inputDescription}>Instagram</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -447,7 +448,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Youtube</Text>
+              <ParrotsStdText style={styles.inputDescription}>Youtube</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -465,7 +466,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Twitter</Text>
+              <ParrotsStdText style={styles.inputDescription}>Twitter</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -483,7 +484,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Tiktok</Text>
+              <ParrotsStdText style={styles.inputDescription}>Tiktok</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -501,7 +502,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Linkedin</Text>
+              <ParrotsStdText style={styles.inputDescription}>Linkedin</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -519,7 +520,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Title</Text>
+              <ParrotsStdText style={styles.inputDescription}>Title</ParrotsStdText>
 
               <TextInput
                 style={[styles.textInput, { flex: 1 }]}
@@ -541,7 +542,7 @@ const EditProfileScreen = ({ navigation }) => {
                 size={24}
                 color="black"
               />
-              <Text style={styles.inputDescription}>Bio</Text>
+              <ParrotsStdText style={styles.inputDescription}>Bio</ParrotsStdText>
               <TextInput
                 style={styles.textInputBio}
                 placeholder="Enter your bio (max 500 characters)"
@@ -569,7 +570,7 @@ const EditProfileScreen = ({ navigation }) => {
                   navigation.navigate("ProfileScreen");
                 }}
               >
-                <Text style={styles.choiceText}>Save Changes</Text>
+                <ParrotsStdText style={styles.choiceText}>Save Changes</ParrotsStdText>
               </TouchableOpacity>
             </View>
 
