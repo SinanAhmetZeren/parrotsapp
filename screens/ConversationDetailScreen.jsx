@@ -47,6 +47,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [toastMessage, setToastMsg] = useState("");
   const [message, setMessage] = useState("");
   const [messagesToDisplay, setMessagesToDisplay] = useState([]);
+  const [isSending, setIsSending] = useState(false);
   const scrollViewRef = useRef();
   const sendTimestampsRef = useRef([]);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -140,7 +141,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   );
 
   const handleSend = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() || isSending) return;
     const now = Date.now();
     sendTimestampsRef.current = sendTimestampsRef.current.filter((t) => now - t < 5000);
     if (sendTimestampsRef.current.length >= 5) return;
@@ -158,14 +159,17 @@ export const ConversationDetailScreen = ({ navigation }) => {
     const saved = message;
     setMessage("");
     Keyboard.dismiss();
+    setIsSending(true);
 
     try {
-      if (!isHubReady()) { setMessage(saved); return; }
+      if (!isHubReady()) { setMessage(saved); setIsSending(false); return; }
       await invokeHub("SendMessage", currentUserId, conversationUserId, saved);
     } catch {
       setMessagesToDisplay((prev) => prev.filter((m) => m !== optimistic));
       setMessage(saved);
       showToast("Message not sent - Please check your connection.");
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -254,9 +258,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
             maxLength={500}
           />
           <TouchableOpacity
-            disabled={!message.trim()}
+            disabled={!message.trim() || isSending}
             onPress={handleSend}
-            style={message.trim() ? styles.sendBtn : styles.sendBtnDisabled}
+            style={message.trim() && !isSending ? styles.sendBtn : styles.sendBtnDisabled}
           >
             <Feather name="send" size={20} color="white" />
           </TouchableOpacity>
