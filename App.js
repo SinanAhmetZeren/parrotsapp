@@ -681,7 +681,13 @@ function App() {
 
               dispatch(setHubConnected(true));
               reconnectingHandler = () => dispatch(setHubConnected(false));
-              reconnectedHandler = () => dispatch(setHubConnected(true));
+              reconnectedHandler = async () => {
+                dispatch(setHubConnected(true));
+                try {
+                  const hasUnread = await invokeHub("CheckUnreadMessages", storedUserId);
+                  if (hasUnread) dispatch(setUnreadMessages(true));
+                } catch { }
+              };
               register_OnReconnecting(reconnectingHandler);
               register_OnReconnected(reconnectedHandler);
 
@@ -725,10 +731,16 @@ function App() {
     }, [isLoggedIn, userId]);
 
     useEffect(() => {
-      const subscription = AppState.addEventListener("change", (nextState) => {
+      const subscription = AppState.addEventListener("change", async (nextState) => {
         const isForeground = nextState === "active";
         invokeHub("UpdatePresence", isForeground).catch(() => {});
-        if (isForeground) Notifications.setBadgeCountAsync(0).catch(() => {});
+        if (isForeground) {
+          Notifications.setBadgeCountAsync(0).catch(() => {});
+          try {
+            const hasUnread = await invokeHub("CheckUnreadMessages", userId);
+            if (hasUnread) dispatch(setUnreadMessages(true));
+          } catch { }
+        }
       });
       return () => subscription.remove();
     }, []);
