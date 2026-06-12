@@ -199,7 +199,7 @@ export default function VehicleCardProfile({
                   <Feather name="users" size={11} color={parrotBlue} />
                 </View>
               </View>
-              <Text
+              <ParrotsStdText
                 style={styles.cardDescription}
                 numberOfLines={4}
                 ellipsizeMode="tail"

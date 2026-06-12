@@ -191,7 +191,7 @@ export const RenderBidsComponent = ({
                             })
                           }
                         >
-                          <Text
+                          <ParrotsStdText
                             style={{
                               color: parrotTextDarkBlue,
                               fontFamily: "Nunito_700Bold",

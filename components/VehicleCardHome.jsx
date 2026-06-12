@@ -22,7 +22,7 @@ export default function VehicleCardHome({
         <View style={styles.textContainer}>
           <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
           <ParrotsStdText style={styles.subHeader}>{cardSubHeader}</ParrotsStdText>
-          <Text
+          <ParrotsStdText
             style={styles.cardDescription}
             numberOfLines={5}
             ellipsizeMode="tail"

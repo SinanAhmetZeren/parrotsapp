@@ -144,7 +144,7 @@ export default function VoyageCardProfile({
                   <AntDesign name="calendar" size={11} color={parrotBlue} />
                 </View>
               </View>
-              <Text
+              <ParrotsStdText
                 style={styles.cardDescription}
                 numberOfLines={3}
                 ellipsizeMode="tail"

@@ -468,7 +468,7 @@ export default function ProfileScreenPublic({ navigation }) {
                         size={18}
                         color={parrotBlue}
                       />
-                      <Text
+                      <ParrotsStdText
                         style={{
                           fontFamily: "Nunito_700Bold",
                           lineHeight: 22,

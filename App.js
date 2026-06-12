@@ -86,6 +86,7 @@ import {
 } from "./signalr/signalRHub";
 
 import { registerPushTokenAsync } from "./utils/registerPushToken";
+import { ParrotsStdText } from "./components/ParrotsStdText";
 
 // Force font scaling to stay at 100% across the whole app
 if (Text.defaultProps == null) Text.defaultProps = {};

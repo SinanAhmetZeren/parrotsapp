@@ -21,7 +21,7 @@ export const ConnectSelectionComponent = ({
           style={styles.recentChatsTab}
         >
           <View style={styles.tabLabelRow}>
-            <Text
+            <ParrotsStdText
               style={
                 selectedFunction === 1
                   ? styles.selectedTitle
@@ -39,7 +39,7 @@ export const ConnectSelectionComponent = ({
           style={styles.groupsTab}
         >
           <View style={styles.tabLabelRow}>
-            <Text
+            <ParrotsStdText
               style={
                 selectedFunction === 4
                   ? styles.selectedTitle
@@ -57,7 +57,7 @@ export const ConnectSelectionComponent = ({
           style={styles.findTab}
         >
           <View style={styles.tabLabelRow}>
-            <Text
+            <ParrotsStdText
               style={
                 selectedFunction === 2
                   ? styles.selectedTitle
@@ -75,7 +75,7 @@ export const ConnectSelectionComponent = ({
           style={styles.bookmarksTab}
         >
           <View style={styles.tabLabelRow}>
-            <Text
+            <ParrotsStdText
               style={
                 selectedFunction === 3
                   ? styles.selectedTitle

@@ -402,7 +402,7 @@ const CreateVoyageMapComponent = ({
                 <ParrotsStdText style={styles.latorLngtxt}>Lat:</ParrotsStdText>
               </View>
               <View style={styles.latorLng}>
-                <Text
+                <ParrotsStdText
                   style={
                     latitude ? styles.latlngtextInput : styles.latlngtextInput2
                   }
@@ -419,7 +419,7 @@ const CreateVoyageMapComponent = ({
                 <ParrotsStdText style={styles.latorLngtxt}>Lng:</ParrotsStdText>
               </View>
               <View style={styles.latorLng}>
-                <Text
+                <ParrotsStdText
                   style={
                     latitude ? styles.latlngtextInput : styles.latlngtextInput2
                   }

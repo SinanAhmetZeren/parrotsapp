@@ -19,7 +19,7 @@ const StepBar = ({ currentStep }) => {
           styles.second,
         ]}
       >
-        <Text
+        <ParrotsStdText
           style={[isActive ? styles.activeStepText : styles.inactiveStepText]}
         >
           {displayText}

@@ -127,7 +127,7 @@ export default function VoyageCardProfileHorizontalModal({
                 <AntDesign name="calendar" size={12} color={parrotBlue} />
               </ParrotsStdText>
             </View>
-            <Text
+            <ParrotsStdText
               style={styles.cardDescription}
               numberOfLines={5}
               ellipsizeMode="tail"

@@ -746,7 +746,7 @@ export default function HomeScreen({ navigation }) {
                   }}
                 >
                   <View>
-                    <Text
+                    <ParrotsStdText
                       style={styles.applyFilter}
                     >print dates </ParrotsStdText>
                   </View>

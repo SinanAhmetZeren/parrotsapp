@@ -452,7 +452,7 @@ export default function ProfileScreen({ navigation }) {
                         size={18}
                         color={parrotBlue}
                       />
-                      <Text
+                      <ParrotsStdText
                         style={{
                           fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
@@ -521,7 +521,7 @@ export default function ProfileScreen({ navigation }) {
                         size={18}
                         color={parrotBlue}
                       />
-                      <Text
+                      <ParrotsStdText
                         style={{
                           fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
@@ -552,7 +552,7 @@ export default function ProfileScreen({ navigation }) {
                         size={18}
                         color={parrotBlue}
                       />
-                      <Text
+                      <ParrotsStdText
                         style={{
                           fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
@@ -582,7 +582,7 @@ export default function ProfileScreen({ navigation }) {
                         size={18}
                         color={parrotBlue}
                       />
-                      <Text
+                      <ParrotsStdText
                         style={{
                           fontFamily: "Nunito_700Bold",
                           lineHeight: 22,
