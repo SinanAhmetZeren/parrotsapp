@@ -160,12 +160,12 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!groupId) return;
-    const handler = (last5) => {
-      if (!Array.isArray(last5)) return;
+    const handler = (last3) => {
+      if (!Array.isArray(last3)) return;
       setMessagesToDisplay((prev) => {
-        const existingIds = new Set(last5.map(m => m.id));
-        const kept = (prev ?? []).filter(m => !m.id || !existingIds.has(m.id));
-        return [...kept, ...last5];
+        const existingIds = new Set(last3.map(m => m.id));
+        const kept = (prev ?? []).filter(m => !m.tempId && m.id && !existingIds.has(m.id));
+        return [...kept, ...last3];
       });
     };
     register_ReceiveGroupMessage(handler);
@@ -208,6 +208,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
 
     const optimistic = {
+      tempId: Date.now(),
       senderId: currentUserId,
       senderUsername: "You",
       text: message,
