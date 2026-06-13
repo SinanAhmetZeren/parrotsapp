@@ -131,7 +131,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       const handleReconnecting = () => {};
-      const handleReconnected = () => { setToastVisible(false); showToast("Reconnected"); };
+      const handleReconnected = () => { setToastVisible(false); };
       register_OnReconnecting(handleReconnecting);
       register_OnReconnected(handleReconnected);
       return () => {

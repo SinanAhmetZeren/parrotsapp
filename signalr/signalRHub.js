@@ -58,7 +58,7 @@ export const initHubConnection = async (userId, apiUrl) => {
     if (!hubConnection) {
         hubConnection = new HubConnectionBuilder()
             .withUrl(`${apiUrl}/chathub/81?userId=${userId}`)
-            .withAutomaticReconnect()
+            .withAutomaticReconnect([0, 2, 5, 5, 5])
             .configureLogging(LogLevel.None)
             .build();
 

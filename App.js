@@ -367,7 +367,9 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
   const isHubConnected = useSelector((state) => state.users.isHubConnected);
   const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
   const [showConnectionPill, setShowConnectionPill] = useState(false);
+  const [pillText, setPillText] = useState("Reconnecting...");
   const [foregroundedAt, setForegroundedAt] = useState(Date.now());
+  const prevHubConnected = useRef(null);
 
   useEffect(() => {
     const sub = AppState.addEventListener("change", (nextState) => {
@@ -377,8 +379,24 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
   }, []);
 
   useEffect(() => {
+    const wasDisconnected = prevHubConnected.current === false;
+    prevHubConnected.current = isHubConnected;
+
+    if (!isLoggedIn) { setShowConnectionPill(false); return; }
+
+    if (isHubConnected) {
+      if (wasDisconnected && showConnectionPill) {
+        setPillText("Reconnected");
+        setTimeout(() => setShowConnectionPill(false), 2000);
+      } else {
+        setShowConnectionPill(false);
+      }
+      return;
+    }
+
     setShowConnectionPill(false);
-    if (!isLoggedIn || isHubConnected || AppState.currentState !== "active") return;
+    setPillText("Reconnecting...");
+    if (AppState.currentState !== "active") return;
     const timer = setTimeout(() => setShowConnectionPill(true), 10000);
     return () => clearTimeout(timer);
   }, [isLoggedIn, isHubConnected, foregroundedAt]);
@@ -629,7 +647,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
 
       {showConnectionPill && (
         <View style={{ position: "absolute", bottom: 80, alignSelf: "center", backgroundColor: "rgba(30, 111, 217, 0.9)", paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, zIndex: 999 }}>
-          <ParrotsStdText style={{ color: "white", fontSize: 13, fontWeight: "600" }}>Reconnecting...</ParrotsStdText>
+          <ParrotsStdText style={{ color: "white", fontSize: 13, fontWeight: "600" }}>{pillText}</ParrotsStdText>
         </View>
       )}
     </>
