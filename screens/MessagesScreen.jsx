@@ -16,6 +16,7 @@ import {
   ScrollView,
   ActivityIndicator,
   BackHandler,
+  AppState,
   Platform,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
@@ -55,6 +56,7 @@ export default function MessagesScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const foregroundedAtRef = useRef(Date.now());
   const dispatch = useDispatch();
   const {
     data: messagesData,
@@ -137,10 +139,18 @@ export default function MessagesScreen({ navigation }) {
   );
 
 
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") foregroundedAtRef.current = Date.now();
+    });
+    return () => sub.remove();
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       const handleReconnecting = () => {
-        showToast("Connection lost - Reconnecting...");
+        const inGrace = AppState.currentState === "active" && Date.now() - foregroundedAtRef.current < 10000;
+        if (!inGrace) showToast("Reconnecting...");
       };
       const handleReconnected = () => {
         setToastVisible(false);

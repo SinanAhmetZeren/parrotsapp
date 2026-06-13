@@ -4,7 +4,7 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from "@expo-google-fonts/nunito";
 import * as SplashScreen from "expo-splash-screen";
 import * as Notifications from "expo-notifications";
@@ -60,7 +60,6 @@ import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider } from "react-redux"; // Import the Provider
 import { store } from "./store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import {
   useGetUserByIdQuery,
   useGetFavoriteVoyageIdsByUserIdQuery,
@@ -368,15 +367,21 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
   const isHubConnected = useSelector((state) => state.users.isHubConnected);
   const isLoggedIn = useSelector((state) => state.users.isLoggedIn);
   const [showConnectionPill, setShowConnectionPill] = useState(false);
+  const [foregroundedAt, setForegroundedAt] = useState(Date.now());
 
   useEffect(() => {
-    if (!isLoggedIn || isHubConnected) {
-      setShowConnectionPill(false);
-      return;
-    }
-    const timer = setTimeout(() => setShowConnectionPill(true), 20000);
+    const sub = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") setForegroundedAt(Date.now());
+    });
+    return () => sub.remove();
+  }, []);
+
+  useEffect(() => {
+    setShowConnectionPill(false);
+    if (!isLoggedIn || isHubConnected || AppState.currentState !== "active") return;
+    const timer = setTimeout(() => setShowConnectionPill(true), 10000);
     return () => clearTimeout(timer);
-  }, [isLoggedIn, isHubConnected]);
+  }, [isLoggedIn, isHubConnected, foregroundedAt]);
 
   return (
     <>

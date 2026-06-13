@@ -12,6 +12,7 @@ import {
   Image,
   StyleSheet,
   Keyboard,
+  AppState,
   Platform,
 } from "react-native";
 import { useGetMessagesBetweenUsersQuery } from "../slices/MessageSlice";
@@ -51,6 +52,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [isSending, setIsSending] = useState(false);
   const scrollViewRef = useRef();
   const sendTimestampsRef = useRef([]);
+  const foregroundedAtRef = useRef(Date.now());
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const tabBarHeight = Platform.OS === "ios"
@@ -127,9 +129,19 @@ export const ConversationDetailScreen = ({ navigation }) => {
     }, [refetch])
   );
 
+  useEffect(() => {
+    const sub = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") foregroundedAtRef.current = Date.now();
+    });
+    return () => sub.remove();
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
-      const handleReconnecting = () => showToast("Connection lost - Reconnecting...");
+      const handleReconnecting = () => {
+        const inGrace = AppState.currentState === "active" && Date.now() - foregroundedAtRef.current < 10000;
+        if (!inGrace) showToast("Reconnecting...");
+      };
       const handleReconnected = () => { setToastVisible(false); showToast("Reconnected"); };
       register_OnReconnecting(handleReconnecting);
       register_OnReconnected(handleReconnected);
