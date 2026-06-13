@@ -1,7 +1,7 @@
 import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Constants from 'expo-constants';
 const DeviceInfo = Constants.appOwnership === "expo" ? null : require('react-native-device-info').default;
@@ -15,6 +15,7 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
+  Keyboard,
   Platform,
 } from "react-native";
 import { StyleSheet } from "react-native";
@@ -48,6 +49,14 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
   const userId = useSelector((state) => state.users.userId);
   const currentUserName = useSelector((state) => state.users.userName);
   const currentUserImage = useSelector((state) => state.users.userProfileImageThumbnail || state.users.userProfileImage);
+
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardDidShow", (e) => setKeyboardHeight(e.endCoordinates.height));
+    const hideSub = Keyboard.addListener("keyboardDidHide", () => setKeyboardHeight(0));
+    return () => { showSub.remove(); hideSub.remove(); };
+  }, []);
 
   const [newGroupName, setNewGroupName] = useState("");
   const [groupMemberSearch, setGroupMemberSearch] = useState("");
@@ -90,7 +99,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
 
   return (
     <View style={{
-      height: containerHeight,
+      height: keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight,
       flexDirection: "column",
       backgroundColor: "white"
     }}>
