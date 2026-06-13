@@ -12,6 +12,7 @@ let reconnectingHandlers = [];
 let reconnectedHandlers = [];
 let connectionUserId = null;
 let currentApiUrl = null;
+let reconnectAttempts = 0;
 
 // Helper to check if we can actually attempt a start
 const canStart = (state) => state === HubConnectionState.Disconnected;
@@ -20,11 +21,14 @@ const canStart = (state) => state === HubConnectionState.Disconnected;
 // 📱 Handle App State (Foreground/Background)
 AppState.addEventListener("change", async (nextAppState) => {
     if (nextAppState === "active" && hubConnection) {
+        reconnectAttempts = 0;
         if (canStart(hubConnection.state)) {
             try {
                 await hubConnection.start();
                 chatReadyRef.current = true;
+                reconnectedHandlers.forEach(h => h());
             } catch (err) {
+                scheduleReconnect();
             }
         }
     }
@@ -121,21 +125,26 @@ function setupInternalListeners() {
 }
 
 function scheduleReconnect() {
+    const delay = reconnectAttempts < 10 ? 5000 : 30000;
     setTimeout(async () => {
+        if (AppState.currentState !== "active") return;
+        reconnectAttempts++;
         if (hubConnection && canStart(hubConnection.state) && connectionUserId && currentApiUrl) {
             try {
                 await hubConnection.start();
                 chatReadyRef.current = true;
+                reconnectAttempts = 0;
                 reconnectedHandlers.forEach(h => h());
             } catch {
                 scheduleReconnect();
             }
         } else if (hubConnection && (hubConnection.state === HubConnectionState.Connected)) {
+            reconnectAttempts = 0;
             reconnectedHandlers.forEach(h => h());
         } else {
             scheduleReconnect();
         }
-    }, 30000);
+    }, delay);
 }
 
 export const register_OnReconnecting = (handler) => {
@@ -173,6 +182,7 @@ export const stopHubConnection = async () => {
         reconnectedHandlers = [];
         chatReadyRef.current = false;
         connectionUserId = null;
+        reconnectAttempts = 0;
     }
 };
 
