@@ -629,7 +629,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
 
       {showConnectionPill && (
         <View style={{ position: "absolute", bottom: 80, alignSelf: "center", backgroundColor: "rgba(30, 111, 217, 0.9)", paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, zIndex: 999 }}>
-          <ParrotsStdText style={{ color: "white", fontSize: 13, fontWeight: "600" }}>No connection — retrying...</ParrotsStdText>
+          <ParrotsStdText style={{ color: "white", fontSize: 13, fontWeight: "600" }}>Reconnecting...</ParrotsStdText>
         </View>
       )}
     </>

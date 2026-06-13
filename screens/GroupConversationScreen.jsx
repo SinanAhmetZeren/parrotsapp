@@ -64,7 +64,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [confirmLeave, setConfirmLeave] = useState(false);
   const scrollViewRef = useRef();
   const sendTimestampsRef = useRef([]);
-  const foregroundedAtRef = useRef(Date.now());
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const insets = useSafeAreaInsets();
   const tabBarHeight = Platform.OS === "ios"
@@ -185,19 +184,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
     }, [refetchMessages, currentUserId, groupId])
   );
 
-  useEffect(() => {
-    const sub = AppState.addEventListener("change", (nextState) => {
-      if (nextState === "active") foregroundedAtRef.current = Date.now();
-    });
-    return () => sub.remove();
-  }, []);
-
   useFocusEffect(
     useCallback(() => {
-      const handleReconnecting = () => {
-        const inGrace = AppState.currentState === "active" && Date.now() - foregroundedAtRef.current < 10000;
-        if (!inGrace) showToast("Reconnecting...");
-      };
+      const handleReconnecting = () => {};
       const handleReconnected = () => { setToastVisible(false); showToast("Reconnected"); };
       register_OnReconnecting(handleReconnecting);
       register_OnReconnected(handleReconnected);
