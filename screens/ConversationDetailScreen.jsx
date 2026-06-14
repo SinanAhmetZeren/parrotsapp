@@ -17,7 +17,8 @@ import {
 } from "react-native";
 import { useGetMessagesBetweenUsersQuery } from "../slices/MessageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { markMessagesRead, setUnreadMessages } from "../slices/UserSlice";
 import { useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -45,6 +46,7 @@ const formatDate = (dateString) => {
 };
 
 export const ConversationDetailScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMsg] = useState("");
   const [message, setMessage] = useState("");
@@ -105,6 +107,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
         if (result.data) setMessagesToDisplay(result.data.data);
       });
       if (isHubReady()) invokeHub("EnterConversationPage", currentUserId, conversationUserId);
+      invokeHub("CheckUnreadMessages", currentUserId).then(hasUnread => {
+        if (hasUnread) dispatch(setUnreadMessages(true));
+        else dispatch(markMessagesRead());
+      }).catch(() => {});
       return () => {
         if (isHubReady()) invokeHub("LeaveConversationPage", currentUserId);
       };

@@ -17,7 +17,8 @@ import {
 } from "react-native";
 import { useGetGroupMessagesQuery, useGetGroupByIdQuery } from "../slices/GroupSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { markMessagesRead, setUnreadMessages } from "../slices/UserSlice";
 import { useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -81,6 +82,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   };
 
   const route = useRoute();
+  const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.users.userId);
   const { groupId, groupName } = route.params;
 
@@ -178,6 +180,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
         if (result.data) setMessagesToDisplay(result.data);
       });
       if (isHubReady()) invokeHub("EnterGroupConversationPage", currentUserId, String(groupId));
+      invokeHub("CheckUnreadMessages", currentUserId).then(hasUnread => {
+        if (hasUnread) dispatch(setUnreadMessages(true));
+        else dispatch(markMessagesRead());
+      }).catch(() => {});
       return () => {
         if (isHubReady()) invokeHub("LeaveGroupConversationPage", currentUserId);
       };
