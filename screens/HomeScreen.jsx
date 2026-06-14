@@ -421,10 +421,10 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     const getVoyages = async () => {
-      const lat1 = initialLatitude - 0.15;
-      const lat2 = initialLatitude + 0.15;
-      const lon1 = initialLongitude - 0.2;
-      const lon2 = initialLongitude + 0.2;
+      const lat1 = initialLatitude - 0.03;
+      const lat2 = initialLatitude + 0.03;
+      const lon1 = initialLongitude - 0.04;
+      const lon2 = initialLongitude + 0.04;
 
       setIsMarkersLoading(true);
 
@@ -452,10 +452,10 @@ export default function HomeScreen({ navigation }) {
     setHasError(false);
     try {
       const getVoyages = async () => {
-        const lat1 = initialLatitude - 0.15;
-        const lat2 = initialLatitude + 0.15;
-        const lon1 = initialLongitude - 0.2;
-        const lon2 = initialLongitude + 0.2;
+        const lat1 = initialLatitude - 0.03;
+        const lat2 = initialLatitude + 0.03;
+        const lon1 = initialLongitude - 0.04;
+        const lon2 = initialLongitude + 0.04;
 
         setIsMarkersLoading(true);
 
@@ -604,8 +604,8 @@ export default function HomeScreen({ navigation }) {
   const initialRegion = {
     latitude: initialLatitude,
     longitude: initialLongitude,
-    latitudeDelta: 0.25,
-    longitudeDelta: 0.25,
+    latitudeDelta: 0.04,
+    longitudeDelta: 0.03,
   };
 
   return (
@@ -768,6 +768,7 @@ export default function HomeScreen({ navigation }) {
                     style={styles.map}
                     initialRegion={initialRegion}
                     ref={mapRef}
+                    showsUserLocation={true}
                     onRegionChangeComplete={handleRegionChangeComplete}
                   >
 {!isMarkersLoading && initialVoyages.map((item, index) => {

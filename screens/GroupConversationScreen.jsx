@@ -162,12 +162,14 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!groupId) return;
-    const handler = (last3) => {
-      if (!Array.isArray(last3)) return;
+    const handler = (payload) => {
+      if (!payload || payload.groupConversationId !== groupId) return;
+      const incoming = payload.messages;
+      if (!Array.isArray(incoming)) return;
       setMessagesToDisplay((prev) => {
-        const existingIds = new Set(last3.map(m => m.id));
+        const existingIds = new Set(incoming.map(m => m.id));
         const kept = (prev ?? []).filter(m => !m.tempId && m.id && !existingIds.has(m.id));
-        return [...kept, ...last3];
+        return [...kept, ...incoming];
       });
     };
     register_ReceiveGroupMessage(handler);

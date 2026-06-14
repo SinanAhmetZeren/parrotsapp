@@ -3,7 +3,7 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import {
@@ -18,7 +18,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import he from "he";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueTransparent, parrotCream, parrotDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueTransparent, parrotCream, parrotDarkBlue, parrotGreen } from "../assets/color";
 import { Shadow } from "react-native-shadow-2";
 
 export default function VoyageCardProfile({
@@ -31,7 +31,9 @@ export default function VoyageCardProfile({
   vehiclename,
   vehicletype,
   voyageId,
-  publicOnMap
+  publicOnMap,
+  bidCount,
+  acceptedBidCount,
 }) {
   const cardImageUrl = `${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d");
@@ -113,6 +115,18 @@ export default function VoyageCardProfile({
           <View style={{ ...styles.cardContainer }}>
             <View style={{ ...styles.shadow }}>
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
+              {bidCount > 0 && (
+                <View style={styles.bidPill}>
+                  <View style={[styles.bidCircle, { backgroundColor: parrotBananaLeafGreen }]}>
+                    <Feather name="check" size={10} color="white" />
+                    <ParrotsStdText style={styles.bidPillText}>{acceptedBidCount}</ParrotsStdText>
+                  </View>
+                  <View style={[styles.bidCircle, { backgroundColor: parrotBlue }]}>
+                    <FontAwesome name="pencil" size={10} color="white" />
+                    <ParrotsStdText style={styles.bidPillText}>{bidCount}</ParrotsStdText>
+                  </View>
+                </View>
+              )}
             </View>
 
             <View style={{ ...styles.textContainer, height: vh(20), position: "relative" }}>
@@ -211,6 +225,32 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
     color: parrotBlue,
+  },
+  bidPill: {
+    position: "absolute",
+    bottom: vh(0.8),
+    left: vw(2),
+    backgroundColor: "rgba(222,222,222,0.85)",
+    // backgroundColor: "white",
+    borderRadius: vw(11),
+    paddingHorizontal: vw(1),
+    paddingVertical: 3,
+    flexDirection: "row",
+    gap: 2,
+  },
+  bidCircle: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    borderRadius: vw(3),
+    paddingHorizontal: vw(1.5),
+    paddingVertical: 2,
+    justifyContent: "center",
+  },
+  bidPillText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 11,
+    color: "white",
   },
   cardDescription: {
     fontFamily: "Nunito_700Bold",

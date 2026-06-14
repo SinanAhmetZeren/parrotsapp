@@ -23,6 +23,7 @@ export default function FavoriteVoyageList({ data, direction }) {
         vehiclename={item.vehicle?.name}
         vehicletype={item.vehicle?.type}
         isPublicOnMap={item.publicOnMap}
+        userBidAccepted={item.userBidAccepted}
       />
     </View>
   );

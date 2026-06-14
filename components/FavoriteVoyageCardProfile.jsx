@@ -3,7 +3,7 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import {
@@ -18,7 +18,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import he from "he";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotTextDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotBlueTransparent, parrotCream, parrotGreen, parrotTextDarkBlue } from "../assets/color";
 
 
 export default function FavoriteVoyageCardProfile({
@@ -31,7 +31,8 @@ export default function FavoriteVoyageCardProfile({
   vehiclename,
   vehicletype,
   voyageId,
-  isPublicOnMap
+  isPublicOnMap,
+  userBidAccepted,
 }) {
   const cardImageUrl = `${cardImage}`;
   const formattedStartDate = require("date-fns").format(startdate, "MMM d");
@@ -91,6 +92,13 @@ export default function FavoriteVoyageCardProfile({
       <View style={styles.cardContainer}>
         <View style={styles.shadow}>
           <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
+          {userBidAccepted !== null && userBidAccepted !== undefined && (
+            <View style={[styles.bidBadge, {
+              backgroundColor: userBidAccepted ? parrotGreen : parrotBlue
+            }]}>
+              <FontAwesome6 name={userBidAccepted ? "circle-check" : "clock"} size={13} color="white" />
+            </View>
+          )}
         </View>
 
         <View style={styles.textContainer}>
@@ -191,6 +199,21 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
     color: parrotBlue,
+  },
+  bidBadge: {
+    position: "absolute",
+    bottom: vh(0.8),
+    left: vw(2),
+    width: vw(5),
+    height: vw(5),
+    borderRadius: vw(2.5),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bidBadgeText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 11,
+    color: "white",
   },
   cardDescription: {
     fontFamily: "Nunito_700Bold",

@@ -603,7 +603,17 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
             tabBarIcon: ({ focused }) => {
               return (
                 <View style={{ ...styles.tabIconStyle, backgroundColor: focused && !modalVisible ? selectedTabBackGroundColor : unselectedTabBackGroundColor }}>
-                  <MaterialCommunityIcons name={"share-variant-outline"} size={24} color={focused && !modalVisible ? selectedTabColor : unselectedTabColor} />
+                  <View>
+                    <MaterialCommunityIcons name={"share-variant-outline"} size={24} color={focused && !modalVisible ? selectedTabColor : unselectedTabColor} />
+                    {hasUnreadMessages && (
+                      <View style={{
+                        position: "absolute", top: -3, right: -5, width: 13, height: 13, borderRadius: 15,
+                        backgroundColor: parrotRed, alignItems: "center", justifyContent: "center"
+                      }}>
+                        <MaterialIcons name="mail-outline" size={9} color="white" />
+                      </View>
+                    )}
+                  </View>
                   <ParrotsStdText style={{ ...baseTextStyle, color: focused && !modalVisible ? selectedTabColor : unselectedTabColor }}>Connect</ParrotsStdText>
                 </View>
               );
@@ -620,20 +630,6 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               // );
             },
 
-            tabBarBadge: hasUnreadMessages ? <MaterialIcons name="mail-outline" size={10} color="white" /> : undefined, //"•" //"🦜" 📨 📪 📫 📬 📤 🗳️"👀"
-            tabBarBadgeStyle: {
-              backgroundColor: parrotRed,//"transparent", // your custom badge background
-              color: "white",
-              fontSize: 12,        // adjust to fit
-              minWidth: 16,
-              height: 20,
-              borderRadius: 10,    // half of height for perfect circle
-              textAlign: "center", // horizontal center
-              textAlignVertical: "center", // vertical center (Android)
-              lineHeight: 20,      // same as height for iOS vertical center
-              paddingHorizontal: 4,
-
-            },
 
           }}
         />
@@ -758,9 +754,9 @@ function App() {
     useEffect(() => {
       const subscription = AppState.addEventListener("change", async (nextState) => {
         const isForeground = nextState === "active";
-        invokeHub("UpdatePresence", isForeground).catch(() => {});
+        invokeHub("UpdatePresence", isForeground).catch(() => { });
         if (isForeground) {
-          Notifications.setBadgeCountAsync(0).catch(() => {});
+          Notifications.setBadgeCountAsync(0).catch(() => { });
           try {
             const hasUnread = await invokeHub("CheckUnreadMessages", userId);
             if (hasUnread) dispatch(setUnreadMessages(true));

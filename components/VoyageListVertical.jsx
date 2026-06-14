@@ -20,6 +20,8 @@ export default function VoyageListVertical({ data, direction }) {
       vehiclename={item.vehicle?.name}
       vehicletype={item.vehicle?.type}
       publicOnMap={item.publicOnMap}
+      bidCount={item.bidCount}
+      acceptedBidCount={item.acceptedBidCount}
     />
   );
   if (!data) return null;

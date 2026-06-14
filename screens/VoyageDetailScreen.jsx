@@ -31,6 +31,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   useWindowDimensions,
+  Modal,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { invokeHub } from "../signalr/signalRHub.js";
@@ -52,7 +53,7 @@ import {
   removeVoyageFromUserFavorites,
 } from "../slices/UserSlice";
 import { API_URL } from "@env";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotTextDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import RenderHtml from "react-native-render-html";
 import LoadingLogo from "../components/LoadingLogo";
@@ -120,6 +121,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [unfavConfirmVisible, setUnfavConfirmVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
   const [hasError, setHasError] = useState(false)
@@ -295,11 +297,20 @@ const VoyageDetailScreen = ({ navigation }) => {
     showToast("Voyage added to favorites");
   };
 
-  const handleDeleteVoyageFromFavorites = () => {
+  const confirmDeleteVoyageFromFavorites = () => {
     deleteVoyageFromFavorites({ userId, voyageId });
     setIsFavorited(false);
     dispatch(removeVoyageFromUserFavorites({ favoriteVoyage: voyageId }));
+    setUnfavConfirmVisible(false);
     showToast("Voyage removed from favorites");
+  };
+
+  const handleDeleteVoyageFromFavorites = () => {
+    if (hasBidWithUserId) {
+      setUnfavConfirmVisible(true);
+    } else {
+      confirmDeleteVoyageFromFavorites();
+    }
   };
 
   const onRefresh = () => {
@@ -390,262 +401,278 @@ const VoyageDetailScreen = ({ navigation }) => {
       <>
         <TokenExpiryGuard />
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-        <ScrollView style={styles.ScrollView} ref={scrollRef}>
-          <View style={styles.rectangularBox}>
-            <Image
-              style={styles.imageContainer}
-              resizeMode="cover"
-              source={{ uri: imageUrl }}
-            />
-          </View>
+          <ScrollView style={styles.ScrollView} ref={scrollRef}>
+            <View style={styles.rectangularBox}>
+              <Image
+                style={styles.imageContainer}
+                resizeMode="cover"
+                source={{ uri: imageUrl }}
+              />
+            </View>
 
-          <View style={styles.voyageDataWrapper}>
-            <View style={styles.VoyageDataContainer}>
-              {/* // VoyageName and Username */}
+            <View style={styles.voyageDataWrapper}>
+              <View style={styles.VoyageDataContainer}>
+                {/* // VoyageName and Username */}
 
-              <View style={styles.detailsCard}>
+                <View style={styles.detailsCard}>
 
-                {/* Voyage Name */}
-                <ParrotsStdText style={styles.voyageName}>{VoyageData.name}</ParrotsStdText>
+                  {/* Voyage Name */}
+                  <ParrotsStdText style={styles.voyageName}>{VoyageData.name}</ParrotsStdText>
 
-                {/* Host + Vehicle */}
-                <View style={styles.row}>
-                  <Ionicons name="person-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
-                  <TouchableOpacity style={styles.pill} onPress={() => goToProfilePage(VoyageData?.user?.id)}>
-                    <Image source={{ uri: VoyageData?.user?.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
-                    <ParrotsStdText style={styles.value}>{VoyageData?.user?.userName}</ParrotsStdText>
-                  </TouchableOpacity>
-                  <Ionicons name="rocket-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 6 }]} />
+                  {/* Host + Vehicle */}
+                  <View style={styles.row}>
+                    <Ionicons name="person-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
+                    <TouchableOpacity style={styles.pill} onPress={() => goToProfilePage(VoyageData?.user?.id)}>
+                      <Image source={{ uri: VoyageData?.user?.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
+                      <ParrotsStdText style={styles.value}>{VoyageData?.user?.userName}</ParrotsStdText>
+                    </TouchableOpacity>
+                    <Ionicons name="rocket-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 6 }]} />
+                    <TouchableOpacity
+                      style={styles.pill}
+                      onPress={() => {
+                        if (VoyageData.vehicleType !== 4 && VoyageData.vehicleType !== 5 && VoyageData.vehicleType !== 10) {
+                          goToVehiclePage(VoyageData.vehicle?.id);
+                        }
+                      }}
+                    >
+                      {VoyageData.vehicleType === 4 ? (
+                        <Image source={require("../assets/walk1.jpeg")} style={styles.profileImage} />
+                      ) : VoyageData.vehicleType === 5 ? (
+                        <Image source={require("../assets/run1.jpeg")} style={styles.profileImage} />
+                      ) : VoyageData.vehicleType === 10 ? (
+                        <Image source={require("../assets/train.jpeg")} style={styles.profileImage} />
+                      ) : (
+                        <Image source={{ uri: VoyageData.vehicle?.profileImageUrl }} style={styles.profileImage} />
+                      )}
+                      <ParrotsStdText style={styles.userName}>{VoyageData.vehicle?.name}</ParrotsStdText>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Vacancy + Date */}
+                  <View style={styles.row}>
+                    <Ionicons name="people-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
+                    <View style={styles.pill}>
+                      <ParrotsStdText style={styles.value}>{VoyageData.vacancy} spots</ParrotsStdText>
+                    </View>
+                    <Ionicons name="calendar-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }]} />
+                    <View style={styles.pill}>
+                      <ParrotsStdText style={styles.value}>{formattedStartDate}  →  {formattedEndDate}</ParrotsStdText>
+                    </View>
+                  </View>
+
+                  {/* Price + Auction + Fixed Price */}
+                  <View style={styles.row}>
+                    <Ionicons name="cash-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
+                    <View style={styles.pill}>
+                      <ParrotsStdText style={styles.value}>
+                        {VoyageData.minPrice === VoyageData.maxPrice
+                          ? `${VoyageData.currency}${VoyageData.minPrice}`
+                          : `${VoyageData.currency}${VoyageData.minPrice}  –  ${VoyageData.currency}${VoyageData.maxPrice}`}
+                      </ParrotsStdText>
+                    </View>
+                    <MaterialIcons name="gavel" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }, !VoyageData.auction && { opacity: 0.35 }]} />
+                    <TouchableOpacity
+                      style={[styles.pill, !VoyageData.auction && { opacity: 0.35 }, { marginRight: 12, alignSelf: "center" }]}
+                      onPress={() => showToast(VoyageData.auction ? "This is an auction where the host will select the most suitable bids" : "This is not an auction where the host will select the most suitable bids")}
+                    >
+                      <ParrotsStdText style={styles.value}>Auction</ParrotsStdText>
+                    </TouchableOpacity>
+                    <MaterialIcons name="sell" size={18} color={parrotBlue} style={[styles.rowIcon, !VoyageData.fixedPrice && { opacity: 0.35 }]} />
+                    <TouchableOpacity
+                      style={[styles.pill, !VoyageData.fixedPrice && { opacity: 0.35 }, { alignSelf: "center" }]}
+                      onPress={() => showToast(VoyageData.fixedPrice ? "This voyage has a fixed price set by the host" : "This voyage does not have a fixed price set by the host")}
+                    >
+                      <ParrotsStdText style={styles.value}>Fixed Price</ParrotsStdText>
+                    </TouchableOpacity>
+                  </View>
+
+                </View>
+
+
+                <View style={[styles.sectionCard, { position: "relative" }]}>
                   <TouchableOpacity
-                    style={styles.pill}
-                    onPress={() => {
-                      if (VoyageData.vehicleType !== 4 && VoyageData.vehicleType !== 5 && VoyageData.vehicleType !== 10) {
-                        goToVehiclePage(VoyageData.vehicle?.id);
-                      }
-                    }}
+                    onPress={() => showToast("Tap an image to view gallery")}
+                    style={{ position: "absolute", top: 8, right: 10, zIndex: 10 }}
                   >
-                    {VoyageData.vehicleType === 4 ? (
-                      <Image source={require("../assets/walk1.jpeg")} style={styles.profileImage} />
-                    ) : VoyageData.vehicleType === 5 ? (
-                      <Image source={require("../assets/run1.jpeg")} style={styles.profileImage} />
-                    ) : VoyageData.vehicleType === 10 ? (
-                      <Image source={require("../assets/train.jpeg")} style={styles.profileImage} />
-                    ) : (
-                      <Image source={{ uri: VoyageData.vehicle?.profileImageUrl }} style={styles.profileImage} />
-                    )}
-                    <ParrotsStdText style={styles.userName}>{VoyageData.vehicle?.name}</ParrotsStdText>
+                    <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
                   </TouchableOpacity>
-                </View>
 
-                {/* Vacancy + Date */}
-                <View style={styles.row}>
-                  <Ionicons name="people-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
-                  <View style={styles.pill}>
-                    <ParrotsStdText style={styles.value}>{VoyageData.vacancy} spots</ParrotsStdText>
+                  {/* // Voyage Images */}
+                  <View style={styles.ImagesMainContainer}>
+                    <View style={styles.ImagesSubContainer}>
+                      <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
+                    </View>
                   </View>
-                  <Ionicons name="calendar-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }]} />
-                  <View style={styles.pill}>
-                    <ParrotsStdText style={styles.value}>{formattedStartDate}  →  {formattedEndDate}</ParrotsStdText>
-                  </View>
-                </View>
 
-                {/* Price + Auction + Fixed Price */}
-                <View style={styles.row}>
-                  <Ionicons name="cash-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
-                  <View style={styles.pill}>
-                    <ParrotsStdText style={styles.value}>
-                      {VoyageData.minPrice === VoyageData.maxPrice
-                        ? `${VoyageData.currency}${VoyageData.minPrice}`
-                        : `${VoyageData.currency}${VoyageData.minPrice}  –  ${VoyageData.currency}${VoyageData.maxPrice}`}
-                    </ParrotsStdText>
-                  </View>
-                  <MaterialIcons name="gavel" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }, !VoyageData.auction && { opacity: 0.35 }]} />
-                  <TouchableOpacity
-                    style={[styles.pill, !VoyageData.auction && { opacity: 0.35 }, { marginRight: 12, alignSelf: "center" }]}
-                    onPress={() => showToast(VoyageData.auction ? "This is an auction where the host will select the most suitable bids" : "This is not an auction where the host will select the most suitable bids")}
-                  >
-                    <ParrotsStdText style={styles.value}>Auction</ParrotsStdText>
-                  </TouchableOpacity>
-                  <MaterialIcons name="sell" size={18} color={parrotBlue} style={[styles.rowIcon, !VoyageData.fixedPrice && { opacity: 0.35 }]} />
-                  <TouchableOpacity
-                    style={[styles.pill, !VoyageData.fixedPrice && { opacity: 0.35 }, { alignSelf: "center" }]}
-                    onPress={() => showToast(VoyageData.fixedPrice ? "This voyage has a fixed price set by the host" : "This voyage does not have a fixed price set by the host")}
-                  >
-                    <ParrotsStdText style={styles.value}>Fixed Price</ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
+                  {/* // Voyage Description */}
+                  <View style={styles.DescriptionContainer}>
+                    <ParrotsStdText style={styles.descriptionText}>{displayText}</ParrotsStdText>
 
-              </View>
-
-
-              <View style={[styles.sectionCard, { position: "relative" }]}>
-                <TouchableOpacity
-                  onPress={() => showToast("Tap an image to view gallery")}
-                  style={{ position: "absolute", top: 8, right: 10, zIndex: 10 }}
-                >
-                  <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
-                </TouchableOpacity>
-
-                {/* // Voyage Images */}
-                <View style={styles.ImagesMainContainer}>
-                  <View style={styles.ImagesSubContainer}>
-                    <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
-                  </View>
-                </View>
-
-                {/* // Voyage Description */}
-                <View style={styles.DescriptionContainer}>
-                  <ParrotsStdText style={styles.descriptionText}>{displayText}</ParrotsStdText>
-
-                  {plainDescription.length > descriptionShortenedChars &&
-                    !showFullText && (
-                      <TouchableOpacity onPress={() => setShowFullText(true)}>
+                    {plainDescription.length > descriptionShortenedChars &&
+                      !showFullText && (
+                        <TouchableOpacity onPress={() => setShowFullText(true)}>
+                          <ParrotsStdText style={styles.ReadMoreLess}>
+                            Read more
+                            <Feather name="chevron-down" size={16} color={parrotBlue} />
+                          </ParrotsStdText>
+                        </TouchableOpacity>
+                      )}
+                    {showFullText && (
+                      <TouchableOpacity onPress={() => setShowFullText(false)}>
                         <ParrotsStdText style={styles.ReadMoreLess}>
-                          Read more
-                          <Feather name="chevron-down" size={16} color={parrotBlue} />
+                          Read less
+                          <Feather name="chevron-up" size={16} color={parrotBlue} />
                         </ParrotsStdText>
                       </TouchableOpacity>
                     )}
-                  {showFullText && (
-                    <TouchableOpacity onPress={() => setShowFullText(false)}>
-                      <ParrotsStdText style={styles.ReadMoreLess}>
-                        Read less
-                        <Feather name="chevron-up" size={16} color={parrotBlue} />
-                      </ParrotsStdText>
-                    </TouchableOpacity>
-                  )}
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-          {/* // map + waypoints */}
+            {/* // map + waypoints */}
 
-          <View style={[styles.routeCard, { position: "relative" }]}>
+            <View style={[styles.routeCard, { position: "relative" }]}>
 
-            <View style={styles.mapAndEmojisContainer}>
-              <View style={styles.mapContainer}>
-                <MapView provider={PROVIDER_GOOGLE} ref={mapRef} style={styles.map} region={initialRegion}>
-                  <WaypointListComponent waypoints={waypoints} />
-                  <RenderPolylinesComponent waypoints={waypoints} />
-                </MapView>
+              <View style={styles.mapAndEmojisContainer}>
+                <View style={styles.mapContainer}>
+                  <MapView provider={PROVIDER_GOOGLE} ref={mapRef} style={styles.map} region={initialRegion}>
+                    <WaypointListComponent waypoints={waypoints} />
+                    <RenderPolylinesComponent waypoints={waypoints} />
+                  </MapView>
+                </View>
+
+                {/* 3 icons top-right of map, slightly overlapping */}
+                <View style={styles.mapTopIcons}>
+                  {isFavorited ? (
+                    <TouchableOpacity onPress={() => handleDeleteVoyageFromFavorites()}>
+                      <Ionicons name="heart" size={24} color="red" style={styles.heartContainer2} />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity onPress={() => handleAddVoyageToFavorites()}>
+                      <Ionicons name="heart" size={24} color="orange" style={styles.heartContainer2} />
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity onPress={() => showToast(VoyageData.publicOnMap ? "This voyage is publicly visible on the map" : "This voyage is not visible on the map")}>
+                    <Ionicons name="earth" size={24} color={VoyageData.publicOnMap ? "#1E6FD9" : "#a0b8d8"} style={styles.earthContainer2} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleShareVoyage()}>
+                    <MaterialIcons name="ios-share" size={24} color={parrotBlue} style={styles.shareContainer2} />
+                  </TouchableOpacity>
+                </View>
               </View>
 
-              {/* 3 icons top-right of map, slightly overlapping */}
-              <View style={styles.mapTopIcons}>
-                {isFavorited ? (
-                  <TouchableOpacity onPress={() => handleDeleteVoyageFromFavorites()}>
-                    <Ionicons name="heart" size={24} color="red" style={styles.heartContainer2} />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity onPress={() => handleAddVoyageToFavorites()}>
-                    <Ionicons name="heart" size={24} color="orange" style={styles.heartContainer2} />
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity onPress={() => showToast(VoyageData.publicOnMap ? "This voyage is publicly visible on the map" : "This voyage is not visible on the map")}>
-                  <Ionicons name="earth" size={24} color={VoyageData.publicOnMap ? "#1E6FD9" : "#a0b8d8"} style={styles.earthContainer2} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleShareVoyage()}>
-                  <MaterialIcons name="ios-share" size={24} color={parrotBlue} style={styles.shareContainer2} />
-                </TouchableOpacity>
+              {/* Info icon just below map, above waypoints */}
+              <TouchableOpacity
+                onPress={() => showToast("Tap on card to focus map")}
+                style={{ alignSelf: "flex-end", marginRight: 10, marginTop: vh(0.5), zIndex: 10 }}
+              >
+                <MaterialIcons name="info-outline" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
+              </TouchableOpacity>
+
+              <View style={styles.waypointFlatlistContainer}>
+                <WaypointFlatListVoyageDetailsScreen
+                  focusMap={focusMap}
+                  addedWayPoints={waypoints}
+                  voyageProfileImage={VoyageData.profileImage}
+                />
               </View>
             </View>
 
-            {/* Info icon just below map, above waypoints */}
-            <TouchableOpacity
-              onPress={() => showToast("Tap on card to focus map")}
-              style={{ alignSelf: "flex-end", marginRight: 10, marginTop: vh(0.5), zIndex: 10 }}
-            >
-              <MaterialIcons name="info-outline" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
-            </TouchableOpacity>
+            {/* // Bids */}
 
-            <View style={styles.waypointFlatlistContainer}>
-              <WaypointFlatListVoyageDetailsScreen
-                focusMap={focusMap}
-                addedWayPoints={waypoints}
-                voyageProfileImage={VoyageData.profileImage}
-              />
-            </View>
-          </View>
+            {bids.length !== 0 ? (
+              <View style={styles.mainBidsContainer2}>
+                <View style={styles.currentBidsAndSeeAllBids}>
+                  <ParrotsStdText style={styles.currentBidsTitle}>Current Bids</ParrotsStdText>
+                  <TouchableOpacity onPress={handleSeeAll}>
+                    <ParrotsStdText style={styles.seeAllButton}>See All</ParrotsStdText>
+                  </TouchableOpacity>
+                </View>
 
-          {/* // Bids */}
-
-          {bids.length !== 0 ? (
-            <View style={styles.mainBidsContainer2}>
-              <View style={styles.currentBidsAndSeeAllBids}>
-                <ParrotsStdText style={styles.currentBidsTitle}>Current Bids</ParrotsStdText>
-                <TouchableOpacity onPress={handleSeeAll}>
-                  <ParrotsStdText style={styles.seeAllButton}>See All</ParrotsStdText>
-                </TouchableOpacity>
+                <View style={styles.allBidsContainer}>
+                  <RenderBidsComponent
+                    bids={bids}
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    ownVoyage={ownVoyage}
+                    voyageName={VoyageData.name}
+                    currentUserId={userId}
+                    refetch={refetchVoyage}
+                    username={userName}
+                    currency={VoyageData.currency}
+                  />
+                </View>
               </View>
+            ) : null}
 
-              <View style={styles.allBidsContainer}>
-                <RenderBidsComponent
-                  bids={bids}
-                  modalVisible={modalVisible}
-                  setModalVisible={setModalVisible}
-                  ownVoyage={ownVoyage}
-                  voyageName={VoyageData.name}
-                  currentUserId={userId}
+            {ownVoyage && bids.some((b) => b.accepted) && (
+              <View style={styles.broadcastCard}>
+                <View style={styles.broadcastInputRow}>
+                  <TextInput
+                    style={styles.broadcastInput}
+                    placeholder="Message accepted users..."
+                    placeholderTextColor="#aaa"
+                    value={broadcastMessage}
+                    onChangeText={setBroadcastMessage}
+                    multiline
+                    onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 400)}
+                  />
+                  <TouchableOpacity
+                    style={[styles.broadcastSendBtn, (!broadcastMessage.trim() || isBroadcasting) && { opacity: 0.5 }]}
+                    onPress={handleBroadcast}
+                    disabled={!broadcastMessage.trim() || isBroadcasting}
+                  >
+                    {isBroadcasting
+                      ? <ActivityIndicator size="small" color="white" />
+                      : <Feather name="send" size={18} color="white" />}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            {/* // enter bid */}
+
+            <View style={{ paddingBottom: ownVoyage ? vh(11) : vh(11) }}>
+              {ownVoyage ? null : (
+                <CreateBidComponent
+                  userName={userName}
+                  userProfileImage={userProfileImage}
+                  voyageId={voyageId}
+                  userId={userId}
+                  userBidId={userBidId}
+                  hasBidWithUserId={hasBidWithUserId}
+                  userBidPrice={userBidPrice}
+                  userBidPersons={userBidPersons}
+                  userBidMessage={userBidMessage}
                   refetch={refetchVoyage}
-                  username={userName}
+                  ownVoyage={ownVoyage}
                   currency={VoyageData.currency}
                 />
-              </View>
+              )}
             </View>
-          ) : null}
-
-          {ownVoyage && bids.some((b) => b.accepted) && (
-            <View style={styles.broadcastCard}>
-              <View style={styles.broadcastInputRow}>
-                <TextInput
-                  style={styles.broadcastInput}
-                  placeholder="Message accepted users..."
-                  placeholderTextColor="#aaa"
-                  value={broadcastMessage}
-                  onChangeText={setBroadcastMessage}
-                  multiline
-                  onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 400)}
-                />
-                <TouchableOpacity
-                  style={[styles.broadcastSendBtn, (!broadcastMessage.trim() || isBroadcasting) && { opacity: 0.5 }]}
-                  onPress={handleBroadcast}
-                  disabled={!broadcastMessage.trim() || isBroadcasting}
-                >
-                  {isBroadcasting
-                    ? <ActivityIndicator size="small" color="white" />
-                    : <Feather name="send" size={18} color="white" />}
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
-          {/* // enter bid */}
-
-          <View style={{ paddingBottom: ownVoyage ? vh(11) : vh(11) }}>
-            {ownVoyage ? null : (
-              <CreateBidComponent
-                userName={userName}
-                userProfileImage={userProfileImage}
-                voyageId={voyageId}
-                userId={userId}
-                userBidId={userBidId}
-                hasBidWithUserId={hasBidWithUserId}
-                userBidPrice={userBidPrice}
-                userBidPersons={userBidPersons}
-                userBidMessage={userBidMessage}
-                refetch={refetchVoyage}
-                ownVoyage={ownVoyage}
-                currency={VoyageData.currency}
-              />
-            )}
-          </View>
-        </ScrollView>
+          </ScrollView>
         </KeyboardAvoidingView>
         {toastVisible && (
           <View style={styles.toast}>
             <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
           </View>
         )}
+        <Modal transparent visible={unfavConfirmVisible} animationType="fade" onRequestClose={() => setUnfavConfirmVisible(false)}>
+          <TouchableOpacity style={styles.unfavOverlay} activeOpacity={1} onPress={() => setUnfavConfirmVisible(false)}>
+            <View style={styles.unfavModal}>
+              <ParrotsStdText style={styles.unfavTitle}>Active Bid</ParrotsStdText>
+              <ParrotsStdText style={styles.unfavMessage}>You have an active bid on this voyage. Removing it from favorites may make it harder to track your bids.</ParrotsStdText>
+              <View style={styles.unfavButtons}>
+                <TouchableOpacity style={styles.unfavCancel} onPress={() => setUnfavConfirmVisible(false)}>
+                  <ParrotsStdText style={styles.unfavCancelText}>Cancel</ParrotsStdText>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.unfavRemove} onPress={confirmDeleteVoyageFromFavorites}>
+                  <ParrotsStdText style={styles.unfavRemoveText}>Remove</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </>
     );
   }
@@ -1108,6 +1135,61 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: "48%",
+  },
+
+  unfavOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  unfavModal: {
+    backgroundColor: parrotCream,
+    borderRadius: vh(2.5),
+    paddingHorizontal: vw(7),
+    paddingVertical: vh(3),
+    width: vw(82),
+    alignItems: "center",
+  },
+  unfavTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 17,
+    color: parrotBlue,
+    marginBottom: vh(1),
+  },
+  unfavMessage: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: parrotTextDarkBlue,
+    textAlign: "center",
+    lineHeight: 20,
+    marginBottom: vh(2.5),
+  },
+  unfavButtons: {
+    flexDirection: "row",
+    gap: vw(4),
+  },
+  unfavCancel: {
+    backgroundColor: "rgba(0, 119, 234, 0.08)",
+    borderRadius: vw(6),
+    paddingHorizontal: vw(6),
+    paddingVertical: vh(1),
+  },
+  unfavCancelText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: parrotBlue,
+  },
+  unfavRemove: {
+    backgroundColor: parrotRed,
+    borderRadius: vw(6),
+    paddingHorizontal: vw(6),
+    paddingVertical: vh(1),
+  },
+  unfavRemoveText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "white",
   },
 
 });
