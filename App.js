@@ -341,9 +341,12 @@ const MessageStack = () => {
       <Stack.Screen
         name="ProfileScreenPublic"
         component={ProfileScreenPublic}
-        options={{
-          unmountOnBlur: true,
-        }}
+        options={{ unmountOnBlur: true }}
+      />
+      <Stack.Screen
+        name="VoyageDetail"
+        component={VoyageDetailScreen}
+        options={{ unmountOnBlur: true }}
       />
     </Stack.Navigator>
   );

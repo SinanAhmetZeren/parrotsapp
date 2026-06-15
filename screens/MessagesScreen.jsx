@@ -35,7 +35,7 @@ import { Feather } from "@expo/vector-icons";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import LoadingLogo from "../components/LoadingLogo";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotPistachioGreen, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent3, parrotLightBlue, parrotPistachioGreen, parrotPlaceholderGrey } from "../assets/color";
 import {
   register_ReceiveMessage,
   unregister_ReceiveMessage,
@@ -315,19 +315,13 @@ export default function MessagesScreen({ navigation }) {
           />
           {/* Sub-toggle: Users | Bids */}
           <View style={styles.bookmarkToggleRow}>
-            <TouchableOpacity
-              style={[styles.bookmarkToggleBtn, bookmarkTab === "users" && styles.bookmarkToggleActive]}
-              onPress={() => setBookmarkTab("users")}
-            >
-              <ParrotsStdText style={[styles.bookmarkToggleText, bookmarkTab === "users" && styles.bookmarkToggleTextActive]}>
+            <TouchableOpacity style={styles.bookmarkToggleBtn} onPress={() => setBookmarkTab("users")}>
+              <ParrotsStdText style={bookmarkTab === "users" ? styles.bookmarkToggleActive : styles.bookmarkToggleInactive}>
                 Users
               </ParrotsStdText>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.bookmarkToggleBtn, bookmarkTab === "bids" && styles.bookmarkToggleActive]}
-              onPress={() => setBookmarkTab("bids")}
-            >
-              <ParrotsStdText style={[styles.bookmarkToggleText, bookmarkTab === "bids" && styles.bookmarkToggleTextActive]}>
+            <TouchableOpacity style={styles.bookmarkToggleBtn} onPress={() => setBookmarkTab("bids")}>
+              <ParrotsStdText style={bookmarkTab === "bids" ? styles.bookmarkToggleActive : styles.bookmarkToggleInactive}>
                 Bids
               </ParrotsStdText>
             </TouchableOpacity>
@@ -405,39 +399,33 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: vh(1.8),
     paddingHorizontal: vw(2),
-    fontSize: 15,
+    fontSize: 18,
     color: "black",
   },
 
   bookmarkToggleRow: {
     flexDirection: "row",
-    marginHorizontal: vw(5),
-    marginTop: vh(1.5),
-    marginBottom: vh(0.5),
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
-    borderRadius: vh(3),
-    padding: 3,
+    marginTop: vh(1),
+    justifyContent: "center",
+    gap: vw(20),
   },
   bookmarkToggleBtn: {
-    flex: 1,
-    paddingVertical: vh(0.8),
     alignItems: "center",
-    borderRadius: vh(2.5),
+    paddingVertical: vh(0.4),
   },
   bookmarkToggleActive: {
-    backgroundColor: parrotBlue,
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    color: parrotLightBlue,
   },
-  bookmarkToggleText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    color: parrotBlue,
-  },
-  bookmarkToggleTextActive: {
-    color: "white",
+  bookmarkToggleInactive: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    color: parrotBlueSemiTransparent3,
   },
   currentBidsTitle2: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 20,
+    fontSize: 18,
     color: parrotBlue,
     paddingTop: vh(3),
   },

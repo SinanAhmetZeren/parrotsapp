@@ -7,7 +7,7 @@ import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { parrotBlue, parrotGreen, parrotLightBlue } from "../assets/color";
-import { Feather } from "@expo/vector-icons";
+import { Feather, FontAwesome6 } from "@expo/vector-icons";
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
@@ -29,7 +29,12 @@ export const BidBookmarkPill = ({ bids, height }) => {
   return (
     <ScrollView style={{ height }}>
       {bids.map((item) => (
-        <View key={item.bidId} style={styles.pillWrapper}>
+        <TouchableOpacity
+          key={item.bidId}
+          style={styles.pillWrapper}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate("VoyageDetail", { voyageId: item.voyageId })}
+        >
           <View style={styles.pill}>
             <Image
               source={{ uri: item.profileImageThumbnail || `${API_URL}/placeholder` }}
@@ -39,12 +44,16 @@ export const BidBookmarkPill = ({ bids, height }) => {
               <ParrotsStdText style={styles.voyageName} numberOfLines={1}>
                 {item.voyageName}
               </ParrotsStdText>
-              <ParrotsStdText style={styles.dates}>
-                {formatDate(item.startDate)} – {formatDate(item.endDate)}
-              </ParrotsStdText>
-              <View style={styles.priceRow}>
-                <View style={[styles.statusDot, { backgroundColor: item.accepted ? parrotGreen : parrotBlue }]} />
-                <ParrotsStdText style={styles.price}>${item.offerPrice}</ParrotsStdText>
+              <View style={styles.detailRow}>
+                <View style={styles.detailIcon}>
+                  <View style={[styles.bidBadge, { backgroundColor: item.accepted ? parrotGreen : parrotBlue }]}>
+                    <FontAwesome6 name={item.accepted ? "circle-check" : "clock"} size={11} color="white" />
+                  </View>
+                </View>
+                <ParrotsStdText style={styles.dates} numberOfLines={1}>
+                  {formatDate(item.startDate)} – {formatDate(item.endDate)}
+                </ParrotsStdText>
+                <ParrotsStdText style={styles.price} numberOfLines={1}>${item.offerPrice}</ParrotsStdText>
               </View>
             </View>
             <TouchableOpacity
@@ -56,10 +65,10 @@ export const BidBookmarkPill = ({ bids, height }) => {
                 })
               }
             >
-              <Feather name="arrow-right" size={18} color={parrotBlue} />
+              <Feather name="map-pin" size={18} color={parrotBlue} />
             </TouchableOpacity>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );
@@ -93,26 +102,31 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: parrotLightBlue,
   },
-  dates: {
-    fontFamily: "Nunito_600SemiBold",
-    fontSize: 12,
-    color: "rgba(0,0,0,0.45)",
-    marginTop: 2,
+  bidBadge: {
+    borderRadius: vw(3),
+    padding: 3,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  priceRow: {
+  detailRow: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 3,
   },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: 5,
+  detailIcon: {
+    width: vw(7),
+    alignItems: "flex-start",
+  },
+  dates: {
+    width: vw(30),
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 12,
+    color: "rgba(0,0,0,0.45)",
   },
   price: {
+    width: vw(18),
     fontFamily: "Nunito_700Bold",
-    fontSize: 13,
+    fontSize: 12,
     color: "rgba(0,0,0,0.55)",
   },
   actionButton: {
