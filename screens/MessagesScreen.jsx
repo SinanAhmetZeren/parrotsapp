@@ -23,6 +23,8 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import ConversationList from "../components/ConversationList";
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
 import { useGetUsersByUsernameQuery, useGetBookmarksQuery } from "../slices/UserSlice";
+import { useGetMyBidsQuery } from "../slices/VoyageSlice";
+import { BidBookmarkPill } from "../components/BidBookmarkPill";
 import { setUnreadMessages, markMessagesRead } from "../slices/UserSlice";
 import CreateNewGroupTab from "../components/CreateNewGroupTab";
 import { useSelector } from "react-redux";
@@ -84,8 +86,10 @@ export default function MessagesScreen({ navigation }) {
   };
 
   const [selectedFunction, setSelectedFunction] = useState(1);
+  const [bookmarkTab, setBookmarkTab] = useState("users");
 
   const { data: bookmarksRaw, isLoading: isLoadingBookmarks } = useGetBookmarksQuery(undefined, { skip: selectedFunction !== 3 });
+  const { data: myBidsRaw, isLoading: isLoadingBids } = useGetMyBidsQuery(undefined, { skip: selectedFunction !== 3 || bookmarkTab !== "bids" });
   const bookmarksData = React.useMemo(() => [
     ...(bookmarksRaw?.map(b => ({
       id: b.bookmarkedUserId,
@@ -309,21 +313,50 @@ export default function MessagesScreen({ navigation }) {
             selectedFunction={selectedFunction}
             setSelectedFunction={setSelectedFunction}
           />
-          {isLoadingBookmarks ? (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: Platform.OS === "ios" ? vh(20) : 0 }}>
-              <LoadingLogo size={220} />
-            </View>
+          {/* Sub-toggle: Users | Bids */}
+          <View style={styles.bookmarkToggleRow}>
+            <TouchableOpacity
+              style={[styles.bookmarkToggleBtn, bookmarkTab === "users" && styles.bookmarkToggleActive]}
+              onPress={() => setBookmarkTab("users")}
+            >
+              <ParrotsStdText style={[styles.bookmarkToggleText, bookmarkTab === "users" && styles.bookmarkToggleTextActive]}>
+                Users
+              </ParrotsStdText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.bookmarkToggleBtn, bookmarkTab === "bids" && styles.bookmarkToggleActive]}
+              onPress={() => setBookmarkTab("bids")}
+            >
+              <ParrotsStdText style={[styles.bookmarkToggleText, bookmarkTab === "bids" && styles.bookmarkToggleTextActive]}>
+                Bids
+              </ParrotsStdText>
+            </TouchableOpacity>
+          </View>
+
+          {bookmarkTab === "users" ? (
+            isLoadingBookmarks ? (
+              <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: Platform.OS === "ios" ? vh(20) : 0 }}>
+                <LoadingLogo size={220} />
+              </View>
+            ) : bookmarksData.length === 0 ? (
+              <View style={styles.currentBidsAndSeeAll2}>
+                <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
+                <ParrotsStdText style={styles.currentBidsTitle2}>No bookmarks yet</ParrotsStdText>
+              </View>
+            ) : (
+              <SearchUsersComponent searchResults={bookmarksData} height={Platform.OS === "ios" ? vh(70) : vh(80)} />
+            )
           ) : (
-            <ScrollView style={styles.messageTextContainer}>
-              {bookmarksData.length === 0 ? (
-                <View style={styles.currentBidsAndSeeAll2}>
-                  <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
-                  <ParrotsStdText style={styles.currentBidsTitle2}>No bookmarks yet</ParrotsStdText>
-                </View>
-              ) : (
-                <SearchUsersComponent searchResults={bookmarksData} height={Platform.OS === "ios" ? vh(70) : vh(80)} />
-              )}
-            </ScrollView>
+            isLoadingBids ? (
+              <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: Platform.OS === "ios" ? vh(20) : 0 }}>
+                <LoadingLogo size={220} />
+              </View>
+            ) : (
+              <BidBookmarkPill
+                bids={myBidsRaw?.data}
+                height={Platform.OS === "ios" ? vh(70) : vh(80)}
+              />
+            )
           )}
         </View>
       ) : (
@@ -376,6 +409,32 @@ const styles = StyleSheet.create({
     color: "black",
   },
 
+  bookmarkToggleRow: {
+    flexDirection: "row",
+    marginHorizontal: vw(5),
+    marginTop: vh(1.5),
+    marginBottom: vh(0.5),
+    backgroundColor: "rgba(0, 119, 234, 0.06)",
+    borderRadius: vh(3),
+    padding: 3,
+  },
+  bookmarkToggleBtn: {
+    flex: 1,
+    paddingVertical: vh(0.8),
+    alignItems: "center",
+    borderRadius: vh(2.5),
+  },
+  bookmarkToggleActive: {
+    backgroundColor: parrotBlue,
+  },
+  bookmarkToggleText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: parrotBlue,
+  },
+  bookmarkToggleTextActive: {
+    color: "white",
+  },
   currentBidsTitle2: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 20,

@@ -104,6 +104,9 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    getMyBids: builder.query({
+      query: () => "/api/Bid/myBids",
+    }),
     sendBid: builder.mutation({
       query: (bidData) => {
         return {
@@ -334,6 +337,7 @@ export const {
   useGetVoyagesByUserByIdQuery,
   useLazyGetVoyagesByUserByIdQuery,
   useGetVoyageByIdQuery,
+  useGetMyBidsQuery,
   useSendBidMutation,
   useChangeBidMutation,
   useAcceptBidMutation,
