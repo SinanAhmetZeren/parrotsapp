@@ -685,6 +685,23 @@ const styles = StyleSheet.create({
   mainBidsContainer: {
     borderRadius: vw(5),
   },
+  mainBidsContainer2: { backgroundColor: "white", flex: 1 },
+  currentBidsAndSeeAll2: {
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  currentBidsTitle2: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: parrotLightBlue,
+    paddingTop: vh(2),
+  },
+  logoImage: {
+    marginTop: vh(25),
+    height: vh(25),
+    width: vh(25),
+    borderRadius: vh(15),
+  },
   buttonsContainer: {
     position: "absolute",
     top: vh(30),
