@@ -121,7 +121,6 @@ const VoyageDetailScreen = ({ navigation }) => {
 
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [unfavConfirmVisible, setUnfavConfirmVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
   const [hasError, setHasError] = useState(false)
@@ -297,20 +296,11 @@ const VoyageDetailScreen = ({ navigation }) => {
     showToast("Voyage added to favorites");
   };
 
-  const confirmDeleteVoyageFromFavorites = () => {
+  const handleDeleteVoyageFromFavorites = () => {
     deleteVoyageFromFavorites({ userId, voyageId });
     setIsFavorited(false);
     dispatch(removeVoyageFromUserFavorites({ favoriteVoyage: voyageId }));
-    setUnfavConfirmVisible(false);
     showToast("Voyage removed from favorites");
-  };
-
-  const handleDeleteVoyageFromFavorites = () => {
-    if (hasBidWithUserId) {
-      setUnfavConfirmVisible(true);
-    } else {
-      confirmDeleteVoyageFromFavorites();
-    }
   };
 
   const onRefresh = () => {
@@ -657,22 +647,6 @@ const VoyageDetailScreen = ({ navigation }) => {
             <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
           </View>
         )}
-        <Modal transparent visible={unfavConfirmVisible} animationType="fade" onRequestClose={() => setUnfavConfirmVisible(false)}>
-          <TouchableOpacity style={styles.unfavOverlay} activeOpacity={1} onPress={() => setUnfavConfirmVisible(false)}>
-            <View style={styles.unfavModal}>
-              <ParrotsStdText style={styles.unfavTitle}>Active Bid</ParrotsStdText>
-              <ParrotsStdText style={styles.unfavMessage}>You have an active bid on this voyage. Removing it from favorites may make it harder to track your bids.</ParrotsStdText>
-              <View style={styles.unfavButtons}>
-                <TouchableOpacity style={styles.unfavCancel} onPress={() => setUnfavConfirmVisible(false)}>
-                  <ParrotsStdText style={styles.unfavCancelText}>Cancel</ParrotsStdText>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.unfavRemove} onPress={confirmDeleteVoyageFromFavorites}>
-                  <ParrotsStdText style={styles.unfavRemoveText}>Remove</ParrotsStdText>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </Modal>
       </>
     );
   }
@@ -1137,59 +1111,5 @@ const styles = StyleSheet.create({
     width: "48%",
   },
 
-  unfavOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  unfavModal: {
-    backgroundColor: parrotCream,
-    borderRadius: vh(2.5),
-    paddingHorizontal: vw(7),
-    paddingVertical: vh(3),
-    width: vw(82),
-    alignItems: "center",
-  },
-  unfavTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 17,
-    color: parrotBlue,
-    marginBottom: vh(1),
-  },
-  unfavMessage: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
-    color: parrotTextDarkBlue,
-    textAlign: "center",
-    lineHeight: 20,
-    marginBottom: vh(2.5),
-  },
-  unfavButtons: {
-    flexDirection: "row",
-    gap: vw(4),
-  },
-  unfavCancel: {
-    backgroundColor: "rgba(0, 119, 234, 0.08)",
-    borderRadius: vw(6),
-    paddingHorizontal: vw(6),
-    paddingVertical: vh(1),
-  },
-  unfavCancelText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    color: parrotBlue,
-  },
-  unfavRemove: {
-    backgroundColor: parrotRed,
-    borderRadius: vw(6),
-    paddingHorizontal: vw(6),
-    paddingVertical: vh(1),
-  },
-  unfavRemoveText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    color: "white",
-  },
 
 });
