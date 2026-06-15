@@ -106,6 +106,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     }),
     getMyBids: builder.query({
       query: () => "/api/Bid/myBids",
+      keepUnusedDataFor: 0,
     }),
     sendBid: builder.mutation({
       query: (bidData) => {

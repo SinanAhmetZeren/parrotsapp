@@ -5,7 +5,7 @@ export default {
         "name": "Parrots",
         "slug": "parrots",
         "owner": "ahmetzeren",
-        "version": "1.0.14",
+        "version": "1.0.15",
         "scheme": "parrotsapp",
         "orientation": "portrait",
         "icon": "./assets/parrotslogoblue_icon.png",
@@ -41,7 +41,7 @@ export default {
         "android": {
             "package": "com.zenforest.parrots",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 15,
+            "versionCode": 16,
             "intentFilters": [
                 {
                     "action": "VIEW",
