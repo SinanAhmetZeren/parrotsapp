@@ -107,10 +107,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
         if (result.data) setMessagesToDisplay(result.data.data);
       });
       if (isHubReady()) invokeHub("EnterConversationPage", currentUserId, conversationUserId);
-      invokeHub("CheckUnreadMessages", currentUserId).then(hasUnread => {
-        if (hasUnread) dispatch(setUnreadMessages(true));
-        else dispatch(markMessagesRead());
-      }).catch(() => {});
       return () => {
         if (isHubReady()) invokeHub("LeaveConversationPage", currentUserId);
       };
