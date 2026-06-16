@@ -39,6 +39,7 @@ export default {
             }
         },
         "android": {
+            "softwareKeyboardLayoutMode": "resize",
             "package": "com.zenforest.parrots",
             "googleServicesFile": "./google-services.json",
             "versionCode": 16,
