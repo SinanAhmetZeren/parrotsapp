@@ -14,6 +14,7 @@ import {
   Modal,
   Image,
   ScrollView,
+  FlatList,
   ActivityIndicator,
   Keyboard,
   Platform,
@@ -34,6 +35,83 @@ import {
   parrotRed,
 } from "../assets/color";
 
+const EMOJI_CATEGORIES = [
+  { icon: "😀", label: "Smileys" },
+  { icon: "👋", label: "People" },
+  { icon: "🐶", label: "Animals" },
+  { icon: "🍕", label: "Food" },
+  { icon: "✈️", label: "Travel" },
+  { icon: "⚽", label: "Activity" },
+  { icon: "💡", label: "Objects" },
+  { icon: "🔥", label: "Symbols" },
+];
+
+const EMOJIS_BY_CATEGORY = {
+  Smileys: [
+    "😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃", "😉", "😊", "😇", "🥰", "😍", "🤩",
+    "😘", "😗", "😚", "😙", "🥲", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤫", "🤔", "🤐",
+    "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "🤥", "😌", "😔", "😪", "🤤", "😴", "😷", "🤒",
+    "🤕", "🤢", "🤮", "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "🥸", "😎", "🤓", "🧐", "😕",
+    "😟", "🙁", "☹️", "😮", "😯", "😲", "😳", "🥺", "😦", "😧", "😨", "😰", "😥", "😢", "😭", "😱",
+    "😖", "😣", "😞", "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬", "😈", "👿", "💀", "☠️", "💩",
+    "🤡", "👹", "👺", "👻", "👽", "👾", "🤖", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾",
+  ],
+  People: [
+    "👋", "🤚", "🖐️", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🤟", "🤘", "🤙", "👈", "👉", "👆",
+    "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️",
+    "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🫀", "🫁", "🧠", "🦷", "🦴", "👀",
+    "👁️", "👅", "👄", "💋", "👶", "🧒", "👦", "👧", "🧑", "👱", "👨", "🧔", "👩", "🧓", "👴", "👵",
+    "🙍", "🙎", "🙅", "🙆", "💁", "🙋", "🧏", "🙇", "🤦", "🤷", "💆", "💇", "🚶", "🧍", "🧎", "🏃",
+    "💃", "🕺", "🧖", "🧗", "🏇", "🏂", "🏋️", "🤼", "🤸", "⛹️", "🤺", "🏊", "🚴", "🧘", "👫", "👬",
+  ],
+  Animals: [
+    "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐨", "🐯", "🦁", "🐮", "🐷", "🐽", "🐸", "🐵",
+    "🙈", "🙉", "🙊", "🐒", "🐔", "🐧", "🐦", "🐤", "🦆", "🦅", "🦉", "🦇", "🐺", "🐗", "🐴", "🦄",
+    "🐝", "🐛", "🦋", "🐌", "🐞", "🐜", "🦟", "🦗", "🕷️", "🦂", "🐢", "🐍", "🦎", "🦖", "🦕", "🐙",
+    "🦑", "🦐", "🦞", "🦀", "🐡", "🐠", "🐟", "🐬", "🐳", "🐋", "🦈", "🐊", "🐅", "🐆", "🦓", "🦍",
+    "🦧", "🐘", "🦛", "🦏", "🐪", "🐫", "🦒", "🦘", "🐃", "🐂", "🐄", "🐎", "🐖", "🐏", "🐑", "🦙",
+    "🐐", "🦌", "🐕", "🐩", "🦮", "🐈", "🐓", "🦃", "🦚", "🦜", "🦢", "🦩", "🕊️", "🐇", "🦝", "🦨",
+    "🌵", "🎄", "🌲", "🌳", "🌴", "🌱", "🌿", "☘️", "🍀", "🎍", "🎋", "🍃", "🍂", "🍁", "🍄", "🌾",
+    "💐", "🌷", "🌹", "🥀", "🌺", "🌸", "🌼", "🌻", "🌞", "🌝", "🌛", "🌜", "🌚", "🌕", "🌙", "⭐",
+    "🌟", "💫", "✨", "⚡", "🌈", "☀️", "🌤️", "⛅", "🌦️", "🌧️", "⛈️", "🌩️", "🌨️", "❄️", "💧", "🌊",
+  ],
+  Food: [
+    "🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥",
+    "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶️", "🫑", "🌽", "🥕", "🧄", "🧅", "🥔", "🍠", "🥐",
+    "🥯", "🍞", "🥖", "🥨", "🧀", "🥚", "🍳", "🧈", "🥞", "🧇", "🥓", "🥩", "🍗", "🍖", "🦴", "🌭",
+    "🍔", "🍟", "🍕", "🫓", "🥪", "🥙", "🧆", "🌮", "🌯", "🫔", "🥗", "🥘", "🫕", "🍝", "🍜", "🍲",
+    "🍛", "🍣", "🍱", "🥟", "🦪", "🍤", "🍙", "🍚", "🍘", "🍥", "🥮", "🍢", "🧁", "🍰", "🎂", "🍮",
+    "🍭", "🍬", "🍫", "🍿", "🍩", "🍪", "🌰", "🥜", "🍯", "🧃", "🥤", "🧋", "☕", "🍵", "🍶", "🍺",
+    "🍻", "🥂", "🍷", "🥃", "🍸", "🍹", "🧉", "🍾", "🧊", "🥄", "🍴", "🍽️", "🥢", "🧂",
+  ],
+  Travel: [
+    "🚗", "🚕", "🚙", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚", "🚛", "🚜", "🛵", "🏍️",
+    "🚲", "🛴", "🛺", "🚁", "🛸", "✈️", "🛩️", "🛫", "🛬", "🪂", "💺", "🚀", "🛶", "⛵", "🚤", "🛥️",
+    "🚢", "⚓", "🗺️", "🗼", "🗽", "🗿", "🏔️", "⛰️", "🌋", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️", "🏟️", "🏛️",
+    "🏗️", "🧱", "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏬",
+    "🏭", "🏯", "🏰", "💒", "⛪", "🌁", "🌃", "🌄", "🌅", "🌆", "🌇", "🌉", "🌌", "🌠", "🎇",
+  ],
+  Activity: [
+    "⚽", "🏀", "🏈", "⚾", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱", "🏓", "🏸", "🥊", "🥋", "🎯", "🪃",
+    "🏹", "🎣", "🤿", "🎽", "🎿", "🛷", "🥌", "🎮", "🕹️", "🎲", "🎭", "🎨", "🎬", "🎤", "🎧", "🎼",
+    "🎵", "🎶", "🎸", "🎹", "🥁", "🪘", "🎷", "🎺", "🪗", "🎻", "🏆", "🥇", "🥈", "🥉", "🏅", "🎖️",
+  ],
+  Objects: [
+    "💡", "🔦", "🕯️", "💰", "💵", "💴", "💶", "💷", "💸", "💳", "🪙", "💎", "🔑", "🗝️", "🔒", "🔓",
+    "🔨", "🪓", "⛏️", "🔧", "🪛", "🔩", "⚙️", "🧲", "🔫", "💣", "🔪", "⚔️", "🛡️", "📱", "💻", "🖥️",
+    "📷", "📸", "📹", "🎥", "📡", "📺", "📻", "🎙️", "📞", "☎️", "🔋", "🔌", "📦", "📫", "📬", "📭",
+    "📰", "📃", "📜", "📄", "📊", "📈", "📉", "📋", "📅", "📆", "📌", "📍", "✂️", "📎", "🖊️", "✏️",
+    "🔍", "🔎", "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔", "❣️", "💕", "💞", "💓",
+    "💗", "💖", "💘", "💝",
+  ],
+  Symbols: [
+    "🔥", "💥", "✨", "🎉", "🎊", "🎈", "🎁", "🎀", "🏮", "🧧", "✉️", "📩", "📨", "🚩", "🏁", "🏳️",
+    "🚫", "⛔", "🚷", "📵", "🔞", "💯", "🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "⚫", "⚪", "🟤", "🔶",
+    "🔷", "🔸", "🔹", "🔺", "🔻", "💠", "🔘", "🔲", "🔳", "▪️", "▫️", "◾", "☮️", "✝️", "☪️", "🕉️",
+    "✡️", "🔯", "🪯", "♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓", "⛎",
+  ],
+};
+
 const SELECTOR_HEIGHT = vh(6.5);
 
 export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
@@ -51,6 +129,8 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
   const currentUserImage = useSelector((state) => state.users.userProfileImageThumbnail || state.users.userProfileImage);
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [emojiOpen, setEmojiOpen] = useState(false);
+  const [emojiCategory, setEmojiCategory] = useState("Smileys");
 
   useEffect(() => {
     const showSub = Keyboard.addListener("keyboardDidShow", (e) => setKeyboardHeight(e.endCoordinates.height));
@@ -97,12 +177,11 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
     }
   };
 
+  const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight;
+
   return (
-    <View style={{
-      height: keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight,
-      flexDirection: "column",
-      backgroundColor: "white"
-    }}>
+    <View style={{ height: outerHeight, backgroundColor: "white" }}>
+    <View style={{ flex: 1, flexDirection: "column", backgroundColor: "white" }}>
 
       {/* 1. Title */}
       <ParrotsStdText style={[styles.membersLabel, { backgroundColor: "white", marginTop: vh(1.5) }]}>Create New Group</ParrotsStdText>
@@ -240,14 +319,21 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
       <View style={[styles.sendRow, {
         width: "100%", alignSelf: "center",
         backgroundColor: parrotLightCream,
-        paddingBottom: insets.bottom,
+        paddingBottom: emojiOpen ? 0 : insets.bottom,
       }]}>
+        <TouchableOpacity
+          onPress={() => { Keyboard.dismiss(); setEmojiOpen((prev) => !prev); }}
+          style={styles.emojiBtn}
+        >
+          <Feather name="smile" size={22} color={emojiOpen ? parrotLightBlue : parrotPlaceholderGrey} />
+        </TouchableOpacity>
         <TextInput
           style={styles.groupMessageInput}
           placeholder="Write first message..."
           placeholderTextColor={parrotPlaceholderGrey}
           value={firstGroupMessage}
           onChangeText={setFirstGroupMessage}
+          onFocus={() => setEmojiOpen(false)}
         />
         <TouchableOpacity
           style={[styles.groupSendBtn, (!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0) && styles.groupSendBtnDisabled]}
@@ -259,6 +345,38 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
             : <Feather name="send" size={20} color="white" />}
         </TouchableOpacity>
       </View>
+    </View>
+
+    {emojiOpen && (
+      <View style={styles.emojiPanel}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryRow} keyboardShouldPersistTaps="always">
+          {EMOJI_CATEGORIES.map((cat) => (
+            <TouchableOpacity
+              key={cat.label}
+              onPress={() => setEmojiCategory(cat.label)}
+              style={[styles.categoryBtn, emojiCategory === cat.label && styles.categoryBtnActive]}
+            >
+              <Text style={styles.categoryIcon}>{cat.icon}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+        <FlatList
+          data={EMOJIS_BY_CATEGORY[emojiCategory]}
+          keyExtractor={(item) => item}
+          numColumns={8}
+          contentContainerStyle={{ paddingBottom: tabBarHeight }}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.emojiItem}
+              onPress={() => setFirstGroupMessage((prev) => prev + item)}
+            >
+              <Text style={styles.emojiText}>{item}</Text>
+            </TouchableOpacity>
+          )}
+          keyboardShouldPersistTaps="always"
+        />
+      </View>
+    )}
     </View>
   );
 }
@@ -343,6 +461,43 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: vh(2),
     marginHorizontal: vw(5),
+  },
+  emojiBtn: {
+    paddingHorizontal: vw(1),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emojiPanel: {
+    height: vh(35),
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(0,0,0,0.06)",
+  },
+  categoryRow: {
+    flexGrow: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.06)",
+  },
+  categoryBtn: {
+    height: vh(6),
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(0.8),
+  },
+  categoryBtnActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: parrotLightBlue,
+  },
+  categoryIcon: {
+    fontSize: 20,
+  },
+  emojiItem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: vh(0.8),
+  },
+  emojiText: {
+    fontSize: 26,
   },
   sendRow: {
     flexDirection: "row",
