@@ -17,18 +17,22 @@ import {
   FlatList,
   ActivityIndicator,
   Keyboard,
+  BackHandler,
   Platform,
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useSelector } from "react-redux";
 import { Feather } from "@expo/vector-icons";
+import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
+import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
 import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
 import { useCreateGroupMutation, useAddGroupMemberMutation } from "../slices/GroupSlice";
 import { invokeHub } from "../signalr/signalRHub";
 import {
   parrotBlue,
   parrotBlueSemiTransparent,
+  parrotBlueSemiTransparent2,
   parrotLightBlue,
   parrotLightCream,
   parrotPlaceholderGrey,
@@ -131,12 +135,21 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [emojiCategory, setEmojiCategory] = useState("Smileys");
+  const [inputFocused, setInputFocused] = useState(false);
 
   useEffect(() => {
     const showSub = Keyboard.addListener("keyboardDidShow", (e) => setKeyboardHeight(e.endCoordinates.height));
     const hideSub = Keyboard.addListener("keyboardDidHide", () => setKeyboardHeight(0));
     return () => { showSub.remove(); hideSub.remove(); };
   }, []);
+
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (emojiOpen) { setEmojiOpen(false); return true; }
+      return false;
+    });
+    return () => sub.remove();
+  }, [emojiOpen]);
 
   const [newGroupName, setNewGroupName] = useState("");
   const [groupMemberSearch, setGroupMemberSearch] = useState("");
@@ -180,6 +193,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
   const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight;
 
   return (
+    <TouchableWithoutFeedback onPress={() => { if (emojiOpen) setEmojiOpen(false); }} accessible={false}>
     <View style={{ height: outerHeight, backgroundColor: "white" }}>
     <View style={{ flex: 1, flexDirection: "column", backgroundColor: "white" }}>
 
@@ -325,15 +339,16 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
           onPress={() => { Keyboard.dismiss(); setEmojiOpen((prev) => !prev); }}
           style={styles.emojiBtn}
         >
-          <Feather name="smile" size={22} color={emojiOpen ? parrotLightBlue : parrotPlaceholderGrey} />
+          <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 41, height: 41, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.2)" }} />
         </TouchableOpacity>
         <TextInput
-          style={styles.groupMessageInput}
+          style={[styles.groupMessageInput, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
           placeholder="Write first message..."
           placeholderTextColor={parrotPlaceholderGrey}
           value={firstGroupMessage}
           onChangeText={setFirstGroupMessage}
-          onFocus={() => setEmojiOpen(false)}
+          onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
+          onBlur={() => setInputFocused(false)}
         />
         <TouchableOpacity
           style={[styles.groupSendBtn, (!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0) && styles.groupSendBtnDisabled]}
@@ -378,6 +393,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
       </View>
     )}
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -504,8 +520,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: vh(1),
     paddingHorizontal: vw(5),
-    borderTopWidth: 1,
-    borderTopColor: "#e8f0f8",
+    borderTopWidth: 0,
     backgroundColor: parrotLightCream,
     gap: vw(2),
   },
@@ -518,6 +533,8 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     fontSize: 15,
     color: "black",
+    borderWidth: 2,
+    borderColor: "rgba(128,128,128,0.08)",
   },
   groupSendBtn: {
     backgroundColor: parrotLightBlue,

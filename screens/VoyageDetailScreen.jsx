@@ -29,6 +29,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
   useWindowDimensions,
   Modal,
@@ -57,6 +58,30 @@ import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotC
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import RenderHtml from "react-native-render-html";
 import LoadingLogo from "../components/LoadingLogo";
+import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
+import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
+
+const EMOJI_CATEGORIES = [
+  { icon: "😀", label: "Smileys" },
+  { icon: "👋", label: "People" },
+  { icon: "🐶", label: "Animals" },
+  { icon: "🍕", label: "Food" },
+  { icon: "✈️", label: "Travel" },
+  { icon: "⚽", label: "Activity" },
+  { icon: "💡", label: "Objects" },
+  { icon: "🔥", label: "Symbols" },
+];
+
+const EMOJIS_BY_CATEGORY = {
+  Smileys: ["😀","😃","😄","😁","😆","😅","🤣","😂","🙂","🙃","😉","😊","😇","🥰","😍","🤩","😘","😗","😚","😙","🥲","😋","😛","😜","🤪","😝","🤑","🤗","🤭","🤫","🤔","🤐","🤨","😐","😑","😶","😏","😒","🙄","😬","🤥","😌","😔","😪","🤤","😴","😷","🤒","🤕","🤢","🤮","🤧","🥵","🥶","🥴","😵","🤯","🤠","🥳","🥸","😎","🤓","🧐","😕","😟","🙁","☹️","😮","😯","😲","😳","🥺","😦","😧","😨","😰","😥","😢","😭","😱","😖","😣","😞","😓","😩","😫","🥱","😤","😡","😠","🤬","😈","👿","💀","☠️","💩","🤡","👹","👺","👻","👽","👾","🤖","😺","😸","😹","😻","😼","😽","🙀","😿","😾"],
+  People: ["👋","🤚","🖐️","✋","🖖","👌","🤌","🤏","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","🖕","👇","☝️","👍","👎","✊","👊","🤛","🤜","👏","🙌","👐","🤲","🤝","🙏","✍️","💅","🤳","💪","🦾","🦿","🦵","🦶","👂","🦻","👃","🫀","🫁","🧠","🦷","🦴","👀","👁️","👅","👄","💋","👶","🧒","👦","👧","🧑","👱","👨","🧔","👩","🧓","👴","👵","🙍","🙎","🙅","🙆","💁","🙋","🧏","🙇","🤦","🤷","💆","💇","🚶","🧍","🧎","🏃","💃","🕺","🧖","🧗","🏇","🏂","🏋️","🤼","🤸","⛹️","🤺","🏊","🚴","🧘","👫","👬"],
+  Animals: ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐽","🐸","🐵","🙈","🙉","🙊","🐒","🐔","🐧","🐦","🐤","🦆","🦅","🦉","🦇","🐺","🐗","🐴","🦄","🐝","🐛","🦋","🐌","🐞","🐜","🦟","🦗","🕷️","🦂","🐢","🐍","🦎","🦖","🦕","🐙","🦑","🦐","🦞","🦀","🐡","🐠","🐟","🐬","🐳","🐋","🦈","🐊","🐅","🐆","🦓","🦍","🦧","🐘","🦛","🦏","🐪","🐫","🦒","🦘","🐃","🐂","🐄","🐎","🐖","🐏","🐑","🦙","🐐","🦌","🐕","🐩","🦮","🐈","🐓","🦃","🦚","🦜","🦢","🦩","🕊️","🐇","🦝","🦨"],
+  Food: ["🍏","🍎","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🫐","🍈","🍒","🍑","🥭","🍍","🥥","🥝","🍅","🍆","🥑","🥦","🥬","🥒","🌶️","🫑","🌽","🥕","🧄","🧅","🥔","🍠","🥐","🥯","🍞","🥖","🥨","🧀","🥚","🍳","🧈","🥞","🧇","🥓","🥩","🍗","🍖","🦴","🌭","🍔","🍟","🍕","🫓","🥪","🥙","🧆","🌮","🌯","🫔","🥗","🥘","🫕","🍝","🍜","🍲","🍛","🍣","🍱","🥟","🦪","🍤","🍙","🍚","🍘","🍥","🥮","🍢","🧁","🍰","🎂","🍮","🍭","🍬","🍫","🍿","🍩","🍪","🌰","🥜","🍯","🧃","🥤","🧋","☕","🍵","🍶","🍺","🍻","🥂","🍷","🥃","🍸","🍹","🧉","🍾","🧊","🥄","🍴","🍽️","🥢","🧂"],
+  Travel: ["🚗","🚕","🚙","🚌","🚎","🏎️","🚓","🚑","🚒","🚐","🛻","🚚","🚛","🚜","🛵","🏍️","🚲","🛴","🛺","🚁","🛸","✈️","🛩️","🛫","🛬","🪂","💺","🚀","🛶","⛵","🚤","🛥️","🚢","⚓","🗺️","🗼","🗽","🗿","🏔️","⛰️","🌋","🏕️","🏖️","🏜️","🏝️","🏞️","🏟️","🏛️","🏗️","🧱","🏘️","🏚️","🏠","🏡","🏢","🏣","🏤","🏥","🏦","🏨","🏩","🏪","🏫","🏬","🏭","🏯","🏰","💒","⛪","🌁","🌃","🌄","🌅","🌆","🌇","🌉","🌌","🌠","🎇"],
+  Activity: ["⚽","🏀","🏈","⚾","🥎","🎾","🏐","🏉","🥏","🎱","🏓","🏸","🥊","🥋","🎯","🪃","🏹","🎣","🤿","🎽","🎿","🛷","🥌","🎮","🕹️","🎲","🎭","🎨","🎬","🎤","🎧","🎼","🎵","🎶","🎸","🎹","🥁","🪘","🎷","🎺","🪗","🎻","🏆","🥇","🥈","🥉","🏅","🎖️"],
+  Objects: ["💡","🔦","🕯️","💰","💵","💴","💶","💷","💸","💳","🪙","💎","🔑","🗝️","🔒","🔓","🔨","🪓","⛏️","🔧","🪛","🔩","⚙️","🧲","🔫","💣","🔪","⚔️","🛡️","📱","💻","🖥️","📷","📸","📹","🎥","📡","📺","📻","🎙️","📞","☎️","🔋","🔌","📦","📫","📬","📭","📰","📃","📜","📄","📊","📈","📉","📋","📅","📆","📌","📍","✂️","📎","🖊️","✏️","🔍","🔎","❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝"],
+  Symbols: ["🔥","💥","✨","🎉","🎊","🎈","🎁","🎀","🏮","🧧","✉️","📩","📨","🚩","🏁","🏳️","🚫","⛔","🚷","📵","🔞","💯","🔴","🟠","🟡","🟢","🔵","🟣","⚫","⚪","🟤","🔶","🔷","🔸","🔹","🔺","🔻","💠","🔘","🔲","🔳","▪️","▫️","◾","☮️","✝️","☪️","🕉️","✡️","🔯","🪯","♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓","⛎"],
+};
 
 const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
@@ -74,6 +99,9 @@ const VoyageDetailScreen = ({ navigation }) => {
   const [bids, setBids] = useState([]);
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isBroadcasting, setIsBroadcasting] = useState(false);
+  const [emojiOpen, setEmojiOpen] = useState(false);
+  const [emojiCategory, setEmojiCategory] = useState("Smileys");
+  const [inputFocused, setInputFocused] = useState(false);
 
   const handleBroadcast = async () => {
     const acceptedUserIds = bids?.filter((b) => b.accepted).map((b) => b.userId);
@@ -597,15 +625,51 @@ const VoyageDetailScreen = ({ navigation }) => {
 
             {ownVoyage && bids.some((b) => b.accepted) && (
               <View style={styles.broadcastCard}>
+                <Modal visible={emojiOpen} transparent animationType="fade" onRequestClose={() => setEmojiOpen(false)}>
+                  <TouchableOpacity style={styles.emojiModalBackdrop} activeOpacity={1} onPress={() => setEmojiOpen(false)} />
+                  <View style={styles.emojiModalPanel}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.emojiCategoryRow} keyboardShouldPersistTaps="always">
+                      {EMOJI_CATEGORIES.map((cat) => (
+                        <TouchableOpacity
+                          key={cat.label}
+                          onPress={() => setEmojiCategory(cat.label)}
+                          style={[styles.emojiCategoryBtn, emojiCategory === cat.label && styles.emojiCategoryBtnActive]}
+                        >
+                          <Text style={styles.emojiCategoryIcon}>{cat.icon}</Text>
+                        </TouchableOpacity>
+                      ))}
+                    </ScrollView>
+                    <ScrollView keyboardShouldPersistTaps="always">
+                      <View style={styles.emojiGrid}>
+                        {EMOJIS_BY_CATEGORY[emojiCategory].map((item) => (
+                          <TouchableOpacity
+                            key={item}
+                            style={styles.emojiItem}
+                            onPress={() => setBroadcastMessage((prev) => prev + item)}
+                          >
+                            <Text style={styles.emojiText}>{item}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    </ScrollView>
+                  </View>
+                </Modal>
                 <View style={styles.broadcastInputRow}>
+                  <TouchableOpacity
+                    onPress={() => { Keyboard.dismiss(); setEmojiOpen((prev) => !prev); }}
+                    style={styles.broadcastEmojiBtn}
+                  >
+                    <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 38, height: 38, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? "rgba(0,119,234,0.4)" : "rgba(128,128,128,0.2)" }} />
+                  </TouchableOpacity>
                   <TextInput
-                    style={styles.broadcastInput}
+                    style={[styles.broadcastInput, { borderColor: emojiOpen || inputFocused ? "rgba(0,119,234,0.4)" : "rgba(128,128,128,0.08)" }]}
                     placeholder="Message accepted users..."
                     placeholderTextColor="#aaa"
                     value={broadcastMessage}
                     onChangeText={setBroadcastMessage}
                     multiline
-                    onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 400)}
+                    onFocus={() => { setEmojiOpen(false); setInputFocused(true); setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 400); }}
+                    onBlur={() => setInputFocused(false)}
                   />
                   <TouchableOpacity
                     style={[styles.broadcastSendBtn, (!broadcastMessage.trim() || isBroadcasting) && { opacity: 0.5 }]}
@@ -675,12 +739,14 @@ const styles = StyleSheet.create({
   broadcastInput: {
     flex: 1,
     backgroundColor: "white",
-    borderRadius: vh(2),
+    borderRadius: vh(4),
     paddingHorizontal: vw(3),
     paddingVertical: vh(1),
     fontFamily: "Nunito_600SemiBold",
     fontSize: 14,
     maxHeight: vh(12),
+    borderWidth: 2,
+    borderColor: "rgba(128,128,128,0.08)",
   },
   broadcastSendBtn: {
     backgroundColor: parrotBlue,
@@ -690,6 +756,59 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  broadcastEmojiBtn: {
+    paddingHorizontal: vw(1),
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  emojiModalBackdrop: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+  },
+  emojiModalPanel: {
+    position: "absolute",
+    bottom: vh(22),
+    left: vw(2),
+    right: vw(2),
+    height: vh(35),
+    backgroundColor: "white",
+    borderRadius: vh(2),
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.08)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 8,
+    overflow: "hidden",
+  },
+  emojiCategoryRow: {
+    flexGrow: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.06)",
+  },
+  emojiCategoryBtn: {
+    height: vh(6),
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(0.8),
+  },
+  emojiCategoryBtnActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: parrotLightBlue,
+  },
+  emojiCategoryIcon: { fontSize: 20 },
+  emojiGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  emojiItem: {
+    width: "12.5%",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: vh(0.8),
+  },
+  emojiText: { fontSize: 26 },
   waypointFlatlistContainer: {
     marginRight: vw(3),
     marginBottom: vh(1),

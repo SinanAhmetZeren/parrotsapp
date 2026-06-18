@@ -9,10 +9,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Image,
   StyleSheet,
   Keyboard,
   AppState,
+  BackHandler,
   Platform,
   FlatList,
 } from "react-native";
@@ -22,6 +24,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { markMessagesRead, setUnreadMessages } from "../slices/UserSlice";
 import { useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
+import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
+import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotRed } from "../assets/color";
@@ -146,7 +150,16 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [emojiCategory, setEmojiCategory] = useState("Smileys");
+  const [inputFocused, setInputFocused] = useState(false);
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (emojiOpen) { setEmojiOpen(false); return true; }
+      return false;
+    });
+    return () => sub.remove();
+  }, [emojiOpen]);
   const tabBarHeight = Platform.OS === "ios"
     ? (vh(100) - insets.top - insets.bottom) * 0.08
     : vh(8);
@@ -323,6 +336,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight;
 
   return (
+    <TouchableWithoutFeedback onPress={() => { if (emojiOpen) setEmojiOpen(false); }} accessible={false}>
     <View style={{ backgroundColor: "white", height: outerHeight }}>
       <View style={[styles.mainContainer, { flex: 1 }]}>
         {/* // HEADER // */}
@@ -500,17 +514,18 @@ export const ConversationDetailScreen = ({ navigation }) => {
             }}
             style={styles.emojiBtn}
           >
-            <Feather name="smile" size={22} color={emojiOpen ? parrotLightBlue : parrotPlaceholderGrey} />
+            <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 41, height: 41, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.2)" }} />
           </TouchableOpacity>
           <TextInput
             onChangeText={(text) => setMessage(text)}
-            style={styles.textinputStyle}
+            style={[styles.textinputStyle, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
             multiline
             placeholder={`Message ${groupName}...`}
             placeholderTextColor={parrotPlaceholderGrey}
             value={message}
             maxLength={500}
-            onFocus={() => setEmojiOpen(false)}
+            onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
+            onBlur={() => setInputFocused(false)}
           />
           <TouchableOpacity
             disabled={!message.trim()}
@@ -559,6 +574,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
         </View>
       )}
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -705,6 +721,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "black",
     textAlignVertical: "center",
+    borderWidth: 2,
+    borderColor: "rgba(128,128,128,0.08)",
   },
   emojiBtn: {
     paddingHorizontal: vw(1),
