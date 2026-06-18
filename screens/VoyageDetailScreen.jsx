@@ -56,6 +56,7 @@ import {
 import { API_URL } from "@env";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import RenderHtml from "react-native-render-html";
 import LoadingLogo from "../components/LoadingLogo";
 import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
@@ -87,6 +88,7 @@ const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const { voyageId } = route.params;
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   const [addVoyageToFavorites] = useAddVoyageToFavoritesMutation();
   const [deleteVoyageFromFavorites] = useDeleteVoyageFromFavoritesMutation();
@@ -627,7 +629,7 @@ const VoyageDetailScreen = ({ navigation }) => {
               <View style={styles.broadcastCard}>
                 <Modal visible={emojiOpen} transparent animationType="fade" onRequestClose={() => setEmojiOpen(false)}>
                   <TouchableOpacity style={styles.emojiModalBackdrop} activeOpacity={1} onPress={() => setEmojiOpen(false)} />
-                  <View style={styles.emojiModalPanel}>
+                  <View style={[styles.emojiModalPanel, { bottom: insets.bottom + vh(13) }]}>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.emojiCategoryRow} keyboardShouldPersistTaps="always">
                       {EMOJI_CATEGORIES.map((cat) => (
                         <TouchableOpacity
@@ -768,7 +770,7 @@ const styles = StyleSheet.create({
   },
   emojiModalPanel: {
     position: "absolute",
-    bottom: vh(22),
+    bottom: vh(12),
     left: vw(2),
     right: vw(2),
     height: vh(35),
