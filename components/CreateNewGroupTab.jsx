@@ -210,6 +210,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
             value={newGroupName}
             onChangeText={setNewGroupName}
             numberOfLines={1}
+            maxLength={30}
           />
         </View>
       </View>

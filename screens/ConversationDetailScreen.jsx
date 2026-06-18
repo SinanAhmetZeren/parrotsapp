@@ -363,17 +363,25 @@ export const ConversationDetailScreen = ({ navigation }) => {
                   borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.2)"
                 }} />
             </TouchableOpacity>
-            <TextInput
-              onChangeText={(text) => setMessage(text)}
-              style={[styles.textinputStyle, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
-              multiline
-              placeholder={`Message ${name}...`}
-              placeholderTextColor={parrotPlaceholderGrey}
-              value={message}
-              maxLength={500}
-              onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
-              onBlur={() => setInputFocused(false)}
-            />
+            <View style={{ flex: 1 }}>
+              <TextInput
+                onChangeText={(text) => setMessage(text)}
+                style={[styles.textinputStyle, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
+                multiline
+                placeholder=""
+                value={message}
+                maxLength={500}
+                onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
+                onBlur={() => setInputFocused(false)}
+              />
+              {!message && !inputFocused && !emojiOpen && (
+                <View pointerEvents="none" style={styles.inputPlaceholder}>
+                  <ParrotsStdText style={{ color: parrotPlaceholderGrey, fontSize: 15 }}>
+                    Write a message to <ParrotsStdText style={{ color: parrotBlue }}>{name}</ParrotsStdText>
+                  </ParrotsStdText>
+                </View>
+              )}
+            </View>
             <TouchableOpacity
               disabled={!message.trim() || isSending}
               onPress={handleSend}
@@ -526,6 +534,15 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: "rgba(0, 119, 234, 0.5)",
     fontSize: 12,
+  },
+  inputPlaceholder: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: vw(4),
+    right: 0,
+    justifyContent: "center",
+    zIndex: 1,
   },
   textinputStyle: {
     flex: 1,

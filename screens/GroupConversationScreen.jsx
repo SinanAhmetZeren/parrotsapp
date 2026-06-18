@@ -516,17 +516,25 @@ export const ConversationDetailScreen = ({ navigation }) => {
           >
             <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 41, height: 41, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.2)" }} />
           </TouchableOpacity>
-          <TextInput
-            onChangeText={(text) => setMessage(text)}
-            style={[styles.textinputStyle, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
-            multiline
-            placeholder={`Message ${groupName}...`}
-            placeholderTextColor={parrotPlaceholderGrey}
-            value={message}
-            maxLength={500}
-            onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
-            onBlur={() => setInputFocused(false)}
-          />
+          <View style={{ flex: 1 }}>
+            <TextInput
+              onChangeText={(text) => setMessage(text)}
+              style={[styles.textinputStyle, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
+              multiline
+              placeholder=""
+              value={message}
+              maxLength={500}
+              onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
+              onBlur={() => setInputFocused(false)}
+            />
+            {!message && !inputFocused && !emojiOpen && (
+              <View pointerEvents="none" style={styles.inputPlaceholder}>
+                <ParrotsStdText style={{ color: parrotPlaceholderGrey, fontSize: 15 }}>
+                  Message <ParrotsStdText style={{ color: parrotBlue }}>{groupName?.length > 20 ? groupName.slice(0, 20) + "..." : groupName}</ParrotsStdText>
+                </ParrotsStdText>
+              </View>
+            )}
+          </View>
           <TouchableOpacity
             disabled={!message.trim()}
             onPress={handleSend}
@@ -707,6 +715,15 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: "rgba(0, 119, 234, 0.5)",
     fontSize: 12,
+  },
+  inputPlaceholder: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: vw(4),
+    right: 0,
+    justifyContent: "center",
+    zIndex: 1,
   },
   textinputStyle: {
     flex: 1,
