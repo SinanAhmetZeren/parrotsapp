@@ -15,6 +15,7 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
 } from "react-native";
 import {
   useCreateVehicleMutation,
@@ -186,7 +187,7 @@ const CreateVehicleScreen = () => {
         capacity,
       });
 
-      const createdVehicleId = response?.data?.data?.id;
+const createdVehicleId = response?.data?.data?.id;
       if (!createdVehicleId) {
         throw new Error("Vehicle ID not returned from API");
       }
@@ -199,9 +200,7 @@ const CreateVehicleScreen = () => {
       setVoyageImage("");
       setAddedVehicleImages([]);
 
-      console.log("1. Vehicle created successfully, moving to step 2");
-      setCurrentStep(1);
-      console.log("2. Vehicle created successfully, moving to step 2");
+      setCurrentStep(2);
     } catch (error) {
       console.error("Error in or after createVehicle:", error);
       console.log(
@@ -374,7 +373,12 @@ const CreateVehicleScreen = () => {
 
 
       {hasError && (
-        <View style={{ backgroundColor: "white", height: vh(100) }}>
+        <ScrollView
+          contentContainerStyle={{ backgroundColor: "white", height: vh(100) }}
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={() => setHasError(false)} />
+          }
+        >
           <View style={{ marginTop: vh(15) }}>
             <Image
               source={require("../assets/parrotslogo.png")}
@@ -382,11 +386,8 @@ const CreateVehicleScreen = () => {
             />
             <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
             <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
-            {/* <ParrotsStdText style={styles.currentBidsTitle3}>
-              Swipe Down to Retry
-            </ParrotsStdText> */}
           </View>
-        </View>
+        </ScrollView>
       )}
 
       {currentStep == 1 && !hasError && (
