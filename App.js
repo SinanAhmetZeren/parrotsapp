@@ -86,6 +86,9 @@ import {
 
 import { registerPushTokenAsync } from "./utils/registerPushToken";
 import { ParrotsStdText } from "./components/ParrotsStdText";
+import { UpdateModal } from "./components/UpdateModal";
+import Constants from "expo-constants";
+import { useGetMinVersionQuery } from "./slices/VersionSlice";
 
 // Force font scaling to stay at 100% across the whole app
 if (Text.defaultProps == null) Text.defaultProps = {};
@@ -653,6 +656,16 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
   );
 };
 
+const compareVersions = (a, b) => {
+  const pa = a.split(".").map(Number);
+  const pb = b.split(".").map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((pa[i] ?? 0) < (pb[i] ?? 0)) return -1;
+    if ((pa[i] ?? 0) > (pb[i] ?? 0)) return 1;
+  }
+  return 0;
+};
+
 function App() {
   const [fontsLoaded] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold });
 
@@ -666,6 +679,16 @@ function App() {
 
     const dispatch = useDispatch();
     const [isAuthChecking, setIsAuthChecking] = useState(true);
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const { data: versionData } = useGetMinVersionQuery();
+
+    useEffect(() => {
+      if (!versionData?.minVersion) return;
+      const currentVersion = Constants.expoConfig?.version ?? "0.0.0";
+      if (compareVersions(currentVersion, versionData.minVersion) < 0) {
+        setShowUpdateModal(true);
+      }
+    }, [versionData]);
 
     useEffect(() => {
       let unreadHandlerTrue;
@@ -820,11 +843,16 @@ function App() {
 
     if (isAuthChecking) return null;
 
-    return isLoggedIn ? (
-      <TabNavigator isLoading={isLoadingUser} hasUnreadMessages={hasUnreadMessages} />
-    ) : (
+    return (
       <>
-        <AuthStack />
+        <UpdateModal visible={showUpdateModal} onDismiss={() => setShowUpdateModal(false)} />
+        {isLoggedIn ? (
+          <TabNavigator isLoading={isLoadingUser} hasUnreadMessages={hasUnreadMessages} />
+        ) : (
+          <>
+            <AuthStack />
+          </>
+        )}
       </>
     );
   }
