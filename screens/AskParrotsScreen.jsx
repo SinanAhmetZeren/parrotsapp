@@ -8,8 +8,8 @@ import {
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { API_URL } from "@env";
 import * as Location from "expo-location";
+import { useAskParrotsMutation } from "../slices/AiSlice";
 import { ParrotsStdText } from "../components/ParrotsStdText";
 import {
   parrotBlue, parrotCream, parrotGreen, parrotTextDarkBlue,
@@ -25,7 +25,6 @@ const VEHICLE_COLORS = [
   parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink,
 ];
 import { Image } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import parrotLogo from "../assets/parrotsiconpaddedtransparent.png";
 
 const VEHICLES = ["Boat", "Car", "Caravan", "Bus", "Walk", "Run", "Motorcycle", "Bicycle", "TinyHouse", "Airplane", "Train"];
@@ -46,9 +45,9 @@ export default function AskParrotsScreen() {
   const [vibe, setVibe] = useState(null);
   const [radius, setRadius] = useState(null);
   const [pin, setPin] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [askParrots, { isLoading: loading }] = useAskParrotsMutation();
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -70,42 +69,22 @@ export default function AskParrotsScreen() {
 
   const handleAsk = async () => {
     if (!canAsk) return;
-    setLoading(true);
     setResponse(null);
     try {
-      const t = await AsyncStorage.getItem("storedToken");
-
-      const radiusKm = radius.replace("km", "");
-      const body = {
+      const result = await askParrots({
         vehicleType: vehicle,
         duration,
         vibe,
         latitude: pin?.latitude ?? 0,
         longitude: pin?.longitude ?? 0,
-        radiusKm,
-      };
-
-      const res = await fetch(`${API_URL}/api/Ai/ask`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${t}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        setResponse(data.response);
-        fadeAnim.setValue(0);
-        Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
-      } else {
-        setResponse(data.message ?? "Something went wrong. Please try again.");
-      }
+        radiusKm: radius.replace("km", ""),
+      }).unwrap();
+      setResponse(result.response);
+      fadeAnim.setValue(0);
+      Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
     } catch (e) {
-      setResponse("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+      console.log("AskParrots error:", JSON.stringify(e));
+      setResponse(e?.data?.message ?? "Something went wrong. Please try again.");
     }
   };
 
@@ -183,10 +162,10 @@ export default function AskParrotsScreen() {
 
         {/* Response */}
         {response && (
-          <Animated.View style={[styles.responseCard, { opacity: fadeAnim }]}>
+          <View style={styles.responseCard}>
             <ParrotsStdText style={styles.responseLabel}>PARROTS SUGGESTS</ParrotsStdText>
             <ParrotsStdText style={styles.responseText}>{response}</ParrotsStdText>
-          </Animated.View>
+          </View>
         )}
 
         <View style={{ height: 40 }} />
@@ -214,12 +193,13 @@ function buildPromptParts(vehicle, duration, vibe, radius, vehicleColor, duratio
     { text: duration, color: durationColor },
     { text: " available. " },
     vibe === "Any"
-      ? { text: "I'm open to " }
+      ? { text: "I'm looking for a voyage of " }
       : { text: "I'm looking for a " },
     { text: vibePart, color: vibeColor },
     vibe === "Any"
-      ? { text: " vibe, starting within " }
+      ? { text: ", starting within " }
       : { text: " experience, starting within " },
+
     { text: radius, color: radiusColor },
     { text: " of this location." },
   ];
@@ -273,10 +253,10 @@ function PillGroup({ options, selected, onSelect, colors }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: parrotCream },
-  scroll: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24 },
-  logo: { width: 80, height: 80, alignSelf: "center", marginTop: 8 },
-  title: { fontSize: 26, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue, textAlign: "center", marginTop: 4 },
-  subtitle: { fontSize: 14, color: parrotInputTextColor, textAlign: "center", marginBottom: 16 },
+  scroll: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 24 },
+  logo: { width: 180, height: 180, alignSelf: "center", marginTop: -30, marginBottom: -30 },
+  title: { fontSize: 26, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue, textAlign: "center", marginTop: 0 },
+  subtitle: { fontSize: 14, color: parrotInputTextColor, textAlign: "center", marginBottom: 12 },
   card: {
     backgroundColor: "white", borderRadius: 16, padding: 16, marginBottom: 12,
     shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
