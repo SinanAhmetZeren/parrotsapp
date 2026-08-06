@@ -83,7 +83,6 @@ export default function AskParrotsScreen() {
       fadeAnim.setValue(0);
       Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
     } catch (e) {
-      console.log("AskParrots error:", JSON.stringify(e));
       setResponse(e?.data?.message ?? "Something went wrong. Please try again.");
     }
   };
@@ -164,7 +163,13 @@ export default function AskParrotsScreen() {
         {response && (
           <View style={styles.responseCard}>
             <ParrotsStdText style={styles.responseLabel}>PARROTS SUGGESTS</ParrotsStdText>
-            <ParrotsStdText style={styles.responseText}>{response}</ParrotsStdText>
+            <ParrotsStdText style={styles.responseText}>
+              {response.split(/\*\*([^*]+)\*\*/).map((part, i) =>
+                i % 2 === 1
+                  ? <ParrotsStdText key={i} style={[styles.responseText, { color: parrotBlue }]}>{part}</ParrotsStdText>
+                  : part
+              )}
+            </ParrotsStdText>
           </View>
         )}
 
