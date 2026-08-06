@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   View, ScrollView, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Animated
+  ActivityIndicator, Animated, Modal, Clipboard
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
@@ -46,6 +46,7 @@ export default function AskParrotsScreen() {
   const [radius, setRadius] = useState(null);
   const [pin, setPin] = useState(null);
   const [response, setResponse] = useState(null);
+  const [copied, setCopied] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [askParrots, { isLoading: loading }] = useAskParrotsMutation();
   const mapRef = useRef(null);
@@ -155,26 +156,42 @@ export default function AskParrotsScreen() {
         >
           {loading
             ? <ActivityIndicator color="white" />
-            : <ParrotsStdText style={styles.askButtonText}>Ask</ParrotsStdText>
+            : <ParrotsStdText style={styles.askButtonText}>Ask Parrots</ParrotsStdText>
           }
         </TouchableOpacity>
 
-        {/* Response */}
-        {response && (
-          <View style={styles.responseCard}>
-            <ParrotsStdText style={styles.responseLabel}>PARROTS SUGGESTS</ParrotsStdText>
-            <ParrotsStdText style={styles.responseText}>
-              {response.split(/\*\*([^*]+)\*\*/).map((part, i) =>
-                i % 2 === 1
-                  ? <ParrotsStdText key={i} style={[styles.responseText, { color: parrotBlue }]}>{part}</ParrotsStdText>
-                  : part
-              )}
-            </ParrotsStdText>
-          </View>
-        )}
-
         <View style={{ height: 40 }} />
       </ScrollView>
+
+      {/* Response modal */}
+      <Modal visible={!!response} transparent animationType="slide" onRequestClose={() => setResponse(null)}>
+        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setResponse(null)}>
+          <View style={styles.modalSheet}>
+            <View style={styles.modalHandle} />
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <ParrotsStdText style={styles.responseText}>
+                {response?.split(/\*\*([^*]+)\*\*/).map((part, i) =>
+                  i % 2 === 1
+                    ? <ParrotsStdText key={i} style={[styles.responseText, { color: parrotBlue }]}>{part}</ParrotsStdText>
+                    : part
+                )}
+              </ParrotsStdText>
+            </ScrollView>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.modalCopy} onPress={() => {
+                Clipboard.setString(response.replace(/\*\*([^*]+)\*\*/g, "$1"));
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}>
+                <ParrotsStdText style={styles.modalCopyText}>{copied ? "Copied!" : "Copy"}</ParrotsStdText>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalClose} onPress={() => setResponse(null)}>
+                <ParrotsStdText style={styles.modalCloseText}>Close</ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -278,14 +295,31 @@ const styles = StyleSheet.create({
   map: { width: "100%", height: 260, borderRadius: 12, marginTop: 8 },
   promptText: { fontSize: 14, color: parrotInputTextColor, fontFamily: "Nunito_600SemiBold", lineHeight: 22, textAlign: "center" },
   askButton: {
-    backgroundColor: parrotWalkTurquoise, borderRadius: 16, paddingVertical: 16,
-    alignItems: "center", marginTop: 8, marginBottom: 16,
+    backgroundColor: parrotWalkTurquoise, borderRadius: 24, paddingVertical: 12,
+    paddingHorizontal: 32, alignSelf: "center", marginTop: 8, marginBottom: 16, minWidth: 160,
   },
-  askButtonText: { color: "white", fontSize: 18, fontFamily: "Nunito_800ExtraBold" },
+  askButtonText: { color: "white", fontSize: 16, fontFamily: "Nunito_800ExtraBold" },
   responseCard: {
     backgroundColor: "white", borderRadius: 16, padding: 16,
     shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
   },
-  responseLabel: { fontSize: 11, fontFamily: "Nunito_800ExtraBold", color: parrotGreen, letterSpacing: 1, marginBottom: 10 },
-  responseText: { fontSize: 15, color: parrotTextDarkBlue, lineHeight: 24, fontFamily: "Nunito_600SemiBold" },
+  responseText: { fontSize: 15, color: parrotTextDarkBlue, lineHeight: 26, fontFamily: "Nunito_600SemiBold" },
+  modalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)", paddingHorizontal: 24 },
+  modalSheet: {
+    backgroundColor: "white", borderRadius: 24,
+    padding: 24, paddingBottom: 28, width: "100%", maxHeight: "70%",
+    shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 20, shadowOffset: { width: 0, height: 8 }, elevation: 10,
+  },
+  modalHandle: { display: "none" },
+  modalButtons: { flexDirection: "row", gap: 10, marginTop: 20 },
+  modalCopy: {
+    flex: 1, borderWidth: 1.5, borderColor: parrotWalkTurquoise, borderRadius: 14,
+    paddingVertical: 12, alignItems: "center",
+  },
+  modalCopyText: { color: parrotWalkTurquoise, fontSize: 16, fontFamily: "Nunito_800ExtraBold" },
+  modalClose: {
+    flex: 1, backgroundColor: parrotWalkTurquoise, borderRadius: 14,
+    paddingVertical: 12, alignItems: "center",
+  },
+  modalCloseText: { color: "white", fontSize: 16, fontFamily: "Nunito_800ExtraBold" },
 });
