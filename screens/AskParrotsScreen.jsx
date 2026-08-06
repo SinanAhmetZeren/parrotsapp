@@ -1,0 +1,306 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View, ScrollView, TouchableOpacity, StyleSheet,
+  ActivityIndicator, Animated
+} from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { API_URL } from "@env";
+import * as Location from "expo-location";
+import { ParrotsStdText } from "../components/ParrotsStdText";
+import {
+  parrotBlue, parrotCream, parrotGreen, parrotTextDarkBlue,
+  parrotWalkTurquoise, parrotPlaceholderGrey, parrotInputTextColor,
+  parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen,
+  parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen,
+  parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink,
+} from "../assets/color";
+
+const VEHICLE_COLORS = [
+  parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen,
+  parrotWalkTurquoise, parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen,
+  parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink,
+];
+import { Image } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import parrotLogo from "../assets/parrotsiconpaddedtransparent.png";
+
+const VEHICLES = ["Boat", "Car", "Caravan", "Bus", "Walk", "Run", "Motorcycle", "Bicycle", "TinyHouse", "Airplane", "Train"];
+const DURATIONS = ["Half day", "1 day", "2-3 days", "1 week", "2 weeks"];
+const VIBES = ["Culture", "Food", "Nature", "Chill", "Adventure", "Budget", "Scenic", "Any"];
+const RADII = ["1km", "5km", "10km", "50km"];
+
+const DURATION_COLORS = ["#2ac898", "#2ac898", "#2ac898", "#2ac898", "#2ac898"];
+const VIBE_COLORS = ["#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623"];
+const RADIUS_COLORS = ["#06B6D4", "#06B6D4", "#06B6D4", "#06B6D4"];
+
+export default function AskParrotsScreen() {
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
+  const [vehicle, setVehicle] = useState(null);
+  const [duration, setDuration] = useState(null);
+  const [vibe, setVibe] = useState(null);
+  const [radius, setRadius] = useState(null);
+  const [pin, setPin] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+      const loc = await Location.getCurrentPositionAsync({});
+      const coord = { latitude: loc.coords.latitude, longitude: loc.coords.longitude };
+      setPin(coord);
+      mapRef.current?.animateToRegion({ ...coord, latitudeDelta: 0.0922, longitudeDelta: 0.0922 }, 500);
+    })();
+  }, []);
+
+  const canAsk = vehicle && duration && vibe && radius && pin;
+
+  const handleMapPress = (e) => {
+    setPin(e.nativeEvent.coordinate);
+  };
+
+  const handleAsk = async () => {
+    if (!canAsk) return;
+    setLoading(true);
+    setResponse(null);
+    try {
+      const t = await AsyncStorage.getItem("storedToken");
+
+      const radiusKm = radius.replace("km", "");
+      const body = {
+        vehicleType: vehicle,
+        duration,
+        vibe,
+        latitude: pin?.latitude ?? 0,
+        longitude: pin?.longitude ?? 0,
+        radiusKm,
+      };
+
+      const res = await fetch(`${API_URL}/api/Ai/ask`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${t}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setResponse(data.response);
+        fadeAnim.setValue(0);
+        Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
+      } else {
+        setResponse(data.message ?? "Something went wrong. Please try again.");
+      }
+    } catch (e) {
+      setResponse("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+
+        {/* Header */}
+        <Image source={parrotLogo} style={styles.logo} />
+        <ParrotsStdText style={styles.title}>Ask Parrots</ParrotsStdText>
+        <ParrotsStdText style={styles.subtitle}>Tell me what kind of voyage you're after.</ParrotsStdText>
+
+        {/* Vehicle */}
+        <SectionCard label="VEHICLE TYPE">
+          <PillGroup options={VEHICLES} selected={vehicle} onSelect={setVehicle} colors={VEHICLE_COLORS} />
+        </SectionCard>
+
+        {/* Duration */}
+        <SectionCard label="DURATION">
+          <PillGroup options={DURATIONS} selected={duration} onSelect={setDuration} colors={DURATION_COLORS} />
+        </SectionCard>
+
+        {/* Vibe */}
+        <SectionCard label="VIBE">
+          <PillGroup options={VIBES} selected={vibe} onSelect={setVibe} colors={VIBE_COLORS} />
+        </SectionCard>
+
+        {/* Radius */}
+        <SectionCard label="RADIUS">
+          <PillGroup options={RADII} selected={radius} onSelect={setRadius} colors={RADIUS_COLORS} />
+        </SectionCard>
+
+        {/* Map */}
+        <SectionCard label="START LOCATION — TAP THE MAP">
+          <MapView
+            ref={mapRef}
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            initialRegion={{ latitude: 41.0, longitude: 28.9, latitudeDelta: 20, longitudeDelta: 20 }}
+            onPress={handleMapPress}
+          >
+            {pin && <Marker coordinate={pin} pinColor={parrotWalkTurquoise} />}
+          </MapView>
+        </SectionCard>
+
+        {/* Prompt preview */}
+        {canAsk && (
+          <SectionCard label="YOUR QUERY">
+            <ParrotsStdText style={styles.promptText}>
+              {buildPromptParts(vehicle, duration, vibe, radius,
+                VEHICLE_COLORS[VEHICLES.indexOf(vehicle)],
+                DURATION_COLORS[DURATIONS.indexOf(duration)],
+                VIBE_COLORS[VIBES.indexOf(vibe)],
+                RADIUS_COLORS[RADII.indexOf(radius)]
+              ).map((part, i) =>
+                part.color
+                  ? <ParrotsStdText key={i} style={[styles.promptText, { color: part.color }]}>{part.text}</ParrotsStdText>
+                  : part.text
+              )}
+            </ParrotsStdText>
+          </SectionCard>
+        )}
+
+        {/* Ask button */}
+        <TouchableOpacity
+          style={[styles.askButton, !canAsk && { opacity: 0.4 }]}
+          onPress={handleAsk}
+          disabled={!canAsk || loading}
+        >
+          {loading
+            ? <ActivityIndicator color="white" />
+            : <ParrotsStdText style={styles.askButtonText}>Ask</ParrotsStdText>
+          }
+        </TouchableOpacity>
+
+        {/* Response */}
+        {response && (
+          <Animated.View style={[styles.responseCard, { opacity: fadeAnim }]}>
+            <ParrotsStdText style={styles.responseLabel}>PARROTS SUGGESTS</ParrotsStdText>
+            <ParrotsStdText style={styles.responseText}>{response}</ParrotsStdText>
+          </Animated.View>
+        )}
+
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </View>
+  );
+}
+
+const VIBE_DESCRIPTIONS = {
+  Culture: "Culture (focused on cultural sights and history)",
+  Food: "Food (focused on local food and dining)",
+  Nature: "Nature (focused on nature and outdoor scenery)",
+  Chill: "Chill (relaxed and laid-back)",
+  Adventure: "Adventure (adventurous and off the beaten path)",
+  Budget: "Budget (budget-friendly)",
+  Scenic: "Scenic (focused on scenic landscapes and views)",
+};
+
+function buildPromptParts(vehicle, duration, vibe, radius, vehicleColor, durationColor, vibeColor, radiusColor) {
+  const vibePart = vibe === "Any" ? "any vibe" : VIBE_DESCRIPTIONS[vibe] ?? vibe;
+  return [
+    { text: "I have a " },
+    { text: vehicle, color: vehicleColor },
+    { text: " and " },
+    { text: duration, color: durationColor },
+    { text: " available. " },
+    vibe === "Any"
+      ? { text: "I'm open to " }
+      : { text: "I'm looking for a " },
+    { text: vibePart, color: vibeColor },
+    vibe === "Any"
+      ? { text: " vibe, starting within " }
+      : { text: " experience, starting within " },
+    { text: radius, color: radiusColor },
+    { text: " of this location." },
+  ];
+}
+
+function buildPromptPreview(vehicle, duration, vibe, radius, pin) {
+  const vibePart = vibe === "Any"
+    ? "I'm open to any vibe"
+    : `I'm looking for a ${VIBE_DESCRIPTIONS[vibe] ?? vibe} experience`;
+  const locationPart = pin
+    ? `starting within ${radius} of this location`
+    : "";
+  return `I have a ${vehicle} and ${duration} available. ${vibePart}, ${locationPart}.`;
+}
+
+function SectionCard({ label, children }) {
+  return (
+    <View style={styles.card}>
+      <ParrotsStdText style={styles.cardLabel}>{label}</ParrotsStdText>
+      {children}
+    </View>
+  );
+}
+
+function PillGroup({ options, selected, onSelect, colors }) {
+  return (
+    <View style={styles.pillGroup}>
+      {options.map((opt, i) => {
+        const isSelected = selected === opt;
+        const color = colors ? colors[i] : parrotBlue;
+        return (
+          <TouchableOpacity
+            key={opt}
+            style={[
+              styles.pill,
+              colors
+                ? { backgroundColor: isSelected ? color : color + "0D", borderColor: isSelected ? "transparent" : "rgba(150,150,150,0.5)" }
+                : isSelected && { backgroundColor: parrotBlue, borderColor: parrotBlue }
+            ]}
+            onPress={() => onSelect(opt)}
+          >
+            <ParrotsStdText style={[styles.pillText, { color: isSelected ? "white" : "#555" }]}>
+              {opt}
+            </ParrotsStdText>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: parrotCream },
+  scroll: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24 },
+  logo: { width: 80, height: 80, alignSelf: "center", marginTop: 8 },
+  title: { fontSize: 26, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue, textAlign: "center", marginTop: 4 },
+  subtitle: { fontSize: 14, color: parrotInputTextColor, textAlign: "center", marginBottom: 16 },
+  card: {
+    backgroundColor: "white", borderRadius: 16, padding: 16, marginBottom: 12,
+    shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+  },
+  cardLabel: { fontSize: 11, fontFamily: "Nunito_800ExtraBold", color: parrotPlaceholderGrey, letterSpacing: 1, marginBottom: 10 },
+  pillGroup: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  pill: {
+    borderWidth: 1.5, borderColor: parrotPlaceholderGrey, borderRadius: 20,
+    paddingHorizontal: 14, paddingVertical: 7,
+  },
+  pillSelected: { backgroundColor: parrotBlue, borderColor: parrotBlue },
+  pillText: { fontSize: 14, color: parrotTextDarkBlue, fontFamily: "Nunito_600SemiBold" },
+  pillTextSelected: { color: "white" },
+  map: { width: "100%", height: 260, borderRadius: 12, marginTop: 8 },
+  promptText: { fontSize: 14, color: parrotInputTextColor, fontFamily: "Nunito_600SemiBold", lineHeight: 22, textAlign: "center" },
+  askButton: {
+    backgroundColor: parrotWalkTurquoise, borderRadius: 16, paddingVertical: 16,
+    alignItems: "center", marginTop: 8, marginBottom: 16,
+  },
+  askButtonText: { color: "white", fontSize: 18, fontFamily: "Nunito_800ExtraBold" },
+  responseCard: {
+    backgroundColor: "white", borderRadius: 16, padding: 16,
+    shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+  },
+  responseLabel: { fontSize: 11, fontFamily: "Nunito_800ExtraBold", color: parrotGreen, letterSpacing: 1, marginBottom: 10 },
+  responseText: { fontSize: 15, color: parrotTextDarkBlue, lineHeight: 24, fontFamily: "Nunito_600SemiBold" },
+});

@@ -44,6 +44,7 @@ import EditProfileScreen from "./screens/EditProfileScreen";
 import EditVehicleScreen from "./screens/EditVehicleScreen";
 import CreateVoyageScreen from "./screens/CreateVoyageScreen";
 import CreateVehicleScreen from "./screens/CreateVehicleScreen";
+import AskParrotsScreen from "./screens/AskParrotsScreen";
 import MessagesScreen from "./screens/MessagesScreen";
 import { ConversationDetailScreen } from "./screens/ConversationDetailScreen";
 import GroupConversationDetail from "./components/GroupConversationDetail";
@@ -276,6 +277,13 @@ const AddNewStack = () => {
       <Stack.Screen
         name="CreateVehicleScreen"
         component={CreateVehicleScreen}
+        options={{
+          unmountOnBlur: true,
+        }}
+      />
+      <Stack.Screen
+        name="AskParrotsScreen"
+        component={AskParrotsScreen}
         options={{
           unmountOnBlur: true,
         }}

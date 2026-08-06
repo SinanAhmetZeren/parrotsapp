@@ -3,10 +3,10 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { View,  TouchableOpacity, Modal, StyleSheet, Animated } from "react-native";
+import { View, TouchableOpacity, Modal, StyleSheet, Animated } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
-import { parrotBlue, parrotCream } from "../assets/color";
+import { parrotBlue, parrotCream, parrotWalkTurquoise } from "../assets/color";
 import { Shadow } from "react-native-shadow-2";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -36,9 +36,7 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
     }
   }, [modalVisible]);
 
-  const handlePressOut = () => {
-    setModalVisible(false);
-  };
+  const handlePressOut = () => setModalVisible(false);
 
   const handleAddVehicle = () => {
     setModalVisible(false);
@@ -50,6 +48,11 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
     navigation.navigate("Create", { screen: "CreateVoyageScreen" });
   };
 
+  const handleAskParrots = () => {
+    setModalVisible(false);
+    navigation.navigate("Create", { screen: "AskParrotsScreen", initial: false });
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -59,38 +62,36 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
     >
       <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPressOut={handlePressOut}>
         <Animated.View style={[styles.centeredView, { opacity: opacityAnim, bottom: insets.bottom + 60 }]}>
-          <View style={styles.modalView}>
-            <Shadow
-              distance={8}
-              offset={[0, 0]}
-              startColor="rgba(0,0,0,0.18)"
-              finalColor="rgba(0,0,0,0.23)"
-              radius={12}
-              style={{ borderRadius: vh(2) }}
-            >
+
+          {/* Ask Parrots — top row */}
+          <View style={styles.topRow}>
+            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.10)" radius={12} style={{ borderRadius: vh(2) }}>
+              <View style={styles.askView}>
+                <TouchableOpacity style={styles.askSelection} onPress={handleAskParrots}>
+                  <ParrotsStdText style={styles.choiceText}>Ask Parrots</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </Shadow>
+          </View>
+
+          {/* New Vehicle + New Voyage — bottom row */}
+          <View style={styles.bottomRow}>
+            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.10)" radius={12} style={{ borderRadius: vh(2) }}>
               <View style={styles.modalView}>
                 <TouchableOpacity style={styles.selection} onPress={handleAddVehicle}>
                   <ParrotsStdText style={styles.choiceText}>New Vehicle</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </Shadow>
-          </View>
-          <View style={styles.modalView2}>
-            <Shadow
-              distance={8}
-              offset={[0, 0]}
-              startColor="rgba(0,0,0,0.18)"
-              finalColor="rgba(0,0,0,0.23)"
-              radius={12}
-              style={{ borderRadius: vh(2) }}
-            >
-              <View style={styles.modalView2}>
-                <TouchableOpacity style={styles.selection2} onPress={handleAddVoyage}>
+            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.10)" radius={12} style={{ borderRadius: vh(2) }}>
+              <View style={styles.modalView}>
+                <TouchableOpacity style={styles.selection} onPress={handleAddVoyage}>
                   <ParrotsStdText style={styles.choiceText}>New Voyage</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </Shadow>
           </View>
+
         </Animated.View>
       </TouchableOpacity>
     </Modal>
@@ -100,24 +101,33 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
 const styles = StyleSheet.create({
   centeredView: {
     position: "absolute",
-    bottom: 0, // overridden inline with insets.bottom + 60
+    bottom: 0,
     alignSelf: "center",
-    width: vw(75),
-    height: vh(6.5),
+    width: vw(80),
     paddingHorizontal: vh(0.2),
-    paddingVertical: vh(0.2),
-    backgroundColor: parrotCream,
+    paddingVertical: vh(0.4),
+    backgroundColor: "transparent",
     borderRadius: vh(4),
+    flexDirection: "column",
+    alignItems: "center",
+    gap: vh(0.5),
+  },
+  topRow: {
+    width: "100%",
+    alignItems: "center",
+  },
+  bottomRow: {
     flexDirection: "row",
     justifyContent: "space-around",
+    width: "100%",
   },
   modalView: {
     backgroundColor: parrotBlue,
     borderRadius: vh(3),
     alignSelf: "center",
   },
-  modalView2: {
-    backgroundColor: parrotBlue,
+  askView: {
+    backgroundColor: parrotWalkTurquoise,
     borderRadius: vh(3),
     alignSelf: "center",
   },
@@ -133,7 +143,7 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.5),
     borderRadius: vh(2.5),
   },
-  selection2: {
+  askSelection: {
     marginHorizontal: vh(0.5),
     marginVertical: vh(0.5),
     paddingHorizontal: vh(2),
