@@ -224,6 +224,11 @@ const HomeStack = () => {
           unmountOnBlur: true,
         }}
       />
+      <Stack.Screen
+        name="AskParrotsScreen"
+        component={AskParrotsScreen}
+        options={{ unmountOnBlur: true }}
+      />
     </Stack.Navigator>
   );
 };
@@ -281,14 +286,6 @@ const AddNewStack = () => {
           unmountOnBlur: true,
         }}
       />
-      <Stack.Screen
-        name="AskParrotsScreen"
-        component={AskParrotsScreen}
-        options={{
-          unmountOnBlur: true,
-        }}
-      />
-
       <Stack.Screen
         name="EditVehicleScreen"
         component={EditVehicleScreen}

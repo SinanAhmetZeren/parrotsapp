@@ -50,7 +50,7 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
 
   const handleAskParrots = () => {
     setModalVisible(false);
-    navigation.navigate("Create", { screen: "AskParrotsScreen", initial: false });
+    navigation.navigate("Home", { screen: "AskParrotsScreen" });
   };
 
   return (
