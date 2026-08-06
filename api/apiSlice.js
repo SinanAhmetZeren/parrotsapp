@@ -30,8 +30,9 @@ let refreshPromise = null;
 
 // Base query with token refresh logic and 8s timeout
 const baseQueryWithReauth = async (args, api, extraOptions) => {
+  const isAiRequest = typeof args === "object" && args?.url?.includes("/api/Ai/");
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  const timeoutId = setTimeout(() => controller.abort(), isAiRequest ? 30000 : 8000);
   api.signal?.addEventListener("abort", () => controller.abort());
 
   let result;
