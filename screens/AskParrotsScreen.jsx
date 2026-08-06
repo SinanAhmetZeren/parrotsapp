@@ -123,7 +123,7 @@ export default function AskParrotsScreen() {
         </SectionCard>
 
         {/* Map */}
-        <SectionCard label="AROUND... (TAP TO SET LOCATION)">
+        <SectionCard label="AROUND... (TAP TO SET LOCATION)" style={{ padding: 0, paddingTop: 10, overflow: "hidden" }} labelStyle={{ paddingHorizontal: 16 }}>
           <MapView
             ref={mapRef}
             provider={PROVIDER_GOOGLE}
@@ -211,7 +211,7 @@ export default function AskParrotsScreen() {
                 if (!isHubReady()) return;
                 const query = buildPromptPreview(vehicle, duration, vibe, radius, pin);
                 const responseText = response.replace(/\*\*([^*]+)\*\*/g, "$1");
-                const text = `${query}\n\n${responseText}`;
+                const text = `🦜 ${query}\n\n➡️ ${responseText}`;
                 await invokeHub("SendMessage", currentUserId, currentUserId, text, true);
                 setSent(true);
                 setTimeout(() => setSent(false), 2000);
@@ -288,10 +288,10 @@ function buildPromptPreview(vehicle, duration, vibe, radius, pin) {
   return `${vehiclePart} ${vibePart}, ${locationPart}.`;
 }
 
-function SectionCard({ label, children }) {
+function SectionCard({ label, children, style, labelStyle }) {
   return (
-    <View style={styles.card}>
-      <ParrotsStdText style={styles.cardLabel}>{label}</ParrotsStdText>
+    <View style={[styles.card, style]}>
+      <ParrotsStdText style={[styles.cardLabel, labelStyle]}>{label}</ParrotsStdText>
       {children}
     </View>
   );
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   pillSelected: { backgroundColor: parrotBlue, borderColor: parrotBlue },
   pillText: { fontSize: 14, color: parrotTextDarkBlue, fontFamily: "Nunito_600SemiBold" },
   pillTextSelected: { color: "white" },
-  map: { width: "100%", height: 260, borderRadius: 12, marginTop: 8 },
+  map: { width: "100%", height: 338, borderBottomLeftRadius: 16, borderBottomRightRadius: 16, marginTop: 8 },
   promptText: { fontSize: 14, color: parrotInputTextColor, fontFamily: "Nunito_600SemiBold", lineHeight: 22, textAlign: "center" },
   askButton: {
     backgroundColor: parrotWalkTurquoise, borderRadius: 24, paddingVertical: 8,
