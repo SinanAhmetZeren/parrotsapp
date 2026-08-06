@@ -63,30 +63,26 @@ export const CreateChoiceModal = ({ modalVisible, setModalVisible }) => {
       <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPressOut={handlePressOut}>
         <Animated.View style={[styles.centeredView, { opacity: opacityAnim, bottom: insets.bottom + 60 }]}>
 
-          {/* Ask Parrots — top row */}
-          <View style={styles.topRow}>
-            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.10)" radius={12} style={{ borderRadius: vh(2) }}>
-              <View style={styles.askView}>
-                <TouchableOpacity style={styles.askSelection} onPress={handleAskParrots}>
-                  <ParrotsStdText style={styles.choiceText}>Ask Parrots</ParrotsStdText>
-                </TouchableOpacity>
-              </View>
-            </Shadow>
-          </View>
-
-          {/* New Vehicle + New Voyage — bottom row */}
+          {/* All three side by side */}
           <View style={styles.bottomRow}>
-            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.10)" radius={12} style={{ borderRadius: vh(2) }}>
+            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.1)" finalColor="rgba(0,0,0,0.00)" radius={12} style={{ borderRadius: vh(2) }}>
               <View style={styles.modalView}>
                 <TouchableOpacity style={styles.selection} onPress={handleAddVehicle}>
                   <ParrotsStdText style={styles.choiceText}>New Vehicle</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </Shadow>
-            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.08)" finalColor="rgba(0,0,0,0.10)" radius={12} style={{ borderRadius: vh(2) }}>
-              <View style={styles.modalView}>
+            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.1)" finalColor="rgba(0,0,0,0.00)" radius={12} style={{ borderRadius: vh(2) }}>
+              <View style={[styles.modalView, { backgroundColor: "#089ADE" }]}>
                 <TouchableOpacity style={styles.selection} onPress={handleAddVoyage}>
                   <ParrotsStdText style={styles.choiceText}>New Voyage</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </Shadow>
+            <Shadow distance={8} offset={[0, 0]} startColor="rgba(0,0,0,0.1)" finalColor="rgba(0,0,0,0.00)" radius={12} style={{ borderRadius: vh(2) }}>
+              <View style={styles.askView}>
+                <TouchableOpacity style={styles.selection} onPress={handleAskParrots}>
+                  <ParrotsStdText style={styles.choiceText}>Ask Parrots</ParrotsStdText>
                 </TouchableOpacity>
               </View>
             </Shadow>
@@ -103,7 +99,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     alignSelf: "center",
-    width: vw(80),
+    width: vw(95),
     paddingHorizontal: vh(0.2),
     paddingVertical: vh(0.4),
     backgroundColor: "transparent",
@@ -112,14 +108,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: vh(0.5),
   },
-  topRow: {
-    width: "100%",
-    alignItems: "center",
-  },
   bottomRow: {
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
+    backgroundColor: "transparent",
   },
   modalView: {
     backgroundColor: parrotBlue,
@@ -132,21 +125,14 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   choiceText: {
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: "Nunito_800ExtraBold",
     color: "white",
   },
   selection: {
-    marginHorizontal: vh(0.5),
-    marginVertical: vh(0.5),
-    paddingHorizontal: vh(2),
-    paddingVertical: vh(0.5),
-    borderRadius: vh(2.5),
-  },
-  askSelection: {
-    marginHorizontal: vh(0.5),
-    marginVertical: vh(0.5),
-    paddingHorizontal: vh(2),
+    marginHorizontal: vh(0.4),
+    marginVertical: vh(0.4),
+    paddingHorizontal: vh(1.2),
     paddingVertical: vh(0.5),
     borderRadius: vh(2.5),
   },

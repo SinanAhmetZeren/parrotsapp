@@ -3,10 +3,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   View, ScrollView, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Animated, Modal, Clipboard
+  ActivityIndicator, Animated, Modal, Clipboard, BackHandler
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { invokeHub, isHubReady } from "../signalr/signalRHub";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Location from "expo-location";
 import { useAskParrotsMutation } from "../slices/AiSlice";
@@ -26,6 +28,7 @@ const VEHICLE_COLORS = [
 ];
 import { Image } from "react-native";
 import parrotLogo from "../assets/parrotsiconpaddedtransparent.png";
+import parrotTabIcon from "../assets/parrotwhiteoutlinebg.png";
 
 const VEHICLES = ["Boat", "Car", "Caravan", "Bus", "Walk", "Run", "Motorcycle", "Bicycle", "TinyHouse", "Airplane", "Train"];
 const DURATIONS = ["Half day", "1 day", "2-3 days", "1 week", "2 weeks"];
@@ -47,6 +50,8 @@ export default function AskParrotsScreen() {
   const [pin, setPin] = useState(null);
   const [response, setResponse] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [sent, setSent] = useState(false);
+  const currentUserId = useSelector((state) => state.users.userId);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [askParrots, { isLoading: loading }] = useAskParrotsMutation();
   const mapRef = useRef(null);
@@ -98,27 +103,27 @@ export default function AskParrotsScreen() {
         <ParrotsStdText style={styles.subtitle}>Tell me what kind of voyage you're after.</ParrotsStdText>
 
         {/* Vehicle */}
-        <SectionCard label="VEHICLE TYPE">
+        <SectionCard label="I WANT TO TRAVEL BY...">
           <PillGroup options={VEHICLES} selected={vehicle} onSelect={setVehicle} colors={VEHICLE_COLORS} />
         </SectionCard>
 
         {/* Duration */}
-        <SectionCard label="DURATION">
+        <SectionCard label="FOR...">
           <PillGroup options={DURATIONS} selected={duration} onSelect={setDuration} colors={DURATION_COLORS} />
         </SectionCard>
 
         {/* Vibe */}
-        <SectionCard label="VIBE">
+        <SectionCard label="WITH A VIBE OF...">
           <PillGroup options={VIBES} selected={vibe} onSelect={setVibe} colors={VIBE_COLORS} />
         </SectionCard>
 
         {/* Radius */}
-        <SectionCard label="RADIUS">
+        <SectionCard label="STARTING WITHIN...">
           <PillGroup options={RADII} selected={radius} onSelect={setRadius} colors={RADIUS_COLORS} />
         </SectionCard>
 
         {/* Map */}
-        <SectionCard label="START LOCATION — TAP THE MAP">
+        <SectionCard label="AROUND... (TAP TO SET LOCATION)">
           <MapView
             ref={mapRef}
             provider={PROVIDER_GOOGLE}
@@ -126,7 +131,7 @@ export default function AskParrotsScreen() {
             initialRegion={{ latitude: 41.0, longitude: 28.9, latitudeDelta: 20, longitudeDelta: 20 }}
             onPress={handleMapPress}
           >
-            {pin && <Marker coordinate={pin} pinColor={parrotWalkTurquoise} />}
+            {pin && <Marker coordinate={pin} pinColor={parrotBoatPurple} />}
           </MapView>
         </SectionCard>
 
@@ -138,7 +143,8 @@ export default function AskParrotsScreen() {
                 VEHICLE_COLORS[VEHICLES.indexOf(vehicle)],
                 DURATION_COLORS[DURATIONS.indexOf(duration)],
                 VIBE_COLORS[VIBES.indexOf(vibe)],
-                RADIUS_COLORS[RADII.indexOf(radius)]
+                RADIUS_COLORS[RADII.indexOf(radius)],
+                pin
               ).map((part, i) =>
                 part.color
                   ? <ParrotsStdText key={i} style={[styles.promptText, { color: part.color }]}>{part.text}</ParrotsStdText>
@@ -168,6 +174,22 @@ export default function AskParrotsScreen() {
         <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setResponse(null)}>
           <View style={styles.modalSheet}>
             <View style={styles.modalHandle} />
+            <View style={styles.modalQueryRow}>
+              <Image source={parrotTabIcon} style={styles.modalQueryLogo} />
+              <ParrotsStdText style={styles.modalQueryText}>
+                {canAsk && buildPromptParts(vehicle, duration, vibe, radius,
+                  VEHICLE_COLORS[VEHICLES.indexOf(vehicle)],
+                  DURATION_COLORS[DURATIONS.indexOf(duration)],
+                  VIBE_COLORS[VIBES.indexOf(vibe)],
+                  RADIUS_COLORS[RADII.indexOf(radius)],
+                  pin
+                ).map((part, i) =>
+                  part.color
+                    ? <ParrotsStdText key={i} style={[styles.modalQueryText, { color: part.color }]}>{part.text}</ParrotsStdText>
+                    : part.text
+                )}
+              </ParrotsStdText>
+            </View>
             <ScrollView showsVerticalScrollIndicator={false}>
               <ParrotsStdText style={styles.responseText}>
                 {response?.split(/\*\*([^*]+)\*\*/).map((part, i) =>
@@ -178,15 +200,26 @@ export default function AskParrotsScreen() {
               </ParrotsStdText>
             </ScrollView>
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.modalCopy} onPress={() => {
+              <TouchableOpacity style={[styles.modalActionBtn, { backgroundColor: parrotBlue }]} onPress={() => {
                 Clipboard.setString(response.replace(/\*\*([^*]+)\*\*/g, "$1"));
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
               }}>
-                <ParrotsStdText style={styles.modalCopyText}>{copied ? "Copied!" : "Copy"}</ParrotsStdText>
+                <ParrotsStdText style={styles.modalActionText}>{copied ? "Copied!" : "Copy"}</ParrotsStdText>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.modalClose} onPress={() => setResponse(null)}>
-                <ParrotsStdText style={styles.modalCloseText}>Close</ParrotsStdText>
+              <TouchableOpacity style={[styles.modalActionBtn, { backgroundColor: "#089ADE" }]} onPress={async () => {
+                if (!isHubReady()) return;
+                const query = buildPromptPreview(vehicle, duration, vibe, radius, pin);
+                const responseText = response.replace(/\*\*([^*]+)\*\*/g, "$1");
+                const text = `${query}\n\n${responseText}`;
+                await invokeHub("SendMessage", currentUserId, currentUserId, text, true);
+                setSent(true);
+                setTimeout(() => setSent(false), 2000);
+              }}>
+                <ParrotsStdText style={styles.modalActionText}>{sent ? "Sent!" : "Send Me"}</ParrotsStdText>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.modalActionBtn, { backgroundColor: parrotWalkTurquoise }]} onPress={() => setResponse(null)}>
+                <ParrotsStdText style={styles.modalActionText}>Close</ParrotsStdText>
               </TouchableOpacity>
             </View>
           </View>
@@ -206,35 +239,53 @@ const VIBE_DESCRIPTIONS = {
   Scenic: "Scenic (focused on scenic landscapes and views)",
 };
 
-function buildPromptParts(vehicle, duration, vibe, radius, vehicleColor, durationColor, vibeColor, radiusColor) {
-  const vibePart = vibe === "Any" ? "any vibe" : VIBE_DESCRIPTIONS[vibe] ?? vibe;
+const ON_FOOT = ["Walk", "Run"];
+
+function formatDuration(d) { return d === "Half day" ? "Half a Day" : d; }
+
+function buildPromptParts(vehicle, duration, vibe, radius, vehicleColor, durationColor, vibeColor, radiusColor, pin = null) {
+  const isOnFoot = ON_FOOT.includes(vehicle);
+  const displayDuration = formatDuration(duration);
+  const vibeDesc = vibe !== "Any" ? VIBE_DESCRIPTIONS[vibe] : null;
+  const vibeKeyword = vibeDesc ? vibeDesc.split(" (")[0] : null;
+  const vibeParenthesis = vibeDesc ? " (" + vibeDesc.split(" (")[1] : null;
   return [
-    { text: "I have a " },
+    isOnFoot ? { text: "I want to go for a " } : { text: "I have a " },
     { text: vehicle, color: vehicleColor },
-    { text: " and " },
-    { text: duration, color: durationColor },
-    { text: " available. " },
+    isOnFoot ? { text: " for " } : { text: " and " },
+    { text: displayDuration, color: durationColor },
+    isOnFoot ? { text: ". " } : { text: " available. " },
     vibe === "Any"
       ? { text: "I'm looking for a voyage of " }
       : { text: "I'm looking for a " },
-    { text: vibePart, color: vibeColor },
+    vibe === "Any"
+      ? { text: "any vibe", color: vibeColor }
+      : { text: vibeKeyword, color: vibeColor },
+    vibe !== "Any" && vibeParenthesis
+      ? { text: vibeParenthesis }
+      : { text: "" },
     vibe === "Any"
       ? { text: ", starting within " }
       : { text: " experience, starting within " },
-
     { text: radius, color: radiusColor },
-    { text: " of this location." },
+    { text: " of this location " },
+    pin ? { text: `(${pin.latitude.toFixed(4)}, ${pin.longitude.toFixed(4)}).`, color: parrotBoatPurple } : { text: "." },
   ];
 }
 
 function buildPromptPreview(vehicle, duration, vibe, radius, pin) {
+  const isOnFoot = ON_FOOT.includes(vehicle);
+  const displayDuration = formatDuration(duration);
+  const vehiclePart = isOnFoot
+    ? `I want to go for a ${vehicle} for ${displayDuration}.`
+    : `I have a ${vehicle} and ${displayDuration} available.`;
   const vibePart = vibe === "Any"
-    ? "I'm open to any vibe"
+    ? "I'm looking for a voyage of any vibe"
     : `I'm looking for a ${VIBE_DESCRIPTIONS[vibe] ?? vibe} experience`;
   const locationPart = pin
-    ? `starting within ${radius} of this location`
+    ? `starting within ${radius} of this location (${pin.latitude.toFixed(4)}, ${pin.longitude.toFixed(4)})`
     : "";
-  return `I have a ${vehicle} and ${duration} available. ${vibePart}, ${locationPart}.`;
+  return `${vehiclePart} ${vibePart}, ${locationPart}.`;
 }
 
 function SectionCard({ label, children }) {
@@ -295,8 +346,8 @@ const styles = StyleSheet.create({
   map: { width: "100%", height: 260, borderRadius: 12, marginTop: 8 },
   promptText: { fontSize: 14, color: parrotInputTextColor, fontFamily: "Nunito_600SemiBold", lineHeight: 22, textAlign: "center" },
   askButton: {
-    backgroundColor: parrotWalkTurquoise, borderRadius: 24, paddingVertical: 12,
-    paddingHorizontal: 32, alignSelf: "center", marginTop: 8, marginBottom: 16, minWidth: 160,
+    backgroundColor: parrotWalkTurquoise, borderRadius: 24, paddingVertical: 8,
+    paddingHorizontal: 22, alignSelf: "center", marginTop: 8, marginBottom: 16, minWidth: 130,
   },
   askButtonText: { color: "white", fontSize: 16, fontFamily: "Nunito_800ExtraBold" },
   responseCard: {
@@ -307,19 +358,16 @@ const styles = StyleSheet.create({
   modalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)", paddingHorizontal: 24 },
   modalSheet: {
     backgroundColor: "white", borderRadius: 24,
-    padding: 24, paddingBottom: 28, width: "100%", maxHeight: "70%",
+    padding: 24, paddingBottom: 28, width: "100%", maxHeight: "85%",
     shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 20, shadowOffset: { width: 0, height: 8 }, elevation: 10,
   },
   modalHandle: { display: "none" },
-  modalButtons: { flexDirection: "row", gap: 10, marginTop: 20 },
-  modalCopy: {
-    flex: 1, borderWidth: 1.5, borderColor: parrotWalkTurquoise, borderRadius: 14,
-    paddingVertical: 12, alignItems: "center",
+  modalQueryRow: { flexDirection: "row", alignItems: "flex-start", marginBottom: 12, marginLeft: -12, marginRight: 4 },
+  modalQueryLogo: { width: 36, height: 36, marginRight: 8, marginLeft: -4, marginTop: -4 },
+  modalQueryText: { flex: 1, fontSize: 13, color: parrotInputTextColor, fontFamily: "Nunito_600SemiBold", lineHeight: 20, opacity: 0.6, fontStyle: "italic" },
+  modalButtons: { flexDirection: "row", gap: 8, marginTop: 20 },
+  modalActionBtn: {
+    flex: 1, borderRadius: 20, paddingVertical: 10, alignItems: "center",
   },
-  modalCopyText: { color: parrotWalkTurquoise, fontSize: 16, fontFamily: "Nunito_800ExtraBold" },
-  modalClose: {
-    flex: 1, backgroundColor: parrotWalkTurquoise, borderRadius: 14,
-    paddingVertical: 12, alignItems: "center",
-  },
-  modalCloseText: { color: "white", fontSize: 16, fontFamily: "Nunito_800ExtraBold" },
+  modalActionText: { color: "white", fontSize: 14, fontFamily: "Nunito_800ExtraBold" },
 });
