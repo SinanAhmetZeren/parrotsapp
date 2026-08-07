@@ -12,6 +12,7 @@ import { invokeHub, isHubReady } from "../signalr/signalRHub";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Location from "expo-location";
 import { useAskParrotsMutation } from "../slices/AiSlice";
+import { FontAwesome } from "@expo/vector-icons";
 import { ParrotsStdText } from "../components/ParrotsStdText";
 import {
   parrotBlue, parrotCream, parrotGreen, parrotTextDarkBlue,
@@ -20,6 +21,7 @@ import {
   parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen,
   parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink,
 } from "../assets/color";
+import { vw, vh } from "react-native-expo-viewport-units";
 
 const VEHICLE_COLORS = [
   parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen,
@@ -51,6 +53,10 @@ export default function AskParrotsScreen() {
   const [response, setResponse] = useState(null);
   const [copied, setCopied] = useState(false);
   const [sent, setSent] = useState(false);
+  const [showScrollArrow, setShowScrollArrow] = useState(false);
+  const scrollViewHeight = useRef(0);
+  const scrollContentHeight = useRef(0);
+  const checkScrollable = () => setShowScrollArrow(scrollContentHeight.current > scrollViewHeight.current + 1);
   const currentUserId = useSelector((state) => state.users.userId);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [askParrots, { isLoading: loading }] = useAskParrotsMutation();
@@ -114,7 +120,7 @@ export default function AskParrotsScreen() {
 
         {/* Vibe */}
         <SectionCard label="WITH A VIBE OF...">
-          <PillGroup options={VIBES} selected={vibe} onSelect={setVibe} colors={VIBE_COLORS} />
+          <PillGroup options={VIBES} selected={vibe} onSelect={setVibe} colors={VIBE_COLORS} pillPaddingHorizontal={12} />
         </SectionCard>
 
         {/* Radius */}
@@ -171,7 +177,7 @@ export default function AskParrotsScreen() {
 
       {/* Response modal */}
       <Modal visible={!!response} transparent animationType="slide" onRequestClose={() => setResponse(null)}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setResponse(null)}>
+        <View style={styles.modalOverlay}>
           <View style={styles.modalSheet}>
             <View style={styles.modalHandle} />
             <View style={styles.modalQueryRow}>
@@ -190,18 +196,48 @@ export default function AskParrotsScreen() {
                 )}
               </ParrotsStdText>
             </View>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <ParrotsStdText style={styles.responseText}>
-                {response?.split(/\*\*([^*]+)\*\*/).map((part, i) =>
-                  i % 2 === 1
-                    ? <ParrotsStdText key={i} style={[styles.responseText, { color: parrotBlue }]}>{part}</ParrotsStdText>
-                    : part
-                )}
-              </ParrotsStdText>
-            </ScrollView>
+            <View style={{ maxHeight: vh(60) }}>
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                onLayout={(e) => { scrollViewHeight.current = e.nativeEvent.layout.height; checkScrollable(); }}
+                onContentSizeChange={(_, h) => { scrollContentHeight.current = h; checkScrollable(); }}
+                onScroll={({ nativeEvent }) => {
+                  const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+                  const atBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - 16;
+                  setShowScrollArrow(!atBottom);
+                }}
+                scrollEventThrottle={16}
+              >
+                {(() => {
+                  const locMatch = response?.match(/^\[\[([^\]]+)\]\]/);
+                  const locLabel = locMatch ? locMatch[1] : null;
+                  const bodyText = response?.replace(/^\[\[[^\]]+\]\]\s*/, "") ?? "";
+                  return (
+                    <ParrotsStdText style={styles.responseText}>
+                      {locLabel && (
+                        <ParrotsStdText style={styles.locationLabel}>@ {locLabel} </ParrotsStdText>
+                      )}
+                      {bodyText.split(/(\*\*[^*]+\*\*|\{\{[^}]+\}\})/).map((part, i) => {
+                        if (/^\*\*[^*]+\*\*$/.test(part))
+                          return <ParrotsStdText key={i} style={[styles.responseText, { color: parrotBlue, fontFamily: "Nunito_800ExtraBold" }]}>{part.slice(2, -2)}</ParrotsStdText>;
+                        if (/^\{\{[^}]+\}\}$/.test(part))
+                          return <ParrotsStdText key={i} style={[styles.responseText, { color: "#8B5CF6", fontFamily: "Nunito_800ExtraBold" }]}>{part.slice(2, -2)}</ParrotsStdText>;
+                        return part;
+                      })}
+                    </ParrotsStdText>
+                  );
+                })()}
+              </ScrollView>
+              {showScrollArrow && (
+                <View pointerEvents="none" style={[styles.scrollArrow, { opacity: 0.3, transform: [{ scaleX: 0.8 }] }]}>
+                  <FontAwesome name="arrow-down" size={28} color={parrotWalkTurquoise} />
+                </View>
+              )}
+            </View>
             <View style={styles.modalButtons}>
               <TouchableOpacity style={[styles.modalActionBtn, { backgroundColor: parrotBlue }]} onPress={() => {
-                Clipboard.setString(response.replace(/\*\*([^*]+)\*\*/g, "$1"));
+                const clean = response.replace(/^\[\[([^\]]+)\]\]\s*/, "($1) ").replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\{\{([^}]+)\}\}/g, "$1");
+                Clipboard.setString(clean);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
               }}>
@@ -210,7 +246,7 @@ export default function AskParrotsScreen() {
               <TouchableOpacity style={[styles.modalActionBtn, { backgroundColor: "#089ADE" }]} onPress={async () => {
                 if (!isHubReady()) return;
                 const query = buildPromptPreview(vehicle, duration, vibe, radius, pin);
-                const responseText = response.replace(/\*\*([^*]+)\*\*/g, "$1");
+                const responseText = response.replace(/^\[\[([^\]]+)\]\]\s*/, "($1) ").replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\{\{([^}]+)\}\}/g, "$1");
                 const text = `🦜 ${query}\n\n➡️ ${responseText}`;
                 await invokeHub("SendMessage", currentUserId, currentUserId, text, true);
                 setSent(true);
@@ -223,7 +259,7 @@ export default function AskParrotsScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        </TouchableOpacity>
+        </View>
       </Modal>
     </View>
   );
@@ -297,7 +333,7 @@ function SectionCard({ label, children, style, labelStyle }) {
   );
 }
 
-function PillGroup({ options, selected, onSelect, colors }) {
+function PillGroup({ options, selected, onSelect, colors, pillPaddingHorizontal }) {
   return (
     <View style={styles.pillGroup}>
       {options.map((opt, i) => {
@@ -308,6 +344,7 @@ function PillGroup({ options, selected, onSelect, colors }) {
             key={opt}
             style={[
               styles.pill,
+              pillPaddingHorizontal != null && { paddingHorizontal: pillPaddingHorizontal },
               colors
                 ? { backgroundColor: isSelected ? color : color + "0D", borderColor: isSelected ? "transparent" : "rgba(150,150,150,0.5)" }
                 : isSelected && { backgroundColor: parrotBlue, borderColor: parrotBlue }
@@ -354,11 +391,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white", borderRadius: 16, padding: 16,
     shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
   },
+  locationLabel: { fontSize: 15, color: "#10B981", fontFamily: "Nunito_800ExtraBold", marginBottom: 6 },
+  scrollArrow: { position: "absolute", bottom: 0, right: -10, pointerEvents: "none" },
   responseText: { fontSize: 15, color: parrotTextDarkBlue, lineHeight: 26, fontFamily: "Nunito_600SemiBold" },
-  modalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)", paddingHorizontal: 24 },
+  modalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)", paddingHorizontal: 12 },
   modalSheet: {
     backgroundColor: "white", borderRadius: 24,
-    padding: 24, paddingBottom: 28, width: "100%", maxHeight: "85%",
+    padding: 24, paddingRight: 16, paddingBottom: 28, width: "100%", maxHeight: "85%",
+    flexDirection: "column",
     shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 20, shadowOffset: { width: 0, height: 8 }, elevation: 10,
   },
   modalHandle: { display: "none" },
