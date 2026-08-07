@@ -107,6 +107,7 @@ export default function AskParrotsScreen() {
         <Image source={parrotLogo} style={styles.logo} />
         <ParrotsStdText style={styles.title}>Ask Parrots</ParrotsStdText>
         <ParrotsStdText style={styles.subtitle}>Tell me what kind of voyage you're after.</ParrotsStdText>
+        <ParrotsStdText style={styles.disclaimer}>AI-generated suggestions — always verify before you go.</ParrotsStdText>
 
         {/* Vehicle */}
         <SectionCard label="I WANT TO TRAVEL BY...">
@@ -366,7 +367,8 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 24 },
   logo: { width: 180, height: 180, alignSelf: "center", marginTop: -30, marginBottom: -30 },
   title: { fontSize: 26, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue, textAlign: "center", marginTop: 0 },
-  subtitle: { fontSize: 14, color: parrotInputTextColor, textAlign: "center", marginBottom: 12 },
+  subtitle: { fontSize: 14, color: parrotInputTextColor, textAlign: "center", marginBottom: 4 },
+  disclaimer: { fontSize: 11, color: parrotPlaceholderGrey, textAlign: "center", marginBottom: 12, fontStyle: "italic" },
   card: {
     backgroundColor: "white", borderRadius: 16, padding: 16, marginBottom: 12,
     shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,

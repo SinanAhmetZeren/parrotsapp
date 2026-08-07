@@ -16,13 +16,14 @@ const sections = [
     { num: "9.", text: "Intellectual Property" },
     { num: "10.", text: "Limitation of Liability" },
     { num: "11.", text: "Disclaimers" },
-    { num: "12.", text: "Modifications" },
-    { num: "13.", text: "Privacy Policy" },
-    { num: "14.", text: "Dispute Resolution" },
-    { num: "15.", text: "Governing Law" },
-    { num: "16.", text: "Service Termination and Discontinuation" },
-    { num: "17.", text: "Refund Policy" },
-    { num: "18.", text: "Contact" },
+    { num: "12.", text: "AI-Generated Content (Ask Parrots)" },
+    { num: "13.", text: "Modifications" },
+    { num: "14.", text: "Privacy Policy" },
+    { num: "15.", text: "Dispute Resolution" },
+    { num: "16.", text: "Governing Law" },
+    { num: "17.", text: "Service Termination and Discontinuation" },
+    { num: "18.", text: "Refund Policy" },
+    { num: "19.", text: "Contact" },
 ];
 
 export default function TermsOfUseComponent() {
@@ -49,7 +50,7 @@ export default function TermsOfUseComponent() {
             <View style={styles.indexContainer}>
                 <View style={styles.indexColumns}>
                     <View style={styles.indexColumn}>
-                        {sections.slice(0, 8).map((item, i) => (
+                        {sections.slice(0, 10).map((item, i) => (
                             <TouchableOpacity key={i} onPress={() => scrollToSection(i)} style={styles.indexRow}>
                                 <ParrotsStdText style={styles.indexNum}>{item.num}</ParrotsStdText>
                                 <ParrotsStdText style={styles.indexText}>{item.text}</ParrotsStdText>
@@ -57,8 +58,8 @@ export default function TermsOfUseComponent() {
                         ))}
                     </View>
                     <View style={styles.indexColumn}>
-                        {sections.slice(8).map((item, i) => (
-                            <TouchableOpacity key={i + 8} onPress={() => scrollToSection(i + 8)} style={styles.indexRow}>
+                        {sections.slice(10).map((item, i) => (
+                            <TouchableOpacity key={i + 10} onPress={() => scrollToSection(i + 10)} style={styles.indexRow}>
                                 <ParrotsStdText style={styles.indexNum}>{item.num}</ParrotsStdText>
                                 <ParrotsStdText style={styles.indexText}>{item.text}</ParrotsStdText>
                             </TouchableOpacity>
@@ -449,9 +450,49 @@ export default function TermsOfUseComponent() {
                 </View>
             </View>
 
-            {/* 12. Modifications */}
+            {/* 12. AI-Generated Content */}
             <View ref={r => sectionRefs.current[11] = r} style={styles.wrapper}>
-                <ParrotsStdText style={styles.sectionTitle}>12. Modifications</ParrotsStdText>
+                <ParrotsStdText style={styles.sectionTitle}>12. AI-Generated Content (Ask Parrots)</ParrotsStdText>
+
+                <View style={styles.subSection}>
+                    <ParrotsStdText style={styles.sectionTitle2}>1. Nature of AI Suggestions</ParrotsStdText>
+                    <ParrotsStdText style={styles.paragraph}>
+                        "Ask Parrots" features AI-generated travel suggestions powered by third-party technology (Google Gemini). Responses are generated automatically and may contain inaccuracies, outdated information, or incomplete routing. Suggestions do not constitute professional, safety, or travel planning advice.
+                    </ParrotsStdText>
+                </View>
+
+                <View style={styles.subSection}>
+                    <ParrotsStdText style={styles.sectionTitle2}>2. Location & Query Data</ParrotsStdText>
+                    <ParrotsStdText style={styles.paragraph}>
+                        By using Ask Parrots, your location coordinates, selected vehicle type, voyage duration, and vibe preferences are transmitted to Parrots servers and forwarded to Google Gemini for real-time processing only when you actively submit a query. This data is handled in accordance with Google's Terms of Service and Privacy Policy. Parrots does not control third-party processing.
+                    </ParrotsStdText>
+                </View>
+
+                <View style={styles.subSection}>
+                    <ParrotsStdText style={styles.sectionTitle2}>3. Travel Safety & Independent Verification</ParrotsStdText>
+                    <ParrotsStdText style={styles.paragraph}>
+                        You are solely responsible for your personal safety, compliance with local traffic laws, and adherence to physical road or path conditions. Always independently verify route feasibility, venue operating hours, local regulations, and safety conditions before embarking on any suggested voyage.
+                    </ParrotsStdText>
+                </View>
+
+                <View style={styles.subSection}>
+                    <ParrotsStdText style={styles.sectionTitle2}>4. No Liability & Disclaimer of Warranties</ParrotsStdText>
+                    <ParrotsStdText style={styles.paragraph}>
+                        Ask Parrots is provided on an "AS IS" and "AS AVAILABLE" basis. To the maximum extent permitted by law, Parrots accepts no liability for any loss, damage, injury, delay, or expense arising from reliance on AI-generated suggestions or service interruptions.
+                    </ParrotsStdText>
+                </View>
+
+                <View style={styles.subSection}>
+                    <ParrotsStdText style={styles.sectionTitle2}>5. Usage Limits & Service Availability</ParrotsStdText>
+                    <ParrotsStdText style={styles.paragraph}>
+                        To ensure fair access for all users, usage of Ask Parrots may be subject to rate limits, quotas, or temporary suspensions at Parrots' sole discretion and without prior notice. Parrots reserves the right to modify or discontinue Ask Parrots at any time, consistent with Section 17.
+                    </ParrotsStdText>
+                </View>
+            </View>
+
+            {/* 13. Modifications */}
+            <View ref={r => sectionRefs.current[12] = r} style={styles.wrapper}>
+                <ParrotsStdText style={styles.sectionTitle}>13. Modifications</ParrotsStdText>
                 <ParrotsStdText style={styles.paragraph}>
                     Parrots may update these Terms at any time. Where changes are material,
                     Parrots will make reasonable efforts to notify users, such as by displaying
@@ -462,9 +503,9 @@ export default function TermsOfUseComponent() {
                 </ParrotsStdText>
             </View>
 
-            {/* 13. Privacy Policy */}
-            <View ref={r => sectionRefs.current[12] = r} style={styles.wrapper}>
-                <ParrotsStdText style={styles.sectionTitle}>13. Privacy Policy</ParrotsStdText>
+            {/* 14. Privacy Policy */}
+            <View ref={r => sectionRefs.current[13] = r} style={styles.wrapper}>
+                <ParrotsStdText style={styles.sectionTitle}>14. Privacy Policy</ParrotsStdText>
 
                 <ParrotsStdText style={styles.paragraph}>
                     Parrots respects your privacy and is committed to protecting your personal data.
@@ -579,9 +620,9 @@ export default function TermsOfUseComponent() {
                 </View>
             </View>
 
-            {/* 14. Dispute Resolution */}
-            <View ref={r => sectionRefs.current[13] = r} style={styles.wrapper}>
-                <ParrotsStdText style={styles.sectionTitle}>14. Dispute Resolution</ParrotsStdText>
+            {/* 15. Dispute Resolution */}
+            <View ref={r => sectionRefs.current[14] = r} style={styles.wrapper}>
+                <ParrotsStdText style={styles.sectionTitle}>15. Dispute Resolution</ParrotsStdText>
                 <ParrotsStdText style={styles.paragraph}>
                     In the event of a dispute, users are encouraged to contact Parrots at
                     parrotsapp@gmail.com in the first instance to seek an informal resolution.
@@ -593,17 +634,17 @@ export default function TermsOfUseComponent() {
                 </ParrotsStdText>
             </View>
 
-            {/* 15. Law */}
-            <View ref={r => sectionRefs.current[14] = r} style={styles.wrapper}>
-                <ParrotsStdText style={styles.sectionTitle}>15. Governing Law</ParrotsStdText>
+            {/* 16. Law */}
+            <View ref={r => sectionRefs.current[15] = r} style={styles.wrapper}>
+                <ParrotsStdText style={styles.sectionTitle}>16. Governing Law</ParrotsStdText>
                 <ParrotsStdText style={styles.paragraph}>
                     These Terms are governed by the laws of the United Kingdom.
                 </ParrotsStdText>
             </View>
 
-            {/* 16. Service Termination */}
-            <View ref={r => sectionRefs.current[15] = r} style={styles.wrapper}>
-                <ParrotsStdText style={styles.sectionTitle}>16. Service Termination and Discontinuation</ParrotsStdText>
+            {/* 17. Service Termination */}
+            <View ref={r => sectionRefs.current[16] = r} style={styles.wrapper}>
+                <ParrotsStdText style={styles.sectionTitle}>17. Service Termination and Discontinuation</ParrotsStdText>
                 <ParrotsStdText style={styles.paragraph}>
                     Parrots reserves the right to modify, suspend, or permanently discontinue the Service, or any part thereof, at any time and for any reason, with or without prior notice. We shall not be liable to you or any third party for any such modification, suspension, or discontinuation.
                 </ParrotsStdText>
@@ -615,9 +656,9 @@ export default function TermsOfUseComponent() {
                 </ParrotsStdText>
             </View>
 
-            {/* 17. Refund Policy */}
-            <View ref={r => sectionRefs.current[16] = r} style={styles.wrapper}>
-                <ParrotsStdText style={styles.sectionTitle}>17. Refund Policy</ParrotsStdText>
+            {/* 18. Refund Policy */}
+            <View ref={r => sectionRefs.current[17] = r} style={styles.wrapper}>
+                <ParrotsStdText style={styles.sectionTitle}>18. Refund Policy</ParrotsStdText>
 
                 <View style={styles.subSection}>
                     <ParrotsStdText style={styles.sectionTitle2}>ParrotCoins and Paid Credits</ParrotsStdText>
@@ -665,15 +706,17 @@ export default function TermsOfUseComponent() {
                 </View>
             </View>
 
-            {/* 18. Contact */}
-            <View ref={r => sectionRefs.current[17] = r} style={styles.wrapper}>
-                <ParrotsStdText style={styles.sectionTitle}>18. Contact</ParrotsStdText>
+            {/* 19. Contact */}
+            <View ref={r => sectionRefs.current[18] = r} style={styles.wrapper}>
+                <ParrotsStdText style={styles.sectionTitle}>19. Contact</ParrotsStdText>
                 <ParrotsStdText style={styles.paragraph}>
                     For questions regarding these Terms:{"\n"}
                     Email: parrotsapp@gmail.com{"\n"}
                     Location: United Kingdom
                 </ParrotsStdText>
             </View>
+
+            <View style={{ height: 40 }} />
         </ScrollView>
     );
 }
