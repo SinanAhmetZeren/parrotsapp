@@ -457,35 +457,35 @@ export default function TermsOfUseComponent() {
                 <View style={styles.subSection}>
                     <ParrotsStdText style={styles.sectionTitle2}>1. Nature of AI Suggestions</ParrotsStdText>
                     <ParrotsStdText style={styles.paragraph}>
-                        "Ask Parrots" features AI-generated travel suggestions powered by third-party technology (Google Gemini). Responses are generated automatically and may contain inaccuracies, outdated information, or incomplete routing. Suggestions do not constitute professional, safety, or travel planning advice.
+                        "Ask Parrots" features AI-generated travel suggestions powered by third-party technology (Google Gemini). Responses are generated automatically and may contain inaccuracies, outdated information, or incomplete routing, regardless of mode of travel (e.g., walking, driving, boating, cycling or other modes of travel supported by the app). Suggested routes, services, or transport options may no longer be available or may not exist. Suggestions do not constitute professional, safety, or travel planning advice.
                     </ParrotsStdText>
                 </View>
 
                 <View style={styles.subSection}>
                     <ParrotsStdText style={styles.sectionTitle2}>2. Location & Query Data</ParrotsStdText>
                     <ParrotsStdText style={styles.paragraph}>
-                        By using Ask Parrots, your location coordinates, selected vehicle type, voyage duration, and vibe preferences are transmitted to Parrots servers and forwarded to Google Gemini for real-time processing only when you actively submit a query. This data is handled in accordance with Google's Terms of Service and Privacy Policy. Parrots does not control third-party processing.
+                        By using Ask Parrots, your location coordinates, selected vehicle type, voyage duration, and vibe preferences are transmitted to Parrots servers and forwarded to Google Gemini (or alternative AI providers we may use in future) solely to process and generate your request. This data is handled in accordance with our Privacy Policy and applicable third-party terms. Parrots does not control third-party processing.
                     </ParrotsStdText>
                 </View>
 
                 <View style={styles.subSection}>
                     <ParrotsStdText style={styles.sectionTitle2}>3. Travel Safety & Independent Verification</ParrotsStdText>
                     <ParrotsStdText style={styles.paragraph}>
-                        You are solely responsible for your personal safety, compliance with local traffic laws, and adherence to physical road or path conditions. Always independently verify route feasibility, venue operating hours, local regulations, and safety conditions before embarking on any suggested voyage.
+                        You are solely responsible for your personal safety, compliance with local traffic laws, and adherence to physical road or path conditions, weather, or temporary closures. Always independently verify route feasibility, venue operating hours, local regulations, and safety conditions before embarking on any suggested voyage. Where suggestions involve public or paid transport (such as flights, ferries, or taxis), Parrots accepts no responsibility for cancellations, delays, no-shows, or pricing changes. Always confirm availability and book through official channels.
                     </ParrotsStdText>
                 </View>
 
                 <View style={styles.subSection}>
                     <ParrotsStdText style={styles.sectionTitle2}>4. No Liability & Disclaimer of Warranties</ParrotsStdText>
                     <ParrotsStdText style={styles.paragraph}>
-                        Ask Parrots is provided on an "AS IS" and "AS AVAILABLE" basis. To the maximum extent permitted by law, Parrots accepts no liability for any loss, damage, injury, delay, or expense arising from reliance on AI-generated suggestions or service interruptions.
+                        Ask Parrots is provided on an "AS IS" and "AS AVAILABLE" basis. To the maximum extent permitted by law, Parrots accepts no liability for any direct, indirect, incidental, or consequential loss, injury, delay, fine, or expense arising from reliance on AI-generated suggestions or service interruptions.
                     </ParrotsStdText>
                 </View>
 
                 <View style={styles.subSection}>
                     <ParrotsStdText style={styles.sectionTitle2}>5. Usage Limits & Service Availability</ParrotsStdText>
                     <ParrotsStdText style={styles.paragraph}>
-                        To ensure fair access for all users, usage of Ask Parrots may be subject to rate limits, quotas, or temporary suspensions at Parrots' sole discretion and without prior notice. Parrots reserves the right to modify or discontinue Ask Parrots at any time, consistent with Section 17.
+                        To ensure fair access for all users, usage of Ask Parrots may be subject to rate limits, quotas, or temporary suspensions at Parrots' sole discretion and without prior notice. Each Ask Parrots query consumes 1 ParrotCracker. Parrots reserves the right to adjust this rate at any time. Parrots reserves the right to modify or discontinue Ask Parrots at any time, consistent with Section 17.
                     </ParrotsStdText>
                 </View>
             </View>
