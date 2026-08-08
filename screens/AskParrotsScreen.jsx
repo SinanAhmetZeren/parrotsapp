@@ -20,7 +20,7 @@ import {
   parrotWalkTurquoise, parrotPlaceholderGrey, parrotInputTextColor,
   parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen,
   parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen,
-  parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink,
+  parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink, parrotDarkBlue,
 } from "../assets/color";
 import { vw, vh } from "react-native-expo-viewport-units";
 
@@ -110,8 +110,11 @@ export default function AskParrotsScreen() {
     } catch (e) {
       if (e?.status === 402) {
         setCoinBalance(0);
+        setResponse("You're out of crackers! Earn or buy more crackers to generate your next voyage.");
+      } else if (e?.status === "FETCH_ERROR") {
+        setResponse("Unable to connect. Please check your network and try again.");
       } else {
-        setResponse(e?.data?.message ?? "Something went wrong. Please try again.");
+        setResponse(e?.data?.message ?? "Unable to connect. Please check your network and try again.");
       }
     }
   };
@@ -160,16 +163,24 @@ export default function AskParrotsScreen() {
         </SectionCard>
 
         {/* Map */}
-        <SectionCard label="AROUND... (TAP TO SET LOCATION)" style={{ padding: 0, paddingTop: 10, overflow: "hidden" }} labelStyle={{ paddingHorizontal: 16 }}>
-          <MapView
-            ref={mapRef}
-            provider={PROVIDER_GOOGLE}
-            style={styles.map}
-            initialRegion={{ latitude: 41.0, longitude: 28.9, latitudeDelta: 20, longitudeDelta: 20 }}
-            onPress={handleMapPress}
-          >
-            {pin && <Marker coordinate={pin} pinColor={parrotBoatPurple} />}
-          </MapView>
+        <SectionCard label="AROUND..."
+          style={{ padding: 0, paddingTop: 10, overflow: "hidden" }} labelStyle={{ paddingHorizontal: 16 }}>
+          <View style={{ position: "relative", marginTop: -8 }}>
+            <MapView
+              ref={mapRef}
+              provider={PROVIDER_GOOGLE}
+              style={styles.map}
+              initialRegion={{ latitude: 41.0, longitude: 28.9, latitudeDelta: 20, longitudeDelta: 20 }}
+              onPress={handleMapPress}
+            >
+              {pin && <Marker coordinate={pin} pinColor={parrotBoatPurple} />}
+            </MapView>
+            <View style={styles.tapPill} pointerEvents="none">
+              <View style={styles.tapPillInner}>
+                <ParrotsStdText style={styles.tapPillText}>Tap for location. Zoom in if a label blocks your tap.</ParrotsStdText>
+              </View>
+            </View>
+          </View>
         </SectionCard>
 
         {/* Prompt preview */}
@@ -413,6 +424,14 @@ const styles = StyleSheet.create({
   pillText: { fontSize: 14, color: parrotTextDarkBlue, fontFamily: "Nunito_600SemiBold" },
   pillTextSelected: { color: "white" },
   map: { width: "100%", height: 338, borderBottomLeftRadius: 16, borderBottomRightRadius: 16, marginTop: 8 },
+  tapPill: {
+    position: "absolute", bottom: 2, right: 2,
+    backgroundColor: "transparent",
+  },
+  tapPillInner: {
+    backgroundColor: "#ffffff", borderRadius: 20, paddingHorizontal: 8, paddingVertical: 4,
+  },
+  tapPillText: { fontSize: 10.5, fontFamily: "Nunito_700Bold", color: parrotWalkTurquoise },
   promptText: { fontSize: 14, color: parrotInputTextColor, fontFamily: "Nunito_600SemiBold", lineHeight: 22, textAlign: "center" },
   askButton: {
     backgroundColor: parrotWalkTurquoise, borderRadius: 24, paddingVertical: 8,

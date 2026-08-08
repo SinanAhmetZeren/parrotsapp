@@ -3,11 +3,11 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { StyleSheet, View, FlatList,  Image } from "react-native";
+import { StyleSheet, View, FlatList, Image, TouchableOpacity } from "react-native";
 import VoyageCardProfileHorizontal from "./VoyageCardProfileHorizontal";
 import PlaceCardHorizontal from "./PlaceCardHorizontal";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { parrotLightBlue } from "../assets/color";
+import { parrotLightBlue, parrotCaravanOrangeRed, parrotDarkBlue } from "../assets/color";
 
 export default function VoyageListHorizontal({ data, focusMap, navigation }) {
   const renderItem = ({ item }) => {
@@ -56,8 +56,14 @@ export default function VoyageListHorizontal({ data, focusMap, navigation }) {
             style={styles.logoImage}
           />
           <ParrotsStdText style={styles.currentBidsTitle2}>
-            Nothing here at this time{"\n"}Explore a different area
+            No voyages posted here.
           </ParrotsStdText>
+          <View style={styles.subtitleRow}>
+            <ParrotsStdText style={styles.currentBidsSubtitle2}>Why not post one — or </ParrotsStdText>
+            <TouchableOpacity onPress={() => navigation.navigate("AskParrotsScreen")} activeOpacity={0.4}>
+              <ParrotsStdText style={styles.askParrotsLink}>Ask Parrots</ParrotsStdText>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
@@ -94,12 +100,31 @@ const styles = StyleSheet.create({
   currentBidsAndSeeAll2: {
     alignItems: "center",
     alignSelf: "center",
+    marginTop: vh(3),
   },
   currentBidsTitle2: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 17,
-    fontWeight: "700",
+    color: parrotDarkBlue,
+    textAlign: "center",
+    marginBottom: 4,
+  },
+  subtitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    flexWrap: "wrap",
+  },
+  currentBidsSubtitle2: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 17,
     color: parrotLightBlue,
     textAlign: "center",
+  },
+  askParrotsLink: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 17,
+    color: parrotCaravanOrangeRed,
   },
 
   containerHorizontal: {
