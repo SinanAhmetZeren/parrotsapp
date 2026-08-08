@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   View, ScrollView, TouchableOpacity, StyleSheet,
-  ActivityIndicator, Animated, Modal, Clipboard, BackHandler
+  ActivityIndicator, Animated, Modal, Clipboard, BackHandler, Linking
 } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
@@ -12,6 +12,7 @@ import { invokeHub, isHubReady } from "../signalr/signalRHub";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Location from "expo-location";
 import { useAskParrotsMutation } from "../slices/AiSlice";
+import { useLazyGetParrotCoinBalanceQuery } from "../slices/UserSlice";
 import { FontAwesome } from "@expo/vector-icons";
 import { ParrotsStdText } from "../components/ParrotsStdText";
 import {
@@ -31,6 +32,7 @@ const VEHICLE_COLORS = [
 import { Image } from "react-native";
 import parrotLogo from "../assets/parrotsiconpaddedtransparent.png";
 import parrotTabIcon from "../assets/parrotwhiteoutlinebg.png";
+import parrotCookie from "../assets/parrotCookie.png";
 
 const VEHICLES = ["Boat", "Car", "Caravan", "Bus", "Walk", "Run", "Motorcycle", "Bicycle", "TinyHouse", "Airplane", "Train"];
 const DURATIONS = ["Half day", "1 day", "2-3 days", "1 week", "2 weeks"];
@@ -60,6 +62,8 @@ export default function AskParrotsScreen() {
   const currentUserId = useSelector((state) => state.users.userId);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [askParrots, { isLoading: loading }] = useAskParrotsMutation();
+  const [coinBalance, setCoinBalance] = useState(null);
+  const [getParrotCoinBalance] = useLazyGetParrotCoinBalanceQuery();
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -72,6 +76,14 @@ export default function AskParrotsScreen() {
       mapRef.current?.animateToRegion({ ...coord, latitudeDelta: 0.0922, longitudeDelta: 0.0922 }, 500);
     })();
   }, []);
+
+  useEffect(() => {
+    if (currentUserId) {
+      getParrotCoinBalance(currentUserId).then((res) => {
+        if (res?.data != null) setCoinBalance(res.data.balance ?? 0);
+      });
+    }
+  }, [currentUserId]);
 
   const canAsk = vehicle && duration && vibe && radius && pin;
 
@@ -92,10 +104,15 @@ export default function AskParrotsScreen() {
         radiusKm: radius.replace("km", ""),
       }).unwrap();
       setResponse(result.response);
+      if (result.remainingBalance !== undefined) setCoinBalance(result.remainingBalance);
       fadeAnim.setValue(0);
       Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
     } catch (e) {
-      setResponse(e?.data?.message ?? "Something went wrong. Please try again.");
+      if (e?.status === 402) {
+        setCoinBalance(0);
+      } else {
+        setResponse(e?.data?.message ?? "Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -107,7 +124,20 @@ export default function AskParrotsScreen() {
         <Image source={parrotLogo} style={styles.logo} />
         <ParrotsStdText style={styles.title}>Ask Parrots</ParrotsStdText>
         <ParrotsStdText style={styles.subtitle}>Tell me what kind of voyage you're after.</ParrotsStdText>
-        <ParrotsStdText style={styles.disclaimer}>AI-generated suggestions — always verify before you go.</ParrotsStdText>
+        <ParrotsStdText style={styles.disclaimer}>These recommendations are for inspiration,{"\n"}so please verify before you go.</ParrotsStdText>
+
+        {coinBalance === 0 && (
+          <View style={styles.noBalanceCard}>
+            <Image source={parrotCookie} style={styles.noBalanceCookie} />
+            <View style={{ flex: 1 }}>
+              <ParrotsStdText style={styles.noBalanceTitle}>You're out of ParrotCrackers.</ParrotsStdText>
+              <ParrotsStdText style={styles.noBalanceSubtitle}>Visit <ParrotsStdText style={{ color: parrotCaravanOrangeRed }}>parrotsvoyages.com</ParrotsStdText> for some crackers.</ParrotsStdText>
+              <TouchableOpacity style={styles.noBalanceButton} onPress={() => Linking.openURL("https://parrotsvoyages.com/parrotCoinPage")}>
+                <ParrotsStdText style={styles.noBalanceButtonText}>Get ParrotCrackers</ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
 
         {/* Vehicle */}
         <SectionCard label="I WANT TO TRAVEL BY...">
@@ -163,9 +193,9 @@ export default function AskParrotsScreen() {
 
         {/* Ask button */}
         <TouchableOpacity
-          style={[styles.askButton, !canAsk && { opacity: 0.4 }]}
+          style={[styles.askButton, (!canAsk || coinBalance === 0) && { opacity: 0.4 }]}
           onPress={handleAsk}
-          disabled={!canAsk || loading}
+          disabled={!canAsk || loading || coinBalance === 0}
         >
           {loading
             ? <ActivityIndicator color="white" />
@@ -368,7 +398,7 @@ const styles = StyleSheet.create({
   logo: { width: 180, height: 180, alignSelf: "center", marginTop: -30, marginBottom: -30 },
   title: { fontSize: 26, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue, textAlign: "center", marginTop: 0 },
   subtitle: { fontSize: 14, color: parrotInputTextColor, textAlign: "center", marginBottom: 4 },
-  disclaimer: { fontSize: 11, color: parrotPlaceholderGrey, textAlign: "center", marginBottom: 12, fontStyle: "italic" },
+  disclaimer: { fontSize: 13, color: parrotPlaceholderGrey, textAlign: "center", marginBottom: 12, fontStyle: "italic", lineHeight: 20 },
   card: {
     backgroundColor: "white", borderRadius: 16, padding: 16, marginBottom: 12,
     shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
@@ -412,4 +442,17 @@ const styles = StyleSheet.create({
     flex: 1, borderRadius: 20, paddingVertical: 10, alignItems: "center",
   },
   modalActionText: { color: "white", fontSize: 14, fontFamily: "Nunito_800ExtraBold" },
+  noBalanceCard: {
+    backgroundColor: "white", borderRadius: 16, padding: 16, marginBottom: 12,
+    flexDirection: "row", alignItems: "center", gap: 12,
+    shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+  },
+  noBalanceCookie: { width: 48, height: 48 },
+  noBalanceTitle: { fontSize: 14, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue, marginBottom: 2 },
+  noBalanceSubtitle: { fontSize: 13, fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey, marginBottom: 10 },
+  noBalanceButton: {
+    backgroundColor: parrotCaravanOrangeRed, borderRadius: 20,
+    paddingVertical: 7, paddingHorizontal: 16, alignSelf: "flex-start",
+  },
+  noBalanceButtonText: { color: "white", fontSize: 13, fontFamily: "Nunito_800ExtraBold" },
 });
