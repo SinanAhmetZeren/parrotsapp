@@ -20,7 +20,7 @@ import {
   parrotWalkTurquoise, parrotPlaceholderGrey, parrotInputTextColor,
   parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen,
   parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen,
-  parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink, parrotDarkBlue,
+  parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink, parrotDarkBlue, parrotBlueSemiTransparent, parrotBlueTransparent,
 } from "../assets/color";
 import { vw, vh } from "react-native-expo-viewport-units";
 
@@ -124,10 +124,14 @@ export default function AskParrotsScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* Header */}
-        <Image source={parrotLogo} style={styles.logo} />
-        <ParrotsStdText style={styles.title}>Ask Parrots</ParrotsStdText>
-        <ParrotsStdText style={styles.subtitle}>Tell me what kind of voyage you're after.</ParrotsStdText>
-        <ParrotsStdText style={styles.disclaimer}>These recommendations are for inspiration,{"\n"}so please verify before you go.</ParrotsStdText>
+        <View style={styles.headerCard}>
+          <Image source={parrotLogo} style={styles.logo} />
+          <View style={styles.headerText}>
+            <ParrotsStdText style={styles.title}>Ask Parrots</ParrotsStdText>
+            <ParrotsStdText style={styles.subtitle}>Tell me what kind of voyage you're after.</ParrotsStdText>
+          </View>
+        </View>
+        <ParrotsStdText style={styles.disclaimer}>Recommendations are for inspiration — please verify before you go.</ParrotsStdText>
 
         {coinBalance === 0 && (
           <View style={styles.noBalanceCard}>
@@ -289,7 +293,7 @@ export default function AskParrotsScreen() {
                 if (!isHubReady()) return;
                 const query = buildPromptPreview(vehicle, duration, vibe, radius, pin);
                 const responseText = response.replace(/^\[\[([^\]]+)\]\]\s*/, "($1) ").replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\{\{([^}]+)\}\}/g, "$1");
-                const text = `🦜 ${query}\n\n➡️ ${responseText}`;
+                const text = `**🦜** ${query}\n\n➡️ ${responseText}`;
                 await invokeHub("SendMessage", currentUserId, currentUserId, text, true);
                 setSent(true);
                 setTimeout(() => setSent(false), 2000);
@@ -406,10 +410,12 @@ function PillGroup({ options, selected, onSelect, colors, pillPaddingHorizontal 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: parrotCream },
   scroll: { paddingHorizontal: 16, paddingTop: 0, paddingBottom: 24 },
-  logo: { width: 180, height: 180, alignSelf: "center", marginTop: -30, marginBottom: -30 },
-  title: { fontSize: 26, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue, textAlign: "center", marginTop: 0 },
-  subtitle: { fontSize: 14, color: parrotInputTextColor, textAlign: "center", marginBottom: 4 },
-  disclaimer: { fontSize: 13, color: parrotPlaceholderGrey, textAlign: "center", marginBottom: 12, fontStyle: "italic", lineHeight: 20 },
+  headerCard: { flexDirection: "row", alignItems: "center", backgroundColor: parrotBlueTransparent, borderRadius: 16, padding: 16, marginBottom: 8 },
+  headerText: { flex: 1, marginLeft: 12 },
+  logo: { width: 70, height: 70, borderRadius: 35 },
+  title: { fontSize: 22, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue },
+  subtitle: { fontSize: 14, fontFamily: "Nunito_600SemiBold", color: parrotBlue, marginTop: 2 },
+  disclaimer: { fontSize: 13, color: parrotCaravanOrangeRed, textAlign: "center", marginBottom: 12, fontStyle: "italic", lineHeight: 20 },
   card: {
     backgroundColor: "white", borderRadius: 16, padding: 16, marginBottom: 12,
     shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,

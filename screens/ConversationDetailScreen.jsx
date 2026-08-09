@@ -9,7 +9,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Image,
   StyleSheet,
   Keyboard,
@@ -24,6 +23,7 @@ import { markMessagesRead, setUnreadMessages } from "../slices/UserSlice";
 import { useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
+import parrotLogo from "../assets/parrotsiconpaddedtransparent.png";
 import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native";
@@ -282,8 +282,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight;
 
   return (
-    <TouchableWithoutFeedback onPress={() => { if (emojiOpen) setEmojiOpen(false); }} accessible={false}>
-      <View style={{ backgroundColor: "white", height: outerHeight }}>
+    <View style={{ backgroundColor: "white", height: outerHeight }}>
         <View style={[styles.mainContainer, { flex: 1 }]}>
           {/* // HEADER // */}
           <TouchableOpacity
@@ -306,9 +305,13 @@ export const ConversationDetailScreen = ({ navigation }) => {
               style={styles.messagesList}
               contentContainerStyle={{ paddingBottom: vh(2) }}
               keyboardShouldPersistTaps="handled"
+              onTouchStart={() => { if (emojiOpen) setEmojiOpen(false); }}
+              onScrollBeginDrag={() => { if (emojiOpen) setEmojiOpen(false); }}
             >
               {messagesToDisplay?.map((msg, index) => {
                 const isMe = msg.senderId === currentUserId;
+                const isAskParrots = isMe && msg.text?.startsWith("**🦜**");
+                const displayText = isAskParrots ? msg.text.replace(/^\*\*🦜\*\*\s*/, "") : msg.text;
                 const [time, date] = formatDate(msg.dateTime);
                 const prevMsg = messagesToDisplay[index - 1];
                 const prevDate = prevMsg ? formatDate(prevMsg.dateTime)[1] : null;
@@ -321,7 +324,19 @@ export const ConversationDetailScreen = ({ navigation }) => {
                         <ParrotsStdText style={styles.dateSeparatorText}>{date}</ParrotsStdText>
                       </View>
                     )}
-                    {isMe ? (
+                    {isAskParrots ? (
+                      <View style={styles.msgRowLeft}>
+                        <View style={{ width: vw(8), alignItems: "center", overflow: "visible" }}>
+                          <Image source={parrotLogo} style={[styles.msgAvatar, { width: vw(13), height: vw(13), borderRadius: vw(6.5) }]} />
+                        </View>
+                        <View style={[styles.msgColumn, { marginTop: vh(1) }]}>
+                          <ParrotsStdText style={styles.msgSender}>Ask Parrots</ParrotsStdText>
+                          <View style={[styles.msgLeft, { backgroundColor: parrotBlue, borderRadius: vh(2) }]}>
+                            <ParrotsStdText selectable style={[styles.msgText, { color: "white" }]}>{displayText}</ParrotsStdText>
+                          </View>
+                        </View>
+                      </View>
+                    ) : isMe ? (
                       <View style={styles.msgRight}>
                         <ParrotsStdText style={styles.msgText}>{msg.text}</ParrotsStdText>
                         <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
@@ -390,7 +405,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
             </View>
             <TouchableOpacity
               disabled={!message.trim() || isSending}
-              onPress={handleSend}
+              onPress={() => { if (emojiOpen) setEmojiOpen(false); handleSend(); }}
               style={message.trim() && !isSending ? styles.sendBtn : styles.sendBtnDisabled}
             >
               <Feather name="send" size={20} color="white" />
@@ -434,8 +449,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
             <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
           </View>
         )}
-      </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
 

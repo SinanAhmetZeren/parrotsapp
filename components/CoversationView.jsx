@@ -63,7 +63,7 @@ export default function CoversationView({
       <View style={styles.nameAndMessage}>
         <ParrotsStdText style={[styles.name, hasUnread && styles.nameUnread]}>{name}</ParrotsStdText>
         <ParrotsStdText style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-          {message}
+          {message?.startsWith("**🦜**") ? "Ask Parrots: " + message.replace(/^\*\*🦜\*\*\s*/, "") : message}
         </ParrotsStdText>
       </View>
       <View style={styles.time}>
