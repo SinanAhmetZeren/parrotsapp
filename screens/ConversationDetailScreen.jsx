@@ -137,6 +137,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [isSending, setIsSending] = useState(false);
   const scrollViewRef = useRef();
   const sendTimestampsRef = useRef([]);
+  const renderCountRef = useRef(0);
+  renderCountRef.current += 1;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
@@ -167,6 +169,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const currentUserId = useSelector((state) => state.users.userId);
   const { conversationUserId, profileImg, name, publicId } = route.params;
+  console.log("[ConversationDetail] render #" + renderCountRef.current + " | conv:" + conversationUserId?.slice(-6) + " | msgs:" + messagesToDisplay?.length);
 
   const { data: messagesData, refetch } = useGetMessagesBetweenUsersQuery(
     { currentUserId, conversationUserId },
@@ -174,7 +177,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
   );
 
   useEffect(() => {
-    if (messagesData) setMessagesToDisplay(messagesData.data);
+    if (messagesData) {
+      console.log("[ConversationDetail] messages loaded:", messagesData.data?.length);
+      setMessagesToDisplay(messagesData.data);
+    }
   }, [messagesData]);
 
   useEffect(() => {
@@ -261,7 +267,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
     try {
       if (!isHubReady()) { setMessage(saved); setIsSending(false); return; }
-      await invokeHub("SendMessage", currentUserId, conversationUserId, saved);
+      await invokeHub("SendMessage", currentUserId, conversationUserId, saved, false);
     } catch {
       setMessagesToDisplay((prev) => prev.filter((m) => m !== optimistic));
       setMessage(saved);
