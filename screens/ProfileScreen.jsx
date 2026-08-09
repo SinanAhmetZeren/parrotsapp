@@ -22,6 +22,7 @@ import * as Clipboard from "expo-clipboard";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Ionicons, Feather, MaterialIcons, Fontisto, AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import VoyageListVertical from "../components/VoyageListVertical";
 import VehicleList from "../components/VehicleList";
 import { useGetUserByIdQuery, useLazyGetParrotCoinBalanceQuery } from "../slices/UserSlice";
@@ -35,7 +36,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import he from "he";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCaravanOrangeRed, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
 // import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
 import LoadingLogo from "../components/LoadingLogo";
@@ -604,7 +605,7 @@ export default function ProfileScreen({ navigation }) {
               <View style={styles.parrotcoinContainerLeft}>
 
 
-                {/* ///// parrotcoin BUTTON /////// */}
+                {/* ///// parrotcrackers BUTTON /////// */}
 
 
                 <TouchableOpacity
@@ -619,10 +620,12 @@ export default function ProfileScreen({ navigation }) {
                   <View>
                     <View style={styles.parrotCoinContainer}>
                       <Image
-                        source={require("../assets/parrotcoin.png")}
+                        source={require("../assets/parrotCookie.png")}
                         style={{
                           width: vw(12),
                           height: vw(12),
+                          marginTop: -2,
+                          marginLeft: -1,
                         }}
                         resizeMode="contain"
                       />
@@ -647,47 +650,92 @@ export default function ProfileScreen({ navigation }) {
                   >
                     <View
                       style={{
-                        width: vw(80),
-                        padding: 20,
+                        width: vw(92),
+                        paddingVertical: 32,
+                        paddingHorizontal: 20,
                         backgroundColor: "white",
                         borderRadius: 12,
-                        alignItems: "center",
+                        alignItems: "flex-start",
                         position: "relative"
                       }}
                     >
-                      <ParrotsStdText style={{ fontSize: 18, fontFamily: "Nunito_800ExtraBold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        ParrotCoin Balance
+                      <ParrotsStdText style={{
+                        fontSize: 22,
+                        fontFamily: "Nunito_800ExtraBold", marginBottom: 16,
+                        color: parrotTextDarkBlue, alignSelf: "center"
+                      }}>
+                        What ParrotCrackers Feed
                       </ParrotsStdText>
 
-                      <View style={{ display: "flex", flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+                      <View style={{ alignSelf: "stretch", paddingLeft: 0 }}>
+                        <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 20, color: parrotTextDarkBlue }}>
+                          ParrotCrackers keep your voyage visible to the community and
+                          deliver instant travel insights for any location & surrounding area.
 
-                        <ParrotsStdText style={{ fontSize: 22, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>
-                          {parrotCoinBalance?.toLocaleString()}
                         </ParrotsStdText>
 
-                        <Image
-                          source={require("../assets/parrotcoin.png")}
-                          style={{ width: 30, height: 30 }}
-                          resizeMode="contain"
-                        />
+                        <View style={{ alignSelf: "stretch", marginBottom: 12 }}>
+                          <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: 16 }}>
+                            <View style={{ width: 44, alignItems: "center", marginTop: 2 }}>
+                              <FontAwesome5 name="map-marker-alt" size={22} color={parrotCaravanOrangeRed} />
+                            </View>
+                            <View style={{ flex: 1 }}>
+                              <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>Feature Your Voyage</ParrotsStdText>
+                              <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>Put your journey on the public map</ParrotsStdText>
+                              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>1 </ParrotsStdText>
+                                <Image source={require("../assets/parrotCookie.png")} style={{ width: 16, height: 16 }} resizeMode="contain" />
+                                <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}> / day</ParrotsStdText>
+                              </View>
+                            </View>
+                          </View>
+                          <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+                            <View style={{ width: 44, alignItems: "center", marginTop: 2 }}>
+                              <Image source={require("../assets/parrotwhiteoutlinebg.png")} style={{ width: 36, height: 36 }} resizeMode="contain" />
+                            </View>
+                            <View style={{ flex: 1 }}>
+                              <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>Ask Parrots</ParrotsStdText>
+                              <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>Get local and area advice</ParrotsStdText>
+                              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>1 </ParrotsStdText>
+                                <Image source={require("../assets/parrotCookie.png")} style={{ width: 16, height: 16 }} resizeMode="contain" />
+                                <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}> / query</ParrotsStdText>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+
+                        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16, backgroundColor: "rgba(255, 240, 210, 0.5)", borderRadius: 12, paddingVertical: 6, paddingHorizontal: 8 }}>
+                          <Image source={require("../assets/jar.png")} style={{ width: 52, height: 52, marginRight: 10 }} resizeMode="contain" />
+                          <ParrotsStdText
+                            style={{
+                              fontSize: 15, fontFamily: "Nunito_800ExtraBold",
+                              color: parrotTextDarkBlue, marginRight: 6
+                            }}>
+                            You have
+                          </ParrotsStdText>
+                          <ParrotsStdText style={{ fontSize: 18, fontFamily: "Nunito_800ExtraBold", color: parrotCaravanOrangeRed, marginRight: 8 }}>
+                            {parrotCoinBalance?.toLocaleString() ?? "—"}
+                          </ParrotsStdText>
+                          <Image
+                            source={require("../assets/parrotCookie.png")}
+                            style={{ width: 20, height: 20 }}
+                            resizeMode="contain"
+                          />
+                        </View>
+
+                        <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", marginTop: 8, color: parrotTextDarkBlue }}>
+                          Need more crackers? Top up anytime at{" "}
+                          <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: parrotLightBlue }}>parrotsvoyages.com</ParrotsStdText>.
+                        </ParrotsStdText>
                       </View>
 
-
-                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        ParrotCoins are used to feature your voyage on the main map.
-                      </ParrotsStdText>
-                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        Each coin keeps your voyage featured for a day.
-                      </ParrotsStdText>
-                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        1 ParrotCoin per day is deducted from your balance, from your posting date to your end date. The total amount is deducted all at once when you post your voyage.
-                      </ParrotsStdText>
-                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        The voyage will be removed from the map once it ends.
-                      </ParrotsStdText>
-                      <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", marginBottom: 10, color: parrotTextDarkBlue }}>
-                        Need more coins? Top up your balance at <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", color: parrotLightBlue }}>parrotsvoyages.com</ParrotsStdText>.
-                      </ParrotsStdText>
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL("https://parrotsvoyages.com")}
+                        style={{ backgroundColor: parrotCaravanOrangeRed, borderRadius: 20, paddingVertical: 7, paddingHorizontal: 16, marginTop: 20, alignSelf: "center" }}
+                      >
+                        <ParrotsStdText style={{ color: "white", fontSize: 13, fontFamily: "Nunito_800ExtraBold" }}>Get ParrotCrackers</ParrotsStdText>
+                      </TouchableOpacity>
 
 
 
@@ -718,7 +766,7 @@ export default function ProfileScreen({ navigation }) {
                 </Modal>
 
 
-                {/* ///// parrotcoin BUTTON /////// */}
+                {/* ///// parrotcrackers BUTTON /////// */}
               </View>
 
 
@@ -1110,7 +1158,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     top: vh(-2),
     right: vw(-2),
-    backgroundColor: "white",
+    backgroundColor: "transparent",
     padding: 4
   },
   buttonClose3: {
