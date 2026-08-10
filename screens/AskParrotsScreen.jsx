@@ -43,13 +43,13 @@ const DURATION_COLORS = ["#2ac898", "#2ac898", "#2ac898", "#2ac898", "#2ac898"];
 const VIBE_COLORS = ["#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623"];
 const RADIUS_COLORS = ["#06B6D4", "#06B6D4", "#06B6D4", "#06B6D4"];
 
-const SPOT_TYPES = ["Popular Spots", "Local Favorites", "Hidden Gems", "Mix of Both"];
+const SPOT_TYPES = ["Popular Spots", "Local Favorites", "Hidden Gems", "Mixed Picks"];
 const SPOT_TYPE_COLORS = ["#8B5CF6", "#8B5CF6", "#8B5CF6", "#8B5CF6"];
 const SPOT_TYPES_CONFIG = {
   "Popular Spots":   { label: "popular spots",   detail: "iconic landmarks and high-profile highlights" },
   "Local Favorites": { label: "local favorites", detail: "authentic neighborhood staples favored by locals" },
   "Hidden Gems":     { label: "hidden gems",     detail: "lesser-known, off-the-beaten-path secret spots" },
-  "Mix of Both":     { label: "a balanced mix",  detail: "a balance of famous highlights and local spots" },
+  "Mixed Picks":     { label: "mixed picks",  detail: "a curated mix of popular spots, local favorites, and hidden gems" },
 };
 
 export default function AskParrotsScreen() {
@@ -220,7 +220,7 @@ export default function AskParrotsScreen() {
                 pin
               ).map((part, i) =>
                 part.color
-                  ? <ParrotsStdText key={i} style={[styles.promptText, { color: part.color }]}>{part.text}</ParrotsStdText>
+                  ? <ParrotsStdText key={i} style={[styles.promptText, { color: part.color, fontFamily: "Nunito_800ExtraBold" }]}>{part.text}</ParrotsStdText>
                   : part.text
               )}
             </ParrotsStdText>
@@ -381,8 +381,8 @@ function buildPromptParts(vehicle, duration, vibe, spotType, radius, vehicleColo
     vehicleSuffix,
     vibe === "Any" ? { text: "I'm looking for a voyage of " } : { text: `I'm looking for ${vibeArticle} ` },
     { text: vibe === "Any" ? "any vibe" : vibeLabel, color: vibeColor },
-    vibe !== "Any" && vibeDetail ? { text: ` (${vibeDetail})` } : { text: "" },
     vibe === "Any" ? { text: "" } : { text: " experience" },
+    vibe !== "Any" && vibeDetail ? { text: ` (${vibeDetail})` } : { text: "" },
     spotConf ? { text: ", focusing on " } : { text: "" },
     spotConf ? { text: spotConf.label, color: "#8B5CF6" } : { text: "" },
     spotConf ? { text: ` (${spotConf.detail})` } : { text: "" },
