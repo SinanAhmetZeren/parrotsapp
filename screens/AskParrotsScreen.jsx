@@ -292,7 +292,7 @@ export default function AskParrotsScreen() {
                         if (/^\*\*[^*]+\*\*$/.test(part))
                           return <ParrotsStdText key={i} style={[styles.responseText, { color: parrotBlue, fontFamily: "Nunito_800ExtraBold" }]}>{part.slice(2, -2)}</ParrotsStdText>;
                         if (/^\{\{[^}]+\}\}$/.test(part))
-                          return <ParrotsStdText key={i} style={[styles.responseText, { color: "#8B5CF6", fontFamily: "Nunito_800ExtraBold" }]}>{part.slice(2, -2)}</ParrotsStdText>;
+                          return <ParrotsStdText key={i} style={[styles.responseText, { color: "#8B5CF6", fontFamily: "Nunito_800ExtraBold", textTransform: "capitalize" }]}>{part.slice(2, -2)}</ParrotsStdText>;
                         return part;
                       })}
                     </ParrotsStdText>
