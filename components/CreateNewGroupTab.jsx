@@ -22,11 +22,11 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Feather } from "@expo/vector-icons";
 import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
 import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
-import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
+import { useGetUsersByUsernameQuery, useAcknowledgeGroupHistoryMutation, setAcknowledgedGroupHistory } from "../slices/UserSlice";
 import { useCreateGroupMutation, useAddGroupMemberMutation } from "../slices/GroupSlice";
 import { invokeHub } from "../signalr/signalRHub";
 import {
@@ -128,9 +128,19 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
     ? vh(99.5) - SELECTOR_HEIGHT - tabBarHeight - insets.top
     : vh(99.5) - SELECTOR_HEIGHT - tabBarHeight + insets.bottom;
 
+  const dispatch = useDispatch();
   const userId = useSelector((state) => state.users.userId);
   const currentUserName = useSelector((state) => state.users.userName);
   const currentUserImage = useSelector((state) => state.users.userProfileImageThumbnail || state.users.userProfileImage);
+  const hasAcknowledgedGroupHistory = useSelector((state) => state.users.hasAcknowledgedGroupHistory);
+  const [acknowledgeGroupHistoryMutation] = useAcknowledgeGroupHistoryMutation();
+  const [showGroupHistoryModal, setShowGroupHistoryModal] = useState(!hasAcknowledgedGroupHistory);
+
+  const handleAcknowledgeGroupHistory = async () => {
+    setShowGroupHistoryModal(false);
+    dispatch(setAcknowledgedGroupHistory());
+    try { await acknowledgeGroupHistoryMutation().unwrap(); } catch { }
+  };
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [emojiOpen, setEmojiOpen] = useState(false);
@@ -195,6 +205,21 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
   return (
     <TouchableWithoutFeedback onPress={() => { if (emojiOpen) setEmojiOpen(false); }} accessible={false}>
     <View style={{ height: outerHeight, backgroundColor: "white" }}>
+
+      <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <ParrotsStdText style={styles.modalTitle}>Group Message History</ParrotsStdText>
+            <ParrotsStdText style={styles.modalText}>
+              You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
+            </ParrotsStdText>
+            <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledgeGroupHistory}>
+              <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     <View style={{ flex: 1, flexDirection: "column", backgroundColor: "white" }}>
 
       {/* 1. Title */}
@@ -399,6 +424,30 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
 }
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1, backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center", justifyContent: "center",
+  },
+  modalBox: {
+    backgroundColor: "#fff", borderRadius: vh(3),
+    padding: vh(3), width: vw(80), alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18, fontFamily: "Nunito_800ExtraBold",
+    color: parrotBlue, marginBottom: vh(1.5), textAlign: "center",
+  },
+  modalText: {
+    fontSize: 14, fontFamily: "Nunito_600SemiBold",
+    color: "#374151", textAlign: "center",
+    marginBottom: vh(2.5), lineHeight: 20,
+  },
+  modalBtn: {
+    backgroundColor: parrotBlue, borderRadius: vh(3),
+    paddingVertical: vh(1.2), paddingHorizontal: vw(12),
+  },
+  modalBtnText: {
+    color: "white", fontFamily: "Nunito_800ExtraBold", fontSize: 16,
+  },
   title: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 18,

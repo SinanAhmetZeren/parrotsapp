@@ -685,6 +685,7 @@ function App() {
     const dispatch = useDispatch();
     const [isAuthChecking, setIsAuthChecking] = useState(true);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [forceUpdate, setForceUpdate] = useState(false);
     const { data: versionData } = useGetMinVersionQuery();
 
     useEffect(() => {
@@ -692,6 +693,7 @@ function App() {
       const currentVersion = Constants.expoConfig?.version ?? "0.0.0";
       if (compareVersions(currentVersion, versionData.minVersion) < 0) {
         setShowUpdateModal(true);
+        setForceUpdate(versionData.forceUpdate ?? false);
       }
     }, [versionData]);
 
@@ -705,6 +707,7 @@ function App() {
           const storedProfileImageUrl = await AsyncStorage.getItem("storedProfileImageUrl");
           const storedProfileImageThumbnailUrl = await AsyncStorage.getItem("storedProfileImageThumbnailUrl");
           const storedHasAcknowledgedPublicProfile = await AsyncStorage.getItem("storedHasAcknowledgedPublicProfile");
+          const storedHasAcknowledgedGroupHistory = await AsyncStorage.getItem("storedHasAcknowledgedGroupHistory");
           console.log("storedHasAcknowledgedPublicProfile:", storedHasAcknowledgedPublicProfile);
           const storedBookmarkedUserIds = await AsyncStorage.getItem("storedBookmarkedUserIds");
 
@@ -720,6 +723,7 @@ function App() {
                 profileImageUrl: storedProfileImageUrl,
                 profileImageThumbnailUrl: storedProfileImageThumbnailUrl || "",
                 hasAcknowledgedPublicProfile: storedHasAcknowledgedPublicProfile === "true",
+                hasAcknowledgedGroupHistory: storedHasAcknowledgedGroupHistory === "true",
                 bookmarkedUserIds: storedBookmarkedUserIds ? JSON.parse(storedBookmarkedUserIds) : [],
               })
             );
@@ -850,7 +854,7 @@ function App() {
 
     return (
       <>
-        <UpdateModal visible={showUpdateModal} onDismiss={() => setShowUpdateModal(false)} />
+        <UpdateModal visible={showUpdateModal} forceUpdate={forceUpdate} onDismiss={() => setShowUpdateModal(false)} />
         {isLoggedIn ? (
           <TabNavigator isLoading={isLoadingUser} hasUnreadMessages={hasUnreadMessages} />
         ) : (

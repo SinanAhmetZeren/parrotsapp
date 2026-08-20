@@ -59,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
 
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("sinanahmetzeren@gmail.com");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
@@ -1140,12 +1140,11 @@ const styles = StyleSheet.create({
   selection2: {
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
-    paddingVertical: vh(1),
+    height: vh(4.5),
     backgroundColor: parrotBlue,
     borderRadius: vh(1.5),
     width: vw(65),
     alignItems: "center",
-    minHeight: vh(4.5),
     justifyContent: "center",
   },
   container: {

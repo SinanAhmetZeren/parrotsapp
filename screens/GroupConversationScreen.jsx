@@ -17,11 +17,12 @@ import {
   BackHandler,
   Platform,
   FlatList,
+  Modal,
 } from "react-native";
 import { useGetGroupMessagesQuery, useGetGroupByIdQuery } from "../slices/GroupSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useSelector, useDispatch } from "react-redux";
-import { markMessagesRead, setUnreadMessages } from "../slices/UserSlice";
+import { markMessagesRead, setUnreadMessages, setAcknowledgedGroupHistory, useAcknowledgeGroupHistoryMutation } from "../slices/UserSlice";
 import { useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
@@ -177,6 +178,15 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const route = useRoute();
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.users.userId);
+  const hasAcknowledgedGroupHistory = useSelector((state) => state.users.hasAcknowledgedGroupHistory);
+  const [showGroupHistoryModal, setShowGroupHistoryModal] = useState(!hasAcknowledgedGroupHistory);
+  const [acknowledgeGroupHistoryMutation] = useAcknowledgeGroupHistoryMutation();
+
+  const handleAcknowledgeGroupHistory = async () => {
+    setShowGroupHistoryModal(false);
+    dispatch(setAcknowledgedGroupHistory());
+    try { await acknowledgeGroupHistoryMutation().unwrap(); } catch { }
+  };
   const { groupId, groupName } = route.params;
 
   const { data: groupData } = useGetGroupByIdQuery(
@@ -338,6 +348,19 @@ export const ConversationDetailScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={() => { if (emojiOpen) setEmojiOpen(false); }} accessible={false}>
     <View style={{ backgroundColor: "white", height: outerHeight }}>
+      <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <ParrotsStdText style={styles.modalTitle}>Group Message History</ParrotsStdText>
+            <ParrotsStdText style={styles.modalText}>
+              You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
+            </ParrotsStdText>
+            <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledgeGroupHistory}>
+              <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <View style={[styles.mainContainer, { flex: 1 }]}>
         {/* // HEADER // */}
         <View style={styles.headerStyle}>
@@ -876,5 +899,29 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: "white",
     fontSize: 13,
+  },
+  modalOverlay: {
+    flex: 1, backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center", justifyContent: "center",
+  },
+  modalBox: {
+    backgroundColor: parrotCream, borderRadius: vh(3),
+    padding: vh(3), width: vw(80), alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18, fontFamily: "Nunito_800ExtraBold",
+    color: parrotBlue, marginBottom: vh(1.5), textAlign: "center",
+  },
+  modalText: {
+    fontSize: 14, fontFamily: "Nunito_600SemiBold",
+    color: "#374151", textAlign: "center",
+    marginBottom: vh(2.5), lineHeight: 20,
+  },
+  modalBtn: {
+    backgroundColor: parrotBlue, borderRadius: vh(3),
+    paddingVertical: vh(1.2), paddingHorizontal: vw(12),
+  },
+  modalBtnText: {
+    color: "white", fontFamily: "Nunito_800ExtraBold", fontSize: 16,
   },
 });

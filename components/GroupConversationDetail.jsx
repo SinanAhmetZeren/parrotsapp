@@ -6,7 +6,7 @@ import {
   View, Text, TextInput, TouchableOpacity, Image, StyleSheet,
   ScrollView, Modal, Keyboard, ActivityIndicator, Platform,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { vh, vw } from "react-native-expo-viewport-units";
@@ -18,7 +18,7 @@ import {
   useRemoveGroupMemberMutation,
   useExitGroupMutation,
 } from "../slices/GroupSlice";
-import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
+import { useGetUsersByUsernameQuery, useAcknowledgeGroupHistoryMutation, setAcknowledgedGroupHistory } from "../slices/UserSlice";
 import {
   invokeHub, isHubReady,
   register_ReceiveGroupMessageRefetch, unregister_ReceiveGroupMessageRefetch,
@@ -50,7 +50,17 @@ export default function GroupConversationDetail({ route, navigation }) {
   const groupId = route?.params?.groupId;
   const groupName = route?.params?.groupName;
   console.log("entered GroupConversationDetail");
+  const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.users.userId);
+  const hasAcknowledgedGroupHistory = useSelector((state) => state.users.hasAcknowledgedGroupHistory);
+  const [acknowledgeGroupHistoryMutation] = useAcknowledgeGroupHistoryMutation();
+  const [showGroupHistoryModal, setShowGroupHistoryModal] = useState(!hasAcknowledgedGroupHistory);
+
+  const handleAcknowledgeGroupHistory = async () => {
+    setShowGroupHistoryModal(false);
+    dispatch(setAcknowledgedGroupHistory());
+    try { await acknowledgeGroupHistoryMutation().unwrap(); } catch { }
+  };
 
   const [message, setMessage] = useState("");
   const [messagesToDisplay, setMessagesToDisplay] = useState([]);
@@ -216,6 +226,19 @@ export default function GroupConversationDetail({ route, navigation }) {
   if (isLoadingMessages) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalBox}>
+              <ParrotsStdText style={styles.modalTitle}>ℹ️ Group Message History</ParrotsStdText>
+              <ParrotsStdText style={styles.modalText}>
+                You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
+              </ParrotsStdText>
+              <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledgeGroupHistory}>
+                <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <LoadingLogo size={200} />
       </View>
     );
@@ -223,13 +246,28 @@ export default function GroupConversationDetail({ route, navigation }) {
 
   return (
     <View style={styles.outerContainer}>
+
+      <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <ParrotsStdText style={styles.modalTitle}>ℹ️ Group Message History</ParrotsStdText>
+            <ParrotsStdText style={styles.modalText}>
+              You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
+            </ParrotsStdText>
+            <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledgeGroupHistory}>
+              <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <View style={styles.mainContainer}>
         {/* Header */}
         <View style={styles.header}>
           <View style={[styles.groupAvatar, { backgroundColor: groupColor(groupId) }]}>
             <ParrotsStdText style={styles.groupAvatarText}>{groupName?.split(" ").map(w => w.charAt(0).toUpperCase()).join("")}</ParrotsStdText>
           </View>
-          <ParrotsStdText style={styles.headerTitle} numberOfLines={1}>{groupName}</ParrotsStdText>
+          <ParrotsStdText style={styles.headerTitle} numberOfLines={1}>{groupName} (ack:{String(hasAcknowledgedGroupHistory)} modal:{String(showGroupHistoryModal)})</ParrotsStdText>
           <TouchableOpacity onPress={() => { setMembersDropdownVisible(v => !v); setConfirmLeave(false); }} style={styles.stackedAvatarsBtn}>
             {stackedAvatars.map((m, i) => (
               <Image
@@ -414,6 +452,30 @@ export default function GroupConversationDetail({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1, backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center", justifyContent: "center",
+  },
+  modalBox: {
+    backgroundColor: parrotCream, borderRadius: vh(3),
+    padding: vh(3), width: vw(80), alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18, fontFamily: "Nunito_800ExtraBold",
+    color: parrotBlue, marginBottom: vh(1.5), textAlign: "center",
+  },
+  modalText: {
+    fontSize: 14, fontFamily: "Nunito_600SemiBold",
+    color: "#374151", textAlign: "center",
+    marginBottom: vh(2.5), lineHeight: 20,
+  },
+  modalBtn: {
+    backgroundColor: parrotBlue, borderRadius: vh(3),
+    paddingVertical: vh(1.2), paddingHorizontal: vw(12),
+  },
+  modalBtnText: {
+    color: "white", fontFamily: "Nunito_800ExtraBold", fontSize: 16,
+  },
   outerContainer: {
     flex: 1,
     backgroundColor: "white",
@@ -601,29 +663,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "flex-end",
-  },
-  modalContainer: {
-    backgroundColor: "white",
-    borderTopLeftRadius: vh(3),
-    borderTopRightRadius: vh(3),
-    padding: vh(2.5),
-    maxHeight: vh(70),
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: vh(1.5),
-  },
-  modalTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 20,
-    color: parrotLightBlue,
   },
   addMemberRow: {
     flexDirection: "row",

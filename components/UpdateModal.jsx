@@ -7,23 +7,29 @@ import { Shadow } from "react-native-shadow-2";
 
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.zenforest.parrots";
 
-export const UpdateModal = ({ visible, onDismiss }) => {
+export const UpdateModal = ({ visible, forceUpdate = false, onDismiss }) => {
   return (
     <Modal transparent animationType="fade" visible={visible} onRequestClose={onDismiss}>
       <View style={styles.overlay}>
         <Shadow distance={16} startColor="rgba(0,0,0,0.25)" finalColor="rgba(0,0,0,0.0)" radius={20}>
           <View style={styles.card}>
             <Image source={require("../assets/parrotslogo.png")} style={styles.logo} />
-            <ParrotsStdText style={styles.title}>New Version Available</ParrotsStdText>
+            <ParrotsStdText style={styles.title}>
+              {forceUpdate ? "A Quick Update is Needed" : "New Version Available"}
+            </ParrotsStdText>
             <ParrotsStdText style={styles.subtitle}>
-              A newer version of Parrots is available. Update for the latest features and fixes.
+              {forceUpdate
+                ? "We've rolled out important updates to give you a better experience. We're sorry for the pause in your journey—please update to continue."
+                : "A newer version of Parrots is available. Update for the latest features and fixes."}
             </ParrotsStdText>
             <TouchableOpacity style={styles.updateBtn} onPress={() => Linking.openURL(PLAY_STORE_URL)}>
               <ParrotsStdText style={styles.updateBtnText}>Update</ParrotsStdText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.dismissBtn} onPress={onDismiss}>
-              <ParrotsStdText style={styles.dismissText}>Not now</ParrotsStdText>
-            </TouchableOpacity>
+            {!forceUpdate && (
+              <TouchableOpacity style={styles.dismissBtn} onPress={onDismiss}>
+                <ParrotsStdText style={styles.dismissText}>Not now</ParrotsStdText>
+              </TouchableOpacity>
+            )}
           </View>
         </Shadow>
       </View>

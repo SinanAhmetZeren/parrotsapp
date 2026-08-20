@@ -18,6 +18,7 @@ const usersSlice = createSlice({
     userFavoriteVoyages: [0],
     userFavoriteVehicles: [0],
     hasAcknowledgedPublicProfile: false,
+    hasAcknowledgedGroupHistory: false,
     bookmarkedUserIds: [],
   },
   reducers: {
@@ -30,6 +31,7 @@ const usersSlice = createSlice({
       state.userProfileImageThumbnail = action.payload.profileImageThumbnailUrl || "";
       state.unreadMessages = action.payload.unreadMessages === "false" ? false : true;
       state.hasAcknowledgedPublicProfile = action.payload.hasAcknowledgedPublicProfile ?? false;
+      state.hasAcknowledgedGroupHistory = action.payload.hasAcknowledgedGroupHistory ?? false;
       AsyncStorage.setItem("storedToken", action.payload.token).catch(
         (error) => {
           console.error("Error setting storedToken ", error);
@@ -69,6 +71,18 @@ const usersSlice = createSlice({
       ).catch((error) => {
         console.error("Error setting storedProfileImageThumbnailUrl:", error);
       });
+      AsyncStorage.setItem(
+        "storedHasAcknowledgedPublicProfile",
+        String(action.payload.hasAcknowledgedPublicProfile ?? false)
+      ).catch((error) => {
+        console.error("Error setting storedHasAcknowledgedPublicProfile:", error);
+      });
+      AsyncStorage.setItem(
+        "storedHasAcknowledgedGroupHistory",
+        String(action.payload.hasAcknowledgedGroupHistory ?? false)
+      ).catch((error) => {
+        console.error("Error setting storedHasAcknowledgedGroupHistory:", error);
+      });
 
     },
     updateAsLoggedOut: (state) => {
@@ -80,6 +94,7 @@ const usersSlice = createSlice({
       state.userProfileImageThumbnail = "";
       state.unreadMessages = false;
       state.hasAcknowledgedPublicProfile = false;
+      state.hasAcknowledgedGroupHistory = false;
       state.userFavoriteVoyages = [0];
       state.userFavoriteVehicles = [0];
       state.bookmarkedUserIds = [];
@@ -125,6 +140,7 @@ const usersSlice = createSlice({
       state.userProfileImage = profileImageUrl;
       state.userProfileImageThumbnail = action.payload.profileImageThumbnailUrl || "";
       state.hasAcknowledgedPublicProfile = action.payload.hasAcknowledgedPublicProfile ?? false;
+      state.hasAcknowledgedGroupHistory = action.payload.hasAcknowledgedGroupHistory ?? false;
       state.bookmarkedUserIds = action.payload.bookmarkedUserIds ?? [];
       state.isLoggedIn = true;
     },
@@ -175,6 +191,10 @@ const usersSlice = createSlice({
       state.hasAcknowledgedPublicProfile = true;
       AsyncStorage.setItem("storedHasAcknowledgedPublicProfile", "true").catch(() => {});
     },
+    setAcknowledgedGroupHistory: (state) => {
+      state.hasAcknowledgedGroupHistory = true;
+      AsyncStorage.setItem("storedHasAcknowledgedGroupHistory", "true").catch(() => {});
+    },
     setBookmarkedUserIds: (state, action) => {
       state.bookmarkedUserIds = action.payload;
       AsyncStorage.setItem("storedBookmarkedUserIds", JSON.stringify(action.payload)).catch(() => {});
@@ -207,6 +227,7 @@ export const {
   setHubConnected,
   markMessagesRead,
   setAcknowledgedPublicProfile,
+  setAcknowledgedGroupHistory,
   setBookmarkedUserIds,
   addBookmarkedUserId,
   removeBookmarkedUserId,
@@ -274,6 +295,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
     acknowledgePublicProfile: builder.mutation({
       query: () => ({
         url: "/api/account/acknowledge-public-profile",
+        method: "POST",
+      }),
+    }),
+    acknowledgeGroupHistory: builder.mutation({
+      query: () => ({
+        url: "/api/account/acknowledge-group-history",
         method: "POST",
       }),
     }),
@@ -389,10 +416,10 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Bookmarks"],
     }),
-    getParrotCoinBalance: builder.query({
+    getParrotCrackerBalance: builder.query({
       query: (userId) => {
         if (userId) {
-          return `/api/User/parrotCoinBalance/${userId}`;
+          return `/api/User/parrotCrackerBalance/${userId}`;
         } else {
           return "";
         }
@@ -416,13 +443,14 @@ export const {
   useLazyGetFavoriteVoyageIdsByUserIdQuery,
   useGetFavoriteVehicleIdsByUserIdQuery,
   useLazyGetFavoriteVehicleIdsByUserIdQuery,
-  useLazyGetParrotCoinBalanceQuery,
+  useLazyGetParrotCrackerBalanceQuery,
   useRegisterUserMutation,
   useRequestCodeMutation,
   useConfirmUserMutation,
   useLoginUserMutation,
   useAcceptTermsMutation,
   useAcknowledgePublicProfileMutation,
+  useAcknowledgeGroupHistoryMutation,
   useGoogleLoginInternalMutation,
   useResetPasswordMutation,
   useGetUserByIdQuery,
