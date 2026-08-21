@@ -311,7 +311,12 @@ export const ConversationDetailScreen = ({ navigation }) => {
               {messagesToDisplay?.map((msg, index) => {
                 const isMe = msg.senderId === currentUserId;
                 const isAskParrots = isMe && msg.text?.startsWith("**🦜**");
-                const displayText = isAskParrots ? msg.text.replace(/^\*\*🦜\*\*\s*/, "") : msg.text;
+                const isParrotsBid = msg.text?.startsWith("[parrots-bid]");
+                const displayText = isAskParrots
+                  ? msg.text.replace(/^\*\*🦜\*\*\s*/, "")
+                  : isParrotsBid
+                  ? msg.text.replace(/^\[parrots-bid\]\s*/, "")
+                  : msg.text;
                 const [time, date] = formatDate(msg.dateTime);
                 const prevMsg = messagesToDisplay[index - 1];
                 const prevDate = prevMsg ? formatDate(prevMsg.dateTime)[1] : null;
@@ -331,6 +336,18 @@ export const ConversationDetailScreen = ({ navigation }) => {
                         </View>
                         <View style={[styles.msgColumn, { marginTop: vh(1) }]}>
                           <ParrotsStdText style={styles.msgSender}>Ask Parrots</ParrotsStdText>
+                          <View style={[styles.msgLeft, { backgroundColor: parrotBlue, borderRadius: vh(2) }]}>
+                            <ParrotsStdText selectable style={[styles.msgText, { color: "white" }]}>{displayText}</ParrotsStdText>
+                          </View>
+                        </View>
+                      </View>
+                    ) : isParrotsBid ? (
+                      <View style={styles.msgRowLeft}>
+                        <View style={{ width: vw(8), alignItems: "center", overflow: "visible" }}>
+                          <Image source={parrotLogo} style={[styles.msgAvatar, { width: vw(13), height: vw(13), borderRadius: vw(6.5) }]} />
+                        </View>
+                        <View style={[styles.msgColumn, { marginTop: vh(1) }]}>
+                          <ParrotsStdText style={styles.msgSender}>Parrots</ParrotsStdText>
                           <View style={[styles.msgLeft, { backgroundColor: parrotBlue, borderRadius: vh(2) }]}>
                             <ParrotsStdText selectable style={[styles.msgText, { color: "white" }]}>{displayText}</ParrotsStdText>
                           </View>

@@ -59,7 +59,7 @@ export const RenderBidsComponent = ({
 
 
   const handleAcceptBid = async ({ bidId, bidUserId }) => {
-    const text = `Hi there! 👋 Welcome on board to "${voyageName}" 🎉`;
+    const text = `[parrots-bid] Welcome aboard "${voyageName}"! Your bid has been accepted.`;
     setLoadingBidId(bidId);
     try {
       await invokeHub("SendMessage", currentUserId, bidUserId, text);

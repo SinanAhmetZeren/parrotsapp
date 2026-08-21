@@ -229,7 +229,7 @@ export default function GroupConversationDetail({ route, navigation }) {
         <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalBox}>
-              <ParrotsStdText style={styles.modalTitle}>ℹ️ Group Message History</ParrotsStdText>
+              <ParrotsStdText style={styles.modalTitle}>Group Message History</ParrotsStdText>
               <ParrotsStdText style={styles.modalText}>
                 You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
               </ParrotsStdText>
@@ -250,7 +250,7 @@ export default function GroupConversationDetail({ route, navigation }) {
       <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
-            <ParrotsStdText style={styles.modalTitle}>ℹ️ Group Message History</ParrotsStdText>
+            <ParrotsStdText style={styles.modalTitle}>Group Message History</ParrotsStdText>
             <ParrotsStdText style={styles.modalText}>
               You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
             </ParrotsStdText>
