@@ -24,6 +24,8 @@ import {
   TextInput,
   Platform,
   AppState,
+  Modal,
+  ScrollView,
 } from "react-native";
 
 if (Text.defaultProps == null) Text.defaultProps = {};
@@ -56,6 +58,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   updateStateFromLocalStorage,
   updateUserFavorites,
+  useAcceptTermsMutation,
+  useLazyCheckRequiresTermsAcceptanceQuery,
 } from "./slices/UserSlice";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
 import { Provider } from "react-redux"; // Import the Provider
@@ -88,6 +92,7 @@ import {
 import { registerPushTokenAsync } from "./utils/registerPushToken";
 import { ParrotsStdText } from "./components/ParrotsStdText";
 import { UpdateModal } from "./components/UpdateModal";
+import TermsOfUseComponent from "./components/TermsOfUseComponent";
 import Constants from "expo-constants";
 import { useGetMinVersionQuery } from "./slices/VersionSlice";
 
@@ -686,7 +691,26 @@ function App() {
     const [isAuthChecking, setIsAuthChecking] = useState(true);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [forceUpdate, setForceUpdate] = useState(false);
+    const [showTermsModal, setShowTermsModal] = useState(false);
     const { data: versionData } = useGetMinVersionQuery();
+    const [checkRequiresTerms] = useLazyCheckRequiresTermsAcceptanceQuery();
+    const [acceptTerms] = useAcceptTermsMutation();
+
+    const checkTermsRequirement = async () => {
+      const token = await AsyncStorage.getItem("storedToken");
+      if (!token) return;
+      try {
+        const result = await checkRequiresTerms().unwrap();
+        if (result?.requiresAcceptance) setShowTermsModal(true);
+      } catch {}
+    };
+
+    const handleAcceptTerms = async () => {
+      try {
+        await acceptTerms().unwrap();
+        setShowTermsModal(false);
+      } catch {}
+    };
 
     useEffect(() => {
       if (!versionData?.minVersion) return;
@@ -713,6 +737,7 @@ function App() {
 
           if (storedToken) {
             registerPushTokenAsync(storedToken);
+            checkTermsRequirement();
 
             // Restore Redux state immediately — navigate to home screen right away
             dispatch(
@@ -789,9 +814,11 @@ function App() {
     useEffect(() => {
       const subscription = AppState.addEventListener("change", async (nextState) => {
         const isForeground = nextState === "active";
+        console.log(isForeground ? "app fore..." : "app back...");
         invokeHub("UpdatePresence", isForeground).catch(() => { });
         if (isForeground) {
           Notifications.setBadgeCountAsync(0).catch(() => { });
+          checkTermsRequirement();
           try {
             const hasUnread = await invokeHub("CheckUnreadMessages", userId);
             if (hasUnread) dispatch(setUnreadMessages(true));
@@ -855,6 +882,25 @@ function App() {
     return (
       <>
         <UpdateModal visible={showUpdateModal} forceUpdate={forceUpdate} onDismiss={() => setShowUpdateModal(false)} />
+        <Modal visible={showTermsModal} animationType="slide">
+          <View style={{ flex: 1, padding: 20, paddingTop: 60 }}>
+            <ParrotsStdText style={{ fontSize: 20, fontWeight: "700", color: "#003580", marginBottom: 12, textAlign: "center" }}>
+              Our Terms of Use have been updated
+            </ParrotsStdText>
+            <ParrotsStdText style={{ fontSize: 14, color: "#555", marginBottom: 16, textAlign: "center" }}>
+              Please read and accept the updated Terms of Use to continue using Parrots.
+            </ParrotsStdText>
+            <ScrollView style={{ flex: 1, borderWidth: 1, borderColor: "#ddd", borderRadius: 8, marginBottom: 16 }}>
+              <TermsOfUseComponent />
+            </ScrollView>
+            <TouchableOpacity
+              onPress={handleAcceptTerms}
+              style={{ backgroundColor: "#007bff", borderRadius: 8, padding: 14, alignItems: "center", marginBottom: 10 }}
+            >
+              <ParrotsStdText style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>I Accept</ParrotsStdText>
+            </TouchableOpacity>
+          </View>
+        </Modal>
         {isLoggedIn ? (
           <TabNavigator isLoading={isLoadingUser} hasUnreadMessages={hasUnreadMessages} />
         ) : (

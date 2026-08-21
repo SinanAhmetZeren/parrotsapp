@@ -292,6 +292,9 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    checkRequiresTermsAcceptance: builder.query({
+      query: () => "/api/account/requires-terms-acceptance",
+    }),
     acknowledgePublicProfile: builder.mutation({
       query: () => ({
         url: "/api/account/acknowledge-public-profile",
@@ -449,6 +452,7 @@ export const {
   useConfirmUserMutation,
   useLoginUserMutation,
   useAcceptTermsMutation,
+  useLazyCheckRequiresTermsAcceptanceQuery,
   useAcknowledgePublicProfileMutation,
   useAcknowledgeGroupHistoryMutation,
   useGoogleLoginInternalMutation,
