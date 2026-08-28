@@ -23,10 +23,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Clipboard from "expo-clipboard";
 import LoadingLogo from "../components/LoadingLogo";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
 import { useFocusEffect } from "@react-navigation/native";
-import { useGetUserByIdQuery, useGetUserByPublicIdQuery, useAddBookmarkMutation, useRemoveBookmarkMutation } from "../slices/UserSlice";
+import { useGetUserByIdQuery, useGetUserByPublicIdQuery, useAddBookmarkMutation, useRemoveBookmarkMutation, useBlockUserMutation, useUnblockUserMutation, useReportUserMutation, useIsBlockedQuery } from "../slices/UserSlice";
 import { addBookmarkedUserId, removeBookmarkedUserId } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery, useLazyGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery, useLazyGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
@@ -52,6 +52,18 @@ export default function ProfileScreenPublic({ navigation }) {
   const [addBookmark] = useAddBookmarkMutation();
   const [removeBookmark] = useRemoveBookmarkMutation();
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [overflowMenuVisible, setOverflowMenuVisible] = useState(false);
+  const [reportModalVisible, setReportModalVisible] = useState(false);
+  const [blockModalVisible, setBlockModalVisible] = useState(false);
+  const [selectedReason, setSelectedReason] = useState("");
+
+  const [blockUser] = useBlockUserMutation();
+  const [unblockUser] = useUnblockUserMutation();
+  const [reportUser] = useReportUserMutation();
+  const { data: isBlockedData, refetch: refetchIsBlocked } = useIsBlockedQuery(publicId);
+  const isBlocked = isBlockedData ?? false;
+
+  const REPORT_REASONS = ["Spam", "Inappropriate behavior", "Harassment", "Scam"];
 
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -131,6 +143,43 @@ export default function ProfileScreenPublic({ navigation }) {
       });
     } catch (error) {
     }
+  };
+
+  const handleCopyProfileLink = async () => {
+    setOverflowMenuVisible(false);
+    try {
+      await Clipboard.setStringAsync(`https://parrotsvoyages.com/profile-public/${userData.publicId}/${encodeURIComponent(userData.userName)}`);
+      showToast("Profile link copied");
+    } catch {
+      showToast("Failed to copy link");
+    }
+  };
+
+  const handleBlockToggle = async () => {
+    try {
+      if (isBlocked) {
+        await unblockUser(publicId).unwrap();
+        showToast("User unblocked");
+      } else {
+        await blockUser(publicId).unwrap();
+        showToast("User blocked");
+      }
+      refetchIsBlocked();
+    } catch {
+      showToast("Action failed");
+    }
+  };
+
+  const handleReportSubmit = async () => {
+    if (!selectedReason) return;
+    setReportModalVisible(false);
+    try {
+      await reportUser({ publicId, reason: selectedReason, details: null }).unwrap();
+      showToast("Report submitted. Thank you.");
+    } catch {
+      showToast("Failed to submit report");
+    }
+    setSelectedReason("");
   };
 
   useEffect(() => {
@@ -433,11 +482,11 @@ export default function ProfileScreenPublic({ navigation }) {
 
 
                   <TouchableOpacity
-                    onPress={() => handleShareProfile()}
+                    onPress={() => setOverflowMenuVisible(true)}
                     style={styles.shareContainer1}
                   >
                     <MaterialIcons
-                      name="ios-share"
+                      name="more-vert"
                       size={24}
                       color={parrotBlue}
                       style={styles.shareContainer2}
@@ -636,6 +685,129 @@ export default function ProfileScreenPublic({ navigation }) {
               <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
             </View>
           )}
+
+          {/* Overflow bottom sheet */}
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={overflowMenuVisible}
+            onRequestClose={() => setOverflowMenuVisible(false)}
+          >
+            <TouchableOpacity
+              style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "flex-end" }}
+              activeOpacity={1}
+              onPress={() => setOverflowMenuVisible(false)}
+            >
+              <View style={styles.bottomSheet}>
+                <View style={styles.bottomSheetHandle} />
+                <TouchableOpacity style={styles.sheetItem} onPress={handleCopyProfileLink}>
+                  <MaterialIcons name="link" size={24} color={parrotBlue} />
+                  <ParrotsStdText style={[styles.sheetItemText, { color: parrotBlue }]}>Copy profile link</ParrotsStdText>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sheetItem} onPress={() => { setOverflowMenuVisible(false); setBlockModalVisible(true); }}>
+                  <MaterialIcons name="block" size={24} color="orange" />
+                  <ParrotsStdText style={[styles.sheetItemText, { color: "orange" }]}>{isBlocked ? "Unblock user" : "Block user"}</ParrotsStdText>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.sheetItem} onPress={() => { setOverflowMenuVisible(false); setReportModalVisible(true); }}>
+                  <MaterialIcons name="flag" size={24} color={parrotRed} />
+                  <ParrotsStdText style={[styles.sheetItemText, { color: parrotRed }]}>Report user</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          </Modal>
+
+          {/* Block confirmation modal */}
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={blockModalVisible}
+            onRequestClose={() => setBlockModalVisible(false)}
+          >
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center" }}>
+              <View style={styles.reportModal}>
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 12 }}>
+                  <View style={[styles.reportIconCircle, { backgroundColor: "rgba(255,165,0,0.1)" }]}>
+                    <MaterialIcons name="block" size={18} color="orange" />
+                  </View>
+                  <View style={{ marginLeft: 10, flex: 1 }}>
+                    <ParrotsStdText style={styles.reportTitle}>{isBlocked ? `Unblock ${userData?.userName}` : `Block ${userData?.userName}`}</ParrotsStdText>
+                  </View>
+                </View>
+                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: "#555", lineHeight: 21 }}>
+                  {isBlocked
+                    ? `${userData?.userName} will be able to message you and bid on your voyages again.`
+                    : `${userData?.userName} won't be able to send you messages or bid on your voyages. They won't be notified that you blocked them.`}
+                </ParrotsStdText>
+                <View style={{ flexDirection: "row", gap: 10, marginTop: 20 }}>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() => setBlockModalVisible(false)}>
+                    <ParrotsStdText style={styles.cancelButtonText}>Cancel</ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.submitButton, { backgroundColor: "orange" }]}
+                    onPress={() => { setBlockModalVisible(false); handleBlockToggle(); }}
+                  >
+                    <ParrotsStdText style={styles.submitButtonText}>{isBlocked ? "Unblock" : "Block"}</ParrotsStdText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+
+          {/* Report reason modal */}
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={reportModalVisible}
+            onRequestClose={() => setReportModalVisible(false)}
+          >
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center" }}>
+              <View style={styles.reportModal}>
+                {/* Header */}
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
+                  <View style={styles.reportIconCircle}>
+                    <MaterialIcons name="flag" size={18} color={parrotRed} />
+                  </View>
+                  <View style={{ marginLeft: 10, flex: 1 }}>
+                    <ParrotsStdText style={styles.reportTitle}>Report {userData?.userName}</ParrotsStdText>
+                    <ParrotsStdText style={styles.reportSubtitle}>Tell us what's wrong. Your report stays private.</ParrotsStdText>
+                  </View>
+                </View>
+
+                {/* Reasons */}
+                <View style={{ marginTop: 12 }}>
+                  {REPORT_REASONS.map((reason) => (
+                    <TouchableOpacity
+                      key={reason}
+                      style={[styles.reasonItem, selectedReason === reason && styles.reasonItemSelected]}
+                      onPress={() => setSelectedReason(reason)}
+                    >
+                      <View style={[styles.radioCircle, selectedReason === reason && styles.radioCircleSelected]}>
+                        {selectedReason === reason && <View style={styles.radioInner} />}
+                      </View>
+                      <ParrotsStdText style={[styles.reasonText, selectedReason === reason && { color: parrotBlue, fontFamily: "Nunito_800ExtraBold" }]}>{reason}</ParrotsStdText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {/* Footer note */}
+                <ParrotsStdText style={styles.reportFootnote}>Your report will be reviewed privately. To also prevent this user from messaging or bidding on your voyages, use the Block option.</ParrotsStdText>
+
+                {/* Buttons */}
+                <View style={{ flexDirection: "row", gap: 10, marginTop: 16 }}>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() => { setReportModalVisible(false); setSelectedReason(""); }}>
+                    <ParrotsStdText style={styles.cancelButtonText}>Cancel</ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.submitButton, !selectedReason && { opacity: 0.4 }]}
+                    onPress={handleReportSubmit}
+                    disabled={!selectedReason}
+                  >
+                    <ParrotsStdText style={styles.submitButtonText}>Submit report</ParrotsStdText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </View>
       </>
     );
@@ -848,6 +1020,128 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 13,
     fontWeight: "600",
+  },
+  bottomSheet: {
+    backgroundColor: "white",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 36,
+  },
+  bottomSheetHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: "#ccc",
+    borderRadius: 2,
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+  sheetItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.06)",
+    gap: 14,
+  },
+  sheetItemText: {
+    fontSize: 16,
+    fontFamily: "Nunito_700Bold",
+    color: "#3D3D3D",
+  },
+  reportModal: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    width: vw(88),
+  },
+  reportIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "rgba(200,30,30,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  reportTitle: {
+    fontSize: 16,
+    fontFamily: "Nunito_800ExtraBold",
+    color: parrotBlue,
+  },
+  reportSubtitle: {
+    fontSize: 12,
+    fontFamily: "Nunito_700Bold",
+    color: "#888",
+    marginTop: 2,
+  },
+  reasonItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: "#f5f5f5",
+    marginBottom: 8,
+    gap: 12,
+  },
+  reasonItemSelected: {
+    backgroundColor: "rgba(30,111,217,0.07)",
+    borderWidth: 1.5,
+    borderColor: parrotBlue,
+  },
+  radioCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#ccc",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  radioCircleSelected: {
+    borderColor: parrotBlue,
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: parrotBlue,
+  },
+  reasonText: {
+    fontSize: 15,
+    fontFamily: "Nunito_700Bold",
+    color: "#3D3D3D",
+  },
+  reportFootnote: {
+    fontSize: 12,
+    fontFamily: "Nunito_700Bold",
+    color: "#aaa",
+    marginTop: 10,
+  },
+  cancelButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: "#f0f0f0",
+    alignItems: "center",
+  },
+  cancelButtonText: {
+    fontSize: 15,
+    fontFamily: "Nunito_700Bold",
+    color: "#3D3D3D",
+  },
+  submitButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 12,
+    backgroundColor: parrotRed,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    fontSize: 15,
+    fontFamily: "Nunito_700Bold",
+    color: "white",
   },
 
 });

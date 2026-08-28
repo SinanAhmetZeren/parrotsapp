@@ -419,6 +419,36 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Bookmarks"],
     }),
+    blockUser: builder.mutation({
+      query: (publicId) => ({
+        url: `/api/Moderation/block/${publicId}`,
+        method: "POST",
+      }),
+    }),
+    unblockUser: builder.mutation({
+      query: (publicId) => ({
+        url: `/api/Moderation/unblock/${publicId}`,
+        method: "POST",
+      }),
+    }),
+    reportUser: builder.mutation({
+      query: ({ publicId, reason, details }) => ({
+        url: `/api/Moderation/report/user/${publicId}`,
+        method: "POST",
+        body: { reason, details },
+      }),
+    }),
+    isBlocked: builder.query({
+      query: (publicId) => `/api/Moderation/isBlocked/${publicId}`,
+      transformResponse: (responseData) => responseData.data,
+    }),
+    reportVoyage: builder.mutation({
+      query: ({ voyageId, reason }) => ({
+        url: `/api/Moderation/report/voyage/${voyageId}`,
+        method: "POST",
+        body: { reason },
+      }),
+    }),
     getParrotCrackerBalance: builder.query({
       query: (userId) => {
         if (userId) {
@@ -462,4 +492,9 @@ export const {
   useUpdateProfileImageMutation,
   useUpdateBackgroundImageMutation,
   usePatchUserMutation,
+  useBlockUserMutation,
+  useUnblockUserMutation,
+  useReportUserMutation,
+  useIsBlockedQuery,
+  useReportVoyageMutation,
 } = extendedApiSlice;

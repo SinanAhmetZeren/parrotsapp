@@ -53,6 +53,8 @@ import {
   addVoyageToUserFavorites,
   removeVoyageFromUserFavorites,
 } from "../slices/UserSlice";
+import { useReportVoyageMutation } from "../slices/UserSlice";
+import * as Clipboard from "expo-clipboard";
 import { API_URL } from "@env";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
@@ -128,6 +130,39 @@ const VoyageDetailScreen = ({ navigation }) => {
       setIsBroadcasting(false);
     }
   };
+  const [overflowMenuVisible, setOverflowMenuVisible] = useState(false);
+  const [voyageReportModalVisible, setVoyageReportModalVisible] = useState(false);
+  const [voyageSelectedReason, setVoyageSelectedReason] = useState(null);
+  const [reportVoyage] = useReportVoyageMutation();
+
+  const REPORT_REASONS = [
+    { label: "Inappropriate Content", subtitle: "Offensive language, descriptions, or stolen/inappropriate imagery" },
+    { label: "Safety / Navigation Hazard", subtitle: "Reckless route details, dangerous passage plans, or safety violations" },
+    { label: "False or Misleading Information", subtitle: "Inaccurate coordinates, fake schedules, or deceptive trip details" },
+    { label: "Spam, Scam, or Commercial Activity", subtitle: "Unsolicited advertising, fraudulent voyages, or unauthorized charters" },
+  ];
+
+  const handleCopyVoyageLink = async () => {
+    try {
+      await Clipboard.setStringAsync(`https://parrotsvoyages.com/voyage-details/${voyageId}`);
+      showToast("Voyage link copied");
+    } catch {
+      showToast("Failed to copy link");
+    }
+  };
+
+  const handleReportVoyage = async () => {
+    if (!voyageSelectedReason) return;
+    try {
+      await reportVoyage({ voyageId, reason: voyageSelectedReason }).unwrap();
+      setVoyageReportModalVisible(false);
+      setVoyageSelectedReason(null);
+      Toast.show({ type: "success", text1: "Report submitted", text2: "Thank you for helping keep Parrots safe.", visibilityTime: 3000, topOffset: 100 });
+    } catch {
+      Toast.show({ type: "error", text1: "Action failed", text2: "Please try again.", visibilityTime: 2000, topOffset: 100 });
+    }
+  };
+
   const [hasBidWithUserId, setHasBidWithUserId] = useState(false);
   const [userBid, setUserBid] = useState("");
   const [userBidId, setUserBidId] = useState("");
@@ -436,6 +471,25 @@ const VoyageDetailScreen = ({ navigation }) => {
 
                 <View style={styles.detailsCard}>
 
+                  {/* Icon row floating half above the card */}
+                  <View style={{ position: "absolute", top: -20, right: 8, flexDirection: "row", alignItems: "center", gap: 4, zIndex: 10 }}>
+                    {isFavorited ? (
+                      <TouchableOpacity onPress={() => handleDeleteVoyageFromFavorites()}>
+                        <Ionicons name="heart" size={24} color="red" style={styles.heartContainer2} />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity onPress={() => handleAddVoyageToFavorites()}>
+                        <Ionicons name="heart" size={24} color="orange" style={styles.heartContainer2} />
+                      </TouchableOpacity>
+                    )}
+                    <TouchableOpacity onPress={() => showToast(VoyageData.publicOnMap ? "This voyage is publicly visible on the map" : "This voyage is not visible on the map")}>
+                      <Ionicons name="earth" size={24} color={VoyageData.publicOnMap ? "#1E6FD9" : "#a0b8d8"} style={styles.earthContainer2} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setOverflowMenuVisible(true)}>
+                      <MaterialIcons name="more-vert" size={24} color={parrotBlue} style={styles.shareContainer2} />
+                    </TouchableOpacity>
+                  </View>
+
                   {/* Voyage Name */}
                   <ParrotsStdText style={styles.voyageName}>{VoyageData.name}</ParrotsStdText>
 
@@ -526,7 +580,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
                   {/* // Voyage Description */}
                   <View style={styles.DescriptionContainer}>
-                    <ParrotsStdText style={styles.descriptionText}>{displayText}</ParrotsStdText>
+                    <ParrotsStdText selectable style={styles.descriptionText}>{displayText}</ParrotsStdText>
 
                     {plainDescription.length > descriptionShortenedChars &&
                       !showFullText && (
@@ -561,24 +615,6 @@ const VoyageDetailScreen = ({ navigation }) => {
                   </MapView>
                 </View>
 
-                {/* 3 icons top-right of map, slightly overlapping */}
-                <View style={styles.mapTopIcons}>
-                  {isFavorited ? (
-                    <TouchableOpacity onPress={() => handleDeleteVoyageFromFavorites()}>
-                      <Ionicons name="heart" size={24} color="red" style={styles.heartContainer2} />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity onPress={() => handleAddVoyageToFavorites()}>
-                      <Ionicons name="heart" size={24} color="orange" style={styles.heartContainer2} />
-                    </TouchableOpacity>
-                  )}
-                  <TouchableOpacity onPress={() => showToast(VoyageData.publicOnMap ? "This voyage is publicly visible on the map" : "This voyage is not visible on the map")}>
-                    <Ionicons name="earth" size={24} color={VoyageData.publicOnMap ? "#1E6FD9" : "#a0b8d8"} style={styles.earthContainer2} />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleShareVoyage()}>
-                    <MaterialIcons name="ios-share" size={24} color={parrotBlue} style={styles.shareContainer2} />
-                  </TouchableOpacity>
-                </View>
               </View>
 
               {/* Info icon just below map, above waypoints */}
@@ -689,7 +725,7 @@ const VoyageDetailScreen = ({ navigation }) => {
             {/* // enter bid */}
 
             <View style={{ paddingBottom: ownVoyage ? vh(11) : vh(11) }}>
-              {ownVoyage ? null : (
+              {ownVoyage || VoyageData.isBlockedByOrganizer ? null : (
                 <CreateBidComponent
                   userName={userName}
                   userProfileImage={userProfileImage}
@@ -713,6 +749,74 @@ const VoyageDetailScreen = ({ navigation }) => {
             <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
           </View>
         )}
+
+        {/* Overflow bottom sheet */}
+        <Modal visible={overflowMenuVisible} transparent animationType="fade" onRequestClose={() => setOverflowMenuVisible(false)}>
+          <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "flex-end" }} activeOpacity={1} onPress={() => setOverflowMenuVisible(false)}>
+            <View style={styles.bottomSheet}>
+              <View style={styles.bottomSheetHandle} />
+              <TouchableOpacity style={styles.sheetItem} onPress={() => { setOverflowMenuVisible(false); handleCopyVoyageLink(); }}>
+                <MaterialIcons name="link" size={24} color={parrotBlue} />
+                <ParrotsStdText style={[styles.sheetItemText, { color: parrotBlue }]}>Copy voyage link</ParrotsStdText>
+              </TouchableOpacity>
+              {!ownVoyage && (
+                <TouchableOpacity style={styles.sheetItem} onPress={() => { setOverflowMenuVisible(false); setTimeout(() => setVoyageReportModalVisible(true), 300); }}>
+                  <MaterialIcons name="flag" size={24} color={parrotRed} />
+                  <ParrotsStdText style={[styles.sheetItemText, { color: parrotRed }]}>Report voyage</ParrotsStdText>
+                </TouchableOpacity>
+              )}
+            </View>
+          </TouchableOpacity>
+        </Modal>
+
+        {/* Report voyage modal */}
+        <Modal visible={voyageReportModalVisible} transparent animationType="fade" onRequestClose={() => setVoyageReportModalVisible(false)}>
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center" }}>
+            <View style={{ backgroundColor: "white", borderRadius: 20, padding: 20, width: vw(88) }}>
+              {/* Header */}
+              <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
+                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(200,30,30,0.1)", alignItems: "center", justifyContent: "center" }}>
+                  <MaterialIcons name="flag" size={18} color={parrotRed} />
+                </View>
+                <View style={{ marginLeft: 10, flex: 1 }}>
+                  <ParrotsStdText style={{ fontSize: 16, fontFamily: "Nunito_800ExtraBold", color: parrotBlue }}>Report voyage</ParrotsStdText>
+                  <ParrotsStdText style={{ fontSize: 12, fontFamily: "Nunito_700Bold", color: "#888", marginTop: 2 }}>Tell us what's wrong. Your report stays private.</ParrotsStdText>
+                </View>
+              </View>
+              {/* Reasons */}
+              <View style={{ marginTop: 12 }}>
+                {REPORT_REASONS.map((reason) => (
+                  <TouchableOpacity
+                    key={reason.label}
+                    onPress={() => setVoyageSelectedReason(reason.label)}
+                    style={[{ flexDirection: "row", alignItems: "center", paddingVertical: 12, paddingHorizontal: 14, borderRadius: 12, backgroundColor: "#f5f5f5", marginBottom: 8, gap: 12 },
+                      voyageSelectedReason === reason.label && { backgroundColor: "rgba(30,111,217,0.07)", borderWidth: 1.5, borderColor: parrotBlue }]}
+                  >
+                    <View style={[{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: "#ccc", alignItems: "center", justifyContent: "center" },
+                      voyageSelectedReason === reason.label && { borderColor: parrotBlue }]}>
+                      {voyageSelectedReason === reason.label && <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: parrotBlue }} />}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <ParrotsStdText style={[{ fontSize: 15, fontFamily: "Nunito_700Bold", color: "#3D3D3D" }, voyageSelectedReason === reason.label && { color: parrotBlue, fontFamily: "Nunito_800ExtraBold" }]}>{reason.label}</ParrotsStdText>
+                      <ParrotsStdText style={{ fontSize: 12, fontFamily: "Nunito_700Bold", color: "#aaa", marginTop: 2 }}>{reason.subtitle}</ParrotsStdText>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              {/* Footnote */}
+              <ParrotsStdText style={{ fontSize: 12, fontFamily: "Nunito_700Bold", color: "#aaa", marginTop: 10 }}>Reports are reviewed privately. The voyage organizer will not be notified.</ParrotsStdText>
+              {/* Buttons */}
+              <View style={{ flexDirection: "row", gap: 10, marginTop: 16 }}>
+                <TouchableOpacity style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: "#f0f0f0", alignItems: "center" }} onPress={() => { setVoyageReportModalVisible(false); setVoyageSelectedReason(null); }}>
+                  <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", color: "#3D3D3D" }}>Cancel</ParrotsStdText>
+                </TouchableOpacity>
+                <TouchableOpacity style={[{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: parrotRed, alignItems: "center" }, !voyageSelectedReason && { opacity: 0.4 }]} onPress={handleReportVoyage} disabled={!voyageSelectedReason}>
+                  <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", color: "white" }}>Submit report</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </>
     );
   }
@@ -1120,6 +1224,7 @@ const styles = StyleSheet.create({
 
   detailsCard: {
     borderRadius: 20,
+    overflow: "visible",
     paddingTop: 4,
     paddingBottom: 16,
     paddingHorizontal: 16,
@@ -1231,6 +1336,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "48%",
   },
-
-
+  bottomSheet: {
+    backgroundColor: "white",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 36,
+  },
+  bottomSheetHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: "#ccc",
+    borderRadius: 2,
+    alignSelf: "center",
+    marginBottom: 16,
+  },
+  sheetItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.06)",
+    gap: 14,
+  },
+  sheetItemText: {
+    fontSize: 16,
+    fontFamily: "Nunito_700Bold",
+    color: "#3D3D3D",
+  },
 });
