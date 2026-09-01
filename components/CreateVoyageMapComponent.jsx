@@ -338,7 +338,7 @@ const CreateVoyageMapComponent = ({
     <View>
       <View style={styles.mapCard}>
         <View style={styles.cardTitleRow}>
-          <ParrotsStdText style={styles.cardTitle}>Add Waypoints</ParrotsStdText>
+          <ParrotsStdText style={styles.cardTitle}>Voyage Route</ParrotsStdText>
         </View>
         <View style={styles.mapAndEmojisContainer}>
           <View style={styles.mapContainer}>
@@ -373,7 +373,7 @@ const CreateVoyageMapComponent = ({
 
       <View style={styles.newWaypointCard}>
         <View style={[styles.cardTitleRow, { flexDirection: "row", alignItems: "center", gap: vw(2) }]}>
-          <ParrotsStdText style={styles.cardTitle}>Waypoint Details</ParrotsStdText>
+          <ParrotsStdText style={styles.cardTitle}>New Waypoint</ParrotsStdText>
           <TouchableOpacity onPress={() => setWaypointInfoVisible(true)}>
             <ParrotsStdText style={{ fontSize: 16, color: parrotLightBlue, fontFamily: "Nunito_800ExtraBold" }}>ⓘ</ParrotsStdText>
           </TouchableOpacity>
@@ -507,17 +507,17 @@ const CreateVoyageMapComponent = ({
       <TouchableOpacity
         style={styles.FinishButtonContainer}
         onPress={() => {
-          if (addedWayPoints.length > 0 && imagesAdded > 0) {
+          if (addedWayPoints.length > 0) {
             goToHomePage();
           }
         }}
-        disabled={!(addedWayPoints.length > 0 && imagesAdded > 0) || isConfirming}
+        disabled={!(addedWayPoints.length > 0) || isConfirming}
       >
         <View
           style={[
             styles.completeText,
             { alignItems: "center", justifyContent: "center" },
-            addedWayPoints.length > 0 && imagesAdded > 0
+            addedWayPoints.length > 0
               ? { backgroundColor: parrotBlue }
               : { backgroundColor: parrotBlueSemiTransparent },
           ]}
@@ -567,7 +567,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 20,
     fontFamily: "Nunito_800ExtraBold",
-    color: parrotLightBlue,
+    color: parrotBlue,
   },
   waypointFlatlistInner: {
     height: vh(38),

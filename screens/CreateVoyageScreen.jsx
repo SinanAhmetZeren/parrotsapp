@@ -99,10 +99,10 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [maxPrice, setMaxPrice] = useState("");
   const [createdVoyageImage, setCreatedVoyageImage] = useState(null);
   const [isAuction, setIsAuction] = useState(true);
-  const [isFixedPrice, setIsFixedPrice] = useState(true);
+  const [isFixedPrice, setIsFixedPrice] = useState(false);
   const [isPublicOnMap, setIsPublicOnMap] = useState(true);
   const [vehicleId, setVehicleId] = useState("");
-  const [currency, setCurrency] = useState("");
+  const [currency, setCurrency] = useState("€");
   const [voyageId, setVoyageId] = useState("");
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
@@ -270,8 +270,8 @@ const CreateVoyageScreen = ({ navigation }) => {
       setLastBidDate("");
       setMinPrice("");
       setMaxPrice("");
-      setIsAuction("");
-      setIsFixedPrice("");
+      setIsAuction(true);
+      setIsFixedPrice(false);
       setIsPublicOnMap("");
       setVehicleId("");
       setCurrency("");
@@ -321,9 +321,10 @@ const CreateVoyageScreen = ({ navigation }) => {
       setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
-      Toast.show({ type: "error", text1: "Image upload failed", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
+      showToast("Image upload failed - Check your connection and try again.");
+    } finally {
+      setIsUploadingImage(false);
     }
-    setIsUploadingImage(false);
   };
 
   const pickProfileImage = async () => {
@@ -467,7 +468,9 @@ const CreateVoyageScreen = ({ navigation }) => {
     return (
       <View style={{ flex: 1 }}>
         <TokenExpiryGuard />
-        <StepBar style={styles.StepBar} currentStep={currentStep} />
+        <View style={{ alignItems: "center", backgroundColor: "white" }}>
+          <StepBar style={styles.StepBar} currentStep={currentStep} onFirstStepPress={() => setCurrentStep(1)} />
+        </View>
         <Modal visible={showPublicProfileModal} transparent animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalBox}>
@@ -841,14 +844,14 @@ const CreateVoyageScreen = ({ navigation }) => {
           <ScrollView style={styles.scrollview}>
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Add Voyage Images</ParrotsStdText>
+                <ParrotsStdText style={styles.cardTitle}>Voyage Images</ParrotsStdText>
               </View>
 
               <View style={voyageImagesStyles.voyageImagesContainer2}>
-                <View style={styles.profileContainer2}>
+                <View style={[styles.profileContainer2, { position: "relative" }]}>
                   {isUploadingImage ? (
-                    <View style={styles.profileImage}>
-                      <ActivityIndicator size="large" style={{ top: vh(8) }} />
+                    <View style={[styles.profileImage, { justifyContent: "center", alignItems: "center" }]}>
+                      <ActivityIndicator size="large" />
                     </View>
                   ) : (
                     <TouchableOpacity onPress={pickVoyageImage}>
@@ -863,6 +866,14 @@ const CreateVoyageScreen = ({ navigation }) => {
                           style={styles.profileImage2}
                         />
                       )}
+                    </TouchableOpacity>
+                  )}
+                  {voyageImage && !isUploadingImage && (
+                    <TouchableOpacity
+                      onPress={() => handleUploadImage()}
+                      style={styles.uploadButton}
+                    >
+                      <ParrotsStdText style={styles.uploadButtonText}>Upload</ParrotsStdText>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -906,7 +917,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                               source={
                                 item.addedVoyageImageId
                                   ? { uri: item.voyageImage }
-                                  : require("../assets/placeholder.png")
+                                  : require("../assets/placeholder1.png")
                               }
                               style={voyageImagesStyles.voyageImage1}
                             />
@@ -928,13 +939,6 @@ const CreateVoyageScreen = ({ navigation }) => {
                 </View>
               </View>
 
-              {voyageImage ? (
-                <View style={styles.addVoyageImageButton}>
-                  <TouchableOpacity onPress={() => handleUploadImage()}>
-                    <AntDesign name="cloud-upload" size={24} color="white" />
-                  </TouchableOpacity>
-                </View>
-              ) : null}
             </View>
 
             <CreateVoyageMapComponent
@@ -965,10 +969,12 @@ const voyageImagesStyles = StyleSheet.create({
     width: vw(94),
     alignSelf: "center",
     borderRadius: vh(2),
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   voyageImage1: {
-    height: vh(13),
-    width: vh(13),
+    height: vh(15),
+    width: vh(15),
     marginRight: vh(1),
     borderRadius: vh(1.5),
   },
@@ -1140,17 +1146,16 @@ const styles = StyleSheet.create({
     color: parrotBlue,
   },
   length1: {
-    height: vh(13),
-    width: vw(90),
-    alignSelf: "center",
+    flex: 1,
+    height: vh(15),
   },
   length2: {
-    width: vw(90),
-    alignSelf: "center",
+    flex: 1,
+    height: vh(15),
   },
   length3: {
-    width: vw(90),
-    alignSelf: "center",
+    flex: 1,
+    height: vh(15),
   },
 
   deleteAddedImage: {
@@ -1198,28 +1203,36 @@ const styles = StyleSheet.create({
     borderRadius: vh(1.5),
   },
   profileContainer2: {
-    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: vh(2),
-    marginTop: vh(1),
+    justifyContent: "flex-start",
+    marginRight: vh(1),
     borderRadius: vh(1.5),
+  },
+  uploadButton: {
+    position: "absolute",
+    bottom: vh(1),
+    alignSelf: "center",
+    backgroundColor: parrotBlue,
+    borderRadius: vh(2),
+    paddingVertical: vh(0.5),
+    paddingHorizontal: vw(3),
+    alignItems: "center",
+  },
+  uploadButtonText: {
+    color: "white",
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
   },
 
   profileImage: {
-    marginLeft: vw(3),
-    marginRight: vh(1),
-    marginBottom: vh(3),
-    width: vh(20),
-    height: vh(20),
-    borderRadius: vh(3),
-
+    width: vh(15),
+    height: vh(15),
+    borderRadius: vh(1.5),
   },
   profileImage2: {
-    marginBottom: vh(2),
-    width: vh(20),
-    height: vh(20),
-    borderRadius: vh(3),
+    width: vh(15),
+    height: vh(15),
+    borderRadius: vh(1.5),
   },
   mainCheckboxContainer: {
     paddingHorizontal: vh(1),

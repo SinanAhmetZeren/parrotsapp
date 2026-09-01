@@ -14,8 +14,8 @@ const data = [
   { label: "£", value: "£" },
 ];
 
-const DropdownComponentCurrency = ({ setCurrency }) => {
-  const [value, setValue] = useState(null);
+const DropdownComponentCurrency = ({ setCurrency, defaultValue = "€" }) => {
+  const [value, setValue] = useState(defaultValue);
   const [isFocus, setIsFocus] = useState(false);
 
   return (

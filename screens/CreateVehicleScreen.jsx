@@ -109,7 +109,7 @@ const CreateVehicleScreen = () => {
       setImage("");
       setVoyageImage(null);
       setAddedVehicleImages([]);
-      setCurrentStep(1);
+      setCurrentStep(2);
       setIsUploadingImage(false);
       setIsCreatingVehicle(false);
     }, [])
@@ -135,12 +135,6 @@ const CreateVehicleScreen = () => {
     setImage("");
     setVoyageImage("");
     setAddedVehicleImages([]);
-
-    // guard: no images → do nothing
-    if (addedVehicleImages.length === 0) {
-      console.log("images length: -->", addedVehicleImages.length);
-      return;
-    }
 
     setIsCompletingVehicle(true);
     setHasError(false);
@@ -187,7 +181,7 @@ const CreateVehicleScreen = () => {
         capacity,
       });
 
-const createdVehicleId = response?.data?.data?.id;
+      const createdVehicleId = response?.data?.data?.id;
       if (!createdVehicleId) {
         throw new Error("Vehicle ID not returned from API");
       }
@@ -368,7 +362,9 @@ const createdVehicleId = response?.data?.data?.id;
     <>
       <TokenExpiryGuard />
 
-      <StepBarVehicle currentStep={currentStep} />
+      <View style={{ alignItems: "center", backgroundColor: "white" }}>
+        <StepBarVehicle currentStep={currentStep} onFirstStepPress={() => setCurrentStep(1)} />
+      </View>
 
 
 
@@ -535,91 +531,86 @@ const createdVehicleId = response?.data?.data?.id;
           {console.log("Step 2 screen rendered")}
 
           <View style={styles.overlay}>
-            <View style={styles.selectedChoice}>
-              <ParrotsStdText style={styles.selectedText}>Add Vehicle Images</ParrotsStdText>
-            </View>
 
-            <View style={styles.profileContainer}>
-              {isUploadingImage ? (
-                <View style={styles.profileImage}>
-                  <ActivityIndicator size="large" style={{ top: vh(8) }} />
-                </View>
-              ) : (
-                <TouchableOpacity onPress={pickVoyageImage}>
-                  {voyageImage ? (
-                    <Image
-                      source={{ uri: voyageImage }}
-                      style={styles.profileImage}
-                    />
-                  ) : (
-                    <Image
-                      source={require("../assets/ParrotsLogoPlus.png")}
-                      style={styles.profileImage2}
-                    />
-                  )}
-                </TouchableOpacity>
-              )}
-
-              {/* Your other UI elements */}
-            </View>
-
-            <View
-              style={
-                addedVehicleImages.length <= 1
-                  ? styles.length1
-                  : addedVehicleImages.length === 2
-                    ? styles.length2
-                    : styles.length3
-              }
-            >
-              <FlatList
-                horizontal
-                data={data}
-                // keyExtractor={(item) => item.addedVoyageImageId}
-                // keyExtractor={(item, index) => index.toString()}
-                keyExtractor={(item, index) => `voyage-image-${index}`}
-                renderItem={({ item, index }) => {
-                  return (
-                    <View key={index}>
-                      <TouchableOpacity
-                        onPress={() => {
-                          if (item.addedVoyageImageId) {
-                            handleDeleteImage(item.addedVoyageImageId);
-                          }
-                        }}
-                      >
-                        <Image
-                          source={
-                            item.addedVoyageImageId
-                              ? { uri: item.voyageImage }
-                              : require("../assets/placeholder.png")
-                          }
-                          style={styles.voyageImage1}
-                        />
-
-                        {item.addedVoyageImageId && (
-                          <ParrotsStdText style={styles.deleteAddedImage}>
-                            <MaterialIcons
-                              name="cancel"
-                              size={24}
-                              color="darkred"
-                            />
-                          </ParrotsStdText>
-                        )}
-                      </TouchableOpacity>
-                    </View>
-                  );
-                }}
-              />
-            </View>
-
-            {voyageImage ? (
-              <View style={styles.addVoyageImageButton}>
-                <TouchableOpacity onPress={() => handleUploadImage()}>
-                  <AntDesign name="cloud-upload" size={24} color="white" />
-                </TouchableOpacity>
+            <View style={vehicleImagesStyles.vehicleImagesContainer}>
+              <View style={[styles.profileContainer2, { position: "relative" }]}>
+                {isUploadingImage ? (
+                  <View style={[styles.profileImage, { justifyContent: "center", alignItems: "center" }]}>
+                    <ActivityIndicator size="large" />
+                  </View>
+                ) : (
+                  <TouchableOpacity onPress={pickVoyageImage}>
+                    {voyageImage ? (
+                      <Image
+                        source={{ uri: voyageImage }}
+                        style={styles.profileImage}
+                      />
+                    ) : (
+                      <Image
+                        source={require("../assets/ParrotsLogoPlus.png")}
+                        style={styles.profileImage2}
+                      />
+                    )}
+                  </TouchableOpacity>
+                )}
+                {voyageImage && !isUploadingImage && (
+                  <TouchableOpacity
+                    onPress={() => handleUploadImage()}
+                    style={styles.uploadButton}
+                  >
+                    <ParrotsStdText style={styles.uploadButtonText}>Upload</ParrotsStdText>
+                  </TouchableOpacity>
+                )}
               </View>
-            ) : null}
+
+              <View
+                style={
+                  addedVehicleImages.length <= 1
+                    ? styles.length1
+                    : addedVehicleImages.length === 2
+                      ? styles.length2
+                      : styles.length3
+                }
+              >
+                <FlatList
+                  horizontal
+                  data={data}
+                  keyExtractor={(item, index) => `vehicle-image-${index}`}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <View key={index}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            if (item.addedVoyageImageId) {
+                              handleDeleteImage(item.addedVoyageImageId);
+                            }
+                          }}
+                        >
+                          <Image
+                            source={
+                              item.addedVoyageImageId
+                                ? { uri: item.voyageImage }
+                                : require("../assets/placeholder1.png")
+                            }
+                            style={vehicleImagesStyles.vehicleImage1}
+                          />
+
+                          {item.addedVoyageImageId && (
+                            <ParrotsStdText style={styles.deleteAddedImage}>
+                              <MaterialIcons
+                                name="cancel"
+                                size={24}
+                                color="darkred"
+                              />
+                            </ParrotsStdText>
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  }}
+                />
+              </View>
+            </View>
             {/* <TouchableOpacity
                 style={styles.FinishButtonContainer}
                 onPress={() => {
@@ -631,24 +622,16 @@ const createdVehicleId = response?.data?.data?.id;
 
             <View style={styles.completeContainer}>
               <TouchableOpacity
-                onPress={() => {
-                  completeVehicle();
-                }}
-                style={
-                  data[0].key === "placeholder_1"
-                    ? styles.selection2Disabled
-                    : styles.selection2
-                }
-                disabled={data[0].key === "placeholder_1"}
+                onPress={() => completeVehicle()}
+                style={styles.selection2}
               >
-                {/* <ParrotsStdText style={styles.loginText}>Complete</ParrotsStdText> */}
-
                 {isCompletingVehicle ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <ParrotsStdText style={styles.loginText}>Complete</ParrotsStdText>
+                  <ParrotsStdText style={styles.loginText}>
+                    {addedVehicleImages.length === 0 ? "Skip" : "Complete"}
+                  </ParrotsStdText>
                 )}
-
               </TouchableOpacity>
             </View>
           </View>
@@ -706,6 +689,7 @@ const styles = StyleSheet.create({
   selection2: {
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
+    marginBottom: vh(3),
     paddingVertical: vh(1),
     backgroundColor: parrotBlue,
     borderRadius: vh(4),
@@ -714,6 +698,7 @@ const styles = StyleSheet.create({
   selection2Disabled: {
     marginHorizontal: vh(0.25),
     marginVertical: vh(0.25),
+    marginBottom: vh(3),
     paddingVertical: vh(1),
     backgroundColor: parrotBlueSemiTransparent,
     borderRadius: vh(4),
@@ -768,17 +753,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   length1: {
-    height: vh(13),
-    width: vw(90),
-    alignSelf: "center",
+    flex: 1,
+    height: vh(15),
   },
   length2: {
-    width: vw(90),
-    alignSelf: "center",
+    flex: 1,
   },
   length3: {
-    width: vw(90),
-    alignSelf: "center",
+    flex: 1,
   },
 
   deleteAddedImage: {
@@ -802,9 +784,8 @@ const styles = StyleSheet.create({
     borderColor: "white",
   },
   scrollview: {
-    // height: vh(200),
     marginBottom: vh(5),
-
+    backgroundColor: "white",
   },
   overlay: {
     marginTop: vh(0),
@@ -817,15 +798,31 @@ const styles = StyleSheet.create({
     marginBottom: vh(1),
     borderRadius: vh(1.5),
   },
-
+  profileContainer2: {
+    alignItems: "center",
+    justifyContent: "flex-start",
+    marginRight: vh(1),
+    borderRadius: vh(1.5),
+  },
+  uploadButton: {
+    position: "absolute",
+    bottom: vh(1),
+    alignSelf: "center",
+    backgroundColor: parrotBlue,
+    borderRadius: vh(2),
+    paddingVertical: vh(0.5),
+    paddingHorizontal: vw(3),
+    alignItems: "center",
+  },
+  uploadButtonText: {
+    color: "white",
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+  },
   profileImage: {
-    marginLeft: vw(3),
-    marginVertical: vh(1),
-    marginBottom: vh(3),
-    width: vh(20),
-    height: vh(20),
-    borderRadius: vh(3),
-    // borderColor: "rgba(190, 119, 234,0.6)",
+    width: vh(15),
+    height: vh(15),
+    borderRadius: vh(1.5),
   },
   backgroundImage: {
     width: vw(80),
@@ -853,15 +850,31 @@ const styles = StyleSheet.create({
   cardTitleRow: { marginHorizontal: vw(2), marginBottom: vh(1) },
   cardTitle: { fontFamily: "Nunito_800ExtraBold", fontSize: 20, color: parrotBlue },
   profileImage2: {
-    marginLeft: vw(3),
-    marginVertical: vh(1),
-    marginBottom: vh(3),
-    width: vh(20),
-    height: vh(20),
-    borderRadius: vh(3),
+    width: vh(15),
+    height: vh(15),
+    borderRadius: vh(1.5),
   },
   formContainer: {
     padding: vh(2),
+  },
+});
+
+const vehicleImagesStyles = StyleSheet.create({
+  vehicleImagesContainer: {
+    marginTop: vh(10),
+    paddingBottom: vh(1),
+    paddingHorizontal: vw(3),
+    alignSelf: "center",
+    width: vw(94),
+    borderRadius: vh(2),
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+  vehicleImage1: {
+    height: vh(15),
+    width: vh(15),
+    marginRight: vh(1),
+    borderRadius: vh(1.5),
   },
 });
 

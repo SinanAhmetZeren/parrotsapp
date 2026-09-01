@@ -35,6 +35,18 @@ import { Shadow } from "react-native-shadow-2";
 
 export const WaypointFlatList = ({ addedWayPoints, handleDeleteWaypoint, voyageProfileImage }) => {
 
+  if (addedWayPoints.length === 0) {
+    return (
+      <View style={{ alignItems: "center", justifyContent: "center", paddingVertical: vh(2) }}>
+        <Image
+          source={require("../assets/parrotslogo.png")}
+          style={{ width: vh(20), height: vh(20), opacity: 0.15 }}
+          resizeMode="contain"
+        />
+      </View>
+    );
+  }
+
   return (
     <FlatList
       horizontal
