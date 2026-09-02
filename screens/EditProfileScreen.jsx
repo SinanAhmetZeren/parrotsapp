@@ -12,7 +12,8 @@ import {
   Button,
   StyleSheet,
   ScrollView,
-  Keyboard
+  Keyboard,
+  Modal,
 } from "react-native";
 import Checkbox from "expo-checkbox";
 
@@ -23,6 +24,8 @@ import {
   usePatchUserMutation,
   updateUserName,
   updateUserData,
+  updateAsLoggedOut,
+  useDeleteAccountMutation,
 } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
@@ -33,7 +36,7 @@ import { useDispatch } from "react-redux";
 import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
-import { parrotBlue, parrotCream } from "../assets/color";
+import { parrotBlue, parrotCream, parrotRed, parrotTextDarkBlue, parrotCaravanOrangeRed } from "../assets/color";
 import { htmlToText } from "html-to-text";
 
 const EditProfileScreen = ({ navigation }) => {
@@ -52,6 +55,16 @@ const EditProfileScreen = ({ navigation }) => {
   const [updateProfileImage] = useUpdateProfileImageMutation();
   const [updateBackgroundImage] = useUpdateBackgroundImageMutation();
   const [patchUser] = usePatchUserMutation();
+  const [deleteAccount, { isLoading: isDeletingAccount }] = useDeleteAccountMutation();
+  const [deleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount().unwrap();
+    } catch (_) { }
+    setDeleteAccountModalVisible(false);
+    dispatch(updateAsLoggedOut());
+  };
 
   const [profileImage, setProfileImage] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(null);
@@ -358,7 +371,7 @@ const EditProfileScreen = ({ navigation }) => {
 
                 </View>
                 <TextInput
-                  placeholder="Enter your email"
+                  placeholder="Enter your display email"
                   value={displayEmail}
                   onChangeText={(text) => setDisplayEmail(text)}
                   style={[styles.textInput, { flex: 1 }]}
@@ -582,8 +595,45 @@ const EditProfileScreen = ({ navigation }) => {
                 }}
               />
             </View>
+
+            <View style={styles.saveChangesButtonContainer}>
+              <TouchableOpacity
+                style={{ ...styles.selection, backgroundColor: parrotCaravanOrangeRed, marginTop: vh(0.5) }}
+                onPress={() => setDeleteAccountModalVisible(true)}
+                activeOpacity={0.8}
+              >
+                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "white" }}>
+                  Delete Account
+                </ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+
           </View>
         </ScrollView>
+
+        <Modal animationType="fade" transparent={true} visible={deleteAccountModalVisible} onRequestClose={() => setDeleteAccountModalVisible(false)}>
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.6)" }}>
+            <View style={{ backgroundColor: "#fff", borderRadius: 16, padding: 24, width: vw(80), alignItems: "center" }}>
+              <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: parrotTextDarkBlue, marginBottom: 10 }}>Delete Account</ParrotsStdText>
+              <ParrotsStdText style={{ fontFamily: "Nunito_400Regular", fontSize: 13, color: parrotTextDarkBlue, textAlign: "center", marginBottom: 24 }}>
+                Your account will be deactivated. If you are a host with active voyages, your trip details will remain visible to your counterparties. As mentioned in the Terms of Use, Parrots may contact you via your registered email in the event of urgent coordination, and prompt responsiveness to guests is required for active trips and ongoing commitments.
+              </ParrotsStdText>
+              <TouchableOpacity
+                onPress={handleDeleteAccount}
+                disabled={isDeletingAccount}
+                style={{ backgroundColor: parrotRed, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 28, marginBottom: 12, opacity: isDeletingAccount ? 0.6 : 1 }}
+                activeOpacity={0.8}
+              >
+                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: "#fff", fontSize: 14 }}>
+                  {isDeletingAccount ? "Deleting..." : "Yes, Delete My Account"}
+                </ParrotsStdText>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setDeleteAccountModalVisible(false)} activeOpacity={0.8}>
+                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotBlue, fontSize: 13 }}>Cancel</ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       </>
     );
   }
@@ -636,10 +686,11 @@ const styles = StyleSheet.create({
     top: vh(-20),
   },
   selection: {
-    paddingHorizontal: vh(2),
     paddingVertical: vh(.75),
     backgroundColor: parrotBlue,
     borderRadius: vh(2.5),
+    width: vw(40),
+    alignItems: "center",
   },
   saveChangesButtonContainer: {
     bottom: vh(-2.5),
@@ -647,7 +698,7 @@ const styles = StyleSheet.create({
     left: vw(4),
   },
   choiceText: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: "700",
     color: "white",
   },

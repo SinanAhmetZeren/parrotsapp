@@ -449,6 +449,12 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         body: { reason },
       }),
     }),
+    deleteAccount: builder.mutation({
+      query: () => ({
+        url: `/api/User/delete-account`,
+        method: "POST",
+      }),
+    }),
     getParrotCrackerBalance: builder.query({
       query: (userId) => {
         if (userId) {
@@ -497,4 +503,5 @@ export const {
   useReportUserMutation,
   useIsBlockedQuery,
   useReportVoyageMutation,
+  useDeleteAccountMutation,
 } = extendedApiSlice;

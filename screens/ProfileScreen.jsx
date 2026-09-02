@@ -25,7 +25,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import VoyageListVertical from "../components/VoyageListVertical";
 import VehicleList from "../components/VehicleList";
-import { useGetUserByIdQuery, useLazyGetParrotCoinBalanceQuery } from "../slices/UserSlice";
+import { useGetUserByIdQuery, useLazyGetParrotCrackerBalanceQuery } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,9 +68,9 @@ export default function ProfileScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [coinModalVisible, setCoinModalVisible] = useState(false);
-  const [parrotCoinBalance, setParrotCoinBalance] = useState(null);
-  const [getParrotCoinBalance] = useLazyGetParrotCoinBalanceQuery();
+  const [crackerModalVisible, setCrackerModalVisible] = useState(false);
+  const [parrotCrackerBalance, setParrotCrackerBalance] = useState(null);
+  const [getParrotCrackerBalance] = useLazyGetParrotCrackerBalanceQuery();
 
   const {
     data: userData,
@@ -109,6 +109,7 @@ export default function ProfileScreen({ navigation }) {
     // await GoogleSignin.signOut();
   };
 
+
   /*
   useFocusEffect(
     useCallback(() => {
@@ -141,13 +142,13 @@ export default function ProfileScreen({ navigation }) {
 */
 
 
-  const handleGetParrotCoinBalance = async () => {
+  const handleGetParrotCrackerBalance = async () => {
     try {
 
-      const response = await getParrotCoinBalance(userId).unwrap();
-      setParrotCoinBalance(response.balance); // or response.balance depending on API
+      const response = await getParrotCrackerBalance(userId).unwrap();
+      setParrotCrackerBalance(response.balance); // or response.balance depending on API
     } catch (error) {
-      console.error("Error fetching ParrotCoin balance:", error);
+      console.error("Error fetching ParrotCracker balance:", error);
     }
   };
 
@@ -597,30 +598,31 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </TouchableOpacity>
                 {/* ///// EDIT PROFILE BUTTON /////// */}
+
               </View>
 
 
 
 
-              <View style={styles.parrotcoinContainerLeft}>
+              <View style={styles.parrotcrackerContainerLeft}>
 
 
                 {/* ///// parrotcrackers BUTTON /////// */}
 
 
                 <TouchableOpacity
-                  style={styles.parrotCoinBox}
+                  style={styles.parrotCrackerBox}
                   onPress={async () => {
-                    setCoinModalVisible(true);
-                    await handleGetParrotCoinBalance();
+                    setCrackerModalVisible(true);
+                    await handleGetParrotCrackerBalance();
 
                   }}
                   activeOpacity={0.5}
                 >
                   <View>
-                    <View style={styles.parrotCoinContainer}>
+                    <View style={styles.parrotCrackerContainer}>
                       <Image
-                        source={require("../assets/parrotCookie.png")}
+                        source={require("../assets/parrotCracker.png")}
                         style={{
                           width: vw(12),
                           height: vw(12),
@@ -636,8 +638,8 @@ export default function ProfileScreen({ navigation }) {
                 <Modal
                   animationType="fade"
                   transparent={true}
-                  visible={coinModalVisible}
-                  onRequestClose={() => setCoinModalVisible(false)}
+                  visible={crackerModalVisible}
+                  onRequestClose={() => setCrackerModalVisible(false)}
                 >
                   <View
                     style={{
@@ -684,7 +686,7 @@ export default function ProfileScreen({ navigation }) {
                               <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>Put your journey on the public map</ParrotsStdText>
                               <View style={{ flexDirection: "row", alignItems: "center" }}>
                                 <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>1 </ParrotsStdText>
-                                <Image source={require("../assets/parrotCookie.png")} style={{ width: 16, height: 16 }} resizeMode="contain" />
+                                <Image source={require("../assets/parrotCracker.png")} style={{ width: 16, height: 16 }} resizeMode="contain" />
                                 <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}> / day</ParrotsStdText>
                               </View>
                             </View>
@@ -698,7 +700,7 @@ export default function ProfileScreen({ navigation }) {
                               <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>Get local and area advice</ParrotsStdText>
                               <View style={{ flexDirection: "row", alignItems: "center" }}>
                                 <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>1 </ParrotsStdText>
-                                <Image source={require("../assets/parrotCookie.png")} style={{ width: 16, height: 16 }} resizeMode="contain" />
+                                <Image source={require("../assets/parrotCracker.png")} style={{ width: 16, height: 16 }} resizeMode="contain" />
                                 <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}> / query</ParrotsStdText>
                               </View>
                             </View>
@@ -715,10 +717,10 @@ export default function ProfileScreen({ navigation }) {
                             You have
                           </ParrotsStdText>
                           <ParrotsStdText style={{ fontSize: 18, fontFamily: "Nunito_800ExtraBold", color: parrotCaravanOrangeRed, marginRight: 8 }}>
-                            {parrotCoinBalance?.toLocaleString() ?? "—"}
+                            {parrotCrackerBalance?.toLocaleString() ?? "—"}
                           </ParrotsStdText>
                           <Image
-                            source={require("../assets/parrotCookie.png")}
+                            source={require("../assets/parrotCracker.png")}
                             style={{ width: 20, height: 20 }}
                             resizeMode="contain"
                           />
@@ -749,7 +751,7 @@ export default function ProfileScreen({ navigation }) {
 
                       <TouchableOpacity
                         style={styles.closeButtonAndText3}
-                        onPress={() => setCoinModalVisible(false)}
+                        onPress={() => setCrackerModalVisible(false)}
                       >
                         <ParrotsStdText style={styles.buttonClose3}>
                           <AntDesign name="close" size={24} color="white" />
@@ -1072,7 +1074,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     padding: vw(1),
   },
-  parrotCoinBox: {
+  parrotCrackerBox: {
     backgroundColor: "white",
     // width: vw(30),
     flexDirection: "row",
@@ -1112,7 +1114,7 @@ const styles = StyleSheet.create({
     backgroundColor: ""
   },
 
-  parrotcoinContainerLeft: {
+  parrotcrackerContainerLeft: {
     position: "absolute",
     top: vh(28),
     left: vw(2),
@@ -1124,7 +1126,7 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     paddingHorizontal: vw(2),
   },
-  parrotCoinContainer: {
+  parrotCrackerContainer: {
     alignSelf: "flex-end",
     flexDirection: "row",
     borderRadius: vh(2),

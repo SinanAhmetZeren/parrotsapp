@@ -323,6 +323,13 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    addVoyageUpdate: builder.mutation({
+      query: ({ voyageId, text }) => ({
+        url: `/api/Voyage/${voyageId}/update`,
+        method: "POST",
+        body: { text },
+      }),
+    }),
   }),
 
   overrideExisting: true,
