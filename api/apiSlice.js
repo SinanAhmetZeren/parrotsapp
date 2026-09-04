@@ -69,6 +69,17 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
             }
             return true;
           } else {
+            try {
+              const expoPushToken = await AsyncStorage.getItem("storedExpoPushToken");
+              if (expoPushToken) {
+                await baseQuery(
+                  { url: "/api/account/push-token", method: "DELETE", body: expoPushToken },
+                  api,
+                  extraOptions
+                );
+                await AsyncStorage.removeItem("storedExpoPushToken");
+              }
+            } catch (_) {}
             await AsyncStorage.removeItem("storedToken");
             await AsyncStorage.removeItem("storedRefreshToken");
             await AsyncStorage.removeItem("storedRefreshTokenExpiryTime");

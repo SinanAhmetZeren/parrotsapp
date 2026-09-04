@@ -25,7 +25,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import VoyageListVertical from "../components/VoyageListVertical";
 import VehicleList from "../components/VehicleList";
-import { useGetUserByIdQuery, useLazyGetParrotCrackerBalanceQuery } from "../slices/UserSlice";
+import { useGetUserByIdQuery, useLazyGetParrotCrackerBalanceQuery, useClearPushTokenMutation } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +34,7 @@ import { SocialRenderComponent } from "../components/SocialRenderComponent";
 import { SocialRenderComponentModal } from "../components/SocialRenderComponentModal";
 import { useFocusEffect } from "@react-navigation/native";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import he from "he";
 import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotCaravanOrangeRed, parrotCream, parrotDarkBlue, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
@@ -46,6 +47,7 @@ export default function ProfileScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
   const isHubConnected = useSelector((state) => state.users.isHubConnected);
   const dispatch = useDispatch();
+  const [clearPushToken] = useClearPushTokenMutation();
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
@@ -105,6 +107,13 @@ export default function ProfileScreen({ navigation }) {
   } = useGetVehiclesByUserByIdQuery(userId);
 
   const handleLogout = async () => {
+    try {
+      const expoPushToken = await AsyncStorage.getItem("storedExpoPushToken");
+      if (expoPushToken) {
+        await clearPushToken(expoPushToken).unwrap();
+        await AsyncStorage.removeItem("storedExpoPushToken");
+      }
+    } catch (_) {}
     dispatch(updateAsLoggedOut());
     // await GoogleSignin.signOut();
   };

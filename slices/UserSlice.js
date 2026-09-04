@@ -455,6 +455,13 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    clearPushToken: builder.mutation({
+      query: (expoPushToken) => ({
+        url: `/api/account/push-token`,
+        method: "DELETE",
+        body: expoPushToken,
+      }),
+    }),
     getParrotCrackerBalance: builder.query({
       query: (userId) => {
         if (userId) {
@@ -504,4 +511,5 @@ export const {
   useIsBlockedQuery,
   useReportVoyageMutation,
   useDeleteAccountMutation,
+  useClearPushTokenMutation,
 } = extendedApiSlice;

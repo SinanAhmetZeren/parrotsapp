@@ -1,10 +1,12 @@
-import * as Notifications from "expo-notifications";
+import Notifications, { isExpoGo } from "./notificationsModule";
 import * as Device from "expo-device";
 import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export async function registerPushTokenAsync(token) {
   try {
     if (!Device.isDevice) return;
+    if (isExpoGo) return;
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     console.log("[PUSH] Existing permission status:", existingStatus);
     let finalStatus = existingStatus;
@@ -32,6 +34,7 @@ export async function registerPushTokenAsync(token) {
     });
     if (response.ok) {
       console.log("[PUSH] Token saved to server successfully");
+      await AsyncStorage.setItem("storedExpoPushToken", pushToken);
     } else {
       console.log("[PUSH] Token save failed, status:", response.status);
     }
