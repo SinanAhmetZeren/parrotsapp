@@ -47,6 +47,7 @@ import { WaypointFlatListVoyageDetailsScreen } from "../components/WaypointFlatl
 import {
   useAddVoyageToFavoritesMutation,
   useDeleteVoyageFromFavoritesMutation,
+  useAddVoyageUpdateMutation,
 } from "../slices/VoyageSlice";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -466,7 +467,7 @@ const VoyageDetailScreen = ({ navigation }) => {
               {VoyageData.isOwnerDeleted && (
                 <View style={styles.ownerDeletedNotice}>
                   <ParrotsStdText style={styles.ownerDeletedNoticeText}>
-                    Notice: This user has deleted their account. The voyage remains visible, but if urgent coordination is needed, Parrots will try to contact the host — on a good-faith basis.
+                    Notice: This host has deleted their account and is no longer active on Parrots. The voyage remains visible for viewing purposes only. In case of urgent coordination, Parrots will do its best to reach the host on a good-faith basis.
                   </ParrotsStdText>
                 </View>
               )}
@@ -611,6 +612,13 @@ const VoyageDetailScreen = ({ navigation }) => {
                 </View>
               </View>
             </View>
+            {/* // Updates */}
+            <VoyageUpdatesSection
+              updates={VoyageData.updates || []}
+              voyageId={VoyageData.id}
+              isOwner={ownVoyage}
+            />
+
             {/* // map + waypoints */}
 
             <View style={[styles.routeCard, { position: "relative" }]}>
@@ -747,6 +755,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   refetch={refetchVoyage}
                   ownVoyage={ownVoyage}
                   currency={VoyageData.currency}
+                  isOwnerDeleted={VoyageData.isOwnerDeleted}
                 />
               )}
             </View>
@@ -828,6 +837,62 @@ const VoyageDetailScreen = ({ navigation }) => {
       </>
     );
   }
+};
+
+const VoyageUpdatesSection = ({ updates, voyageId, isOwner }) => {
+  const [text, setText] = useState("");
+  const [localUpdates, setLocalUpdates] = useState(updates || []);
+  const [addVoyageUpdate, { isLoading }] = useAddVoyageUpdateMutation();
+
+  const handleSubmit = async () => {
+    if (!text.trim()) return;
+    try {
+      const result = await addVoyageUpdate({ voyageId, text }).unwrap();
+      setLocalUpdates([result, ...localUpdates]);
+      setText("");
+    } catch (e) {
+      Toast.show({ type: "error", text1: "Failed to post update", visibilityTime: 2000, topOffset: 100 });
+    }
+  };
+
+  return (
+    <View style={styles.updatesCard}>
+      <ParrotsStdText style={styles.updatesTitle}>Updates</ParrotsStdText>
+      {localUpdates.length === 0 && (
+        <ParrotsStdText style={styles.updatesEmpty}>No updates yet.</ParrotsStdText>
+      )}
+      {localUpdates.map((u) => (
+        <View key={u.id} style={styles.updateItem}>
+          <ParrotsStdText style={styles.updateTimestamp}>
+            {new Date(u.createdAt).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
+          </ParrotsStdText>
+          <ParrotsStdText style={styles.updateText}>{u.text}</ParrotsStdText>
+        </View>
+      ))}
+      {isOwner && (
+        <View style={styles.updateInputRow}>
+          <TextInput
+            style={styles.updateInput}
+            placeholder="Write an update..."
+            placeholderTextColor="#aaa"
+            value={text}
+            onChangeText={setText}
+            multiline
+            maxLength={500}
+          />
+          <TouchableOpacity
+            style={[styles.updatePostBtn, (!text.trim() || isLoading) && { opacity: 0.5 }]}
+            onPress={handleSubmit}
+            disabled={!text.trim() || isLoading}
+          >
+            {isLoading
+              ? <ActivityIndicator size="small" color="white" />
+              : <ParrotsStdText style={styles.updatePostBtnText}>Post Update</ParrotsStdText>}
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
+  );
 };
 
 export default VoyageDetailScreen;
@@ -1390,5 +1455,82 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Nunito_700Bold",
     color: "#3D3D3D",
+  },
+  updatesCard: {
+    borderRadius: 20,
+    backgroundColor: "#fdf9f5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginHorizontal: vw(2),
+    marginBottom: vh(1),
+    paddingTop: vh(1.5),
+    paddingBottom: vh(1.5),
+    paddingHorizontal: vw(4),
+  },
+  updatesTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 20,
+    color: "#2ac898",
+    marginBottom: vh(1),
+  },
+  updatesEmpty: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13,
+    color: "#94a3b8",
+    marginBottom: vh(1),
+  },
+  updateItem: {
+    paddingLeft: vw(3),
+    paddingVertical: vh(0.5),
+    marginBottom: vh(1),
+    backgroundColor: "rgba(42,200,152,0.03)",
+    borderRadius: 8,
+  },
+  updateTimestamp: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 11,
+    color: "#94a3b8",
+    marginBottom: 2,
+    textAlign: "right",
+  },
+  updateText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#1E3A5F",
+  },
+  updateInputRow: {
+    marginTop: vh(1),
+    gap: vh(1),
+  },
+  updateInput: {
+    backgroundColor: "white",
+    borderRadius: 12,
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(1),
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 14,
+    borderWidth: 1,
+    borderColor: "rgba(128,128,128,0.15)",
+    minHeight: vh(8),
+    textAlignVertical: "top",
+  },
+  updatePostBtn: {
+    backgroundColor: parrotBlue,
+    borderRadius: 20,
+    paddingVertical: vh(1),
+    paddingHorizontal: vw(5),
+    alignSelf: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: vw(30),
+    minHeight: vh(4.5),
+  },
+  updatePostBtnText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "white",
   },
 });

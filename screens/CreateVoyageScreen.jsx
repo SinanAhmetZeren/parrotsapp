@@ -32,7 +32,7 @@ import {
   Feather,
 } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { useAcknowledgePublicProfileMutation, setAcknowledgedPublicProfile } from "../slices/UserSlice";
+import { useAcknowledgePublicProfileMutation, setAcknowledgedPublicProfile, useLazyGetParrotCrackerBalanceQuery } from "../slices/UserSlice";
 import CalendarPicker from "react-native-calendar-picker";
 import Checkbox from "expo-checkbox";
 import DropdownComponent from "../components/DropdownComponent";
@@ -62,6 +62,7 @@ const CreateVoyageScreen = ({ navigation }) => {
     isSuccess,
     refetch,
   } = useGetUserByIdQuery(userId);
+  const [fetchCrackerBalance, { data: crackerBalance }] = useLazyGetParrotCrackerBalanceQuery();
   const [createVoyage] = useCreateVoyageMutation();
   const [addVoyageImage] = useAddVoyageImageMutation();
   const [deleteVoyageImage] = useDeleteVoyageImageMutation();
@@ -123,6 +124,8 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   useEffect(() => { }, [startDate, endDate, lastBidDate, voyageImage]);
+
+  useEffect(() => { fetchCrackerBalance(userId); }, [userId]);
 
   useEffect(() => {
     if (!hasAcknowledgedPublicProfile) {
@@ -632,7 +635,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 <ParrotsStdText style={styles.cardTitle}>Voyage Dates</ParrotsStdText>
               </View>
               <View style={styles.formContainer}>
-                <View style={styles.calendarContainer}>
+                <View style={[styles.calendarContainer, { position: "relative" }]}>
                   <View style={styles.voyageDatesContainer}>
                     <Feather
                       style={styles.icon}
@@ -664,6 +667,27 @@ const CreateVoyageScreen = ({ navigation }) => {
                       width={300}
                     />
                   </View>
+                  {startDate ? (() => {
+                  const today = new Date(); today.setHours(23, 59, 0, 0);
+                  const rawEnd = endDate || startDate;
+                  const end = new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd); end.setHours(23, 59, 0, 0);
+                  const cost = isPublicOnMap ? Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1) : 0;
+                  const balance = crackerBalance?.balance;
+                  const notEnough = isPublicOnMap && balance != null && balance < cost;
+                  return (
+                    <View style={[styles.crackerPill, { backgroundColor: notEnough ? "rgba(200,50,50,0.9)" : "rgba(0,100,200,0.85)" }]}>
+                      <Image source={require("../assets/parrotCracker.png")} style={{ width: 18, height: 18 }} />
+                      <ParrotsStdText style={styles.crackerPillText}>
+                        {isPublicOnMap ? `${cost} ParrotCrackers will be used` : "No ParrotCrackers will be used"}
+                      </ParrotsStdText>
+                      {isPublicOnMap && balance != null && (
+                        <ParrotsStdText style={styles.crackerPillBalance}>
+                          {notEnough ? ` — you only have ${balance}` : ` (balance: ${balance})`}
+                        </ParrotsStdText>
+                      )}
+                    </View>
+                  );
+                })() : null}
                 </View>
 
                 {/* /// LAST BID DATE /// */}
@@ -1253,6 +1277,28 @@ const styles = StyleSheet.create({
     borderRadius: vh(3),
     backgroundColor: parrotCream,
     marginBottom: vh(1),
+  },
+  crackerPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "center",
+    borderRadius: 20,
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(0.8),
+    marginTop: vh(1),
+    gap: 6,
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+  crackerPillText: {
+    color: "white",
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+  },
+  crackerPillBalance: {
+    color: "rgba(255,255,255,0.8)",
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13,
   },
   formContainer: {
     padding: vh(2),

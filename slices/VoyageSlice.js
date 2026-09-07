@@ -356,5 +356,6 @@ export const {
   useAddVoyageToFavoritesMutation,
   useDeleteVoyageFromFavoritesMutation,
   useConfirmVoyageMutation,
-  useDeleteWaypointMutation
+  useDeleteWaypointMutation,
+  useAddVoyageUpdateMutation,
 } = extendedApiSlice;
