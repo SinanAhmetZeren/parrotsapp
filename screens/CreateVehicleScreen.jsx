@@ -9,6 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Modal,
   StyleSheet,
   ScrollView,
   FlatList,
@@ -27,6 +28,9 @@ import {
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
+import * as FileSystem from "expo-file-system/legacy";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "@env";
 import { MaterialIcons, AntDesign, Feather } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import DropdownComponentType from "../components/DropdownComponentType";
@@ -66,10 +70,11 @@ const CreateVehicleScreen = () => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVehicleImages, setAddedVehicleImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVehicle, setIsCreatingVehicle] = useState(false);
   const [isCompletingVehicle, setIsCompletingVehicle] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -101,18 +106,19 @@ const CreateVehicleScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      setVehicleType(1);
-      setName("");
-      setDescription("");
-      setCapacity(22);
-      setVehicleId("");
-      setImage("");
-      setVoyageImage(null);
-      setAddedVehicleImages([]);
-      setCurrentStep(2);
-      setIsUploadingImage(false);
-      setIsCreatingVehicle(false);
-    }, [])
+      if (!vehicleId) {
+        setVehicleType(1);
+        setName("");
+        setDescription("");
+        setCapacity(22);
+        setImage("");
+        setVoyageImage(null);
+        setAddedVehicleImages([]);
+        setCurrentStep(1);
+        setIsUploadingImage(false);
+        setIsCreatingVehicle(false);
+      }
+    }, [vehicleId])
   );
 
   useFocusEffect(
@@ -125,17 +131,22 @@ const CreateVehicleScreen = () => {
     }, [vehicleId, addedVehicleImages])
   );
 
-  const completeVehicle = async () => {
-    // reset form state
+  const resetAllFields = () => {
     setName("");
     setDescription("");
-    setCapacity(0);
-    setVehicleType("");
+    setCapacity(null);
+    setVehicleType(1);
     setVehicleId("");
     setImage("");
-    setVoyageImage("");
+    setVoyageImage(null);
     setAddedVehicleImages([]);
+    setCurrentStep(1);
+    setIsUploadingImage(false);
+    setIsCreatingVehicle(false);
+    setHasError(false);
+  };
 
+  const completeVehicle = async () => {
     setIsCompletingVehicle(true);
     setHasError(false);
 
@@ -144,7 +155,7 @@ const CreateVehicleScreen = () => {
       const confirmResult = await confirmVehicle(vehicleId);
       console.log("confirmResult: ", confirmResult);
 
-      // navigation.navigate("Home");
+      resetAllFields();
       navigation.navigate("Home", { screen: "HomeScreen" });
 
     } catch (error) {
@@ -161,39 +172,36 @@ const CreateVehicleScreen = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: image,
-      type: "image/jpeg",
-      name: "profileImage.jpg",
-    });
-
     setIsCreatingVehicle(true);
     setHasError(false);
 
     try {
-      const response = await createVehicle({
-        formData,
-        name,
-        description,
-        userId,
-        vehicleType,
-        capacity,
+      const queryParams = new URLSearchParams({
+        Name: name,
+        Description: description,
+        UserId: userId,
+        Capacity: capacity,
+        Type: vehicleType,
       });
-
-      const createdVehicleId = response?.data?.data?.id;
+      const token = await AsyncStorage.getItem("storedToken");
+      const result = await FileSystem.uploadAsync(
+        `${API_URL}/api/Vehicle/AddVehicle?${queryParams}`,
+        image,
+        {
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: "imageFile",
+          mimeType: "image/jpeg",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const responseData = JSON.parse(result.body);
+      const createdVehicleId = responseData?.data?.id;
       if (!createdVehicleId) {
         throw new Error("Vehicle ID not returned from API");
       }
 
       setVehicleId(createdVehicleId);
-      setDescription("");
-      setCapacity("");
-      setVehicleType("");
-      setImage("");
-      setVoyageImage("");
-      setAddedVehicleImages([]);
-
       setCurrentStep(2);
     } catch (error) {
       console.error("Error in or after createVehicle:", error);
@@ -214,24 +222,25 @@ const CreateVehicleScreen = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: voyageImage,
-      type: "image/jpeg",
-      name: "profileImage.jpg",
-    });
-
     setIsUploadingImage(true);
     setHasError(false);
 
     try {
-      const addedVehicleImageResponse = await addVehicleImage({
-        formData,
-        vehicleId,
-      });
-
-      const addedVoyageImageId =
-        addedVehicleImageResponse?.data?.imagePath;
+      const token = await AsyncStorage.getItem("storedToken");
+      const result = await FileSystem.uploadAsync(
+        `${API_URL}/api/Vehicle/${vehicleId}/AddVehicleImage`,
+        voyageImage,
+        {
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: "imageFile",
+          mimeType: "image/jpeg",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("AddVehicleImage response:", result.status, result.body);
+      const responseData = JSON.parse(result.body);
+      const addedVoyageImageId = responseData?.imagePath;
 
       if (!addedVoyageImageId) {
         throw new Error("Image path not returned from API");
@@ -363,7 +372,7 @@ const CreateVehicleScreen = () => {
       <TokenExpiryGuard />
 
       <View style={{ alignItems: "center", backgroundColor: "white" }}>
-        <StepBarVehicle currentStep={currentStep} onFirstStepPress={() => setCurrentStep(1)} />
+        <StepBarVehicle currentStep={currentStep} onFirstStepPress={() => setCurrentStep(1)} onSecondStepPress={vehicleId ? () => setCurrentStep(2) : null} />
       </View>
 
 
@@ -408,10 +417,12 @@ const CreateVehicleScreen = () => {
                         style={styles.backgroundImage}
                       />
                     ) : (
-                      <Image
-                        source={require("../assets/ParrotsLogoPlus.png")}
-                        style={styles.backgroundImagePlaceholder}
-                      />
+                      <View style={styles.backgroundImagePlaceholder}>
+                        <Image
+                          source={require("../assets/ParrotsLogoPlus.png")}
+                          style={{ width: vw(48), height: vh(21), opacity: 0.2 }}
+                        />
+                      </View>
                     )}
                   </TouchableOpacity>
                 )}
@@ -548,7 +559,7 @@ const CreateVehicleScreen = () => {
                     ) : (
                       <Image
                         source={require("../assets/ParrotsLogoPlus.png")}
-                        style={styles.profileImage2}
+                        style={[styles.profileImage2, { opacity: 0.2 }]}
                       />
                     )}
                   </TouchableOpacity>
@@ -622,7 +633,7 @@ const CreateVehicleScreen = () => {
 
             <View style={styles.completeContainer}>
               <TouchableOpacity
-                onPress={() => completeVehicle()}
+                onPress={() => setShowConfirmModal(true)}
                 style={styles.selection2}
               >
                 {isCompletingVehicle ? (
@@ -634,6 +645,33 @@ const CreateVehicleScreen = () => {
                 )}
               </TouchableOpacity>
             </View>
+
+            <Modal visible={showConfirmModal} transparent animationType="fade">
+              <View style={vehicleModalStyles.overlay}>
+                <View style={vehicleModalStyles.box}>
+                  <ParrotsStdText style={vehicleModalStyles.title}>Register this vehicle?</ParrotsStdText>
+                  <View style={vehicleModalStyles.nameCard}>
+                    <View style={vehicleModalStyles.nameRow}>
+                      <ParrotsStdText style={vehicleModalStyles.nameLabel}>Name</ParrotsStdText>
+                      <ParrotsStdText style={vehicleModalStyles.nameValue}>{name}</ParrotsStdText>
+                    </View>
+                    <View style={vehicleModalStyles.nameRow}>
+                      <ParrotsStdText style={vehicleModalStyles.nameLabel}>Type</ParrotsStdText>
+                      <ParrotsStdText style={vehicleModalStyles.nameValue}>{vehicleType}</ParrotsStdText>
+                    </View>
+                  </View>
+                  <ParrotsStdText style={vehicleModalStyles.subtitle}>Goes on your public profile. Edit or remove it any time.</ParrotsStdText>
+                  <View style={vehicleModalStyles.buttonRow}>
+                    <TouchableOpacity onPress={() => setShowConfirmModal(false)}>
+                      <ParrotsStdText style={vehicleModalStyles.cancelText}>Cancel</ParrotsStdText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={vehicleModalStyles.confirmButton} onPress={() => { setShowConfirmModal(false); completeVehicle(); }}>
+                      <ParrotsStdText style={vehicleModalStyles.confirmText}>Register vehicle</ParrotsStdText>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
           </View>
         </ScrollView>
       )}
@@ -833,6 +871,8 @@ const styles = StyleSheet.create({
     width: vw(80),
     height: vh(35),
     alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
   sectionCard: {
     borderRadius: 20,
@@ -875,6 +915,80 @@ const vehicleImagesStyles = StyleSheet.create({
     width: vh(15),
     marginRight: vh(1),
     borderRadius: vh(1.5),
+  },
+});
+
+const vehicleModalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  box: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 24,
+    width: vw(85),
+  },
+  title: {
+    fontSize: 20,
+    fontFamily: "Nunito_700Bold",
+    marginBottom: 16,
+    color: parrotBlue,
+  },
+  nameCard: {
+    backgroundColor: parrotCream,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: "100%",
+    marginBottom: 14,
+  },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+  },
+  nameLabel: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: parrotInputTextColor,
+    width: vw(20),
+  },
+  nameValue: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: parrotInputTextColor,
+  },
+  subtitle: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: parrotInputTextColor,
+    marginBottom: 20,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  cancelText: {
+    fontFamily: "Nunito_700Bold",
+    color: parrotInputTextColor,
+    fontSize: 15,
+    paddingHorizontal: 8,
+  },
+  confirmButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 30,
+    backgroundColor: parrotBlue,
+    alignItems: "center",
+  },
+  confirmText: {
+    fontFamily: "Nunito_700Bold",
+    color: "white",
+    fontSize: 14,
   },
 });
 

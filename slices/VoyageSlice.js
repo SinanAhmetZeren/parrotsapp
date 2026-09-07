@@ -70,9 +70,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return {
           url,
           method: "POST",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
           body: formData,
         };
       },
@@ -91,9 +89,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return {
           url,
           method: "POST",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
           body: formData,
         };
       },
@@ -182,9 +178,7 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         return {
           url,
           method: "POST",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
           body: formData,
         };
       },
@@ -330,6 +324,14 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         body: { text },
       }),
     }),
+    patchVoyageOwner: builder.mutation({
+      query: ({ voyageId, patchDoc }) => ({
+        url: `/api/Voyage/PatchVoyageOwner/${voyageId}`,
+        method: "PATCH",
+        headers: { "Content-Type": "application/json-patch+json" },
+        body: patchDoc,
+      }),
+    }),
   }),
 
   overrideExisting: true,
@@ -358,4 +360,5 @@ export const {
   useConfirmVoyageMutation,
   useDeleteWaypointMutation,
   useAddVoyageUpdateMutation,
+  usePatchVoyageOwnerMutation,
 } = extendedApiSlice;

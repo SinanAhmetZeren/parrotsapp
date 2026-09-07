@@ -8,8 +8,8 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { parrotCream, parrotInputTextColor, parrotPlaceholderGrey } from "../assets/color";
 
-const DropdownComponent = ({ data, setVehicleId }) => {
-  const [value, setValue] = useState(null);
+const DropdownComponent = ({ data, setVehicleId, vehicleId }) => {
+  const [value, setValue] = useState(vehicleId || null);
   const [isFocus, setIsFocus] = useState(false);
 
   return (
@@ -30,6 +30,7 @@ const DropdownComponent = ({ data, setVehicleId }) => {
         value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
+        dropdownPosition="auto"
         onChange={(item) => {
           setValue(item.value);
           setIsFocus(false);

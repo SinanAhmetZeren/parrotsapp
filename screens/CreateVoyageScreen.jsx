@@ -22,10 +22,13 @@ import {
   useAddVoyageImageMutation,
   useDeleteVoyageImageMutation,
   useCheckAndDeleteVoyageMutation,
+  usePatchVoyageOwnerMutation,
 } from "../slices/VoyageSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
+import * as FileSystem from "expo-file-system/legacy";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   MaterialIcons,
   AntDesign,
@@ -70,6 +73,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [addVoyageImage] = useAddVoyageImageMutation();
   const [deleteVoyageImage] = useDeleteVoyageImageMutation();
   const [checkAndDeleteVoyage] = useCheckAndDeleteVoyageMutation();
+  const [patchVoyageOwner] = usePatchVoyageOwnerMutation();
 
   const currentDate = new Date();
   const hours = currentDate.getHours();
@@ -92,31 +96,33 @@ const CreateVoyageScreen = ({ navigation }) => {
   // };
 
 
-  const [name, setName] = useState("Cambridge River Run");
+  const [name, setName] = useState("");
   const [brief, setBrief] = useState("");
   const [description, setDescription] = useState("");
   const [vacancy, setVacancy] = useState("");
-  const [startDate, setStartDate] = useState(new Date("2026-09-24"));
-  const [endDate, setEndDate] = useState(new Date("2026-09-25"));
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [lastBidDate, setLastBidDate] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [createdVoyageImage, setCreatedVoyageImage] = useState(null);
   const [isAuction, setIsAuction] = useState(true);
   const [isFixedPrice, setIsFixedPrice] = useState(false);
-  const [isPublicOnMap, setIsPublicOnMap] = useState(false);
+  const [isPublicOnMap, setIsPublicOnMap] = useState(true);
   const [vehicleId, setVehicleId] = useState("");
   const [currency, setCurrency] = useState("€");
   const [voyageId, setVoyageId] = useState("");
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(false);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
   const sameDateTapCount = useRef(0);
-  const [showConfirmModal, setShowConfirmModal] = useState(true);
+  const [savedSnapshot, setSavedSnapshot] = useState(null);
+  const [isUpdatingDetails, setIsUpdatingDetails] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   const [hasError, setHasError] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
@@ -166,17 +172,31 @@ const CreateVoyageScreen = ({ navigation }) => {
     }, [navigation])
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        if (voyageId) {
-          checkAndDeleteVoyage(voyageId);
-          setCurrentStep(1);
-          setName("");
-        }
-      };
-    }, [voyageId])
-  );
+  const resetAllFields = () => {
+    setName("");
+    setBrief("");
+    setDescription("");
+    setVacancy("");
+    setStartDate("");
+    setEndDate("");
+    setLastBidDate("");
+    setMinPrice("");
+    setMaxPrice("");
+    setIsAuction(true);
+    setIsFixedPrice(false);
+    setIsPublicOnMap(true);
+    setVehicleId("");
+    setCurrency("€");
+    setVoyageId("");
+    setImage("");
+    setVoyageImage(null);
+    setAddedVoyageImages([]);
+    setCurrentStep(1);
+    setCreatedVoyageImage(null);
+    setSavedSnapshot(null);
+    setUpdateSuccess(false);
+    setHasError(false);
+  };
 
   const changeCurrentState = (index) => {
     setCurrentStep(index);
@@ -222,110 +242,124 @@ const CreateVoyageScreen = ({ navigation }) => {
 
   const handleCreateVoyage = async () => {
     if (isCreatingVoyage) return;
-    if (!image) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: image,
-      type: "image/jpeg",
-      name: "profileImage.jpg",
-    });
+    if (!image) return;
 
     try {
       const formattedStartDate = convertDateFormat(startDate);
-      const formattedEndDate = endDate
-        ? convertDateFormat(endDate)
-        : convertDateFormat(startDate);
-      // const formattedLastBidDate = convertDateFormat_LastBidDate(lastBidDate);
+      const formattedEndDate = endDate ? convertDateFormat(endDate) : convertDateFormat(startDate);
       const formattedLastBidDate = formattedStartDate;
 
-
-      setIsCreatingVoyage(true);
-      const response = await createVoyage({
-        formData,
-        name,
-        brief,
-        description,
-        vacancy,
-        formattedStartDate,
-        formattedEndDate,
-        formattedLastBidDate,
-        minPrice,
-        maxPrice,
-        isAuction,
-        isFixedPrice,
-        isPublicOnMap,
-        userId,
-        vehicleId,
-        currency
+      const queryParams = new URLSearchParams({
+        Name: name, Brief: brief, Description: description, Vacancy: vacancy,
+        StartDate: formattedStartDate, EndDate: formattedEndDate, LastBidDate: formattedLastBidDate,
+        MinPrice: minPrice, MaxPrice: maxPrice, Currency: currency,
+        Auction: isAuction.toString(), FixedPrice: isFixedPrice.toString(),
+        PublicOnMap: isPublicOnMap.toString(), UserId: userId, VehicleId: vehicleId,
       });
-      if (response.error || !response.data?.data?.id) {
+
+      const token = await AsyncStorage.getItem("storedToken");
+      setIsCreatingVoyage(true);
+      const result = await FileSystem.uploadAsync(
+        `${API_URL}/api/Voyage/AddVoyage?${queryParams}`,
+        image,
+        {
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: "imageFile",
+          mimeType: "image/jpeg",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const responseData = JSON.parse(result.body);
+      if (!responseData?.data?.id) {
         setIsCreatingVoyage(false);
         setHasError(true);
         return;
       }
-      const createdVoyageId = response.data.data.id;
+      const createdVoyageId = responseData.data.id;
       setCreatedVoyageImage(image);
       setVoyageId(createdVoyageId);
-      setName("");
-      setBrief("");
-      setDescription("");
-      setVacancy("");
-      setStartDate("");
-      setEndDate("");
-      setLastBidDate("");
-      setMinPrice("");
-      setMaxPrice("");
-      setIsAuction(true);
-      setIsFixedPrice(false);
-      setIsPublicOnMap("");
-      setVehicleId("");
-      setCurrency("");
-      setImage("");
-      setVoyageImage("");
-      setAddedVoyageImages("");
-
+      setSavedSnapshot({ name, brief, description, vacancy, vehicleId, minPrice, maxPrice, currency, isAuction, isFixedPrice, isPublicOnMap, startDate, endDate });
       setCurrentStep(2);
     } catch (error) {
-      console.error("Error uploading image", error);
-      setHasError(true)
+      console.error("Error creating voyage", error);
+      setHasError(true);
     }
     setIsCreatingVoyage(false);
   };
 
+  const hasChanges = savedSnapshot && (
+    name !== savedSnapshot.name ||
+    brief !== savedSnapshot.brief ||
+    description !== savedSnapshot.description ||
+    String(vacancy) !== String(savedSnapshot.vacancy) ||
+    String(vehicleId) !== String(savedSnapshot.vehicleId) ||
+    String(minPrice) !== String(savedSnapshot.minPrice) ||
+    String(maxPrice) !== String(savedSnapshot.maxPrice) ||
+    currency !== savedSnapshot.currency ||
+    isAuction !== savedSnapshot.isAuction ||
+    isFixedPrice !== savedSnapshot.isFixedPrice ||
+    isPublicOnMap !== savedSnapshot.isPublicOnMap ||
+    String(startDate) !== String(savedSnapshot.startDate) ||
+    String(endDate) !== String(savedSnapshot.endDate)
+  );
+
+  const handleUpdateDetails = async () => {
+    setIsUpdatingDetails(true);
+    try {
+      const formattedStartDate = convertDateFormat(startDate);
+      const formattedEndDate = endDate ? convertDateFormat(endDate) : convertDateFormat(startDate);
+      const patchDoc = [
+        { op: "replace", path: "/name", value: name },
+        { op: "replace", path: "/brief", value: brief },
+        { op: "replace", path: "/description", value: description },
+        { op: "replace", path: "/vacancy", value: Number(vacancy) },
+        { op: "replace", path: "/vehicleId", value: Number(vehicleId) },
+        { op: "replace", path: "/minPrice", value: Number(minPrice) },
+        { op: "replace", path: "/maxPrice", value: Number(maxPrice) },
+        { op: "replace", path: "/currency", value: currency },
+        { op: "replace", path: "/auction", value: isAuction },
+        { op: "replace", path: "/fixedPrice", value: isFixedPrice },
+        { op: "replace", path: "/publicOnMap", value: isPublicOnMap },
+        { op: "replace", path: "/startDate", value: formattedStartDate },
+        { op: "replace", path: "/endDate", value: formattedEndDate },
+        { op: "replace", path: "/lastBidDate", value: formattedStartDate },
+      ];
+      await patchVoyageOwner({ voyageId, patchDoc }).unwrap();
+      setSavedSnapshot({ name, brief, description, vacancy, vehicleId, minPrice, maxPrice, currency, isAuction, isFixedPrice, isPublicOnMap, startDate, endDate });
+      setUpdateSuccess(true);
+      setTimeout(() => setUpdateSuccess(false), 5000);
+    } catch (err) {
+      showToast("Failed to update voyage details.");
+    }
+    setIsUpdatingDetails(false);
+  };
+
   const handleUploadImage = async () => {
     if (isUploadingImage) return;
-    if (!voyageImage) {
-      return;
-    }
+    if (!voyageImage) return;
 
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: voyageImage,
-      type: "image/jpeg",
-      name: "profileImage.jpg",
-    });
-
-    console.log("voyage image: ", voyageImage);
     setIsUploadingImage(true);
     try {
-      const addedVoyageResponse = await addVoyageImage({
-        formData,
-        voyageId,
-      });
-
-      if (addedVoyageResponse.error || !addedVoyageResponse.data?.imagePath) {
+      const token = await AsyncStorage.getItem("storedToken");
+      const result = await FileSystem.uploadAsync(
+        `${API_URL}/api/Voyage/${voyageId}/AddVoyageImage`,
+        voyageImage,
+        {
+          httpMethod: "POST",
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: "imageFile",
+          mimeType: "image/jpeg",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const responseData = JSON.parse(result.body);
+      if (!responseData?.imagePath) {
         showToast("Image upload failed - Check your connection and try again.");
         return;
       }
-      const addedVoyageImageId = addedVoyageResponse.data.imagePath;
-      const newItem = {
-        addedVoyageImageId,
-        voyageImage,
-      };
-      setAddedVoyageImages((prevImages) => [...prevImages, newItem]);
+      setAddedVoyageImages((prevImages) => [...prevImages, { addedVoyageImageId: responseData.imagePath, voyageImage }]);
       setVoyageImage(null);
     } catch (error) {
       console.error("Error uploading image", error);
@@ -490,82 +524,8 @@ const CreateVoyageScreen = ({ navigation }) => {
       <View style={{ flex: 1 }}>
         <TokenExpiryGuard />
         <View style={{ alignItems: "center", backgroundColor: "white" }}>
-          <StepBar style={styles.StepBar} currentStep={currentStep} onFirstStepPress={() => setCurrentStep(1)} />
+          <StepBar style={styles.StepBar} currentStep={currentStep} onFirstStepPress={() => setCurrentStep(1)} onSecondStepPress={voyageId ? () => setCurrentStep(2) : null} />
         </View>
-        <Modal visible={showConfirmModal} transparent animationType="fade">
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalBox}>
-              {(() => {
-                const rawEnd = endDate || startDate;
-                const end = rawEnd ? new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd) : null;
-                if (end) end.setHours(23, 59, 0, 0);
-                const today = new Date(); today.setHours(23, 59, 0, 0);
-                const cost = isPublicOnMap && end ? Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1) : 0;
-                const startD = startDate ? new Date(startDate?.toDate ? startDate.toDate() : startDate) : null;
-                const endD = end;
-                const formatDate = (d) => d ? d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "";
-                const formatYear = (d) => d ? String(d.getFullYear()).slice(-2) : "";
-                const dateLabel = startD && endD && startD.toDateString() !== endD.toDateString()
-                  ? `${formatDate(startD)} – ${formatDate(endD)} ${formatYear(endD)}`
-                  : `${formatDate(startD)} ${formatYear(startD)}`;
-                return (
-                  <>
-                    <ParrotsStdText style={styles.modalTitle}>Post this voyage?</ParrotsStdText>
-
-                    {/* Summary card */}
-                    <View style={styles.confirmSummaryCard}>
-                      <View style={styles.confirmSummaryRow}>
-                        <ParrotsStdText style={styles.confirmSummaryLabel}>Voyage</ParrotsStdText>
-                        <ParrotsStdText style={styles.confirmSummaryValue}>{name || "—"}</ParrotsStdText>
-                      </View>
-                      <View style={styles.confirmSummaryRow}>
-                        <ParrotsStdText style={styles.confirmSummaryLabel}>Dates</ParrotsStdText>
-                        <ParrotsStdText style={styles.confirmSummaryValue}>{dateLabel || "—"}</ParrotsStdText>
-                      </View>
-                    </View>
-
-                    {/* Public visibility note */}
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "rgba(0,100,200,0.12)", borderRadius: 20, paddingHorizontal: 14, paddingVertical: 10, width: "100%", marginBottom: 10 }}>
-                      <FontAwesome5 name="globe-europe" size={16} color={parrotBlue} />
-                      <ParrotsStdText style={[styles.confirmPublicNote, { marginBottom: 0, color: parrotBlue, paddingRight: 16 }]}>
-                        {isPublicOnMap
-                          ? "Goes public on the map right away. Anyone can find it and place a bid."
-                          : "This voyage won't appear on the map. People can still view it through your profile."}
-                      </ParrotsStdText>
-                    </View>
-
-                    {/* Cracker pill */}
-                    <View style={[styles.confirmCrackerPill, { backgroundColor: "rgba(0,150,100,0.12)", width: "100%" }]}>
-                      <Image source={require("../assets/parrotCracker.png")} style={{ width: 18, height: 18 }} />
-                      <ParrotsStdText style={styles.confirmCrackerText}>
-                        {isPublicOnMap && cost > 0 ? `${cost} ParrotCrackers will be used` : "Free, no ParrotCrackers used."}
-                      </ParrotsStdText>
-                    </View>
-
-                    {/* Lock warning */}
-                    <View style={styles.confirmLockBox}>
-                      <FontAwesome5 name="lock" size={16} color="#92400e" />
-                      <ParrotsStdText style={styles.confirmLockText}>
-                        The details lock once posted.{"\n"}You can still post updates later.
-                      </ParrotsStdText>
-                    </View>
-
-                    {/* Buttons */}
-                    <View style={{ flexDirection: "row", gap: 12, marginTop: 20, width: "100%" }}>
-                      <TouchableOpacity style={styles.confirmCancelBtn} onPress={() => setShowConfirmModal(false)}>
-                        <ParrotsStdText style={styles.confirmCancelText}>Cancel</ParrotsStdText>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={[styles.modalBtn, { flex: 1, borderRadius: 30, alignItems: "center" }]} onPress={() => { setShowConfirmModal(false); handleCreateVoyage(); }}>
-                        <ParrotsStdText style={styles.modalBtnText}>Post voyage</ParrotsStdText>
-                      </TouchableOpacity>
-                    </View>
-                  </>
-                );
-              })()}
-            </View>
-          </View>
-        </Modal>
-
         <Modal visible={showPublicProfileModal} transparent animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalBox}>
@@ -614,10 +574,12 @@ const CreateVoyageScreen = ({ navigation }) => {
                       style={styles.backgroundImage}
                     />
                   ) : (
-                    <Image
-                      source={require("../assets/ParrotsLogoPlus.png")}
-                      style={styles.backgroundImagePlaceholder}
-                    />
+                    <View style={styles.backgroundImagePlaceholder}>
+                      <Image
+                        source={require("../assets/ParrotsLogoPlus.png")}
+                        style={{ width: vw(48), height: vh(21), opacity: 0.2 }}
+                      />
+                    </View>
                   )}
                 </TouchableOpacity>
               </View>
@@ -713,6 +675,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                     <DropdownComponent
                       data={dropdownData}
                       setVehicleId={setVehicleId}
+                      vehicleId={vehicleId}
                     />
                   </View>
                 </View>
@@ -944,9 +907,21 @@ const CreateVoyageScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.submitContainer}>
-              {(
+              {voyageId ? (
                 <TouchableOpacity
-                  onPress={() => setShowConfirmModal(true)}
+                  onPress={handleUpdateDetails}
+                  disabled={!hasChanges || isUpdatingDetails}
+                  style={!hasChanges || isUpdatingDetails ? styles.selection2Disabled : updateSuccess ? [styles.selection2, { backgroundColor: "#16a34a" }] : styles.selection2}
+                >
+                  {isUpdatingDetails ? (
+                    <ActivityIndicator size="small" color="#ffffff" />
+                  ) : (
+                    <ParrotsStdText style={styles.submitText}>{updateSuccess ? "Details Updated" : "Update Details"}</ParrotsStdText>
+                  )}
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={handleCreateVoyage}
                   style={(() => {
                     const rawEnd = endDate || startDate;
                     const end = rawEnd ? new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd) : null;
@@ -980,8 +955,8 @@ const CreateVoyageScreen = ({ navigation }) => {
           </ScrollView>
         )}
 
-        {currentStep === 2 && !hasError && (
-          <ScrollView style={styles.scrollview}>
+        {!hasError && (
+          <ScrollView style={[styles.scrollview, { display: currentStep === 2 ? "flex" : "none" }]}>
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
                 <ParrotsStdText style={styles.cardTitle}>Voyage Images</ParrotsStdText>
@@ -1003,7 +978,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                       ) : (
                         <Image
                           source={require("../assets/ParrotsLogoPlus.png")}
-                          style={styles.profileImage2}
+                          style={[styles.profileImage2, { opacity: 0.2 }]}
                         />
                       )}
                     </TouchableOpacity>
@@ -1086,6 +1061,12 @@ const CreateVoyageScreen = ({ navigation }) => {
               setCurrentStep={setCurrentStep}
               imagesAdded={addedVoyageImages.length}
               createdVoyageImage={createdVoyageImage}
+              voyageName={name}
+              startDate={startDate}
+              endDate={endDate}
+              isPublicOnMap={isPublicOnMap}
+              crackerBalance={crackerBalance}
+              onVoyagePosted={resetAllFields}
             />
 
           </ScrollView>
@@ -1286,6 +1267,8 @@ const styles = StyleSheet.create({
     width: vw(80),
     height: vh(35),
     alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
   calendarStyle: {
     backgroundColor: "white",

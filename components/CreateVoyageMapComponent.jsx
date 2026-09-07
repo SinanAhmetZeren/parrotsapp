@@ -26,7 +26,11 @@ import {
 } from "../slices/VoyageSlice";
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
-import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotGreen, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
+import { FontAwesome5 } from "@expo/vector-icons";
+import * as FileSystem from "expo-file-system/legacy";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "@env";
 import Toast from "react-native-toast-message";
 import * as ImageManipulator from "expo-image-manipulator";
 import { USE_CAMBRIDGE_DEFAULT_LOCATION, CAMBRIDGE_REGION } from "../constants/defaultLocationFlag";
@@ -35,7 +39,13 @@ const CreateVoyageMapComponent = ({
   voyageId,
   setCurrentStep,
   imagesAdded,
-  createdVoyageImage
+  createdVoyageImage,
+  voyageName,
+  startDate,
+  endDate,
+  isPublicOnMap,
+  crackerBalance,
+  onVoyagePosted,
 }) => {
   const [waypointInfoVisible, setWaypointInfoVisible] = useState(false);
   const [addedWayPoints, setAddedWayPoints] = useState([]);
@@ -57,6 +67,7 @@ const CreateVoyageMapComponent = ({
   const [isUploadingWaypointImage, setIsUploadingWaypointImage] = useState(false);
   const [isAddingWaypoint, setIsAddingWaypoint] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [initialRegion, setInitialRegion] = useState(null)
 
   const WaypointComponent = ({
@@ -90,38 +101,28 @@ const CreateVoyageMapComponent = ({
   };
 
   const handleAddWaypoint = async () => {
-
     setIsUploadingWaypointImage(true);
-    const formData = new FormData();
-
-    if (imageUri) {
-      formData.append("imageFile", {
-        uri: imageUri,
-        type: "image/jpeg",
-        name: "profileImage.jpg",
-      });
-    }
-
     try {
-      const result = imageUri ?
-        await addWaypoint({
-          formData,
-          latitude,
-          longitude,
-          title,
-          description,
-          voyageId,
-          order,
-        })
-        :
-        await addWaypointNoImage({
-          latitude,
-          longitude,
-          title,
-          description,
-          voyageId,
-          order,
-        })
+      const queryParams = new URLSearchParams({ Latitude: latitude, Longitude: longitude, Title: title, Description: description, VoyageId: voyageId, Order: order });
+      let result;
+      if (imageUri) {
+        const token = await AsyncStorage.getItem("storedToken");
+        const uploadResult = await FileSystem.uploadAsync(
+          `${API_URL}/api/Waypoint/AddWaypoint?${queryParams}`,
+          imageUri,
+          {
+            httpMethod: "POST",
+            uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+            fieldName: "imageFile",
+            mimeType: "image/jpeg",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const body = JSON.parse(uploadResult.body);
+        result = { data: body, error: uploadResult.status >= 400 ? { status: uploadResult.status } : undefined };
+      } else {
+        result = await addWaypointNoImage({ latitude, longitude, title, description, voyageId, order });
+      }
 
       if (result.error || !result.data?.data) {
         Toast.show({ type: "error", text1: "Could not add waypoint", text2: "Check your connection and try again.", autoHide: true, visibilityTime: 3000 });
@@ -319,6 +320,7 @@ const CreateVoyageMapComponent = ({
       setIsConfirming(false);
       return;
     }
+    if (onVoyagePosted) onVoyagePosted();
     setAddedWayPoints([]);
     setMarkerCoords(null);
     setLatitude("");
@@ -327,7 +329,6 @@ const CreateVoyageMapComponent = ({
     setDescription("");
     setImageUri(null);
     setOrder(1);
-    setCurrentStep(1);
     navigation.navigate("Home", { screen: "HomeScreen" });
   };
 
@@ -390,7 +391,7 @@ const CreateVoyageMapComponent = ({
               ) : (
                 <Image
                   source={require("../assets/ParrotsLogoPlus.png")}
-                  style={styles.profileImage}
+                  style={[styles.profileImage, { opacity: 0.2 }]}
                 />
               )}
             </TouchableOpacity>
@@ -506,11 +507,7 @@ const CreateVoyageMapComponent = ({
 
       <TouchableOpacity
         style={styles.FinishButtonContainer}
-        onPress={() => {
-          if (addedWayPoints.length > 0) {
-            goToHomePage();
-          }
-        }}
+        onPress={() => { if (addedWayPoints.length > 0) setShowConfirmModal(true); }}
         disabled={!(addedWayPoints.length > 0) || isConfirming}
       >
         <View
@@ -526,11 +523,98 @@ const CreateVoyageMapComponent = ({
           {isConfirming && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
         </View>
       </TouchableOpacity>
+
+      <Modal visible={showConfirmModal} transparent animationType="fade">
+        <View style={modalStyles.overlay}>
+          <View style={modalStyles.box}>
+            {(() => {
+              const rawEnd = endDate || startDate;
+              const end = rawEnd ? new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd) : null;
+              if (end) end.setHours(23, 59, 0, 0);
+              const today = new Date(); today.setHours(23, 59, 0, 0);
+              const cost = isPublicOnMap && end ? Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1) : 0;
+              const startD = startDate ? new Date(startDate?.toDate ? startDate.toDate() : startDate) : null;
+              const formatDate = (d) => d ? d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "";
+              const formatYear = (d) => d ? String(d.getFullYear()).slice(-2) : "";
+              const dateLabel = startD && end && startD.toDateString() !== end.toDateString()
+                ? `${formatDate(startD)} – ${formatDate(end)} ${formatYear(end)}`
+                : `${formatDate(startD)} ${formatYear(startD)}`;
+              return (
+                <>
+                  <ParrotsStdText style={modalStyles.title}>Post this voyage?</ParrotsStdText>
+
+                  <View style={modalStyles.summaryCard}>
+                    <View style={modalStyles.summaryRow}>
+                      <ParrotsStdText style={modalStyles.summaryLabel}>Voyage</ParrotsStdText>
+                      <ParrotsStdText style={modalStyles.summaryValue}>{voyageName || "—"}</ParrotsStdText>
+                    </View>
+                    <View style={modalStyles.summaryRow}>
+                      <ParrotsStdText style={modalStyles.summaryLabel}>Dates</ParrotsStdText>
+                      <ParrotsStdText style={modalStyles.summaryValue}>{dateLabel || "—"}</ParrotsStdText>
+                    </View>
+                  </View>
+
+                  <View style={modalStyles.pill}>
+                    <FontAwesome5 name="globe-europe" size={16} color={parrotBlue} />
+                    <ParrotsStdText style={[modalStyles.pillText, { color: parrotBlue, paddingRight: 20 }]}>
+                      {isPublicOnMap
+                        ? "Goes public on the map right away. Anyone can find it and place a bid."
+                        : "This voyage won't appear on the map. People can still view it through your profile."}
+                    </ParrotsStdText>
+                  </View>
+
+                  <View style={[modalStyles.pill, { backgroundColor: "rgba(0,150,100,0.12)", marginBottom: 10 }]}>
+                    <Image source={require("../assets/parrotCracker.png")} style={{ width: 18, height: 18 }} />
+                    <ParrotsStdText style={[modalStyles.pillText, { color: "#065f46" }]}>
+                      {isPublicOnMap && cost > 0 ? `${cost} ParrotCrackers will be used` : "Free, no ParrotCrackers used."}
+                    </ParrotsStdText>
+                  </View>
+
+                  <View style={[modalStyles.pill, { backgroundColor: "#fef3c7", marginBottom: 0 }]}>
+                    <FontAwesome5 name="lock" size={16} color="#92400e" />
+                    <ParrotsStdText style={[modalStyles.pillText, { color: "#92400e", flex: 1 }]}>
+                      The details lock once posted.{"\n"}You can still post updates later.
+                    </ParrotsStdText>
+                  </View>
+
+                  <View style={{ flexDirection: "row", gap: 12, marginTop: 20, width: "100%" }}>
+                    <TouchableOpacity style={modalStyles.cancelBtn} onPress={() => setShowConfirmModal(false)}>
+                      <ParrotsStdText style={modalStyles.cancelText}>Cancel</ParrotsStdText>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={modalStyles.confirmBtn}
+                      onPress={() => { setShowConfirmModal(false); goToHomePage(); }}
+                    >
+                      <ParrotsStdText style={modalStyles.confirmText}>Post voyage</ParrotsStdText>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              );
+            })()}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 export default CreateVoyageMapComponent;
+
+const modalStyles = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center", padding: 24 },
+  box: { backgroundColor: "white", borderRadius: 20, padding: 24, width: "100%", alignItems: "center" },
+  title: { fontFamily: "Nunito_800ExtraBold", fontSize: 18, color: "#1a2e4a", marginBottom: 16 },
+  summaryCard: { backgroundColor: "#f3f4f6", borderRadius: 10, padding: 14, width: "100%", marginBottom: 14, gap: 6 },
+  summaryRow: { flexDirection: "row", justifyContent: "space-between", gap: 8 },
+  summaryLabel: { fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#6b7280" },
+  summaryValue: { fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#1a2e4a", flexShrink: 1, textAlign: "right" },
+  pill: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "rgba(0,100,200,0.12)", borderRadius: 20, paddingHorizontal: 14, paddingVertical: 10, width: "100%", marginBottom: 10 },
+  pillText: { fontFamily: "Nunito_700Bold", fontSize: 14 },
+  cancelBtn: { flex: 1, justifyContent: "center", alignItems: "center" },
+  cancelText: { fontFamily: "Nunito_700Bold", fontSize: 15, color: "#6b7280" },
+  confirmBtn: { flex: 1, backgroundColor: parrotBlue, borderRadius: 30, alignItems: "center", paddingVertical: 12 },
+  confirmText: { fontFamily: "Nunito_700Bold", fontSize: 15, color: "white" },
+});
 
 const styles = StyleSheet.create({
 
@@ -599,7 +683,8 @@ const styles = StyleSheet.create({
   },
   addWaypointText: {
     alignSelf: "center",
-    padding: vh(1),
+    paddingVertical: vh(1),
+    paddingHorizontal: vw(6),
     borderRadius: vh(2),
     backgroundColor: parrotBlue,
     color: "white",
@@ -608,7 +693,8 @@ const styles = StyleSheet.create({
   },
   completeText: {
     alignSelf: "center",
-    padding: vh(1),
+    paddingVertical: vh(1),
+    paddingHorizontal: vw(6),
     borderRadius: vh(2),
     backgroundColor: parrotBlue,
     color: "white",
@@ -617,7 +703,8 @@ const styles = StyleSheet.create({
   },
   addWaypointTextDisabled: {
     alignSelf: "center",
-    padding: vh(1),
+    paddingVertical: vh(1),
+    paddingHorizontal: vw(6),
     borderRadius: vh(2),
     backgroundColor: parrotBlueSemiTransparent2,
     color: "white",

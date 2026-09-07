@@ -6,7 +6,7 @@ import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { parrotBlue, parrotCream } from "../assets/color";
 
-const StepBarVehicle = ({ currentStep, onFirstStepPress }) => {
+const StepBarVehicle = ({ currentStep, onFirstStepPress, onSecondStepPress }) => {
   const StepBarStep = ({ displayText, stepNumber, onPress }) => {
     const isActive = stepNumber === currentStep;
 
@@ -29,7 +29,7 @@ const StepBarVehicle = ({ currentStep, onFirstStepPress }) => {
   return (
     <View style={styles.mainContainer}>
       <StepBarStep displayText={displayTexts2[0]} stepNumber={1} onPress={currentStep === 2 ? onFirstStepPress : null} />
-      <StepBarStep displayText={displayTexts2[1]} stepNumber={2} />
+      <StepBarStep displayText={displayTexts2[1]} stepNumber={2} onPress={currentStep === 1 ? onSecondStepPress : null} />
     </View>
   );
 };
