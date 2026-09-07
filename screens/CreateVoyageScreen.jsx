@@ -1,7 +1,7 @@
 import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {
   ScrollView,
   FlatList,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import { useGetUserByIdQuery } from "../slices/UserSlice";
 import {
@@ -42,7 +43,7 @@ import { API_URL } from "@env";
 import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
+import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCaravanOrangeRed, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 import DropdownComponentCurrency from "../components/DropdownComponentCurrency";
 
 
@@ -112,6 +113,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(false);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
+  const sameDateTapCount = useRef(0);
 
   const [hasError, setHasError] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
@@ -396,13 +398,26 @@ const CreateVoyageScreen = ({ navigation }) => {
       console.log("-->>", date);
       setEndDate(null);
       setCalendarRangeAllowed(false);
+      sameDateTapCount.current = 0;
     } else {
-      if (date >= startDate) {
+      if (date > startDate) {
         setCalendarRangeAllowed(true);
         setEndDate(date);
-      } else {
+        sameDateTapCount.current = 0;
+      } else if (date < startDate) {
         setStartDate(date);
         setEndDate(null);
+        sameDateTapCount.current = 0;
+      } else {
+        // same date tapped again
+        sameDateTapCount.current += 1;
+        if (sameDateTapCount.current >= 2) {
+          setStartDate("");
+          setEndDate(null);
+          setCalendarRangeAllowed(false);
+          sameDateTapCount.current = 0;
+        }
+        // 1st repeat tap: keep (green, no change)
       }
     }
   };
@@ -629,90 +644,7 @@ const CreateVoyageScreen = ({ navigation }) => {
               </View>
             </View>
 
-            {/* Card 3: Voyage Dates */}
-            <View style={styles.sectionCard}>
-              <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Voyage Dates</ParrotsStdText>
-              </View>
-              <View style={styles.formContainer}>
-                <View style={[styles.calendarContainer, { position: "relative" }]}>
-                  <View style={styles.voyageDatesContainer}>
-                    <Feather
-                      style={styles.icon}
-                      name="calendar"
-                      size={24}
-                      color="blue"
-                    />
-                    <ParrotsStdText style={styles.voyageDates}>
-                      Select Voyage Date(s)
-                    </ParrotsStdText>
-                  </View>
-
-                  <View style={styles.calendarStyle}>
-                    <CalendarPicker
-                      selectedRangeStartTextStyle={styles.startEndText}
-                      selectedRangeEndTextStyle={styles.startEndText}
-                      selectedRangeStyle={styles.calendarSelected}
-                      selectedRangeStartStyle={styles.calendarEndStart}
-                      selectedRangeEndStyle={styles.calendarEndStart}
-                      selectedDayStyle={styles.calendarEndStart}
-                      selectedColor={"blue"}
-                      textStyle={{ fontFamily: "Nunito_700Bold" }}
-                      startFromMonday={true}
-                      allowRangeSelection={calendarRangeAllowed}
-                      minDate={new Date()}
-                      selectedStartDate={startDate}
-                      selectedEndDate={endDate}
-                      onDateChange={onDateChange}
-                      width={300}
-                    />
-                  </View>
-                  {startDate ? (() => {
-                  const today = new Date(); today.setHours(23, 59, 0, 0);
-                  const rawEnd = endDate || startDate;
-                  const end = new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd); end.setHours(23, 59, 0, 0);
-                  const cost = isPublicOnMap ? Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1) : 0;
-                  const balance = crackerBalance?.balance;
-                  const notEnough = isPublicOnMap && balance != null && balance < cost;
-                  return (
-                    <View style={[styles.crackerPill, { backgroundColor: notEnough ? "rgba(200,50,50,0.9)" : "rgba(0,100,200,0.85)" }]}>
-                      <Image source={require("../assets/parrotCracker.png")} style={{ width: 18, height: 18 }} />
-                      <ParrotsStdText style={styles.crackerPillText}>
-                        {isPublicOnMap ? `${cost} ParrotCrackers will be used` : "No ParrotCrackers will be used"}
-                      </ParrotsStdText>
-                      {isPublicOnMap && balance != null && (
-                        <ParrotsStdText style={styles.crackerPillBalance}>
-                          {notEnough ? ` — you only have ${balance}` : ` (balance: ${balance})`}
-                        </ParrotsStdText>
-                      )}
-                    </View>
-                  );
-                })() : null}
-                </View>
-
-                {/* /// LAST BID DATE /// */}
-                <View style={{ ...styles.latLngNameRow, display: "none" }}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Last Bid:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      value={lastBidDate}
-                      onChangeText={handleDateChange}
-                      keyboardType="numeric"
-                      placeholder="MM/DD/YYYY"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      maxLength={10}
-                    />
-                  </View>
-                </View>
-                {/* /// LAST BID DATE /// */}
-
-              </View>
-            </View>
-
-            {/* Card 4: Pricing & Options */}
+            {/* Card 3: Pricing & Options */}
             <View style={styles.sectionCard}>
               <View style={styles.cardTitleRow}>
                 <ParrotsStdText style={styles.cardTitle}>Pricing & Options</ParrotsStdText>
@@ -827,6 +759,109 @@ const CreateVoyageScreen = ({ navigation }) => {
                   </View>
                 </View>
                 {/* /// auction fixedprice  /// */}
+
+              </View>
+            </View>
+
+            {/* Card 4: Voyage Dates */}
+            <View style={[styles.sectionCard, { position: "relative", overflow: "visible" }]}>
+              <View style={styles.cardTitleRow}>
+                <ParrotsStdText style={styles.cardTitle}>Voyage Dates</ParrotsStdText>
+              </View>
+              <View style={styles.formContainer}>
+                <View style={styles.calendarContainer}>
+                  <View style={styles.voyageDatesContainer}>
+                    <Feather
+                      style={styles.icon}
+                      name="calendar"
+                      size={24}
+                      color="blue"
+                    />
+                    <ParrotsStdText style={styles.voyageDates}>
+                      Select Voyage Date(s)
+                    </ParrotsStdText>
+                  </View>
+
+                  <View style={styles.calendarStyle}>
+                    <CalendarPicker
+                      selectedRangeStartTextStyle={styles.startEndText}
+                      selectedRangeEndTextStyle={styles.startEndText}
+                      selectedRangeStyle={styles.calendarSelected}
+                      selectedRangeStartStyle={styles.calendarEndStart}
+                      selectedRangeEndStyle={styles.calendarEndStart}
+                      selectedDayStyle={styles.calendarEndStart}
+                      selectedDayTextStyle={{ color: "white", fontFamily: "Nunito_700Bold" }}
+                      selectedDayTextColor={"white"}
+                      selectedColor={"blue"}
+                      textStyle={{ fontFamily: "Nunito_700Bold" }}
+                      startFromMonday={true}
+                      allowRangeSelection={calendarRangeAllowed}
+                      minDate={new Date()}
+                      selectedStartDate={startDate}
+                      selectedEndDate={endDate}
+                      onDateChange={onDateChange}
+                      width={300}
+                      customDatesStyles={startDate && !endDate ? [{ date: startDate?.toDate ? startDate.toDate() : startDate, textStyle: { color: "white" } }] : []}
+                    />
+                  </View>
+                </View>
+                {startDate ? (() => {
+                  const today = new Date(); today.setHours(23, 59, 0, 0);
+                  const rawEnd = endDate || startDate;
+                  const end = new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd); end.setHours(23, 59, 0, 0);
+                  const cost = isPublicOnMap ? Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1) : 0;
+                  const balance = crackerBalance?.balance;
+                  const notEnough = isPublicOnMap && balance != null && balance < cost;
+                  if (!isPublicOnMap) return null;
+                  return (
+                    <View style={styles.crackerPill}>
+                      <Image source={require("../assets/parrotCracker.png")} style={{ width: 18, height: 18, marginBottom: 2 }} />
+                      {notEnough ? (
+                        <View style={{ flexDirection: "row", alignItems: "flex-end", flexWrap: "wrap", gap: 4 }}>
+                          <ParrotsStdText style={styles.crackerPillText}>
+                            {"You need "}
+                            <ParrotsStdText style={[styles.crackerPillText, { fontWeight: "900", color: parrotCaravanOrangeRed }]}>{cost - balance}</ParrotsStdText>
+                            {" more crackers."}
+                          </ParrotsStdText>
+                          <TouchableOpacity onPress={() => Linking.openURL("https://parrotsvoyages.com")} style={{ backgroundColor: parrotCaravanOrangeRed, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 3 }}>
+                            <ParrotsStdText style={{ color: "white", fontSize: 13, fontFamily: "Nunito_700Bold" }}>Get more</ParrotsStdText>
+                          </TouchableOpacity>
+                        </View>
+                      ) : (
+                        <ParrotsStdText style={styles.crackerPillText}>
+                          {isPublicOnMap ? (
+                            <>
+                              {"This'll cost you "}
+                              <ParrotsStdText style={[styles.crackerPillText, { fontWeight: "900", color: parrotGreen }]}>{cost}</ParrotsStdText>
+                              {" of your "}
+                              <ParrotsStdText style={[styles.crackerPillText, { fontWeight: "900", color: parrotBlue }]}>{balance}</ParrotsStdText>
+                              {" ParrotCrackers"}
+                            </>
+                          ) : "You don't need ParrotCrackers since this voyage is not public"}
+                        </ParrotsStdText>
+                      )}
+                    </View>
+                  );
+                })() : null}
+
+                {/* /// LAST BID DATE /// */}
+                <View style={{ ...styles.latLngNameRow, display: "none" }}>
+                  <View style={styles.latLngLabel}>
+                    <ParrotsStdText style={styles.latorLngtxt}>Last Bid:</ParrotsStdText>
+                  </View>
+                  <View style={styles.latorLng}>
+                    <TextInput
+                      style={styles.textInput5}
+                      value={lastBidDate}
+                      onChangeText={handleDateChange}
+                      keyboardType="numeric"
+                      placeholder="MM/DD/YYYY"
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      maxLength={10}
+                    />
+                  </View>
+                </View>
+                {/* /// LAST BID DATE /// */}
 
               </View>
             </View>
@@ -1279,26 +1314,30 @@ const styles = StyleSheet.create({
     marginBottom: vh(1),
   },
   crackerPill: {
+    position: "absolute",
+    bottom: -vh(.5),
+    // left: vw(2),
+    // right: vw(2),
+    zIndex: 10,
     flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "center",
+    alignItems: "flex-end",
+    justifyContent: "center",
     borderRadius: 20,
-    paddingHorizontal: vw(4),
+    paddingHorizontal: vw(3),
     paddingVertical: vh(0.8),
-    marginTop: vh(1),
     gap: 6,
     flexWrap: "wrap",
-    justifyContent: "center",
+    alignSelf: "center",
   },
   crackerPillText: {
-    color: "white",
+    color: parrotInputTextColor,
     fontFamily: "Nunito_700Bold",
     fontSize: 14,
   },
   crackerPillBalance: {
-    color: "rgba(255,255,255,0.8)",
-    fontFamily: "Nunito_600SemiBold",
-    fontSize: 13,
+    color: parrotInputTextColor,
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
   },
   formContainer: {
     padding: vh(2),
