@@ -33,7 +33,7 @@ export const BidBookmarkPill = ({ bids, height }) => {
           key={item.bidId}
           style={styles.pillWrapper}
           activeOpacity={0.7}
-          onPress={() => navigation.navigate("VoyageDetail", { voyageId: item.voyageId })}
+          onPress={() => navigation.navigate("VoyageDetail", { voyagePublicId: item.voyagePublicId })}
         >
           <View style={styles.pill}>
             <Image
@@ -61,7 +61,7 @@ export const BidBookmarkPill = ({ bids, height }) => {
               onPress={() =>
                 navigation.navigate("Favorites", {
                   screen: "VoyageDetail",
-                  params: { voyageId: item.voyageId },
+                  params: { voyagePublicId: item.voyagePublicId },
                 })
               }
             >

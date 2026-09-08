@@ -247,7 +247,9 @@ const CreateVoyageScreen = ({ navigation }) => {
     try {
       const formattedStartDate = convertDateFormat(startDate);
       const formattedEndDate = endDate ? convertDateFormat(endDate) : convertDateFormat(startDate);
-      const formattedLastBidDate = formattedStartDate;
+      const lastBidDateObj = endDate ? new Date(endDate) : new Date(startDate);
+      lastBidDateObj.setHours(23, 59, 59, 999);
+      const formattedLastBidDate = lastBidDateObj.toISOString();
 
       const queryParams = new URLSearchParams({
         Name: name, Brief: brief, Description: description, Vacancy: vacancy,
@@ -272,6 +274,11 @@ const CreateVoyageScreen = ({ navigation }) => {
       );
 
       const responseData = JSON.parse(result.body);
+      if (responseData?.success === false) {
+        setIsCreatingVoyage(false);
+        showToast(responseData.message || "Could not create voyage. Please try again.");
+        return;
+      }
       if (!responseData?.data?.id) {
         setIsCreatingVoyage(false);
         setHasError(true);
@@ -810,7 +817,7 @@ const CreateVoyageScreen = ({ navigation }) => {
               </View>
               <View style={styles.formContainer}>
                 <View style={styles.calendarContainer}>
-                  <View style={styles.voyageDatesContainer}>
+                  {/* <View style={styles.voyageDatesContainer}>
                     <Feather
                       style={styles.icon}
                       name="calendar"
@@ -820,7 +827,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                     <ParrotsStdText style={styles.voyageDates}>
                       Select Voyage Date(s)
                     </ParrotsStdText>
-                  </View>
+                  </View> */}
 
                   <View style={styles.calendarStyle}>
                     <CalendarPicker

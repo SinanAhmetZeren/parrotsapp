@@ -29,7 +29,7 @@ export default function VoyageListHorizontal({ data, focusMap, navigation }) {
     return (
       <VoyageCardProfileHorizontal
         key={item.id}
-        voyageId={item.id}
+        voyageId={item.publicId}
         cardHeader={item.name}
         cardDescription={item.brief}
         cardImage={item.profileImageThumbnail || item.profileImage}

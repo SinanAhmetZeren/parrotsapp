@@ -67,6 +67,7 @@ const CreateVoyageMapComponent = ({
   const [isUploadingWaypointImage, setIsUploadingWaypointImage] = useState(false);
   const [isAddingWaypoint, setIsAddingWaypoint] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [voyagePosted, setVoyagePosted] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [initialRegion, setInitialRegion] = useState(null)
 
@@ -312,7 +313,8 @@ const CreateVoyageMapComponent = ({
     setMarkerCoords(event.nativeEvent.coordinate);
   };
 
-  const goToHomePage = async () => {
+  const handleConfirmPostVoyage = async () => {
+    if (isConfirming || voyagePosted) return;
     setIsConfirming(true);
     const result = await confirmVoyage(voyageId);
     if (result.error) {
@@ -320,16 +322,26 @@ const CreateVoyageMapComponent = ({
       setIsConfirming(false);
       return;
     }
-    if (onVoyagePosted) onVoyagePosted();
-    setAddedWayPoints([]);
-    setMarkerCoords(null);
-    setLatitude("");
-    setLongitude("");
-    setTitle("");
-    setDescription("");
-    setImageUri(null);
-    setOrder(1);
-    navigation.navigate("Home", { screen: "HomeScreen" });
+    if (result.data?.success === false) {
+      Toast.show({ type: "error", text1: "Could not post voyage", text2: result.data?.message || "Please try again.", autoHide: true, visibilityTime: 3000 });
+      setIsConfirming(false);
+      return;
+    }
+    const voyagePublicId = result.data?.data;
+    setIsConfirming(false);
+    setVoyagePosted(true);
+    setTimeout(() => {
+      if (onVoyagePosted) onVoyagePosted();
+      setAddedWayPoints([]);
+      setMarkerCoords(null);
+      setLatitude("");
+      setLongitude("");
+      setTitle("");
+      setDescription("");
+      setImageUri(null);
+      setOrder(1);
+      navigation.navigate("Home", { screen: "VoyageDetail", params: { voyagePublicId } });
+    }, 3000);
   };
 
   const canAddWaypoint = latitude && longitude && description && title;
@@ -348,6 +360,7 @@ const CreateVoyageMapComponent = ({
               style={styles.map}
               initialRegion={initialRegion}
               onPress={handleMapPress}
+              userInterfaceStyle="light"
             >
               {markerCoords && (
                 <Marker coordinate={markerCoords} title="Tapped Location" />
@@ -508,7 +521,7 @@ const CreateVoyageMapComponent = ({
       <TouchableOpacity
         style={styles.FinishButtonContainer}
         onPress={() => { if (addedWayPoints.length > 0) setShowConfirmModal(true); }}
-        disabled={!(addedWayPoints.length > 0) || isConfirming}
+        disabled={!(addedWayPoints.length > 0)}
       >
         <View
           style={[
@@ -519,8 +532,7 @@ const CreateVoyageMapComponent = ({
               : { backgroundColor: parrotBlueSemiTransparent },
           ]}
         >
-          <ParrotsStdText style={{ color: "white", fontFamily: "Nunito_700Bold", opacity: isConfirming ? 0 : 1 }}>Complete</ParrotsStdText>
-          {isConfirming && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
+          <ParrotsStdText style={{ color: "white", fontFamily: "Nunito_700Bold" }}>Complete</ParrotsStdText>
         </View>
       </TouchableOpacity>
 
@@ -578,14 +590,19 @@ const CreateVoyageMapComponent = ({
                   </View>
 
                   <View style={{ flexDirection: "row", gap: 12, marginTop: 20, width: "100%" }}>
-                    <TouchableOpacity style={modalStyles.cancelBtn} onPress={() => setShowConfirmModal(false)}>
-                      <ParrotsStdText style={modalStyles.cancelText}>Cancel</ParrotsStdText>
-                    </TouchableOpacity>
+                    {!isConfirming && !voyagePosted && (
+                      <TouchableOpacity style={modalStyles.cancelBtn} onPress={() => setShowConfirmModal(false)}>
+                        <ParrotsStdText style={modalStyles.cancelText}>Cancel</ParrotsStdText>
+                      </TouchableOpacity>
+                    )}
                     <TouchableOpacity
-                      style={modalStyles.confirmBtn}
-                      onPress={() => { setShowConfirmModal(false); goToHomePage(); }}
+                      style={[modalStyles.confirmBtn, voyagePosted && { backgroundColor: "#16a34a" }]}
+                      onPress={handleConfirmPostVoyage}
+                      disabled={isConfirming || voyagePosted}
                     >
-                      <ParrotsStdText style={modalStyles.confirmText}>Post voyage</ParrotsStdText>
+                      {isConfirming
+                        ? <ActivityIndicator size="small" color="#ffffff" />
+                        : <ParrotsStdText style={modalStyles.confirmText}>{voyagePosted ? "Voyage Created!" : "Post voyage"}</ParrotsStdText>}
                     </TouchableOpacity>
                   </View>
                 </>

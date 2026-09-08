@@ -59,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
 
   const [error, setError] = useState("");
   const [userInfo, setUserInfo] = useState("");
-  const [email, setEmail] = useState("sinanahmetzeren@gmail.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isFocusedEmail, setIsFocusedEmail] = useState(false);

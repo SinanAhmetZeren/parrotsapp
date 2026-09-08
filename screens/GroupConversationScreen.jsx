@@ -498,7 +498,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
                   )}
                   {isMe ? (
                     <View style={styles.msgRight}>
-                      <ParrotsStdText style={styles.msgText}>{msg.text}</ParrotsStdText>
+                      <ParrotsStdText selectable style={styles.msgText}>{msg.text}</ParrotsStdText>
                       <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
                     </View>
                   ) : (
@@ -749,10 +749,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   textinputStyle: {
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
     backgroundColor: "white",
     minHeight: vh(5),
     maxHeight: vh(14),
+
     paddingHorizontal: vw(4),
     paddingTop: Platform.OS === "ios" ? vh(1.5) : vh(1),
     paddingBottom: Platform.OS === "ios" ? vh(1.5) : vh(1),

@@ -15,7 +15,7 @@ import { Shadow } from "react-native-shadow-2";
 export default function VehicleVoyages({ voyages }) {
   const navigation = useNavigation();
 
-  const handleNavigateToVoyage = (voyageId) => {
+  const handleNavigateToVoyage = (voyagePublicId) => {
     const parentScreen = navigation.getState().routes[0].name;
 
     let targetScreen;
@@ -35,7 +35,7 @@ export default function VehicleVoyages({ voyages }) {
 
     navigation.navigate(targetScreen, {
       screen: "VoyageDetail",
-      params: { voyageId: voyageId },
+      params: { voyagePublicId },
     });
   };
 
@@ -56,7 +56,7 @@ export default function VehicleVoyages({ voyages }) {
           style={{ borderRadius: vh(3), marginBottom: vh(1), width: "100%" }}
         >
           <TouchableOpacity
-            onPress={() => handleNavigateToVoyage(item.id)}
+            onPress={() => handleNavigateToVoyage(item.publicId)}
           >
             <View style={styles.singleVoyage}>
               <Image

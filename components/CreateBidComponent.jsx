@@ -41,8 +41,11 @@ export const CreateBidComponent = ({
   userBidPrice,
   userBidMessage,
   refetch,
-  currency
+  currency,
+  isOwnerDeleted,
+  endDate,
 }) => {
+  const isBiddingClosed = endDate && new Date(new Date(endDate).setHours(23, 59, 59, 999)) < Date.now();
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [isChangeModalVisible, setIsChangeModalVisible] = useState(false);
   const [price, setPrice] = useState("0");
@@ -134,13 +137,13 @@ export const CreateBidComponent = ({
       <View style={bidInputStyles.bidButtonContainer}>
         {hasBidWithUserId ? (
           <View style={bidInputStyles.modalView2}>
-            <TouchableOpacity style={bidInputStyles.buttonSendBidContainer} onPress={handleOpenChangeModal}>
+            <TouchableOpacity disabled={!!isOwnerDeleted || isBiddingClosed} style={[bidInputStyles.buttonSendBidContainer, (isOwnerDeleted || isBiddingClosed) && { opacity: 0.4 }]} onPress={handleOpenChangeModal}>
               <ParrotsStdText style={bidInputStyles.buttonSave}>Change Bid</ParrotsStdText>
             </TouchableOpacity>
           </View>
         ) : (
           <View style={bidInputStyles.modalView2}>
-            <TouchableOpacity style={bidInputStyles.buttonSendBidContainer} onPress={handleOpenCreateModal}>
+            <TouchableOpacity disabled={!!isOwnerDeleted || isBiddingClosed} style={[bidInputStyles.buttonSendBidContainer, (isOwnerDeleted || isBiddingClosed) && { opacity: 0.4 }]} onPress={handleOpenCreateModal}>
               <ParrotsStdText style={bidInputStyles.buttonSave}>Create Bid</ParrotsStdText>
             </TouchableOpacity>
           </View>

@@ -365,7 +365,7 @@ const VehicleDetailScreen = () => {
                   )}
                 </View>
                 <View style={styles.DescriptionContainer}>
-                  <ParrotsStdText style={styles.descriptionText}>{displayText}</ParrotsStdText>
+                  <ParrotsStdText selectable style={styles.descriptionText}>{displayText}</ParrotsStdText>
                   {plainDescription.length > descriptionShortenedChars && !showFullText && (
                     <TouchableOpacity onPress={() => setShowFullText(true)}>
                       <ParrotsStdText style={styles.ReadMoreLess}>

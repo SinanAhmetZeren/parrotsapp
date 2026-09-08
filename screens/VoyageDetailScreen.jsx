@@ -5,7 +5,7 @@ import { ParrotsStdText } from "../components/ParrotsStdText";
 import React from "react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRoute } from "@react-navigation/native";
-import { useGetVoyageByIdQuery } from "../slices/VoyageSlice";
+import { useGetVoyageByPublicIdQuery } from "../slices/VoyageSlice";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
   Feather,
@@ -89,7 +89,7 @@ const EMOJIS_BY_CATEGORY = {
 
 const VoyageDetailScreen = ({ navigation }) => {
   const route = useRoute();
-  const { voyageId } = route.params;
+  const { voyagePublicId } = route.params;
   const { width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
 
@@ -145,7 +145,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
   const handleCopyVoyageLink = async () => {
     try {
-      await Clipboard.setStringAsync(`https://parrotsvoyages.com/voyage-details/${voyageId}`);
+      await Clipboard.setStringAsync(`https://parrotsvoyages.com/voyage-details/${voyagePublicId}`);
       showToast("Voyage link copied");
     } catch {
       showToast("Failed to copy link");
@@ -155,7 +155,7 @@ const VoyageDetailScreen = ({ navigation }) => {
   const handleReportVoyage = async () => {
     if (!voyageSelectedReason) return;
     try {
-      await reportVoyage({ voyageId, reason: voyageSelectedReason }).unwrap();
+      await reportVoyage({ voyageId: VoyageData.id, reason: voyageSelectedReason }).unwrap();
       setVoyageReportModalVisible(false);
       setVoyageSelectedReason(null);
       Toast.show({ type: "success", text1: "Report submitted", text2: "Thank you for helping keep Parrots safe.", visibilityTime: 3000, topOffset: 100 });
@@ -176,7 +176,7 @@ const VoyageDetailScreen = ({ navigation }) => {
     isLoading: isLoadingVoyages,
     isError: isErrorVoyage,
     refetch: refetchVoyage,
-  } = useGetVoyageByIdQuery(voyageId);
+  } = useGetVoyageByPublicIdQuery(voyagePublicId);
 
   // useEffect(() => {
   //   console.log("--> voyage data -->");
@@ -279,7 +279,7 @@ const VoyageDetailScreen = ({ navigation }) => {
   const handleShareVoyage = async () => {
     try {
       const result = await Share.share({
-        message: `Check out this link:\nhttps://parrotsvoyages.com/voyage-details/${voyageId}`,
+        message: `Check out this link:\nhttps://parrotsvoyages.com/voyage-details/${voyagePublicId}`,
         title: "Share Link",
       });
     } catch (error) {
@@ -356,16 +356,16 @@ const VoyageDetailScreen = ({ navigation }) => {
   };
 
   const handleAddVoyageToFavorites = () => {
-    addVoyageToFavorites({ userId, voyageId });
+    addVoyageToFavorites({ userId, voyageId: VoyageData.id });
     setIsFavorited(true);
-    dispatch(addVoyageToUserFavorites({ favoriteVoyage: voyageId }));
+    dispatch(addVoyageToUserFavorites({ favoriteVoyage: VoyageData.id }));
     showToast("Voyage added to favorites");
   };
 
   const handleDeleteVoyageFromFavorites = () => {
-    deleteVoyageFromFavorites({ userId, voyageId });
+    deleteVoyageFromFavorites({ userId, voyageId: VoyageData.id });
     setIsFavorited(false);
-    dispatch(removeVoyageFromUserFavorites({ favoriteVoyage: voyageId }));
+    dispatch(removeVoyageFromUserFavorites({ favoriteVoyage: VoyageData.id }));
     showToast("Voyage removed from favorites");
   };
 
@@ -625,7 +625,7 @@ const VoyageDetailScreen = ({ navigation }) => {
 
               <View style={styles.mapAndEmojisContainer}>
                 <View style={styles.mapContainer}>
-                  <MapView provider={PROVIDER_GOOGLE} ref={mapRef} style={styles.map} region={initialRegion}>
+                  <MapView provider={PROVIDER_GOOGLE} ref={mapRef} style={styles.map} region={initialRegion} userInterfaceStyle="light">
                     <WaypointListComponent waypoints={waypoints} />
                     <RenderPolylinesComponent waypoints={waypoints} />
                   </MapView>
@@ -745,7 +745,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                 <CreateBidComponent
                   userName={userName}
                   userProfileImage={userProfileImage}
-                  voyageId={voyageId}
+                  voyageId={VoyageData.id}
                   userId={userId}
                   userBidId={userBidId}
                   hasBidWithUserId={hasBidWithUserId}
@@ -756,6 +756,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   ownVoyage={ownVoyage}
                   currency={VoyageData.currency}
                   isOwnerDeleted={VoyageData.isOwnerDeleted}
+                  endDate={VoyageData.endDate}
                 />
               )}
             </View>

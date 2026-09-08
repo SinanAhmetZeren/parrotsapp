@@ -18,8 +18,8 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       refetchOnFocus: true,
 
     }),
-    getVoyageById: builder.query({
-      query: (voyageId) => `/api/Voyage/GetVoyageById/${voyageId}`,
+    getVoyageByPublicId: builder.query({
+      query: (voyagePublicId) => `/api/Voyage/GetVoyageByPublicId/${voyagePublicId}`,
       transformResponse: (responseData) => {
         return responseData.data;
       },
@@ -346,7 +346,7 @@ export const {
   useCheckAndDeleteVoyageMutation,
   useGetVoyagesByUserByIdQuery,
   useLazyGetVoyagesByUserByIdQuery,
-  useGetVoyageByIdQuery,
+  useGetVoyageByPublicIdQuery,
   useGetMyBidsQuery,
   useSendBidMutation,
   useChangeBidMutation,

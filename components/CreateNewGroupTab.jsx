@@ -375,6 +375,7 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
           onChangeText={setFirstGroupMessage}
           onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
           onBlur={() => setInputFocused(false)}
+          multiline
         />
         <TouchableOpacity
           style={[styles.groupSendBtn, (!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0) && styles.groupSendBtnDisabled]}
@@ -575,7 +576,8 @@ const styles = StyleSheet.create({
     gap: vw(2),
   },
   groupMessageInput: {
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
     backgroundColor: "white",
     borderRadius: vh(3),
     paddingHorizontal: vw(4),
@@ -585,6 +587,9 @@ const styles = StyleSheet.create({
     color: "black",
     borderWidth: 2,
     borderColor: "rgba(128,128,128,0.08)",
+    minHeight: vh(5),
+    maxHeight: vh(14),
+    textAlignVertical: "top",
   },
   groupSendBtn: {
     backgroundColor: parrotLightBlue,

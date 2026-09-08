@@ -598,7 +598,7 @@ const EditProfileScreen = ({ navigation }) => {
 
             <View style={styles.saveChangesButtonContainer}>
               <TouchableOpacity
-                style={{ ...styles.selection, backgroundColor: parrotCaravanOrangeRed, marginTop: vh(0.5) }}
+                style={{ ...styles.selection, backgroundColor: parrotRed, marginTop: vh(0.5) }}
                 onPress={() => setDeleteAccountModalVisible(true)}
                 activeOpacity={0.8}
               >

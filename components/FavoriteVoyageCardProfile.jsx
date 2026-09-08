@@ -30,7 +30,7 @@ export default function FavoriteVoyageCardProfile({
   enddate,
   vehiclename,
   vehicletype,
-  voyageId,
+  voyagePublicId,
   isPublicOnMap,
   userBidAccepted,
 }) {
@@ -39,10 +39,10 @@ export default function FavoriteVoyageCardProfile({
   const formattedEndDate = require("date-fns").format(enddate, "MMM d");
   const navigation = useNavigation();
 
-  const handleNavigation = (voyageId) => {
+  const handleNavigation = (voyagePublicId) => {
     navigation.navigate("Favorites", {
       screen: "VoyageDetail",
-      params: { voyageId: voyageId },
+      params: { voyagePublicId: voyagePublicId },
     });
   };
 
@@ -88,7 +88,7 @@ export default function FavoriteVoyageCardProfile({
 
   // let x = "1234567890123456789012345";
   return (
-    <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
+    <TouchableOpacity onPress={() => handleNavigation(voyagePublicId)}>
       <View style={styles.cardContainer}>
         <View style={styles.shadow}>
           <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />

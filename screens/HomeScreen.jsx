@@ -473,7 +473,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   const updateSelectedVoyageData = (item) => {
-    setVoyageIdM(item.id);
+    setVoyageIdM(item.publicId);
     setCardHeaderM(item.name);
     setCardDescriptionM(item.brief);
     setCardImageM(item.profileImage);
@@ -770,6 +770,7 @@ export default function HomeScreen({ navigation }) {
                     ref={mapRef}
                     showsUserLocation={true}
                     onRegionChangeComplete={handleRegionChangeComplete}
+                    userInterfaceStyle="light"
                   >
 {!isMarkersLoading && initialVoyages.map((item, index) => {
                       const waypoint = item.waypoints?.[0];

@@ -7,7 +7,7 @@ import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold } from "@expo-google-fonts/nunito";
 import * as SplashScreen from "expo-splash-screen";
-import * as Notifications from "expo-notifications";
+import Notifications from "./utils/notificationsModule";
 import * as Device from "expo-device";
 SplashScreen.preventAutoHideAsync();
 import { NavigationContainer } from "@react-navigation/native";
@@ -25,7 +25,6 @@ import {
   Platform,
   AppState,
   Modal,
-  ScrollView,
 } from "react-native";
 
 if (Text.defaultProps == null) Text.defaultProps = {};
@@ -817,7 +816,7 @@ function App() {
         console.log(isForeground ? "app fore..." : "app back...");
         invokeHub("UpdatePresence", isForeground).catch(() => { });
         if (isForeground) {
-          Notifications.setBadgeCountAsync(0).catch(() => { });
+          Notifications?.setBadgeCountAsync(0).catch(() => { });
           checkTermsRequirement();
           try {
             const hasUnread = await invokeHub("CheckUnreadMessages", userId);
@@ -882,23 +881,11 @@ function App() {
     return (
       <>
         <UpdateModal visible={showUpdateModal} forceUpdate={forceUpdate} onDismiss={() => setShowUpdateModal(false)} />
-        <Modal visible={showTermsModal} animationType="slide">
-          <View style={{ flex: 1, padding: 20, paddingTop: 60 }}>
-            <ParrotsStdText style={{ fontSize: 20, fontWeight: "700", color: "#003580", marginBottom: 12, textAlign: "center" }}>
-              Our Terms of Use have been updated
-            </ParrotsStdText>
-            <ParrotsStdText style={{ fontSize: 14, color: "#555", marginBottom: 16, textAlign: "center" }}>
-              Please read and accept the updated Terms of Use to continue using Parrots.
-            </ParrotsStdText>
-            <ScrollView style={{ flex: 1, borderWidth: 1, borderColor: "#ddd", borderRadius: 8, marginBottom: 16 }}>
-              <TermsOfUseComponent />
-            </ScrollView>
-            <TouchableOpacity
-              onPress={handleAcceptTerms}
-              style={{ backgroundColor: "#007bff", borderRadius: 8, padding: 14, alignItems: "center", marginBottom: 10 }}
-            >
-              <ParrotsStdText style={{ color: "#fff", fontWeight: "700", fontSize: 16 }}>I Accept</ParrotsStdText>
-            </TouchableOpacity>
+        <Modal visible={showTermsModal} animationType="fade" transparent={true}>
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
+            <View style={{ marginTop: vh(8), width: vw(96), height: vh(86), borderRadius: vh(1), overflow: "hidden" }}>
+              <TermsOfUseComponent onAccept={handleAcceptTerms} />
+            </View>
           </View>
         </Modal>
         {isLoggedIn ? (

@@ -30,7 +30,7 @@ export default function VoyageCardProfile({
   enddate,
   vehiclename,
   vehicletype,
-  voyageId,
+  voyagePublicId,
   publicOnMap,
   bidCount,
   acceptedBidCount,
@@ -40,7 +40,7 @@ export default function VoyageCardProfile({
   const formattedEndDate = require("date-fns").format(enddate, "MMM d");
   const navigation = useNavigation();
 
-  const handleNavigation = (voyageId) => {
+  const handleNavigation = (voyagePublicId) => {
     const parentScreen = navigation.getState().routes[0].name;
 
     let targetScreen;
@@ -60,7 +60,7 @@ export default function VoyageCardProfile({
 
     navigation.navigate(targetScreen, {
       screen: "VoyageDetail",
-      params: { voyageId: voyageId },
+      params: { voyagePublicId },
     });
   };
 
@@ -111,7 +111,7 @@ export default function VoyageCardProfile({
     }}>
 
       <View>
-        <TouchableOpacity onPress={() => handleNavigation(voyageId)}>
+        <TouchableOpacity onPress={() => handleNavigation(voyagePublicId)}>
           <View style={{ ...styles.cardContainer }}>
             <View style={{ ...styles.shadow }}>
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />

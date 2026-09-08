@@ -44,7 +44,7 @@ export default function VoyageCardProfileHorizontal({
   enddate,
   vehiclename,
   vehicletype,
-  voyageId,
+  voyagePublicId,
   latitude,
   longitude,
   focusMap,
@@ -57,8 +57,8 @@ export default function VoyageCardProfileHorizontal({
   const navHook = useNavigation();
   const navigation = navProp || navHook;
 
-  const handleNavigation = (voyageId) => {
-    navigation.push("VoyageDetail", { voyageId });
+  const handleNavigation = (voyagePublicId) => {
+    navigation.push("VoyageDetail", { voyagePublicId });
   };
 
   let icon;
@@ -121,7 +121,7 @@ export default function VoyageCardProfileHorizontal({
   return (
 
 
-    <TouchableOpacity onPress={() => handleNavigation(voyageId)} style={styles.TouchableOpacityStyle}>
+    <TouchableOpacity onPress={() => handleNavigation(voyagePublicId)} style={styles.TouchableOpacityStyle}>
       <View>
         <View style={styles.cardContainerWrapper}>
           <View style={[styles.vehicleColorCircle, { backgroundColor: vehicleColors[vehicletype] ?? parrotBlue }]}>

@@ -12,7 +12,7 @@ import { invokeHub, isHubReady } from "../signalr/signalRHub";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Location from "expo-location";
 import { useAskParrotsMutation } from "../slices/AiSlice";
-import { useLazyGetParrotCoinBalanceQuery } from "../slices/UserSlice";
+import { useLazyGetParrotCrackerBalanceQuery } from "../slices/UserSlice";
 import { FontAwesome } from "@expo/vector-icons";
 import { ParrotsStdText } from "../components/ParrotsStdText";
 import {
@@ -32,16 +32,13 @@ const VEHICLE_COLORS = [
 import { Image } from "react-native";
 import parrotLogo from "../assets/parrotsiconpaddedtransparent.png";
 import parrotTabIcon from "../assets/parrotwhiteoutlinebg.png";
-import parrotCookie from "../assets/parrotCookie.png";
+import parrotCracker from "../assets/parrotCracker.png";
 
 const VEHICLES = ["Boat", "Car", "Caravan", "Bus", "Walk", "Run", "Motorcycle", "Bicycle", "TinyHouse", "Airplane", "Train"];
 const DURATIONS = ["Half day", "1 day", "2-3 days", "1 week", "2 weeks"];
 const VIBES = ["Culture", "Food", "Nature", "Chill", "Adventure", "Budget", "Scenic", "Any"];
-const RADII = ["1km", "5km", "10km", "50km"];
-
 const DURATION_COLORS = ["#2ac898", "#2ac898", "#2ac898", "#2ac898", "#2ac898"];
 const VIBE_COLORS = ["#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623", "#F5A623"];
-const RADIUS_COLORS = ["#06B6D4", "#06B6D4", "#06B6D4", "#06B6D4"];
 
 const SPOT_TYPES = ["Popular Spots", "Local Favorites", "Hidden Gems", "Mixed Picks"];
 const SPOT_TYPE_COLORS = ["#8B5CF6", "#8B5CF6", "#8B5CF6", "#8B5CF6"];
@@ -60,7 +57,6 @@ export default function AskParrotsScreen() {
   const [duration, setDuration] = useState(null);
   const [vibe, setVibe] = useState(null);
   const [spotType, setSpotType] = useState(null);
-  const [radius, setRadius] = useState(null);
   const [pin, setPin] = useState(null);
   const [response, setResponse] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -72,8 +68,8 @@ export default function AskParrotsScreen() {
   const currentUserId = useSelector((state) => state.users.userId);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [askParrots, { isLoading: loading }] = useAskParrotsMutation();
-  const [coinBalance, setCoinBalance] = useState(null);
-  const [getParrotCoinBalance] = useLazyGetParrotCoinBalanceQuery();
+  const [crackerBalance, setCrackerBalance] = useState(null);
+  const [getParrotCrackerBalance] = useLazyGetParrotCrackerBalanceQuery();
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -82,20 +78,19 @@ export default function AskParrotsScreen() {
       if (status !== "granted") return;
       const loc = await Location.getCurrentPositionAsync({});
       const coord = { latitude: loc.coords.latitude, longitude: loc.coords.longitude };
-      setPin(coord);
       mapRef.current?.animateToRegion({ ...coord, latitudeDelta: 0.0922, longitudeDelta: 0.0922 }, 500);
     })();
   }, []);
 
   useEffect(() => {
     if (currentUserId) {
-      getParrotCoinBalance(currentUserId).then((res) => {
-        if (res?.data != null) setCoinBalance(res.data.balance ?? 0);
+      getParrotCrackerBalance(currentUserId).then((res) => {
+        if (res?.data != null) setCrackerBalance(res.data.balance ?? 0);
       });
     }
   }, [currentUserId]);
 
-  const canAsk = vehicle && duration && vibe && spotType && radius && pin;
+  const canAsk = vehicle && duration && vibe && spotType && pin;
 
   const handleMapPress = (e) => {
     setPin(e.nativeEvent.coordinate);
@@ -112,15 +107,14 @@ export default function AskParrotsScreen() {
         spotType,
         latitude: pin?.latitude ?? 0,
         longitude: pin?.longitude ?? 0,
-        radiusKm: radius.replace("km", ""),
       }).unwrap();
       setResponse(result.response);
-      if (result.remainingBalance !== undefined) setCoinBalance(result.remainingBalance);
+      if (result.remainingBalance !== undefined) setCrackerBalance(result.remainingBalance);
       fadeAnim.setValue(0);
       Animated.timing(fadeAnim, { toValue: 1, duration: 400, useNativeDriver: true }).start();
     } catch (e) {
       if (e?.status === 402) {
-        setCoinBalance(0);
+        setCrackerBalance(0);
         setResponse("You're out of crackers! Earn or buy more crackers to generate your next voyage.");
       } else if (e?.status === "FETCH_ERROR") {
         setResponse("Unable to connect. Please check your network and try again.");
@@ -149,13 +143,13 @@ export default function AskParrotsScreen() {
           </View>
         </View>
 
-        {coinBalance === 0 && (
+        {crackerBalance === 0 && (
           <View style={styles.noBalanceCard}>
-            <Image source={parrotCookie} style={styles.noBalanceCookie} />
+            <Image source={parrotCracker} style={styles.noBalanceCookie} />
             <View style={{ flex: 1 }}>
               <ParrotsStdText style={styles.noBalanceTitle}>You're out of ParrotCrackers.</ParrotsStdText>
               <ParrotsStdText style={styles.noBalanceSubtitle}>Visit <ParrotsStdText style={{ color: parrotCaravanOrangeRed }}>parrotsvoyages.com</ParrotsStdText> for some crackers.</ParrotsStdText>
-              <TouchableOpacity style={styles.noBalanceButton} onPress={() => Linking.openURL("https://parrotsvoyages.com/parrotCoinPage")}>
+              <TouchableOpacity style={styles.noBalanceButton} onPress={() => Linking.openURL("https://parrotsvoyages.com/parrotCrackerPage")}>
                 <ParrotsStdText style={styles.noBalanceButtonText}>Get ParrotCrackers</ParrotsStdText>
               </TouchableOpacity>
             </View>
@@ -182,11 +176,6 @@ export default function AskParrotsScreen() {
           <PillGroup options={SPOT_TYPES} selected={spotType} onSelect={setSpotType} colors={SPOT_TYPE_COLORS} />
         </SectionCard>
 
-        {/* Radius */}
-        <SectionCard label="STARTING WITHIN...">
-          <PillGroup options={RADII} selected={radius} onSelect={setRadius} colors={RADIUS_COLORS} />
-        </SectionCard>
-
         {/* Map */}
         <SectionCard label="AROUND..."
           style={{ padding: 0, paddingTop: 10, overflow: "hidden" }} labelStyle={{ paddingHorizontal: 16 }}>
@@ -197,6 +186,8 @@ export default function AskParrotsScreen() {
               style={styles.map}
               initialRegion={{ latitude: 41.0, longitude: 28.9, latitudeDelta: 20, longitudeDelta: 20 }}
               onPress={handleMapPress}
+              showsUserLocation={true}
+              userInterfaceStyle="light"
             >
               {pin && <Marker coordinate={pin} pinColor={parrotBoatPurple} />}
             </MapView>
@@ -212,11 +203,10 @@ export default function AskParrotsScreen() {
         <SectionCard label="YOUR QUERY">
           {canAsk ? (
             <ParrotsStdText style={styles.promptText}>
-              {buildPromptParts(vehicle, duration, vibe, spotType, radius,
+              {buildPromptParts(vehicle, duration, vibe, spotType,
                 VEHICLE_COLORS[VEHICLES.indexOf(vehicle)],
                 DURATION_COLORS[DURATIONS.indexOf(duration)],
                 VIBE_COLORS[VIBES.indexOf(vibe)],
-                RADIUS_COLORS[RADII.indexOf(radius)],
                 pin
               ).map((part, i) =>
                 part.color
@@ -233,9 +223,9 @@ export default function AskParrotsScreen() {
 
         {/* Ask button */}
         <TouchableOpacity
-          style={[styles.askButton, (!canAsk || coinBalance === 0) && { opacity: 0.4 }]}
+          style={[styles.askButton, (!canAsk || crackerBalance === 0) && { opacity: 0.4 }]}
           onPress={handleAsk}
-          disabled={!canAsk || loading || coinBalance === 0}
+          disabled={!canAsk || loading || crackerBalance === 0}
         >
           {loading
             ? <ActivityIndicator color="white" />
@@ -254,11 +244,10 @@ export default function AskParrotsScreen() {
             <View style={styles.modalQueryRow}>
               <Image source={parrotTabIcon} style={styles.modalQueryLogo} />
               <ParrotsStdText style={styles.modalQueryText}>
-                {canAsk && buildPromptParts(vehicle, duration, vibe, spotType, radius,
+                {canAsk && buildPromptParts(vehicle, duration, vibe, spotType,
                   VEHICLE_COLORS[VEHICLES.indexOf(vehicle)],
                   DURATION_COLORS[DURATIONS.indexOf(duration)],
                   VIBE_COLORS[VIBES.indexOf(vibe)],
-                  RADIUS_COLORS[RADII.indexOf(radius)],
                   pin
                 ).map((part, i) =>
                   part.color
@@ -316,7 +305,7 @@ export default function AskParrotsScreen() {
               </TouchableOpacity>
               <TouchableOpacity style={[styles.modalActionBtn, { backgroundColor: "#089ADE" }]} onPress={async () => {
                 if (!isHubReady()) return;
-                const query = buildPromptPreview(vehicle, duration, vibe, spotType, radius, pin);
+                const query = buildPromptPreview(vehicle, duration, vibe, spotType, pin);
                 const responseText = response.replace(/^\[\[([^\]]+)\]\]\s*/, "($1) ").replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\{\{([^}]+)\}\}/g, "$1");
                 const text = `**🦜** ${query}\n\n➡️ ${responseText}`;
                 await invokeHub("SendMessage", currentUserId, currentUserId, text, true);
@@ -354,7 +343,7 @@ function getIndefiniteArticle(word) { return /^[aeiou]/i.test(word) ? "an" : "a"
 function formatDuration(d) { return d === "Half day" ? "half a day" : d; }
 function formatVehicleName(v) { return v === "TinyHouse" ? "tiny house" : v.toLowerCase(); }
 
-function buildPromptParts(vehicle, duration, vibe, spotType, radius, vehicleColor, durationColor, vibeColor, radiusColor, pin = null) {
+function buildPromptParts(vehicle, duration, vibe, spotType, vehicleColor, durationColor, vibeColor, pin = null) {
   const isOnFoot = ON_FOOT.includes(vehicle);
   const isTransit = TRANSIT.includes(vehicle);
   const displayDuration = formatDuration(duration);
@@ -386,14 +375,11 @@ function buildPromptParts(vehicle, duration, vibe, spotType, radius, vehicleColo
     spotConf ? { text: ", focusing on " } : { text: "" },
     spotConf ? { text: spotConf.label, color: "#8B5CF6" } : { text: "" },
     spotConf ? { text: ` (${spotConf.detail})` } : { text: "" },
-    { text: ", starting within " },
-    { text: radius, color: radiusColor },
-    { text: " of this location " },
-    pin ? { text: `(${pin.latitude.toFixed(4)}, ${pin.longitude.toFixed(4)}).`, color: parrotBoatPurple } : { text: "." },
+    { text: ", starting from this location." },
   ];
 }
 
-function buildPromptPreview(vehicle, duration, vibe, spotType, radius, pin) {
+function buildPromptPreview(vehicle, duration, vibe, spotType, pin) {
   const isOnFoot = ON_FOOT.includes(vehicle);
   const isTransit = TRANSIT.includes(vehicle);
   const displayDuration = formatDuration(duration);
@@ -420,9 +406,7 @@ function buildPromptPreview(vehicle, duration, vibe, spotType, radius, pin) {
   const spotConfig = spotType ? SPOT_TYPES_CONFIG[spotType] : null;
   const spotPart = spotConfig ? `, focusing on ${spotConfig.label} (${spotConfig.detail})` : "";
 
-  const locationPart = pin
-    ? `starting within ${radius} of this location (${pin.latitude.toFixed(4)}, ${pin.longitude.toFixed(4)})`
-    : "";
+  const locationPart = pin ? "starting from this location" : "";
   return `${vehiclePart} ${vibePart}${spotPart}, ${locationPart}.`;
 }
 

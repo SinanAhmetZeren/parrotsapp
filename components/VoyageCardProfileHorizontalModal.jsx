@@ -28,7 +28,7 @@ export default function VoyageCardProfileHorizontalModal({
   enddate,
   vehiclename,
   vehicletype,
-  voyageId,
+  voyagePublicId,
   latitude,
   longitude,
   focusMap,
@@ -41,8 +41,8 @@ export default function VoyageCardProfileHorizontalModal({
   const navHook = useNavigation();
   const navigation = navProp || navHook;
 
-  const handleNavigation = (voyageId) => {
-    navigation.push("VoyageDetail", { voyageId });
+  const handleNavigation = (voyagePublicId) => {
+    navigation.push("VoyageDetail", { voyagePublicId });
   };
 
   let icon;
@@ -90,7 +90,7 @@ export default function VoyageCardProfileHorizontalModal({
     <TouchableOpacity
       onPress={() => {
         setSelectedVoyageModalVisible(false);
-        handleNavigation(voyageId);
+        handleNavigation(voyagePublicId);
       }}
     >
       <View style={styles.cardContainer}>
