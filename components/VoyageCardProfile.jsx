@@ -18,7 +18,21 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
 import he from "he";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueTransparent, parrotCream, parrotDarkBlue, parrotGreen } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueTransparent, parrotCream, parrotDarkBlue, parrotGreen, parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen, parrotWalkTurquoise, parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen, parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink } from "../assets/color";
+
+const vehicleColors = {
+  0: parrotBoatPurple,
+  1: parrotCarRed,
+  2: parrotCaravanOrangeRed,
+  3: parrotBusYellowGreen,
+  4: parrotWalkTurquoise,
+  5: parrotRunLightOrange,
+  6: parrotMotorcycleDarkRed,
+  7: parrotBicycleTealGreen,
+  8: parrotTinyHouseLightYellow,
+  9: parrotAirplaneLightGreen,
+  10: parrotTrainPink,
+};
 import { Shadow } from "react-native-shadow-2";
 
 export default function VoyageCardProfile({
@@ -64,44 +78,21 @@ export default function VoyageCardProfile({
     });
   };
 
+  const vColor = vehicleColors[vehicletype] ?? parrotBlue;
   let icon;
   switch (vehicletype) {
-    case 0:
-      icon = <FontAwesome6 name="sailboat" size={12} color={parrotBlue} />;
-      break;
-    case 1:
-      icon = <AntDesign name="car" size={12} color={parrotBlue} />;
-      break;
-    case 2:
-      icon = <FontAwesome5 name="caravan" size={12} color={parrotBlue} />;
-      break;
-    case 3:
-      icon = <Ionicons name="bus-outline" size={12} color={parrotBlue} />;
-      break;
-    case 4:
-      icon = <FontAwesome5 name="walking" size={12} color={parrotBlue} />;
-      break;
-    case 5:
-      icon = <FontAwesome5 name="running" size={12} color={parrotBlue} />;
-      break;
-    case 6:
-      icon = <FontAwesome name="motorcycle" size={12} color={parrotBlue} />;
-      break;
-    case 7:
-      icon = <FontAwesome name="bicycle" size={12} color={parrotBlue} />;
-      break;
-    case 8:
-      icon = <FontAwesome6 name="house" size={12} color={parrotBlue} />;
-      break;
-    case 9:
-      icon = <Ionicons name="airplane-outline" size={12} color={parrotBlue} />;
-      break;
-    case 10:
-      icon = <Ionicons name="train-outline" size={12} color={parrotBlue} />;
-      break;
-    default:
-      icon = "help-circle";
-      break;
+    case 0:  icon = <FontAwesome6 name="sailboat" size={12} color={vColor} />; break;
+    case 1:  icon = <AntDesign name="car" size={12} color={vColor} />; break;
+    case 2:  icon = <FontAwesome5 name="caravan" size={12} color={vColor} />; break;
+    case 3:  icon = <Ionicons name="bus-outline" size={12} color={vColor} />; break;
+    case 4:  icon = <FontAwesome5 name="walking" size={12} color={vColor} />; break;
+    case 5:  icon = <FontAwesome5 name="running" size={12} color={vColor} />; break;
+    case 6:  icon = <FontAwesome name="motorcycle" size={12} color={vColor} />; break;
+    case 7:  icon = <FontAwesome name="bicycle" size={12} color={vColor} />; break;
+    case 8:  icon = <FontAwesome6 name="house" size={12} color={vColor} />; break;
+    case 9:  icon = <Ionicons name="airplane-outline" size={12} color={vColor} />; break;
+    case 10: icon = <Ionicons name="train-outline" size={12} color={vColor} />; break;
+    default: icon = null; break;
   }
 
   // let x = "1234567890123456789012345";
@@ -112,7 +103,7 @@ export default function VoyageCardProfile({
 
       <View>
         <TouchableOpacity onPress={() => handleNavigation(voyagePublicId)}>
-          <View style={{ ...styles.cardContainer }}>
+          <View style={{ ...styles.cardContainer, borderWidth: 1.5, borderColor: vColor + "47" }}>
             <View style={{ ...styles.shadow }}>
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
               {bidCount > 0 && (
@@ -141,8 +132,8 @@ export default function VoyageCardProfile({
               }
 
               <View style={styles.pillRow}>
-                <View style={styles.pill}>
-                  <ParrotsStdText style={styles.pillText}>
+                <View style={[styles.pill, { backgroundColor: vColor + "20" }]}>
+                  <ParrotsStdText style={[styles.pillText, { color: vColor }]}>
                     {vehiclename?.length > 20
                       ? vehiclename.substring(0, 20) + "..."
                       : vehiclename}

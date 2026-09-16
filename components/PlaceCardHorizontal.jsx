@@ -3,52 +3,66 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View,  Image, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { Shadow } from "react-native-shadow-2";
-import { parrotBlue, parrotCream } from "../assets/color";
+import { Ionicons } from "@expo/vector-icons";
 
-const eggConfig = {
-  1: { image: require("../assets/whiteegg.png"), background: "#e8e8e8" },
-  2: { image: require("../assets/silveregg.png"), background: "#b0b7c3" },
-  3: { image: require("../assets/goldenegg.png"), background: "#FFD700" },
-};
+const PLACE_INK = "#6F6455";
+const PLACE_BG = "#F5F2EC";
+const PLACE_BORDER = "rgba(150,131,94,0.26)";
 
-export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardImage, link, latitude, longitude, focusMap, placeType }) {
-  const egg = eggConfig[placeType] || eggConfig[3];
+export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardImage, link, latitude, longitude, focusMap }) {
+  const parts = (link || "").split("|");
+  const category = parts[0] || "";
+  const location = parts[1] || "";
+  const url = parts[2] || "";
+
   const handlePress = () => {
-    if (!link) return;
-    const url = link.startsWith("http") ? link : `https://${link}`;
-    Linking.openURL(url);
+    if (!url) return;
+    const fullUrl = url.startsWith("http") ? url : `https://${url}`;
+    Linking.openURL(fullUrl);
   };
 
   return (
     <TouchableOpacity onPress={handlePress} style={styles.touchable}>
       <View>
-        <View style={styles.cardContainerWrapper}>
-          <View style={[styles.eggBadgeClip, { backgroundColor: egg.background }]}>
-            <View style={styles.eggBadgeOffset}>
-              <Image source={egg.image} style={styles.eggBadge} resizeMode="contain" />
-            </View>
-          </View>
+        <View style={[styles.cardContainerWrapper, { borderWidth: 1.5, borderColor: PLACE_BORDER }]}>
           <View style={styles.cardContainer}>
             <Image style={styles.cardImage} source={{ uri: cardImage }} resizeMode="cover" />
             <View style={styles.containerContainer}>
               <View style={styles.textContainer}>
-                <ParrotsStdText style={styles.header} numberOfLines={2}>{cardHeader}</ParrotsStdText>
-                {cardDescription ? (
-                  <ParrotsStdText style={styles.cardDescription} numberOfLines={6} ellipsizeMode="tail">
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                  <ParrotsStdText style={styles.header} numberOfLines={2}>{cardHeader}</ParrotsStdText>
+                  <ParrotsStdText style={styles.placeLabel}>PLACE</ParrotsStdText>
+                </View>
+
+                <View style={styles.pillRow}>
+                  {!!category && (
+                    <View style={[styles.pill, { backgroundColor: PLACE_BG }]}>
+                      <ParrotsStdText style={[styles.pillText, { color: PLACE_INK }]}>{category}</ParrotsStdText>
+                    </View>
+                  )}
+                  {!!location && (
+                    <View style={styles.pill}>
+                      <Ionicons name="location-outline" size={11} color="#4A5A6A" />
+                      <ParrotsStdText style={styles.pillText}>{location}</ParrotsStdText>
+                    </View>
+                  )}
+                </View>
+
+                {!!cardDescription && (
+                  <ParrotsStdText style={styles.cardDescription} numberOfLines={2} ellipsizeMode="tail">
                     {cardDescription}
                   </ParrotsStdText>
-                ) : null}
+                )}
               </View>
             </View>
-            <View style={styles.bottomRow}>
-              <View style={styles.visitButton} />
-              <TouchableOpacity onPress={() => focusMap && focusMap(latitude, longitude)} style={styles.mapButton}>
+
+            <TouchableOpacity onPress={() => focusMap && focusMap(latitude, longitude)} style={styles.extendedAreaContainer}>
+              <View style={styles.extendedArea}>
                 <ParrotsStdText style={styles.seeOnMap}>View on map</ParrotsStdText>
-              </TouchableOpacity>
-            </View>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -65,45 +79,22 @@ const styles = StyleSheet.create({
     borderRadius: vh(2),
     overflow: "hidden",
   },
-  eggBadgeClip: {
-    position: "absolute",
-    top: 6,
-    right: 2,
-    width: 30,
-    height: 30,
-    zIndex: 10,
-    overflow: "hidden",
-    borderRadius: 17,
-  },
-  eggBadgeOffset: {
-    position: "relative",
-    left: 0,
-    top: -1,
-  },
-  eggBadge: {
-    width: 31,
-    height: 34,
-  },
   cardContainer: {
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "rgba(42, 200, 152, 0.04)",
+    backgroundColor: "white",
     borderRadius: vh(2),
-  },
-  containerContainer: {
-    height: vh(22),
-    top: 0,
   },
   cardImage: {
     width: vw(38),
     height: vh(20),
-    marginRight: vh(0.5),
-    borderRadius: vh(2),
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
+  },
+  containerContainer: {
+    height: vh(22),
+    top: 0,
   },
   textContainer: {
     marginTop: vh(1),
@@ -112,54 +103,71 @@ const styles = StyleSheet.create({
     paddingHorizontal: vw(2),
     paddingVertical: vh(0.2),
   },
+  placeLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 9,
+    letterSpacing: 1.2,
+    color: "#5C6B7A",
+    alignSelf: "flex-start",
+    paddingRight: 6,
+  },
   header: {
-    fontFamily: "Nunito_700Bold",
-    marginTop: 2,
-    fontSize: 14,
-    color: parrotBlue,
+    fontFamily: "Nunito_800ExtraBold",
+    marginTop: 0,
+    fontSize: 15,
+    color: "#0A2540",
+    letterSpacing: -0.23,
+    lineHeight: 18,
     paddingVertical: vh(0.2),
     alignSelf: "flex-start",
   },
-  cardDescription: {
-    fontFamily: "Nunito_700Bold",
-    paddingTop: vh(0.6),
+  pillRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 5,
     marginTop: vh(0.5),
+  },
+  pill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#F4F7FB",
+    paddingHorizontal: vw(2),
+    paddingVertical: 3,
+    borderRadius: vw(3),
+  },
+  pillText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 11,
+    color: "#4A5A6A",
+  },
+  cardDescription: {
+    fontFamily: "Nunito_600SemiBold",
+    paddingTop: vh(0.6),
     fontSize: 12,
-    color: "#6b7280",
+    color: "#4A5A6A",
     lineHeight: 17,
   },
-  bottomRow: {
+  extendedAreaContainer: {
+    alignSelf: "flex-end",
     position: "absolute",
-    bottom: vh(0.8),
-    left: vw(38),
-    width: vw(50),
-    flexDirection: "row",
-    justifyContent: "space-between",
+    bottom: vh(0.3),
+    right: vw(2),
+    borderRadius: vh(1),
+    paddingLeft: vw(5),
+    paddingRight: vw(2),
   },
-  visitButton: {
-    flex: 1,
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    marginRight: 2,
-    alignItems: "flex-start",
-  },
-  mapButton: {
-    flex: 1,
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    marginLeft: 2,
-    alignItems: "flex-end",
-  },
-  visitText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 12,
-    color: parrotBlue,
+  extendedArea: {
+    paddingHorizontal: vh(8),
+    paddingVertical: vh(3),
   },
   seeOnMap: {
     fontFamily: "Nunito_700Bold",
     fontSize: 12,
-    color: parrotBlue,
+    color: "#5C6B7A",
+    alignSelf: "flex-end",
+    position: "absolute",
+    bottom: vh(0),
+    right: vw(0),
   },
 });

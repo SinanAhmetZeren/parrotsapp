@@ -3,7 +3,7 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { format } from "date-fns";
 import {
@@ -62,56 +62,19 @@ export default function VoyageCardProfileHorizontal({
   };
 
   let icon;
-  let dotIcon;
   switch (vehicletype) {
-    case 0:
-      icon = <FontAwesome6 name="sailboat" size={12} color={parrotBlue} />;
-      dotIcon = <FontAwesome6 name="sailboat" size={13} color="white" />;
-      break;
-    case 1:
-      icon = <AntDesign name="car" size={12} color={parrotBlue} />;
-      dotIcon = <AntDesign name="car" size={13} color="white" />;
-      break;
-    case 2:
-      icon = <FontAwesome5 name="caravan" size={12} color={parrotBlue} />;
-      dotIcon = <FontAwesome5 name="caravan" size={13} color="white" />;
-      break;
-    case 3:
-      icon = <Ionicons name="bus-outline" size={12} color={parrotBlue} />;
-      dotIcon = <Ionicons name="bus-outline" size={13} color="white" />;
-      break;
-    case 4:
-      icon = <FontAwesome5 name="walking" size={12} color={parrotBlue} />;
-      dotIcon = <FontAwesome5 name="walking" size={13} color="white" />;
-      break;
-    case 5:
-      icon = <FontAwesome5 name="running" size={12} color={parrotBlue} />;
-      dotIcon = <FontAwesome5 name="running" size={13} color="white" />;
-      break;
-    case 6:
-      icon = <FontAwesome name="motorcycle" size={12} color={parrotBlue} />;
-      dotIcon = <FontAwesome name="motorcycle" size={13} color="white" />;
-      break;
-    case 7:
-      icon = <FontAwesome name="bicycle" size={12} color={parrotBlue} />;
-      dotIcon = <FontAwesome name="bicycle" size={13} color="white" />;
-      break;
-    case 8:
-      icon = <FontAwesome6 name="house" size={12} color={parrotBlue} />;
-      dotIcon = <FontAwesome6 name="house" size={13} color="white" />;
-      break;
-    case 9:
-      icon = <Ionicons name="airplane-outline" size={12} color={parrotBlue} />;
-      dotIcon = <Ionicons name="airplane-outline" size={13} color="white" />;
-      break;
-    case 10:
-      icon = <Ionicons name="train-outline" size={12} color={parrotBlue} />;
-      dotIcon = <Ionicons name="train-outline" size={13} color="white" />;
-      break;
-    default:
-      icon = null;
-      dotIcon = null;
-      break;
+    case 0: icon = <FontAwesome6 name="sailboat" size={12} color={parrotBlue} />; break;
+    case 1: icon = <AntDesign name="car" size={12} color={parrotBlue} />; break;
+    case 2: icon = <FontAwesome5 name="caravan" size={12} color={parrotBlue} />; break;
+    case 3: icon = <Ionicons name="bus-outline" size={12} color={parrotBlue} />; break;
+    case 4: icon = <FontAwesome5 name="walking" size={12} color={parrotBlue} />; break;
+    case 5: icon = <FontAwesome5 name="running" size={12} color={parrotBlue} />; break;
+    case 6: icon = <FontAwesome name="motorcycle" size={12} color={parrotBlue} />; break;
+    case 7: icon = <FontAwesome name="bicycle" size={12} color={parrotBlue} />; break;
+    case 8: icon = <FontAwesome6 name="house" size={12} color={parrotBlue} />; break;
+    case 9: icon = <Ionicons name="airplane-outline" size={12} color={parrotBlue} />; break;
+    case 10: icon = <Ionicons name="train-outline" size={12} color={parrotBlue} />; break;
+    default: icon = null; break;
   }
 
   const panMapOnVoyage = () => {
@@ -123,10 +86,7 @@ export default function VoyageCardProfileHorizontal({
 
     <TouchableOpacity onPress={() => handleNavigation(voyagePublicId)} style={styles.TouchableOpacityStyle}>
       <View>
-        <View style={styles.cardContainerWrapper}>
-          <View style={[styles.vehicleColorCircle, { backgroundColor: vehicleColors[vehicletype] ?? parrotBlue }]}>
-            <View style={{ opacity: 0.4 }}>{dotIcon}</View>
-          </View>
+        <View style={[styles.cardContainerWrapper, { borderWidth: 1.5, borderColor: (vehicleColors[vehicletype] ?? parrotBlue) + "27" }]}>
           <View style={styles.cardContainer}>
             <View style={styles.shadow}>
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
@@ -137,21 +97,21 @@ export default function VoyageCardProfileHorizontal({
                 <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
 
                 <View style={styles.pillRow}>
-                  <View style={styles.pill}>
-                    <ParrotsStdText style={styles.pillText}>
+                  <View style={[styles.pill, { backgroundColor: (vehicleColors[vehicletype] ?? parrotBlue) + "20" }]}>
+                    <ParrotsStdText style={[styles.pillText, { color: vehicleColors[vehicletype] ?? parrotBlue }]}>
                       {vehiclename?.length > 16
                         ? vehiclename.substring(0, 16) + "..."
                         : vehiclename}
                     </ParrotsStdText>
-                    {icon}
+                    {React.cloneElement(icon, { color: vehicleColors[vehicletype] ?? parrotBlue })}
                   </View>
                   <View style={styles.pill}>
                     <ParrotsStdText style={styles.pillText}>{vacancy}</ParrotsStdText>
-                    <Feather name="users" size={11} color={parrotBlue} />
+                    <Feather name="users" size={11} color="#4A5A6A" />
                   </View>
                   <View style={styles.pill}>
                     <ParrotsStdText style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</ParrotsStdText>
-                    <AntDesign name="calendar" size={11} color={parrotBlue} />
+                    <AntDesign name="calendar" size={11} color="#4A5A6A" />
                   </View>
                 </View>
                 <ParrotsStdText
@@ -196,24 +156,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
+    backgroundColor: "white",
     borderRadius: vh(2),
   },
   cardContainerWrapper: {
     backgroundColor: "white",
     borderRadius: vh(2),
     overflow: "hidden",
-  },
-  vehicleColorCircle: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    width: 21,
-    height: 21,
-    borderRadius: 10.5,
-    zIndex: 10,
-    alignItems: "center",
-    justifyContent: "center",
   },
   containerContainer: {
     height: vh(22),
@@ -233,9 +182,9 @@ const styles = StyleSheet.create({
     paddingVertical: vh(3),
   },
   seeOnMap: {
-    fontFamily: "Nunito_700Bold",
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 12,
-    color: parrotBlue,
+    color: "#0A5FBF",
     alignSelf: "flex-end",
     position: "absolute",
     bottom: vh(0),
@@ -244,10 +193,6 @@ const styles = StyleSheet.create({
   cardImage: {
     width: vw(38),
     height: vh(20),
-    marginRight: vh(0.5),
-    borderRadius: vh(2),
-    borderTopRightRadius: vh(0),
-    borderBottomRightRadius: vh(0),
   },
   textContainer: {
     marginTop: vh(1),
@@ -257,10 +202,12 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.2),
   },
   header: {
-    fontFamily: "Nunito_700Bold",
+    fontFamily: "Nunito_800ExtraBold",
     marginTop: 2,
-    fontSize: 14,
-    color: parrotBlue,
+    fontSize: 15,
+    color: "#0A5FBF",
+    letterSpacing: -0.23,
+    lineHeight: 18,
     paddingVertical: vh(0.2),
     alignSelf: "flex-start",
   },
@@ -274,7 +221,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
+    backgroundColor: "#F4F7FB",
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),
@@ -282,7 +229,7 @@ const styles = StyleSheet.create({
   pillText: {
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
-    color: parrotBlue,
+    color: "#4A5A6A",
   },
   cardDescription: {
     fontFamily: "Nunito_700Bold",
