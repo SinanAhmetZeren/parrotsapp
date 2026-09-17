@@ -10,7 +10,7 @@ export default function VoyageListVertical({ data, direction }) {
   const renderItem = ({ item }) => (
     <VoyageCardProfile
       key={item.id}
-      voyageId={item.publicId}
+      voyagePublicId={item.publicId}
       cardHeader={item.name}
       cardDescription={item.brief}
       cardImage={item.profileImageThumbnail || item.profileImage}

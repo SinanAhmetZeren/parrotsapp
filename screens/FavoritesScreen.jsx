@@ -24,7 +24,7 @@ import { useGetFavoriteVoyagesByUserIdQuery } from "../slices/VoyageSlice";
 import { useGetFavoriteVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
 import { useSelector } from "react-redux";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import { parrotBananaLeafGreen, parrotBlue, parrotPistachioGreen } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotCream, parrotPistachioGreen } from "../assets/color";
 
 export default function FavoritesScreen({ navigation }) {
   const insets = useSafeAreaInsets();
@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     height: vh(90),
+    backgroundColor: parrotCream,
   },
   voyageListContainer: {
     width: vw(98),

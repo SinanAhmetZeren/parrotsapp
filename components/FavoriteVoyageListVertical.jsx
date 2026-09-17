@@ -13,7 +13,7 @@ export default function FavoriteVoyageList({ data, direction }) {
     <View style={{ borderRadius: vh(2), marginBottom: vh(1.3) }} key={item.id}>
       <FavoriteVoyageCardProfile
         key={item.id}
-        voyageId={item.publicId}
+        voyagePublicId={item.publicId}
         cardHeader={item.name}
         cardDescription={item.brief}
         cardImage={item.profileImage}

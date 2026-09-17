@@ -950,11 +950,8 @@ const CreateVoyageScreen = ({ navigation }) => {
                     return isPublicOnMap && balance != null && balance < cost;
                   })()}
                 >
-                  {isCreatingVoyage ? (
-                    <ActivityIndicator size="small" color="#ffffff" />
-                  ) : (
-                    <ParrotsStdText style={styles.submitText}>Create Voyage</ParrotsStdText>
-                  )}
+                  <ParrotsStdText style={[styles.submitText, { opacity: isCreatingVoyage ? 0 : 1 }]}>Create Voyage</ParrotsStdText>
+                  {isCreatingVoyage && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
                 </TouchableOpacity>
               )}
             </View>
@@ -1255,6 +1252,8 @@ const styles = StyleSheet.create({
     backgroundColor: parrotBlue,
     borderRadius: vh(4),
     width: vw(50),
+    alignItems: "center",
+    justifyContent: "center",
   },
   selection2Disabled: {
     marginHorizontal: vh(0.25),
@@ -1263,6 +1262,8 @@ const styles = StyleSheet.create({
     backgroundColor: parrotBlueSemiTransparent,
     borderRadius: vh(4),
     width: vw(50),
+    alignItems: "center",
+    justifyContent: "center",
   },
   submitText: {
     fontFamily: "Nunito_700Bold",

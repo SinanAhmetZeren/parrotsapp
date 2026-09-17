@@ -5,7 +5,7 @@ export default {
         "name": "Parrots",
         "slug": "parrots",
         "owner": "ahmetzeren",
-        "version": "1.0.27",
+        "version": "1.0.29",
         "scheme": "parrotsapp",
         "orientation": "portrait",
         "icon": "./assets/parrotslogoblue_icon.png",
@@ -42,7 +42,7 @@ export default {
             "softwareKeyboardLayoutMode": "resize",
             "package": "com.zenforest.parrots",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 27,
+            "versionCode": 29,
             "intentFilters": [
                 {
                     "action": "VIEW",
@@ -82,6 +82,8 @@ export default {
             "expo-build-properties",
             "expo-web-browser",
             "@react-native-google-signin/google-signin",
+            "expo-splash-screen",
+            "expo-status-bar",
         ],
         "extra": {
             "eas": {

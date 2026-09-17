@@ -101,21 +101,28 @@ export default function VoyageCardProfile({
       marginBottom: 0, borderRadius: vh(2), padding: vh(1)
     }}>
 
-      <View>
+      <View style={{ backgroundColor: "white", borderRadius: vh(2), overflow: "hidden", borderWidth: 1, borderColor: "#E8E3DC" }}>
         <TouchableOpacity onPress={() => handleNavigation(voyagePublicId)}>
-          <View style={{ ...styles.cardContainer, borderWidth: 1.5, borderColor: vColor + "47" }}>
+          <View style={styles.cardContainer}>
             <View style={{ ...styles.shadow }}>
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
-              {bidCount > 0 && (
+              {(bidCount > 0 || publicOnMap) && (
                 <View style={styles.bidPill}>
-                  <View style={[styles.bidCircle, { backgroundColor: parrotBananaLeafGreen }]}>
-                    <Feather name="check" size={10} color="white" />
-                    <ParrotsStdText style={styles.bidPillText}>{acceptedBidCount}</ParrotsStdText>
-                  </View>
-                  <View style={[styles.bidCircle, { backgroundColor: parrotBlue }]}>
-                    <FontAwesome name="pencil" size={10} color="white" />
-                    <ParrotsStdText style={styles.bidPillText}>{bidCount}</ParrotsStdText>
-                  </View>
+                  {publicOnMap &&
+                    <View style={{ backgroundColor: "#00838F", borderRadius: 99, padding: 4, alignItems: "center", justifyContent: "center" }}>
+                      <MaterialIcons name="public" size={15} color="white" />
+                    </View>
+                  }
+                  {bidCount > 0 && (
+                    <>
+                      <View style={[styles.bidCircle, { backgroundColor: parrotBananaLeafGreen }]}>
+                        <ParrotsStdText style={styles.bidPillText}>{acceptedBidCount}</ParrotsStdText>
+                      </View>
+                      <View style={[styles.bidCircle, { backgroundColor: parrotBlue }]}>
+                        <ParrotsStdText style={styles.bidPillText}>{bidCount}</ParrotsStdText>
+                      </View>
+                    </>
+                  )}
                 </View>
               )}
             </View>
@@ -125,14 +132,8 @@ export default function VoyageCardProfile({
                 {cardHeader}
               </ParrotsStdText>
 
-              {publicOnMap &&
-                <View style={{ position: "absolute", right: 5, top: 5, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5), padding: 3 }}>
-                  <MaterialIcons name="public" size={20} color={parrotBlue} />
-                </View>
-              }
-
               <View style={styles.pillRow}>
-                <View style={[styles.pill, { backgroundColor: vColor + "20" }]}>
+                <View style={[styles.pill, { backgroundColor: vColor + "15" }]}>
                   <ParrotsStdText style={[styles.pillText, { color: vColor }]}>
                     {vehiclename?.length > 20
                       ? vehiclename.substring(0, 20) + "..."
@@ -142,11 +143,11 @@ export default function VoyageCardProfile({
                 </View>
                 <View style={styles.pill}>
                   <ParrotsStdText style={styles.pillText}>{vacancy}</ParrotsStdText>
-                  <Feather name="users" size={11} color={parrotBlue} />
+                  <Feather name="users" size={11} color="#4A5A6A" />
                 </View>
                 <View style={styles.pill}>
                   <ParrotsStdText style={styles.pillText}>{formattedStartDate + " – " + formattedEndDate}</ParrotsStdText>
-                  <AntDesign name="calendar" size={11} color={parrotBlue} />
+                  <AntDesign name="calendar" size={11} color="#4A5A6A" />
                 </View>
               </View>
               <ParrotsStdText
@@ -173,16 +174,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
-    borderRadius: vh(2),
+    backgroundColor: "transparent",
   },
   cardImage: {
     width: vw(42),
     height: vh(20),
-    marginRight: vh(0.5),
-    borderRadius: vh(2),
-    borderTopRightRadius: vh(0),
-    borderBottomRightRadius: vh(0),
   },
   textContainer: {
     width: vw(50),
@@ -190,10 +186,10 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.2),
   },
   header: {
-    fontFamily: "Nunito_700Bold",
+    fontFamily: "Nunito_800ExtraBold",
     marginTop: 2,
-    fontSize: 14,
-    color: parrotBlue,
+    fontSize: 15,
+    color: "#0A5FBF",
     paddingVertical: vh(0.2),
     alignSelf: "flex-start",
   },
@@ -207,7 +203,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
+    backgroundColor: "#F4F7FB",
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),
@@ -215,28 +211,23 @@ const styles = StyleSheet.create({
   pillText: {
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
-    color: parrotBlue,
+    color: "#4A5A6A",
   },
   bidPill: {
     position: "absolute",
     bottom: vh(0.8),
     left: vw(2),
-    backgroundColor: "rgba(222,222,222,0.85)",
-    // backgroundColor: "white",
-    borderRadius: vw(11),
-    paddingHorizontal: vw(1),
-    paddingVertical: 3,
     flexDirection: "row",
     gap: 2,
   },
   bidCircle: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 3,
-    borderRadius: vw(3),
-    paddingHorizontal: vw(1.5),
-    paddingVertical: 2,
     justifyContent: "center",
+    borderRadius: 99,
+    minWidth: 22,
+    minHeight: 22,
+    paddingHorizontal: 5,
   },
   bidPillText: {
     fontFamily: "Nunito_700Bold",

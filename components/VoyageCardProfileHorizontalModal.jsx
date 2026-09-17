@@ -3,9 +3,8 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { format } from "date-fns";
 import {
   Feather,
   FontAwesome6,
@@ -15,9 +14,27 @@ import {
   Ionicons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { API_URL } from "@env";
 import he from "he";
-import { parrotBlue, parrotBlueMediumTransparent, parrotCream } from "../assets/color";
+import {
+  parrotBlue,
+  parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen,
+  parrotWalkTurquoise, parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen,
+  parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink,
+} from "../assets/color";
+
+const vehicleColors = {
+  0: parrotBoatPurple,
+  1: parrotCarRed,
+  2: parrotCaravanOrangeRed,
+  3: parrotBusYellowGreen,
+  4: parrotWalkTurquoise,
+  5: parrotRunLightOrange,
+  6: parrotMotorcycleDarkRed,
+  7: parrotBicycleTealGreen,
+  8: parrotTinyHouseLightYellow,
+  9: parrotAirplaneLightGreen,
+  10: parrotTrainPink,
+};
 
 export default function VoyageCardProfileHorizontalModal({
   cardHeader,
@@ -29,116 +46,76 @@ export default function VoyageCardProfileHorizontalModal({
   vehiclename,
   vehicletype,
   voyagePublicId,
-  latitude,
-  longitude,
-  focusMap,
   setSelectedVoyageModalVisible,
   navigation: navProp,
 }) {
-  const cardImageUrl = `${cardImage}`;
-  const formattedStartDate = require("date-fns").format(startdate, "MMM d, yy");
-  const formattedEndDate = require("date-fns").format(enddate, "MMM d, yy");
+  const vt = Number(vehicletype);
+  const vColor = vehicleColors[vt] ?? parrotBlue;
+  const formattedStartDate = require("date-fns").format(startdate, "MMM d");
+  const formattedEndDate = require("date-fns").format(enddate, "MMM d");
+  const dateLabel = formattedStartDate === formattedEndDate
+    ? formattedStartDate
+    : `${formattedStartDate} – ${formattedEndDate}`;
   const navHook = useNavigation();
   const navigation = navProp || navHook;
 
-  const handleNavigation = (voyagePublicId) => {
-    navigation.push("VoyageDetail", { voyagePublicId });
-  };
-
   let icon;
-  switch (vehicletype) {
-    case 0:
-      icon = <FontAwesome6 name="sailboat" size={12} color={parrotBlue} />;
-      break;
-    case 1:
-      icon = <AntDesign name="car" size={12} color={parrotBlue} />;
-      break;
-    case 2:
-      icon = <FontAwesome5 name="caravan" size={12} color={parrotBlue} />;
-      break;
-    case 3:
-      icon = <Ionicons name="bus-outline" size={12} color={parrotBlue} />;
-      break;
-    case 4:
-      icon = <FontAwesome5 name="walking" size={12} color={parrotBlue} />;
-      break;
-    case 5:
-      icon = <FontAwesome5 name="running" size={12} color={parrotBlue} />;
-      break;
-    case 6:
-      icon = <FontAwesome name="motorcycle" size={12} color={parrotBlue} />;
-      break;
-    case 7:
-      icon = <FontAwesome name="bicycle" size={12} color={parrotBlue} />;
-      break;
-    case 8:
-      icon = <FontAwesome6 name="house" size={12} color={parrotBlue} />;
-      break;
-    case 9:
-      icon = <Ionicons name="airplane-outline" size={12} color={parrotBlue} />;
-      break;
-    case 10:
-      icon = <Ionicons name="train-outline" size={12} color={parrotBlue} />;
-      break;
-
-    default:
-      icon = "help-circle";
-      break;
+  switch (vt) {
+    case 0:  icon = <FontAwesome6 name="sailboat" size={12} color={vColor} />; break;
+    case 1:  icon = <AntDesign name="car" size={12} color={vColor} />; break;
+    case 2:  icon = <FontAwesome5 name="caravan" size={12} color={vColor} />; break;
+    case 3:  icon = <Ionicons name="bus-outline" size={12} color={vColor} />; break;
+    case 4:  icon = <FontAwesome5 name="walking" size={12} color={vColor} />; break;
+    case 5:  icon = <FontAwesome5 name="running" size={12} color={vColor} />; break;
+    case 6:  icon = <FontAwesome name="motorcycle" size={12} color={vColor} />; break;
+    case 7:  icon = <FontAwesome name="bicycle" size={12} color={vColor} />; break;
+    case 8:  icon = <FontAwesome6 name="house" size={12} color={vColor} />; break;
+    case 9:  icon = <Ionicons name="airplane-outline" size={12} color={vColor} />; break;
+    case 10: icon = <Ionicons name="train-outline" size={12} color={vColor} />; break;
+    default: icon = null; break;
   }
 
   return (
     <TouchableOpacity
       onPress={() => {
         setSelectedVoyageModalVisible(false);
-        handleNavigation(voyagePublicId);
+        navigation.push("VoyageDetail", { voyagePublicId });
       }}
     >
-      <View style={styles.cardContainer}>
-        <View style={styles.shadow}>
-          <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
-        </View>
+      <View style={[styles.cardContainerWrapper, { backgroundColor: "white", borderWidth: 1, borderColor: "#E8E3DC" }]}>
+        <View style={styles.cardContainer}>
+          <Image style={styles.cardImage} source={{ uri: cardImage }} resizeMode="cover" />
 
-        <View style={styles.containerContainer}>
-          <View style={styles.textContainer}>
-            <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
+          <View style={styles.containerContainer}>
+            <View style={styles.textContainer}>
+              <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
 
-            <View style={styles.vacancyAndVehicle}>
-              <View>
-                <ParrotsStdText style={styles.subHeader}>
-                  {/* {vehiclename + "111 "} */}
-                  {vehiclename?.length > 21
-                    ? vehiclename.substring(0, 21) + "..."
-                    : vehiclename}
-                  {"  "}
+              <View style={styles.pillRow}>
+                <View style={[styles.pill, { backgroundColor: vColor + "15" }]}>
+                  <ParrotsStdText style={[styles.pillText, { color: vColor }]}>
+                    {vehiclename?.length > 16 ? vehiclename.substring(0, 16) + "..." : vehiclename}
+                  </ParrotsStdText>
                   {icon}
-                </ParrotsStdText>
+                </View>
+                <View style={styles.pill}>
+                  <ParrotsStdText style={styles.pillText}>{vacancy}</ParrotsStdText>
+                  <Feather name="users" size={11} color="#4A5A6A" />
+                </View>
+                <View style={styles.pill}>
+                  <ParrotsStdText style={styles.pillText}>{dateLabel}</ParrotsStdText>
+                  <AntDesign name="calendar" size={11} color="#4A5A6A" />
+                </View>
               </View>
-            </View>
 
-            <View style={styles.vacancyAndVehicle}>
-              <View>
-                <ParrotsStdText style={styles.subHeader2}>
-                  {vacancy + " "}
-                  <Feather name="users" size={12} color={parrotBlue} />
-                </ParrotsStdText>
-              </View>
-              <ParrotsStdText style={styles.subHeader3}>
-                {formattedStartDate + " - " + formattedEndDate + "  "}
-                <AntDesign name="calendar" size={12} color={parrotBlue} />
+              <ParrotsStdText style={styles.cardDescription} numberOfLines={3} ellipsizeMode="tail">
+                {he.decode(
+                  cardDescription
+                    .replace(/<[^>]+>/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim()
+                )}
               </ParrotsStdText>
             </View>
-            <ParrotsStdText
-              style={styles.cardDescription}
-              numberOfLines={5}
-              ellipsizeMode="tail"
-            >
-              {he.decode(
-                cardDescription
-                  .replace(/<[^>]+>/g, ' ')
-                  .replace(/\s+/g, ' ')
-                  .trim()
-              )}
-            </ParrotsStdText>
           </View>
         </View>
       </View>
@@ -147,76 +124,69 @@ export default function VoyageCardProfileHorizontalModal({
 }
 
 const styles = StyleSheet.create({
-  containerContainer: {
-    height: vh(22),
-    top: 0,
-  },
-
-  cardContainer: {
+  cardContainerWrapper: {
+    borderRadius: vh(2),
+    overflow: "hidden",
     marginHorizontal: vw(2),
+  },
+  cardContainer: {
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: parrotCream,
-    borderRadius: vh(2),
+    backgroundColor: "transparent",
   },
-
   cardImage: {
     width: vw(38),
     height: vh(20),
-    marginRight: vh(0.5),
-    borderRadius: vh(2),
-    borderTopRightRadius: vh(0),
-    borderBottomRightRadius: vh(0),
+  },
+  containerContainer: {
+    height: vh(22),
+    top: 0,
   },
   textContainer: {
     marginTop: vh(1),
     width: vw(50),
     height: vh(18),
-    padding: vh(0.2),
+    paddingHorizontal: vw(2),
+    paddingVertical: vh(0.2),
   },
   header: {
-    fontFamily: "Nunito_700Bold",
+    fontFamily: "Nunito_800ExtraBold",
     marginTop: 2,
-    fontSize: 14,
-    color: parrotBlue,
+    fontSize: 15,
+    color: "#0A5FBF",
+    letterSpacing: -0.23,
+    lineHeight: 18,
     paddingVertical: vh(0.2),
-    alignSelf: "center",
+    alignSelf: "flex-start",
   },
-  subHeader: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 12,
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
-    paddingHorizontal: vh(0.5),
-    marginTop: vh(0.2),
-    borderRadius: vw(2),
+  pillRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 5,
+    marginTop: vh(0.5),
   },
-  subHeader2: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 10,
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
-    paddingHorizontal: vh(0.5),
-    marginTop: vh(0.2),
-    borderRadius: vw(2),
+  pill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#F4F7FB",
+    paddingHorizontal: vw(2),
+    paddingVertical: 3,
+    borderRadius: vw(3),
   },
-  subHeader3: {
+  pillText: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 10,
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
-    paddingHorizontal: vh(1),
-    marginTop: vh(0.1),
-    borderRadius: vw(2),
+    fontSize: 11,
+    color: "#4A5A6A",
   },
   cardDescription: {
-    fontFamily: "Nunito_700Bold",
+    fontFamily: "Nunito_600SemiBold",
     paddingTop: vh(0.6),
-    paddingHorizontal: 0,
-    fontSize: 11.5,
-  },
-  vacancyAndVehicle: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    fontSize: 12,
+    color: "#4A5A6A",
+    lineHeight: 17,
   },
 });

@@ -26,15 +26,12 @@ export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardI
   return (
     <TouchableOpacity onPress={handlePress} style={styles.touchable}>
       <View>
-        <View style={[styles.cardContainerWrapper, { borderWidth: 1.5, borderColor: PLACE_BORDER }]}>
+        <View style={[styles.cardContainerWrapper, { borderWidth: 1, borderColor: "#E8E3DC", backgroundColor: "white" }]}>
           <View style={styles.cardContainer}>
             <Image style={styles.cardImage} source={{ uri: cardImage }} resizeMode="cover" />
             <View style={styles.containerContainer}>
               <View style={styles.textContainer}>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                  <ParrotsStdText style={styles.header} numberOfLines={2}>{cardHeader}</ParrotsStdText>
-                  <ParrotsStdText style={styles.placeLabel}>PLACE</ParrotsStdText>
-                </View>
+                <ParrotsStdText style={styles.header} numberOfLines={2}>{cardHeader}</ParrotsStdText>
 
                 <View style={styles.pillRow}>
                   {!!category && (
@@ -51,7 +48,7 @@ export default function PlaceCardHorizontal({ cardHeader, cardDescription, cardI
                 </View>
 
                 {!!cardDescription && (
-                  <ParrotsStdText style={styles.cardDescription} numberOfLines={2} ellipsizeMode="tail">
+                  <ParrotsStdText style={styles.cardDescription} numberOfLines={4} ellipsizeMode="tail">
                     {cardDescription}
                   </ParrotsStdText>
                 )}

@@ -3,189 +3,73 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View,  Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import {
-  Feather,
-  FontAwesome6,
-  AntDesign,
-  FontAwesome5,
-  FontAwesome,
-  Ionicons,
-} from "@expo/vector-icons";
+import { Feather, FontAwesome6, AntDesign, FontAwesome5, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { API_URL } from "@env";
-import { parrotTextDarkBlue, parrotBlue, parrotBlueMediumTransparent, parrotCream } from "../assets/color";
 import he from "he";
+import {
+  parrotBlue,
+  parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen,
+  parrotWalkTurquoise, parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen,
+  parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink,
+} from "../assets/color";
 
-export default function FavoriteVehicleCardProfile({
-  vehicleId,
-  vehiclename,
-  description,
-  cardImage,
-  vehicletype,
-  capacity,
-}) {
-  const cardImageUrl = `${cardImage}`;
+const vehicleColors = {
+  0: parrotBoatPurple, 1: parrotCarRed, 2: parrotCaravanOrangeRed, 3: parrotBusYellowGreen,
+  4: parrotWalkTurquoise, 5: parrotRunLightOrange, 6: parrotMotorcycleDarkRed,
+  7: parrotBicycleTealGreen, 8: parrotTinyHouseLightYellow, 9: parrotAirplaneLightGreen, 10: parrotTrainPink,
+};
+
+const vehicleTypeNames = ["Boat", "Car", "Caravan", "Bus", "Walk", "Run", "Motorcycle", "Bicycle", "TinyHouse", "Airplane", "Train"];
+
+export default function FavoriteVehicleCardProfile({ vehicleId, vehiclename, description, cardImage, vehicletype, capacity }) {
+  const vColor = vehicleColors[vehicletype] ?? "#0A77EA";
+
   let icon;
   switch (vehicletype) {
-    case 0:
-      icon = (
-        <FontAwesome6
-          name="sailboat"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 1:
-      icon = (
-        <AntDesign
-          name="car"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 2:
-      icon = (
-        <FontAwesome5
-          name="caravan"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 3:
-      icon = (
-        <Ionicons
-          name="bus-outline"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 4:
-      icon = (
-        <FontAwesome5
-          name="walking"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 5:
-      icon = (
-        <FontAwesome5
-          name="running"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 6:
-      icon = (
-        <FontAwesome
-          name="motorcycle"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 7:
-      icon = (
-        <FontAwesome
-          name="bicycle"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 8:
-      icon = (
-        <FontAwesome6
-          name="house"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 9:
-      icon = (
-        <Ionicons
-          name="airplane-outline"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    case 10:
-      icon = (
-        <Ionicons
-          name="train-outline"
-          size={16}
-          color={parrotBlue}
-          style={styles.icon}
-        />
-      );
-      break;
-    default:
-      icon = "help-circle";
-      break;
+    case 0:  icon = <FontAwesome6 name="sailboat" size={12} color={vColor} />; break;
+    case 1:  icon = <AntDesign name="car" size={12} color={vColor} />; break;
+    case 2:  icon = <FontAwesome5 name="caravan" size={12} color={vColor} />; break;
+    case 3:  icon = <Ionicons name="bus-outline" size={12} color={vColor} />; break;
+    case 4:  icon = <FontAwesome5 name="walking" size={12} color={vColor} />; break;
+    case 5:  icon = <FontAwesome5 name="running" size={12} color={vColor} />; break;
+    case 6:  icon = <FontAwesome name="motorcycle" size={12} color={vColor} />; break;
+    case 7:  icon = <FontAwesome name="bicycle" size={12} color={vColor} />; break;
+    case 8:  icon = <FontAwesome6 name="house" size={12} color={vColor} />; break;
+    case 9:  icon = <Ionicons name="airplane-outline" size={12} color={vColor} />; break;
+    case 10: icon = <Ionicons name="train-outline" size={12} color={vColor} />; break;
+    default: icon = null; break;
   }
 
-  const vehicleTypeNames = ["Boat", "Car", "Caravan", "Bus", "Walk", "Run", "Motorcycle", "Bicycle", "TinyHouse", "Airplane", "Train"];
   const vehicleTypeName = vehicleTypeNames[vehicletype] ?? "";
-
   const navigation = useNavigation();
-  const handleNavigateToVehicle = (vehicleId) => {
-    // navigation.navigate("VehicleDetail", { vehicleId });
 
-    navigation.navigate("Favorites", {
-      screen: "VehicleDetail",
-      params: { vehicleId: vehicleId },
-    });
+  const handleNavigateToVehicle = (id) => {
+    navigation.navigate("Favorites", { screen: "VehicleDetail", params: { vehicleId: id } });
   };
 
   return (
     <TouchableOpacity onPress={() => handleNavigateToVehicle(vehicleId)}>
-      <View style={styles.cardContainer}>
-        <View style={styles.shadow}>
-          <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
-        </View>
-
-        <View style={styles.textContainer}>
-          <ParrotsStdText numberOfLines={1} style={styles.headerName}>
-            {vehiclename}
-          </ParrotsStdText>
-          <View style={styles.pillRow}>
-            <ParrotsStdText style={styles.pill}>{icon}{"  "}{vehicleTypeName}</ParrotsStdText>
-            <View style={styles.pillView}>
-              <ParrotsStdText style={styles.pillText}>{capacity > 100 ? "100+" : capacity}</ParrotsStdText>
-              <Feather name="users" size={11} color={parrotBlue} />
+      <View style={[styles.cardContainerWrapper, { backgroundColor: "white", borderColor: "#E8E3DC" }]}>
+        <View style={styles.cardContainer}>
+          <Image style={styles.cardImage} source={{ uri: cardImage }} resizeMode="cover" />
+          <View style={styles.textContainer}>
+            <ParrotsStdText numberOfLines={1} style={[styles.headerName, { color: "#0A5FBF" }]}>{vehiclename}</ParrotsStdText>
+            <View style={styles.pillRow}>
+              <View style={[styles.pillView, { backgroundColor: vColor + "15" }]}>
+                <ParrotsStdText style={[styles.pillText, { color: vColor }]} numberOfLines={1}>{vehicleTypeName}</ParrotsStdText>
+                {icon}
+              </View>
+              <View style={styles.pillView}>
+                <ParrotsStdText style={styles.pillText}>{capacity > 100 ? "100+" : capacity}</ParrotsStdText>
+                <Feather name="users" size={11} color="#4A5A6A" />
+              </View>
             </View>
+            <ParrotsStdText style={styles.cardDescription} numberOfLines={4} ellipsizeMode="tail">
+              {he.decode(description.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim())}
+            </ParrotsStdText>
           </View>
-          <ParrotsStdText style={styles.cardDescription}
-            numberOfLines={4}
-            ellipsizeMode="tail"
-          >
-            {he.decode(
-              description
-                .replace(/<[^>]+>/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim()
-            )}
-          </ParrotsStdText>
         </View>
       </View>
     </TouchableOpacity>
@@ -193,24 +77,22 @@ export default function FavoriteVehicleCardProfile({
 }
 
 const styles = StyleSheet.create({
+  cardContainerWrapper: {
+    borderRadius: vh(2),
+    borderWidth: 1.5,
+    overflow: "hidden",
+  },
   cardContainer: {
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
-    // marginBottom: 10,
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
-    borderRadius: vh(2),
+    backgroundColor: "transparent",
   },
-
   cardImage: {
     width: vw(46),
     height: vh(20),
-    marginRight: vh(0.5),
-    borderRadius: vh(2),
-    borderTopRightRadius: vh(0),
-    borderBottomRightRadius: vh(0),
   },
   textContainer: {
     width: vw(46),
@@ -219,9 +101,8 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   headerName: {
-    fontFamily: "Nunito_700Bold",
+    fontFamily: "Nunito_800ExtraBold",
     fontSize: 14,
-    color: parrotBlue,
     alignSelf: "flex-start",
     paddingVertical: vh(0.2),
   },
@@ -234,8 +115,8 @@ const styles = StyleSheet.create({
   pill: {
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
-    color: parrotBlue,
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
+    color: "#4A5A6A",
+    backgroundColor: "#F4F7FB",
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),
@@ -244,7 +125,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
+    backgroundColor: "#F4F7FB",
     paddingHorizontal: vw(2),
     paddingVertical: 3,
     borderRadius: vw(3),
@@ -252,14 +133,13 @@ const styles = StyleSheet.create({
   pillText: {
     fontFamily: "Nunito_700Bold",
     fontSize: 11,
-    color: parrotBlue,
+    color: "#4A5A6A",
   },
   cardDescription: {
-    fontFamily: "Nunito_700Bold",
+    fontFamily: "Nunito_600SemiBold",
     paddingTop: vh(0.6),
-    paddingHorizontal: 0,
     fontSize: 12,
-    color: "#6b7280",
+    color: "#4A5A6A",
     lineHeight: 17,
   },
 });

@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  FlatList,
   ActivityIndicator,
   Modal,
   Image,
@@ -21,8 +22,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { format } from "date-fns";
+import he from "he";
 
-import { MaterialCommunityIcons, FontAwesome6, FontAwesome } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome6, FontAwesome, Feather, AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { vw, vh } from "react-native-expo-viewport-units";
 
@@ -121,6 +124,83 @@ const PlaceEggMarker = memo(({ item, onPress }) => {
 
 
 
+const VoyageListCard = memo(({ item, navigation, onClose }) => {
+  const isPlace = item.placeType > 0;
+  const vColor = vehicleColors[item.vehicle?.type] ?? "#0A77EA";
+
+  let dateLabel = "";
+  if (!isPlace) {
+    try {
+      const s = format(new Date(item.startDate), "d MMM");
+      const e = format(new Date(item.endDate), "d MMM");
+      dateLabel = s === e ? s : `${s} – ${e}`;
+    } catch (_) { }
+  }
+
+  const briefParts = (item.brief || "").split("|");
+  const placeCategory = isPlace ? briefParts[0] : "";
+  const placeLocation = isPlace ? briefParts[1] : "";
+  const placeUrl = isPlace ? briefParts[2] : "";
+
+  const description = !isPlace && item.brief
+    ? he.decode(item.brief.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim())
+    : (item.description || "");
+
+  const handlePress = () => {
+    if (isPlace) {
+      if (!placeUrl) return;
+      const url = placeUrl.startsWith("http") ? placeUrl : `https://${placeUrl}`;
+      Linking.openURL(url);
+    } else {
+      onClose();
+      navigation.push("VoyageDetail", { voyagePublicId: item.publicId });
+    }
+  };
+
+  return (
+    <TouchableOpacity style={styles.listCard} onPress={handlePress} activeOpacity={0.85}>
+      <Image source={{ uri: item.profileImageThumbnail || item.profileImage }} style={styles.listCardImage} resizeMode="cover" />
+      <View style={styles.listCardContent}>
+        <ParrotsStdText style={[styles.listCardTitle, { color: isPlace ? "#0A2540" : "#0A5FBF" }]} numberOfLines={2}>{item.name}</ParrotsStdText>
+        <View style={styles.listCardPillRow}>
+          {!isPlace && !!item.vehicle?.name && (
+            <View style={[styles.listCardPill, { backgroundColor: vColor + "15" }]}>
+              <ParrotsStdText style={[styles.listCardPillText, { color: vColor }]}>
+                {item.vehicle.name.length > 14 ? item.vehicle.name.substring(0, 14) + "…" : item.vehicle.name}
+              </ParrotsStdText>
+            </View>
+          )}
+          {!isPlace && item.vacancy != null && (
+            <View style={styles.listCardPillGrey}>
+              <ParrotsStdText style={styles.listCardPillGreyText}>{item.vacancy}</ParrotsStdText>
+              <Feather name="users" size={11} color="#4A5A6A" />
+            </View>
+          )}
+          {!isPlace && !!dateLabel && (
+            <View style={styles.listCardPillGrey}>
+              <ParrotsStdText style={styles.listCardPillGreyText}>{dateLabel}</ParrotsStdText>
+              <AntDesign name="calendar" size={11} color="#4A5A6A" />
+            </View>
+          )}
+          {isPlace && !!placeCategory && (
+            <View style={[styles.listCardPill, { backgroundColor: "#F5F2EC" }]}>
+              <ParrotsStdText style={[styles.listCardPillText, { color: "#6F6455" }]}>{placeCategory}</ParrotsStdText>
+            </View>
+          )}
+          {isPlace && !!placeLocation && (
+            <View style={styles.listCardPillGrey}>
+              <ParrotsStdText style={styles.listCardPillGreyText}>{placeLocation}</ParrotsStdText>
+            </View>
+          )}
+        </View>
+        {!!description && (
+          <ParrotsStdText style={styles.listCardDesc} numberOfLines={isPlace ? 4 : 3}>{description}</ParrotsStdText>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
+});
+
 export default function HomeScreen({ navigation }) {
   const insets = useSafeAreaInsets();
 
@@ -133,6 +213,7 @@ export default function HomeScreen({ navigation }) {
     setTimeout(() => setToastVisible(false), 2500);
   };
 
+  const [viewAllVoyagesVisible, setViewAllVoyagesVisible] = useState(false);
   const [countModalVisibility, setCountModalVisibility] = useState(false);
   const [calendarModalVisibility, setCalendarModalVisibility] = useState(false);
   const [vehicleModalVisibility, setVehicleModalVisibility] = useState(false);
@@ -772,7 +853,7 @@ export default function HomeScreen({ navigation }) {
                     onRegionChangeComplete={handleRegionChangeComplete}
                     userInterfaceStyle="light"
                   >
-{!isMarkersLoading && initialVoyages.map((item, index) => {
+                    {!isMarkersLoading && initialVoyages.map((item, index) => {
                       const waypoint = item.waypoints?.[0];
                       const latitude = waypoint?.latitude;
                       const longitude = waypoint?.longitude;
@@ -845,10 +926,18 @@ export default function HomeScreen({ navigation }) {
             </View>
           ) : !hasError ? (
             <>
-              {initialVoyages.filter(v => !v.isPlace).length > 0 && (
+              {initialVoyages.filter(v => v.placeType === 0).length > 0 && (
                 <View style={styles.mainBidsContainer}>
                   <View style={styles.currentBidsAndSeeAll}>
-                    <ParrotsStdText style={styles.currentBidsTitle}>Voyages</ParrotsStdText>
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <ParrotsStdText style={styles.currentBidsTitle}>Voyages</ParrotsStdText>
+                      <ParrotsStdText style={styles.currentBidsTitleCount}>{initialVoyages.filter(v => v.placeType === 0).length}</ParrotsStdText>
+                    </View>
+                    {initialVoyages.length > 1 && (
+                      <TouchableOpacity onPress={() => setViewAllVoyagesVisible(true)}>
+                        <ParrotsStdText style={styles.viewAllButton}>View all</ParrotsStdText>
+                      </TouchableOpacity>
+                    )}
                   </View>
                 </View>
               )}
@@ -894,7 +983,7 @@ export default function HomeScreen({ navigation }) {
               <View style={styles.imageContainerInModal}>
                 <VoyageCardProfileHorizontalModal
                   key={voyageIdM}
-                  voyageId={voyageIdM}
+                  voyagePublicId={voyageIdM}
                   cardHeader={cardHeaderM}
                   cardDescription={cardDescriptionM}
                   cardImage={cardImageM}
@@ -972,6 +1061,55 @@ export default function HomeScreen({ navigation }) {
           </Modal>
         </View>
       </ScrollView>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={viewAllVoyagesVisible}
+        onRequestClose={() => setViewAllVoyagesVisible(false)}
+      >
+        <TouchableOpacity
+          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", alignItems: "center", justifyContent: "center" }}
+          activeOpacity={1}
+          onPress={() => setViewAllVoyagesVisible(false)}
+        >
+          <TouchableOpacity activeOpacity={1} onPress={() => { }} style={styles.viewAllModal}>
+            <View style={styles.viewAllHeader}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                <ParrotsStdText style={styles.viewAllTitle}>Voyages</ParrotsStdText>
+                <ParrotsStdText style={styles.viewAllCount}>{initialVoyages.filter(v => v.placeType === 0).length}</ParrotsStdText>
+              </View>
+              <TouchableOpacity onPress={() => setViewAllVoyagesVisible(false)}>
+                <Ionicons name="close" size={22} color="#4A5A6A" />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={(() => {
+                const voyages = initialVoyages.filter(v => v.placeType === 0);
+                const places = initialVoyages.filter(v => v.placeType > 0).sort((a, b) => b.placeType - a.placeType);
+                const result = [];
+                let vi = 0, pi = 0;
+                while (vi < voyages.length || pi < places.length) {
+                  for (let i = 0; i < 2 && vi < voyages.length; i++) result.push(voyages[vi++]);
+                  if (pi < places.length) result.push(places[pi++]);
+                }
+                return result;
+              })()}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => (
+                <VoyageListCard
+                  item={item}
+                  navigation={navigation}
+                  onClose={() => setViewAllVoyagesVisible(false)}
+                />
+              )}
+              contentContainerStyle={{ paddingBottom: 32 }}
+              showsVerticalScrollIndicator={false}
+            />
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+
       {toastVisible && (
         <View style={styles.toast}>
           <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
@@ -1086,7 +1224,7 @@ const styles = StyleSheet.create({
   imageContainerInModal: {
     top: vh(35),
     width: vw(90),
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
     alignItems: "center",
     justifyContent: "center",
     alignSelf: "center",
@@ -1144,6 +1282,9 @@ const styles = StyleSheet.create({
     paddingVertical: vh(0.7),
     minWidth: vh(12),
     alignItems: "center",
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
   },
   applyFilterText: {
     fontSize: 14,
@@ -1157,10 +1298,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   applyFilterInitial: {
-    backgroundColor: applyFilterInitialBackgroundColor,
+    backgroundColor: "white",
     color: applyFilterInitialColor,
-    borderWidth: 2,
-    borderColor: applyFilterInitialBorderColor,
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
   },
   applyFilterApplied: {
     color: applyFilterAppliedColor,
@@ -1177,8 +1318,125 @@ const styles = StyleSheet.create({
   },
   currentBidsTitle: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 20,
-    color: parrotBlue
+    fontSize: 18,
+    color: "#0A5FBF",
+  },
+  currentBidsTitleCount: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#4A5A6A",
+    marginLeft: 6,
+    alignSelf: "flex-end",
+    marginBottom: 1,
+  },
+  viewAllButton: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#0A5FBF",
+    marginBottom: 3,
+  },
+  viewAllModal: {
+    width: vw(92),
+    maxHeight: vh(82),
+    backgroundColor: parrotCream,
+    borderRadius: 22,
+    paddingTop: 16,
+    paddingHorizontal: vw(4),
+  },
+  viewAllHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 14,
+  },
+  viewAllTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 18,
+    color: "#0A5FBF",
+  },
+  viewAllCount: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#4A5A6A",
+    marginBottom: 1,
+    alignSelf: "flex-end",
+  },
+  listCard: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    marginBottom: 10,
+    overflow: "hidden",
+    height: vh(20),
+  },
+  listCardImage: {
+    width: vw(34),
+    height: vh(20),
+  },
+  listCardContent: {
+    flex: 1,
+    paddingHorizontal: vw(2),
+    paddingVertical: vh(0.2),
+    paddingTop: vh(1),
+    justifyContent: "flex-start",
+  },
+  listCardTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14,
+    letterSpacing: -0.23,
+    lineHeight: 18,
+    paddingVertical: vh(0.2),
+    alignSelf: "flex-start",
+  },
+  listCardPillRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 5,
+    marginTop: vh(0.5),
+  },
+  listCardPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: vw(2),
+    paddingVertical: 3,
+    borderRadius: vw(3),
+  },
+  listCardPillText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 11,
+  },
+  listCardPillGrey: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#F4F7FB",
+    paddingHorizontal: vw(2),
+    paddingVertical: 3,
+    borderRadius: vw(3),
+  },
+  listCardPillGreyText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 11,
+    color: "#4A5A6A",
+  },
+  listCardDesc: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "#6b7280",
+    lineHeight: 17,
+    paddingTop: vh(0.6),
+  },
+  listCardPlaceLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 9,
+    letterSpacing: 1.2,
+    color: "#5C6B7A",
+    alignSelf: "flex-start",
+    marginTop: -4,
+    paddingRight: 4,
   },
   mainBidsContainer: {
     borderRadius: vw(5),
@@ -1188,11 +1446,12 @@ const styles = StyleSheet.create({
     marginTop: vh(2),
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingRight: vw(10),
+    alignItems: "flex-end",
+    paddingRight: vw(5),
   },
   scrollview: {
     marginBottom: vh(1),
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
   },
   welcomeandFilters: {
     flexDirection: "row",
@@ -1234,14 +1493,17 @@ const styles = StyleSheet.create({
     width: vw(30),
   },
   icon: {
-    padding: 7,
+    padding: 5,
     margin: 2,
     borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
   },
   filtered: {
     color: parrotBlue,
-    backgroundColor: "rgba(0, 119, 234,0.06)",
     backgroundColor: parrotBlueMediumTransparent,
+    borderColor: "rgba(10,95,191,0.15)",
     borderRadius: vh(5),
   },
   toast: {

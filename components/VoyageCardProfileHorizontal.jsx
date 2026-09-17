@@ -86,7 +86,7 @@ export default function VoyageCardProfileHorizontal({
 
     <TouchableOpacity onPress={() => handleNavigation(voyagePublicId)} style={styles.TouchableOpacityStyle}>
       <View>
-        <View style={[styles.cardContainerWrapper, { borderWidth: 1.5, borderColor: (vehicleColors[vehicletype] ?? parrotBlue) + "27" }]}>
+        <View style={[styles.cardContainerWrapper, { backgroundColor: "white", borderWidth: 1, borderColor: "#E8E3DC" }]}>
           <View style={styles.cardContainer}>
             <View style={styles.shadow}>
               <Image style={styles.cardImage} source={{ uri: cardImageUrl }} />
@@ -97,13 +97,13 @@ export default function VoyageCardProfileHorizontal({
                 <ParrotsStdText style={styles.header}>{cardHeader}</ParrotsStdText>
 
                 <View style={styles.pillRow}>
-                  <View style={[styles.pill, { backgroundColor: (vehicleColors[vehicletype] ?? parrotBlue) + "20" }]}>
-                    <ParrotsStdText style={[styles.pillText, { color: vehicleColors[vehicletype] ?? parrotBlue }]}>
+                  <View style={[styles.pill, { backgroundColor: (vehicleColors[vehicletype] ?? "#0A77EA") + "15" }]}>
+                    <ParrotsStdText style={[styles.pillText, { color: vehicleColors[vehicletype] ?? "#0A77EA" }]}>
                       {vehiclename?.length > 16
                         ? vehiclename.substring(0, 16) + "..."
                         : vehiclename}
                     </ParrotsStdText>
-                    {React.cloneElement(icon, { color: vehicleColors[vehicletype] ?? parrotBlue })}
+                    {React.cloneElement(icon, { color: vehicleColors[vehicletype] ?? "#0A77EA" })}
                   </View>
                   <View style={styles.pill}>
                     <ParrotsStdText style={styles.pillText}>{vacancy}</ParrotsStdText>
@@ -156,11 +156,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     flexDirection: "row",
     height: vh(20),
-    backgroundColor: "white",
+    backgroundColor: "transparent",
     borderRadius: vh(2),
   },
   cardContainerWrapper: {
-    backgroundColor: "white",
     borderRadius: vh(2),
     overflow: "hidden",
   },

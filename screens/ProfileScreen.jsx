@@ -862,6 +862,9 @@ export default function ProfileScreen({ navigation }) {
                   <View style={styles.mainBidsContainer}>
                     <View style={styles.currentBidsAndSeeAll}>
                       <ParrotsStdText style={styles.currentBidsTitle}>Vehicles</ParrotsStdText>
+                      {VehiclesData?.length > 1 && (
+                        <ParrotsStdText style={styles.currentBidsTitleCount}>{VehiclesData.length}</ParrotsStdText>
+                      )}
                     </View>
                   </View>
                   <View style={styles.vehicleListContainer}>
@@ -877,6 +880,9 @@ export default function ProfileScreen({ navigation }) {
                   <View style={styles.mainBidsContainer}>
                     <View style={styles.currentBidsAndSeeAll}>
                       <ParrotsStdText style={styles.currentBidsTitle}>Voyages</ParrotsStdText>
+                      {VoyagesData?.length > 1 && (
+                        <ParrotsStdText style={styles.currentBidsTitleCount}>{VoyagesData.length}</ParrotsStdText>
+                      )}
                     </View>
                   </View>
                   <View style={styles.voyageListContainer}>
@@ -968,6 +974,12 @@ const styles = StyleSheet.create({
     color: parrotBlue,
     paddingLeft: vw(5),
   },
+  currentBidsTitleCount: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#4A5A6A",
+    marginLeft: 6,
+  },
   UserNameProfile: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 22,
@@ -981,6 +993,7 @@ const styles = StyleSheet.create({
   currentBidsAndSeeAll: {
     marginTop: vh(2),
     flexDirection: "row",
+    alignItems: "baseline",
     paddingRight: vw(10),
   },
   mainBidsContainer: {
