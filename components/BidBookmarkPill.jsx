@@ -1,22 +1,26 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { View, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Image, TouchableOpacity, StyleSheet, ScrollView, Platform } from "react-native";
 import { ParrotsStdText } from "./ParrotsStdText";
-import { vh, vw } from "react-native-expo-viewport-units";
+import { vh } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
-import { parrotBlue, parrotGreen, parrotLightBlue } from "../assets/color";
-import { Feather, FontAwesome6 } from "@expo/vector-icons";
+import { Feather, FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+const formatDateRange = (start, end) => {
+  if (!start) return "";
+  const s = new Date(start);
+  const e = end ? new Date(end) : null;
+  const fmt = (d) => d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  if (!e || fmt(s) === fmt(e)) return fmt(s);
+  return `${fmt(s)} – ${fmt(e)}`;
 };
 
 export const BidBookmarkPill = ({ bids, height }) => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   if (!bids || bids.length === 0) {
     return (
@@ -27,47 +31,61 @@ export const BidBookmarkPill = ({ bids, height }) => {
   }
 
   return (
-    <ScrollView style={{ height }}>
+    <ScrollView
+      style={{ height }}
+      contentContainerStyle={[
+        styles.list,
+        Platform.OS === "ios" && { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 },
+      ]}
+      showsVerticalScrollIndicator={false}
+    >
       {bids.map((item) => (
         <TouchableOpacity
           key={item.bidId}
-          style={styles.pillWrapper}
-          activeOpacity={0.7}
+          style={styles.card}
+          activeOpacity={0.8}
           onPress={() => navigation.navigate("VoyageDetail", { voyagePublicId: item.voyagePublicId })}
         >
-          <View style={styles.pill}>
-            <Image
-              source={{ uri: item.profileImageThumbnail || `${API_URL}/placeholder` }}
-              style={styles.thumbnail}
-            />
-            <View style={styles.info}>
-              <ParrotsStdText style={styles.voyageName} numberOfLines={1}>
-                {item.voyageName}
-              </ParrotsStdText>
-              <View style={styles.detailRow}>
-                <View style={styles.detailIcon}>
-                  <View style={[styles.bidBadge, { backgroundColor: item.accepted ? parrotGreen : parrotBlue }]}>
-                    <FontAwesome6 name={item.accepted ? "circle-check" : "clock"} size={11} color="white" />
+          <Image
+            source={{ uri: item.profileImageThumbnail || `${API_URL}/placeholder` }}
+            style={styles.thumbnail}
+          />
+          <View style={styles.info}>
+            <ParrotsStdText style={styles.name} numberOfLines={1}>{item.voyageName}</ParrotsStdText>
+            <View style={styles.metaRow}>
+              {item.accepted
+                ? <View style={styles.pillOk}>
+                    <ParrotsStdText style={styles.pillOkText}>Accepted</ParrotsStdText>
                   </View>
-                </View>
-                <ParrotsStdText style={styles.dates} numberOfLines={1}>
-                  {formatDate(item.startDate)} – {formatDate(item.endDate)}
+                : <View style={styles.pillWait}>
+                    <ParrotsStdText style={styles.pillWaitText}>Pending</ParrotsStdText>
+                  </View>
+              }
+              <View style={styles.datePill}>
+                <MaterialCommunityIcons name="calendar-outline" size={11} color="#4A5A6A" />
+                <ParrotsStdText style={styles.datePillText} numberOfLines={1}>
+                  {formatDateRange(item.startDate, item.endDate)}
                 </ParrotsStdText>
-                <ParrotsStdText style={styles.price} numberOfLines={1}>${item.offerPrice}</ParrotsStdText>
+              </View>
+              <View style={styles.pricePill}>
+                <ParrotsStdText style={styles.price}>
+                  {item.offerPrice > 0 ? `$ ${item.offerPrice}` : "FREE"}
+                </ParrotsStdText>
               </View>
             </View>
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={() =>
-                navigation.navigate("Favorites", {
-                  screen: "VoyageDetail",
-                  params: { voyagePublicId: item.voyagePublicId },
-                })
-              }
-            >
-              <Feather name="map-pin" size={18} color={parrotBlue} />
-            </TouchableOpacity>
           </View>
+          <TouchableOpacity
+            style={styles.pinBtn}
+            activeOpacity={0.7}
+            onPress={() =>
+              navigation.navigate("Favorites", {
+                screen: "VoyageDetail",
+                params: { voyagePublicId: item.voyagePublicId },
+              })
+            }
+          >
+            <Feather name="map-pin" size={16} color="#0A5FBF" />
+          </TouchableOpacity>
         </TouchableOpacity>
       ))}
     </ScrollView>
@@ -75,65 +93,117 @@ export const BidBookmarkPill = ({ bids, height }) => {
 };
 
 const styles = StyleSheet.create({
-  pillWrapper: {
-    width: vw(90),
-    marginLeft: vw(5),
-    marginTop: vh(2),
+  list: {
+    gap: 7,
+    paddingBottom: 16,
   },
-  pill: {
+  card: {
     flexDirection: "row",
-    backgroundColor: "rgba(0, 119, 234, 0.02)",
-    borderRadius: vh(6),
-    paddingHorizontal: vh(1),
-    paddingVertical: vh(0.8),
     alignItems: "center",
+    gap: 10,
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#E3E9F0",
+    borderRadius: 16,
+    padding: 9,
+    paddingRight: 10,
   },
   thumbnail: {
-    height: vh(6.5),
-    width: vh(6.5),
-    borderRadius: vh(1.5),
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    flexShrink: 0,
   },
   info: {
     flex: 1,
-    marginLeft: vh(1.5),
+    minWidth: 0,
+    gap: 5,
   },
-  voyageName: {
+  name: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 15,
-    color: parrotLightBlue,
+    fontSize: 14,
+    color: "#0A5FBF",
+    letterSpacing: -0.1,
   },
-  bidBadge: {
-    borderRadius: vw(3),
-    padding: 3,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  detailRow: {
+  metaRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 3,
+    gap: 5,
+    flexWrap: "nowrap",
+    minWidth: 0,
   },
-  detailIcon: {
-    width: vw(7),
-    alignItems: "flex-start",
+  pillWait: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    backgroundColor: "#EAF2FD",
+    borderRadius: 999,
+    paddingVertical: 3,
+    width: 60,
+    flexShrink: 0,
   },
-  dates: {
-    width: vw(30),
-    fontFamily: "Nunito_600SemiBold",
-    fontSize: 12,
-    color: "rgba(0,0,0,0.45)",
+  pillWaitText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 10.5,
+    color: "#0A5FBF",
+  },
+  pillOk: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 4,
+    backgroundColor: "#E4F5E9",
+    borderRadius: 999,
+    paddingVertical: 3,
+    width: 60,
+    flexShrink: 0,
+  },
+  pillOkText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 10.5,
+    color: "#0B6B4E",
+  },
+  datePill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#F4F7FB",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    flexShrink: 1,
+    minWidth: 0,
+  },
+  datePillText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 10.5,
+    color: "#4A5A6A",
+    flexShrink: 1,
+  },
+  pricePill: {
+    backgroundColor: "#F4F7FB",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    flexShrink: 0,
   },
   price: {
-    width: vw(18),
     fontFamily: "Nunito_700Bold",
-    fontSize: 12,
-    color: "rgba(0,0,0,0.55)",
+    fontSize: 10.5,
+    color: "#0A5FBF",
+    letterSpacing: -0.1,
   },
-  actionButton: {
-    padding: vh(1),
-    borderRadius: vh(4),
-    backgroundColor: "rgba(30, 111, 217, 0.08)",
-    marginLeft: vh(1),
+  pinBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: "#E3E9F0",
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
   },
   emptyContainer: {
     alignItems: "center",
@@ -142,7 +212,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontFamily: "Nunito_700Bold",
     fontSize: 16,
-    color: parrotBlue,
+    color: "#0A77EA",
     opacity: 0.5,
   },
 });

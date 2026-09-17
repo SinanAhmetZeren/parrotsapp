@@ -2,139 +2,73 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
-import { View,  TouchableOpacity, Modal, StyleSheet } from "react-native";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotLightBlue } from "../assets/color";
 
-export const ConnectSelectionComponent = ({
-  selectedFunction,
-  setSelectedFunction,
-}) => {
+const TABS = [
+  { id: 1, label: "Chats" },
+  { id: 2, label: "Find" },
+  { id: 3, label: "Bids" },
+];
+
+export const ConnectSelectionComponent = ({ selectedFunction, setSelectedFunction }) => {
   return (
-    <>
-      <View style={styles.selectionContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectedFunction(1);
-          }}
-          style={styles.recentChatsTab}
-        >
-          <View style={styles.tabLabelRow}>
-            <ParrotsStdText
-              style={
-                selectedFunction === 1
-                  ? styles.selectedTitle
-                  : styles.nonSelectedTitle
-              }
-            >
-              Chats
+    <View style={styles.row}>
+      <View style={styles.seg}>
+        {TABS.map((tab) => (
+          <TouchableOpacity
+            key={tab.id}
+            style={[styles.segBtn, selectedFunction === tab.id && styles.segBtnOn]}
+            onPress={() => setSelectedFunction(tab.id)}
+            activeOpacity={0.8}
+          >
+            <ParrotsStdText style={[styles.segLabel, selectedFunction === tab.id && styles.segLabelOn]}>
+              {tab.label}
             </ParrotsStdText>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectedFunction(4);
-          }}
-          style={styles.groupsTab}
-        >
-          <View style={styles.tabLabelRow}>
-            <ParrotsStdText
-              style={
-                selectedFunction === 4
-                  ? styles.selectedTitle
-                  : styles.nonSelectedTitle
-              }
-            >
-              Groups
-            </ParrotsStdText>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectedFunction(2);
-          }}
-          style={styles.findTab}
-        >
-          <View style={styles.tabLabelRow}>
-            <ParrotsStdText
-              style={
-                selectedFunction === 2
-                  ? styles.selectedTitle
-                  : styles.nonSelectedTitle
-              }
-            >
-              Find
-            </ParrotsStdText>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setSelectedFunction(3);
-          }}
-          style={styles.bookmarksTab}
-        >
-          <View style={styles.tabLabelRow}>
-            <ParrotsStdText
-              style={
-                selectedFunction === 3
-                  ? styles.selectedTitle
-                  : styles.nonSelectedTitle
-              }
-            >
-              Bookmarks
-            </ParrotsStdText>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        ))}
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  selectionContainer: {
+  row: {
     flexDirection: "row",
-    marginTop: vh(2),
-    width: vw(90),
-    marginHorizontal: "auto",
+    alignItems: "center",
+    gap: 8,
+    marginTop: vh(1.5),
+    paddingHorizontal: vw(4),
   },
-  selectedTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 20,
-    color: parrotLightBlue,
-  },
-  nonSelectedTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 20,
-    color: parrotBlueSemiTransparent3,
-  },
-  tabLabelRow: {
+  seg: {
+    flex: 1,
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#F4F7FB",
+    borderRadius: 999,
+    padding: 3,
+    gap: 2,
   },
-  recentChatsTab: {
+  segBtn: {
     flex: 1,
+    paddingVertical: 8,
+    borderRadius: 999,
     alignItems: "center",
-    paddingVertical: vh(0.4),
-    // backgroundColor: "rgba(30, 111, 217, 0.1)",
   },
-  findTab: {
-    flex: 1,
-    paddingVertical: vh(0.4),
-    alignItems: "center",
-    // backgroundColor: "rgba(76, 175, 80, 0.1)",
+  segBtnOn: {
+    backgroundColor: "#0A77EA",
+    shadowColor: "#0A77EA",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  bookmarksTab: {
-    flex: 1.5,
-    paddingVertical: vh(0.4),
-    alignItems: "center",
-    // backgroundColor: "rgba(255, 152, 0, 0.1)",
+  segLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#4A5A6A",
   },
-  groupsTab: {
-    flex: 1,
-    paddingVertical: vh(0.4),
-    alignItems: "center",
-    // backgroundColor: "pink"
+  segLabelOn: {
+    color: "#fff",
   },
 });

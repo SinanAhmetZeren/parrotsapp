@@ -5,13 +5,22 @@ import { ParrotsStdText } from "./ParrotsStdText";
 import React from "react";
 import { View, TouchableOpacity, Image, StyleSheet, ScrollView, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { vh, vw } from "react-native-expo-viewport-units";
+import { vh } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { API_URL } from "@env";
 
-export const SearchUsersComponent = ({ searchResults, height = Platform.OS === "ios" ? vh(60) : vh(70) }) => {
+export const BookmarkedUsersComponent = ({ bookmarks, height }) => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+
+  if (!bookmarks || bookmarks.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <ParrotsStdText style={styles.emptyText}>No bookmarked people yet</ParrotsStdText>
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -19,10 +28,10 @@ export const SearchUsersComponent = ({ searchResults, height = Platform.OS === "
       contentContainerStyle={styles.list}
       showsVerticalScrollIndicator={false}
     >
-      {searchResults?.map((item) => (
-        <View key={item.publicId} style={styles.card}>
+      {bookmarks.map((item) => (
+        <View key={item.id ?? item.bookmarkedUserId} style={styles.card}>
           <Image
-            source={{ uri: item.profileImageThumbnailUrl || item.profileImageUrl }}
+            source={{ uri: item.profileImageThumbnailUrl || item.profileImageUrl || `${API_URL}/placeholder` }}
             style={styles.avatar}
           />
           <View style={styles.body}>
@@ -38,9 +47,10 @@ export const SearchUsersComponent = ({ searchResults, height = Platform.OS === "
             <TouchableOpacity
               style={styles.actionBtn}
               onPress={() =>
-                navigation.navigate("Messages", {
-                  screen: "ProfileScreenPublic",
-                  params: { publicId: item.publicId, userName: item.userName, userId: item.id },
+                navigation.navigate("ProfileScreenPublic", {
+                  publicId: item.publicId,
+                  userName: item.userName,
+                  userId: item.bookmarkedUserId,
                 })
               }
               activeOpacity={0.7}
@@ -53,7 +63,7 @@ export const SearchUsersComponent = ({ searchResults, height = Platform.OS === "
                 navigation.navigate("Messages", {
                   screen: "ConversationDetailScreen",
                   params: {
-                    conversationUserId: item.id,
+                    conversationUserId: item.bookmarkedUserId,
                     profileImg: item.profileImageUrl,
                     name: item.userName,
                     publicId: item.publicId,
@@ -129,5 +139,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  emptyContainer: {
+    alignItems: "center",
+    marginTop: vh(5),
+  },
+  emptyText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
+    color: "#0A77EA",
+    opacity: 0.5,
   },
 });

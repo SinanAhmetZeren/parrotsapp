@@ -2,13 +2,10 @@ import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
-import React, { useRef } from "react";
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { useDispatch } from "react-redux";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
-  Text,
   TouchableOpacity,
   Image,
   TextInput,
@@ -16,26 +13,26 @@ import {
   ScrollView,
   ActivityIndicator,
   BackHandler,
-  AppState,
   Platform,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
-import ConversationList from "../components/ConversationList";
-import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
-import { useGetUsersByUsernameQuery, useGetBookmarksQuery } from "../slices/UserSlice";
-import { useGetMyBidsQuery } from "../slices/VoyageSlice";
-import { BidBookmarkPill } from "../components/BidBookmarkPill";
-import { setUnreadMessages, markMessagesRead } from "../slices/UserSlice";
-import CreateNewGroupTab from "../components/CreateNewGroupTab";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
+
+import ConversationList from "../components/ConversationList";
+import { BidBookmarkPill } from "../components/BidBookmarkPill";
 import { ConnectSelectionComponent } from "../components/ConnectSelectionComponent";
 import { SearchUsersComponent } from "../components/SearchUsersComponent";
-import { Feather } from "@expo/vector-icons";
-import { API_URL } from "@env";
-import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import LoadingLogo from "../components/LoadingLogo";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent3, parrotLightBlue, parrotPistachioGreen, parrotPlaceholderGrey } from "../assets/color";
+import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
+
+import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
+import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
+import { useGetMyBidsQuery } from "../slices/VoyageSlice";
+import { useCreateGroupMutation } from "../slices/GroupSlice";
+import { markMessagesRead } from "../slices/UserSlice";
+
 import {
   register_ReceiveMessage,
   unregister_ReceiveMessage,
@@ -45,213 +42,184 @@ import {
   unregister_OnReconnecting,
   register_OnReconnected,
   unregister_OnReconnected,
-  invokeHub,
-  isHubReady,
 } from "../signalr/signalRHub.js";
 
+import {
+  parrotBananaLeafGreen,
+  parrotBlue,
+  parrotBlueSemiTransparent,
+  parrotPistachioGreen,
+  parrotPlaceholderGrey,
+  parrotCream,
+} from "../assets/color";
 
 export default function MessagesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
-  const currentUserName = useSelector((state) => state.users.userName);
-  const currentUserImage = useSelector((state) => state.users.userProfileImageThumbnail || state.users.userProfileImage);
-  const [searchText, setSearchText] = useState("");
-  const [username, setUsername] = useState("");
+  const [selectedFunction, setSelectedFunction] = useState(1);
+
+  // Chats
   const [refreshing, setRefreshing] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const { data: messagesData, isLoading: isLoadingMessages, isError: isErrorMessages, refetch } =
+    useGetMessagesByUserIdQuery(userId);
+
+  // Group create
+  const [groupName, setGroupName] = useState("");
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
+  const [createGroup] = useCreateGroupMutation();
+
+  // Find
+  const [searchText, setSearchText] = useState("");
+  const [username, setUsername] = useState("");
+  const { data: usersData, isFetching: isFetchingUsers } = useGetUsersByUsernameQuery(username, {
+    skip: username.length < 3,
+    refetchOnMountOrArgChange: true,
+  });
+
+  // Bids
+  const { data: myBidsRaw, isLoading: isLoadingBids } = useGetMyBidsQuery(undefined, {
+    skip: selectedFunction !== 3,
+  });
+
   const dispatch = useDispatch();
-  const {
-    data: messagesData,
-    isLoading: isLoadingMessages,
-    isError: isErrorMessages,
-    error: errorMessages,
-    isSuccess: isSuccessMessages,
-    refetch,
-  } = useGetMessagesByUserIdQuery(userId);
 
-  const {
-    data: usersData,
-    isFetching: isFetchingUsers,
-    isError: isErrorUsers,
-    error: errorUser,
-    isSuccess: isSuccessUsers,
-  } = useGetUsersByUsernameQuery(username, { skip: username.length < 3, refetchOnMountOrArgChange: true });
-
+  // Toast
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-
-  const showToast = (message) => {
-    setToastMessage(message);
+  const showToast = (msg) => {
+    setToastMessage(msg);
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 2500);
   };
 
-  const [selectedFunction, setSelectedFunction] = useState(1);
-  const [bookmarkTab, setBookmarkTab] = useState("users");
-
-  const { data: bookmarksRaw, isLoading: isLoadingBookmarks } = useGetBookmarksQuery(undefined, { skip: selectedFunction !== 3 });
-  const { data: myBidsRaw, isLoading: isLoadingBids } = useGetMyBidsQuery(undefined, { skip: selectedFunction !== 3 || bookmarkTab !== "bids" });
-  const bookmarksData = React.useMemo(() => [
-    ...(bookmarksRaw?.map(b => ({
-      id: b.bookmarkedUserId,
-      publicId: b.publicId,
-      userName: b.userName,
-      profileImageUrl: b.profileImageUrl,
-      profileImageThumbnailUrl: b.profileImageThumbnailUrl,
-    })) ?? []),
-  ], [bookmarksRaw]);
-
-  const recipientId = userId;
-
-
-
-  // Handle API error state
-  useEffect(() => {
-    setHasError(isErrorMessages);
-  }, [isErrorMessages]);
-
-
-
-  // 🟢 SignalR subscriptions
-  useFocusEffect(
-    useCallback(() => {
-
-      if (!userId) return;
-
-      // Tell hub user entered this screen
-      invokeHub("EnterMessagesScreen", userId);
-      console.log("enter messages screen --> ");
-
-      const handleReceiveMessage = async () => {
-        try { await refetch(); } catch {}
-      };
-
-      const handleGroupMessage = async () => {
-        try { await refetch(); } catch {}
-      };
-
-      register_ReceiveMessage(handleReceiveMessage);
-      register_ReceiveGroupMessage(handleGroupMessage);
-
-      return () => {
-        invokeHub("LeaveMessagesScreen", userId);
-        console.log("left messages screen --> ");
-        unregister_ReceiveMessage(handleReceiveMessage);
-        unregister_ReceiveGroupMessage(handleGroupMessage);
-      };
-    }, [userId, refetch])
-  );
-
-
-  useFocusEffect(
-    useCallback(() => {
-      const handleReconnecting = () => {};
-      const handleReconnected = () => { setToastVisible(false); };
-      register_OnReconnecting(handleReconnecting);
-      register_OnReconnected(handleReconnected);
-      return () => {
-        setToastVisible(false);
-        unregister_OnReconnecting(handleReconnecting);
-        unregister_OnReconnected(handleReconnected);
-      };
-    }, [])
-  );
-
-  useEffect(() => {
-    const unsubscribe = navigation.getParent()?.addListener("tabPress", () => {
-      setSelectedFunction(1);
-    });
-    return unsubscribe;
-  }, [navigation]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (selectedFunction === 1) return;
-      const sub = BackHandler.addEventListener("hardwareBackPress", () => {
-        setSelectedFunction(1);
-        return true;
-      });
-      return () => sub.remove();
-    }, [selectedFunction])
-  );
-
-  // Refetch when screen gains focus
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          await refetch();
-        } catch (error) {
-          console.error("Error refetching messages:", error);
-        }
-      };
-      fetchData();
-    }, [refetch])
-  );
-
-  // Pull-to-refresh handler
-  const onRefresh = async () => {
-    setRefreshing(true);
-    try {
-      await refetch();
-      setHasError(false);
-    } catch (error) {
-      setHasError(true);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-
-
-
-
+  useEffect(() => { setHasError(isErrorMessages); }, [isErrorMessages]);
 
   useEffect(() => {
     if (!messagesData) return;
-    const hasUnread = messagesData.some(m => (m.unreadCount ?? 0) > 0);
+    const hasUnread = messagesData.some((m) => (m.unreadCount ?? 0) > 0);
     if (!hasUnread) dispatch(markMessagesRead());
   }, [messagesData, dispatch]);
 
-  const handleSearchUsers = () => {
-    setUsername(searchText);
+  // SignalR
+  useFocusEffect(useCallback(() => {
+    if (!userId) return;
+    console.log("enter messages screen --> ");
+    const handleMsg = async () => { try { await refetch(); } catch { } };
+    register_ReceiveMessage(handleMsg);
+    register_ReceiveGroupMessage(handleMsg);
+    return () => {
+      console.log("left messages screen --> ");
+      unregister_ReceiveMessage(handleMsg);
+      unregister_ReceiveGroupMessage(handleMsg);
+    };
+  }, [userId, refetch]));
+
+  useFocusEffect(useCallback(() => {
+    const handleReconnected = () => setToastVisible(false);
+    register_OnReconnecting(() => { });
+    register_OnReconnected(handleReconnected);
+    return () => {
+      setToastVisible(false);
+      unregister_OnReconnecting(() => { });
+      unregister_OnReconnected(handleReconnected);
+    };
+  }, []));
+
+  useEffect(() => {
+    const unsub = navigation.getParent()?.addListener("tabPress", () => setSelectedFunction(1));
+    return unsub;
+  }, [navigation]);
+
+  useFocusEffect(useCallback(() => {
+    if (selectedFunction === 1) return;
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      setSelectedFunction(1);
+      return true;
+    });
+    return () => sub.remove();
+  }, [selectedFunction]));
+
+  useFocusEffect(useCallback(() => {
+    const fetch = async () => { try { await refetch(); } catch { } };
+    fetch();
+  }, [refetch]));
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try { await refetch(); setHasError(false); } catch { setHasError(true); } finally { setRefreshing(false); }
   };
 
+  const handleCreateGroup = async () => {
+    if (!groupName.trim() || isCreatingGroup) return;
+    setIsCreatingGroup(true);
+    try {
+      const result = await createGroup({ name: groupName.trim(), creatorId: userId }).unwrap();
+      const gId = result.id ?? result.Id ?? result.data?.id;
+      const gName = result.name ?? result.Name ?? groupName.trim();
+      setGroupName("");
+      await refetch();
+      navigation.navigate("GroupConversationDetailScreen", { groupId: gId, groupName: gName });
+    } catch {
+      showToast("Could not create group");
+    } finally {
+      setIsCreatingGroup(false);
+    }
+  };
 
+  const handleSearchUsers = () => setUsername(searchText);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.screen}>
       <TokenExpiryGuard />
 
-      {selectedFunction === 1 ? (
-        <View style={styles.container}>
-          <ConnectSelectionComponent
-            selectedFunction={selectedFunction}
-            setSelectedFunction={setSelectedFunction}
-          />
+      <ConnectSelectionComponent
+        selectedFunction={selectedFunction}
+        setSelectedFunction={setSelectedFunction}
+      />
+
+      {/* ── TAB 1: Chats ── */}
+      {selectedFunction === 1 && (
+        <View style={styles.tabContent}>
+          {/* Create group row */}
+          <View style={styles.createRow}>
+            <TextInput
+              style={styles.createInput}
+              placeholder="Group name…"
+              placeholderTextColor="rgba(92,107,122,0.5)"
+              value={groupName}
+              onChangeText={setGroupName}
+            />
+            <TouchableOpacity
+              style={[styles.createBtn, groupName.trim().length > 0 && styles.createBtnActive]}
+              onPress={handleCreateGroup}
+              disabled={groupName.trim().length === 0 || isCreatingGroup}
+              activeOpacity={0.85}
+            >
+              {isCreatingGroup
+                ? <ActivityIndicator size="small" color={groupName.trim() ? "#fff" : "#A9B4BF"} />
+                : <ParrotsStdText style={[styles.createBtnText, groupName.trim().length > 0 && styles.createBtnTextActive]}>Create</ParrotsStdText>
+              }
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.divider} />
+
           {hasError ? (
             <ScrollView
-              style={styles.mainBidsContainer2}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                  colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
-                  tintColor={parrotBananaLeafGreen}
-                />
-              }
+              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[parrotPistachioGreen, parrotBananaLeafGreen]} tintColor={parrotBananaLeafGreen} />}
             >
-              <View style={styles.currentBidsAndSeeAll2}>
+              <View style={styles.emptyState}>
                 <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
-                <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
-                <ParrotsStdText style={[styles.currentBidsTitle2, { paddingTop: vh(1) }]}>Swipe down to retry</ParrotsStdText>
+                <ParrotsStdText style={styles.emptyTitle}>Something went wrong</ParrotsStdText>
+                <ParrotsStdText style={[styles.emptyTitle, { paddingTop: vh(1) }]}>Swipe down to retry</ParrotsStdText>
               </View>
             </ScrollView>
-          ) : (isLoadingMessages || messagesData === undefined) ? (
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: Platform.OS === "ios" ? vh(20) : 0 }}>
+          ) : isLoadingMessages || messagesData === undefined ? (
+            <View style={styles.loader}>
               <LoadingLogo size={220} />
             </View>
           ) : messagesData?.length > 0 ? (
-            <View style={styles.flatlist}>
+            <View style={styles.listWrap}>
               <ConversationList
                 data={messagesData}
                 userId={userId}
@@ -259,113 +227,58 @@ export default function MessagesScreen({ navigation }) {
               />
             </View>
           ) : (
-            <View style={styles.mainBidsContainer2}>
-              <View style={styles.currentBidsAndSeeAll2}>
-                <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
-                <ParrotsStdText style={styles.currentBidsTitle2}>No messages yet...</ParrotsStdText>
-              </View>
+            <View style={styles.emptyState}>
+              <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
+              <ParrotsStdText style={styles.emptyTitle}>No messages yet…</ParrotsStdText>
             </View>
           )}
         </View>
-      ) : selectedFunction === 2 ? (
-        <View style={styles.container}>
-          {
-            <>
-              <ConnectSelectionComponent
-                selectedFunction={selectedFunction}
-                setSelectedFunction={setSelectedFunction}
-              />
+      )}
 
-              <View style={styles.messageTextContainer}>
-                <View style={{ marginHorizontal: vw(5), marginTop: vh(2) }}>
-                  <View>
-                    <View style={styles.searchBar}>
-                      <TextInput
-                        onChangeText={(text) => {
-                          setSearchText(text);
-                        }}
-                        style={styles.textinputStyle}
-                        numberOfLines={1}
-                        placeholder="Search by username..."
-                        placeholderTextColor={parrotPlaceholderGrey}
-                      >
-                        {searchText}
-                      </TextInput>
-                      <TouchableOpacity
-                        onPress={handleSearchUsers}
-                        style={styles.magnifier}
-                      >
-                        {isFetchingUsers
-                          ? <ActivityIndicator size="small" color={parrotBlue} />
-                          : <Feather name="search" size={20} color={searchText.length > 2 ? parrotBlue : parrotBlueSemiTransparent} />}
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </View>
-                <SearchUsersComponent searchResults={isFetchingUsers ? null : (usersData ?? [])} />
-              </View>
-            </>
-          }
-        </View>
-      ) : selectedFunction === 3 ? (
-        <View style={styles.container}>
-          <ConnectSelectionComponent
-            selectedFunction={selectedFunction}
-            setSelectedFunction={setSelectedFunction}
-          />
-          {/* Sub-toggle: Users | Bids */}
-          <View style={styles.bookmarkToggleRow}>
-            <TouchableOpacity style={styles.bookmarkToggleBtn} onPress={() => setBookmarkTab("users")}>
-              <ParrotsStdText style={bookmarkTab === "users" ? styles.bookmarkToggleActive : styles.bookmarkToggleInactive}>
-                Users
-              </ParrotsStdText>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bookmarkToggleBtn} onPress={() => setBookmarkTab("bids")}>
-              <ParrotsStdText style={bookmarkTab === "bids" ? styles.bookmarkToggleActive : styles.bookmarkToggleInactive}>
-                Bids
-              </ParrotsStdText>
+      {/* ── TAB 2: Find ── */}
+      {selectedFunction === 2 && (
+        <View style={styles.tabContent}>
+          <View style={styles.searchRow}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search by username…"
+              placeholderTextColor="rgba(92,107,122,0.5)"
+              value={searchText}
+              onChangeText={setSearchText}
+            />
+            <TouchableOpacity
+              style={[styles.createBtn, searchText.trim().length >= 3 && styles.createBtnActive]}
+              onPress={handleSearchUsers}
+              disabled={searchText.trim().length < 3 || isFetchingUsers}
+              activeOpacity={0.85}
+            >
+              <ParrotsStdText style={[styles.createBtnText, searchText.trim().length >= 3 && styles.createBtnTextActive, isFetchingUsers && { opacity: 0 }]}>Search</ParrotsStdText>
+              {isFetchingUsers && <ActivityIndicator size="small" color={searchText.trim().length >= 3 ? "#fff" : "#A9B4BF"} style={{ position: "absolute" }} />}
             </TouchableOpacity>
           </View>
 
-          {bookmarkTab === "users" ? (
-            isLoadingBookmarks ? (
-              <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: Platform.OS === "ios" ? vh(20) : 0 }}>
-                <LoadingLogo size={220} />
-              </View>
-            ) : bookmarksData.length === 0 ? (
-              <View style={styles.currentBidsAndSeeAll2}>
-                <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
-                <ParrotsStdText style={styles.currentBidsTitle2}>No bookmarks yet</ParrotsStdText>
-              </View>
-            ) : (
-              <SearchUsersComponent searchResults={bookmarksData} height={Platform.OS === "ios" ? vh(70) : vh(80)} />
-            )
-          ) : (
-            isLoadingBids ? (
-              <View style={{ flex: 1, alignItems: "center", justifyContent: "center", paddingBottom: Platform.OS === "ios" ? vh(20) : 0 }}>
-                <LoadingLogo size={220} />
-              </View>
-            ) : (
-              <BidBookmarkPill
-                bids={myBidsRaw?.data}
-                height={Platform.OS === "ios" ? vh(70) : vh(80)}
-              />
-            )
+          {username.length > 0 && (
+            <SearchUsersComponent searchResults={isFetchingUsers ? null : (usersData ?? [])} />
           )}
         </View>
-      ) : (
-        /* Groups tab — create new group */
-        <View style={styles.container}>
-          <ConnectSelectionComponent
-            selectedFunction={selectedFunction}
-            setSelectedFunction={setSelectedFunction}
-          />
-          <CreateNewGroupTab
-            onGroupCreated={async () => { await refetch(); setSelectedFunction(1); }}
-            showToast={showToast}
-          />
+      )}
+
+      {/* ── TAB 3: Bids ── */}
+      {selectedFunction === 3 && (
+        <View style={styles.tabContent}>
+          {isLoadingBids ? (
+            <View style={styles.loader}>
+              <LoadingLogo size={220} />
+            </View>
+          ) : (
+            <BidBookmarkPill
+              bids={myBidsRaw?.data}
+              height={Platform.OS === "ios" ? vh(70) : vh(80)}
+            />
+          )}
         </View>
       )}
+
       {toastVisible && (
         <View style={styles.toast}>
           <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
@@ -376,95 +289,119 @@ export default function MessagesScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  magnifier: {
-    alignSelf: "center",
-    width: vw(10),
-    height: vw(10),
-    backgroundColor: "rgba(30, 111, 217, 0.08)",
-    borderRadius: vw(5),
-    marginRight: vw(1),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: vw(3),
-    backgroundColor: "rgba(0, 119, 234, 0.02)",
-    borderRadius: vh(6),
-    width: vw(90),
-  },
-  textinputStyle: {
-    fontFamily: "Nunito_700Bold",
+  screen: {
     flex: 1,
-    paddingVertical: vh(1.8),
-    paddingHorizontal: vw(2),
-    fontSize: 18,
-    color: "black",
+    backgroundColor: parrotCream,
   },
-
-  bookmarkToggleRow: {
+  tabContent: {
+    flex: 1,
+    paddingHorizontal: vw(4),
+    paddingTop: vh(1.2),
+  },
+  // Create group row
+  createRow: {
     flexDirection: "row",
-    marginTop: vh(1),
-    justifyContent: "center",
-    gap: vw(20),
+    gap: 8,
+    marginBottom: vh(1),
   },
-  bookmarkToggleBtn: {
+  createInput: {
+    flex: 1,
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13.5,
+    color: "#0A2540",
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#E3E9F0",
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    height: 38,
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  createBtn: {
+    height: 38,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    borderColor: "#E3E9F0",
+    backgroundColor: "#fff",
     alignItems: "center",
-    paddingVertical: vh(0.4),
+    justifyContent: "center",
   },
-  bookmarkToggleActive: {
+  createBtnActive: {
+    backgroundColor: "#0A77EA",
+    borderColor: "#0A77EA",
+  },
+  createBtnText: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 18,
-    color: parrotLightBlue,
+    fontSize: 13,
+    color: "#A9B4BF",
   },
-  bookmarkToggleInactive: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 18,
-    color: parrotBlueSemiTransparent3,
+  createBtnTextActive: {
+    color: "#fff",
   },
-  currentBidsTitle2: {
+  divider: {
+    height: 1,
+    backgroundColor: "#E3E9F0",
+    marginBottom: vh(1),
+  },
+  listWrap: {
+    flex: 1,
+    minHeight: 0,
+  },
+  // Search
+  searchRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: vh(1),
+  },
+  searchInput: {
+    flex: 1,
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13.5,
+    color: "#0A2540",
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#E3E9F0",
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    height: 38,
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  // Empty states
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: vh(10),
+    paddingHorizontal: vw(8),
+  },
+  emptyTitle: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 18,
     color: parrotBlue,
     paddingTop: vh(3),
+  },
+  loader: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: Platform.OS === "ios" ? vh(20) : 0,
   },
   logoImage: {
     height: vh(20),
     width: vh(20),
     borderRadius: vh(10),
   },
-  currentBidsAndSeeAll2: {
-    marginTop: vh(2),
-    alignItems: "center",
-    alignSelf: "center",
-  },
-  mainBidsContainer2: {
-    marginTop: vh(7.5),
-    borderRadius: vw(5),
-  },
-  container: {
-    backgroundColor: "white",
-    width: vw(100),
-    alignSelf: "center",
-    height: vh(100),
-  },
-  flatlist: {
-    marginTop: vh(2),
-    width: vw(94),
-    justifyContent: "center",
-    alignSelf: "center",
-  },
   toast: {
     position: "absolute",
     bottom: vh(10),
     alignSelf: "center",
-    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    backgroundColor: "rgba(30,111,217,0.9)",
     paddingHorizontal: vw(4),
     paddingVertical: vh(1),
     borderRadius: 20,
-    flexDirection: "row",
-    alignItems: "center",
   },
   toastText: {
     fontFamily: "Nunito_700Bold",

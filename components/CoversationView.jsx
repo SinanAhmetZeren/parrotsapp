@@ -4,21 +4,17 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-undef */
 
 import React from "react";
-import { View, Image,  StyleSheet, TouchableOpacity } from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { vh, vw } from "react-native-expo-viewport-units";
 import { useNavigation } from "@react-navigation/native";
-import { MessagesComponent } from "../components/MessagesComponent";
-import { API_URL } from "@env";
-import { parrotBlueDarkTransparent, parrotBlueDarkTransparent2, parrotCream, parrotGreen, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp);
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // January is 0
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = String(date.getFullYear()).slice(-2);
-
   return [`${hours}:${minutes}`, `${day}/${month}/${year}`];
 }
 
@@ -34,133 +30,113 @@ export default function CoversationView({
   onRead,
 }) {
   const navigation = useNavigation();
-
   const hasUnread = unreadCount > 0;
-  const handleNavigate = (conversationUserId) => {
+  const [timeStr, dateStr] = formatDate(time);
+
+  const handleNavigate = () => {
     if (isLastUnread && onRead) onRead();
-    navigation.navigate("ConversationDetailScreen", {
-      conversationUserId,
-      profileImg,
-      name,
-      publicId
-    });
+    navigation.navigate("ConversationDetailScreen", { conversationUserId: userId, profileImg, name, publicId });
   };
+
+  const preview = message?.startsWith("**🦜**")
+    ? "Ask Parrots: " + message.replace(/^\*\*🦜\*\*\s*/, "")
+    : message?.startsWith("[parrots-bid]")
+    ? "Parrots: " + message.replace(/^\[parrots-bid\]\s*/, "")
+    : message;
 
   return (
     <TouchableOpacity
-      style={styles.mainContainer}
-      onPress={() => handleNavigate(userId)}
+      style={[styles.row, hasUnread && styles.rowUnread]}
+      onPress={handleNavigate}
+      activeOpacity={0.8}
     >
-      <View style={styles.profileImageContainer}>
-        <Image
-          style={styles.profileImage}
-          resizeMode="cover"
-          source={{
-            uri: `${profileImg}`,
-          }}
-        />
-      </View>
-      <View style={styles.nameAndMessage}>
-        <ParrotsStdText style={[styles.name, hasUnread && styles.nameUnread]}>{name}</ParrotsStdText>
-        <ParrotsStdText style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-          {message?.startsWith("**🦜**")
-            ? "Ask Parrots: " + message.replace(/^\*\*🦜\*\*\s*/, "")
-            : message?.startsWith("[parrots-bid]")
-            ? "Parrots: " + message.replace(/^\[parrots-bid\]\s*/, "")
-            : message}
-        </ParrotsStdText>
-      </View>
-      <View style={styles.time}>
-        <View style={styles.timeRow}>
-          {hasUnread && (
-            <View style={styles.unreadBadge}>
-              <ParrotsStdText style={styles.unreadBadgeText}>{unreadCount}</ParrotsStdText>
-            </View>
-          )}
-          <ParrotsStdText style={styles.timeText1}>{formatDate(time)[0]}</ParrotsStdText>
+      <Image style={styles.avatar} resizeMode="cover" source={{ uri: profileImg }} />
+      <View style={styles.body}>
+        <View style={styles.top}>
+          <ParrotsStdText style={styles.name} numberOfLines={1}>{name}</ParrotsStdText>
+          <ParrotsStdText style={styles.time}>{timeStr}</ParrotsStdText>
         </View>
-        <ParrotsStdText style={styles.timeText2}>{formatDate(time)[1]}</ParrotsStdText>
+        <View style={styles.bottom}>
+          <ParrotsStdText style={styles.preview} numberOfLines={1} ellipsizeMode="tail">{preview}</ParrotsStdText>
+          {hasUnread
+            ? <View style={styles.dot} />
+            : <ParrotsStdText style={styles.date}>{dateStr}</ParrotsStdText>}
+        </View>
       </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: vw(2),
-    paddingRight: vw(4),
-    paddingVertical: vh(0.6),
-    backgroundColor: "rgba(0, 119, 234, 0.02)",
-    borderRadius: vh(6),
-    width: vw(90),
+    gap: 10,
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#E3E9F0",
+    borderRadius: 16,
+    paddingHorizontal: 11,
+    paddingVertical: 9,
   },
-  profileImageContainer: {
-    justifyContent: "center",
-    marginRight: vw(2),
+  rowUnread: {
+    backgroundColor: "#EAF2FD",
+    borderColor: "rgba(10,119,234,0.3)",
   },
-  profileImage: {
-    height: vw(11),
-    width: vw(11),
-    borderRadius: vw(6),
+  avatar: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    flexShrink: 0,
   },
-  columnContainer: {
+  body: {
     flex: 1,
-    justifyContent: "center",
+    minWidth: 0,
+    gap: 2,
+  },
+  top: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 8,
+    minWidth: 0,
+  },
+  bottom: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 8,
+    minWidth: 0,
   },
   name: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 15,
-    color: parrotLightBlue,
-    marginBottom: vh(0.4),
-  },
-  message: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
-    color: parrotPlaceholderGrey,
-  },
-  nameAndMessage: {
     flex: 1,
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14.5,
+    color: "#0A5FBF",
+    letterSpacing: -0.1,
   },
   time: {
-    alignItems: "flex-end",
-    justifyContent: "center",
-    paddingLeft: vw(2),
-  },
-  timeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: vw(1.5),
-    marginBottom: vh(0.5),
-  },
-  timeText1: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
-    color: parrotBlueDarkTransparent2,
-  },
-  timeText2: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 12,
-    color: parrotBlueDarkTransparent,
-  },
-  nameUnread: {
-    fontFamily: "Nunito_800ExtraBold",
-    color: parrotLightBlue,
-  },
-  unreadBadge: {
-    minWidth: vw(5),
-    height: vw(5),
-    borderRadius: vw(2.5),
-    backgroundColor: parrotGreen,
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "flex-end",
-    paddingHorizontal: vw(1),
-  },
-  unreadBadgeText: {
-    color: "white",
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 11,
+    color: "#5C6B7A",
+    flexShrink: 0,
+  },
+  preview: {
+    flex: 1,
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 12.5,
+    color: "#4A5A6A",
+  },
+  date: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 10.5,
+    color: "#98A5B2",
+    flexShrink: 0,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#0A77EA",
+    flexShrink: 0,
+    alignSelf: "center",
   },
 });

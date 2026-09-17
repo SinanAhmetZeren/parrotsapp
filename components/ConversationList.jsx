@@ -3,14 +3,13 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 import React from "react";
-import { ScrollView, StyleSheet, View,  TouchableOpacity, Platform } from "react-native";
+import { ScrollView, StyleSheet, View, TouchableOpacity, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { markMessagesRead } from "../slices/UserSlice";
 import ConversationView from "./CoversationView";
 import { vh, vw } from "react-native-expo-viewport-units";
-import { Shadow } from "react-native-shadow-2";
-import { parrotLightBlue, parrotPlaceholderGrey, parrotBlueDarkTransparent2, parrotBlueDarkTransparent, parrotGreen } from "../assets/color";
+import { Ionicons } from "@expo/vector-icons";
 
 const GROUP_COLORS = ["#a020a0", "#6a0dad", "#1e88e5", "#29b6f6", "#00bfa5", "#ffa726", "#e53935"];
 
@@ -24,8 +23,7 @@ function groupInitials(name) {
 }
 
 function groupColor(groupId) {
-  const idx = (groupId ?? 0) % GROUP_COLORS.length;
-  return GROUP_COLORS[idx];
+  return GROUP_COLORS[(groupId ?? 0) % GROUP_COLORS.length];
 }
 
 function formatDate(timestamp) {
@@ -38,36 +36,40 @@ function formatDate(timestamp) {
   return [`${hours}:${minutes}`, `${day}/${month}/${year}`];
 }
 
-function GroupPreviewView({ item, onOpenGroup, unreadCount }) {
+function GroupPreviewView({ item, onOpenGroup }) {
+  const unreadCount = item.unreadCount ?? 0;
+  const hasUnread = unreadCount > 0;
   const color = groupColor(item.groupConversationId);
   const initials = groupInitials(item.groupName);
-  const [time, date] = formatDate(item.dateTime);
-  const hasUnread = unreadCount > 0;
+  const [timeStr, dateStr] = formatDate(item.dateTime);
 
   return (
     <TouchableOpacity
-      style={styles.mainContainer}
+      style={[styles.row, hasUnread && styles.rowUnread]}
       onPress={() => onOpenGroup(item.groupConversationId, item.groupName)}
+      activeOpacity={0.8}
     >
-      <View style={[styles.initialsCircle, { backgroundColor: color }]}>
-        <ParrotsStdText style={styles.initialsText}>{initials}</ParrotsStdText>
-      </View>
-      <View style={styles.nameAndMessage}>
-        <ParrotsStdText style={[styles.name, hasUnread && styles.nameUnread]}>{item.groupName}</ParrotsStdText>
-        <ParrotsStdText style={styles.message} numberOfLines={1} ellipsizeMode="tail">
-          {item.text ? `${item.senderUsername}: ${item.text}` : "No messages yet"}
-        </ParrotsStdText>
-      </View>
-      <View style={styles.time}>
-        <View style={styles.timeRow}>
-          {hasUnread && (
-            <View style={styles.unreadBadge}>
-              <ParrotsStdText style={styles.unreadBadgeText}>{unreadCount}</ParrotsStdText>
-            </View>
-          )}
-          <ParrotsStdText style={styles.timeText1}>{time}</ParrotsStdText>
+      <View style={styles.avatarWrap}>
+        <View style={[styles.initialsCircle, { backgroundColor: color }]}>
+          <ParrotsStdText style={styles.initialsText}>{initials}</ParrotsStdText>
         </View>
-        <ParrotsStdText style={styles.timeText2}>{date}</ParrotsStdText>
+        <View style={styles.groupBadge}>
+          <Ionicons name="people" size={9} color="#5C6B7A" />
+        </View>
+      </View>
+      <View style={styles.body}>
+        <View style={styles.top}>
+          <ParrotsStdText style={styles.name} numberOfLines={1}>{item.groupName}</ParrotsStdText>
+          <ParrotsStdText style={styles.time}>{timeStr}</ParrotsStdText>
+        </View>
+        <View style={styles.bottom}>
+          <ParrotsStdText style={styles.preview} numberOfLines={1} ellipsizeMode="tail">
+            {item.text ? `${item.senderUsername}: ${item.text}` : "No messages yet"}
+          </ParrotsStdText>
+          {hasUnread
+            ? <View style={styles.dot} />
+            : <ParrotsStdText style={styles.date}>{dateStr}</ParrotsStdText>}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -76,30 +78,24 @@ function GroupPreviewView({ item, onOpenGroup, unreadCount }) {
 export default function ConversationList({ data, userId, onOpenGroup }) {
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
-  const items = [];
 
+  const items = [];
   if (data) {
     data.forEach((message) => {
       if (message.groupConversationId) {
         items.push({ ...message, _type: "group" });
       } else {
-        const user = message.senderId !== userId ? message.senderId : message.receiverId;
-        const userProfileImage =
-          message.senderId !== userId
-            ? message.senderProfileThumbnailUrl || message.senderProfileUrl
-            : message.receiverProfileThumbnailUrl || message.receiverProfileUrl;
-        const userName =
-          message.senderId !== userId ? message.senderUsername : message.receiverUsername;
-        const publicId =
-          message.senderId !== userId ? message.senderPublicId : message.receiverPublicId;
+        const isSender = message.senderId === userId;
         items.push({
           _type: "dm",
-          user,
-          userName,
-          userProfileImage,
+          user: isSender ? message.receiverId : message.senderId,
+          userName: isSender ? message.receiverUsername : message.senderUsername,
+          userProfileImage: isSender
+            ? message.receiverProfileThumbnailUrl || message.receiverProfileUrl
+            : message.senderProfileThumbnailUrl || message.senderProfileUrl,
           text: message.text,
           dateTime: message.dateTime,
-          publicId,
+          publicId: isSender ? message.receiverPublicId : message.senderPublicId,
           unreadCount: message.unreadCount ?? 0,
         });
       }
@@ -107,35 +103,37 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
   }
 
   const sorted = [...items].sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
-  const totalUnreadItems = sorted.filter(i => (i.unreadCount ?? 0) > 0).length;
+  const totalUnreadItems = sorted.filter((i) => (i.unreadCount ?? 0) > 0).length;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={Platform.OS === "ios" ? { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 } : undefined}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={[
+        styles.contentContainer,
+        Platform.OS === "ios" && { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 },
+      ]}
+      showsVerticalScrollIndicator={false}
+    >
       {sorted.map((item, index) =>
         item._type === "group" ? (
-          <View
+          <GroupPreviewView
             key={`group-${item.groupConversationId}`}
-            style={{ borderRadius: vh(3), marginBottom: vh(2) }}
-          >
-            <GroupPreviewView item={item} onOpenGroup={onOpenGroup} unreadCount={item.unreadCount ?? 0} />
-          </View>
+            item={item}
+            onOpenGroup={onOpenGroup}
+          />
         ) : (
-          <View
+          <ConversationView
             key={`dm-${item.user}-${index}`}
-            style={{ borderRadius: vh(3), marginBottom: vh(2) }}
-          >
-            <ConversationView
-              profileImg={item.userProfileImage}
-              name={item.userName}
-              userId={item.user}
-              message={item.text}
-              time={item.dateTime}
-              publicId={item.publicId}
-              unreadCount={item.unreadCount ?? 0}
-              isLastUnread={(item.unreadCount ?? 0) > 0 && totalUnreadItems === 1}
-              onRead={() => dispatch(markMessagesRead())}
-            />
-          </View>
+            profileImg={item.userProfileImage}
+            name={item.userName}
+            userId={item.user}
+            message={item.text}
+            time={item.dateTime}
+            publicId={item.publicId}
+            unreadCount={item.unreadCount ?? 0}
+            isLastUnread={(item.unreadCount ?? 0) > 0 && totalUnreadItems === 1}
+            onRead={() => dispatch(markMessagesRead())}
+          />
         )
       )}
     </ScrollView>
@@ -144,87 +142,104 @@ export default function ConversationList({ data, userId, onOpenGroup }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: vw(2),
-    backgroundColor: "white",
-    height: vh(85),
-    paddingTop: vh(1),
+    flex: 1,
   },
-  mainContainer: {
+  contentContainer: {
+    gap: 7,
+    paddingBottom: 16,
+  },
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: vw(2),
-    paddingRight: vw(4),
-    paddingVertical: vh(0.6),
-    backgroundColor: "rgba(0, 119, 234, 0.02)",
-    borderRadius: vh(6),
-    width: vw(90),
+    gap: 10,
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#E3E9F0",
+    borderRadius: 16,
+    paddingHorizontal: 11,
+    paddingVertical: 9,
+  },
+  rowUnread: {
+    backgroundColor: "#EAF2FD",
+    borderColor: "rgba(10,119,234,0.3)",
+  },
+  avatarWrap: {
+    position: "relative",
+    flexShrink: 0,
   },
   initialsCircle: {
-    width: vw(11),
-    height: vw(11),
-    borderRadius: vw(6),
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     alignItems: "center",
     justifyContent: "center",
-    marginRight: vw(2),
-    flexShrink: 0,
   },
   initialsText: {
     color: "white",
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 15,
   },
-  nameAndMessage: {
+  groupBadge: {
+    position: "absolute",
+    right: -2,
+    bottom: -2,
+    width: 17,
+    height: 17,
+    borderRadius: 9,
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#E3E9F0",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  body: {
     flex: 1,
+    minWidth: 0,
+    gap: 2,
+  },
+  top: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 8,
+    minWidth: 0,
+  },
+  bottom: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 8,
+    minWidth: 0,
   },
   name: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 15,
-    color: parrotLightBlue,
-    marginBottom: vh(0.4),
-  },
-  message: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
-    color: parrotPlaceholderGrey,
+    flex: 1,
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 14.5,
+    color: "#0A5FBF",
+    letterSpacing: -0.1,
   },
   time: {
-    alignItems: "flex-end",
-    justifyContent: "center",
-    paddingLeft: vw(2),
-  },
-  timeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: vw(1.5),
-    marginBottom: vh(0.5),
-  },
-  timeText1: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
-    color: parrotBlueDarkTransparent2,
-  },
-  timeText2: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 12,
-    color: parrotBlueDarkTransparent,
-  },
-  nameUnread: {
-    fontFamily: "Nunito_800ExtraBold",
-    color: parrotLightBlue,
-  },
-  unreadBadge: {
-    minWidth: vw(5),
-    height: vw(5),
-    borderRadius: vw(2.5),
-    backgroundColor: parrotGreen,
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "flex-end",
-    paddingHorizontal: vw(1),
-  },
-  unreadBadgeText: {
-    color: "white",
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 11,
+    color: "#5C6B7A",
+    flexShrink: 0,
+  },
+  preview: {
+    flex: 1,
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 12.5,
+    color: "#4A5A6A",
+  },
+  date: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 10.5,
+    color: "#98A5B2",
+    flexShrink: 0,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#0A77EA",
+    flexShrink: 0,
+    alignSelf: "center",
   },
 });
