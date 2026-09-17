@@ -105,7 +105,7 @@ TextInput.defaultProps.allowFontScaling = false;
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const bottomTabColor = parrotCream;
+const bottomTabColor = "#fdfdfd";
 const selectedTabColor = parrotBlue;
 const unselectedTabColor = "black" || "#3c9dde" || parrotBlue;
 const selectedTabBackGroundColor = "rgba(240,240,240,0.0009)"//parrotBlueSemiTransparent;
@@ -134,6 +134,11 @@ const screenOptions1 = {
     elevation: 0,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+    borderTopWidth: 2,
+    borderLeftWidth: 2,
+    borderRightWidth: 2,
+    borderColor: "#E8DDD0",
+    borderTopColor: "#E8DDD0",
     backgroundColor: bottomTabColor,
   },
 };
@@ -417,8 +422,19 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
   }, [isLoggedIn, isHubConnected, foregroundedAt]);
 
   return (
-    <>
-      <Tab.Navigator screenOptions={{ ...screenOptions1, tabBarStyle: { ...screenOptions1.tabBarStyle, height: tabBarHeight }, tabBarItemStyle: Platform.OS === "ios" ? { marginBottom: insets.bottom * 0.5 } : undefined }}  >
+    <View style={{ flex: 1 }}>
+      {/* Ring behind parrot — covered on bottom by tab bar */}
+      <View style={{
+        position: "absolute",
+        bottom: 0,
+        alignSelf: "center",
+        width: vw(17) + 3,
+        height: vw(17) + 3,
+        borderRadius: (vw(17) + 3) / 2,
+        backgroundColor: "#E8DDD0",
+        zIndex: 5,
+      }} />
+      <Tab.Navigator screenOptions={{ ...screenOptions1, tabBarStyle: { ...screenOptions1.tabBarStyle, height: tabBarHeight, zIndex: 10 }, tabBarItemStyle: Platform.OS === "ios" ? { marginBottom: insets.bottom * 0.5 } : undefined }}  >
         <Tab.Screen
           name="Home"
           component={HomeStack}
@@ -521,38 +537,26 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
               return (
                 <TouchableOpacity onPress={toggleModal} style={{ alignItems: "center" }}>
                   <View style={{
-                    width: vw(15),
-                    height: vw(15),
-                    borderRadius: vw(7.5),
-                    backgroundColor: "#ede2d5ff",
-                    // backgroundColor: "white",
+                    width: vw(17),
+                    height: vw(17),
+                    borderRadius: vw(17.5),
+                    backgroundColor: "#FAF6F2",
                     alignItems: "center",
                     justifyContent: "center",
                     bottom: vh(-2.5),
+
                   }}>
                     <Image
-                      // source={require("./assets/twoparrots.png")}
                       source={require("./assets/parrotwhiteoutlinebg.png")}
                       style={{
-                        width: vw(13), height: vw(13), overflow: "hidden", borderRadius: vh(5)
-                        // width: vw(18), height: vw(15), overflow: "hidden", borderRadius: vh(5), marginLeft: vw(1)
+                        width: vw(17),
+                        height: vw(17), overflow: "hidden", borderRadius: vh(5)
                       }}
                       resizeMode="contain"
                     />
                   </View>
-                  {/* <ParrotsStdText style={{ ...baseTextStyle, color: isActive ? selectedTabColor : unselectedTabColor, bottom: vh(-2.3) }}>Voyage</ParrotsStdText> */}
                 </TouchableOpacity>);
-              // return (
-              //   <TouchableOpacity onPress={toggleModal}>
-              //     <View style={{ bottom: vh(-3) }}>
-              //       <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: isActive ? "#d4bfa0" : "#c8b5a0", alignItems: "center", justifyContent: "center", shadowColor: "#b89e82", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 0, elevation: 5 }}>
-              //         <View style={{ width: vw(12), height: vw(12), borderRadius: vw(6), backgroundColor: isActive ? "#fff8f0" : "#f5ede3", alignItems: "center", justifyContent: "center", marginBottom: 7 }}>
-              //           <MaterialCommunityIcons name={"rocket-launch-outline"} size={24} color={isActive ? selectedTabColor : unselectedTabColor} />
-              //         </View>
-              //       </View>
-              //       <ParrotsStdText style={{ ...baseTextStyle, display: "none", color: isActive ? selectedTabColor : unselectedTabColor, textAlign: "center", marginTop: -4 }}>Voyage</ParrotsStdText>
-              //     </View>
-              //   </TouchableOpacity>)
+
             }
           }}
         />
@@ -648,7 +652,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
 
           }}
         />
-      </Tab.Navigator >
+      </Tab.Navigator>
 
       <CreateChoiceModal
         modalVisible={modalVisible}
@@ -661,7 +665,7 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
           <ParrotsStdText style={{ color: "white", fontSize: 13, fontWeight: "600" }}>{pillText}</ParrotsStdText>
         </View>
       )}
-    </>
+    </View>
   );
 };
 
@@ -701,14 +705,14 @@ function App() {
       try {
         const result = await checkRequiresTerms().unwrap();
         if (result?.requiresAcceptance) setShowTermsModal(true);
-      } catch {}
+      } catch { }
     };
 
     const handleAcceptTerms = async () => {
       try {
         await acceptTerms().unwrap();
         setShowTermsModal(false);
-      } catch {}
+      } catch { }
     };
 
     useEffect(() => {

@@ -205,7 +205,9 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: "row",
-    backgroundColor: "#F4F7FB",
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#E8E3DC",
     borderRadius: 999,
     padding: 3,
     gap: 2,

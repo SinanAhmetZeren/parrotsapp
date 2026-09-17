@@ -34,46 +34,52 @@ export const BookmarkedUsersComponent = ({ bookmarks, height }) => {
             source={{ uri: item.profileImageThumbnailUrl || item.profileImageUrl || `${API_URL}/placeholder` }}
             style={styles.avatar}
           />
-          <View style={styles.body}>
-            <ParrotsStdText style={styles.name} numberOfLines={1}>{item.userName}</ParrotsStdText>
-            {item.title ? (
-              <ParrotsStdText style={styles.title} numberOfLines={1}>{item.title}</ParrotsStdText>
-            ) : null}
+          <View style={styles.right}>
+            {/* Row 1: name/title + buttons */}
+            <View style={styles.row1}>
+              <View style={styles.nameBlock}>
+                <ParrotsStdText style={styles.name} numberOfLines={1}>{item.userName}</ParrotsStdText>
+                {item.title ? (
+                  <ParrotsStdText style={styles.title} numberOfLines={1}>{item.title}</ParrotsStdText>
+                ) : null}
+              </View>
+              <View style={styles.actions}>
+                <TouchableOpacity
+                  style={styles.actionBtn}
+                  onPress={() =>
+                    navigation.navigate("ProfileScreenPublic", {
+                      publicId: item.publicId,
+                      userName: item.userName,
+                      userId: item.bookmarkedUserId,
+                    })
+                  }
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="person-circle-outline" size={18} color="#0A5FBF" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.actionBtn}
+                  onPress={() =>
+                    navigation.navigate("Messages", {
+                      screen: "ConversationDetailScreen",
+                      params: {
+                        conversationUserId: item.bookmarkedUserId,
+                        profileImg: item.profileImageUrl,
+                        name: item.userName,
+                        publicId: item.publicId,
+                      },
+                    })
+                  }
+                  activeOpacity={0.7}
+                >
+                  <Feather name="mail" size={15} color="#0A5FBF" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            {/* Row 2: bio full width */}
             {item.bio ? (
-              <ParrotsStdText style={styles.bio} numberOfLines={1}>{item.bio}</ParrotsStdText>
+              <ParrotsStdText style={styles.bio} numberOfLines={3}>{item.bio}</ParrotsStdText>
             ) : null}
-          </View>
-          <View style={styles.actions}>
-            <TouchableOpacity
-              style={styles.actionBtn}
-              onPress={() =>
-                navigation.navigate("ProfileScreenPublic", {
-                  publicId: item.publicId,
-                  userName: item.userName,
-                  userId: item.bookmarkedUserId,
-                })
-              }
-              activeOpacity={0.7}
-            >
-              <Ionicons name="person-circle-outline" size={18} color="#0A5FBF" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.actionBtn}
-              onPress={() =>
-                navigation.navigate("Messages", {
-                  screen: "ConversationDetailScreen",
-                  params: {
-                    conversationUserId: item.bookmarkedUserId,
-                    profileImg: item.profileImageUrl,
-                    name: item.userName,
-                    publicId: item.publicId,
-                  },
-                })
-              }
-              activeOpacity={0.7}
-            >
-              <Feather name="mail" size={15} color="#0A5FBF" />
-            </TouchableOpacity>
           </View>
         </View>
       ))}
@@ -88,14 +94,15 @@ const styles = StyleSheet.create({
   },
   card: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: 10,
     backgroundColor: "#fff",
     borderWidth: 1.5,
-    borderColor: "#E3E9F0",
+    borderColor: "#E8E3DC",
     borderRadius: 16,
     paddingHorizontal: 11,
-    paddingVertical: 9,
+    paddingVertical: 8,
+    height: 114,
   },
   avatar: {
     width: 42,
@@ -103,7 +110,17 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     flexShrink: 0,
   },
-  body: {
+  right: {
+    flex: 1,
+    minWidth: 0,
+    gap: 6,
+  },
+  row1: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  nameBlock: {
     flex: 1,
     minWidth: 0,
     gap: 1,
@@ -117,7 +134,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 11.5,
-    color: "#C2740A",
+    color: "#E07B0A",
     letterSpacing: -0.005,
   },
   bio: {
@@ -127,7 +144,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: "row",
-    gap: 6,
+    gap: 14,
     flexShrink: 0,
   },
   actionBtn: {
@@ -135,7 +152,7 @@ const styles = StyleSheet.create({
     height: 34,
     borderRadius: 10,
     borderWidth: 1.5,
-    borderColor: "#E3E9F0",
+    borderColor: "#E8E3DC",
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
