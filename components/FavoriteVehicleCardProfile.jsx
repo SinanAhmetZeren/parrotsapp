@@ -79,7 +79,7 @@ export default function FavoriteVehicleCardProfile({ vehicleId, vehiclename, des
 const styles = StyleSheet.create({
   cardContainerWrapper: {
     borderRadius: vh(2),
-    borderWidth: 1.5,
+    borderWidth: 1,
     overflow: "hidden",
   },
   cardContainer: {

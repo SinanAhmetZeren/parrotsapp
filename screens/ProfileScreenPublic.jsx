@@ -12,6 +12,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  Pressable,
   Linking,
   ActivityIndicator,
   Modal,
@@ -463,74 +464,36 @@ export default function ProfileScreenPublic({ navigation }) {
                 )}
               </View>
 
-              <View style={styles.buttonsContainer}>
-                {/* ///// EDIT PROFILE BUTTON /////// */}
+              <View style={styles.topPillsRow}>
                 <TouchableOpacity
-                  style={styles.editProfileBox}
-                  onPress={() => {
-                    navigation.navigate("Messages", {
-                      screen: "ConversationDetailScreen",
-                      params: {
-                        conversationUserId: userId,
-                        profileImg: userData.profileImageUrl,
-                        name: userData.userName,
-                      },
-                    });
-                  }}
+                  style={styles.topPill}
+                  onPress={handleToggleBookmark}
+                  disabled={bookmarkLoading}
                   activeOpacity={0.8}
                 >
-
-
-                  <TouchableOpacity
-                    onPress={() => setOverflowMenuVisible(true)}
-                    style={styles.shareContainer1}
-                  >
-                    <MaterialIcons
-                      name="more-vert"
-                      size={24}
-                      color={parrotBlue}
-                      style={styles.shareContainer2}
-                    />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={handleToggleBookmark}
-                    disabled={bookmarkLoading}
-                    style={styles.bookmarkContainer1}
-                  >
-                    {bookmarkLoading ? (
-                      <ActivityIndicator size="small" color={parrotRed} style={styles.shareContainer2} />
-                    ) : (
-                      <Ionicons
-                        name={isBookmarked ? "bookmark" : "bookmark-outline"}
-                        size={24}
-                        color={parrotRed}
-                        style={styles.shareContainer2}
-                      />
-                    )}
-                  </TouchableOpacity>
-
-                  <View>
-                    <View style={styles.innerProfileContainer}>
-                      <Feather
-                        name="send"
-                        size={18}
-                        color={parrotBlue}
-                      />
-                      <ParrotsStdText
-                        style={{
-                          fontFamily: "Nunito_700Bold",
-                          lineHeight: 22,
-                          marginLeft: vw(1),
-                          fontSize: 11,
-                        }}
-                      >
-                        Send Message
-                      </ParrotsStdText>
-                    </View>
-                  </View>
+                  {bookmarkLoading ? (
+                    <ActivityIndicator size="small" color={parrotRed} />
+                  ) : (
+                    <Ionicons name={isBookmarked ? "bookmark" : "bookmark-outline"} size={20} color={parrotRed} />
+                  )}
                 </TouchableOpacity>
-                {/* ///// EDIT PROFILE BUTTON /////// */}
+                <TouchableOpacity
+                  style={styles.topPill}
+                  onPress={() => setOverflowMenuVisible(true)}
+                  activeOpacity={0.8}
+                >
+                  <MaterialIcons name="more-vert" size={22} color={parrotBlue} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.topPill}
+                  onPress={() => navigation.navigate("Messages", {
+                    screen: "ConversationDetailScreen",
+                    params: { conversationUserId: userId, profileImg: userData.profileImageUrl, name: userData.userName },
+                  })}
+                  activeOpacity={0.8}
+                >
+                  <Feather name="send" size={18} color={parrotBlue} />
+                </TouchableOpacity>
               </View>
 
               <View style={styles.profileImageAndSocial}>
@@ -545,19 +508,21 @@ export default function ProfileScreenPublic({ navigation }) {
                   </View>
                 </View>
 
-                <SocialRenderComponent
-                  userData={userData}
-                  handleEmailPress={handleEmailPress}
-                  handleInstagramPress={handleInstagramPress}
-                  handleYoutubePress={handleYoutubePress}
-                  handleFacebookPress={handleFacebookPress}
-                  handlePhonePress={handlePhonePress}
-                  handleTwitterPress={handleTwitterPress}
-                  handleTiktokPress={handleTiktokPress}
-                  handleLinkedinPress={handleLinkedinPress}
-                  setSocialItemCount={setSocialItemCount}
-                  setSocialModalVisible={setSocialModalVisible}
-                />
+                <View style={{ marginRight: vw(12) }}>
+                  <SocialRenderComponent
+                    userData={userData}
+                    handleEmailPress={handleEmailPress}
+                    handleInstagramPress={handleInstagramPress}
+                    handleYoutubePress={handleYoutubePress}
+                    handleFacebookPress={handleFacebookPress}
+                    handlePhonePress={handlePhonePress}
+                    handleTwitterPress={handleTwitterPress}
+                    handleTiktokPress={handleTiktokPress}
+                    handleLinkedinPress={handleLinkedinPress}
+                    setSocialItemCount={setSocialItemCount}
+                    setSocialModalVisible={setSocialModalVisible}
+                  />
+                </View>
               </View>
 
               {/* ------- BIO ------ */}
@@ -649,37 +614,32 @@ export default function ProfileScreenPublic({ navigation }) {
             </View>
           </ScrollView>
 
-          <View>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={socialModalVisible}
-              onRequestClose={() => setSocialModalVisible(false)}
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={socialModalVisible}
+            onRequestClose={() => setSocialModalVisible(false)}
+          >
+            <Pressable
+              style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.35)", justifyContent: "center", alignItems: "center" }}
+              onPress={() => setSocialModalVisible(false)}
             >
-              <TouchableOpacity
-                onPress={() => setSocialModalVisible(false)}
-                style={{
-                  flex: 1,
-                  backgroundColor: "rgba(1,1,1,0.3)",
-                }}
-              >
-                <View style={styles.socialRenderComponentModal}>
-                  <SocialRenderComponentModal
-                    userData={userData}
-                    handleEmailPress={handleEmailPress}
-                    handleInstagramPress={handleInstagramPress}
-                    handleYoutubePress={handleYoutubePress}
-                    handleFacebookPress={handleFacebookPress}
-                    handlePhonePress={handlePhonePress}
-                    handleTwitterPress={handleTwitterPress}
-                    handleTiktokPress={handleTiktokPress}
-                    handleLinkedinPress={handleLinkedinPress}
-                    setSocialItemCount={setSocialItemCount}
-                  />
-                </View>
-              </TouchableOpacity>
-            </Modal>
-          </View>
+              <Pressable style={styles.socialRenderComponentModal} onPress={() => {}}>
+                <SocialRenderComponentModal
+                  userData={userData}
+                  handleEmailPress={handleEmailPress}
+                  handleInstagramPress={handleInstagramPress}
+                  handleYoutubePress={handleYoutubePress}
+                  handleFacebookPress={handleFacebookPress}
+                  handlePhonePress={handlePhonePress}
+                  handleTwitterPress={handleTwitterPress}
+                  handleTiktokPress={handleTiktokPress}
+                  handleLinkedinPress={handleLinkedinPress}
+                  setSocialItemCount={setSocialItemCount}
+                />
+              </Pressable>
+            </Pressable>
+          </Modal>
           {toastVisible && (
             <View style={styles.toast}>
               <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
@@ -816,13 +776,13 @@ export default function ProfileScreenPublic({ navigation }) {
 
 const styles = StyleSheet.create({
   socialRenderComponentModal: {
-    top: vh(20),
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
     alignSelf: "center",
     justifyContent: "center",
     width: vw(65),
     borderRadius: vh(2),
     paddingVertical: vh(2),
+    paddingHorizontal: vw(4),
   },
 
   extendedAreaContainer: {
@@ -874,11 +834,26 @@ const styles = StyleSheet.create({
     width: vh(25),
     borderRadius: vh(15),
   },
-  buttonsContainer: {
+  topPillsRow: {
     position: "absolute",
-    top: vh(30),
-    right: vw(2),
-    flexDirection: "column",
+    top: 13,
+    right: 13,
+    flexDirection: "row",
+    gap: 8,
+    zIndex: 20,
+  },
+  topPill: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "rgba(255,255,255,0.92)",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "rgba(12,30,48,1)",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
   },
   rectangularBox: {
     height: vh(35),
@@ -953,7 +928,7 @@ const styles = StyleSheet.create({
     top: vh(1),
   },
   profileImageAndName: {
-    left: vw(6),
+    left: vw(3),
     top: vh(3),
   },
   profileImage: {
@@ -969,41 +944,9 @@ const styles = StyleSheet.create({
     height: vh(20),
     width: vh(20),
     borderRadius: vh(15),
-    backgroundColor: parrotBlueSemiTransparent
-
-  },
-  editProfileBox: {
-    backgroundColor: "white",
-    top: vh(-0.5),
-    width: vw(30),
-    left: vw(-4),
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    borderRadius: vh(2),
-    padding: vw(1),
-
-  },
-  innerProfileContainer: {
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    borderRadius: vh(2),
-    paddingHorizontal: vw(1),
-  },
-  shareContainer1: {
-    position: "absolute",
-    bottom: vh(0),
-    right: vw(32),
-  },
-  bookmarkContainer1: {
-    position: "absolute",
-    bottom: vh(0),
-    right: vw(42),
-  },
-  shareContainer2: {
-    padding: vw(1),
-    width: vw(8),
-    backgroundColor: "white",
-    borderRadius: vh(5),
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
   },
   toast: {
     position: "absolute",
