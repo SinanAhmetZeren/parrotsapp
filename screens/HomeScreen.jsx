@@ -557,7 +557,7 @@ export default function HomeScreen({ navigation }) {
     setVoyageIdM(item.publicId);
     setCardHeaderM(item.name);
     setCardDescriptionM(item.brief);
-    setCardImageM(item.profileImage);
+    setCardImageM(item.profileImageThumbnail || item.profileImage);
     setVacancyM(item.vacancy);
     setStartDateM(item.startDate);
     setEndDateM(item.endDate);

@@ -11,6 +11,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
+  Pressable,
   Linking,
   ActivityIndicator,
   Modal,
@@ -61,6 +62,7 @@ export default function ProfileScreen({ navigation }) {
   const [socialItemCount, setSocialItemCount] = useState(0);
   const [socialModalVisible, setSocialModalVisible] = useState(false);
   const [termsModalVisible, setTermsModalVisible] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [retryCountUser, setRetryCountUser] = useState(0);
   const [retryCountVoyages, setRetryCountVoyages] = useState(0);
   const [retryCountVehicles, setRetryCountVehicles] = useState(0);
@@ -113,7 +115,7 @@ export default function ProfileScreen({ navigation }) {
         await clearPushToken(expoPushToken).unwrap();
         await AsyncStorage.removeItem("storedExpoPushToken");
       }
-    } catch (_) {}
+    } catch (_) { }
     dispatch(updateAsLoggedOut());
     // await GoogleSignin.signOut();
   };
@@ -338,58 +340,14 @@ export default function ProfileScreen({ navigation }) {
             left: vw(50) - 120
           }} />
 
-        {/* Terms of Use */}
-        <View style={styles.buttonsContainerTermsOfUse}>
-          <TouchableOpacity style={styles.publicProfileBox} onPress={() => setTermsModalVisible(true)} activeOpacity={0.8}>
-            <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
-              <MaterialIcons name="web-asset" size={18} color={parrotBlue} />
-              <ParrotsStdText style={{
-                fontFamily: "Nunito_700Bold", lineHeight: 22,
-                marginLeft: vw(2), fontSize: 11
-              }}>Terms of Use</ParrotsStdText>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* Public Profile / Logout / Edit Profile */}
-        <View style={{ ...styles.buttonsContainerRight, top: vh(23) }}>
-          <TouchableOpacity style={styles.publicProfileBox} onPress={() => { }} activeOpacity={0.8}>
-            <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
-              <MaterialIcons name="public" size={18} color={parrotBlue} />
-              <ParrotsStdText style={{
-                fontFamily: "Nunito_700Bold", lineHeight: 22,
-                marginLeft: vw(2), fontSize: 11
-              }}>Public Profile</ParrotsStdText>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutBox} onPress={handleLogout} activeOpacity={0.8}>
-            <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
-              <MaterialCommunityIcons name="logout" size={18} color={parrotBlue} />
-              <ParrotsStdText style={{
-                fontFamily: "Nunito_700Bold", lineHeight: 22,
-                marginLeft: vw(2), fontSize: 11
-              }}>Logout</ParrotsStdText>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.editProfileBox} onPress={() => navigation.navigate("EditProfile")} activeOpacity={0.8}>
-            <View style={[styles.innerProfileContainer, { opacity: 0.1 }]}>
-              <MaterialCommunityIcons name="account-edit-outline" size={18} color={parrotBlue} />
-              <ParrotsStdText style={{
-                fontFamily: "Nunito_700Bold", lineHeight: 22,
-                marginLeft: vw(2), fontSize: 11
-              }}>Edit Profile</ParrotsStdText>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        <Modal animationType="fade" transparent={true} visible={termsModalVisible} onRequestClose={handleCloseTermsModal}>
-          <View style={{ flex: 1, marginTop: vh(8), width: vw(96), height: vh(86), margin: "auto", borderRadius: vh(1), overflow: "hidden" }}>
-            <TermsOfUseComponent />
+        {/* three-dot menu placeholder in loading state */}
+        <View style={[styles.menuBtn, { opacity: 0.15 }]}>
+          <View style={styles.menuDots}>
+            <View style={styles.dot} />
+            <View style={styles.dot} />
+            <View style={styles.dot} />
           </View>
-          <TouchableOpacity style={styles.closeButtonAndText2} onPress={handleCloseTermsModal}>
-            <ParrotsStdText style={styles.buttonClose2}><AntDesign name="close" size={24} color="white" /></ParrotsStdText>
-          </TouchableOpacity>
-        </Modal>
+        </View>
       </View>
     );
   }
@@ -445,39 +403,40 @@ export default function ProfileScreen({ navigation }) {
                 )}
               </View>
 
-              {/* ///// terms of use /////// */}
-              <View style={styles.buttonsContainerTermsOfUse}>
+              {/* Three-dot menu button */}
+              <TouchableOpacity
+                style={styles.menuBtn}
+                onPress={() => setMenuOpen(v => !v)}
+                activeOpacity={0.85}
+              >
+                <View style={styles.menuDots}>
+                  <View style={styles.dot} />
+                  <View style={styles.dot} />
+                  <View style={styles.dot} />
+                </View>
+              </TouchableOpacity>
 
-                {/* ///// terms of use BUTTON /////// */}
-                <TouchableOpacity
-                  style={styles.publicProfileBox}
-                  onPress={() => {
-                    setTermsModalVisible(true);
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <View>
-                    <View style={styles.innerProfileContainer}>
-                      <MaterialIcons
-                        name="web-asset"
-                        size={18}
-                        color={parrotBlue}
-                      />
-                      <ParrotsStdText
-                        style={{
-                          fontFamily: "Nunito_700Bold",
-                          lineHeight: 22,
-                          marginLeft: vw(2),
-                          fontSize: 11,
-                        }}
-                      >
-                        Terms of Use
-                      </ParrotsStdText>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-                {/* ///// terms of use BUTTON /////// */}
-              </View>
+              {menuOpen && (
+                <View style={styles.menuDropdown}>
+                  <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuOpen(false); navigation.navigate("EditProfile"); }} activeOpacity={0.8}>
+                    <MaterialCommunityIcons name="account-edit-outline" size={16} color={parrotBlue} />
+                    <ParrotsStdText style={styles.menuItemText}>Edit Profile</ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuOpen(false); navigation.navigate("ProfileStack", { screen: "ProfileScreenPublic", params: { publicId: userData.publicId, userId: userId, userName: userData.id } }); }} activeOpacity={0.8}>
+                    <MaterialIcons name="public" size={16} color={parrotBlue} />
+                    <ParrotsStdText style={styles.menuItemText}>Public Profile</ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.menuItem} onPress={() => { setMenuOpen(false); setTermsModalVisible(true); }} activeOpacity={0.8}>
+                    <MaterialIcons name="web-asset" size={16} color={parrotBlue} />
+                    <ParrotsStdText style={styles.menuItemText}>Terms of Use</ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} onPress={() => { setMenuOpen(false); handleLogout(); }} activeOpacity={0.8}>
+                    <MaterialCommunityIcons name="logout" size={16} color={parrotBlue} />
+                    <ParrotsStdText style={styles.menuItemText}>Logout</ParrotsStdText>
+                  </TouchableOpacity>
+                </View>
+              )}
+
               <Modal
                 animationType="fade"
                 transparent={true}
@@ -486,7 +445,6 @@ export default function ProfileScreen({ navigation }) {
               >
                 <View
                   style={{
-                    // flex: 1,
                     marginTop: vh(8),
                     width: vw(96),
                     height: vh(96),
@@ -508,107 +466,6 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </TouchableOpacity>
               </Modal>
-              {/* ///// terms of use /////// */}
-
-
-              <View style={styles.buttonsContainerRight}>
-                {/* ///// PUBLIC PROFILE BUTTON /////// */}
-                <TouchableOpacity
-                  style={styles.publicProfileBox}
-                  onPress={() => {
-                    navigation.navigate("ProfileStack", {
-                      screen: "ProfileScreenPublic",
-                      // params: { userId: userId },
-                      params: { publicId: userData.publicId, userId: userId, userName: userData.id },
-                    });
-
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <View>
-                    <View style={styles.innerProfileContainer}>
-                      <MaterialIcons
-                        name="public"
-                        size={18}
-                        color={parrotBlue}
-                      />
-                      <ParrotsStdText
-                        style={{
-                          fontFamily: "Nunito_700Bold",
-                          lineHeight: 22,
-                          marginLeft: vw(2),
-                          fontSize: 11,
-                        }}
-                      >
-                        Public Profile
-                      </ParrotsStdText>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-                {/* ///// PUBLIC PROFILE BUTTON /////// */}
-
-
-                {/* ///// LOGOUT BUTTON /////// */}
-                <TouchableOpacity
-                  style={styles.logoutBox}
-                  onPress={() => {
-                    handleLogout();
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <View>
-                    <View style={styles.innerProfileContainer}>
-                      <MaterialCommunityIcons
-                        name="logout"
-                        size={18}
-                        color={parrotBlue}
-                      />
-                      <ParrotsStdText
-                        style={{
-                          fontFamily: "Nunito_700Bold",
-                          lineHeight: 22,
-                          marginLeft: vw(2),
-                          fontSize: 11,
-                        }}
-                      >
-                        Logout
-                      </ParrotsStdText>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-                {/* ///// LOGOUT BUTTON /////// */}
-
-                {/* ///// EDIT PROFILE BUTTON /////// */}
-                <TouchableOpacity
-                  style={styles.editProfileBox}
-                  onPress={() => {
-                    navigation.navigate("EditProfile");
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <View>
-                    <View style={styles.innerProfileContainer}>
-                      <MaterialCommunityIcons
-                        name="account-edit-outline"
-                        size={18}
-                        color={parrotBlue}
-                      />
-                      <ParrotsStdText
-                        style={{
-                          fontFamily: "Nunito_700Bold",
-                          lineHeight: 22,
-                          marginLeft: vw(2),
-                          fontSize: 11,
-                        }}
-                      >
-                        Edit Profile
-                      </ParrotsStdText>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-                {/* ///// EDIT PROFILE BUTTON /////// */}
-
-              </View>
 
 
 
@@ -686,33 +543,50 @@ export default function ProfileScreen({ navigation }) {
                         </ParrotsStdText>
 
                         <View style={{ alignSelf: "stretch", marginBottom: 12 }}>
-                          <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: 16 }}>
+                          <View style={{ flexDirection: "row", alignItems: "flex-start", marginBottom: 16, backgroundColor: "rgba(255, 240, 210, 0.5)", borderRadius: 12, padding: 10 }}>
                             <View style={{ width: 44, alignItems: "center", marginTop: 2 }}>
                               <FontAwesome5 name="map-marker-alt" size={22} color={parrotCaravanOrangeRed} />
                             </View>
-                            <View style={{ flex: 1 }}>
-                              <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>Feature Your Voyage</ParrotsStdText>
-                              <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>Put your journey on the public map</ParrotsStdText>
+                            <View style={{ width: "70%" }}>
+                              <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>
+                                Feature Your Voyage</ParrotsStdText>
+                              <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>
+                                Put your journey on the public map for 1
+                                <Image source={require("../assets/parrotCracker.png")} style={{ width: 14, height: 14 }} resizeMode="contain" />
+                                / day</ParrotsStdText>
                               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                                <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>1 </ParrotsStdText>
-                                <Image source={require("../assets/parrotCracker.png")} style={{ width: 16, height: 16 }} resizeMode="contain" />
-                                <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}> / day</ParrotsStdText>
                               </View>
                             </View>
                           </View>
-                          <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+                          <View style={{ flexDirection: "row", alignItems: "flex-start", backgroundColor: "rgba(255, 240, 210, 0.5)", borderRadius: 12, padding: 10 }}>
                             <View style={{ width: 44, alignItems: "center", marginTop: 2 }}>
                               <Image source={require("../assets/parrotwhiteoutlinebg.png")} style={{ width: 36, height: 36 }} resizeMode="contain" />
                             </View>
-                            <View style={{ flex: 1 }}>
-                              <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>Ask Parrots</ParrotsStdText>
-                              <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>Get local and area advice</ParrotsStdText>
+                            {/* <View style={{ flex: 1 }}>
+                              <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>
+                              Ask Parrots</ParrotsStdText>
+                              <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>
+                              Get local and area advice</ParrotsStdText>
                               <View style={{ flexDirection: "row", alignItems: "center" }}>
                                 <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>1 </ParrotsStdText>
                                 <Image source={require("../assets/parrotCracker.png")} style={{ width: 16, height: 16 }} resizeMode="contain" />
                                 <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}> / query</ParrotsStdText>
                               </View>
+                            </View> */}
+
+
+                            <View style={{ width: "75%" }}>
+                              <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue }}>
+                                Ask Parrots</ParrotsStdText>
+                              <ParrotsStdText style={{ fontSize: 14, fontFamily: "Nunito_700Bold", color: "gray" }}>
+                                Get local and area advice for your voyages for 1
+                                <Image source={require("../assets/parrotCracker.png")} style={{ width: 14, height: 14 }} resizeMode="contain" />
+                                / day</ParrotsStdText>
+                              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                              </View>
                             </View>
+
+
                           </View>
                         </View>
 
@@ -787,13 +661,12 @@ export default function ProfileScreen({ navigation }) {
                     <Image
                       style={styles.profileImage}
                       resizeMode="cover"
-                      //resizeMode="contain"
                       source={{ uri: profileImageUrl }}
                     />
                   </View>
                 </View>
 
-                <View style={{}}>
+                <View style={{ marginRight: vw(12) }}>
                   <SocialRenderComponent
                     userData={userData}
                     handleEmailPress={handleEmailPress}
@@ -896,38 +769,33 @@ export default function ProfileScreen({ navigation }) {
             </View>
           </ScrollView>
 
-          <View>
-            <Modal
-              animationType="fade"
-              transparent={true}
-              visible={socialModalVisible}
-              onRequestClose={() => setSocialModalVisible(false)}
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={socialModalVisible}
+            onRequestClose={() => setSocialModalVisible(false)}
+          >
+            <Pressable
+              style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.35)", justifyContent: "center", alignItems: "center" }}
+              onPress={() => setSocialModalVisible(false)}
             >
-              <TouchableOpacity
-                onPress={() => setSocialModalVisible(false)}
-                style={{
-                  flex: 1,
-                  backgroundColor: "rgba(1,1,1,0.3)",
-                }}
-              >
-                <View style={styles.socialRenderComponentModal}>
-                  <SocialRenderComponentModal
-                    userData={userData}
-                    handleEmailPress={handleEmailPress}
-                    handleInstagramPress={handleInstagramPress}
-                    handleYoutubePress={handleYoutubePress}
-                    handleFacebookPress={handleFacebookPress}
-                    handlePhonePress={handlePhonePress}
-                    handleTwitterPress={handleTwitterPress}
-                    handleTiktokPress={handleTiktokPress}
-                    handleLinkedinPress={handleLinkedinPress}
-                    setSocialItemCount={setSocialItemCount}
-                    setSocialModalVisible={setSocialModalVisible}
-                  />
-                </View>
-              </TouchableOpacity>
-            </Modal>
-          </View>
+              <Pressable style={styles.socialRenderComponentModal} onPress={() => { }}>
+                <SocialRenderComponentModal
+                  userData={userData}
+                  handleEmailPress={handleEmailPress}
+                  handleInstagramPress={handleInstagramPress}
+                  handleYoutubePress={handleYoutubePress}
+                  handleFacebookPress={handleFacebookPress}
+                  handlePhonePress={handlePhonePress}
+                  handleTwitterPress={handleTwitterPress}
+                  handleTiktokPress={handleTiktokPress}
+                  handleLinkedinPress={handleLinkedinPress}
+                  setSocialItemCount={setSocialItemCount}
+                  setSocialModalVisible={setSocialModalVisible}
+                />
+              </Pressable>
+            </Pressable>
+          </Modal>
           {toastVisible && (
             <View style={styles.toast}>
               <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
@@ -959,13 +827,13 @@ const styles = StyleSheet.create({
   },
 
   socialRenderComponentModal: {
-    top: vh(20),
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
     alignSelf: "center",
     justifyContent: "center",
     width: vw(65),
     borderRadius: vh(2),
     paddingVertical: vh(2),
+    paddingHorizontal: vw(4),
   },
 
   currentBidsTitle: {
@@ -1070,7 +938,7 @@ const styles = StyleSheet.create({
     top: vh(1),
   },
   profileImageAndName: {
-    left: vw(6),
+    left: vw(3),
     top: vh(3),
   },
   profileImage: {
@@ -1086,7 +954,9 @@ const styles = StyleSheet.create({
     height: vh(20),
     width: vh(20),
     borderRadius: vh(15),
-    backgroundColor: parrotBlueSemiTransparent
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
   },
   editProfileBox: {
     marginTop: vh(0.5),
@@ -1097,10 +967,17 @@ const styles = StyleSheet.create({
     padding: vw(1),
   },
   parrotCrackerBox: {
-    backgroundColor: "white",
-    // width: vw(30),
-    flexDirection: "row",
-    borderRadius: vw(10),
+    backgroundColor: "rgba(255,255,255,0.92)",
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "rgba(12,30,48,1)",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
   },
   logoutBox: {
     marginTop: vh(0.5),
@@ -1121,26 +998,70 @@ const styles = StyleSheet.create({
     padding: vw(1),
     zIndex: 100,
   },
-  buttonsContainerTermsOfUse: {
+  menuBtn: {
     position: "absolute",
-    top: vh(.5),
-    right: vw(2),
-    flexDirection: "column",
-    backgroundColor: ""
+    top: 13,
+    right: 13,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "rgba(255,255,255,0.92)",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "rgba(12,30,48,1)",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+    zIndex: 20,
   },
-  buttonsContainerRight: {
+  menuDots: {
+    flexDirection: "row",
+    gap: 4,
+    alignItems: "center",
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#0A2540",
+  },
+  menuDropdown: {
     position: "absolute",
-    top: vh(21),
-    right: vw(2),
-    flexDirection: "column",
-    backgroundColor: ""
+    top: 58,
+    right: 13,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    shadowColor: "rgba(12,30,48,1)",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    zIndex: 20,
+    minWidth: 160,
+    overflow: "hidden",
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#E8DDD0",
+  },
+  menuItemText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#0A2540",
   },
 
   parrotcrackerContainerLeft: {
     position: "absolute",
-    top: vh(28),
-    left: vw(2),
+    top: 13,
+    right: 61,
     flexDirection: "column",
+    zIndex: 20,
   },
   innerProfileContainer: {
     alignSelf: "flex-end",

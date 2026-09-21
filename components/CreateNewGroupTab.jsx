@@ -204,222 +204,222 @@ export default function CreateNewGroupTab({ onGroupCreated, showToast }) {
 
   return (
     <TouchableWithoutFeedback onPress={() => { if (emojiOpen) setEmojiOpen(false); }} accessible={false}>
-    <View style={{ height: outerHeight, backgroundColor: "white" }}>
+      <View style={{ height: outerHeight, backgroundColor: "white" }}>
 
-      <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <ParrotsStdText style={styles.modalTitle}>Group Message History</ParrotsStdText>
-            <ParrotsStdText style={styles.modalText}>
-              You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
-            </ParrotsStdText>
-            <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledgeGroupHistory}>
-              <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-    <View style={{ flex: 1, flexDirection: "column", backgroundColor: "white" }}>
-
-      {/* 1. Title */}
-      <ParrotsStdText style={[styles.membersLabel, { backgroundColor: "white", marginTop: vh(1.5) }]}>Create New Group</ParrotsStdText>
-
-      {/* 2. Group name */}
-      <View style={[styles.groupInputRow, { backgroundColor: "white" }]}>
-        <View style={[styles.searchBar, { width: vw(85), backgroundColor: "rgba(0, 119, 234, 0.02)", borderWidth: 0 }]}>
-          <TextInput
-            style={styles.textinputStyle}
-            placeholder="Group name..."
-            placeholderTextColor={parrotPlaceholderGrey}
-            value={newGroupName}
-            onChangeText={setNewGroupName}
-            numberOfLines={1}
-            maxLength={30}
-          />
-        </View>
-      </View>
-
-      {/* 3. Search users */}
-      <View style={[styles.groupSearchWrapper, { backgroundColor: "white" }]}>
-        <View style={[styles.searchBar, { width: vw(85), backgroundColor: "rgba(0, 119, 234, 0.02)", borderWidth: 0 }]}>
-          <TextInput
-            style={styles.textinputStyle}
-            placeholder="Search users to add..."
-            placeholderTextColor={parrotPlaceholderGrey}
-            value={groupMemberSearch}
-            onChangeText={setGroupMemberSearch}
-            numberOfLines={1}
-            onSubmitEditing={() => {
-              if (groupMemberSearch.length >= 3) { setGroupMemberQuery(groupMemberSearch); setGroupDropdownVisible(true); }
-            }}
-          />
-          <TouchableOpacity
-            style={styles.magnifier}
-            onPress={() => {
-              if (groupMemberSearch.length >= 3) { setGroupMemberQuery(groupMemberSearch); setGroupDropdownVisible(true); }
-            }}
-            disabled={groupMemberSearch.length < 3}
-          >
-            <Feather name="search" size={20} color={groupMemberSearch.length > 2 ? parrotBlue : parrotBlueSemiTransparent} />
-          </TouchableOpacity>
-        </View>
-
-        <Modal visible={groupDropdownVisible} transparent animationType="none" onRequestClose={() => setGroupDropdownVisible(false)}>
-          <TouchableWithoutFeedback onPress={() => setGroupDropdownVisible(false)}>
-            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.3)" }}>
-              <View style={styles.groupSearchDropdown} onStartShouldSetResponder={() => true}>
-                <ScrollView keyboardShouldPersistTaps="handled">
-                  {(isFetchingGroupMembers ? [] : (groupMemberResults ?? []))
-                    .filter((u) => !addedMembers.find((m) => (m.Id ?? m.id) === (u.Id ?? u.id)) && (u.Id ?? u.id) !== userId)
-                    .map((u) => (
-                      <View key={u.Id ?? u.id} style={{ borderRadius: vh(6), marginBottom: vh(1), alignItems: "center" }}>
-                        <View style={{ backgroundColor: "white", borderRadius: vh(6), padding: vh(0.5) }}>
-                          <View style={styles.pillContainer}>
-                            <View style={styles.pillProfile}>
-                              <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.pillAvatar} />
-                              <ParrotsStdText style={styles.pillName}>{u.userName}</ParrotsStdText>
-                            </View>
-                            <TouchableOpacity
-                              style={addingMemberId === (u.Id ?? u.id) ? styles.addedMemberBtn : styles.addMemberBtn}
-                              disabled={!!addingMemberId}
-                              onPress={() => {
-                                const uid = u.Id ?? u.id;
-                                setAddingMemberId(uid);
-                                setTimeout(() => {
-                                  setAddedMembers((prev) => [...prev, u]);
-                                  setGroupDropdownVisible(false);
-                                  setGroupMemberSearch("");
-                                  setGroupMemberQuery("");
-                                  setAddingMemberId(null);
-                                }, 600);
-                              }}
-                            >
-                              {addingMemberId === (u.Id ?? u.id)
-                                ? <Feather name="check" size={18} color="#4caf50" />
-                                : <Feather name="plus" size={18} color={parrotBlue} />}
-                            </TouchableOpacity>
-                          </View>
-                        </View>
-                      </View>
-                    ))}
-                </ScrollView>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      </View>
-
-      {/* 4. Members title */}
-      <ParrotsStdText style={[styles.membersLabel, { backgroundColor: "white" }]}>Members</ParrotsStdText>
-
-      {/* 5. Members scroll */}
-      <ScrollView
-        style={[styles.membersScroll, { backgroundColor: "white" }]}
-        contentContainerStyle={{ alignItems: "center", paddingTop: vh(2), paddingBottom: vh(1) }}
-        nestedScrollEnabled
-      >
-        <View style={{ borderRadius: vh(6), marginBottom: vh(1) }}>
-          <View style={styles.pillContainer}>
-            <View style={styles.pillProfile}>
-              <Image source={{ uri: currentUserImage }} style={styles.pillAvatar} />
-              <ParrotsStdText style={styles.pillName}>{currentUserName} (you)</ParrotsStdText>
-            </View>
-          </View>
-        </View>
-        {addedMembers.map((m) => (
-          <View key={m.Id ?? m.id} style={{ borderRadius: vh(6), marginBottom: vh(1) }}>
-            <View style={styles.pillContainer}>
-              <View style={styles.pillProfile}>
-                <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.pillAvatar} />
-                <ParrotsStdText style={styles.pillName}>{m.userName}</ParrotsStdText>
-              </View>
-              <TouchableOpacity
-                style={styles.pillAction}
-                disabled={!!removingMemberId}
-                onPress={() => {
-                  const mid = m.Id ?? m.id;
-                  setRemovingMemberId(mid);
-                  setTimeout(() => {
-                    setAddedMembers((prev) => prev.filter((x) => (x.Id ?? x.id) !== mid));
-                    setRemovingMemberId(null);
-                  }, 600);
-                }}
-              >
-                {removingMemberId === (m.Id ?? m.id)
-                  ? <ActivityIndicator size={18} color={parrotRed} />
-                  : <Feather name="x" size={18} color={parrotRed} />}
+        <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalBox}>
+              <ParrotsStdText style={styles.modalTitle}>Group Message History</ParrotsStdText>
+              <ParrotsStdText style={styles.modalText}>
+                You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
+              </ParrotsStdText>
+              <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledgeGroupHistory}>
+                <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
               </TouchableOpacity>
             </View>
           </View>
-        ))}
-      </ScrollView>
+        </Modal>
 
-      {/* 6. Send row */}
-      <View style={[styles.sendRow, {
-        width: "100%", alignSelf: "center",
-        backgroundColor: parrotLightCream,
-        paddingBottom: emojiOpen ? 0 : insets.bottom,
-      }]}>
-        <TouchableOpacity
-          onPress={() => { Keyboard.dismiss(); setEmojiOpen((prev) => !prev); }}
-          style={styles.emojiBtn}
-        >
-          <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 41, height: 41, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.2)" }} />
-        </TouchableOpacity>
-        <TextInput
-          style={[styles.groupMessageInput, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
-          placeholder="Write first message..."
-          placeholderTextColor={parrotPlaceholderGrey}
-          value={firstGroupMessage}
-          onChangeText={setFirstGroupMessage}
-          onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
-          onBlur={() => setInputFocused(false)}
-          multiline
-        />
-        <TouchableOpacity
-          style={[styles.groupSendBtn, (!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0) && styles.groupSendBtnDisabled]}
-          onPress={handleCreateGroupAndSend}
-          disabled={!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0 || isCreatingGroup}
-        >
-          {isCreatingGroup
-            ? <ActivityIndicator size="small" color="white" />
-            : <Feather name="send" size={20} color="white" />}
-        </TouchableOpacity>
-      </View>
-    </View>
+        <View style={{ flex: 1, flexDirection: "column", backgroundColor: "white" }}>
 
-    {emojiOpen && (
-      <View style={styles.emojiPanel}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryRow} keyboardShouldPersistTaps="always">
-          {EMOJI_CATEGORIES.map((cat) => (
+          {/* 1. Title */}
+          <ParrotsStdText style={[styles.membersLabel, { backgroundColor: "white", marginTop: vh(1.5) }]}>Create New Group</ParrotsStdText>
+
+          {/* 2. Group name */}
+          <View style={[styles.groupInputRow, { backgroundColor: "white" }]}>
+            <View style={[styles.searchBar, { width: vw(85), backgroundColor: "rgba(0, 119, 234, 0.02)", borderWidth: 0 }]}>
+              <TextInput
+                style={styles.textinputStyle}
+                placeholder="Group name..."
+                placeholderTextColor={parrotPlaceholderGrey}
+                value={newGroupName}
+                onChangeText={setNewGroupName}
+                numberOfLines={1}
+                maxLength={30}
+              />
+            </View>
+          </View>
+
+          {/* 3. Search users */}
+          <View style={[styles.groupSearchWrapper, { backgroundColor: "white" }]}>
+            <View style={[styles.searchBar, { width: vw(85), backgroundColor: "rgba(0, 119, 234, 0.02)", borderWidth: 0 }]}>
+              <TextInput
+                style={styles.textinputStyle}
+                placeholder="Search users to add..."
+                placeholderTextColor={parrotPlaceholderGrey}
+                value={groupMemberSearch}
+                onChangeText={setGroupMemberSearch}
+                numberOfLines={1}
+                onSubmitEditing={() => {
+                  if (groupMemberSearch.length >= 3) { setGroupMemberQuery(groupMemberSearch); setGroupDropdownVisible(true); }
+                }}
+              />
+              <TouchableOpacity
+                style={styles.magnifier}
+                onPress={() => {
+                  if (groupMemberSearch.length >= 3) { setGroupMemberQuery(groupMemberSearch); setGroupDropdownVisible(true); }
+                }}
+                disabled={groupMemberSearch.length < 3}
+              >
+                <Feather name="search" size={20} color={groupMemberSearch.length > 2 ? parrotBlue : parrotBlueSemiTransparent} />
+              </TouchableOpacity>
+            </View>
+
+            <Modal visible={groupDropdownVisible} transparent animationType="none" onRequestClose={() => setGroupDropdownVisible(false)}>
+              <TouchableWithoutFeedback onPress={() => setGroupDropdownVisible(false)}>
+                <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.3)" }}>
+                  <View style={styles.groupSearchDropdown} onStartShouldSetResponder={() => true}>
+                    <ScrollView keyboardShouldPersistTaps="handled">
+                      {(isFetchingGroupMembers ? [] : (groupMemberResults ?? []))
+                        .filter((u) => !addedMembers.find((m) => (m.Id ?? m.id) === (u.Id ?? u.id)) && (u.Id ?? u.id) !== userId)
+                        .map((u) => (
+                          <View key={u.Id ?? u.id} style={{ borderRadius: vh(6), marginBottom: vh(1), alignItems: "center" }}>
+                            <View style={{ backgroundColor: "white", borderRadius: vh(6), padding: vh(0.5) }}>
+                              <View style={styles.pillContainer}>
+                                <View style={styles.pillProfile}>
+                                  <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.pillAvatar} />
+                                  <ParrotsStdText style={styles.pillName}>{u.userName}</ParrotsStdText>
+                                </View>
+                                <TouchableOpacity
+                                  style={addingMemberId === (u.Id ?? u.id) ? styles.addedMemberBtn : styles.addMemberBtn}
+                                  disabled={!!addingMemberId}
+                                  onPress={() => {
+                                    const uid = u.Id ?? u.id;
+                                    setAddingMemberId(uid);
+                                    setTimeout(() => {
+                                      setAddedMembers((prev) => [...prev, u]);
+                                      setGroupDropdownVisible(false);
+                                      setGroupMemberSearch("");
+                                      setGroupMemberQuery("");
+                                      setAddingMemberId(null);
+                                    }, 600);
+                                  }}
+                                >
+                                  {addingMemberId === (u.Id ?? u.id)
+                                    ? <Feather name="check" size={18} color="#4caf50" />
+                                    : <Feather name="plus" size={18} color={parrotBlue} />}
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          </View>
+                        ))}
+                    </ScrollView>
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+          </View>
+
+          {/* 4. Members title */}
+          <ParrotsStdText style={[styles.membersLabel, { backgroundColor: "white" }]}>Members</ParrotsStdText>
+
+          {/* 5. Members scroll */}
+          <ScrollView
+            style={[styles.membersScroll, { backgroundColor: "white" }]}
+            contentContainerStyle={{ alignItems: "center", paddingTop: vh(2), paddingBottom: vh(1) }}
+            nestedScrollEnabled
+          >
+            <View style={{ borderRadius: vh(6), marginBottom: vh(1) }}>
+              <View style={styles.pillContainer}>
+                <View style={styles.pillProfile}>
+                  <Image source={{ uri: currentUserImage }} style={styles.pillAvatar} />
+                  <ParrotsStdText style={styles.pillName}>{currentUserName} (you)</ParrotsStdText>
+                </View>
+              </View>
+            </View>
+            {addedMembers.map((m) => (
+              <View key={m.Id ?? m.id} style={{ borderRadius: vh(6), marginBottom: vh(1) }}>
+                <View style={styles.pillContainer}>
+                  <View style={styles.pillProfile}>
+                    <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.pillAvatar} />
+                    <ParrotsStdText style={styles.pillName}>{m.userName}</ParrotsStdText>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.pillAction}
+                    disabled={!!removingMemberId}
+                    onPress={() => {
+                      const mid = m.Id ?? m.id;
+                      setRemovingMemberId(mid);
+                      setTimeout(() => {
+                        setAddedMembers((prev) => prev.filter((x) => (x.Id ?? x.id) !== mid));
+                        setRemovingMemberId(null);
+                      }, 600);
+                    }}
+                  >
+                    {removingMemberId === (m.Id ?? m.id)
+                      ? <ActivityIndicator size={18} color={parrotRed} />
+                      : <Feather name="x" size={18} color={parrotRed} />}
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
+
+          {/* 6. Send row */}
+          <View style={[styles.sendRow, {
+            width: "100%", alignSelf: "center",
+            backgroundColor: parrotLightCream,
+            paddingBottom: emojiOpen ? 0 : insets.bottom,
+          }]}>
             <TouchableOpacity
-              key={cat.label}
-              onPress={() => setEmojiCategory(cat.label)}
-              style={[styles.categoryBtn, emojiCategory === cat.label && styles.categoryBtnActive]}
+              onPress={() => { Keyboard.dismiss(); setEmojiOpen((prev) => !prev); }}
+              style={styles.emojiBtn}
             >
-              <Text style={styles.categoryIcon}>{cat.icon}</Text>
+              <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 41, height: 41, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.2)" }} />
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-        <FlatList
-          data={EMOJIS_BY_CATEGORY[emojiCategory]}
-          keyExtractor={(item) => item}
-          numColumns={8}
-          contentContainerStyle={{ paddingBottom: tabBarHeight }}
-          renderItem={({ item }) => (
+            <TextInput
+              style={[styles.groupMessageInput, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
+              placeholder="Write first message..."
+              placeholderTextColor={parrotPlaceholderGrey}
+              value={firstGroupMessage}
+              onChangeText={setFirstGroupMessage}
+              onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
+              onBlur={() => setInputFocused(false)}
+              multiline
+            />
             <TouchableOpacity
-              style={styles.emojiItem}
-              onPress={() => setFirstGroupMessage((prev) => prev + item)}
+              style={[styles.groupSendBtn, (!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0) && styles.groupSendBtnDisabled]}
+              onPress={handleCreateGroupAndSend}
+              disabled={!newGroupName.trim() || !firstGroupMessage.trim() || addedMembers.length === 0 || isCreatingGroup}
             >
-              <Text style={styles.emojiText}>{item}</Text>
+              {isCreatingGroup
+                ? <ActivityIndicator size="small" color="white" />
+                : <Feather name="send" size={20} color="white" />}
             </TouchableOpacity>
-          )}
-          keyboardShouldPersistTaps="always"
-        />
+          </View>
+        </View>
+
+        {emojiOpen && (
+          <View style={styles.emojiPanel}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryRow} keyboardShouldPersistTaps="always">
+              {EMOJI_CATEGORIES.map((cat) => (
+                <TouchableOpacity
+                  key={cat.label}
+                  onPress={() => setEmojiCategory(cat.label)}
+                  style={[styles.categoryBtn, emojiCategory === cat.label && styles.categoryBtnActive]}
+                >
+                  <Text style={styles.categoryIcon}>{cat.icon}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <FlatList
+              data={EMOJIS_BY_CATEGORY[emojiCategory]}
+              keyExtractor={(item) => item}
+              numColumns={8}
+              contentContainerStyle={{ paddingBottom: tabBarHeight }}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.emojiItem}
+                  onPress={() => setFirstGroupMessage((prev) => prev + item)}
+                >
+                  <Text style={styles.emojiText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              keyboardShouldPersistTaps="always"
+            />
+          </View>
+        )}
       </View>
-    )}
-    </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -495,7 +495,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingLeft: vw(3),
     backgroundColor: "rgba(0, 119, 234, 0.02)",
-    borderRadius: vh(6),
+    // borderRadius: vh(6),
+    borderRadius: 16,
     width: vw(90),
   },
   textinputStyle: {

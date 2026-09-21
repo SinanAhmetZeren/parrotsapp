@@ -44,10 +44,6 @@ const styles = StyleSheet.create({
   seg: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: "#fff",
-    borderWidth: 1.5,
-    borderColor: "#E8E3DC",
-    borderRadius: 999,
     padding: 3,
     gap: 2,
   },
@@ -68,7 +64,7 @@ const styles = StyleSheet.create({
   segLabel: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 13,
-    color: "#4A5A6A",
+    color: "#0A77EA",
   },
   segLabelOn: {
     color: "#fff",

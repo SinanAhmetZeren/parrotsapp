@@ -2,21 +2,16 @@ import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useCallback, use } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   Image,
-  Button,
   StyleSheet,
   ScrollView,
-  Keyboard,
   Modal,
 } from "react-native";
-import Checkbox from "expo-checkbox";
-
 import {
   useGetUserByIdQuery,
   useUpdateProfileImageMutation,
@@ -29,28 +24,38 @@ import {
 } from "../slices/UserSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
-import { Entypo, Fontisto, Feather, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Feather, Fontisto, FontAwesome5, MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { API_URL } from "@env";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
-import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
-import { parrotBlue, parrotCream, parrotRed, parrotTextDarkBlue, parrotCaravanOrangeRed } from "../assets/color";
+import { parrotBlue, parrotCream, parrotRed, parrotTextDarkBlue } from "../assets/color";
 import { htmlToText } from "html-to-text";
+import LoadingLogo from "../components/LoadingLogo";
+
+const BORDER = "#E8E3DC";
+const BLUE = "#0A5FBF";
+const BLUE_PILL = "#E8F1FB";
+
+const SectionLabel = ({ children }) => (
+  <ParrotsStdText style={styles.sectionLabel}>{children}</ParrotsStdText>
+);
+
+const FieldRow = ({ icon, label, children }) => (
+  <View style={styles.fieldRow}>
+    <View style={styles.fieldIcon}>{icon}</View>
+    <ParrotsStdText style={styles.fieldLabel}>{label}</ParrotsStdText>
+    <View style={styles.fieldInput}>{children}</View>
+  </View>
+);
 
 const EditProfileScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
-
   const dispatch = useDispatch();
-  const {
-    data: userData,
-    isLoading,
-    isError,
-    error,
-    isSuccess,
-    refetch,
-  } = useGetUserByIdQuery(userId);
+
+  const { data: userData, isLoading, isSuccess, refetch } = useGetUserByIdQuery(userId);
 
   const [updateProfileImage] = useUpdateProfileImageMutation();
   const [updateBackgroundImage] = useUpdateBackgroundImageMutation();
@@ -58,749 +63,405 @@ const EditProfileScreen = ({ navigation }) => {
   const [deleteAccount, { isLoading: isDeletingAccount }] = useDeleteAccountMutation();
   const [deleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false);
 
-  const handleDeleteAccount = async () => {
-    try {
-      await deleteAccount().unwrap();
-    } catch (_) { }
-    setDeleteAccountModalVisible(false);
-    dispatch(updateAsLoggedOut());
-  };
-
-  const [profileImage, setProfileImage] = useState(null);
-  const [backgroundImage, setBackgroundImage] = useState(null);
+  const [profileImageUri, setProfileImageUri] = useState(null);
+  const [backgroundImageUri, setBackgroundImageUri] = useState(null);
+  const [username, setUsername] = useState("");
+  const [title, setTitle] = useState("");
+  const [bio, setBio] = useState("");
+  const [displayEmail, setDisplayEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [instagramProfile, setInstagramProfile] = useState("");
   const [twitterProfile, setTwitterProfile] = useState("");
   const [tiktokProfile, setTiktokProfile] = useState("");
   const [linkedinProfile, setLinkedinProfile] = useState("");
   const [youtubeProfile, setYoutubeProfile] = useState("");
-  const [displayEmail, setDisplayEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [facebookProfile, setFacebookProfile] = useState("");
-  const [username, setUsername] = useState("");
-  const [title, setTitle] = useState("");
-  const [bio, setBio] = useState("");
-  const [profileImageUri, setProfileImageUri] = useState(null);
-  const [backgroundImageUri, setBackgroundImageUri] = useState(null);
-  const [emailHidden, setEmailHidden] = useState(true);
-  const [textInputBottomMargin, setTextInputBottomMargin] = useState(0);
-  const [hasError, setHasError] = useState(false)
+  const [isSaving, setIsSaving] = useState(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchData = async () => {
-        try {
-          await refetch();
-        } catch (error) {
-          console.error("Error refetching messages data:", error);
-        }
-      };
+  const toPlainText = (html) => htmlToText(html ?? "", { wordwrap: false });
 
-      fetchData();
-
-      return () => {
-        // Cleanup function if needed
-      };
-    }, [refetch])
-  );
-
-  const handleUploadProfile = async () => {
-    if (!profileImageUri) {
-      return;
-    }
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: profileImageUri,
-      type: "image/jpeg",
-      name: "profileImage.jpg",
-    });
-    try {
-      const response = await updateProfileImage({ formData, userId });
-    } catch (error) {
-      console.error("Error uploading image", error);
-      setHasError(true)
-    }
-  };
-
-  const handleUploadBackground = async () => {
-    if (!backgroundImageUri) {
-      return;
-    }
-    const formData = new FormData();
-    formData.append("imageFile", {
-      uri: backgroundImageUri,
-      type: "image/jpeg",
-      name: "backgroundImage.jpg",
-    });
-    try {
-      const response = await updateBackgroundImage({ formData, userId });
-    } catch (error) {
-      console.error("Error uploading image", error);
-      setHasError(true)
-    }
-  };
-
-  const handlePatchUser = async () => {
-    const patchDoc = [
-      { op: "replace", path: "/userName", value: username },
-      // { op: "replace", path: "/email", value: email },
-      { op: "replace", path: "/displayEmail", value: displayEmail },
-      { op: "replace", path: "/phonenumber", value: phoneNumber },
-      { op: "replace", path: "/facebook", value: facebookProfile },
-      { op: "replace", path: "/instagram", value: instagramProfile },
-      { op: "replace", path: "/twitter", value: twitterProfile },
-      { op: "replace", path: "/tiktok", value: tiktokProfile },
-      { op: "replace", path: "/linkedin", value: linkedinProfile },
-      { op: "replace", path: "/youtube", value: youtubeProfile },
-      { op: "replace", path: "/title", value: title },
-      { op: "replace", path: "/bio", value: bio },
-      { op: "replace", path: "/emailVisible", value: !emailHidden },
-    ];
-    try {
-      const response = await patchUser({ patchDoc, userId });
-      dispatch(
-        updateUserName({
-          username,
-        })
-      );
-      dispatch(
-        updateUserData({
-          image: profileImage,
-        })
-      );
-      // console.log("updating user");
-    } catch (error) {
-      console.error("Error uploading image", error);
-      setHasError(true)
-    }
-  };
-
-  const pickProfileImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setProfileImageUri(result.assets[0].uri);
-    }
-  };
-
-  const pickBackgroundImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      // aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setBackgroundImageUri(result.assets[0].uri);
-    }
-  };
-
-
-  const toPlainText = (html) =>
-    htmlToText(html ?? '', { wordwrap: false });
+  useFocusEffect(useCallback(() => {
+    const fetch = async () => { try { await refetch(); } catch { } };
+    fetch();
+  }, [refetch]));
 
   useEffect(() => {
     if (isSuccess && userData) {
-      setProfileImage(userData.profileImageUrl);
-      setBackgroundImage(userData.backgroundImageUrl);
+      setUsername(userData.userName);
+      setTitle(toPlainText(userData.title));
+      setBio(toPlainText(userData.bio));
+      setDisplayEmail(userData.displayEmail);
+      setPhoneNumber(userData.phoneNumber);
       setInstagramProfile(userData.instagram);
       setTwitterProfile(userData.twitter);
       setTiktokProfile(userData.tiktok);
       setLinkedinProfile(userData.linkedin);
       setYoutubeProfile(userData.youtube);
-      setDisplayEmail(userData.displayEmail);
-      setPhoneNumber(userData.phoneNumber);
       setFacebookProfile(userData.facebook);
-      setUsername(userData.userName);
-      setTitle(toPlainText(userData.title));
-      setBio(toPlainText(userData.bio));
-      setEmailHidden(!userData.emailVisible);
     }
   }, [isSuccess, userData]);
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      (event) => {
-        setTextInputBottomMargin(event.endCoordinates.height);
-        console.log("height: ", event.endCoordinates.height);
+  const pickProfileImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ["images"], allowsEditing: true, quality: 1 });
+    if (!result.canceled) setProfileImageUri(result.assets[0].uri);
+  };
+
+  const pickBackgroundImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ["images"], allowsEditing: true, quality: 1 });
+    if (!result.canceled) setBackgroundImageUri(result.assets[0].uri);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      if (profileImageUri) {
+        const fd = new FormData();
+        fd.append("imageFile", { uri: profileImageUri, type: "image/jpeg", name: "profileImage.jpg" });
+        await updateProfileImage({ formData: fd, userId });
       }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      (event) => {
-        setTextInputBottomMargin(0);
-        console.log("height: ", event.endCoordinates.height);
+      if (backgroundImageUri) {
+        const fd = new FormData();
+        fd.append("imageFile", { uri: backgroundImageUri, type: "image/jpeg", name: "backgroundImage.jpg" });
+        await updateBackgroundImage({ formData: fd, userId });
       }
-    );
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+      const patchDoc = [
+        { op: "replace", path: "/userName", value: username },
+        { op: "replace", path: "/displayEmail", value: displayEmail },
+        { op: "replace", path: "/phonenumber", value: phoneNumber },
+        { op: "replace", path: "/facebook", value: facebookProfile },
+        { op: "replace", path: "/instagram", value: instagramProfile },
+        { op: "replace", path: "/twitter", value: twitterProfile },
+        { op: "replace", path: "/tiktok", value: tiktokProfile },
+        { op: "replace", path: "/linkedin", value: linkedinProfile },
+        { op: "replace", path: "/youtube", value: youtubeProfile },
+        { op: "replace", path: "/title", value: title },
+        { op: "replace", path: "/bio", value: bio },
+      ];
+      await patchUser({ patchDoc, userId });
+      dispatch(updateUserName({ username }));
+      dispatch(updateUserData({ image: userData?.profileImageUrl }));
+      navigation.navigate("ProfileScreen");
+    } catch { } finally { setIsSaving(false); }
+  };
 
-  useEffect(() => {
-    console.log("TextInput bottom margin updated:", textInputBottomMargin);
-  }, [textInputBottomMargin]);
+  const handleDeleteAccount = async () => {
+    try { await deleteAccount().unwrap(); } catch { }
+    setDeleteAccountModalVisible(false);
+    dispatch(updateAsLoggedOut());
+  };
 
-
-  if (hasError) {
-    return (
-      <View style={{ backgroundColor: "white", height: vh(100) }}>
-        <View style={{ marginTop: vh(15) }}>
-          <Image
-            source={require("../assets/parrotslogo.png")}
-            style={styles.logoImage}
-          />
-          <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
-          <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
-          {/* <ParrotsStdText style={styles.currentBidsTitle3}>
-              Swipe Down to Retry
-            </ParrotsStdText> */}
-        </View>
-      </View>
-    )
+  if (isLoading) {
+    return <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: parrotCream }}><LoadingLogo size={200} /></View>;
   }
 
-  if (isSuccess && !hasError) {
-    const profileImageUrl = `${userData.profileImageUrl}`;
-    const backgroundImageUrl = `${userData.backgroundImageUrl}`;
+  if (!isSuccess || !userData) return null;
 
-    return (
-      <>
-        <TokenExpiryGuard />
-        <ScrollView style={{ ...styles.scrollview, top: -textInputBottomMargin }}>
-          <TouchableOpacity onPress={pickBackgroundImage}>
-            <View style={styles.rectangularBox}>
-              {backgroundImageUri ? (
-                <Image
-                  style={styles.imageContainer}
-                  resizeMode="cover"
-                  source={{ uri: backgroundImageUri }}
-                />
-              ) : (
-                <Image
-                  style={styles.imageContainer}
-                  resizeMode="cover"
-                  source={{ uri: backgroundImageUrl }}
-                />
-              )}
+  const profileImageUrl = userData.profileImageUrl;
+  const backgroundImageUrl = userData.backgroundImageUrl;
+
+  return (
+    <>
+      <TokenExpiryGuard />
+      <ScrollView style={styles.root} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+
+        {/* ── BACKGROUND IMAGE ── */}
+        <TouchableOpacity onPress={pickBackgroundImage} activeOpacity={0.85}>
+          <View style={styles.bgWrap}>
+            <Image
+              source={{ uri: backgroundImageUri || backgroundImageUrl }}
+              style={styles.bgImage}
+              resizeMode="cover"
+            />
+            <View style={styles.bgCameraBtn}>
+              <Feather name="camera" size={16} color={BLUE} />
             </View>
-            <View style={styles.recycleBoxBG}>
-              <Entypo
-                name="image"
-                size={24}
-                color="black"
-                style={styles.recycleBackground}
+          </View>
+        </TouchableOpacity>
+
+        {/* ── PROFILE IMAGE ── */}
+        <View style={styles.avatarRow}>
+          <TouchableOpacity onPress={pickProfileImage} activeOpacity={0.85}>
+            <View style={styles.avatarWrap}>
+              <Image
+                source={{ uri: profileImageUri || profileImageUrl }}
+                style={styles.avatar}
+                resizeMode="cover"
               />
+              <View style={styles.avatarCameraBtn}>
+                <Feather name="camera" size={14} color={BLUE} />
+              </View>
             </View>
           </TouchableOpacity>
-          <View style={styles.profileBackGround}>
-            <TouchableOpacity onPress={pickProfileImage}>
-              {profileImageUri ? (
-                <Image source={{ uri: profileImageUri }} style={styles.profileImage} />
-              ) : (
-                <Image
-                  source={{ uri: profileImageUrl }}
-                  style={styles.profileImage}
-                />
-              )}
-              <View style={styles.recycleBox}>
-                <Entypo
-                  name="image"
-                  size={24}
-                  color="black"
-                  style={styles.recycle}
-                />
-              </View>
-            </TouchableOpacity>
-            {/* Your other UI elements */}
+        </View>
+
+        {/* ── IDENTITY ── */}
+        <View style={styles.section}>
+          <SectionLabel>Profile</SectionLabel>
+
+          <FieldRow icon={<Feather name="user" size={17} color={BLUE} />} label="Username">
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              placeholderTextColor="rgba(92,107,122,0.5)"
+              value={username}
+              onChangeText={setUsername}
+              maxLength={25}
+            />
+          </FieldRow>
+
+          <FieldRow icon={<Feather name="pen-tool" size={17} color={BLUE} />} label="Title">
+            <TextInput
+              style={styles.input}
+              placeholder="Your title (max 50 chars)"
+              placeholderTextColor="rgba(92,107,122,0.5)"
+              value={title}
+              onChangeText={setTitle}
+              maxLength={50}
+            />
+          </FieldRow>
+
+          <View style={[styles.fieldRow, { borderTopWidth: 1, borderTopColor: BORDER }]}>
+            <View style={styles.fieldIcon}><Feather name="align-left" size={17} color={BLUE} /></View>
+            <ParrotsStdText style={styles.fieldLabel}>Bio</ParrotsStdText>
+          </View>
+          <TextInput
+            style={styles.bioInput}
+            placeholder="Tell people about yourself (max 500 chars)"
+            placeholderTextColor="rgba(92,107,122,0.5)"
+            value={bio}
+            onChangeText={setBio}
+            multiline
+            maxLength={500}
+          />
+        </View>
+
+        {/* ── CONTACT ── */}
+        <View style={styles.section}>
+          <SectionLabel>Contact</SectionLabel>
+
+          <FieldRow icon={<Fontisto name="email" size={16} color={BLUE} />} label="Email">
+            <TextInput
+              style={styles.input}
+              placeholder="Display email"
+              placeholderTextColor="rgba(92,107,122,0.5)"
+              value={displayEmail}
+              onChangeText={setDisplayEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </FieldRow>
+          <View style={styles.emailNote}>
+            <MaterialCommunityIcons name="information-slab-circle-outline" size={14} color={BLUE} style={{ marginTop: 1 }} />
+            <ParrotsStdText style={styles.emailNoteText}>
+              This email address will be publicly visible on your profile. It may differ from your login email and is optional to provide.
+            </ParrotsStdText>
           </View>
 
-          <View style={styles.profileImageContainer}>
-            {/* Username */}
-            <View style={styles.socialBox}>
-              <Feather
-                style={styles.icon}
-                name="user"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Username</ParrotsStdText>
+          <FieldRow icon={<Feather name="phone" size={17} color={BLUE} />} label="Phone">
+            <TextInput
+              style={styles.input}
+              placeholder="Phone number"
+              placeholderTextColor="rgba(92,107,122,0.5)"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
+            />
+          </FieldRow>
+        </View>
 
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your username"
-                value={username}
-                onChangeText={(text) => setUsername(text)}
-                maxLength={25}
-              />
-            </View>
+        {/* ── SOCIALS ── */}
+        <View style={styles.section}>
+          <SectionLabel>Socials</SectionLabel>
 
-            <View>
-              <View style={styles.socialBox}>
-                <Fontisto
-                  style={styles.icon}
-                  name="email"
-                  size={24}
-                  color="black"
-                />
-                <View style={styles.emailInfoWrapper}  >
-                  <ParrotsStdText style={styles.inputDescription}>Email</ParrotsStdText>
-                  <TouchableOpacity
-                    style={styles.infoIcon}
-                    onPress={() => {
-                      Toast.show({
-                        type: "infoLarge",
-                        visibilityTime: 8000,
-                        topOffset: 90,
-                        text1: "Display Email",
-                        text2: "This email address will be publicly visible on your profile. It may differ from your login email and is optional to provide.",
-                      });
-                    }}
-                  >
+          <FieldRow icon={<Feather name="instagram" size={17} color={BLUE} />} label="Instagram">
+            <TextInput style={styles.input} placeholder="Instagram handle" placeholderTextColor="rgba(92,107,122,0.5)" value={instagramProfile} onChangeText={setInstagramProfile} autoCapitalize="none" />
+          </FieldRow>
+          <FieldRow icon={<Feather name="twitter" size={17} color={BLUE} />} label="Twitter">
+            <TextInput style={styles.input} placeholder="Twitter handle" placeholderTextColor="rgba(92,107,122,0.5)" value={twitterProfile} onChangeText={setTwitterProfile} autoCapitalize="none" />
+          </FieldRow>
+          <FieldRow icon={<FontAwesome5 name="tiktok" size={15} color={BLUE} />} label="TikTok">
+            <TextInput style={styles.input} placeholder="TikTok handle" placeholderTextColor="rgba(92,107,122,0.5)" value={tiktokProfile} onChangeText={setTiktokProfile} autoCapitalize="none" />
+          </FieldRow>
+          <FieldRow icon={<Feather name="youtube" size={17} color={BLUE} />} label="YouTube">
+            <TextInput style={styles.input} placeholder="YouTube channel" placeholderTextColor="rgba(92,107,122,0.5)" value={youtubeProfile} onChangeText={setYoutubeProfile} autoCapitalize="none" />
+          </FieldRow>
+          <FieldRow icon={<Feather name="facebook" size={17} color={BLUE} />} label="Facebook">
+            <TextInput style={styles.input} placeholder="Facebook profile" placeholderTextColor="rgba(92,107,122,0.5)" value={facebookProfile} onChangeText={setFacebookProfile} autoCapitalize="none" />
+          </FieldRow>
+          <FieldRow icon={<Feather name="linkedin" size={17} color={BLUE} />} label="LinkedIn">
+            <TextInput style={styles.input} placeholder="LinkedIn profile" placeholderTextColor="rgba(92,107,122,0.5)" value={linkedinProfile} onChangeText={setLinkedinProfile} autoCapitalize="none" />
+          </FieldRow>
+        </View>
 
-                    {/* info icon */}
-                    <MaterialCommunityIcons name="information-slab-circle-outline" size={20} color="rgba(0, 119, 234,0.5)" />
-                  </TouchableOpacity>
+        {/* ── SAVE + DELETE ── */}
+        <View style={styles.bottomRow}>
+          <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={isSaving} activeOpacity={0.85}>
+            <ParrotsStdText style={styles.saveBtnTxt}>{isSaving ? "Saving…" : "Save Changes"}</ParrotsStdText>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.deleteBtn} onPress={() => setDeleteAccountModalVisible(true)} activeOpacity={0.8}>
+            <ParrotsStdText style={styles.deleteBtnTxt}>Delete Account</ParrotsStdText>
+          </TouchableOpacity>
+        </View>
 
+        <View style={{ height: vh(6) }} />
+      </ScrollView>
 
-                </View>
-                <TextInput
-                  placeholder="Enter your display email"
-                  value={displayEmail}
-                  onChangeText={(text) => setDisplayEmail(text)}
-                  style={[styles.textInput, { flex: 1 }]}
-                  editable={true}
-                />
-              </View>
-
-
-            </View>
-
-            {/* <View style={styles.socialBoxCheckbox}>
-              <Fontisto
-                style={styles.icon}
-                name="email"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Hide Email</ParrotsStdText>
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  value={emailHidden}
-                  onValueChange={setEmailHidden}
-                  color={emailHidden ? "rgba(0, 119, 234,0.9)" : undefined}
-                />
-              </View>
-            </View> */}
-
-            {/* Phone Number */}
-            <View style={styles.socialBox}>
-              <Feather
-                style={styles.icon}
-                name="phone"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Phone</ParrotsStdText>
-
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your phone number"
-                value={phoneNumber}
-                onChangeText={(text) => setPhoneNumber(text)}
-              />
-            </View>
-
-            {/* Facebook Profile */}
-            <View style={styles.socialBox}>
-              <Feather
-                style={styles.icon}
-                name="facebook"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Facebook</ParrotsStdText>
-
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your Facebook profile"
-                value={facebookProfile}
-                onChangeText={(text) => setFacebookProfile(text)}
-              />
-            </View>
-
-            {/* Instagram Profile */}
-            <View style={styles.socialBox}>
-              <Feather
-                style={styles.icon}
-                name="instagram"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Instagram</ParrotsStdText>
-
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your Instagram profile"
-                value={instagramProfile}
-                onChangeText={(text) => setInstagramProfile(text)}
-              />
-            </View>
-
-            {/* Youtube Profile */}
-            <View style={styles.socialBox}>
-              <Feather
-                style={styles.icon}
-                name="youtube"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Youtube</ParrotsStdText>
-
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your Youtube profile"
-                value={youtubeProfile}
-                onChangeText={(text) => setYoutubeProfile(text)}
-              />
-            </View>
-
-            {/* Twitter Profile */}
-            <View style={styles.socialBox}>
-              <Feather
-                style={styles.icon}
-                name="twitter"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Twitter</ParrotsStdText>
-
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your Twitter profile"
-                value={twitterProfile}
-                onChangeText={(text) => setTwitterProfile(text)}
-              />
-            </View>
-
-            {/* Tiktok Profile */}
-            <View style={styles.socialBox}>
-              <FontAwesome5
-                style={styles.icon}
-                name="tiktok"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Tiktok</ParrotsStdText>
-
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your Tiktok profile"
-                value={tiktokProfile}
-                onChangeText={(text) => setTiktokProfile(text)}
-              />
-            </View>
-
-            {/* Linkedin Profile */}
-            <View style={styles.socialBox}>
-              <Feather
-                style={styles.icon}
-                name="linkedin"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Linkedin</ParrotsStdText>
-
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your Linkedin profile"
-                value={linkedinProfile}
-                onChangeText={(text) => setLinkedinProfile(text)}
-              />
-            </View>
-
-            {/* Title */}
-            <View style={styles.socialBox}>
-              <Feather
-                style={styles.icon}
-                name="pen-tool"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Title</ParrotsStdText>
-
-              <TextInput
-                style={[styles.textInput, { flex: 1 }]}
-                placeholder="Enter your title (max 50 characters)"
-                value={title}
-                maxLength={50}
-                multiline
-                onChangeText={(text) => {
-                  setTitle(text);
-                }}
-              />
-            </View>
-
-            {/* Bio */}
-            <View style={styles.socialBoxBio}>
-              <Feather
-                style={styles.icon}
-                name="pen-tool"
-                size={24}
-                color="black"
-              />
-              <ParrotsStdText style={styles.inputDescription}>Bio</ParrotsStdText>
-              <TextInput
-                style={styles.textInputBio}
-                placeholder="Enter your bio (max 500 characters)"
-                value={bio}
-                onChangeText={(text) => setBio(text)}
-                multiline
-                maxLength={500}
-              />
-            </View>
-
-            <View style={styles.saveChangesButtonContainer}>
-              <TouchableOpacity
-                style={{
-                  ...styles.selection,
-                  display: textInputBottomMargin > 0 ? "none" : "flex",
-                }}
-                onPress={() => {
-                  {
-                    profileImageUri ? handleUploadProfile() : null;
-                  }
-                  {
-                    backgroundImageUri ? handleUploadBackground() : null;
-                  }
-                  handlePatchUser();
-                  navigation.navigate("ProfileScreen");
-                }}
-              >
-                <ParrotsStdText style={styles.choiceText}>Save Changes</ParrotsStdText>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.refetch}>
-              <Button
-                title="refetch"
-                onPress={() => {
-                  refetch();
-                }}
-              />
-            </View>
-
-            <View style={styles.saveChangesButtonContainer}>
-              <TouchableOpacity
-                style={{ ...styles.selection, backgroundColor: parrotRed, marginTop: vh(0.5) }}
-                onPress={() => setDeleteAccountModalVisible(true)}
-                activeOpacity={0.8}
-              >
-                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "white" }}>
-                  Delete Account
-                </ParrotsStdText>
-              </TouchableOpacity>
-            </View>
-
-          </View>
-        </ScrollView>
-
-        <Modal animationType="fade" transparent={true} visible={deleteAccountModalVisible} onRequestClose={() => setDeleteAccountModalVisible(false)}>
-          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.6)" }}>
-            <View style={{ backgroundColor: "#fff", borderRadius: 16, padding: 24, width: vw(80), alignItems: "center" }}>
-              <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: parrotTextDarkBlue, marginBottom: 10 }}>Delete Account</ParrotsStdText>
-              <ParrotsStdText style={{ fontFamily: "Nunito_400Regular", fontSize: 13, color: parrotTextDarkBlue, textAlign: "center", marginBottom: 24 }}>
-                Your account will be deactivated. If you are a host with active voyages, your trip details will remain visible to your counterparties. As mentioned in the Terms of Use, Parrots may contact you via your registered email in the event of urgent coordination, and prompt responsiveness to guests is required for active trips and ongoing commitments.
+      {/* ── DELETE MODAL ── */}
+      <Modal animationType="fade" transparent visible={deleteAccountModalVisible} onRequestClose={() => setDeleteAccountModalVisible(false)}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <ParrotsStdText style={styles.modalTitle}>Delete Account</ParrotsStdText>
+            <ParrotsStdText style={styles.modalBody}>
+              Your account will be deactivated. If you are a host with active voyages, your trip details will remain visible to your counterparties. As mentioned in the Terms of Use, Parrots may contact you via your registered email in the event of urgent coordination, and prompt responsiveness to guests is required for active trips and ongoing commitments.
+            </ParrotsStdText>
+            <TouchableOpacity
+              onPress={handleDeleteAccount}
+              disabled={isDeletingAccount}
+              style={[styles.modalDeleteBtn, { opacity: isDeletingAccount ? 0.6 : 1 }]}
+              activeOpacity={0.8}
+            >
+              <ParrotsStdText style={styles.modalDeleteBtnTxt}>
+                {isDeletingAccount ? "Deleting…" : "Yes, Delete My Account"}
               </ParrotsStdText>
-              <TouchableOpacity
-                onPress={handleDeleteAccount}
-                disabled={isDeletingAccount}
-                style={{ backgroundColor: parrotRed, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 28, marginBottom: 12, opacity: isDeletingAccount ? 0.6 : 1 }}
-                activeOpacity={0.8}
-              >
-                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: "#fff", fontSize: 14 }}>
-                  {isDeletingAccount ? "Deleting..." : "Yes, Delete My Account"}
-                </ParrotsStdText>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setDeleteAccountModalVisible(false)} activeOpacity={0.8}>
-                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotBlue, fontSize: 13 }}>Cancel</ParrotsStdText>
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setDeleteAccountModalVisible(false)} activeOpacity={0.8}>
+              <ParrotsStdText style={styles.modalCancel}>Cancel</ParrotsStdText>
+            </TouchableOpacity>
           </View>
-        </Modal>
-      </>
-    );
-  }
+        </View>
+      </Modal>
+    </>
+  );
 };
 
 export default EditProfileScreen;
 
 const styles = StyleSheet.create({
-  currentBidsTitle3: {
-    top: vh(-3),
-    fontSize: 17,
-    fontWeight: "700",
-    color: parrotBlue,
-    textAlign: "center",
+  root: { flex: 1, backgroundColor: parrotCream },
+  content: { paddingBottom: vh(4) },
+
+  // background image
+  bgWrap: { height: vh(32.5), position: "relative", backgroundColor: "#D0D8E4" },
+  bgImage: { width: "100%", height: "100%" },
+  bgCameraBtn: {
+    position: "absolute", bottom: 10, right: 12,
+    width: 34, height: 34, borderRadius: 17,
+    backgroundColor: "rgba(255,255,255,0.92)",
+    alignItems: "center", justifyContent: "center",
+    shadowColor: "#0C1E30", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4, elevation: 3,
   },
-  currentBidsTitle2: {
-    top: vh(-3),
-    fontSize: 17,
-    fontWeight: "700",
-    color: parrotBlue,
-    textAlign: "center",
+
+  // avatar
+  avatarRow: { paddingHorizontal: 16, marginTop: -55 },
+  avatarWrap: { position: "relative", width: 110, height: 110 },
+  avatar: { width: 110, height: 110, borderRadius: 55, borderWidth: 3, borderColor: "#fff" },
+  avatarCameraBtn: {
+    position: "absolute", bottom: 0, right: 0,
+    width: 28, height: 28, borderRadius: 14,
+    backgroundColor: "rgba(255,255,255,0.92)",
+    alignItems: "center", justifyContent: "center",
+    shadowColor: "#0C1E30", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 2,
   },
-  logoImage: {
-    height: vh(23),
-    width: vh(23),
-    alignSelf: "center",
+
+  // sections
+  section: {
+    marginHorizontal: 16, marginTop: 16,
+    backgroundColor: "#fff",
+    borderWidth: 1, borderColor: BORDER,
+    borderRadius: 16,
+    overflow: "hidden",
   },
-  infoIcon: {
-    position: "absolute",
-    right: vw(2)
+  sectionLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 11.5,
+    color: "#7A8896",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    paddingHorizontal: 14,
+    paddingTop: 11,
+    paddingBottom: 4,
   },
-  emailInfoWrapper: {
+
+  // field rows
+  fieldRow: {
     flexDirection: "row",
     alignItems: "center",
-    position: "relative"
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    minHeight: 44,
   },
-  checkboxContainer: {
-    justifyContent: "center",
-    paddingLeft: vw(2),
-  },
-  profileBackGround: {
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: parrotCream,
-    top: vh(-6),
-    borderRadius: vh(3),
-  },
-  profileImageContainer: {
-    padding: vh(2),
-    top: vh(-20),
-  },
-  selection: {
-    paddingVertical: vh(.75),
-    backgroundColor: parrotBlue,
-    borderRadius: vh(2.5),
-    width: vw(40),
-    alignItems: "center",
-  },
-  saveChangesButtonContainer: {
-    bottom: vh(-2.5),
-    alignSelf: "center",
-    left: vw(4),
-  },
-  choiceText: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "white",
-  },
-  scrollview: {
-    backgroundColor: parrotCream,
-  },
-  profileImage: {
-    top: vh(-8),
-    left: vw(-25),
-    width: vh(22),
-    height: vh(22),
-    borderRadius: vh(20),
-  },
-  recycle: {
-    color: parrotBlue,
-  },
-  recycleBackground: {
-    color: parrotBlue,
-  },
-  recycleBox: {
-    top: vh(-14),
-    left: vw(10),
-    textAlign: "center",
-    width: vw(12),
-    height: vw(12),
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: vh(6),
-  },
-  recycleBoxBG: {
-    top: vh(-6),
-    left: vw(85),
-    textAlign: "center",
-    width: vw(12),
-    height: vw(12),
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: vh(6),
-  },
-  refetch: {
-    padding: 3,
-    paddingHorizontal: vw(15),
-    borderRadius: vw(9),
-    display: "none",
-  },
-  rectangularBox: {
-    height: vh(35),
-    backgroundColor: "white",
-  },
-  imageContainer: {
-    top: vh(0),
-    height: vh(38),
-    width: vw(100),
-  },
-  icon: {
-    padding: 3,
-    margin: 2,
-    marginLeft: 8,
-    borderRadius: 20,
-    color: parrotBlue,
-    fontSize: 18,
-    alignSelf: "center",
-  },
-  inputDescription: {
-    color: parrotBlue,
+  fieldIcon: { width: 24, alignItems: "center", marginRight: 8 },
+  fieldLabel: {
+    fontFamily: "Nunito_700Bold",
     fontSize: 13,
-    alignSelf: "center",
-    width: vw(17),
+    color: BLUE,
+    width: vw(18),
+    marginRight: 8,
   },
-  textInput: {
-    lineHeight: 21,
-    marginVertical: 1,
-    fontSize: 14,
-    padding: vw(1),
+  fieldInput: { flex: 1 },
+  input: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13.5,
+    color: "#0A2540",
+    paddingVertical: 6,
   },
-  textInputBio: {
-    lineHeight: 21,
-    marginVertical: 5,
-    fontSize: 14,
+  inputMulti: { minHeight: 72, textAlignVertical: "top" },
+  bioInput: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13.5,
+    color: "#0A2540",
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    paddingTop: 4,
+    minHeight: 90,
+    textAlignVertical: "top",
+  },
+
+  // email note
+  emailNote: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingBottom: 10,
+    paddingTop: 2,
+  },
+  emailNoteText: {
     flex: 1,
-    padding: vw(1),
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 11.5,
+    color: "#5C6B7A",
+    lineHeight: 16,
   },
-  socialBox: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 20,
-    marginTop: 2,
+
+  // save + delete row
+  bottomRow: { flexDirection: "row", marginHorizontal: 16, marginTop: 20, gap: 10 },
+  saveBtn: {
+    flex: 1,
+    backgroundColor: BLUE,
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: "center",
   },
-  socialBoxCheckbox: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 20,
-    marginTop: 2,
-    paddingVertical: vh(0.4),
+  saveBtnTxt: { fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#fff" },
+  deleteBtn: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderWidth: 1, borderColor: parrotRed,
+    borderRadius: 14,
+    paddingVertical: 13,
+    alignItems: "center",
   },
-  socialBoxBio: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 20,
-    marginTop: 2,
-    width: vw(90),
-  },
+  deleteBtnTxt: { fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: parrotRed },
+
+  // modal
+  modalBackdrop: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.55)" },
+  modalCard: { backgroundColor: "#fff", borderRadius: 18, padding: 24, width: vw(84), alignItems: "center" },
+  modalTitle: { fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: parrotTextDarkBlue, marginBottom: 10 },
+  modalBody: { fontFamily: "Nunito_400Regular", fontSize: 13, color: parrotTextDarkBlue, textAlign: "center", marginBottom: 24, lineHeight: 19 },
+  modalDeleteBtn: { backgroundColor: parrotRed, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 28, marginBottom: 12 },
+  modalDeleteBtnTxt: { fontFamily: "Nunito_700Bold", color: "#fff", fontSize: 14 },
+  modalCancel: { fontFamily: "Nunito_700Bold", color: parrotBlue, fontSize: 13 },
 });

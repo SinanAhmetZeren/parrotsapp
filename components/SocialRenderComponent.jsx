@@ -3,10 +3,22 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from "react";
-import { View,  TouchableOpacity, StyleSheet, Image } from "react-native";
-import { vw, vh } from "react-native-expo-viewport-units";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { useEffect } from "react";
-import { parrotBlueMediumTransparent, parrotBlueTransparent, parrotLightBlue } from "../assets/color";
+import { vw, vh } from "react-native-expo-viewport-units";
+import { Ionicons, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import { parrotBlueTransparent } from "../assets/color";
+
+const BRAND = {
+  0: { color: "#4EA3E0", icon: (s) => <Ionicons name="mail" size={s} color="#fff" /> },
+  1: { color: "#D62976", icon: (s) => <FontAwesome5 name="instagram" size={s} color="#fff" /> },
+  2: { color: "#FF0000", icon: (s) => <FontAwesome5 name="youtube" size={s} color="#fff" /> },
+  3: { color: "#1877F2", icon: (s) => <FontAwesome5 name="facebook-f" size={s} color="#fff" /> },
+  4: { color: "#4EA3E0", icon: (s) => <Ionicons name="call" size={s} color="#fff" /> },
+  5: { color: "#0B0B0B", icon: (s) => <FontAwesome5 name="twitter" size={s} color="#fff" /> },
+  6: { color: "#0A66C2", icon: (s) => <FontAwesome5 name="linkedin-in" size={s} color="#fff" /> },
+  7: { color: "#000000", icon: (s) => <MaterialCommunityIcons name="music-note" size={s} color="#fff" /> },
+};
 
 export const SocialRenderComponent = ({
   userData,
@@ -19,485 +31,156 @@ export const SocialRenderComponent = ({
   handleTwitterPress,
   handleTiktokPress,
   setSocialItemCount,
-  setSocialModalVisible
+  setSocialModalVisible,
 }) => {
-  useEffect(() => {
-    setSocialItemCount(contactDataArray.length);
-  }, [setSocialItemCount, contactDataArray]);
   let contactDataArray = [];
 
-
-  if (userData.displayEmail && userData.displayEmail.trim() !== "" && userData.emailVisible === true) {
+  if (userData.displayEmail && userData.displayEmail.trim() !== "" && userData.emailVisible === true)
     contactDataArray.push([userData.displayEmail, 0]);
-  }
-
-  if (userData.instagram && userData.instagram.trim() !== "") {
+  if (userData.instagram && userData.instagram.trim() !== "")
     contactDataArray.push([userData.instagram, 1]);
-  }
-
-  if (userData.youtube && userData.youtube.trim() !== "") {
+  if (userData.youtube && userData.youtube.trim() !== "")
     contactDataArray.push([userData.youtube, 2]);
-  }
-
-  if (userData.facebook && userData.facebook.trim() !== "") {
+  if (userData.facebook && userData.facebook.trim() !== "")
     contactDataArray.push([userData.facebook, 3]);
-  }
-
-  if (userData.phoneNumber && userData.phoneNumber.trim() !== "") {
+  if (userData.phoneNumber && userData.phoneNumber.trim() !== "")
     contactDataArray.push([userData.phoneNumber, 4]);
-  }
-
-  if (userData.twitter && userData.twitter.trim() !== "") {
+  if (userData.twitter && userData.twitter.trim() !== "")
     contactDataArray.push([userData.twitter, 5]);
-  }
-
-  if (userData.linkedin && userData.linkedin.trim() !== "") {
+  if (userData.linkedin && userData.linkedin.trim() !== "")
     contactDataArray.push([userData.linkedin, 6]);
-  }
-
-  if (userData.tiktok && userData.tiktok.trim() !== "") {
+  if (userData.tiktok && userData.tiktok.trim() !== "")
     contactDataArray.push([userData.tiktok, 7]);
-  }
 
+  useEffect(() => {
+    setSocialItemCount(contactDataArray.length);
+  }, [setSocialItemCount, contactDataArray.length]);
 
-
-  const renderAllItems2 = () => {
-    if (contactDataArray.length > 0) {
-      return contactDataArray.slice(0, 5).map((x, index) => {
-        const baseStyle =
-          styles[`social_${Math.min(contactDataArray.length, 5)}_${index}`] ||
-          styles.social_default;
-
-        switch (x[1]) {
-          case 0:
-            return (
-              <EmailItem
-                style={baseStyle}
-                key={index}
-                email={userData.displayEmail}
-                handleEmailPress={handleEmailPress}
-              />
-            );
-          case 1:
-            return (
-              <InstagramItem
-                style={baseStyle}
-                key={index}
-                instagram={userData.instagram}
-                handleInstagramPress={handleInstagramPress}
-              />
-            );
-          case 2:
-            return (
-              <YoutubeItem
-                style={baseStyle}
-                key={index}
-                youtube={userData.youtube}
-                handleYoutubePress={handleYoutubePress}
-              />
-            );
-          case 3:
-            return (
-              <FacebookItem
-                style={baseStyle}
-                key={index}
-                facebook={userData.facebook}
-                handleFacebookPress={handleFacebookPress}
-              />
-            );
-          case 4:
-            return (
-              <PhoneItem
-                style={baseStyle}
-                key={index}
-                phoneNumber={userData.phoneNumber}
-                handlePhonePress={handlePhonePress}
-              />
-            );
-          case 5:
-            return (
-              <TwitterItem
-                style={baseStyle}
-                key={index}
-                twitter={userData.twitter}
-                handleTwitterPress={handleTwitterPress}
-              />
-            );
-          case 6:
-            return (
-              <TiktokItem
-                style={baseStyle}
-                key={index}
-                tiktok={userData.tiktok}
-                handleTiktokPress={handleTiktokPress}
-              />
-            );
-          case 7:
-            return (
-              <LinkedinItem
-                style={baseStyle}
-                key={index}
-                linkedin={userData.linkedin}
-                handleLinkedinPress={handleLinkedinPress}
-              />
-            );
-          default:
-            return null;
-        }
-      });
-    }
+  const handlers = {
+    0: handleEmailPress,
+    1: handleInstagramPress,
+    2: handleYoutubePress,
+    3: handleFacebookPress,
+    4: handlePhonePress,
+    5: handleTwitterPress,
+    6: handleLinkedinPress,
+    7: handleTiktokPress,
   };
 
-
   const renderAllItems = () => {
-    // Take first 5 non-null contacts
     const firstFive = contactDataArray.slice(0, 5);
-
-    // If less than 5, fill the remaining with null placeholders
-    while (firstFive.length < 5) {
-      firstFive.push([null, 'placeholder']); // use a custom type for shadow
-    }
+    while (firstFive.length < 5) firstFive.push([null, "placeholder"]);
 
     return firstFive.map((x, index) => {
-      const baseStyle =
-        styles[`social_${firstFive.length}_${index}`] || styles.social_default;
+      const baseStyle = styles[`social_5_${index}`] || styles.social_default;
 
-      if (x[1] === 'placeholder') {
-        return <ShadowItem style={baseStyle} key={`placeholder-${index}`} />;
+      if (x[1] === "placeholder") {
+        return (
+          <View key={`ph-${index}`} style={[baseStyle, { opacity: 0 }]}>
+            <View style={styles.iconLogo} />
+            <ParrotsStdText style={styles.iconText}> </ParrotsStdText>
+          </View>
+        );
       }
 
+      const type = x[1];
+      const brand = BRAND[type] ?? BRAND[0];
+      const handle = x[0] ?? "";
 
-      switch (x[1]) {
-        case 0:
-          return (
-            <EmailItem
-              style={baseStyle}
-              key={`email-${index}`}
-              email={userData.displayEmail}
-              handleEmailPress={handleEmailPress}
-            />
-          );
-        case 1:
-          return (
-            <InstagramItem
-              style={baseStyle}
-              key={`instagram-${index}`}
-              instagram={userData.instagram}
-              handleInstagramPress={handleInstagramPress}
-            />
-          );
-        case 2:
-          return (
-            <YoutubeItem
-              style={baseStyle}
-              key={`youtube-${index}`}
-              youtube={userData.youtube}
-              handleYoutubePress={handleYoutubePress}
-            />
-          );
-        case 3:
-          return (
-            <FacebookItem
-              style={baseStyle}
-              key={`facebook-${index}`}
-              facebook={userData.facebook}
-              handleFacebookPress={handleFacebookPress}
-            />
-          );
-        case 4:
-          return (
-            <PhoneItem
-              style={baseStyle}
-              key={`phone-${index}`}
-              phoneNumber={userData.phoneNumber}
-              handlePhonePress={handlePhonePress}
-            />
-          );
-        case 5:
-          return (
-            <TwitterItem
-              style={baseStyle}
-              key={`twitter-${index}`}
-              twitter={userData.twitter}
-              handleTwitterPress={handleTwitterPress}
-            />
-          );
-        case 6:
-          return (
-            <LinkedinItem
-              style={baseStyle}
-              key={`linkedin-${index}`}
-              linkedin={userData.linkedin}
-              handleLinkedinPress={handleLinkedinPress}
-            />
-          );
-        case 7:
-          return (
-            <TiktokItem
-              style={baseStyle}
-              key={`tiktok-${index}`}
-              tiktok={userData.tiktok}
-              handleTiktokPress={handleTiktokPress}
-            />
-          );
-        default:
-          return null;
-      }
-
-
+      return (
+        <TouchableOpacity key={`item-${index}`} style={baseStyle} onPress={handlers[type]} activeOpacity={0.75}>
+          <View style={[styles.iconLogo, { backgroundColor: brand.color }]}>
+            {brand.icon(16)}
+          </View>
+          <View style={styles.pill}>
+            <ParrotsStdText style={styles.iconText} numberOfLines={1} ellipsizeMode="tail">
+              {handle.length > 17 ? `${handle.substring(0, 14)}...` : handle}
+            </ParrotsStdText>
+          </View>
+        </TouchableOpacity>
+      );
     });
   };
 
-
-
   return (
-    <>
-      <View
-        style={[
-          // styles[`social_Main_${contactDataArray.length}`],
-          styles[`social_Main_5`],
-          {
-            //marginLeft: vw(12), marginTop: vh(0.8), minWidth: vw(45),
-            // backgroundColor: "red"
-          },
-        ]}
-      >
-        {renderAllItems()}
-
-        {contactDataArray.length > 5 && (
-          <TouchableOpacity
-            onPress={() => {
-              setSocialModalVisible(true);
-            }}
-            style={styles.extendedAreaContainer}
-          >
-            <View style={styles.extendedArea}>
-              <ParrotsStdText style={styles.moreButton}>see more</ParrotsStdText>
-            </View>
-          </TouchableOpacity>
-        )}
-
-      </View>
-    </>
+    <View style={styles.social_Main_5}>
+      {renderAllItems()}
+      {contactDataArray.length > 5 && (
+        <TouchableOpacity onPress={() => setSocialModalVisible(true)} style={styles.seeMoreInline} activeOpacity={0.8}>
+          <View style={styles.moreCircle}>
+            <ParrotsStdText style={styles.moreButton}>+{contactDataArray.length - 5}</ParrotsStdText>
+          </View>
+        </TouchableOpacity>
+      )}
+    </View>
   );
 };
-
-const EmailItem = ({ email, handleEmailPress, style }) => {
-  return (
-    <TouchableOpacity style={style} onPress={() => handleEmailPress()}>
-      <Image
-        style={styles.iconLogo}
-        source={require("../assets/email_logo.png")}
-      />
-
-      <ParrotsStdText style={styles.iconText}>
-        {email.length > 17 ? `${email.substring(0, 14)}...` : email}
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-const InstagramItem = ({ instagram, handleInstagramPress, style }) => {
-  return (
-    <TouchableOpacity style={style} onPress={() => handleInstagramPress()}>
-      <Image
-        style={styles.iconLogo}
-        source={require("../assets/instagram_icon.png")}
-      />
-      <ParrotsStdText style={styles.iconText}>
-        {instagram.length > 17 ? `${instagram.substring(0, 14)}...` : instagram}
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-const YoutubeItem = ({ youtube, handleYoutubePress, style }) => {
-  return (
-    <TouchableOpacity style={style} onPress={() => handleYoutubePress()}>
-      <Image
-        style={styles.iconLogo}
-        source={require("../assets/youtube_icon.png")}
-      />
-      <ParrotsStdText style={styles.iconText}>
-        {youtube.length > 17 ? `${youtube.substring(0, 14)}...` : youtube}
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-const FacebookItem = ({ facebook, handleFacebookPress, style }) => {
-  return (
-    <TouchableOpacity style={style} onPress={() => handleFacebookPress()}>
-      <Image
-        style={styles.iconLogo}
-        source={require("../assets/facebook_logo.png")}
-      />
-      <ParrotsStdText style={styles.iconText}>
-        {facebook.length > 17 ? `${facebook.substring(0, 14)}...` : facebook}
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-const PhoneItem = ({ phoneNumber, handlePhonePress, style }) => {
-  return (
-    <TouchableOpacity style={style} onPress={() => handlePhonePress()}>
-      <Image
-        style={styles.iconLogo}
-        source={require("../assets/phone_logo.jpeg")}
-      />
-      <ParrotsStdText style={styles.iconText}>
-        {phoneNumber.length > 17
-          ? `${phoneNumber.substring(0, 14)}...`
-          : phoneNumber}
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-const TwitterItem = ({ twitter, handleTwitterPress, style }) => {
-  return (
-    <TouchableOpacity style={style} onPress={() => handleTwitterPress()}>
-      <Image
-        style={styles.iconLogo}
-        source={require("../assets/twitter_logo.png")}
-      />
-      <ParrotsStdText style={styles.iconText}>
-        {twitter.length > 17 ? `${twitter.substring(0, 14)}...` : twitter}
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-const TiktokItem = ({ tiktok, handleTiktokPress, style }) => {
-  return (
-    <TouchableOpacity style={style} onPress={() => handleTiktokPress()}>
-      <Image
-        style={styles.iconLogo}
-        source={require("../assets/tiktok_logo.png")}
-      />
-      <ParrotsStdText style={styles.iconText}>
-        {tiktok.length > 17 ? `${tiktok.substring(0, 14)}...` : tiktok}
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-const LinkedinItem = ({ linkedin, handleLinkedinPress, style }) => {
-  return (
-    <TouchableOpacity style={style} onPress={() => handleLinkedinPress()}>
-      <Image
-        style={styles.iconLogo}
-        source={require("../assets/linkedin_logo.png")}
-      />
-      <ParrotsStdText style={styles.iconText}>
-        {linkedin.length > 17 ? `${linkedin.substring(0, 14)}...` : linkedin}
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-
-const ShadowItem = ({ style }) => {
-  return (
-    <TouchableOpacity style={{ ...style, opacity: 0.6 }} >
-      <View style={styles.iconLogoPlaceHolder} />
-      <ParrotsStdText style={styles.iconText}>
-      </ParrotsStdText>
-    </TouchableOpacity>
-  );
-};
-
-
 
 const styles = StyleSheet.create({
-  extendedAreaContainer: {
-    alignSelf: "flex-end",
+  seeMoreInline: {
     position: "absolute",
-    bottom: vh(-4),
-    right: vw(8),
-    borderRadius: vh(4),
-    // backgroundColor: "pink",
-    zIndex: 100,
+    bottom: vh(0.5),
+    right: vw(-7),
   },
-  extendedArea: {
-    paddingHorizontal: vw(1),
-    paddingVertical: vh(1),
-    // backgroundColor: "red",
+  moreCircle: {
+    width: vh(3.5),
+    height: vh(3.5),
+    borderRadius: vh(1.75),
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    alignItems: "center",
+    justifyContent: "center",
   },
   moreButton: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    alignSelf: "flex-end",
-    color: parrotLightBlue,
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: vh(2),
-    paddingHorizontal: vw(2),
+    fontSize: 12,
+    color: "#0A5FBF",
   },
-
   iconLogo: {
     height: vh(4),
     width: vh(4),
     borderRadius: vh(2),
-    marginRight: vh(1),
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
+    shadowColor: "rgba(12,30,48,1)",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.16,
+    shadowRadius: 3,
+    elevation: 3,
   },
-  iconLogoPlaceHolder: {
-    backgroundColor: parrotBlueMediumTransparent,
-    height: vh(4),
-    width: vh(4),
-    borderRadius: vh(2),
-    marginRight: vh(1),
-    opacity: 0.3,
+  pill: {
+    flex: 1,
+    justifyContent: "center",
+    zIndex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    paddingLeft: vh(3),
+    paddingRight: vw(2),
+    marginLeft: -vh(2),
+    height: vh(3.5),
+  },
+  iconText: {
+    fontFamily: "Nunito_700Bold",
+    lineHeight: 22,
+    fontSize: 13,
+    color: "#0A5FBF",
   },
   social_Main_5: {
     flexDirection: "column",
-    width: vw(50),
+    width: vw(44),
     zIndex: 100,
-    paddingRight: 20,
     paddingTop: 0,
     top: vh(1),
     height: vh(22.5),
+    // backgroundColor: "red",
   },
-  social_Main_4: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: vh(2),
-    top: vh(1),
-    height: vh(22.5),
-  },
-  social_Main_3: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: vh(4),
-    top: vh(1),
-    height: vh(22.5),
-  },
-  social_Main_2: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: vh(6),
-    top: vh(1),
-    height: vh(22.5),
-  },
-  social_Main_1: {
-    flexDirection: "column",
-    width: vw(50),
-    zIndex: 100,
-    paddingRight: 20,
-    paddingTop: vh(8),
-    top: vh(1),
-    height: vh(22.5),
-  },
-
   social_5_0: {
     flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
+    alignItems: "center",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -505,7 +188,7 @@ const styles = StyleSheet.create({
   },
   social_5_1: {
     flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
+    alignItems: "center",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -513,7 +196,7 @@ const styles = StyleSheet.create({
   },
   social_5_2: {
     flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
+    alignItems: "center",
     left: vw(4),
     borderRadius: 20,
     marginTop: 2,
@@ -521,7 +204,7 @@ const styles = StyleSheet.create({
   },
   social_5_3: {
     flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
+    alignItems: "center",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
@@ -529,111 +212,10 @@ const styles = StyleSheet.create({
   },
   social_5_4: {
     flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
+    alignItems: "center",
     borderRadius: 20,
     marginTop: 2,
     marginBottom: 2,
     left: vw(-4),
-  },
-  /*
-  social_4_0: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-8.5),
-  },
-  social_4_1: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: 20,
-    marginTop: vh(0.5),
-    marginBottom: 2,
-    left: vw(-4),
-  },
-  social_4_2: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    left: vw(-4),
-    borderRadius: 20,
-    marginTop: vh(0.5),
-    marginBottom: 2,
-  },
-  social_4_3: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: 20,
-    marginTop: vh(0.5),
-    marginBottom: 2,
-    left: vw(-8.5),
-  },
-  //////
-  social_3_0: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-6),
-  },
-  social_3_1: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: 20,
-    marginTop: vh(0.8),
-    marginBottom: 2,
-    left: vw(-4),
-  },
-  social_3_2: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    left: vw(-6),
-    borderRadius: 20,
-    marginTop: vh(0.8),
-    marginBottom: 2,
-  },
-  //////
-  social_2_0: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: 20,
-    marginTop: 2,
-    marginBottom: 2,
-    left: vw(-4.5),
-  },
-  social_2_1: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: 20,
-    marginTop: vh(1),
-    marginBottom: 2,
-    left: vw(-4),
-  },
-  //////
-  social_1_0: {
-    flexDirection: "row",
-    backgroundColor: parrotBlueTransparent,
-    borderRadius: 20,
-    marginTop: vh(1),
-    marginBottom: 2,
-    left: vw(-4),
-  },
-  */
-  ///////
-  icon: {
-    padding: 3,
-    margin: 2,
-    marginLeft: 8,
-    borderRadius: 20,
-    color: parrotLightBlue,
-    fontSize: 18,
-  },
-  iconText: {
-    fontFamily: "Nunito_700Bold",
-    lineHeight: 22,
-    marginTop: vh(0.4),
-    fontSize: 13,
-    color: parrotLightBlue,
   },
 });

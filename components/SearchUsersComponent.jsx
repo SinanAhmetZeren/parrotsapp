@@ -45,7 +45,7 @@ export const SearchUsersComponent = ({ searchResults, height = Platform.OS === "
                   }
                   activeOpacity={0.7}
                 >
-                  <Ionicons name="person-circle-outline" size={18} color="#0A5FBF" />
+                  <Ionicons name="person-circle-outline" size={22} color="#0A5FBF" />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.actionBtn}
@@ -62,7 +62,7 @@ export const SearchUsersComponent = ({ searchResults, height = Platform.OS === "
                   }
                   activeOpacity={0.7}
                 >
-                  <Feather name="mail" size={15} color="#0A5FBF" />
+                  <Feather name="mail" size={19} color="#0A5FBF" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -87,9 +87,9 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: 10,
     backgroundColor: "#fff",
-    borderWidth: 1.5,
-    borderColor: "#E8E3DC",
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
     paddingHorizontal: 11,
     paddingVertical: 8,
     height: 114,
@@ -140,10 +140,8 @@ const styles = StyleSheet.create({
   actionBtn: {
     width: 34,
     height: 34,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: "#E8E3DC",
-    backgroundColor: "#fff",
+    borderRadius: 99,
+    backgroundColor: "rgba(10, 119, 234, 0.08)",
     alignItems: "center",
     justifyContent: "center",
   },

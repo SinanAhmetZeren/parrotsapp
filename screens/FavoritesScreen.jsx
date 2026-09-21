@@ -65,8 +65,8 @@ export default function FavoritesScreen({ navigation }) {
 
   useFocusEffect(useCallback(() => {
     console.log("entered favorites screen --> ");
-    refetchVoyages().catch(() => {});
-    refetchVehicles().catch(() => {});
+    refetchVoyages().catch(() => { });
+    refetchVehicles().catch(() => { });
   }, [refetchVoyages, refetchVehicles]));
 
   useFocusEffect(useCallback(() => {
@@ -89,7 +89,7 @@ export default function FavoritesScreen({ navigation }) {
       await refetchVoyages();
       await refetchVehicles();
       if (selectedTab === 3) await refetchBookmarks();
-    } catch {}
+    } catch { }
     setRefreshing(false);
   };
 
@@ -205,10 +205,6 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: "row",
-    backgroundColor: "#fff",
-    borderWidth: 1.5,
-    borderColor: "#E8E3DC",
-    borderRadius: 999,
     padding: 3,
     gap: 2,
     marginTop: vh(1.5),
@@ -231,7 +227,7 @@ const styles = StyleSheet.create({
   segLabel: {
     fontFamily: "Nunito_800ExtraBold",
     fontSize: 13,
-    color: "#4A5A6A",
+    color: "#0A77EA",
   },
   segLabelOn: {
     color: "#fff",

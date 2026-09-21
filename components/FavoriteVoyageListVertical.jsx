@@ -16,7 +16,7 @@ export default function FavoriteVoyageList({ data, direction }) {
         voyagePublicId={item.publicId}
         cardHeader={item.name}
         cardDescription={item.brief}
-        cardImage={item.profileImage}
+        cardImage={item.profileImageThumbnail || item.profileImage}
         vacancy={item.vacancy}
         startdate={item.startDate}
         enddate={item.endDate}

@@ -17,13 +17,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   RefreshControl,
+  Dimensions,
 } from "react-native";
 import {
   useCreateVehicleMutation,
   useAddVehicleImageMutation,
   useDeleteVehicleImageMutation,
   useCheckAndDeleteVehicleMutation,
-  useConfirmVehicleMutation
+  useConfirmVehicleMutation,
+  usePatchVehicleMutation,
 } from "../slices/VehicleSlice";
 import { vh, vw } from "react-native-expo-viewport-units";
 import * as ImagePicker from "expo-image-picker";
@@ -31,7 +33,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 import * as FileSystem from "expo-file-system/legacy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
-import { MaterialIcons, AntDesign, Feather } from "@expo/vector-icons";
+import { MaterialIcons, AntDesign, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import DropdownComponentType from "../components/DropdownComponentType";
 import StepBarVehicle from "../components/StepBarVehicle";
@@ -41,6 +43,10 @@ import { BackHandler } from "react-native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCream, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
 
+const SCREEN_W = Dimensions.get("window").width;
+const TILE_GAP = 8;
+const TILE_SIZE = Math.floor((SCREEN_W - vw(8) - TILE_GAP * 2) / 3); // 3 tiles, 2 gaps, padH = vw(4)*2
+
 const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
 
@@ -49,6 +55,7 @@ const CreateVehicleScreen = () => {
   const [deleteVehicleImage] = useDeleteVehicleImageMutation();
   const [checkAndDeleteVehicle] = useCheckAndDeleteVehicleMutation();
   const [confirmVehicle] = useConfirmVehicleMutation();
+  const [patchVehicle] = usePatchVehicleMutation();
 
   const currentDate = new Date();
   const hours = currentDate.getHours();
@@ -58,17 +65,15 @@ const CreateVehicleScreen = () => {
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes.toString();
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
+
   const [vehicleType, setVehicleType] = useState(1);
-  // const [name, setName] = useState("aaa");
-  // const [description, setDescription] = useState("bbb");
-  // const [capacity, setCapacity] = useState(22) //useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [capacity, setCapacity] = useState(null);
 
   const [vehicleId, setVehicleId] = useState("");
+  const vehicleIdRef = React.useRef("");
   const [image, setImage] = useState("");
-  const [voyageImage, setVoyageImage] = useState(null);
   const [addedVehicleImages, setAddedVehicleImages] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -78,6 +83,17 @@ const CreateVehicleScreen = () => {
   const [hasError, setHasError] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [savedSnapshot, setSavedSnapshot] = useState(null);
+  const [isUpdatingVehicle, setIsUpdatingVehicle] = useState(false);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+
+  React.useEffect(() => { vehicleIdRef.current = vehicleId; }, [vehicleId]);
+
+  const hasChanges = savedSnapshot
+    ? name !== savedSnapshot.name ||
+    description !== savedSnapshot.description ||
+    String(capacity) !== String(savedSnapshot.capacity)
+    : false;
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -90,19 +106,13 @@ const CreateVehicleScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       const backAction = () => {
-        // navigation.navigate("Home");
         navigation.navigate("Home", { screen: "HomeScreen" });
-
         return true;
       };
-      const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
-      );
+      const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
       return () => backHandler.remove();
     }, [navigation])
   );
-
 
   useFocusEffect(
     React.useCallback(() => {
@@ -110,9 +120,8 @@ const CreateVehicleScreen = () => {
         setVehicleType(1);
         setName("");
         setDescription("");
-        setCapacity(22);
+        setCapacity(null);
         setImage("");
-        setVoyageImage(null);
         setAddedVehicleImages([]);
         setCurrentStep(1);
         setIsUploadingImage(false);
@@ -138,26 +147,24 @@ const CreateVehicleScreen = () => {
     setVehicleType(1);
     setVehicleId("");
     setImage("");
-    setVoyageImage(null);
     setAddedVehicleImages([]);
     setCurrentStep(1);
     setIsUploadingImage(false);
     setIsCreatingVehicle(false);
+    setIsUpdatingVehicle(false);
     setHasError(false);
+    setSavedSnapshot(null);
   };
 
   const completeVehicle = async () => {
     setIsCompletingVehicle(true);
     setHasError(false);
-
     try {
       console.log("confirming vehicle: ", vehicleId);
       const confirmResult = await confirmVehicle(vehicleId);
       console.log("confirmResult: ", confirmResult);
-
       resetAllFields();
       navigation.navigate("Home", { screen: "HomeScreen" });
-
     } catch (error) {
       console.error("Error completing vehicle:", error);
       showToast("Failed to complete vehicle - Check your connection and try again.");
@@ -168,13 +175,9 @@ const CreateVehicleScreen = () => {
   };
 
   const handleCreateVehicle = async () => {
-    if (!image) {
-      return;
-    }
-
+    if (!image) return;
     setIsCreatingVehicle(true);
     setHasError(false);
-
     try {
       const queryParams = new URLSearchParams({
         Name: name,
@@ -197,18 +200,13 @@ const CreateVehicleScreen = () => {
       );
       const responseData = JSON.parse(result.body);
       const createdVehicleId = responseData?.data?.id;
-      if (!createdVehicleId) {
-        throw new Error("Vehicle ID not returned from API");
-      }
-
+      if (!createdVehicleId) throw new Error("Vehicle ID not returned from API");
       setVehicleId(createdVehicleId);
+      setSavedSnapshot({ name, description, capacity });
       setCurrentStep(2);
     } catch (error) {
       console.error("Error in or after createVehicle:", error);
-      console.log(
-        "Error details:",
-        error?.data || error?.error || error?.message
-      );
+      console.log("Error details:", error?.data || error?.error || error?.message);
       showToast("Failed to create vehicle - Check your connection and try again.");
       setHasError(true);
     } finally {
@@ -216,52 +214,25 @@ const CreateVehicleScreen = () => {
     }
   };
 
-
-  const handleUploadImage = useCallback(async () => {
-    if (!voyageImage) {
-      return;
-    }
-
-    setIsUploadingImage(true);
+  const handleUpdateVehicle = async () => {
+    setIsUpdatingVehicle(true);
     setHasError(false);
-
     try {
-      const token = await AsyncStorage.getItem("storedToken");
-      const result = await FileSystem.uploadAsync(
-        `${API_URL}/api/Vehicle/${vehicleId}/AddVehicleImage`,
-        voyageImage,
-        {
-          httpMethod: "POST",
-          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
-          fieldName: "imageFile",
-          mimeType: "image/jpeg",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      console.log("AddVehicleImage response:", result.status, result.body);
-      const responseData = JSON.parse(result.body);
-      const addedVoyageImageId = responseData?.imagePath;
-
-      if (!addedVoyageImageId) {
-        throw new Error("Image path not returned from API");
-      }
-
-      const newItem = {
-        addedVoyageImageId,
-        voyageImage,
-      };
-
-      setAddedVehicleImages((prevImages) => [...prevImages, newItem]);
-      setVoyageImage(null);
+      const patch = [
+        { op: "replace", path: "/name", value: name },
+        { op: "replace", path: "/description", value: description },
+        { op: "replace", path: "/capacity", value: Number(capacity) },
+      ];
+      await patchVehicle({ currentVehicleId: vehicleId, patchDoc: patch }).unwrap();
+      setSavedSnapshot({ name, description, capacity });
     } catch (error) {
-      console.error("Error uploading image", error);
-      showToast("Image upload failed - Check your connection and try again.");
+      console.error("Error updating vehicle:", error);
+      showToast("Failed to update vehicle - Check your connection and try again.");
       setHasError(true);
     } finally {
-      setIsUploadingImage(false);
+      setIsUpdatingVehicle(false);
     }
-  }, [voyageImage, vehicleId, addVehicleImage]);
-
+  };
 
   const pickProfileImage = async () => {
     console.log("Picking profile image... PICKING");
@@ -271,9 +242,7 @@ const CreateVehicleScreen = () => {
       aspect: [1, 1],
       quality: 0.7,
     });
-
     console.log("Picking profile image... PICKED");
-
     if (!result.canceled) {
       const asset = result.assets[0];
       const manipulated = await ImageManipulator.manipulateAsync(
@@ -283,7 +252,6 @@ const CreateVehicleScreen = () => {
       );
       setImage(manipulated.uri);
     }
-
   };
 
   const pickVoyageImage = async () => {
@@ -293,7 +261,6 @@ const CreateVehicleScreen = () => {
       aspect: [1, 1],
       quality: 0.7,
     });
-
     if (!result.canceled) {
       const asset = result.assets[0];
       const manipulated = await ImageManipulator.manipulateAsync(
@@ -301,36 +268,51 @@ const CreateVehicleScreen = () => {
         [{ resize: { width: 1080, height: 1080 } }],
         { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
       );
-      setVoyageImage(manipulated.uri);
+      const uri = manipulated.uri;
+      const currentVehicleId = vehicleIdRef.current;
+
+      setIsUploadingImage(true);
+      setHasError(false);
+      try {
+        const token = await AsyncStorage.getItem("storedToken");
+        const uploadResult = await FileSystem.uploadAsync(
+          `${API_URL}/api/Vehicle/${currentVehicleId}/AddVehicleImage`,
+          uri,
+          {
+            httpMethod: "POST",
+            uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+            fieldName: "imageFile",
+            mimeType: "image/jpeg",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        console.log("AddVehicleImage response:", uploadResult.status, uploadResult.body);
+        const responseData = JSON.parse(uploadResult.body);
+        const addedVoyageImageId = responseData?.imagePath;
+        if (!addedVoyageImageId) throw new Error("Image path not returned from API");
+        setAddedVehicleImages((prev) => [...prev, { addedVoyageImageId, voyageImage: uri }]);
+      } catch (error) {
+        console.error("Error uploading image", error);
+        showToast("Image upload failed - Check your connection and try again.");
+        setHasError(true);
+      } finally {
+        setIsUploadingImage(false);
+      }
     }
   };
 
-
-
   const handleDeleteImage = async (imageId) => {
     const previousImages = [...addedVehicleImages];
-
-    // optimistic UI update
-    setAddedVehicleImages(
-      previousImages.filter(
-        (item) => item.addedVoyageImageId !== imageId
-      )
-    );
-
+    setAddedVehicleImages(previousImages.filter((item) => item.addedVoyageImageId !== imageId));
     setHasError(false);
-
     try {
       await deleteVehicleImage(imageId);
     } catch (error) {
       console.error("Error deleting image", error);
-
-      // rollback on failure
       setAddedVehicleImages(previousImages);
       setHasError(true);
     }
   };
-
-
 
   const VehicleTypes = [
     "Boat",
@@ -346,334 +328,294 @@ const CreateVehicleScreen = () => {
     // "Train",
   ];
 
-  const dropdownData = VehicleTypes.map((type) => ({
-    label: type,
-    value: type,
-  }));
+  const dropdownData = VehicleTypes.map((type) => ({ label: type, value: type }));
 
-  const maxItems = 10;
-  const placeholders = Array.from({ length: maxItems }, (_, index) => ({
-    key: `placeholder_${index + 1}`,
-  }));
+  const isStep1Disabled =
+    name === "" || description === "" || !capacity || vehicleType === "" || image === "";
 
-  const data =
-    addedVehicleImages.length < maxItems
-      ? [
-        ...addedVehicleImages,
-        ...placeholders.slice(addedVehicleImages.length),
-      ]
-      : addedVehicleImages.map((item) => ({
-        ...item,
-        key: item.addedVoyageImageId,
-      }));
+  const buildGridData = () => {
+    const tiles = [];
+    // Picker always top-left
+    tiles.push({ type: "picker" });
+    // Uploaded images fill next slots
+    addedVehicleImages.forEach((item) => {
+      tiles.push({ type: "image", item });
+    });
+    // Uploading spinner goes after last uploaded
+    if (isUploadingImage) tiles.push({ type: "uploading" });
+    // Empty slots to fill to 9 (1 picker + 8 images)
+    while (tiles.length < 9) tiles.push({ type: "empty", id: String(tiles.length) });
+    return tiles;
+  };
+
+  const renderGridTile = (item) => {
+    const base = [styles.tile, { width: TILE_SIZE, height: TILE_SIZE }];
+    if (item.type === "image") {
+      return (
+        <View style={base}>
+          <Image source={{ uri: item.item.voyageImage }} style={styles.tileImg} />
+          <TouchableOpacity
+            style={styles.tileX}
+            onPress={() => handleDeleteImage(item.item.addedVoyageImageId)}
+          >
+            <Feather name="x" size={12} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    if (item.type === "uploading") {
+      return (
+        <View style={[...base, styles.tileUploading]}>
+          <ActivityIndicator size="small" color={parrotBlue} />
+        </View>
+      );
+    }
+    if (item.type === "picker") {
+      return (
+        <TouchableOpacity
+          style={[...base, styles.tilePicker]}
+          onPress={pickVoyageImage}
+          activeOpacity={0.75}
+        >
+          <Image
+            source={require("../assets/ParrotsLogoPlus.png")}
+            style={{ width: TILE_SIZE * 0.55, height: TILE_SIZE * 0.55, opacity: 0.22 }}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      );
+    }
+    return <View style={[...base, styles.tileEmpty]} />;
+  };
 
   return (
     <>
       <TokenExpiryGuard />
 
-      <View style={{ alignItems: "center", backgroundColor: "white" }}>
-        <StepBarVehicle currentStep={currentStep} onFirstStepPress={() => setCurrentStep(1)} onSecondStepPress={vehicleId ? () => setCurrentStep(2) : null} />
+      <View style={{ backgroundColor: "white" }}>
+        <StepBarVehicle
+          currentStep={currentStep}
+          onFirstStepPress={() => setCurrentStep(1)}
+          onSecondStepPress={vehicleId ? () => setCurrentStep(2) : null}
+        />
       </View>
-
-
 
       {hasError && (
         <ScrollView
-          contentContainerStyle={{ backgroundColor: "white", height: vh(100) }}
-          refreshControl={
-            <RefreshControl refreshing={false} onRefresh={() => setHasError(false)} />
-          }
+          contentContainerStyle={{ backgroundColor: parrotCream, flexGrow: 1 }}
+          refreshControl={<RefreshControl refreshing={false} onRefresh={() => setHasError(false)} />}
         >
-          <View style={{ marginTop: vh(15) }}>
-            <Image
-              source={require("../assets/parrotslogo.png")}
-              style={styles.logoImage}
-            />
-            <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
-            <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
+          <View style={{ marginTop: vh(15), alignItems: "center" }}>
+            <Image source={require("../assets/parrotslogo.png")} style={styles.logoImage} />
+            <ParrotsStdText style={styles.errorText}>Something went wrong</ParrotsStdText>
+            <ParrotsStdText style={styles.errorText}>Swipe down to retry</ParrotsStdText>
           </View>
         </ScrollView>
       )}
 
-      {currentStep == 1 && !hasError && (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-          <ScrollView style={styles.scrollview} keyboardShouldPersistTaps="handled">
+      {/* ── STEP 1 ── */}
+      {currentStep === 1 && !hasError && (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+          <ScrollView
+            style={styles.scrollview}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Cover photo */}
+            <TouchableOpacity style={styles.coverCard} onPress={pickProfileImage} activeOpacity={0.8}>
+              {isCreatingVehicle ? (
+                <ActivityIndicator size="large" color={parrotBlue} />
+              ) : image ? (
+                <Image source={{ uri: image }} style={styles.coverImage} />
+              ) : (
+                <Image
+                  source={require("../assets/ParrotsLogoPlus.png")}
+                  style={{ width: vw(47), height: vh(21), opacity: 0.18 }}
+                  resizeMode="contain"
+                />
+              )}
+            </TouchableOpacity>
 
-            {/* Card 1: Profile Image */}
-            <View style={styles.sectionCard}>
-              <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Vehicle Profile Image</ParrotsStdText>
-              </View>
-              <View style={styles.profileContainer}>
-                {isCreatingVehicle ? (
-                  <View style={styles.backgroundImage}>
-                    <ActivityIndicator size="large" style={{ top: vh(14) }} />
-                  </View>
-                ) : (
-                  <TouchableOpacity onPress={() => pickProfileImage()}>
-                    {image ? (
-                      <Image
-                        source={{ uri: image }}
-                        style={styles.backgroundImage}
-                      />
-                    ) : (
-                      <View style={styles.backgroundImagePlaceholder}>
-                        <Image
-                          source={require("../assets/ParrotsLogoPlus.png")}
-                          style={{ width: vw(48), height: vh(21), opacity: 0.2 }}
-                        />
-                      </View>
-                    )}
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
+            {/* Name */}
+            <ParrotsStdText style={styles.fieldLabel}>Name</ParrotsStdText>
+            <TextInput
+              style={styles.input}
+              placeholder="Vehicle name (max 20)"
+              placeholderTextColor="rgba(92,107,122,0.5)"
+              value={name}
+              maxLength={20}
+              onChangeText={setName}
+            />
 
-            {/* Card 2: Vehicle Details */}
-            <View style={styles.sectionCard}>
-              <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Vehicle Details</ParrotsStdText>
-              </View>
-              <View style={styles.formContainer}>
-                {/* /// name /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Name:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Vehicle name (max 20)"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={name}
-                      maxLength={20}
-                      onChangeText={(text) => setName(text)}
-                    />
-                  </View>
-                </View>
-                {/* /// type /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Type:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <DropdownComponentType
-                      data={dropdownData}
-                      setVehicleType={setVehicleType}
-                      selected={vehicleType}
-                    />
-                  </View>
-                </View>
-                {/* /// DESC /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Description:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={[styles.textInput5, { minHeight: vh(12), textAlignVertical: "top" }]}
-                      multiline
-                      placeholder="Describe Your Vehicle"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={description}
-                      onChangeText={(text) => setDescription(text)}
-                    />
-                  </View>
-                </View>
-                {/* /// VACANCY /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Capacity:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Enter Vehicle Capacity"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={capacity}
-                      onChangeText={(text) => setCapacity(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
+            {/* Type + Capacity row */}
+            <View style={styles.typeCapRow}>
+              <View style={{ flex: 1.5 }}>
+                <ParrotsStdText style={styles.fieldLabel}>Type</ParrotsStdText>
+                <View style={styles.dropdownCard}>
+                  <DropdownComponentType
+                    data={dropdownData}
+                    setVehicleType={setVehicleType}
+                    selected={vehicleType}
+                  />
                 </View>
               </View>
-            </View>
-
-            {/* Create Vehicle Button */}
-            <View style={styles.modalViewLogin}>
-              <View style={styles.loginContainer}>
-                <TouchableOpacity
-                  onPress={() => handleCreateVehicle()}
-                  style={
-                    name === "" ||
-                      description === "" ||
-                      capacity === "" ||
-                      vehicleType === "" ||
-                      image === ""
-                      ? styles.selection2Disabled
-                      : styles.selection2
-                  }
-                  disabled={
-                    name === "" ||
-                    description === "" ||
-                    capacity === "" ||
-                    vehicleType === "" ||
-                    image === ""
-                  }
-                >
-                  {isCreatingVehicle ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <ParrotsStdText style={styles.loginText}>Create Vehicle</ParrotsStdText>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
-
-          </ScrollView>
-
-
-        </KeyboardAvoidingView>
-      )}
-
-      {currentStep === 2 && !hasError && (
-
-        <ScrollView style={styles.scrollview}>
-          {console.log("Step 2 screen rendered")}
-
-          <View style={styles.overlay}>
-
-            <View style={vehicleImagesStyles.vehicleImagesContainer}>
-              <View style={[styles.profileContainer2, { position: "relative" }]}>
-                {isUploadingImage ? (
-                  <View style={[styles.profileImage, { justifyContent: "center", alignItems: "center" }]}>
-                    <ActivityIndicator size="large" />
-                  </View>
-                ) : (
-                  <TouchableOpacity onPress={pickVoyageImage}>
-                    {voyageImage ? (
-                      <Image
-                        source={{ uri: voyageImage }}
-                        style={styles.profileImage}
-                      />
-                    ) : (
-                      <Image
-                        source={require("../assets/ParrotsLogoPlus.png")}
-                        style={[styles.profileImage2, { opacity: 0.2 }]}
-                      />
-                    )}
-                  </TouchableOpacity>
-                )}
-                {voyageImage && !isUploadingImage && (
-                  <TouchableOpacity
-                    onPress={() => handleUploadImage()}
-                    style={styles.uploadButton}
-                  >
-                    <ParrotsStdText style={styles.uploadButtonText}>Upload</ParrotsStdText>
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              <View
-                style={
-                  addedVehicleImages.length <= 1
-                    ? styles.length1
-                    : addedVehicleImages.length === 2
-                      ? styles.length2
-                      : styles.length3
-                }
-              >
-                <FlatList
-                  horizontal
-                  data={data}
-                  keyExtractor={(item, index) => `vehicle-image-${index}`}
-                  renderItem={({ item, index }) => {
-                    return (
-                      <View key={index}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            if (item.addedVoyageImageId) {
-                              handleDeleteImage(item.addedVoyageImageId);
-                            }
-                          }}
-                        >
-                          <Image
-                            source={
-                              item.addedVoyageImageId
-                                ? { uri: item.voyageImage }
-                                : require("../assets/placeholder1.png")
-                            }
-                            style={vehicleImagesStyles.vehicleImage1}
-                          />
-
-                          {item.addedVoyageImageId && (
-                            <ParrotsStdText style={styles.deleteAddedImage}>
-                              <MaterialIcons
-                                name="cancel"
-                                size={24}
-                                color="darkred"
-                              />
-                            </ParrotsStdText>
-                          )}
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  }}
+              <View style={{ flex: 1 }}>
+                <ParrotsStdText style={styles.fieldLabel}>Capacity</ParrotsStdText>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Passengers"
+                  placeholderTextColor="rgba(92,107,122,0.5)"
+                  value={capacity ? String(capacity) : ""}
+                  onChangeText={setCapacity}
+                  keyboardType="numeric"
                 />
               </View>
             </View>
-            {/* <TouchableOpacity
-                style={styles.FinishButtonContainer}
-                onPress={() => {
-                  goToProfilePage();
-                }}
-              >
-                <ParrotsStdText style={styles.addWaypointText}> Complete </ParrotsStdText>
-              </TouchableOpacity> */}
 
-            <View style={styles.completeContainer}>
+            {/* Description */}
+            <ParrotsStdText style={styles.fieldLabel}>Description</ParrotsStdText>
+            <TextInput
+              style={[styles.input, { minHeight: vh(11), textAlignVertical: "top", paddingTop: 10 }]}
+              multiline
+              placeholder="Describe your vehicle"
+              placeholderTextColor="rgba(92,107,122,0.5)"
+              value={description}
+              onChangeText={setDescription}
+            />
+
+            {/* Register / Update button */}
+            {!vehicleId ? (
               <TouchableOpacity
+                style={[styles.createBtn, isStep1Disabled && styles.createBtnDisabled, { alignSelf: "center", paddingHorizontal: vw(10) }]}
                 onPress={() => setShowConfirmModal(true)}
-                style={styles.selection2}
+                disabled={isStep1Disabled}
+                activeOpacity={0.85}
               >
-                {isCompletingVehicle ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <ParrotsStdText style={styles.loginText}>
-                    {addedVehicleImages.length === 0 ? "Skip" : "Complete"}
-                  </ParrotsStdText>
-                )}
+                <ParrotsStdText style={[styles.createBtnText, isCreatingVehicle && { opacity: 0 }]}>Register Vehicle</ParrotsStdText>
+                {isCreatingVehicle && <ActivityIndicator size="small" color="#fff" style={{ position: "absolute" }} />}
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={[styles.createBtn, !hasChanges && styles.createBtnDisabled, { alignSelf: "center", paddingHorizontal: vw(10) }]}
+                onPress={handleUpdateVehicle}
+                disabled={!hasChanges || isUpdatingVehicle}
+                activeOpacity={0.85}
+              >
+                <ParrotsStdText style={[styles.createBtnText, isUpdatingVehicle && { opacity: 0 }]}>Update Details</ParrotsStdText>
+                {isUpdatingVehicle && <ActivityIndicator size="small" color="#fff" style={{ position: "absolute" }} />}
+              </TouchableOpacity>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      )}
+
+      {/* ── STEP 2 ── */}
+      {currentStep === 2 && !hasError && (
+        <ScrollView style={styles.scrollview} contentContainerStyle={styles.scrollContent}>
+          {console.log("Step 2 screen rendered")}
+
+          {/* Vehicle created badge */}
+          <View style={styles.createdBadge}>
+            <Feather name="check" size={13} color="#0B6B4E" />
+            <ParrotsStdText style={styles.createdBadgeText}>Vehicle created</ParrotsStdText>
+          </View>
+
+          {/* Photos heading */}
+          <View style={styles.photosHeadRow}>
+            <ParrotsStdText style={styles.photosHeading}>Photos</ParrotsStdText>
+            <ParrotsStdText style={styles.photosCount}>{addedVehicleImages.length} / 8</ParrotsStdText>
+          </View>
+
+          {/* Image grid — explicit 3-column rows, no FlatList */}
+          {(() => {
+            const tiles = buildGridData();
+            return [0, 1, 2].map(row => (
+              <View key={row} style={{ flexDirection: "row", marginBottom: TILE_GAP }}>
+                {tiles.slice(row * 3, row * 3 + 3).map((item, col) => {
+                  const tileKey =
+                    item.type === "image" ? `img-${item.item.addedVoyageImageId}` :
+                      item.type === "picker" ? "picker" :
+                        item.type === "uploading" ? "uploading" :
+                          `empty-${item.id}`;
+                  return (
+                    <View key={tileKey} style={{ marginRight: col < 2 ? TILE_GAP : 0 }}>
+                      {renderGridTile(item)}
+                    </View>
+                  );
+                })}
+              </View>
+            ));
+          })()}
+
+          {/* Bottom button */}
+          <View style={styles.step2Foot}>
+            <TouchableOpacity
+              style={[styles.createBtn, { alignSelf: "center", paddingHorizontal: vw(10) }]}
+              onPress={() => setShowCompleteModal(true)}
+              activeOpacity={0.85}
+              disabled={isCompletingVehicle}
+            >
+              <ParrotsStdText style={[styles.createBtnText, isCompletingVehicle && { opacity: 0 }]}>
+                Complete
+              </ParrotsStdText>
+              {isCompletingVehicle && <ActivityIndicator size="small" color="#fff" style={{ position: "absolute" }} />}
+            </TouchableOpacity>
+          </View>
+
+        </ScrollView>
+      )}
+
+      <Modal visible={showCompleteModal} transparent animationType="fade">
+        <View style={vehicleModalStyles.overlay}>
+          <View style={vehicleModalStyles.box}>
+            <ParrotsStdText style={vehicleModalStyles.title}>All done?</ParrotsStdText>
+            <ParrotsStdText style={vehicleModalStyles.desc}>Your vehicle is registered. You can add more photos any time from your profile.</ParrotsStdText>
+            <View style={vehicleModalStyles.buttonRow}>
+              <TouchableOpacity onPress={() => setShowCompleteModal(false)}>
+                <ParrotsStdText style={vehicleModalStyles.cancelText}>Cancel</ParrotsStdText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={vehicleModalStyles.confirmButton}
+                onPress={() => { setShowCompleteModal(false); completeVehicle(); }}
+              >
+                <ParrotsStdText style={vehicleModalStyles.confirmText}>Complete</ParrotsStdText>
               </TouchableOpacity>
             </View>
-
-            <Modal visible={showConfirmModal} transparent animationType="fade">
-              <View style={vehicleModalStyles.overlay}>
-                <View style={vehicleModalStyles.box}>
-                  <ParrotsStdText style={vehicleModalStyles.title}>Register this vehicle?</ParrotsStdText>
-                  <View style={vehicleModalStyles.nameCard}>
-                    <View style={vehicleModalStyles.nameRow}>
-                      <ParrotsStdText style={vehicleModalStyles.nameLabel}>Name</ParrotsStdText>
-                      <ParrotsStdText style={vehicleModalStyles.nameValue}>{name}</ParrotsStdText>
-                    </View>
-                    <View style={vehicleModalStyles.nameRow}>
-                      <ParrotsStdText style={vehicleModalStyles.nameLabel}>Type</ParrotsStdText>
-                      <ParrotsStdText style={vehicleModalStyles.nameValue}>{vehicleType}</ParrotsStdText>
-                    </View>
-                  </View>
-                  <ParrotsStdText style={vehicleModalStyles.subtitle}>Goes on your public profile. Edit or remove it any time.</ParrotsStdText>
-                  <View style={vehicleModalStyles.buttonRow}>
-                    <TouchableOpacity onPress={() => setShowConfirmModal(false)}>
-                      <ParrotsStdText style={vehicleModalStyles.cancelText}>Cancel</ParrotsStdText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={vehicleModalStyles.confirmButton} onPress={() => { setShowConfirmModal(false); completeVehicle(); }}>
-                      <ParrotsStdText style={vehicleModalStyles.confirmText}>Register vehicle</ParrotsStdText>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </Modal>
           </View>
-        </ScrollView>
+        </View>
+      </Modal>
+
+      <Modal visible={showConfirmModal} transparent animationType="fade">
+        <View style={vehicleModalStyles.overlay}>
+          <View style={vehicleModalStyles.box}>
+            <ParrotsStdText style={vehicleModalStyles.title}>Register this vehicle?</ParrotsStdText>
+            <ParrotsStdText style={vehicleModalStyles.headline}>It goes on your public profile.</ParrotsStdText>
+            <ParrotsStdText style={vehicleModalStyles.desc}>Anyone viewing your profile can see it.</ParrotsStdText>
+            <View style={vehicleModalStyles.pill}>
+              <ParrotsStdText style={vehicleModalStyles.pillText}>Nothing locks, you can edit or remove it any time.</ParrotsStdText>
+            </View>
+            <View style={[vehicleModalStyles.pill, vehicleModalStyles.pillGreen]}>
+              <ParrotsStdText style={[vehicleModalStyles.pillText, vehicleModalStyles.pillTextGreen]}>Free to register, no ParrotCrackers used</ParrotsStdText>
+            </View>
+            <View style={vehicleModalStyles.buttonRow}>
+              <TouchableOpacity onPress={() => setShowConfirmModal(false)}>
+                <ParrotsStdText style={vehicleModalStyles.cancelText}>Cancel</ParrotsStdText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={vehicleModalStyles.confirmButton}
+                onPress={() => { setShowConfirmModal(false); handleCreateVehicle(); }}
+              >
+                <ParrotsStdText style={vehicleModalStyles.confirmText}>Register vehicle</ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {toastVisible && (
+        <View style={styles.toast}>
+          <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
+        </View>
       )}
     </>
   );
@@ -682,239 +624,222 @@ const CreateVehicleScreen = () => {
 export default CreateVehicleScreen;
 
 const styles = StyleSheet.create({
-
-  currentBidsTitle2: {
-    fontFamily: "Nunito_800ExtraBold",
-    top: vh(-3),
-    fontSize: 17,
-    color: parrotBlue,
-    textAlign: "center",
+  scrollview: {
+    flex: 1,
+    backgroundColor: parrotCream,
   },
-
+  scrollContent: {
+    paddingHorizontal: vw(4),
+    paddingBottom: vh(12),
+  },
   logoImage: {
     height: vh(23),
     width: vh(23),
     alignSelf: "center",
   },
-  voyageImage1: {
-    height: vh(13),
-    width: vh(13),
-    marginRight: vh(1),
-    borderRadius: vh(1.5),
-  },
-  modalViewLogin: {
-    alignSelf: "center",
-    marginTop: vh(0.8),
-    marginBottom: vh(10),
-  },
-  completeContainer: {
-    alignSelf: "center",
-    marginTop: vh(2),
-    marginBottom: vh(10),
-  },
-  loginText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 16,
-    color: "white",
-    textAlign: "center",
-  },
-  choiceText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 16,
-    color: "white",
-    textAlign: "center",
-  },
-  selection2: {
-    marginHorizontal: vh(0.25),
-    marginVertical: vh(0.25),
-    marginBottom: vh(3),
-    paddingVertical: vh(1),
-    backgroundColor: parrotBlue,
-    borderRadius: vh(4),
-    width: vw(50),
-  },
-  selection2Disabled: {
-    marginHorizontal: vh(0.25),
-    marginVertical: vh(0.25),
-    marginBottom: vh(3),
-    paddingVertical: vh(1),
-    backgroundColor: parrotBlueSemiTransparent,
-    borderRadius: vh(4),
-    width: vw(50),
-  },
-  latLngNameRow: {
-    flexDirection: "row",
-    backgroundColor: parrotCream,
-    borderRadius: vh(3),
-    marginBottom: vh(0.5),
-  },
-  latLngLabel: {
-    justifyContent: "center",
-    backgroundColor: parrotCream,
-    marginVertical: vh(0.3),
-    padding: vh(0.4),
-    borderRadius: vh(3),
-    borderColor: parrotPlaceholderGrey,
-
-  },
-  latorLngtxt: {
-    fontFamily: "Nunito_700Bold",
-    color: parrotInputTextColor,
-    width: vw(25),
-    textAlign: "center",
-  },
-  latorLng: {
-    flexDirection: "row",
-    backgroundColor: parrotTransparentWhite,
-    marginVertical: vh(0.3),
-    padding: vh(0.4),
-    borderTopRightRadius: vh(3),
-    borderBottomRightRadius: vh(3),
-    borderColor: parrotPlaceholderGrey,
-    width: vw(64),
-  },
-  textInput5: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 13,
-    paddingLeft: vw(1),
-    width: "90%",
-    color: parrotInputTextColor,
-  },
-  selectedChoice: {
-    marginTop: vh(1),
-    alignItems: "center",
-  },
-  selectedText: {
-    fontFamily: "Nunito_700Bold",
+  errorText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 17,
     color: parrotBlue,
-    fontSize: 18,
     textAlign: "center",
-  },
-  length1: {
-    flex: 1,
-    height: vh(15),
-  },
-  length2: {
-    flex: 1,
-  },
-  length3: {
-    flex: 1,
+    marginTop: 4,
   },
 
-  deleteAddedImage: {
-    top: vh(0),
-    right: vw(2),
-    backgroundColor: "white",
-    borderRadius: vh(3),
-    position: "absolute",
-  },
-  addVoyageImageButton: {
-    backgroundColor: parrotBlue,
-    position: "absolute",
-    right: vw(22),
-    top: vh(22),
-    padding: vh(1),
-    alignSelf: "center",
-    borderRadius: vh(3),
-    overflow: "hidden",
-    marginTop: vh(1),
+  // Cover
+  coverCard: {
+    width: "100%",
+    aspectRatio: 1,
+    backgroundColor: "#fff",
     borderWidth: 1,
-    borderColor: "white",
-  },
-  scrollview: {
-    marginBottom: vh(5),
-    backgroundColor: "white",
-  },
-  overlay: {
-    marginTop: vh(0),
-  },
-  profileContainer: {
-    flexDirection: "row",
+    borderColor: "#E8E3DC",
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
+    overflow: "hidden",
+    marginBottom: vh(2),
     marginTop: vh(1),
-    marginBottom: vh(1),
-    borderRadius: vh(1.5),
   },
-  profileContainer2: {
-    alignItems: "center",
-    justifyContent: "flex-start",
-    marginRight: vh(1),
-    borderRadius: vh(1.5),
+  coverImage: {
+    width: "100%",
+    height: "100%",
   },
-  uploadButton: {
-    position: "absolute",
-    bottom: vh(1),
-    alignSelf: "center",
-    backgroundColor: parrotBlue,
-    borderRadius: vh(2),
-    paddingVertical: vh(0.5),
-    paddingHorizontal: vw(3),
-    alignItems: "center",
-  },
-  uploadButtonText: {
-    color: "white",
+
+  // Field label
+  fieldLabel: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 13,
+    fontSize: 12,
+    color: "rgba(92,107,122,0.75)",
+    marginBottom: 5,
+    marginLeft: 2,
   },
-  profileImage: {
-    width: vh(15),
-    height: vh(15),
-    borderRadius: vh(1.5),
+
+  // Input (MessagesScreen createInput style)
+  input: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13.5,
+    color: "#0A2540",
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    height: 44,
+    paddingTop: 0,
+    paddingBottom: 0,
+    marginBottom: vh(1.5),
   },
-  backgroundImage: {
-    width: vw(80),
-    height: vh(35),
-    borderRadius: 20,
+
+  // Type + Capacity side by side
+  typeCapRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 0,
   },
-  backgroundImagePlaceholder: {
-    width: vw(80),
-    height: vh(35),
-    alignSelf: "center",
+
+  // Dropdown wrapper matches input card
+  dropdownCard: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    borderRadius: 16,
+    height: 44,
+    justifyContent: "center",
+    marginBottom: vh(1.5),
+    overflow: "hidden",
+  },
+
+  // Buttons
+  createBtn: {
+    backgroundColor: parrotBlue,
+    borderRadius: vh(3),
+    paddingVertical: vh(1.2),
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: vh(2),
+  },
+  createBtnDisabled: {
+    backgroundColor: parrotBlueSemiTransparent,
+  },
+  createBtnText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 16,
+    color: "#fff",
+  },
+
+  // Step 2
+  createdBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#E3F5EC",
+    alignSelf: "flex-start",
+    borderRadius: 999,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginTop: vh(1),
+    marginBottom: vh(1.5),
+  },
+  createdBadgeText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#0B6B4E",
+  },
+  photosHeadRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginBottom: vh(1.2),
+  },
+  photosHeading: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 20,
+    color: parrotBlue,
+    flex: 1,
+  },
+  photosCount: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "rgba(92,107,122,0.75)",
+  },
+
+  // Image grid
+  tile: {
+    borderRadius: 14,
+    overflow: "hidden",
+    position: "relative",
+  },
+  tileImg: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  tileCoverBadge: {
+    position: "absolute",
+    left: 5,
+    bottom: 5,
+    backgroundColor: "rgba(12,30,48,0.65)",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  tileCoverText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 9,
+    color: "#fff",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+  },
+  tileX: {
+    position: "absolute",
+    right: 4,
+    top: 4,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: "rgba(12,30,48,0.55)",
     alignItems: "center",
     justifyContent: "center",
   },
-  sectionCard: {
-    borderRadius: 20,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: vw(2),
-    marginBottom: vh(1),
-    paddingTop: vh(1.5),
-    paddingBottom: vh(1),
+  tileUploading: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  cardTitleRow: { marginHorizontal: vw(2), marginBottom: vh(1) },
-  cardTitle: { fontFamily: "Nunito_800ExtraBold", fontSize: 20, color: parrotBlue },
-  profileImage2: {
-    width: vh(15),
-    height: vh(15),
-    borderRadius: vh(1.5),
+  tilePicker: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  formContainer: {
-    padding: vh(2),
+  tileEmpty: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    opacity: 0.45,
   },
-});
 
-const vehicleImagesStyles = StyleSheet.create({
-  vehicleImagesContainer: {
-    marginTop: vh(10),
-    paddingBottom: vh(1),
-    paddingHorizontal: vw(3),
-    alignSelf: "center",
-    width: vw(94),
-    borderRadius: vh(2),
-    flexDirection: "row",
-    alignItems: "flex-start",
+  // Step 2 bottom
+  step2Foot: {
+    marginTop: vh(2),
+    alignItems: "center",
   },
-  vehicleImage1: {
-    height: vh(15),
-    width: vh(15),
-    marginRight: vh(1),
-    borderRadius: vh(1.5),
+
+  // Toast
+  toast: {
+    position: "absolute",
+    bottom: vh(10),
+    alignSelf: "center",
+    backgroundColor: "rgba(30,111,217,0.9)",
+    paddingHorizontal: vw(4),
+    paddingVertical: vh(1),
+    borderRadius: 20,
+  },
+  toastText: {
+    fontFamily: "Nunito_700Bold",
+    color: "white",
+    fontSize: 13,
   },
 });
 
@@ -934,38 +859,39 @@ const vehicleModalStyles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontFamily: "Nunito_700Bold",
-    marginBottom: 16,
+    marginBottom: 8,
     color: parrotBlue,
   },
-  nameCard: {
+  headline: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 15,
+    color: "#0A2540",
+    marginBottom: 4,
+  },
+  desc: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 13,
+    color: parrotInputTextColor,
+    marginBottom: 12,
+  },
+  pill: {
     backgroundColor: parrotCream,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    width: "100%",
-    marginBottom: 14,
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginBottom: 8,
   },
-  nameRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 4,
-  },
-  nameLabel: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    color: parrotInputTextColor,
-    width: vw(20),
-  },
-  nameValue: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    color: parrotInputTextColor,
-  },
-  subtitle: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    color: parrotInputTextColor,
+  pillGreen: {
+    backgroundColor: "rgba(0,150,100,0.1)",
     marginBottom: 20,
+  },
+  pillText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: parrotInputTextColor,
+  },
+  pillTextGreen: {
+    color: "#16a34a",
   },
   buttonRow: {
     flexDirection: "row",
@@ -991,4 +917,3 @@ const vehicleModalStyles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
