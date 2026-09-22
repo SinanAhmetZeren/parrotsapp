@@ -27,7 +27,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { WaypointFlatList, WaypointItem } from "../components/WaypointFlatlist";
 import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotGreen, parrotLightBlue, parrotPlaceholderGrey } from "../assets/color";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, Feather } from "@expo/vector-icons";
 import * as FileSystem from "expo-file-system/legacy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "@env";
@@ -46,6 +46,8 @@ const CreateVoyageMapComponent = ({
   isPublicOnMap,
   crackerBalance,
   onVoyagePosted,
+  onCanCompleteChange,
+  completeTriggerRef,
 }) => {
   const [waypointInfoVisible, setWaypointInfoVisible] = useState(false);
   const [addedWayPoints, setAddedWayPoints] = useState([]);
@@ -297,6 +299,15 @@ const CreateVoyageMapComponent = ({
     fetchLocation();
   }, []);
 
+  useEffect(() => {
+    if (onCanCompleteChange) onCanCompleteChange(addedWayPoints.length > 0);
+    if (completeTriggerRef) {
+      completeTriggerRef.current = () => {
+        if (addedWayPoints.length > 0) setShowConfirmModal(true);
+      };
+    }
+  }, [addedWayPoints]);
+
 
   /*
   const initialRegion = {
@@ -348,33 +359,135 @@ const CreateVoyageMapComponent = ({
 
 
   return (
-    <View>
-      <View style={styles.mapCard}>
-        <View style={styles.cardTitleRow}>
-          <ParrotsStdText style={styles.cardTitle}>Voyage Route</ParrotsStdText>
+    <View style={{ gap: 10 }}>
+
+      {/* Route card */}
+      <View style={cmStyles.card}>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <ParrotsStdText style={[cmStyles.cardTitle, { flex: 1 }]}>Route</ParrotsStdText>
+          <ParrotsStdText style={cmStyles.ct}>{addedWayPoints.length} pinned</ParrotsStdText>
+          <TouchableOpacity onPress={() => setWaypointInfoVisible(true)} style={{ marginLeft: 8 }}>
+            <ParrotsStdText style={{ fontSize: 14, color: parrotLightBlue, fontFamily: "Nunito_800ExtraBold" }}>ⓘ</ParrotsStdText>
+          </TouchableOpacity>
         </View>
-        <View style={styles.mapAndEmojisContainer}>
-          <View style={styles.mapContainer}>
-            <MapView
-              provider={PROVIDER_GOOGLE}
-              style={styles.map}
-              initialRegion={initialRegion}
-              onPress={handleMapPress}
-              userInterfaceStyle="light"
+
+        {/* Map */}
+        <View style={{ borderRadius: 11, overflow: "hidden", height: vh(25) }}>
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={{ width: "100%", height: "100%" }}
+            initialRegion={initialRegion}
+            onPress={handleMapPress}
+            userInterfaceStyle="light"
+          >
+            {markerCoords && <Marker coordinate={markerCoords} />}
+            <WaypointList waypoints={addedWayPoints} />
+            {renderPolylines(addedWayPoints)}
+          </MapView>
+          {!markerCoords && (
+            <View style={{ position: "absolute", left: 8, bottom: 8, flexDirection: "row", alignItems: "center", gap: 5, backgroundColor: "rgba(30,111,217,0.72)", borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 }}>
+              <Feather name="navigation" size={11} color="#fff" />
+              <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 10, color: "#fff" }}>Tap the map to pin</ParrotsStdText>
+            </View>
+          )}
+        </View>
+
+        {/* Coordinate pill */}
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "#E8F1FB", borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6 }}>
+          <Feather name="map-pin" size={12} color="#5B3FD6" />
+          <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 8.5, letterSpacing: 1, textTransform: "uppercase", color: "#5A6874" }}>Pinned</ParrotsStdText>
+          <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 11.5, color: "#0A5FBF", marginLeft: "auto" }}>
+            {markerCoords ? `${latitude.toString().substring(0, 8)},  ${longitude.toString().substring(0, 8)}` : "—"}
+          </ParrotsStdText>
+        </View>
+
+        {/* Waypoint form */}
+        <ParrotsStdText style={cmStyles.cardTitle}>Add Waypoint</ParrotsStdText>
+        {/* 2-column layout: left = image+add, right = name / description */}
+        <View style={{ flexDirection: "row", gap: 8, alignItems: "stretch" }}>
+          {/* Left: image picker + add button */}
+          <View style={{ width: 96, gap: 6, marginTop: 16 }}>
+            <TouchableOpacity
+              style={{ width: 96, height: 86, borderRadius: 10, borderWidth: 1, borderColor: "#E8E3DC", backgroundColor: "#fff", alignItems: "center", justifyContent: "center", overflow: "hidden" }}
+              onPress={pickVoyageImage}
+              activeOpacity={0.75}
             >
-              {markerCoords && (
-                <Marker coordinate={markerCoords} title="Tapped Location" />
+              {imageUri ? (
+                <Image source={{ uri: imageUri }} style={{ width: "100%", height: "100%", resizeMode: "cover" }} />
+              ) : (
+                <Image source={require("../assets/ParrotsLogoPlus.png")} style={{ width: 58, height: 58, opacity: 0.22 }} resizeMode="contain" />
               )}
-              <WaypointList waypoints={addedWayPoints} />
-              {renderPolylines(addedWayPoints)}
-            </MapView>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ height: 32, backgroundColor: canAddWaypoint && !isUploadingWaypointImage ? "#0A5FBF" : "rgba(10,95,191,0.4)", borderRadius: 999, alignItems: "center", justifyContent: "center" }}
+              onPress={() => { if (canAddWaypoint) handleAddWaypoint(); }}
+              disabled={!canAddWaypoint || isUploadingWaypointImage}
+            >
+              {isUploadingWaypointImage
+                ? <ActivityIndicator size="small" color="#fff" />
+                : <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 11.5, color: "#fff" }}>Add</ParrotsStdText>}
+            </TouchableOpacity>
+          </View>
+
+          {/* Right: name (top), description (bottom) */}
+          <View style={{ flex: 1, gap: 6 }}>
+            <View style={{ gap: 3 }}>
+              <ParrotsStdText style={cmStyles.lb}>TITLE</ParrotsStdText>
+              <TextInput
+                style={cmStyles.fld}
+                placeholder="Waypoint title"
+                placeholderTextColor={parrotPlaceholderGrey}
+                value={title}
+                onChangeText={setTitle}
+                maxLength={25}
+              />
+            </View>
+            <View style={{ gap: 3 }}>
+              <ParrotsStdText style={cmStyles.lb}>DESCRIPTION</ParrotsStdText>
+              <TextInput
+                style={[cmStyles.fld, { height: 62, paddingTop: 9, textAlignVertical: "top" }]}
+                placeholder="What happens here"
+                placeholderTextColor={parrotPlaceholderGrey}
+                value={description}
+                onChangeText={setDescription}
+                maxLength={300}
+                multiline
+                numberOfLines={2}
+              />
+            </View>
           </View>
         </View>
-
-
       </View>
 
+      {/* Added waypoints */}
+      {addedWayPoints.length > 0 && (
+        <View style={{ gap: 6 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 2 }}>
+            <ParrotsStdText style={[cmStyles.cardTitle, { flex: 1 }]}>Added waypoints</ParrotsStdText>
+            <ParrotsStdText style={cmStyles.ct}>{addedWayPoints.length}</ParrotsStdText>
+          </View>
+          {addedWayPoints.map((wp, index) => (
+            <View key={wp.waypointId} style={{ flexDirection: "row", alignItems: "flex-start", gap: 8, borderWidth: 1.5, borderColor: "#D8E0E8", borderRadius: 11, backgroundColor: "#fff", padding: 7 }}>
+              <View style={{ width: 19, height: 19, borderRadius: 9.5, backgroundColor: "#0A5FBF", alignItems: "center", justifyContent: "center", marginTop: 1, flexShrink: 0 }}>
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 10, color: "#fff" }}>{index + 1}</ParrotsStdText>
+              </View>
+              <Image source={{ uri: wp.imageUri }} style={{ width: 34, height: 34, borderRadius: 8, flexShrink: 0 }} />
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 12.5, color: "#1F2933" }} numberOfLines={1}>{wp.title}</ParrotsStdText>
+                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 10.5, color: "#5A6874", lineHeight: 15, marginTop: 2 }} numberOfLines={2}>{wp.description}</ParrotsStdText>
+              </View>
+              <TouchableOpacity
+                style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: "#F1F4F7", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+                onPress={() => handleDeleteWaypoint(wp.waypointId)}
+              >
+                <Feather name="x" size={10} color="#5A6874" />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      )}
 
+      {/* Info modal */}
       <Modal transparent animationType="fade" visible={waypointInfoVisible} onRequestClose={() => setWaypointInfoVisible(false)}>
         <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.3)", justifyContent: "center", alignItems: "center" }} activeOpacity={1} onPress={() => setWaypointInfoVisible(false)}>
           <View style={{ backgroundColor: "white", borderRadius: vh(2), borderWidth: 2, borderColor: parrotLightBlue, paddingHorizontal: vw(6), paddingVertical: vh(3), width: vw(80) }}>
@@ -384,157 +497,6 @@ const CreateVoyageMapComponent = ({
           </View>
         </TouchableOpacity>
       </Modal>
-
-      <View style={styles.newWaypointCard}>
-        <View style={[styles.cardTitleRow, { flexDirection: "row", alignItems: "center", gap: vw(2) }]}>
-          <ParrotsStdText style={styles.cardTitle}>New Waypoint</ParrotsStdText>
-          <TouchableOpacity onPress={() => setWaypointInfoVisible(true)}>
-            <ParrotsStdText style={{ fontSize: 16, color: parrotLightBlue, fontFamily: "Nunito_800ExtraBold" }}>ⓘ</ParrotsStdText>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.profileContainer}>
-          {isUploadingWaypointImage ? (
-            <View style={styles.profileImage}>
-              <ActivityIndicator size="large" style={{ top: vh(4) }} />
-            </View>
-          ) : (
-            <TouchableOpacity onPress={pickVoyageImage}>
-              {imageUri ? (
-                <Image source={{ uri: imageUri }} style={styles.profileImage} />
-              ) : (
-                <Image
-                  source={require("../assets/ParrotsLogoPlus.png")}
-                  style={[styles.profileImage, { opacity: 0.2 }]}
-                />
-              )}
-            </TouchableOpacity>
-          )}
-
-          <View style={styles.latLng}>
-            <View style={styles.latLngNameRow}>
-              <View style={styles.latLngLabel}>
-                <ParrotsStdText style={styles.latorLngtxt}>Lat:</ParrotsStdText>
-              </View>
-              <View style={styles.latorLng}>
-                <ParrotsStdText
-                  style={
-                    latitude ? styles.latlngtextInput : styles.latlngtextInput2
-                  }
-                >
-                  {latitude
-                    ? latitude.toString().substring(0, 20)
-                    : "tap on map"}
-                </ParrotsStdText>
-              </View>
-            </View>
-
-            <View style={styles.latLngNameRow}>
-              <View style={styles.latLngLabel}>
-                <ParrotsStdText style={styles.latorLngtxt}>Lng:</ParrotsStdText>
-              </View>
-              <View style={styles.latorLng}>
-                <ParrotsStdText
-                  style={
-                    latitude ? styles.latlngtextInput : styles.latlngtextInput2
-                  }
-                >
-                  {longitude
-                    ? longitude.toString().substring(0, 20)
-                    : "tap on map"}
-                </ParrotsStdText>
-              </View>
-            </View>
-
-            <View style={styles.latLngNameRow}>
-              <View style={styles.nameLabel}>
-                <ParrotsStdText style={styles.latorLngtxt}>Name:</ParrotsStdText>
-              </View>
-              <View style={styles.nameInputContainer}>
-                <TextInput
-                  style={styles.nameInput}
-                  placeholder="Title (max 25 chars)"
-                  value={title}
-                  multiline
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  numberOfLines={1}
-                  onChangeText={(text) => setTitle(text)}
-                  maxLength={25}
-                />
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.latLngNameRow2}>
-          <View style={styles.latLngLabel2}>
-            <ParrotsStdText style={styles.latorLngtxt2}>Description:</ParrotsStdText>
-          </View>
-          <View style={styles.latorLng2}>
-            <TextInput
-              style={styles.textInputDescription}
-              placeholder="Waypoint description (max 300)"
-              value={description}
-              placeholderTextColor={parrotPlaceholderGrey}
-              multiline
-              numberOfLines={3}
-              onChangeText={(text) => setDescription(text)}
-              maxLength={300}
-            />
-          </View>
-        </View>
-
-
-        <TouchableOpacity
-          style={styles.AddWaypointButtonContainer}
-          onPress={() => {
-            if (latitude && longitude && description && title) {
-              handleAddWaypoint();
-            }
-          }}
-          disabled={!(latitude && longitude && description && title) || isAddingWaypoint}
-        >
-          <View
-            style={[
-              styles.completeText,
-              { alignItems: "center", justifyContent: "center" },
-              (latitude && longitude && description && title)
-                ? { backgroundColor: parrotBlue }
-                : { backgroundColor: parrotBlueSemiTransparent },
-            ]}
-          >
-            <ParrotsStdText style={{ color: "white", fontFamily: "Nunito_700Bold", opacity: isAddingWaypoint ? 0 : 1 }}>Add Waypoint</ParrotsStdText>
-            {isAddingWaypoint && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
-          </View>
-        </TouchableOpacity>
-      </View >
-
-
-      <View style={styles.addedWaypointsCard}>
-        <View style={styles.cardTitleRow}>
-          <ParrotsStdText style={styles.cardTitle}>Added Waypoints</ParrotsStdText>
-        </View>
-        <View style={styles.waypointFlatlistInner}>
-          <WaypointFlatList addedWayPoints={addedWayPoints} handleDeleteWaypoint={handleDeleteWaypoint} />
-        </View>
-      </View>
-
-      <TouchableOpacity
-        style={styles.FinishButtonContainer}
-        onPress={() => { if (addedWayPoints.length > 0) setShowConfirmModal(true); }}
-        disabled={!(addedWayPoints.length > 0)}
-      >
-        <View
-          style={[
-            styles.completeText,
-            { alignItems: "center", justifyContent: "center" },
-            addedWayPoints.length > 0
-              ? { backgroundColor: parrotBlue }
-              : { backgroundColor: parrotBlueSemiTransparent },
-          ]}
-        >
-          <ParrotsStdText style={{ color: "white", fontFamily: "Nunito_700Bold" }}>Complete</ParrotsStdText>
-        </View>
-      </TouchableOpacity>
 
       <Modal visible={showConfirmModal} transparent animationType="fade">
         <View style={modalStyles.overlay}>
@@ -633,281 +595,40 @@ const modalStyles = StyleSheet.create({
   confirmText: { fontFamily: "Nunito_700Bold", fontSize: 15, color: "white" },
 });
 
-const styles = StyleSheet.create({
-
-  mapCard: {
-    borderRadius: 20,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: vw(2),
-    marginBottom: vh(1),
-    paddingTop: vh(1.5),
-    overflow: "hidden",
-  },
-  addedWaypointsCard: {
-    borderRadius: 20,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: vw(2),
-    marginBottom: vh(1),
-    paddingTop: vh(1.5),
-    paddingBottom: vh(1),
-  },
-  cardTitleRow: {
-    marginHorizontal: vw(2),
-    marginBottom: vh(1),
+const cmStyles = StyleSheet.create({
+  card: {
+    borderWidth: 1.5,
+    borderColor: "#D8E0E8",
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    padding: 10,
+    gap: 8,
   },
   cardTitle: {
-    fontSize: 20,
     fontFamily: "Nunito_800ExtraBold",
-    color: parrotBlue,
+    fontSize: 12.5,
+    color: "#0A5FBF",
   },
-  waypointFlatlistInner: {
-    height: vh(38),
-    padding: vh(2),
-    paddingVertical: vh(0),
-    justifyContent: "center",
-    alignContent: "center",
-    alignItems: "center",
-    marginBottom: vh(1),
+  ct: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 10.5,
+    color: "#5A6874",
   },
-  messageBubble: {
-    width: vw(88),
-    height: vh(6.8),
-    marginTop: vh(0.7),
+  lb: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 8.5,
+    letterSpacing: 1.1,
+    color: "#5A6874",
   },
-  warningTextContainer: {
-    alignSelf: "center",
-    justifyContent: "center",
-    width: vw(80),
-    height: vh(7),
-    flexDirection: "row",
-    marginTop: vh(1),
-    borderRadius: vh(2),
-  },
-  miniLogo: {
-    height: vh(4),
-    width: vh(4),
-    alignSelf: "center",
-  },
-  addWaypointText: {
-    alignSelf: "center",
-    paddingVertical: vh(1),
-    paddingHorizontal: vw(6),
-    borderRadius: vh(2),
-    backgroundColor: parrotBlue,
-    color: "white",
+  fld: {
     fontFamily: "Nunito_700Bold",
-    marginBottom: vh(1),
-  },
-  completeText: {
-    alignSelf: "center",
-    paddingVertical: vh(1),
-    paddingHorizontal: vw(6),
-    borderRadius: vh(2),
-    backgroundColor: parrotBlue,
-    color: "white",
-    fontFamily: "Nunito_700Bold",
-    marginBottom: vh(3),
-  },
-  addWaypointTextDisabled: {
-    alignSelf: "center",
-    paddingVertical: vh(1),
-    paddingHorizontal: vw(6),
-    borderRadius: vh(2),
-    backgroundColor: parrotBlueSemiTransparent2,
-    color: "white",
-    fontFamily: "Nunito_700Bold",
-    marginBottom: vh(1),
-  },
-  FinishButtonContainer: {
-    borderRadius: vh(2),
-    width: vw(95),
-    alignSelf: "center",
-    marginBottom: vh(5),
-  },
-  AddWaypointButtonContainer: {
-    borderRadius: vh(2),
-    width: vw(95),
-    alignSelf: "center",
-  },
-  newWaypointCard: {
-    borderRadius: 20,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: vw(2),
-    marginBottom: vh(1),
-    paddingTop: vh(1.5),
-    paddingHorizontal: vw(2),
-  },
-  latLng: {
-    width: vw(59),
-    marginTop: vh(1),
-  },
-  latorLng: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    marginVertical: vh(0.2),
-    padding: vh(0.4),
-    borderTopRightRadius: vh(1.5),
-    borderBottomRightRadius: vh(1.5),
-    width: vw(45),
-  },
-  nameInputContainer: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    marginVertical: vh(0),
-    padding: vh(0.4),
-    paddingVertical: 0,
-    borderTopRightRadius: vh(1.5),
-    borderBottomRightRadius: vh(1.5),
-    width: vw(45),
-  },
-  latorLng2: {
-    flexDirection: "row",
-    backgroundColor: parrotCream,
-    marginVertical: vh(0.3),
-    padding: vh(0.1),
-    width: vw(62),
-    borderTopRightRadius: vh(1.5),
-    borderBottomRightRadius: vh(1.5),
-  },
-  latLngNameRow: {
-    flexDirection: "row",
-    backgroundColor: parrotCream,
-    borderRadius: vh(1.5),
-    marginBottom: vh(0.5),
-    height: vh(4.5),
-  },
-  latLngNameRow2: {
-    flexDirection: "row",
-    backgroundColor: parrotCream,
-    borderRadius: vh(1.5),
-    marginBottom: vh(0.5),
-    marginHorizontal: vw(2),
-  },
-  nameLabel: {
-    justifyContent: "center",
-    backgroundColor: parrotCream,
-    marginVertical: vh(0.3),
-    padding: vh(0.4),
-    borderRadius: vh(1.5),
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-  latLngLabel: {
-    justifyContent: "center",
-    backgroundColor: parrotCream,
-    marginVertical: vh(0.1),
-    padding: vh(0.4),
-    borderRadius: vh(1.5),
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-  latLngLabel2: {
-    justifyContent: "center",
-    backgroundColor: parrotCream,
-    marginVertical: vh(0.3),
-    marginLeft: vw(3),
-    padding: vh(0.4),
-    borderRadius: vh(1.5),
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    width: vw(25),
-  },
-  latorLngtxt: {
-    color: parrotPlaceholderGrey,
-    fontFamily: "Nunito_700Bold",
-    width: vw(12),
-    textAlign: "center",
-  },
-  latorLngtxt2: {
-    color: parrotPlaceholderGrey,
-    fontFamily: "Nunito_700Bold",
-    width: vw(21),
-    textAlign: "center",
-  },
-  profileContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: vh(1.5),
-    borderRadius: vh(1.5),
-    justifyContent: "space-between",
-  },
-  profileImage: {
-    marginLeft: vw(2),
-    marginRight: vw(2),
-    marginVertical: vh(1),
-    width: vh(14.5),
-    height: vh(14.5),
-    borderRadius: vh(1.5),
-    borderColor: parrotBlueSemiTransparent,
-    backgroundColor: "white",
-
-  },
-  textInputDescription: {
-    fontSize: 13,
-    fontFamily: "Nunito_700Bold",
-    paddingLeft: vw(1),
-    width: "99%",
-    backgroundColor: "white",
-    borderRadius: vh(1.5),
-  },
-  nameInput: {
-    fontSize: 13,
-    fontFamily: "Nunito_700Bold",
-    paddingLeft: vw(1),
-    width: "90%",
-  },
-  latlngtextInput: {
-    fontSize: 13,
-    fontFamily: "Nunito_700Bold",
-    padding: vw(1),
-    width: "90%",
-    color: parrotPlaceholderGrey,
-  },
-  latlngtextInput2: {
-    fontSize: 13,
-    fontFamily: "Nunito_700Bold",
-    padding: vw(1),
-    width: "90%",
-    color: parrotPlaceholderGrey,
-  },
-  mapAndEmojisContainer: {
-    height: vh(40),
-    padding: vh(1),
-    width: "98%",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    marginBottom: vh(0.2),
-  },
-  mapContainer: {
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
-    borderRadius: vh(3),
-    // borderColor: "#93c9ed",
-    borderColor: parrotBlueSemiTransparent,
-    // borderWidth: 2,
-    borderRadius: vh(2),
-
-  },
-  map: {
-    width: "100%",
-    height: "100%",
-    borderRadius: vw(10),
+    height: 42,
+    borderRadius: 8,
+    backgroundColor: "#F7F9FB",
+    borderWidth: 1.5,
+    borderColor: "#D8E0E8",
+    paddingHorizontal: 9,
+    fontSize: 12.5,
+    color: "#1F2933",
   },
 });

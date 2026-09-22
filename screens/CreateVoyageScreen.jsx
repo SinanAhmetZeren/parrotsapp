@@ -15,7 +15,11 @@ import {
   FlatList,
   ActivityIndicator,
   Linking,
+  Dimensions,
 } from "react-native";
+
+const SCREEN_W = Dimensions.get("window").width;
+const TILE_GAP = 8;
 import { useGetUserByIdQuery } from "../slices/UserSlice";
 import {
   useCreateVoyageMutation,
@@ -49,12 +53,14 @@ import { BackHandler } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotCaravanOrangeRed, parrotCream, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotPlaceholderGrey, parrotTransparentWhite } from "../assets/color";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DropdownComponentCurrency from "../components/DropdownComponentCurrency";
 
 
 // Set lastBidDate to startDate for now, 
 // since lastBidDate is hidden and not used in the form
 const CreateVoyageScreen = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const userId = useSelector((state) => state.users.userId);
   const hasAcknowledgedPublicProfile = useSelector((state) => state.users.hasAcknowledgedPublicProfile);
   const dispatch = useDispatch();
@@ -115,7 +121,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(false);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -127,6 +133,8 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [hasError, setHasError] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [canComplete, setCanComplete] = useState(false);
+  const completeTriggerRef = useRef(null);
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -418,6 +426,51 @@ const CreateVoyageScreen = ({ navigation }) => {
     }
   };
 
+  const pickAndUploadVoyageImage = async () => {
+    if (addedVoyageImages.length >= 8 || isUploadingImage) return;
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      const manipulated = await ImageManipulator.manipulateAsync(
+        asset.uri,
+        [{ resize: { width: 1080, height: 1080 } }],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      const uri = manipulated.uri;
+      setIsUploadingImage(true);
+      try {
+        const token = await AsyncStorage.getItem("storedToken");
+        const uploadResult = await FileSystem.uploadAsync(
+          `${API_URL}/api/Voyage/${voyageId}/AddVoyageImage`,
+          uri,
+          {
+            httpMethod: "POST",
+            uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+            fieldName: "imageFile",
+            mimeType: "image/jpeg",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const responseData = JSON.parse(uploadResult.body);
+        if (!responseData?.imagePath) {
+          showToast("Image upload failed - Check your connection and try again.");
+          return;
+        }
+        setAddedVoyageImages((prev) => [...prev, { addedVoyageImageId: responseData.imagePath, voyageImage: uri }]);
+      } catch (error) {
+        console.error("Error uploading voyage image", error);
+        showToast("Image upload failed - Check your connection and try again.");
+      } finally {
+        setIsUploadingImage(false);
+      }
+    }
+  };
+
   const handleDateChange = (text) => {
     // Remove non-numeric characters from the input
     const cleanedText = text.replace(/[^0-9]/g, "");
@@ -437,10 +490,16 @@ const CreateVoyageScreen = ({ navigation }) => {
   };
 
   const onDateChange = (date) => {
-    if (!startDate || (startDate && endDate)) {
+    if (startDate && endDate) {
+      setStartDate("");
+      setEndDate(null);
+      setCalendarRangeAllowed(false);
+      sameDateTapCount.current = 0;
+      return;
+    }
+    if (!startDate) {
       setStartDate(date);
       console.log("-->>", date);
-      setEndDate(null);
       setCalendarRangeAllowed(false);
       sameDateTapCount.current = 0;
     } else {
@@ -511,6 +570,70 @@ const CreateVoyageScreen = ({ navigation }) => {
       }))
     );
 
+    const formatCalDate = (date) => {
+      if (!date) return "—";
+      const d = date?.toDate ? date.toDate() : new Date(date);
+      return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+    };
+
+    const isFormComplete = image !== "" && name !== "" && brief !== "" && description !== "" && vacancy !== "" && vehicleId !== "" && startDate !== "" && endDate !== "" && minPrice !== "" && maxPrice !== "" && currency !== "";
+
+    const TILE_SIZE = Math.floor((SCREEN_W - vw(8) - 20 - TILE_GAP * 2) / 3);
+
+    const buildGridData = () => {
+      const tiles = [];
+      tiles.push({ type: "picker" });
+      addedVoyageImages.forEach((item, index) => {
+        tiles.push({ type: "image", item, isCover: index === 0 });
+      });
+      if (isUploadingImage) tiles.push({ type: "uploading" });
+      while (tiles.length < 9) tiles.push({ type: "empty", id: String(tiles.length) });
+      return tiles;
+    };
+
+    const renderGridTile = (tile) => {
+      const base = [s2Styles.tile, { width: TILE_SIZE, height: TILE_SIZE }];
+      if (tile.type === "image") {
+        return (
+          <View style={base}>
+            <Image source={{ uri: tile.item.voyageImage }} style={s2Styles.tileImg} />
+            {tile.isCover && (
+              <View style={s2Styles.tileCoverBadge}>
+                <ParrotsStdText style={s2Styles.tileCoverText}>Cover</ParrotsStdText>
+              </View>
+            )}
+            <TouchableOpacity style={s2Styles.tileX} onPress={() => handleDeleteImage(tile.item.addedVoyageImageId)}>
+              <Feather name="x" size={12} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        );
+      }
+      if (tile.type === "uploading") {
+        return (
+          <View style={[...base, s2Styles.tileUploading]}>
+            <ActivityIndicator size="small" color={parrotBlue} />
+          </View>
+        );
+      }
+      if (tile.type === "picker") {
+        return (
+          <TouchableOpacity
+            style={[...base, s2Styles.tilePicker]}
+            onPress={pickAndUploadVoyageImage}
+            activeOpacity={0.75}
+            disabled={addedVoyageImages.length >= 8 || isUploadingImage}
+          >
+            <Image
+              source={require("../assets/ParrotsLogoPlus.png")}
+              style={{ width: TILE_SIZE * 0.55, height: TILE_SIZE * 0.55, opacity: 0.22 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+        );
+      }
+      return <View style={[...base, s2Styles.tileEmpty]} />;
+    };
+
     const maxItems = 10;
     const placeholders = Array.from({ length: maxItems }, (_, index) => ({
       key: `placeholder_${index + 1}`,
@@ -566,514 +689,273 @@ const CreateVoyageScreen = ({ navigation }) => {
 
 
         {currentStep == 1 && !hasError && (
-          <ScrollView style={styles.scrollview}>
+          <View style={{ flex: 1, backgroundColor: parrotCream }}>
+            <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 12, paddingBottom: 16, gap: 10 }}>
 
-            {/* Card 1: Cover Image */}
-            <View style={styles.sectionCard}>
-              <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Profile Image</ParrotsStdText>
+              {/* Cover image */}
+              <TouchableOpacity onPress={pickProfileImage} activeOpacity={0.8}
+                style={{ width: "100%", aspectRatio: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#E8E3DC", borderRadius: 16, alignItems: "center", justifyContent: "center", overflow: "hidden", marginBottom: vh(1), marginTop: vh(0.5) }}>
+                {image ? (
+                  <Image source={{ uri: image }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+                ) : (
+                  <Image source={require("../assets/ParrotsLogoPlus.png")} style={{ width: vw(47), height: vh(21), opacity: 0.18 }} resizeMode="contain" />
+                )}
+              </TouchableOpacity>
+
+              {/* Basics card */}
+              <View style={cvStyles.card}>
+                <ParrotsStdText style={cvStyles.cardTitle}>Basics</ParrotsStdText>
+                <View style={cvStyles.field}>
+                  <ParrotsStdText style={cvStyles.label}>Voyage name *</ParrotsStdText>
+                  <TextInput style={[cvStyles.input, { height: 42 }]} placeholder="Voyage name (max 30)" placeholderTextColor={parrotPlaceholderGrey} value={name} maxLength={30} onChangeText={setName} />
+                  <ParrotsStdText style={cvStyles.charCount}>{name.length} / 30</ParrotsStdText>
+                </View>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  <View style={[cvStyles.field, { flex: 1 }]}>
+                    <ParrotsStdText style={cvStyles.label}>Vehicle *</ParrotsStdText>
+                    <DropdownComponent data={dropdownData} setVehicleId={setVehicleId} vehicleId={vehicleId} />
+                  </View>
+                  <View style={[cvStyles.field, { width: 84 }]}>
+                    <ParrotsStdText style={cvStyles.label}>Spots</ParrotsStdText>
+                    <TextInput style={[cvStyles.input, { height: 42 }]} placeholder="0" placeholderTextColor={parrotPlaceholderGrey} value={vacancy} onChangeText={setVacancy} keyboardType="numeric" />
+                  </View>
+                </View>
               </View>
-              <View style={styles.profileContainer}>
-                <TouchableOpacity onPress={pickProfileImage}>
-                  {image ? (
-                    <Image
-                      source={{ uri: image }}
-                      style={styles.backgroundImage}
-                    />
-                  ) : (
-                    <View style={styles.backgroundImagePlaceholder}>
-                      <Image
-                        source={require("../assets/ParrotsLogoPlus.png")}
-                        style={{ width: vw(48), height: vh(21), opacity: 0.2 }}
-                      />
-                    </View>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
 
-            {/* Card 2: Voyage Details */}
-            <View style={styles.sectionCard}>
-              <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Voyage Details</ParrotsStdText>
-              </View>
-              <View style={styles.formContainer}>
-
-                {/* /// name /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Name:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Voyage name (max 30)"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={name}
-                      maxLength={30}
-                      onChangeText={(text) => setName(text)}
-                    />
-                  </View>
+              {/* Pricing card */}
+              <View style={cvStyles.card}>
+                <ParrotsStdText style={cvStyles.cardTitle}>Pricing</ParrotsStdText>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  <TouchableOpacity style={{ flex: 1, backgroundColor: isAuction ? "#0A5FBF" : "#F4F7FB", borderRadius: 8, paddingVertical: 10, alignItems: "center", borderWidth: 1.5, borderColor: isAuction ? "#0A5FBF" : "#D8E0E8" }} onPress={() => setIsAuction(!isAuction)}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: isAuction ? "white" : "#3C4A57" }}>Auction</ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{ flex: 1, backgroundColor: isFixedPrice ? "#0A5FBF" : "#F4F7FB", borderRadius: 8, paddingVertical: 10, alignItems: "center", borderWidth: 1.5, borderColor: isFixedPrice ? "#0A5FBF" : "#D8E0E8" }} onPress={() => setIsFixedPrice(!isFixedPrice)}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: isFixedPrice ? "white" : "#3C4A57" }}>Fixed price</ParrotsStdText>
+                  </TouchableOpacity>
                 </View>
-                {/* /// name  /// */}
-
-                {/* /// brief /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Brief:</ParrotsStdText>
+                <ParrotsStdText style={[cvStyles.hint, { fontSize: 12 }]}>
+                  {isAuction ?
+                    "Auction, host selects the most suitable bids." :
+                    "Not an auction, host does not select most suitable bids."}{"\n"}
+                  {isFixedPrice ?
+                    "Fixed price, set by the host." :
+                    "Prices not fixed, bidders propose their own price."}
+                </ParrotsStdText>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  <View style={[cvStyles.field, { flex: 1 }]}>
+                    <ParrotsStdText style={cvStyles.label}>Min</ParrotsStdText>
+                    <TextInput style={[cvStyles.input, { height: 42 }]} placeholder="0" placeholderTextColor={parrotPlaceholderGrey} value={minPrice} onChangeText={setMinPrice} keyboardType="numeric" />
                   </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Voyage brief (max 300)"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={brief}
-                      multiline
-                      numberOfLines={5}
-                      maxLength={300}
-                      onChangeText={(text) => setBrief(text)}
-                    />
+                  <View style={[cvStyles.field, { flex: 1 }]}>
+                    <ParrotsStdText style={cvStyles.label}>Max</ParrotsStdText>
+                    <TextInput style={[cvStyles.input, { height: 42 }]} placeholder="0" placeholderTextColor={parrotPlaceholderGrey} value={maxPrice} onChangeText={setMaxPrice} keyboardType="numeric" />
                   </View>
-                </View>
-                {/* /// brief  /// */}
-
-                {/* /// DESC /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Description:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={[styles.textInput5, { minHeight: vh(12), textAlignVertical: "top" }]}
-                      multiline
-                      placeholder="Voyage description (max 10,000 characters)"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={description}
-                      onChangeText={(text) => setDescription(text.slice(0, 10000))}
-                    />
-                  </View>
-                </View>
-                {/* /// DESC  /// */}
-
-                {/* /// VACANCY /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Vacancy:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      placeholder="Enter voyage vacancy"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={vacancy}
-                      onChangeText={(text) => setVacancy(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
-                </View>
-                {/* /// VACANCY /// */}
-
-                {/* /// vehicle /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Vehicle:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <DropdownComponent
-                      data={dropdownData}
-                      setVehicleId={setVehicleId}
-                      vehicleId={vehicleId}
-                    />
-                  </View>
-                </View>
-                {/* /// vehicle /// */}
-
-              </View>
-            </View>
-
-            {/* Card 3: Pricing & Options */}
-            <View style={styles.sectionCard}>
-              <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Pricing & Options</ParrotsStdText>
-              </View>
-              <View style={styles.formContainer}>
-                {/* /// MIN PRICE /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Min Price:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      maxLength={20}
-                      placeholder="Enter Min Price"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={minPrice}
-                      onChangeText={(text) => setMinPrice(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
-                </View>
-                {/* /// MIN PRICE /// */}
-
-                {/* /// MAX PRICE /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Max Price:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      maxLength={20}
-                      placeholder="Enter Max Price"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={maxPrice}
-                      onChangeText={(text) => setMaxPrice(text)}
-                      keyboardType="numeric"
-                    />
-                  </View>
-                </View>
-
-
-
-                {/* /// vehicle /// */}
-                <View style={styles.latLngNameRow}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Currency:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
+                  <View style={[cvStyles.field, { width: 80 }]}>
+                    <ParrotsStdText style={cvStyles.label}>Currency</ParrotsStdText>
                     <DropdownComponentCurrency setCurrency={setCurrency} />
                   </View>
                 </View>
-                {/* /// vehicle /// */}
+              </View>
 
+              {/* Brief card */}
+              <View style={cvStyles.card}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <ParrotsStdText style={cvStyles.cardTitle}>Brief</ParrotsStdText>
+                  <ParrotsStdText style={[cvStyles.charCount, { marginLeft: "auto" }]}>{brief.length} / 300</ParrotsStdText>
+                </View>
+                <ParrotsStdText style={cvStyles.hint}>A brief that will be visible on voyage cards</ParrotsStdText>
+                <TextInput style={[cvStyles.input, { height: 88, paddingTop: 9, textAlignVertical: "top" }]} placeholder="Brief (max 300 characters)" placeholderTextColor={parrotPlaceholderGrey} value={brief} maxLength={300} multiline onChangeText={setBrief} />
+              </View>
 
-                {/* /// auction fixedprice  /// */}
-                <View style={styles.auctionFixedPrice}>
-                  <View style={styles.mainCheckboxContainer}>
-                    <View style={styles.checkboxContainer}>
-                      <ParrotsStdText style={styles.checkboxText}>Auction </ParrotsStdText>
-                      <View>
-                        <Checkbox
-                          value={isAuction}
-                          onValueChange={setIsAuction}
-                          color={
-                            isAuction ? "rgba(0, 119, 234,0.9)" : undefined
-                          }
-                          style={{
-                            borderColor: parrotBlue,
-                            borderWidth: 2,
-                          }}
-                        />
-                      </View>
-                    </View>
+              {/* Description card */}
+              <View style={cvStyles.card}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <ParrotsStdText style={cvStyles.cardTitle}>Description</ParrotsStdText>
+                  <ParrotsStdText style={[cvStyles.charCount, { marginLeft: "auto" }]}>{description.length} / 10,000</ParrotsStdText>
+                </View>
+                <ParrotsStdText style={cvStyles.hint}>The route, what to expect, who it suits, etc.</ParrotsStdText>
+                <TextInput style={[cvStyles.input, { height: 88, paddingTop: 9, textAlignVertical: "top" }]} placeholder="Description (max 10,000 characters)" placeholderTextColor={parrotPlaceholderGrey} value={description} multiline onChangeText={(text) => setDescription(text.slice(0, 10000))} />
+              </View>
 
-                    <View style={styles.checkboxContainer}>
-                      <ParrotsStdText style={styles.checkboxText}>FixedPrice </ParrotsStdText>
-                      <View>
-                        <Checkbox
-                          value={isFixedPrice}
-                          onValueChange={setIsFixedPrice}
-                          color={
-                            isFixedPrice ? "rgba(0, 119, 234,0.9)" : undefined
-                          }
-                          style={{
-                            borderColor: parrotBlue,
-                            borderWidth: 2,
-                          }}
-                        />
-                      </View>
-                    </View>
-
-                    <View style={styles.checkboxContainer}>
-                      <ParrotsStdText style={styles.checkboxText}>Public Voyage </ParrotsStdText>
-                      <View>
-                        <Checkbox
-                          value={isPublicOnMap}
-                          onValueChange={setIsPublicOnMap}
-                          color={
-                            isPublicOnMap ? "rgba(0, 119, 234,0.9)" : undefined
-                          }
-                          style={{
-                            borderColor: parrotBlue,
-                            borderWidth: 2,
-                          }}
-
-                        />
-                      </View>
-                    </View>
-
+              {/* Dates card */}
+              <View style={cvStyles.card}>
+                <ParrotsStdText style={cvStyles.cardTitle}>Dates</ParrotsStdText>
+                <View style={{ borderWidth: 1.5, borderColor: "#D8E0E8", borderRadius: 11, overflow: "hidden", backgroundColor: "white" }}>
+                  <CalendarPicker
+                    selectedRangeStartTextStyle={styles.startEndText}
+                    selectedRangeEndTextStyle={styles.startEndText}
+                    selectedRangeStyle={styles.calendarSelected}
+                    selectedRangeStartStyle={styles.calendarEndStart}
+                    selectedRangeEndStyle={styles.calendarEndStart}
+                    selectedDayStyle={styles.calendarEndStart}
+                    selectedDayTextStyle={{ color: "white", fontFamily: "Nunito_700Bold" }}
+                    selectedDayTextColor="white"
+                    selectedColor="blue"
+                    textStyle={{ fontFamily: "Nunito_700Bold" }}
+                    startFromMonday={true}
+                    allowRangeSelection={calendarRangeAllowed}
+                    minDate={new Date()}
+                    selectedStartDate={startDate}
+                    selectedEndDate={endDate}
+                    onDateChange={onDateChange}
+                    width={vw(86)}
+                    customDatesStyles={startDate && !endDate ? [{ date: startDate?.toDate ? startDate.toDate() : startDate, textStyle: { color: "white" } }] : []}
+                  />
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 7, marginTop: 4 }}>
+                  <View style={{ flex: 1, backgroundColor: "#E8F1FB", borderRadius: 8, paddingVertical: 7, alignItems: "center" }}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 12, color: startDate ? "#0A5FBF" : "rgba(10,95,191,0.3)" }}>{startDate ? formatCalDate(startDate) : "Start date"}</ParrotsStdText>
+                  </View>
+                  <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: "#5A6874" }}>→</ParrotsStdText>
+                  <View style={{ flex: 1, backgroundColor: "#E8F1FB", borderRadius: 8, paddingVertical: 7, alignItems: "center" }}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 12, color: (endDate || startDate) ? "#0A5FBF" : "rgba(10,95,191,0.3)" }}>{endDate ? formatCalDate(endDate) : startDate ? formatCalDate(startDate) : "End date"}</ParrotsStdText>
                   </View>
                 </View>
-                {/* /// auction fixedprice  /// */}
-
-              </View>
-            </View>
-
-            {/* Card 4: Voyage Dates */}
-            <View style={[styles.sectionCard, { position: "relative", overflow: "visible" }]}>
-              <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Voyage Dates</ParrotsStdText>
-              </View>
-              <View style={styles.formContainer}>
-                <View style={styles.calendarContainer}>
-                  {/* <View style={styles.voyageDatesContainer}>
-                    <Feather
-                      style={styles.icon}
-                      name="calendar"
-                      size={24}
-                      color="blue"
-                    />
-                    <ParrotsStdText style={styles.voyageDates}>
-                      Select Voyage Date(s)
-                    </ParrotsStdText>
-                  </View> */}
-
-                  <View style={styles.calendarStyle}>
-                    <CalendarPicker
-                      selectedRangeStartTextStyle={styles.startEndText}
-                      selectedRangeEndTextStyle={styles.startEndText}
-                      selectedRangeStyle={styles.calendarSelected}
-                      selectedRangeStartStyle={styles.calendarEndStart}
-                      selectedRangeEndStyle={styles.calendarEndStart}
-                      selectedDayStyle={styles.calendarEndStart}
-                      selectedDayTextStyle={{ color: "white", fontFamily: "Nunito_700Bold" }}
-                      selectedDayTextColor={"white"}
-                      selectedColor={"blue"}
-                      textStyle={{ fontFamily: "Nunito_700Bold" }}
-                      startFromMonday={true}
-                      allowRangeSelection={calendarRangeAllowed}
-                      minDate={new Date()}
-                      selectedStartDate={startDate}
-                      selectedEndDate={endDate}
-                      onDateChange={onDateChange}
-                      width={300}
-                      customDatesStyles={startDate && !endDate ? [{ date: startDate?.toDate ? startDate.toDate() : startDate, textStyle: { color: "white" } }] : []}
-                    />
-                  </View>
-                </View>
-                {startDate ? (() => {
+                {(() => {
+                  const rowStyle = { flexDirection: "row", alignItems: "center", gap: 6, paddingTop: 8, borderTopWidth: 1, borderTopColor: "#D8E0E8", marginTop: 4, minHeight: 30 };
+                  if (!startDate) return <View style={rowStyle} />;
+                  if (!isPublicOnMap) return (
+                    <View style={rowStyle}>
+                      <Image source={require("../assets/parrotCracker.png")} style={{ width: 14, height: 14 }} />
+                      <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 12, color: "#5A6874", flex: 1 }}>No ParrotCrackers will be used if not public on map.</ParrotsStdText>
+                    </View>
+                  );
                   const today = new Date(); today.setHours(23, 59, 0, 0);
                   const rawEnd = endDate || startDate;
                   const end = new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd); end.setHours(23, 59, 0, 0);
-                  const cost = isPublicOnMap ? Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1) : 0;
+                  const cost = Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1);
                   const balance = crackerBalance?.balance;
-                  const notEnough = isPublicOnMap && balance != null && balance < cost;
-                  if (!isPublicOnMap) return null;
+                  const notEnough = balance != null && balance < cost;
                   return (
-                    <View style={styles.crackerPill}>
-                      <Image source={require("../assets/parrotCracker.png")} style={{ width: 18, height: 18, marginBottom: 2 }} />
+                    <View style={rowStyle}>
+                      <Image source={require("../assets/parrotCracker.png")} style={{ width: 14, height: 14 }} />
                       {notEnough ? (
-                        <View style={{ flexDirection: "row", alignItems: "flex-end", flexWrap: "wrap", gap: 4 }}>
-                          <ParrotsStdText style={styles.crackerPillText}>
-                            {"You need "}
-                            <ParrotsStdText style={[styles.crackerPillText, { fontWeight: "900", color: parrotCaravanOrangeRed }]}>{cost - balance}</ParrotsStdText>
-                            {" more crackers."}
-                          </ParrotsStdText>
-                          <TouchableOpacity onPress={() => Linking.openURL("https://parrotsvoyages.com")} style={{ backgroundColor: parrotCaravanOrangeRed, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 3 }}>
-                            <ParrotsStdText style={{ color: "white", fontSize: 13, fontFamily: "Nunito_700Bold" }}>Get more</ParrotsStdText>
-                          </TouchableOpacity>
-                        </View>
+                        <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 12, color: "#dc2626", flex: 1 }}>
+                          <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold" }}>{cost} ParrotCrackers</ParrotsStdText>{" needed, you have "}{balance ?? "?"}
+                        </ParrotsStdText>
                       ) : (
-                        <ParrotsStdText style={styles.crackerPillText}>
-                          {isPublicOnMap ? (
-                            <>
-                              {"This'll cost you "}
-                              <ParrotsStdText style={[styles.crackerPillText, { fontWeight: "900", color: parrotGreen }]}>{cost}</ParrotsStdText>
-                              {" of your "}
-                              <ParrotsStdText style={[styles.crackerPillText, { fontWeight: "900", color: parrotBlue }]}>{balance}</ParrotsStdText>
-                              {" ParrotCrackers"}
-                            </>
-                          ) : "You don't need ParrotCrackers since this voyage is not public"}
+                        <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 12, color: "#1F2933", flex: 1 }}>
+                          <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold" }}>{cost} ParrotCrackers</ParrotsStdText>{" will be used (balance: "}{balance ?? "?"}{")"}
                         </ParrotsStdText>
                       )}
                     </View>
                   );
-                })() : null}
-
-                {/* /// LAST BID DATE /// */}
-                <View style={{ ...styles.latLngNameRow, display: "none" }}>
-                  <View style={styles.latLngLabel}>
-                    <ParrotsStdText style={styles.latorLngtxt}>Last Bid:</ParrotsStdText>
-                  </View>
-                  <View style={styles.latorLng}>
-                    <TextInput
-                      style={styles.textInput5}
-                      value={lastBidDate}
-                      onChangeText={handleDateChange}
-                      keyboardType="numeric"
-                      placeholder="MM/DD/YYYY"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      maxLength={10}
-                    />
-                  </View>
-                </View>
-                {/* /// LAST BID DATE /// */}
-
+                })()}
               </View>
-            </View>
 
-            <View style={styles.submitContainer}>
+              {/* Visibility card */}
+              <View style={cvStyles.card}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }}>
+                    <ParrotsStdText style={cvStyles.cardTitle}>Public on the map</ParrotsStdText>
+                    <ParrotsStdText style={[cvStyles.hint, { marginTop: 2 }]}>Anyone can find and bid on this voyage.</ParrotsStdText>
+                  </View>
+                  <TouchableOpacity onPress={() => setIsPublicOnMap(!isPublicOnMap)} style={{ marginLeft: 12 }}>
+                    <View style={{ width: 38, height: 22, borderRadius: 999, backgroundColor: isPublicOnMap ? "#2AC898" : "#CFD7DE", justifyContent: "center", padding: 3 }}>
+                      <View style={{ width: 16, height: 16, borderRadius: 999, backgroundColor: "white", alignSelf: isPublicOnMap ? "flex-end" : "flex-start", shadowColor: "#000", shadowOpacity: 0.22, shadowRadius: 1, elevation: 2 }} />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+            </ScrollView>
+
+            {/* Footer */}
+            <View style={{ flexDirection: "row", gap: 8, padding: 12, paddingBottom: 36 + insets.bottom, borderTopWidth: 1, borderTopColor: "#D8E0E8", backgroundColor: parrotCream }}>
+              <TouchableOpacity style={{ borderWidth: 1.5, borderColor: "#D8E0E8", backgroundColor: "white", borderRadius: 999, height: 44, paddingHorizontal: 20, alignItems: "center", justifyContent: "center" }} onPress={() => navigation.navigate("Home", { screen: "HomeScreen" })}>
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Cancel</ParrotsStdText>
+              </TouchableOpacity>
               {voyageId ? (
-                <TouchableOpacity
-                  onPress={handleUpdateDetails}
-                  disabled={!hasChanges || isUpdatingDetails}
-                  style={!hasChanges || isUpdatingDetails ? styles.selection2Disabled : updateSuccess ? [styles.selection2, { backgroundColor: "#16a34a" }] : styles.selection2}
-                >
-                  {isUpdatingDetails ? (
-                    <ActivityIndicator size="small" color="#ffffff" />
-                  ) : (
-                    <ParrotsStdText style={styles.submitText}>{updateSuccess ? "Details Updated" : "Update Details"}</ParrotsStdText>
+                <>
+                  {hasChanges && (
+                    <TouchableOpacity style={{ borderRadius: 999, height: 44, paddingHorizontal: 20, alignItems: "center", justifyContent: "center", backgroundColor: isUpdatingDetails ? "rgba(10,95,191,0.4)" : "#0A5FBF" }} onPress={handleUpdateDetails} disabled={isUpdatingDetails}>
+                      {isUpdatingDetails ? <ActivityIndicator size="small" color="white" /> : <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "white" }}>{updateSuccess ? "Saved ✓" : "Save changes"}</ParrotsStdText>}
+                    </TouchableOpacity>
                   )}
-                </TouchableOpacity>
+                  <TouchableOpacity style={{ flex: 1, borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: "#0A5FBF" }} onPress={() => setCurrentStep(2)}>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "white" }}>Next: Images →</ParrotsStdText>
+                  </TouchableOpacity>
+                </>
               ) : (
-                <TouchableOpacity
-                  onPress={handleCreateVoyage}
-                  style={(() => {
-                    const rawEnd = endDate || startDate;
-                    const end = rawEnd ? new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd) : null;
-                    if (end) end.setHours(23, 59, 0, 0);
-                    const today = new Date(); today.setHours(23, 59, 0, 0);
-                    const cost = isPublicOnMap && end ? Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1) : 0;
-                    const balance = crackerBalance?.balance;
-                    const insufficientBalance = isPublicOnMap && balance != null && balance < cost;
-                    const formIncomplete = image === "" || name === "" || brief === "" || description === "" || vacancy === "" || vehicleId === "" || startDate === "" || endDate === "" || minPrice === "" || maxPrice === "" || currency === "";
-                    return formIncomplete || insufficientBalance ? styles.selection2Disabled : styles.selection2;
-                  })()}
-                  disabled={isCreatingVoyage || (() => {
-                    const rawEnd = endDate || startDate;
-                    const end = rawEnd ? new Date(rawEnd?.toDate ? rawEnd.toDate() : rawEnd) : null;
-                    if (end) end.setHours(23, 59, 0, 0);
-                    const today = new Date(); today.setHours(23, 59, 0, 0);
-                    const cost = isPublicOnMap && end ? Math.max(0, Math.round((end - today) / (1000 * 60 * 60 * 24)) + 1) : 0;
-                    const balance = crackerBalance?.balance;
-                    return isPublicOnMap && balance != null && balance < cost;
-                  })()}
-                >
-                  <ParrotsStdText style={[styles.submitText, { opacity: isCreatingVoyage ? 0 : 1 }]}>Create Voyage</ParrotsStdText>
-                  {isCreatingVoyage && <ActivityIndicator size="small" color="#ffffff" style={{ position: "absolute" }} />}
+                <TouchableOpacity style={{ flex: 1, borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: isFormComplete && !isCreatingVoyage ? "#0A5FBF" : "rgba(10,95,191,0.4)" }} onPress={isFormComplete && !isCreatingVoyage ? handleCreateVoyage : undefined} disabled={!isFormComplete || isCreatingVoyage}>
+                  {isCreatingVoyage ? <ActivityIndicator size="small" color="white" /> : <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "white" }}>Create voyage</ParrotsStdText>}
                 </TouchableOpacity>
               )}
             </View>
-
-          </ScrollView>
+          </View>
         )}
 
-        {!hasError && (
-          <ScrollView style={[styles.scrollview, { display: currentStep === 2 ? "flex" : "none" }]}>
-            <View style={styles.sectionCard}>
-              <View style={styles.cardTitleRow}>
-                <ParrotsStdText style={styles.cardTitle}>Voyage Images</ParrotsStdText>
+        {currentStep === 2 && !hasError && (
+          <View style={{ flex: 1, backgroundColor: parrotCream }}>
+            <ScrollView style={s2Styles.scrollview} contentContainerStyle={s2Styles.scrollContent}>
+
+              {/* Voyage created badge */}
+              <View style={s2Styles.createdBadge}>
+                <Feather name="check" size={13} color="#0B6B4E" />
+                <ParrotsStdText style={s2Styles.createdBadgeText}>Voyage created</ParrotsStdText>
               </View>
 
-              <View style={voyageImagesStyles.voyageImagesContainer2}>
-                <View style={[styles.profileContainer2, { position: "relative" }]}>
-                  {isUploadingImage ? (
-                    <View style={[styles.profileImage, { justifyContent: "center", alignItems: "center" }]}>
-                      <ActivityIndicator size="large" />
-                    </View>
-                  ) : (
-                    <TouchableOpacity onPress={pickVoyageImage}>
-                      {voyageImage ? (
-                        <Image
-                          source={{ uri: voyageImage }}
-                          style={styles.profileImage}
-                        />
-                      ) : (
-                        <Image
-                          source={require("../assets/ParrotsLogoPlus.png")}
-                          style={[styles.profileImage2, { opacity: 0.2 }]}
-                        />
-                      )}
-                    </TouchableOpacity>
-                  )}
-                  {voyageImage && !isUploadingImage && (
-                    <TouchableOpacity
-                      onPress={() => handleUploadImage()}
-                      style={styles.uploadButton}
-                    >
-                      <ParrotsStdText style={styles.uploadButtonText}>Upload</ParrotsStdText>
-                    </TouchableOpacity>
-                  )}
+              {/* Photos card */}
+              <View style={s2Styles.photosCard}>
+                <View style={s2Styles.photosHeadRow}>
+                  <ParrotsStdText style={s2Styles.photosHeading}>Photos</ParrotsStdText>
+                  <ParrotsStdText style={s2Styles.photosCount}>{addedVoyageImages.length} / 8</ParrotsStdText>
                 </View>
-                <View
-                  style={
-                    addedVoyageImages.length <= 1
-                      ? styles.length1
-                      : addedVoyageImages.length === 2
-                        ? styles.length2
-                        : styles.length3
-                  }
-                >
-                  <FlatList
-                    horizontal
-                    data={data}
-                    //keyExtractor={(item) => item.addedVoyageImageId}
-                    //keyExtractor={(item) => item.addedVoyageImageId.toString()}
-                    // keyExtractor={(item, index) =>
-                    //   item.addedVoyageImageId
-                    //     ? item.addedVoyageImageId.toString()
-                    //     : index.toString()
-                    // }
 
-                    keyExtractor={(item, index) =>
-                      item.addedVoyageImageId
-                        ? item.addedVoyageImageId.toString()
-                        : `placeholder-${index}`
-                    }
-
-                    renderItem={({ item, index }) => {
+                {/* Image grid */}
+                {[0, 1, 2].map(row => (
+                  <View key={row} style={{ flexDirection: "row", marginBottom: TILE_GAP }}>
+                    {buildGridData().slice(row * 3, row * 3 + 3).map((tile, col) => {
+                      const tileKey =
+                        tile.type === "image" ? `img-${tile.item.addedVoyageImageId}` :
+                          tile.type === "picker" ? "picker" :
+                            tile.type === "uploading" ? "uploading" :
+                              `empty-${tile.id}`;
                       return (
-                        <View /*key={index } */>
-                          <TouchableOpacity
-                            onPress={() => {
-                              if (item.addedVoyageImageId) {
-                                handleDeleteImage(item.addedVoyageImageId);
-                              }
-                            }}
-                          >
-                            <Image
-                              source={
-                                item.addedVoyageImageId
-                                  ? { uri: item.voyageImage }
-                                  : require("../assets/placeholder1.png")
-                              }
-                              style={voyageImagesStyles.voyageImage1}
-                            />
-
-                            {item.addedVoyageImageId && (
-                              <ParrotsStdText style={styles.deleteAddedImage}>
-                                <MaterialIcons
-                                  name="cancel"
-                                  size={24}
-                                  color="darkred"
-                                />
-                              </ParrotsStdText>
-                            )}
-                          </TouchableOpacity>
+                        <View key={tileKey} style={{ marginRight: col < 2 ? TILE_GAP : 0 }}>
+                          {renderGridTile(tile)}
                         </View>
                       );
-                    }}
-                  />
-                </View>
+                    })}
+                  </View>
+                ))}
               </View>
 
+              {/* Route + waypoints */}
+              <CreateVoyageMapComponent
+                voyageId={voyageId}
+                setCurrentStep={setCurrentStep}
+                imagesAdded={addedVoyageImages.length}
+                createdVoyageImage={createdVoyageImage}
+                voyageName={name}
+                startDate={startDate}
+                endDate={endDate}
+                isPublicOnMap={isPublicOnMap}
+                crackerBalance={crackerBalance}
+                onVoyagePosted={resetAllFields}
+                onCanCompleteChange={setCanComplete}
+                completeTriggerRef={completeTriggerRef}
+              />
+
+            </ScrollView>
+
+            {/* Footer */}
+            <View style={{ flexDirection: "row", gap: 8, padding: 12, paddingBottom: 36 + insets.bottom, borderTopWidth: 1, borderTopColor: "#D8E0E8", backgroundColor: parrotCream }}>
+              <TouchableOpacity
+                style={{ borderWidth: 1.5, borderColor: "#D8E0E8", backgroundColor: "white", borderRadius: 999, height: 44, paddingHorizontal: 20, alignItems: "center", justifyContent: "center" }}
+                onPress={() => navigation.navigate("Home", { screen: "HomeScreen" })}
+              >
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Later</ParrotsStdText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ flex: 1, borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: canComplete ? "#0A5FBF" : "rgba(10,95,191,0.4)" }}
+                onPress={() => completeTriggerRef.current && completeTriggerRef.current()}
+                disabled={!canComplete}
+              >
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "white" }}>Complete</ParrotsStdText>
+              </TouchableOpacity>
             </View>
-
-            <CreateVoyageMapComponent
-              voyageId={voyageId}
-              setCurrentStep={setCurrentStep}
-              imagesAdded={addedVoyageImages.length}
-              createdVoyageImage={createdVoyageImage}
-              voyageName={name}
-              startDate={startDate}
-              endDate={endDate}
-              isPublicOnMap={isPublicOnMap}
-              crackerBalance={crackerBalance}
-              onVoyagePosted={resetAllFields}
-            />
-
-          </ScrollView>
+          </View>
         )}
         {toastVisible && (
           <View style={styles.toast}>
@@ -1086,6 +968,28 @@ const CreateVoyageScreen = ({ navigation }) => {
 };
 
 export default CreateVoyageScreen;
+
+const cvStyles = StyleSheet.create({
+  card: {
+    borderWidth: 1.5, borderColor: "#D8E0E8", borderRadius: 14,
+    backgroundColor: "white", padding: 10, gap: 8,
+  },
+  cardTitle: {
+    fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "#0A5FBF",
+  },
+  label: {
+    fontFamily: "Nunito_800ExtraBold", fontSize: 9, letterSpacing: 1.1,
+    textTransform: "uppercase", color: "#5A6874",
+  },
+  input: {
+    fontFamily: "Nunito_700Bold", fontSize: 13, color: "#1F2933",
+    backgroundColor: "#F7F9FB", borderWidth: 1.5, borderColor: "#D8E0E8",
+    borderRadius: 8, height: 36, paddingHorizontal: 9,
+  },
+  field: { gap: 3 },
+  hint: { fontFamily: "Nunito_700Bold", fontSize: 10.5, color: "#5A6874", lineHeight: 15 },
+  charCount: { fontFamily: "Nunito_700Bold", fontSize: 10, color: "#5A6874", alignSelf: "flex-end" },
+});
 
 const voyageImagesStyles = StyleSheet.create({
   voyageImagesContainer2: {
@@ -1539,3 +1443,113 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 });
+
+const s2Styles = StyleSheet.create({
+  scrollview: {
+    flex: 1,
+    backgroundColor: parrotCream,
+  },
+  scrollContent: {
+    paddingHorizontal: vw(4),
+    paddingBottom: vh(12),
+  },
+  createdBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#E3F5EC",
+    alignSelf: "flex-start",
+    borderRadius: 999,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginTop: vh(1),
+    marginBottom: vh(1.5),
+  },
+  createdBadgeText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#0B6B4E",
+  },
+  photosCard: {
+    borderWidth: 1.5,
+    borderColor: "#D8E0E8",
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    padding: 10,
+    marginBottom: vh(1.5),
+  },
+  photosHeadRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginBottom: vh(1.2),
+  },
+  photosHeading: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 20,
+    color: parrotBlue,
+    flex: 1,
+  },
+  photosCount: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "rgba(92,107,122,0.75)",
+  },
+  tile: {
+    borderRadius: 14,
+    overflow: "hidden",
+    position: "relative",
+  },
+  tileImg: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  tileCoverBadge: {
+    position: "absolute",
+    left: 5,
+    bottom: 5,
+    backgroundColor: "rgba(12,30,48,0.65)",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  tileCoverText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 9,
+    color: "#fff",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+  },
+  tileX: {
+    position: "absolute",
+    right: 4,
+    top: 4,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: "rgba(12,30,48,0.55)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tileUploading: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tilePicker: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tileEmpty: {
+    backgroundColor: parrotCream,
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
+    opacity: 0.65,
+  },
+});
+

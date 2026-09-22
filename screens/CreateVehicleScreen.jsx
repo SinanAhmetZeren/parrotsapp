@@ -45,7 +45,7 @@ import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, par
 
 const SCREEN_W = Dimensions.get("window").width;
 const TILE_GAP = 8;
-const TILE_SIZE = Math.floor((SCREEN_W - vw(8) - TILE_GAP * 2) / 3); // 3 tiles, 2 gaps, padH = vw(4)*2
+const TILE_SIZE = Math.floor((SCREEN_W - vw(8) - 20 - TILE_GAP * 2) / 3); // scroll padH vw(4)*2 + card padding 10*2
 
 const CreateVehicleScreen = () => {
   const userId = useSelector((state) => state.users.userId);
@@ -123,7 +123,7 @@ const CreateVehicleScreen = () => {
         setCapacity(null);
         setImage("");
         setAddedVehicleImages([]);
-        setCurrentStep(1);
+        setCurrentStep(2);
         setIsUploadingImage(false);
         setIsCreatingVehicle(false);
       }
@@ -520,32 +520,34 @@ const CreateVehicleScreen = () => {
             <ParrotsStdText style={styles.createdBadgeText}>Vehicle created</ParrotsStdText>
           </View>
 
-          {/* Photos heading */}
-          <View style={styles.photosHeadRow}>
-            <ParrotsStdText style={styles.photosHeading}>Photos</ParrotsStdText>
-            <ParrotsStdText style={styles.photosCount}>{addedVehicleImages.length} / 8</ParrotsStdText>
-          </View>
+          {/* Photos card */}
+          <View style={styles.photosCard}>
+            <View style={styles.photosHeadRow}>
+              <ParrotsStdText style={styles.photosHeading}>Photos</ParrotsStdText>
+              <ParrotsStdText style={styles.photosCount}>{addedVehicleImages.length} / 8</ParrotsStdText>
+            </View>
 
-          {/* Image grid — explicit 3-column rows, no FlatList */}
-          {(() => {
-            const tiles = buildGridData();
-            return [0, 1, 2].map(row => (
-              <View key={row} style={{ flexDirection: "row", marginBottom: TILE_GAP }}>
-                {tiles.slice(row * 3, row * 3 + 3).map((item, col) => {
-                  const tileKey =
-                    item.type === "image" ? `img-${item.item.addedVoyageImageId}` :
-                      item.type === "picker" ? "picker" :
-                        item.type === "uploading" ? "uploading" :
-                          `empty-${item.id}`;
-                  return (
-                    <View key={tileKey} style={{ marginRight: col < 2 ? TILE_GAP : 0 }}>
-                      {renderGridTile(item)}
-                    </View>
-                  );
-                })}
-              </View>
-            ));
-          })()}
+            {/* Image grid — explicit 3-column rows, no FlatList */}
+            {(() => {
+              const tiles = buildGridData();
+              return [0, 1, 2].map(row => (
+                <View key={row} style={{ flexDirection: "row", marginBottom: TILE_GAP }}>
+                  {tiles.slice(row * 3, row * 3 + 3).map((item, col) => {
+                    const tileKey =
+                      item.type === "image" ? `img-${item.item.addedVoyageImageId}` :
+                        item.type === "picker" ? "picker" :
+                          item.type === "uploading" ? "uploading" :
+                            `empty-${item.id}`;
+                    return (
+                      <View key={tileKey} style={{ marginRight: col < 2 ? TILE_GAP : 0 }}>
+                        {renderGridTile(item)}
+                      </View>
+                    );
+                  })}
+                </View>
+              ));
+            })()}
+          </View>
 
           {/* Bottom button */}
           <View style={styles.step2Foot}>
@@ -744,6 +746,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#0B6B4E",
   },
+  photosCard: {
+    borderWidth: 1.5,
+    borderColor: "#D8E0E8",
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    padding: 10,
+    marginBottom: vh(1.5),
+  },
   photosHeadRow: {
     flexDirection: "row",
     alignItems: "baseline",
@@ -815,9 +825,11 @@ const styles = StyleSheet.create({
   },
   tileEmpty: {
     backgroundColor: "#fff",
+    backgroundColor: parrotCream,
+
     borderWidth: 1,
     borderColor: "#E8E3DC",
-    opacity: 0.45,
+    opacity: 0.65,
   },
 
   // Step 2 bottom
