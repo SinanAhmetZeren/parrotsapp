@@ -392,7 +392,7 @@ const CreateVehicleScreen = () => {
     <>
       <TokenExpiryGuard />
 
-      <View style={{ backgroundColor: "white" }}>
+      <View style={{ backgroundColor: parrotCream }}>
         <StepBarVehicle
           currentStep={currentStep}
           onFirstStepPress={() => setCurrentStep(1)}
