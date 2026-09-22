@@ -52,7 +52,7 @@ export default function VoyageListHorizontal({ data, focusMap, navigation }) {
       <View style={styles.mainBidsContainer2}>
         <View style={styles.currentBidsAndSeeAll2}>
           <Image
-            source={require("../assets/parrotslogo.png")}
+            source={require("../assets/parrotsiconpaddedtransparent.png")}
             style={styles.logoImage}
           />
           <ParrotsStdText style={styles.currentBidsTitle2}>
@@ -90,8 +90,8 @@ export default function VoyageListHorizontal({ data, focusMap, navigation }) {
 
 const styles = StyleSheet.create({
   logoImage: {
-    height: vh(13),
-    width: vh(13),
+    height: vh(16.9),
+    width: vh(16.9),
     borderRadius: vh(10),
   },
   mainBidsContainer2: {
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   currentBidsAndSeeAll2: {
     alignItems: "center",
     alignSelf: "center",
-    marginTop: vh(3),
+    marginTop: vh(1),
   },
   currentBidsTitle2: {
     fontFamily: "Nunito_700Bold",
@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
     color: parrotDarkBlue,
     textAlign: "center",
     marginBottom: 4,
+    marginTop: vh(-2),
   },
   subtitleRow: {
     flexDirection: "row",

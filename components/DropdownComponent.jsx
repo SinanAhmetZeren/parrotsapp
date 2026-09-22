@@ -45,33 +45,28 @@ export default DropdownComponent;
 
 const styles = StyleSheet.create({
   dropdown: {
-    width: vw(62),
-    height: vh(5),
-    borderRadius: vh(3),
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    paddingHorizontal: 8,
-    fontSize: 12,
+    height: 42,
+    backgroundColor: "#F7F9FB",
+    borderWidth: 1.5,
+    borderColor: "#D8E0E8",
+    borderRadius: 8,
+    paddingHorizontal: 9,
   },
   placeholderStyle: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 12,
-    color: parrotInputTextColor,
-    width: vw(25),
+    fontSize: 13,
+    color: parrotPlaceholderGrey,
   },
   selectedTextStyle: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 12,
+    fontSize: 13,
     color: parrotInputTextColor,
-    width: vw(25),
   },
   itemTextStyle: {
     fontFamily: "Nunito_700Bold",
-    fontSize: 12,
+    fontSize: 13,
     color: parrotInputTextColor,
-    width: vw(25),
   },
-
   iconStyle: {
     width: 20,
     height: 20,
@@ -79,9 +74,7 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     fontFamily: "Nunito_700Bold",
     height: 30,
-    fontSize: 12,
+    fontSize: 13,
     color: parrotInputTextColor,
-    width: vw(25),
-    textAlign: "center",
   },
 });
