@@ -16,6 +16,8 @@ import {
   ActivityIndicator,
   Linking,
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 
 const SCREEN_W = Dimensions.get("window").width;
@@ -886,8 +888,8 @@ const CreateVoyageScreen = ({ navigation }) => {
         )}
 
         {currentStep === 2 && !hasError && (
-          <View style={{ flex: 1, backgroundColor: parrotCream }}>
-            <ScrollView style={s2Styles.scrollview} contentContainerStyle={s2Styles.scrollContent}>
+          <KeyboardAvoidingView style={{ flex: 1, backgroundColor: parrotCream }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <ScrollView style={s2Styles.scrollview} contentContainerStyle={s2Styles.scrollContent} keyboardShouldPersistTaps="handled">
 
               {/* Voyage created badge */}
               <View style={s2Styles.createdBadge}>
@@ -955,7 +957,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "white" }}>Complete</ParrotsStdText>
               </TouchableOpacity>
             </View>
-          </View>
+          </KeyboardAvoidingView>
         )}
         {toastVisible && (
           <View style={styles.toast}>
@@ -1485,8 +1487,8 @@ const s2Styles = StyleSheet.create({
   },
   photosHeading: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 20,
-    color: parrotBlue,
+    fontSize: 12.5,
+    color: "#0A5FBF",
     flex: 1,
   },
   photosCount: {

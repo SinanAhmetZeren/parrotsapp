@@ -50,7 +50,16 @@ const CreateVoyageMapComponent = ({
   completeTriggerRef,
 }) => {
   const [waypointInfoVisible, setWaypointInfoVisible] = useState(false);
-  const [addedWayPoints, setAddedWayPoints] = useState([]);
+  const [addedWayPoints, setAddedWayPoints] = useState([
+    // { waypointId: "w1", order: 1, title: "Canal District", description: "Stunning 17th century canals lined with narrow townhouses. Best explored by boat or on foot at dawn.", latitude: 52.3676, longitude: 4.9041, imageUri: "https://picsum.photos/seed/canal/400/400", hasImage: true },
+    // { waypointId: "w2", order: 2, title: "Vondelpark", description: "Amsterdam's most famous park. Great for a picnic or a morning run through the rose garden.", latitude: 52.3580, longitude: 4.8686, imageUri: "https://picsum.photos/seed/park/400/400", hasImage: true },
+    // { waypointId: "w3", order: 3, title: "Rijksmuseum", description: "Home to Rembrandt, Vermeer and van Gogh. Allow at least 3 hours. Book tickets in advance.", latitude: 52.3600, longitude: 4.8852, imageUri: "https://picsum.photos/seed/museum/400/400", hasImage: true },
+    // { waypointId: "w4", order: 4, title: "Anne Frank House", description: "The secret annex where Anne Frank hid during WWII. Deeply moving — queue early or pre-book.", latitude: 52.3752, longitude: 4.8840, imageUri: "https://picsum.photos/seed/annefrank/400/400", hasImage: true },
+    // { waypointId: "w5", order: 5, title: "Jordaan Quarter", description: "Charming neighbourhood full of indie boutiques, art galleries and cosy brown cafes.", latitude: 52.3736, longitude: 4.8803, imageUri: "https://picsum.photos/seed/jordaan/400/400", hasImage: true },
+    // { waypointId: "w6", order: 6, title: "Albert Cuyp Market", description: "Amsterdam's biggest street market. Grab a stroopwafel and browse stalls of cheese, flowers and clothes.", latitude: 52.3553, longitude: 4.8981, imageUri: "https://picsum.photos/seed/market/400/400", hasImage: true },
+    // { waypointId: "w7", order: 7, title: "NDSM Wharf", description: "Gritty creative hub on the north bank. Street art, food trucks and great city views.", latitude: 52.4014, longitude: 4.8990, imageUri: "https://picsum.photos/seed/wharf/400/400", hasImage: true },
+    // { waypointId: "w8", order: 8, title: "Heineken Experience", description: "Interactive brewery tour inside the original 1867 building. Ends with two free beers.", latitude: 52.3579, longitude: 4.8955, imageUri: "https://picsum.photos/seed/heineken/400/400", hasImage: true },
+  ]);
   const [markerCoords, setMarkerCoords] = useState(null);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
@@ -395,9 +404,9 @@ const CreateVoyageMapComponent = ({
         {/* Coordinate pill */}
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: "#E8F1FB", borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6 }}>
           <Feather name="map-pin" size={12} color="#5B3FD6" />
-          <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 8.5, letterSpacing: 1, textTransform: "uppercase", color: "#5A6874" }}>Pinned</ParrotsStdText>
+          <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 8.5, letterSpacing: 1, color: "#5A6874" }}>PINNED</ParrotsStdText>
           <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 11.5, color: "#0A5FBF", marginLeft: "auto" }}>
-            {markerCoords ? `${latitude.toString().substring(0, 8)},  ${longitude.toString().substring(0, 8)}` : "—"}
+            {markerCoords ? `${latitude.toString().substring(0, 8)},  ${longitude.toString().substring(0, 8)}` : ""}
           </ParrotsStdText>
         </View>
 
@@ -406,7 +415,8 @@ const CreateVoyageMapComponent = ({
         {/* 2-column layout: left = image+add, right = name / description */}
         <View style={{ flexDirection: "row", gap: 8, alignItems: "stretch" }}>
           {/* Left: image picker + add button */}
-          <View style={{ width: 96, gap: 6, marginTop: 16 }}>
+          <View style={{ width: 96, gap: 3 }}>
+            <ParrotsStdText style={cmStyles.lb}>IMAGE</ParrotsStdText>
             <TouchableOpacity
               style={{ width: 96, height: 86, borderRadius: 10, borderWidth: 1, borderColor: "#E8E3DC", backgroundColor: "#fff", alignItems: "center", justifyContent: "center", overflow: "hidden" }}
               onPress={pickVoyageImage}
@@ -415,11 +425,11 @@ const CreateVoyageMapComponent = ({
               {imageUri ? (
                 <Image source={{ uri: imageUri }} style={{ width: "100%", height: "100%", resizeMode: "cover" }} />
               ) : (
-                <Image source={require("../assets/ParrotsLogoPlus.png")} style={{ width: 58, height: 58, opacity: 0.22 }} resizeMode="contain" />
+                <Image source={require("../assets/ParrotsLogoPlus.png")} style={{ width: 75, height: 75, opacity: 0.22 }} resizeMode="contain" />
               )}
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ height: 32, backgroundColor: canAddWaypoint && !isUploadingWaypointImage ? "#0A5FBF" : "rgba(10,95,191,0.4)", borderRadius: 999, alignItems: "center", justifyContent: "center" }}
+              style={{ height: 32, marginTop: 3, backgroundColor: canAddWaypoint && !isUploadingWaypointImage ? "#0A5FBF" : "rgba(10,95,191,0.4)", borderRadius: 999, alignItems: "center", justifyContent: "center" }}
               onPress={() => { if (canAddWaypoint) handleAddWaypoint(); }}
               disabled={!canAddWaypoint || isUploadingWaypointImage}
             >
@@ -435,7 +445,7 @@ const CreateVoyageMapComponent = ({
               <ParrotsStdText style={cmStyles.lb}>TITLE</ParrotsStdText>
               <TextInput
                 style={cmStyles.fld}
-                placeholder="Waypoint title"
+                placeholder="Waypoint title (max 25)"
                 placeholderTextColor={parrotPlaceholderGrey}
                 value={title}
                 onChangeText={setTitle}
@@ -446,7 +456,7 @@ const CreateVoyageMapComponent = ({
               <ParrotsStdText style={cmStyles.lb}>DESCRIPTION</ParrotsStdText>
               <TextInput
                 style={[cmStyles.fld, { height: 62, paddingTop: 9, textAlignVertical: "top" }]}
-                placeholder="What happens here"
+                placeholder="What happens here (max 300)"
                 placeholderTextColor={parrotPlaceholderGrey}
                 value={description}
                 onChangeText={setDescription}
@@ -625,8 +635,8 @@ const cmStyles = StyleSheet.create({
     height: 42,
     borderRadius: 8,
     backgroundColor: "#F7F9FB",
-    borderWidth: 1.5,
-    borderColor: "#D8E0E8",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
     paddingHorizontal: 9,
     fontSize: 12.5,
     color: "#1F2933",
