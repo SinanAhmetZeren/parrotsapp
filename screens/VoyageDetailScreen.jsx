@@ -33,6 +33,8 @@ import {
   Platform,
   useWindowDimensions,
   Modal,
+  Dimensions,
+  FlatList,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { invokeHub } from "../signalr/signalRHub.js";
@@ -57,13 +59,46 @@ import {
 import { useReportVoyageMutation } from "../slices/UserSlice";
 import * as Clipboard from "expo-clipboard";
 import { API_URL } from "@env";
-import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotCream, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue } from "../assets/color";
+import { parrotBananaLeafGreen, parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotDarkBlue, parrotGreen, parrotGreenMediumTransparent, parrotGreenTransparent, parrotLightBlue, parrotPistachioGreen, parrotRed, parrotTextDarkBlue, parrotBoatPurple, parrotCarRed, parrotCaravanOrangeRed, parrotBusYellowGreen, parrotWalkTurquoise, parrotRunLightOrange, parrotMotorcycleDarkRed, parrotBicycleTealGreen, parrotTinyHouseLightYellow, parrotAirplaneLightGreen, parrotTrainPink } from "../assets/color";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import RenderHtml from "react-native-render-html";
 import LoadingLogo from "../components/LoadingLogo";
 import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
 import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
+
+const SCREEN_W = Dimensions.get("window").width;
+
+const VEHICLE_COLORS = {
+  0: parrotBoatPurple,
+  1: parrotCarRed,
+  2: parrotCaravanOrangeRed,
+  3: parrotBusYellowGreen,
+  4: parrotWalkTurquoise,
+  5: parrotRunLightOrange,
+  6: parrotMotorcycleDarkRed,
+  7: parrotBicycleTealGreen,
+  8: parrotTinyHouseLightYellow,
+  9: parrotAirplaneLightGreen,
+  10: parrotTrainPink,
+};
+
+const VehicleIcon = ({ type, color, size = 12 }) => {
+  switch (type) {
+    case 0: return <FontAwesome5 name="ship" size={size} color={color} />;
+    case 1: return <AntDesign name="car" size={size} color={color} />;
+    case 2: return <FontAwesome5 name="caravan" size={size} color={color} />;
+    case 3: return <Ionicons name="bus-outline" size={size} color={color} />;
+    case 4: return <FontAwesome5 name="walking" size={size} color={color} />;
+    case 5: return <FontAwesome5 name="running" size={size} color={color} />;
+    case 6: return <FontAwesome name="motorcycle" size={size} color={color} />;
+    case 7: return <FontAwesome name="bicycle" size={size} color={color} />;
+    case 8: return <Ionicons name="home-outline" size={size} color={color} />;
+    case 9: return <Ionicons name="airplane-outline" size={size} color={color} />;
+    case 10: return <Ionicons name="train-outline" size={size} color={color} />;
+    default: return <Feather name="compass" size={size} color={color} />;
+  }
+};
 
 const EMOJI_CATEGORIES = [
   { icon: "😀", label: "Smileys" },
@@ -98,9 +133,7 @@ const VoyageDetailScreen = ({ navigation }) => {
   const userId = useSelector((state) => state.users.userId);
   const userProfileImage = useSelector((state) => state.users.userProfileImage);
   const userName = useSelector((state) => state.users.userName);
-  const userFavoriteVoyages = useSelector(
-    (state) => state.users.userFavoriteVoyages
-  );
+  const userFavoriteVoyages = useSelector((state) => state.users.userFavoriteVoyages);
   const [bids, setBids] = useState([]);
   const [broadcastMessage, setBroadcastMessage] = useState("");
   const [isBroadcasting, setIsBroadcasting] = useState(false);
@@ -131,6 +164,7 @@ const VoyageDetailScreen = ({ navigation }) => {
       setIsBroadcasting(false);
     }
   };
+
   const [overflowMenuVisible, setOverflowMenuVisible] = useState(false);
   const [voyageReportModalVisible, setVoyageReportModalVisible] = useState(false);
   const [voyageSelectedReason, setVoyageSelectedReason] = useState(null);
@@ -178,29 +212,26 @@ const VoyageDetailScreen = ({ navigation }) => {
     refetch: refetchVoyage,
   } = useGetVoyageByPublicIdQuery(voyagePublicId);
 
-  // useEffect(() => {
-  //   console.log("--> voyage data -->");
-  //   console.log("hello");
-  //   console.log(VoyageData?.publicOnMap);
-
-  // }, [VoyageData])
-
   const [showFullText, setShowFullText] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
-
-  const [hasError, setHasError] = useState(false)
+  const [hasError, setHasError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [pillTooltip, setPillTooltip] = useState(null);
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  const showPillTooltip = (text, color) => {
+    setPillTooltip({ text, color });
+    setTimeout(() => setPillTooltip(null), 2000);
+  };
 
   const showToast = (message) => {
     setToastMessage(message);
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 2500);
   };
-
-
 
   const dispatch = useDispatch();
 
@@ -209,7 +240,6 @@ const VoyageDetailScreen = ({ navigation }) => {
       const fetchData = async () => {
         try {
           await refetchVoyage();
-
         } catch (error) {
           console.error("Error refetching messages data:", error);
         }
@@ -217,8 +247,6 @@ const VoyageDetailScreen = ({ navigation }) => {
       fetchData();
     }, [refetchVoyage])
   );
-
-
 
   const handleSeeAll = () => {
     setModalVisible(true);
@@ -229,13 +257,11 @@ const VoyageDetailScreen = ({ navigation }) => {
       if (userFavoriteVoyages.includes(VoyageData.id)) {
         setIsFavorited(true);
       }
-
       if (VoyageData.bids) {
         setBids(VoyageData.bids);
         let bids = VoyageData.bids;
         setHasBidWithUserId(bids.some((bid) => bid.userId === userId));
         setUserBid(bids.find((bid) => bid.userId === userId));
-
         if (bids.some((bid) => bid.userId === userId)) {
           let userBid = bids.find((bid) => bid.userId === userId);
           setUserBidPrice(userBid.offerPrice);
@@ -248,37 +274,25 @@ const VoyageDetailScreen = ({ navigation }) => {
   }, [isSuccessVoyages, VoyageData, isFavorited]);
 
   const getInitialRegion = (waypoints) => {
-    const maxLatitude = Math.max(
-      ...waypoints.map((waypoint) => waypoint.latitude)
-    );
-    const minLatitude = Math.min(
-      ...waypoints.map((waypoint) => waypoint.latitude)
-    );
-    const maxLongitude = Math.max(
-      ...waypoints.map((waypoint) => waypoint.longitude)
-    );
-    const minLongitude = Math.min(
-      ...waypoints.map((waypoint) => waypoint.longitude)
-    );
+    const maxLatitude = Math.max(...waypoints.map((w) => w.latitude));
+    const minLatitude = Math.min(...waypoints.map((w) => w.latitude));
+    const maxLongitude = Math.max(...waypoints.map((w) => w.longitude));
+    const minLongitude = Math.min(...waypoints.map((w) => w.longitude));
     const centerLatitude = (maxLatitude + minLatitude) / 2;
     const centerLongitude = (maxLongitude + minLongitude) / 2;
     const latitudeDelta = (maxLatitude - minLatitude) * 1.4;
     const longitudeDelta = (maxLongitude - minLongitude) * 1.3;
-    const initialRegion = {
+    return {
       latitude: centerLatitude + (maxLatitude - minLatitude) * 0.1,
       longitude: centerLongitude,
       latitudeDelta: latitudeDelta == 0 ? 0.15 : latitudeDelta,
       longitudeDelta: longitudeDelta == 0 ? 0.15 : longitudeDelta,
     };
-
-    return initialRegion;
   };
-
-
 
   const handleShareVoyage = async () => {
     try {
-      const result = await Share.share({
+      await Share.share({
         message: `Check out this link:\nhttps://parrotsvoyages.com/voyage-details/${voyagePublicId}`,
         title: "Share Link",
       });
@@ -287,71 +301,42 @@ const VoyageDetailScreen = ({ navigation }) => {
     }
   };
 
-
   const goToProfilePage = (userId) => {
     const parentScreen = navigation.getState().routes[0].name;
-
     let targetScreen;
     switch (parentScreen) {
-      case "HomeScreen":
-        targetScreen = "Home";
-        break;
-      case "ProfileScreen":
-        targetScreen = "ProfileStack";
-        break;
-      case "FavoritesScreen":
-        targetScreen = "Favorites";
-        break;
-      default:
-        targetScreen = "Home";
+      case "HomeScreen": targetScreen = "Home"; break;
+      case "ProfileScreen": targetScreen = "ProfileStack"; break;
+      case "FavoritesScreen": targetScreen = "Favorites"; break;
+      default: targetScreen = "Home";
     }
-
     navigation.navigate(targetScreen, {
       screen: "ProfileScreenPublic",
       params: { publicId: VoyageData?.user.publicId, username: VoyageData?.user.userName, userId: VoyageData?.user.id },
     });
   };
+
   const goToVehiclePage = (vehicleId) => {
     const parentScreen = navigation.getState().routes[0].name;
-
     let targetScreen;
     switch (parentScreen) {
-      case "HomeScreen":
-        targetScreen = "Home";
-        break;
-      case "ProfileScreen":
-        targetScreen = "ProfileStack";
-        break;
-      case "FavoritesScreen":
-        targetScreen = "Favorites";
-        break;
-      default:
-        targetScreen = "Home";
+      case "HomeScreen": targetScreen = "Home"; break;
+      case "ProfileScreen": targetScreen = "ProfileStack"; break;
+      case "FavoritesScreen": targetScreen = "Favorites"; break;
+      default: targetScreen = "Home";
     }
-
     navigation.navigate(targetScreen, {
       screen: "VehicleDetail",
       params: { vehicleId: vehicleId },
     });
   };
 
-
   const mapRef = useRef(null);
   const scrollRef = useRef(null);
 
   const focusMap = (latitude, longitude) => {
     if (mapRef.current) {
-      mapRef.current.animateCamera(
-        {
-          center: {
-            latitude,
-            longitude,
-          },
-          heading: 0,
-          pitch: 10,
-        },
-        { duration: 1000 }
-      );
+      mapRef.current.animateCamera({ center: { latitude, longitude }, heading: 0, pitch: 10 }, { duration: 1000 });
     }
   };
 
@@ -374,9 +359,7 @@ const VoyageDetailScreen = ({ navigation }) => {
     setHasError(false);
     try {
       const refreshData = async () => {
-        setIsLoading(true);
         await refetchVoyage();
-        setIsLoading(false);
       };
       refreshData();
     } catch (error) {
@@ -386,36 +369,20 @@ const VoyageDetailScreen = ({ navigation }) => {
     setRefreshing(false);
   };
 
-  // const navigation = useNavigation();
-
   if (isErrorVoyage) {
     return (
-
       <ScrollView
-        style={styles.mainBidsContainer2}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[parrotPistachioGreen, parrotBananaLeafGreen]}
-            tintColor={parrotBananaLeafGreen}
-          />
-        }
+        style={{ backgroundColor: parrotCream }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[parrotPistachioGreen, parrotBananaLeafGreen]} tintColor={parrotBananaLeafGreen} />}
       >
-        <View style={styles.currentBidsAndSeeAll2}>
-          <Image
-            source={require("../assets/parrotslogo.png")}
-            style={styles.logoImage}
-          />
-          <ParrotsStdText style={styles.currentBidsTitle2}>Something went wrong</ParrotsStdText>
-          <ParrotsStdText style={styles.currentBidsTitle2}>Swipe down to retry</ParrotsStdText>
+        <View style={{ alignItems: "center", paddingTop: vh(15) }}>
+          <Image source={require("../assets/parrotslogo.png")} style={{ height: vh(13), width: vh(13), borderRadius: vh(10) }} />
+          <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: parrotBlue, marginTop: 12 }}>Something went wrong</ParrotsStdText>
+          <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: "#5A6874", marginTop: 4 }}>Swipe down to retry</ParrotsStdText>
         </View>
       </ScrollView>
-
-
     );
   }
-
 
   if (isLoadingVoyages) {
     return <LoadingLogo size={200} style={{ position: "absolute", top: vh(30), left: vw(50) - 100 }} />;
@@ -424,363 +391,365 @@ const VoyageDetailScreen = ({ navigation }) => {
   if (isSuccessVoyages) {
     const ownVoyage = userId == VoyageData?.user?.id;
     const waypoints = [...(VoyageData.waypoints || [])].sort((a, b) => a.order - b.order);
-    const descriptionShortenedChars = 450;
+    const descriptionShortenedChars = 300;
     const plainDescription = VoyageData?.description?.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/\s+/g, " ").trim();
     const displayText = showFullText || plainDescription.length < descriptionShortenedChars
       ? plainDescription
       : plainDescription.slice(0, descriptionShortenedChars) + "...";
 
     let allVoyageImages = [
-      {
-        id: "0",
-        voyageId: VoyageData.id,
-        voyageImagePath: VoyageData.profileImage,
-      },
+      { id: "0", voyageId: VoyageData.id, voyageImagePath: VoyageData.profileImage },
     ].concat(VoyageData.voyageImages);
-    const initialRegion = getInitialRegion(waypoints);
-    const formattedStartDate = require("date-fns").format(
-      VoyageData.startDate,
-      "MMM d, yy"
-    );
-    const formattedEndDate = require("date-fns").format(
-      VoyageData.endDate,
-      "MMM d, yy"
-    );
-    const formattedLastBidDate = require("date-fns").format(
-      VoyageData.lastBidDate,
-      "MMM d, yy"
-    );
 
+    const initialRegion = getInitialRegion(waypoints);
+    const formattedStartDate = require("date-fns").format(VoyageData.startDate, "d MMM yy");
+    const formattedEndDate = require("date-fns").format(VoyageData.endDate, "d MMM yy");
+    const formattedLastBidDate = require("date-fns").format(VoyageData.lastBidDate, "d MMM yy");
     const imageUrl = VoyageData.profileImage;
+    const acceptedBids = bids.filter((b) => b.accepted);
+    const acceptedCount = acceptedBids.length;
+
+    // Vehicle type label
+    const vehicleTypeLabel = {
+      4: "Walk", 5: "Run", 10: "Train",
+    }[VoyageData.vehicleType] || VoyageData.vehicle?.name || "Vehicle";
 
     return (
       <>
         <TokenExpiryGuard />
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-          <ScrollView style={styles.ScrollView} ref={scrollRef}>
-            <View style={styles.rectangularBox}>
-              <Image
-                style={styles.imageContainer}
-                resizeMode="cover"
-                source={{ uri: imageUrl }}
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, backgroundColor: parrotCream }}>
+          <ScrollView
+            style={{ flex: 1, backgroundColor: parrotCream }}
+            ref={scrollRef}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={parrotBlue} />}
+          >
+            {/* Hero carousel */}
+            <View style={{ position: "relative", height: SCREEN_W }}>
+              <FlatList
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                data={allVoyageImages}
+                keyExtractor={(_, i) => String(i)}
+                onScroll={(e) => setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))}
+                scrollEventThrottle={16}
+                renderItem={({ item }) => (
+                  <Image source={{ uri: item.voyageImagePath }} style={{ width: SCREEN_W, height: SCREEN_W }} resizeMode="cover" />
+                )}
               />
+
               {VoyageData.isOwnerDeleted && (
-                <View style={styles.ownerDeletedNotice}>
-                  <ParrotsStdText style={styles.ownerDeletedNoticeText}>
-                    Notice: This host has deleted their account and is no longer active on Parrots. The voyage remains visible for viewing purposes only. In case of urgent coordination, Parrots will do its best to reach the host on a good-faith basis.
+                <View style={ds.ownerDeletedNotice}>
+                  <ParrotsStdText style={ds.ownerDeletedNoticeText}>
+                    Notice: This host has deleted their account and is no longer active on Parrots. The voyage remains visible for viewing purposes only.
                   </ParrotsStdText>
                 </View>
               )}
-            </View>
 
-            <View style={styles.voyageDataWrapper}>
-              <View style={styles.VoyageDataContainer}>
-                {/* // VoyageName and Username */}
-
-                <View style={styles.detailsCard}>
-
-                  {/* Icon row floating half above the card */}
-                  <View style={{ position: "absolute", top: -20, right: 8, flexDirection: "row", alignItems: "center", gap: 4, zIndex: 10 }}>
-                    {isFavorited ? (
-                      <TouchableOpacity onPress={() => handleDeleteVoyageFromFavorites()}>
-                        <Ionicons name="heart" size={24} color="red" style={styles.heartContainer2} />
-                      </TouchableOpacity>
-                    ) : (
-                      <TouchableOpacity onPress={() => handleAddVoyageToFavorites()}>
-                        <Ionicons name="heart" size={24} color="orange" style={styles.heartContainer2} />
-                      </TouchableOpacity>
-                    )}
-                    <TouchableOpacity onPress={() => showToast(VoyageData.publicOnMap ? "This voyage is publicly visible on the map" : "This voyage is not visible on the map")}>
-                      <Ionicons name="earth" size={24} color={VoyageData.publicOnMap ? "#1E6FD9" : "#a0b8d8"} style={styles.earthContainer2} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setOverflowMenuVisible(true)}>
-                      <MaterialIcons name="more-vert" size={24} color={parrotBlue} style={styles.shareContainer2} />
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Voyage Name */}
-                  <ParrotsStdText style={styles.voyageName}>{VoyageData.name}</ParrotsStdText>
-
-
-                  {/* Host + Vehicle */}
-                  <View style={styles.row}>
-                    <Ionicons name="person-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
-                    <TouchableOpacity style={styles.pill} onPress={() => goToProfilePage(VoyageData?.user?.id)}>
-                      <Image source={{ uri: VoyageData?.user?.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={styles.profileImage} />
-                      <ParrotsStdText style={styles.value}>{VoyageData?.user?.userName}</ParrotsStdText>
-                    </TouchableOpacity>
-                    <Ionicons name="rocket-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 6 }]} />
-                    <TouchableOpacity
-                      style={styles.pill}
-                      onPress={() => {
-                        if (VoyageData.vehicleType !== 4 && VoyageData.vehicleType !== 5 && VoyageData.vehicleType !== 10) {
-                          goToVehiclePage(VoyageData.vehicle?.id);
-                        }
-                      }}
-                    >
-                      {VoyageData.vehicleType === 4 ? (
-                        <Image source={require("../assets/walk1.jpeg")} style={styles.profileImage} />
-                      ) : VoyageData.vehicleType === 5 ? (
-                        <Image source={require("../assets/run1.jpeg")} style={styles.profileImage} />
-                      ) : VoyageData.vehicleType === 10 ? (
-                        <Image source={require("../assets/train.jpeg")} style={styles.profileImage} />
-                      ) : (
-                        <Image source={{ uri: VoyageData.vehicle?.profileImageUrl }} style={styles.profileImage} />
-                      )}
-                      <ParrotsStdText style={styles.userName}>{VoyageData.vehicle?.name}</ParrotsStdText>
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Vacancy + Date */}
-                  <View style={styles.row}>
-                    <Ionicons name="people-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
-                    <View style={styles.pill}>
-                      <ParrotsStdText style={styles.value}>{VoyageData.vacancy} spots</ParrotsStdText>
-                    </View>
-                    <Ionicons name="calendar-outline" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }]} />
-                    <View style={styles.pill}>
-                      <ParrotsStdText style={styles.value}>{formattedStartDate}  →  {formattedEndDate}</ParrotsStdText>
-                    </View>
-                  </View>
-
-                  {/* Price + Auction + Fixed Price */}
-                  <View style={styles.row}>
-                    <Ionicons name="cash-outline" size={18} color={parrotBlue} style={styles.rowIcon} />
-                    <View style={styles.pill}>
-                      <ParrotsStdText style={styles.value}>
-                        {VoyageData.minPrice === VoyageData.maxPrice
-                          ? `${VoyageData.currency}${VoyageData.minPrice}`
-                          : `${VoyageData.currency}${VoyageData.minPrice}  –  ${VoyageData.currency}${VoyageData.maxPrice}`}
-                      </ParrotsStdText>
-                    </View>
-                    <MaterialIcons name="gavel" size={18} color={parrotBlue} style={[styles.rowIcon, { marginLeft: 12 }, !VoyageData.auction && { opacity: 0.35 }]} />
-                    <TouchableOpacity
-                      style={[styles.pill, !VoyageData.auction && { opacity: 0.35 }, { marginRight: 12, alignSelf: "center" }]}
-                      onPress={() => showToast(VoyageData.auction ? "This is an auction where the host will select the most suitable bids" : "This is not an auction where the host will select the most suitable bids")}
-                    >
-                      <ParrotsStdText style={styles.value}>Auction</ParrotsStdText>
-                    </TouchableOpacity>
-                    <MaterialIcons name="sell" size={18} color={parrotBlue} style={[styles.rowIcon, !VoyageData.fixedPrice && { opacity: 0.35 }]} />
-                    <TouchableOpacity
-                      style={[styles.pill, !VoyageData.fixedPrice && { opacity: 0.35 }, { alignSelf: "center" }]}
-                      onPress={() => showToast(VoyageData.fixedPrice ? "This voyage has a fixed price set by the host" : "This voyage does not have a fixed price set by the host")}
-                    >
-                      <ParrotsStdText style={styles.value}>Fixed Price</ParrotsStdText>
-                    </TouchableOpacity>
-                  </View>
-
+              {/* Image strip */}
+              {allVoyageImages.length > 1 && (
+                <View style={{ position: "absolute", left: 0, right: 0, bottom: 24, flexDirection: "row", justifyContent: "center", gap: 2 }}>
+                  {allVoyageImages.map((img, i) => (
+                    <Image key={i} source={{ uri: img.voyageImagePath }} style={[ds.stripThumb, i !== heroIndex && { opacity: 0.6 }]} />
+                  ))}
                 </View>
+              )}
 
-
-                <View style={[styles.sectionCard, { position: "relative" }]}>
-                  <TouchableOpacity
-                    onPress={() => showToast("Tap an image to view gallery")}
-                    style={{ position: "absolute", top: 8, right: 10, zIndex: 10 }}
-                  >
-                    <MaterialIcons name="search" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
-                  </TouchableOpacity>
-
-                  {/* // Voyage Images */}
-                  <View style={styles.ImagesMainContainer}>
-                    <View style={styles.ImagesSubContainer}>
-                      <VoyageImagesWithCarousel voyageImages={allVoyageImages} />
-                    </View>
-                  </View>
-
-                  {/* // Voyage Description */}
-                  <View style={styles.DescriptionContainer}>
-                    <ParrotsStdText selectable style={styles.descriptionText}>{displayText}</ParrotsStdText>
-
-                    {plainDescription.length > descriptionShortenedChars &&
-                      !showFullText && (
-                        <TouchableOpacity onPress={() => setShowFullText(true)}>
-                          <ParrotsStdText style={styles.ReadMoreLess}>
-                            Read more
-                            <Feather name="chevron-down" size={16} color={parrotBlue} />
-                          </ParrotsStdText>
-                        </TouchableOpacity>
-                      )}
-                    {showFullText && (
-                      <TouchableOpacity onPress={() => setShowFullText(false)}>
-                        <ParrotsStdText style={styles.ReadMoreLess}>
-                          Read less
-                          <Feather name="chevron-up" size={16} color={parrotBlue} />
-                        </ParrotsStdText>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                </View>
+              {/* Overlay buttons */}
+              <View style={{ position: "absolute", top: 12, right: 12, flexDirection: "row", gap: 8 }}>
+                <TouchableOpacity style={ds.heroBtn} onPress={isFavorited ? handleDeleteVoyageFromFavorites : handleAddVoyageToFavorites}>
+                  <Ionicons name={isFavorited ? "heart" : "heart-outline"} size={17} color="#E8620E" />
+                </TouchableOpacity>
+                <TouchableOpacity style={ds.heroBtn} onPress={() => setOverflowMenuVisible(true)}>
+                  <Feather name="more-vertical" size={17} color="#1F2933" />
+                </TouchableOpacity>
               </View>
             </View>
-            {/* // Updates */}
-            <VoyageUpdatesSection
-              updates={VoyageData.updates || []}
-              voyageId={VoyageData.id}
-              isOwner={ownVoyage}
-            />
 
-            {/* // map + waypoints */}
+            {/* Cards */}
+            <View style={{ paddingHorizontal: 12, paddingBottom: vh(12), gap: 11, marginTop: -20 }}>
 
-            <View style={[styles.routeCard, { position: "relative" }]}>
+              {/* Title card — overlaps hero */}
+              <View style={ds.card}>
+                {/* Title */}
+                <ParrotsStdText style={ds.voyageName}>{VoyageData.name}</ParrotsStdText>
 
-              <View style={styles.mapAndEmojisContainer}>
-                <View style={styles.mapContainer}>
-                  <MapView provider={PROVIDER_GOOGLE} ref={mapRef} style={styles.map} region={initialRegion} userInterfaceStyle="light">
+                {/* Host row */}
+                <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
+                  <TouchableOpacity style={[ds.pill, { backgroundColor: "#EEF3F9" }]} onPress={() => goToProfilePage(VoyageData?.user?.id)}>
+                    <Image source={{ uri: VoyageData?.user?.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={ds.pillImg} />
+                    <ParrotsStdText style={ds.hostName}>{VoyageData?.user?.userName}</ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[ds.pill, { backgroundColor: (VEHICLE_COLORS[VoyageData.vehicleType] ?? parrotBlue) + "18" }]}
+                    onPress={() => { if (VoyageData.vehicleType !== 4 && VoyageData.vehicleType !== 5 && VoyageData.vehicleType !== 10) goToVehiclePage(VoyageData.vehicle?.id); }}
+                  >
+                    {VoyageData.vehicleType === 4 || VoyageData.vehicleType === 5 || VoyageData.vehicleType === 10
+                      ? <VehicleIcon type={VoyageData.vehicleType} color={VEHICLE_COLORS[VoyageData.vehicleType] ?? parrotBlue} size={12} />
+                      : <Image source={{ uri: VoyageData.vehicle?.profileImageUrl }} style={ds.pillImg} />
+                    }
+                    <ParrotsStdText style={[ds.pillText, { color: VEHICLE_COLORS[VoyageData.vehicleType] ?? parrotBlue }]}>{vehicleTypeLabel}</ParrotsStdText>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Row 1: spots, dates, price */}
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5 }}>
+                  <View style={ds.pill}>
+                    <Feather name="users" size={11} color="#5A6874" />
+                    <ParrotsStdText style={ds.pillText}>{VoyageData.vacancy} spots</ParrotsStdText>
+                  </View>
+                  <View style={ds.pill}>
+                    <Feather name="calendar" size={11} color="#5A6874" />
+                    <ParrotsStdText style={ds.pillText}>{formattedStartDate} – {formattedEndDate}</ParrotsStdText>
+                  </View>
+                  <View style={ds.pill}>
+                    <ParrotsStdText style={ds.pillText}>
+                      {`${VoyageData.currency}${VoyageData.minPrice} – ${VoyageData.currency}${VoyageData.maxPrice}`}
+                    </ParrotsStdText>
+                  </View>
+                </View>
+
+                {/* Row 2: auction, fixed price, globe */}
+                <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 5, alignItems: "center" }}>
+                  {pillTooltip && (
+                    <View pointerEvents="none" style={{ position: "absolute", bottom: "100%", left: 0, right: 0, alignItems: "center", marginBottom: 6 }}>
+                      <View style={{ backgroundColor: "#fff", borderWidth: 1.5, borderColor: "#E8E3DC", borderRadius: 11, paddingHorizontal: 14, paddingVertical: 8, maxWidth: SCREEN_W * 0.75, shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 4 }}>
+                        <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: pillTooltip.color, textAlign: "center" }}>
+                          {pillTooltip.text}
+                        </ParrotsStdText>
+                      </View>
+                    </View>
+                  )}
+                  <TouchableOpacity
+                    style={[ds.pill, VoyageData.auction ? { backgroundColor: "#FDF0D5" } : { backgroundColor: "#F0F2F5" }]}
+                    onPress={() => showPillTooltip(
+                      VoyageData.auction ? "Auction, host selects the most suitable bids." : "Not an auction, host does not select most suitable bids.",
+                      VoyageData.auction ? "#C2740A" : "#5A6874"
+                    )}
+                  >
+                    <Feather name="trending-up" size={11} color={VoyageData.auction ? "#C2740A" : "#9AA7B3"} />
+                    <ParrotsStdText style={[ds.pillText, { color: VoyageData.auction ? "#C2740A" : "#9AA7B3" }]}>
+                      {VoyageData.auction ? "Auction" : "No Auction"}
+                    </ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[ds.pill, VoyageData.fixedPrice ? { backgroundColor: "#E4F0FE" } : { backgroundColor: "#F0F2F5" }]}
+                    onPress={() => showPillTooltip(
+                      VoyageData.fixedPrice ? "Fixed price, set by the host." : "Prices not fixed, bidders propose their own price.",
+                      VoyageData.fixedPrice ? "#0A5FBF" : "#5A6874"
+                    )}
+                  >
+                    <Feather name="tag" size={11} color={VoyageData.fixedPrice ? "#0A5FBF" : "#9AA7B3"} />
+                    <ParrotsStdText style={[ds.pillText, { color: VoyageData.fixedPrice ? "#0A5FBF" : "#9AA7B3" }]}>
+                      {VoyageData.fixedPrice ? "Fixed Price" : "Not Fixed Price"}
+                    </ParrotsStdText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[ds.livePill, !VoyageData.publicOnMap && { backgroundColor: "#F0F2F5" }]}
+                    onPress={() => showPillTooltip(
+                      VoyageData.publicOnMap ? "Voyage is displayed on the main map." : "Voyage is not displayed on the main map.",
+                      VoyageData.publicOnMap ? "#0B6B4E" : "#5A6874"
+                    )}
+                  >
+                    <Ionicons name="earth" size={14} color={VoyageData.publicOnMap ? "#0B6B4E" : "#9AA7B3"} />
+                    <ParrotsStdText style={[ds.pillText, { color: VoyageData.publicOnMap ? "#0B6B4E" : "#9AA7B3" }]}>
+                      {VoyageData.publicOnMap ? "Visible on map" : "Not on Map"}
+                    </ParrotsStdText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* About card */}
+              <View style={ds.card}>
+                <ParrotsStdText style={ds.cap}>ABOUT</ParrotsStdText>
+                <ParrotsStdText selectable style={ds.bodyText}>{displayText}</ParrotsStdText>
+                {plainDescription.length > descriptionShortenedChars && !showFullText && (
+                  <TouchableOpacity onPress={() => setShowFullText(true)} style={{ flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start" }}>
+                    <ParrotsStdText style={ds.linkText}>Read more</ParrotsStdText>
+                    <Feather name="chevron-down" size={12} color="#0A5FBF" />
+                  </TouchableOpacity>
+                )}
+                {showFullText && (
+                  <TouchableOpacity onPress={() => setShowFullText(false)} style={{ flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start" }}>
+                    <ParrotsStdText style={ds.linkText}>Read less</ParrotsStdText>
+                    <Feather name="chevron-up" size={12} color="#0A5FBF" />
+                  </TouchableOpacity>
+                )}
+
+                {/* Updates inside About */}
+                <VoyageUpdatesSection updates={VoyageData.updates || []} voyageId={VoyageData.id} isOwner={ownVoyage} />
+              </View>
+
+              {/* Route card */}
+              <View style={ds.card}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <ParrotsStdText style={[ds.cap, { flex: 1 }]}>ROUTE</ParrotsStdText>
+                  <ParrotsStdText style={ds.subCount}>{waypoints.length} waypoints</ParrotsStdText>
+                </View>
+
+                {/* Map */}
+                <View
+                  style={{ borderRadius: 11, overflow: "hidden", aspectRatio: 1, borderWidth: 1.5, borderColor: "#E8E3DC" }}
+                  onStartShouldSetResponder={() => true}
+                  onTouchStart={() => scrollRef.current?.setNativeProps({ scrollEnabled: false })}
+                  onTouchEnd={() => scrollRef.current?.setNativeProps({ scrollEnabled: true })}
+                  onTouchCancel={() => scrollRef.current?.setNativeProps({ scrollEnabled: true })}
+                >
+                  <MapView provider={PROVIDER_GOOGLE} ref={mapRef} style={{ width: "100%", height: "100%" }} region={initialRegion} userInterfaceStyle="light" scrollEnabled={true} zoomEnabled={true}>
                     <WaypointListComponent waypoints={waypoints} />
                     <RenderPolylinesComponent waypoints={waypoints} />
                   </MapView>
                 </View>
 
-              </View>
-
-              {/* Info icon just below map, above waypoints */}
-              <TouchableOpacity
-                onPress={() => showToast("Tap on card to focus map")}
-                style={{ alignSelf: "flex-end", marginRight: 10, marginTop: vh(0.5), zIndex: 10 }}
-              >
-                <MaterialIcons name="info-outline" size={20} color={parrotBlue} style={{ padding: 3, backgroundColor: parrotBlueMediumTransparent, borderRadius: vw(5) }} />
-              </TouchableOpacity>
-
-              <View style={styles.waypointFlatlistContainer}>
-                <WaypointFlatListVoyageDetailsScreen
-                  focusMap={focusMap}
-                  addedWayPoints={waypoints}
-                  voyageProfileImage={VoyageData.profileImage}
-                />
-              </View>
-            </View>
-
-            {/* // Bids */}
-
-            {bids.length !== 0 ? (
-              <View style={styles.mainBidsContainer2}>
-                <View style={styles.currentBidsAndSeeAllBids}>
-                  <ParrotsStdText style={styles.currentBidsTitle}>Current Bids</ParrotsStdText>
-                  <TouchableOpacity onPress={handleSeeAll}>
-                    <ParrotsStdText style={styles.seeAllButton}>See All</ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
-
-                <View style={styles.allBidsContainer}>
-                  <RenderBidsComponent
-                    bids={bids}
-                    modalVisible={modalVisible}
-                    setModalVisible={setModalVisible}
-                    ownVoyage={ownVoyage}
-                    voyageName={VoyageData.name}
-                    currentUserId={userId}
-                    refetch={refetchVoyage}
-                    username={userName}
-                    currency={VoyageData.currency}
+                {/* Waypoint horizontal rail */}
+                <View style={{ marginRight: -11 }}>
+                  <WaypointFlatListVoyageDetailsScreen
+                    focusMap={focusMap}
+                    addedWayPoints={waypoints}
+                    voyageProfileImage={VoyageData.profileImage}
                   />
                 </View>
               </View>
-            ) : null}
 
-            {ownVoyage && bids.some((b) => b.accepted) && (
-              <View style={styles.broadcastCard}>
-                <Modal visible={emojiOpen} transparent animationType="fade" onRequestClose={() => setEmojiOpen(false)}>
-                  <TouchableOpacity style={styles.emojiModalBackdrop} activeOpacity={1} onPress={() => setEmojiOpen(false)} />
-                  <View style={[styles.emojiModalPanel, { bottom: insets.bottom + vh(13) }]}>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.emojiCategoryRow} keyboardShouldPersistTaps="always">
-                      {EMOJI_CATEGORIES.map((cat) => (
-                        <TouchableOpacity
-                          key={cat.label}
-                          onPress={() => setEmojiCategory(cat.label)}
-                          style={[styles.emojiCategoryBtn, emojiCategory === cat.label && styles.emojiCategoryBtnActive]}
-                        >
-                          <Text style={styles.emojiCategoryIcon}>{cat.icon}</Text>
-                        </TouchableOpacity>
-                      ))}
-                    </ScrollView>
-                    <ScrollView keyboardShouldPersistTaps="always">
-                      <View style={styles.emojiGrid}>
-                        {EMOJIS_BY_CATEGORY[emojiCategory].map((item) => (
-                          <TouchableOpacity
-                            key={item}
-                            style={styles.emojiItem}
-                            onPress={() => setBroadcastMessage((prev) => prev + item)}
-                          >
-                            <Text style={styles.emojiText}>{item}</Text>
+              {/* Bids card */}
+              {(bids.length > 0 || !ownVoyage) && (
+                <View style={ds.card}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <ParrotsStdText style={[ds.cap, { flex: 1 }]}>BIDS</ParrotsStdText>
+                    <ParrotsStdText style={ds.subCount}>{bids.length}{acceptedCount > 0 ? ` · ${acceptedCount} accepted` : ""}</ParrotsStdText>
+                    {bids.length > 2 && (
+                      <TouchableOpacity onPress={handleSeeAll} style={{ marginLeft: 10 }}>
+                        <ParrotsStdText style={ds.linkText}>See all</ParrotsStdText>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+
+                  {bids.length > 0 && (
+                    <RenderBidsComponent
+                      bids={bids}
+                      modalVisible={modalVisible}
+                      setModalVisible={setModalVisible}
+                      ownVoyage={ownVoyage}
+                      voyageName={VoyageData.name}
+                      currentUserId={userId}
+                      refetch={refetchVoyage}
+                      username={userName}
+                      currency={VoyageData.currency}
+                    />
+                  )}
+
+                  {/* CTA */}
+                  {!ownVoyage && !VoyageData.isBlockedByOrganizer && (
+                    <CreateBidComponent
+                      userName={userName}
+                      userProfileImage={userProfileImage}
+                      voyageId={VoyageData.id}
+                      userId={userId}
+                      userBidId={userBidId}
+                      hasBidWithUserId={hasBidWithUserId}
+                      userBidPrice={userBidPrice}
+                      userBidPersons={userBidPersons}
+                      userBidMessage={userBidMessage}
+                      refetch={refetchVoyage}
+                      ownVoyage={ownVoyage}
+                      currency={VoyageData.currency}
+                      isOwnerDeleted={VoyageData.isOwnerDeleted}
+                      endDate={VoyageData.endDate}
+                    />
+                  )}
+
+                  {ownVoyage && (
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                      <Feather name="lock" size={11} color="#5A6874" />
+                      <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 10, color: "#5A6874" }}>Only you can see bid messages.</ParrotsStdText>
+                    </View>
+                  )}
+                </View>
+              )}
+
+              {/* Host: message accepted users card */}
+              {ownVoyage && (
+                <View style={ds.card}>
+                  <ParrotsStdText style={[ds.cap, { color: acceptedCount > 0 ? "#0A5FBF" : "#9AA7B3" }]}>
+                    {acceptedCount > 0 ? `MESSAGE ACCEPTED USERS · ${acceptedCount}` : "MESSAGE ACCEPTED USERS"}
+                  </ParrotsStdText>
+
+                  <Modal visible={emojiOpen} transparent animationType="fade" onRequestClose={() => setEmojiOpen(false)}>
+                    <TouchableOpacity style={ds.emojiModalBackdrop} activeOpacity={1} onPress={() => setEmojiOpen(false)} />
+                    <View style={[ds.emojiModalPanel, { bottom: insets.bottom + vh(13) }]}>
+                      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={ds.emojiCategoryRow} keyboardShouldPersistTaps="always">
+                        {EMOJI_CATEGORIES.map((cat) => (
+                          <TouchableOpacity key={cat.label} onPress={() => setEmojiCategory(cat.label)} style={[ds.emojiCategoryBtn, emojiCategory === cat.label && ds.emojiCategoryBtnActive]}>
+                            <Text style={ds.emojiCategoryIcon}>{cat.icon}</Text>
                           </TouchableOpacity>
                         ))}
-                      </View>
-                    </ScrollView>
+                      </ScrollView>
+                      <ScrollView keyboardShouldPersistTaps="always">
+                        <View style={ds.emojiGrid}>
+                          {EMOJIS_BY_CATEGORY[emojiCategory].map((item) => (
+                            <TouchableOpacity key={item} style={ds.emojiItem} onPress={() => setBroadcastMessage((prev) => prev + item)}>
+                              <Text style={ds.emojiText}>{item}</Text>
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      </ScrollView>
+                    </View>
+                  </Modal>
+
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8, opacity: acceptedCount > 0 ? 1 : 0.4 }}>
+                    <TouchableOpacity disabled={acceptedCount === 0} onPress={() => { Keyboard.dismiss(); setEmojiOpen((prev) => !prev); }}>
+                      <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 41, height: 41, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? "rgba(10,95,191,0.4)" : "rgba(128,128,128,0.2)" }} />
+                    </TouchableOpacity>
+                    <TextInput
+                      style={[ds.updateInput, { borderColor: emojiOpen || inputFocused ? "rgba(10,95,191,0.4)" : "rgba(128,128,128,0.08)" }]}
+                      placeholder={acceptedCount > 0 ? `Message the ${acceptedCount} accepted…` : "No accepted users yet…"}
+                      placeholderTextColor="#8B98A5"
+                      editable={acceptedCount > 0}
+                      onPressIn={() => acceptedCount > 0 && setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 500)}
+                      value={broadcastMessage}
+                      onChangeText={setBroadcastMessage}
+                      onFocus={() => { setEmojiOpen(false); setInputFocused(true); setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 400); }}
+                      onBlur={() => setInputFocused(false)}
+                    />
+                    <TouchableOpacity
+                      style={broadcastMessage.trim() && !isBroadcasting && acceptedCount > 0 ? ds.updateSendBtn : ds.updateSendBtnDisabled}
+                      onPress={handleBroadcast}
+                      disabled={!broadcastMessage.trim() || isBroadcasting || acceptedCount === 0}
+                    >
+                      {isBroadcasting ? <ActivityIndicator size="small" color="#9AA7B3" /> : <Feather name="send" size={20} color={broadcastMessage.trim() && acceptedCount > 0 ? "white" : "#9AA7B3"} />}
+                    </TouchableOpacity>
                   </View>
-                </Modal>
-                <View style={styles.broadcastInputRow}>
-                  <TouchableOpacity
-                    onPress={() => { Keyboard.dismiss(); setEmojiOpen((prev) => !prev); }}
-                    style={styles.broadcastEmojiBtn}
-                  >
-                    <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 38, height: 38, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? "rgba(0,119,234,0.4)" : "rgba(128,128,128,0.2)" }} />
-                  </TouchableOpacity>
-                  <TextInput
-                    style={[styles.broadcastInput, { borderColor: emojiOpen || inputFocused ? "rgba(0,119,234,0.4)" : "rgba(128,128,128,0.08)" }]}
-                    placeholder="Message accepted users..."
-                    placeholderTextColor="#aaa"
-                    value={broadcastMessage}
-                    onChangeText={setBroadcastMessage}
-                    multiline
-                    onFocus={() => { setEmojiOpen(false); setInputFocused(true); setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 400); }}
-                    onBlur={() => setInputFocused(false)}
-                  />
-                  <TouchableOpacity
-                    style={[styles.broadcastSendBtn, (!broadcastMessage.trim() || isBroadcasting) && { opacity: 0.5 }]}
-                    onPress={handleBroadcast}
-                    disabled={!broadcastMessage.trim() || isBroadcasting}
-                  >
-                    {isBroadcasting
-                      ? <ActivityIndicator size="small" color="white" />
-                      : <Feather name="send" size={18} color="white" />}
-                  </TouchableOpacity>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                    <Feather name="lock" size={11} color="#5A6874" />
+                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 10, color: "#5A6874" }}>Private — only accepted users receive this</ParrotsStdText>
+                  </View>
                 </View>
-              </View>
-            )}
-
-            {/* // enter bid */}
-
-            <View style={{ paddingBottom: ownVoyage ? vh(11) : vh(11) }}>
-              {ownVoyage || VoyageData.isBlockedByOrganizer ? null : (
-                <CreateBidComponent
-                  userName={userName}
-                  userProfileImage={userProfileImage}
-                  voyageId={VoyageData.id}
-                  userId={userId}
-                  userBidId={userBidId}
-                  hasBidWithUserId={hasBidWithUserId}
-                  userBidPrice={userBidPrice}
-                  userBidPersons={userBidPersons}
-                  userBidMessage={userBidMessage}
-                  refetch={refetchVoyage}
-                  ownVoyage={ownVoyage}
-                  currency={VoyageData.currency}
-                  isOwnerDeleted={VoyageData.isOwnerDeleted}
-                  endDate={VoyageData.endDate}
-                />
               )}
+
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
+
         {toastVisible && (
-          <View style={styles.toast}>
-            <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
+          <View style={ds.toast}>
+            <ParrotsStdText style={ds.toastText}>{toastMessage}</ParrotsStdText>
           </View>
         )}
+
 
         {/* Overflow bottom sheet */}
         <Modal visible={overflowMenuVisible} transparent animationType="fade" onRequestClose={() => setOverflowMenuVisible(false)}>
           <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "flex-end" }} activeOpacity={1} onPress={() => setOverflowMenuVisible(false)}>
-            <View style={styles.bottomSheet}>
-              <View style={styles.bottomSheetHandle} />
-              <TouchableOpacity style={styles.sheetItem} onPress={() => { setOverflowMenuVisible(false); handleCopyVoyageLink(); }}>
+            <View style={ds.bottomSheet}>
+              <View style={ds.bottomSheetHandle} />
+              <TouchableOpacity style={ds.sheetItem} onPress={() => { setOverflowMenuVisible(false); handleCopyVoyageLink(); }}>
                 <MaterialIcons name="link" size={24} color={parrotBlue} />
-                <ParrotsStdText style={[styles.sheetItemText, { color: parrotBlue }]}>Copy voyage link</ParrotsStdText>
+                <ParrotsStdText style={[ds.sheetItemText, { color: parrotBlue }]}>Copy voyage link</ParrotsStdText>
               </TouchableOpacity>
               {!ownVoyage && (
-                <TouchableOpacity style={styles.sheetItem} onPress={() => { setOverflowMenuVisible(false); setTimeout(() => setVoyageReportModalVisible(true), 300); }}>
+                <TouchableOpacity style={ds.sheetItem} onPress={() => { setOverflowMenuVisible(false); setTimeout(() => setVoyageReportModalVisible(true), 300); }}>
                   <MaterialIcons name="flag" size={24} color={parrotRed} />
-                  <ParrotsStdText style={[styles.sheetItemText, { color: parrotRed }]}>Report voyage</ParrotsStdText>
+                  <ParrotsStdText style={[ds.sheetItemText, { color: parrotRed }]}>Report voyage</ParrotsStdText>
                 </TouchableOpacity>
               )}
             </View>
@@ -791,7 +760,6 @@ const VoyageDetailScreen = ({ navigation }) => {
         <Modal visible={voyageReportModalVisible} transparent animationType="fade" onRequestClose={() => setVoyageReportModalVisible(false)}>
           <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center" }}>
             <View style={{ backgroundColor: "white", borderRadius: 20, padding: 20, width: vw(88) }}>
-              {/* Header */}
               <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
                 <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: "rgba(200,30,30,0.1)", alignItems: "center", justifyContent: "center" }}>
                   <MaterialIcons name="flag" size={18} color={parrotRed} />
@@ -801,7 +769,6 @@ const VoyageDetailScreen = ({ navigation }) => {
                   <ParrotsStdText style={{ fontSize: 12, fontFamily: "Nunito_700Bold", color: "#888", marginTop: 2 }}>Tell us what's wrong. Your report stays private.</ParrotsStdText>
                 </View>
               </View>
-              {/* Reasons */}
               <View style={{ marginTop: 12 }}>
                 {REPORT_REASONS.map((reason) => (
                   <TouchableOpacity
@@ -821,9 +788,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   </TouchableOpacity>
                 ))}
               </View>
-              {/* Footnote */}
               <ParrotsStdText style={{ fontSize: 12, fontFamily: "Nunito_700Bold", color: "#aaa", marginTop: 10 }}>Reports are reviewed privately. The voyage organizer will not be notified.</ParrotsStdText>
-              {/* Buttons */}
               <View style={{ flexDirection: "row", gap: 10, marginTop: 16 }}>
                 <TouchableOpacity style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: "#f0f0f0", alignItems: "center" }} onPress={() => { setVoyageReportModalVisible(false); setVoyageSelectedReason(null); }}>
                   <ParrotsStdText style={{ fontSize: 15, fontFamily: "Nunito_700Bold", color: "#3D3D3D" }}>Cancel</ParrotsStdText>
@@ -840,10 +805,44 @@ const VoyageDetailScreen = ({ navigation }) => {
   }
 };
 
+const daysAgo = (dateStr) => {
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return "Today";
+  if (diff === 1) return "1 day ago";
+  return `${diff} days ago`;
+};
+
+const UpdateItem = ({ u }) => (
+  <View style={{ paddingVertical: 4, borderBottomWidth: 1, borderBottomColor: "#F0F4F8" }}>
+    <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+      <ParrotsStdText style={{ flex: 1, fontFamily: "Nunito_600SemiBold", fontSize: 12.5, color: "#3C4A57", lineHeight: 19 }}>
+        {u.text}
+      </ParrotsStdText>
+      <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 11, color: "#5A6874", marginLeft: 8 }}>
+        {daysAgo(u.createdAt)}
+      </ParrotsStdText>
+    </View>
+  </View>
+);
+
+// Updates section — renders inside About card
 const VoyageUpdatesSection = ({ updates, voyageId, isOwner }) => {
   const [text, setText] = useState("");
-  const [localUpdates, setLocalUpdates] = useState(updates || []);
+  const [localUpdates, setLocalUpdates] = useState([
+    // { id: "d1", text: "We have confirmed the departure port — see you at Marina Bay at 08:00!", createdAt: "2025-06-01T08:00:00" },
+    // { id: "d2", text: "Weather looks perfect for the first leg. Pack light layers for the evening.", createdAt: "2025-06-02T10:30:00" },
+    // { id: "d3", text: "Provisioning is done — fresh food and drinks for all guests on board.", createdAt: "2025-06-03T14:00:00" },
+    // { id: "d4", text: "We will make a short stop at Lighthouse Cove on day 2 for swimming.", createdAt: "2025-06-04T09:15:00" },
+    // { id: "d5", text: "Reminder: bring your ID and any seasickness medication you may need.", createdAt: "2025-06-05T11:00:00" },
+    // { id: "d6", text: "The sunset dinner on night 1 is confirmed — chef on board!", createdAt: "2025-06-06T16:45:00" },
+    // { id: "d7", text: "We added an extra waypoint — passing through the Blue Lagoon on day 3.", createdAt: "2025-06-07T08:00:00" },
+    // { id: "d8", text: "All safety briefings will happen at the dock before departure.", createdAt: "2025-06-08T07:30:00" },
+    // { id: "d9", text: "Snorkelling gear is available on board — no need to bring your own.", createdAt: "2025-06-09T13:00:00" },
+    // { id: "d10", text: "Final headcount confirmed. Looking forward to an amazing voyage!", createdAt: "2025-06-10T10:00:00" },
+    ...(updates || []),
+  ]);
   const [addVoyageUpdate, { isLoading }] = useAddVoyageUpdateMutation();
+  const [allUpdatesVisible, setAllUpdatesVisible] = useState(false);
 
   const handleSubmit = async () => {
     if (!text.trim()) return;
@@ -856,148 +855,227 @@ const VoyageUpdatesSection = ({ updates, voyageId, isOwner }) => {
     }
   };
 
+  if (localUpdates.length === 0 && !isOwner) return null;
+
   return (
-    <View style={styles.updatesCard}>
-      <ParrotsStdText style={styles.updatesTitle}>Updates</ParrotsStdText>
-      {localUpdates.length === 0 && (
-        <ParrotsStdText style={styles.updatesEmpty}>No updates yet.</ParrotsStdText>
-      )}
-      {localUpdates.map((u) => (
-        <View key={u.id} style={styles.updateItem}>
-          <ParrotsStdText style={styles.updateTimestamp}>
-            {new Date(u.createdAt).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
-          </ParrotsStdText>
-          <ParrotsStdText style={styles.updateText}>{u.text}</ParrotsStdText>
-        </View>
-      ))}
-      {isOwner && (
-        <View style={styles.updateInputRow}>
-          <TextInput
-            style={styles.updateInput}
-            placeholder="Write an update..."
-            placeholderTextColor="#aaa"
-            value={text}
-            onChangeText={setText}
-            multiline
-            maxLength={500}
-          />
-          <TouchableOpacity
-            style={[styles.updatePostBtn, (!text.trim() || isLoading) && { opacity: 0.5 }]}
-            onPress={handleSubmit}
-            disabled={!text.trim() || isLoading}
-          >
-            {isLoading
-              ? <ActivityIndicator size="small" color="white" />
-              : <ParrotsStdText style={styles.updatePostBtnText}>Post Update</ParrotsStdText>}
+    <View style={{ borderTopWidth: 1, borderTopColor: "#E6ECF2", paddingTop: 10, marginTop: 4, gap: 7 }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <ParrotsStdText style={[ds.cap, { flex: 1 }]}>UPDATES FROM THE HOST</ParrotsStdText>
+        {localUpdates.length > 2 ? (
+          <TouchableOpacity onPress={() => setAllUpdatesVisible(true)}>
+            <ParrotsStdText style={ds.linkText}>See all</ParrotsStdText>
           </TouchableOpacity>
-        </View>
+        ) : (
+          <ParrotsStdText style={ds.subCount}>{localUpdates.length}</ParrotsStdText>
+        )}
+      </View>
+
+      {localUpdates.slice(0, 2).map((u) => (
+        <UpdateItem key={u.id} u={u} />
+      ))}
+
+      {isOwner && (
+        <>
+          <View style={{ flexDirection: "row", gap: vw(2), marginTop: 2, alignItems: "center" }}>
+            <TextInput
+              style={ds.updateInput}
+              placeholder="Post an update…"
+              placeholderTextColor="#8B98A5"
+              value={text}
+              onChangeText={setText}
+              maxLength={500}
+            />
+            <TouchableOpacity
+              style={text.trim() && !isLoading ? ds.updateSendBtn : ds.updateSendBtnDisabled}
+              onPress={handleSubmit}
+              disabled={!text.trim() || isLoading}
+            >
+              {isLoading ? <ActivityIndicator size="small" color="#9AA7B3" /> : <Feather name="send" size={18} color={text.trim() ? "white" : "#9AA7B3"} />}
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+            <Feather name="eye" size={11} color="#5A6874" />
+            <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 10, color: "#5A6874" }}>Visible to everyone viewing this voyage</ParrotsStdText>
+          </View>
+        </>
       )}
+
+      <Modal animationType="fade" transparent visible={allUpdatesVisible} onRequestClose={() => setAllUpdatesVisible(false)}>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "center", alignItems: "center" }}>
+          <View style={{ backgroundColor: "#fff", borderRadius: 18, borderWidth: 1.5, borderColor: "#E8E3DC", paddingHorizontal: 16, paddingTop: 18, paddingBottom: 20, width: vw(88), maxHeight: vh(70) }}>
+            <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#1F2933", marginBottom: 12 }}>All Updates</ParrotsStdText>
+            <ScrollView contentContainerStyle={{ gap: 10, paddingBottom: 4 }}>
+              {localUpdates.map((item) => (
+                <UpdateItem key={item.id} u={item} />
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={{ marginTop: 16, alignSelf: "center", backgroundColor: "#0A5FBF", borderRadius: 999, paddingVertical: 10, paddingHorizontal: 32 }}
+              onPress={() => setAllUpdatesVisible(false)}
+            >
+              <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: "#fff" }}>Close</ParrotsStdText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 export default VoyageDetailScreen;
 
-const styles = StyleSheet.create({
-  broadcastCard: {
-    borderRadius: 20,
-    marginHorizontal: vw(2),
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    padding: vh(2),
-    marginTop: vh(2),
+const ds = StyleSheet.create({
+  card: {
+    borderWidth: 1.5,
+    borderColor: "#E8E3DC",
+    borderRadius: 14,
+    backgroundColor: "#fff",
+    padding: 11,
+    gap: 9,
   },
-  broadcastInputRow: {
+  voyageName: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 22,
+    color: "#0A5FBF",
+    letterSpacing: -0.44,
+    lineHeight: 26,
+  },
+  avatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#D8E0E8",
+  },
+  hostName: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontWeight: "800",
+    fontSize: 11,
+    color: "#0A5FBF",
+  },
+  livePill: {
     flexDirection: "row",
-    alignItems: "flex-end",
-    gap: vw(2),
+    alignItems: "center",
+    gap: 5,
+    backgroundColor: "#E4F5E9",
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
   },
-  broadcastInput: {
-    flex: 1,
+  pill: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    backgroundColor: "#F4F7FB",
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+  },
+  pillText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 11,
+    color: "#3C4A57",
+  },
+  pillImg: {
+    width: vh(3),
+    height: vh(3),
+    borderRadius: vh(2.5),
+    backgroundColor: "#D8E0E8",
+  },
+  cap: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 9,
+    letterSpacing: 1.4,
+    color: "#5A6874",
+  },
+  subCount: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 10.5,
+    color: "#5A6874",
+  },
+  bodyText: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 12.5,
+    color: "#3C4A57",
+    lineHeight: 19,
+  },
+  linkText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#0A5FBF",
+  },
+  heroBtn: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "rgba(255,255,255,0.94)",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  stripThumb: {
+    width: 30,
+    height: 30,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    borderColor: "rgba(255,255,255,0.85)",
+  },
+  updateInput: {
+    flexGrow: 1,
+    flexShrink: 1,
     backgroundColor: "white",
     borderRadius: vh(4),
-    paddingHorizontal: vw(3),
+    paddingHorizontal: vw(4),
     paddingVertical: vh(1),
-    fontFamily: "Nunito_600SemiBold",
-    fontSize: 14,
-    maxHeight: vh(12),
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "black",
+    borderWidth: 2,
+    borderColor: "rgba(128,128,128,0.08)",
+    minHeight: vh(5),
+    maxHeight: vh(14),
+    textAlignVertical: "center",
+  },
+  updateSendBtn: {
+    backgroundColor: parrotLightBlue,
+    width: vh(5),
+    height: vh(5),
+    borderRadius: vh(2.5),
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
+  updateSendBtnDisabled: {
+    backgroundColor: "white",
+    width: vh(5),
+    height: vh(5),
+    borderRadius: vh(2.5),
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
     borderWidth: 2,
     borderColor: "rgba(128,128,128,0.08)",
   },
-  broadcastSendBtn: {
-    backgroundColor: parrotBlue,
-    borderRadius: vh(3),
-    width: vw(9),
-    height: vw(9),
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  broadcastEmojiBtn: {
-    paddingHorizontal: vw(1),
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-  },
-  emojiModalBackdrop: {
-    position: "absolute",
-    top: 0, left: 0, right: 0, bottom: 0,
-  },
-  emojiModalPanel: {
-    position: "absolute",
-    bottom: vh(12),
-    left: vw(2),
-    right: vw(2),
-    height: vh(35),
-    backgroundColor: "white",
-    borderRadius: vh(2),
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.08)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    elevation: 8,
-    overflow: "hidden",
-  },
-  emojiCategoryRow: {
-    flexGrow: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.06)",
-  },
-  emojiCategoryBtn: {
-    height: vh(6),
-    paddingHorizontal: vw(3),
-    paddingVertical: vh(0.8),
-  },
-  emojiCategoryBtnActive: {
-    borderBottomWidth: 2,
-    borderBottomColor: parrotLightBlue,
-  },
-  emojiCategoryIcon: { fontSize: 20 },
-  emojiGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  emojiItem: {
-    width: "12.5%",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: vh(0.8),
-  },
-  emojiText: { fontSize: 26 },
-  waypointFlatlistContainer: {
-    marginRight: vw(3),
-    marginBottom: vh(1),
+  broadcastInput: {
+    flex: 1,
+    height: 32,
+    borderRadius: 999,
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#E8E3DC",
+    paddingHorizontal: 12,
+    fontFamily: "Nunito_700Bold",
+    fontSize: 12,
+    color: "#1F2933",
   },
   toast: {
     position: "absolute",
     bottom: vh(10),
     alignSelf: "center",
-    backgroundColor: "rgba(30, 111, 217, 0.9)",
+    backgroundColor: "rgba(30,111,217,0.9)",
     paddingHorizontal: vw(4),
     paddingVertical: vh(1),
     borderRadius: 20,
@@ -1009,424 +1087,7 @@ const styles = StyleSheet.create({
   toastText: {
     color: "white",
     fontSize: 13,
-    fontWeight: "600",
-  },
-  waypointInfoMessage: {
-    color: parrotBlue,
-    paddingHorizontal: vh(1),
-    borderWidth: 1,
-    borderColor: parrotBlue,
-    marginLeft: vh(1),
-    borderRadius: vh(2),
-  },
-  voyageImageInfoMessage: {
-    color: parrotBlue,
-    paddingHorizontal: vh(1),
-    borderWidth: 1,
-    borderColor: parrotBlue,
-    borderRadius: vh(2),
-  },
-  rectangularBox: {
-    height: vh(37),
-    backgroundColor: "white",
-  },
-  imageContainer: {
-    // top: vh(5),
-    height: vh(39),
-  },
-  voyageDetailsContainer: {
-    borderRadius: vh(2),
-  },
-  OwnerAndBoat: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    margin: 1,
-  },
-
-  voyageBoat: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: vh(5),
-    backgroundColor: parrotBlueMediumTransparent,
-    paddingVertical: vh(0.3),
-    paddingHorizontal: vw(2),
-  },
-  VoyagePropsBox: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    margin: 1,
-  },
-  VoyageProps: {
-    flexDirection: "row",
-    paddingHorizontal: vh(0.9),
-    paddingVertical: vh(0.2),
-    marginTop: vh(0.2),
-    marginHorizontal: vw(1),
-    borderRadius: vw(3),
-    backgroundColor: parrotBlueMediumTransparent,
-
-  },
-  propTextDescription: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: parrotTextDarkBlue,
-  },
-  propText: {
-    fontSize: 14,
-    color: parrotTextDarkBlue,
-  },
-  ScrollView: {
-    backgroundColor: "white",
-  },
-  mapAndEmojisContainer: {
-    height: vh(40),
-    padding: vh(0.5),
-    width: "98%",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    marginBottom: vh(0),
-    marginTop: vh(0),
-  },
-  mapContainer: {
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
-    borderRadius: 20,
-  },
-  map: {
-    width: "100%",
-    height: "100%",
-    borderRadius: vw(10),
-  },
-  mapTopIcons: {
-    position: "absolute",
-    top: vh(-2),
-    right: vw(2),
-    flexDirection: "row",
-    gap: 6,
-    zIndex: 10,
-  },
-  heartContainer1: {
-    position: "absolute",
-    bottom: vh(-1),
-    right: vw(5),
-  },
-  heartContainer2: {
-    padding: vw(1),
-    width: vw(8),
-    backgroundColor: "white",
-    borderRadius: vh(5),
-  },
-  earthContainer1: {
-    position: "absolute",
-    bottom: vh(-1),
-    right: vw(25),
-  },
-  earthContainer2: {
-    padding: vw(1),
-    width: vw(8),
-    backgroundColor: "white",
-    borderRadius: vh(5),
-  },
-  shareContainer1: {
-    position: "absolute",
-    bottom: vh(-1),
-    right: vw(15),
-  },
-  shareContainer2: {
-    padding: vw(1),
-    width: vw(8),
-    backgroundColor: "white",
-    borderRadius: vh(5),
-  },
-  VoyageNameAndUsername: {
-    // padding: vh(1),
-    // margin: vh(0.5),
-    marginTop: vh(0.5),
-  },
-  DescriptionContainer: {
-    paddingHorizontal: vh(1),
-    margin: vh(0.5),
-    marginTop: vh(2.5),
-  },
-  descriptionInnerContainer: {
-    marginVertical: vh(0.2),
-    paddingBottom: vh(1),
-    color: parrotTextDarkBlue,
-  },
-  descriptionText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 15,
-    color: "#3D3D3D",
-    lineHeight: 23,
-    letterSpacing: 0.2,
-    paddingVertical: vh(1),
-  },
-  ReadMoreLess: {
-    fontFamily: "Nunito_700Bold",
-    color: parrotBlue,
-    paddingTop: vh(0.5),
-    paddingBottom: vh(0.5),
-    fontSize: 15,
-  },
-  subContainer: {
-    backgroundColor: "blue",
-    padding: vh(1),
-    margin: vh(0.5),
-    marginTop: vh(0.5),
-  },
-  voyageName: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 24,
-    alignSelf: "center",
-    color: parrotGreen,
-    paddingHorizontal: vh(2),
-    paddingVertical: vh(0.5),
-    borderRadius: vh(1),
-  },
-  ownerDeletedNotice: {
-    position: "absolute",
-    top: vh(8),
-    left: vw(4),
-    right: vw(4),
-    backgroundColor: "rgba(203,4,4,0.55)",
-    borderRadius: vh(1),
-    borderLeftWidth: 3,
-    borderLeftColor: parrotRed,
-    padding: vh(1.2),
-    zIndex: 10,
-  },
-  ownerDeletedNoticeText: {
     fontFamily: "Nunito_600SemiBold",
-    fontSize: 14,
-    color: "white",
-    lineHeight: 18,
-  },
-  userName: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 16,
-    marginTop: vh(0.2),
-    color: "#1E6FD9",
-    flexShrink: 1,
-  },
-  voyageImage: {
-    height: vh(13),
-    width: vh(13),
-    marginRight: vh(1),
-    borderRadius: vh(1.5),
-  },
-  ImagesSubContainer: {
-    paddingHorizontal: vh(1),
-    marginTop: vh(1.5),
-  },
-
-  profileImage: {
-    width: vh(3),
-    height: vh(3),
-    borderRadius: vh(2.5),
-    marginRight: 8,
-    backgroundColor: "grey",
-  },
-
-  offerPrice: {
-    fontSize: 18,
-    fontWeight: "800",
-    color: parrotLightBlue,
-    width: vw(23),
-    textAlign: "right",
-  },
-  currentBidsTitle: {
-    fontSize: 20,
-    fontFamily: "Nunito_800ExtraBold",
-    color: parrotLightBlue,
-  },
-  mainBidsContainer: {
-    borderRadius: vw(5),
-    marginHorizontal: vw(2),
-  },
-  TitleContainerVoyageImages: {
-    marginHorizontal: vw(2),
-  },
-  TitleContainerVoyageDescription: {
-    marginHorizontal: vw(2),
-    // marginTop: vh(2),
-  },
-  TitleContainerVoyageRoute: {
-    // marginTop: vh(2),
-    marginHorizontal: vw(4),
-  },
-  waypointsContainer: {
-    marginHorizontal: vw(2),
-  },
-  mainBidsContainer2: {
-    borderRadius: 20,
-    marginHorizontal: vw(2),
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    paddingTop: vh(1.5),
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  voyageRoute: {
-    borderRadius: vw(5),
-    marginHorizontal: vw(4),
-  },
-  allBidsContainer: {
-    marginTop: vh(1),
-    padding: vh(0),
-  },
-  currentBidsAndSeeAll: {
-    marginTop: 0,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    paddingRight: vw(10),
-  },
-  currentBidsAndSeeAllBids: {
-    marginTop: 0,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: vw(3),
-  },
-  WaypointsAndInfo: {
-    marginTop: 0,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    paddingRight: vw(10),
-  },
-
-  seeAllButton: {
-    color: parrotLightBlue,
-    fontFamily: "Nunito_700Bold",
-    fontSize: 16,
-  },
-  voyageDataWrapper: {
-    backgroundColor: "white",
-    paddingTop: vh(1),
-    borderRadius: vh(5),
-  },
-  VoyageDataContainer: {
-    borderRadius: vh(5),
-    marginHorizontal: vw(2),
-  },
-
-  detailsCard: {
-    borderRadius: 20,
-    overflow: "visible",
-    paddingTop: 4,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: 0,
-    marginBottom: vh(1),
-  },
-
-  waypointsCard: {
-    borderRadius: 20,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: vw(2),
-    marginBottom: vh(1),
-    paddingTop: vh(1.5),
-    paddingBottom: vh(1),
-  },
-
-  routeCard: {
-    borderRadius: 20,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: vw(2),
-    marginBottom: vh(1),
-    paddingTop: vh(1.5),
-    paddingBottom: vh(1),
-    overflow: "hidden",
-  },
-
-  sectionCard: {
-    borderRadius: 20,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: 0,
-    marginBottom: vh(1),
-    paddingTop: vh(1.5),
-    paddingBottom: vh(1),
-  },
-
-
-
-  label: {
-    width: vw(22), // 🔑 fixed width for alignment
-    fontWeight: "700",
-    fontSize: 16,
-    color: "#0A1E5E",
-  },
-
-  value: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 16,
-    color: "#1E6FD9",
-  },
-
-  pill: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 119, 234, 0.06)",
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 20,
-  },
-  rowSplit: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: vh(1),
-    // backgroundColor: "yellow"
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: vh(1),
-  },
-  rowIcon: {
-    marginRight: 2,
-    width: 22,
-  },
-  nameDivider: {
-    height: 1,
-    backgroundColor: "rgba(30, 111, 217, 0.1)",
-    marginBottom: vh(1.2),
-    marginTop: vh(0.4),
-  },
-  flagsDivider: {
-    height: 1,
-    backgroundColor: "rgba(30, 111, 217, 0.1)",
-    marginBottom: vh(1.2),
-  },
-
-  rowHalfClean: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "48%",
   },
   bottomSheet: {
     backgroundColor: "white",
@@ -1457,81 +1118,60 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: "#3D3D3D",
   },
-  updatesCard: {
-    borderRadius: 20,
-    backgroundColor: "#fdf9f5",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-    marginHorizontal: vw(2),
-    marginBottom: vh(1),
-    paddingTop: vh(1.5),
-    paddingBottom: vh(1.5),
-    paddingHorizontal: vw(4),
+  ownerDeletedNotice: {
+    position: "absolute",
+    top: vh(8),
+    left: vw(4),
+    right: vw(4),
+    backgroundColor: "rgba(203,4,4,0.55)",
+    borderRadius: 10,
+    borderLeftWidth: 3,
+    borderLeftColor: "#B3261E",
+    padding: 12,
+    zIndex: 10,
   },
-  updatesTitle: {
-    fontFamily: "Nunito_800ExtraBold",
-    fontSize: 20,
-    color: "#2ac898",
-    marginBottom: vh(1),
-  },
-  updatesEmpty: {
+  ownerDeletedNoticeText: {
     fontFamily: "Nunito_600SemiBold",
     fontSize: 13,
-    color: "#94a3b8",
-    marginBottom: vh(1),
-  },
-  updateItem: {
-    paddingLeft: vw(3),
-    paddingVertical: vh(0.5),
-    marginBottom: vh(1),
-    backgroundColor: "rgba(42,200,152,0.03)",
-    borderRadius: 8,
-  },
-  updateTimestamp: {
-    fontFamily: "Nunito_600SemiBold",
-    fontSize: 11,
-    color: "#94a3b8",
-    marginBottom: 2,
-    textAlign: "right",
-  },
-  updateText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 14,
-    color: "#1E3A5F",
-  },
-  updateInputRow: {
-    marginTop: vh(1),
-    gap: vh(1),
-  },
-  updateInput: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    paddingHorizontal: vw(3),
-    paddingVertical: vh(1),
-    fontFamily: "Nunito_600SemiBold",
-    fontSize: 14,
-    borderWidth: 1,
-    borderColor: "rgba(128,128,128,0.15)",
-    minHeight: vh(8),
-    textAlignVertical: "top",
-  },
-  updatePostBtn: {
-    backgroundColor: parrotBlue,
-    borderRadius: 20,
-    paddingVertical: vh(1),
-    paddingHorizontal: vw(5),
-    alignSelf: "flex-start",
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: vw(30),
-    minHeight: vh(4.5),
-  },
-  updatePostBtnText: {
-    fontFamily: "Nunito_700Bold",
-    fontSize: 14,
     color: "white",
+    lineHeight: 18,
   },
+  emojiModalBackdrop: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+  },
+  emojiModalPanel: {
+    position: "absolute",
+    left: vw(2),
+    right: vw(2),
+    height: vh(35),
+    backgroundColor: "white",
+    borderRadius: vh(2),
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.08)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 8,
+    overflow: "hidden",
+  },
+  emojiCategoryRow: {
+    flexGrow: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.06)",
+  },
+  emojiCategoryBtn: {
+    height: vh(6),
+    paddingHorizontal: vw(3),
+    paddingVertical: vh(0.8),
+  },
+  emojiCategoryBtnActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#0A77EA",
+  },
+  emojiCategoryIcon: { fontSize: 20 },
+  emojiGrid: { flexDirection: "row", flexWrap: "wrap" },
+  emojiItem: { width: "12.5%", alignItems: "center", justifyContent: "center", paddingVertical: vh(0.8) },
+  emojiText: { fontSize: 26 },
 });

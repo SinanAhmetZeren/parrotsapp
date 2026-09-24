@@ -85,15 +85,11 @@ export default function GoogleLoginButton() {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#fff",
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: vh(0.25),
-    marginVertical: vh(0.25),
-    paddingVertical: vh(0.25),
-    borderRadius: vh(1.5),
-    width: vw(65),
-    minHeight: vh(4.5),
+    width: "100%",
+    height: "100%",
   },
   disabled: {
     backgroundColor: '#a1c2fa',

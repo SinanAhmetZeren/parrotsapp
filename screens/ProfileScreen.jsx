@@ -741,7 +741,7 @@ export default function ProfileScreen({ navigation }) {
                     </View>
                   </View>
                   <View style={styles.vehicleListContainer}>
-                    <VehicleList style={styles.voyageList} data={VehiclesData} />
+                    <VehicleList style={styles.voyageList} data={[...VehiclesData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))} />
                   </View>
                 </>
               ) : null}
@@ -761,7 +761,16 @@ export default function ProfileScreen({ navigation }) {
                   <View style={styles.voyageListContainer}>
                     <VoyageListVertical
                       style={styles.voyageList}
-                      data={VoyagesData?.filter(v => v.placeType === 0)}
+                      data={[...(VoyagesData?.filter(v => v.placeType === 0) ?? [])].sort((a, b) => {
+                        const now = Date.now();
+                        const aStart = new Date(a.startDate).getTime();
+                        const bStart = new Date(b.startDate).getTime();
+                        const aUpcoming = aStart >= now;
+                        const bUpcoming = bStart >= now;
+                        if (aUpcoming && bUpcoming) return aStart - bStart; // nearest first
+                        if (!aUpcoming && !bUpcoming) return bStart - aStart; // most recent past first
+                        return aUpcoming ? -1 : 1; // upcoming before past
+                      })}
                     />
                   </View>
                 </>

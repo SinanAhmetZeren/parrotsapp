@@ -17,6 +17,7 @@ import {
   ActivityIndicator,
   Modal,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -39,12 +40,19 @@ import { TERMS_VERSION } from "../constants/TermsVersion";
 import GoogleLoginButton from "../components/GoogleAuthButton";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotRed, parrotTextDarkBlue, parrotYellow } from "../assets/color";
 
-// import {
-//   GoogleSignin,
-//   GoogleSigninButton,
-//   statusCodes,
-// } from "@react-native-google-signin/google-signin";
-// import * as AuthSession from "expo-auth-session";
+const BLUE = "#0A5FBF";
+const LINE = "#D8E0E8";
+const INK = "#1F2933";
+const FAINT = "#5A6874";
+const HERO_H = Dimensions.get("window").width;
+
+const HERO_TITLES = {
+  Login: { title: "Welcome to Parrots", sub: "Sign in to find your next voyage." },
+  Register1: { title: "Let's get started", sub: "Create your account in under a minute." },
+  Register2: { title: "Almost there", sub: "Enter the 6-digit code we sent you." },
+  ForgotPassword: { title: "Reset password", sub: "We'll send a code to your email." },
+  ForgotPassword2: { title: "Check your email", sub: "Enter the code and your new password." },
+};
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -195,23 +203,14 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       setIsLoggingIn(true);
-      // Use await inside try-catch with unwrap() for handling rejected promises
       const loginResponse = await loginUser({
         Email: email,
         Password: password,
       }).unwrap();
 
-      // Ensure token and userId exist before proceeding
       if (!loginResponse?.token || !loginResponse?.userId) {
         throw new Error("Invalid login response");
       }
-
-      // // Store tokens securely
-      // await AsyncStorage.setItem("storedToken", loginResponse.token);
-      // await AsyncStorage.setItem(
-      //   "storedRefreshToken",
-      //   loginResponse.refreshToken
-      // );
 
       dispatch(updateUserFavorites({
         favoriteVehicles: loginResponse.favoriteVehicleIds || [],
@@ -243,21 +242,19 @@ const LoginScreen = ({ navigation }) => {
 
       registerPushTokenAsync(loginResponse.token);
 
-      // Reset inputs
       setEmail("");
       setPassword("");
     } catch (err) {
       console.error("Login error:", err);
       setIsLoggingIn(false);
 
-      // Handle common HTTP errors, else show generic error
       if (err?.status === 401) {
         showToast("Could not log in - Incorrect email or password.");
       } else {
         showToast(`Login failed - ${err?.message || "Something went wrong. Please try again."}`);
       }
     } finally {
-      setIsLoggingIn(false); // Always reset loading state
+      setIsLoggingIn(false);
     }
   };
 
@@ -306,25 +303,9 @@ const LoginScreen = ({ navigation }) => {
       setPasswordR("");
       setConfirmPasswordR("");
 
-      // if registration response is 200
-      // go to Registration-2
-
-      // if ConfirmCode returns token etc
-      // then updateasLoggedIn
-
       if (registerResponse.token) {
         resetAllForms();
         setLoginOrRegister("Register2");
-        /*
-        await dispatch(
-          updateAsLoggedIn({
-            userId: registerResponse.userId,
-            token: registerResponse.token,
-            userName: registerResponse.userName,
-            profileImageUrl: registerResponse.profileImageUrl,
-          })
-        );
-        */
       }
     } catch (err) {
       console.log(err);
@@ -401,11 +382,12 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-  /*    HARD LOGOUT  */
   useEffect(() => {
     logAllAsyncStorage();
     return;
   }, []);
+
+  const { title, sub } = HERO_TITLES[loginOrRegister] || HERO_TITLES.Login;
 
   if (requiresTermsReAcceptance) {
     return (
@@ -440,821 +422,777 @@ const LoginScreen = ({ navigation }) => {
   }
 
   return (
-    <ImageBackground source={require("../assets/seafromsky.jpg")} style={{ flex: 1, paddingTop: vh(4) }}
-      resizeMode="cover" imageStyle={{ left: 0 }}>
+    <View style={s.screen}>
       {toastVisible && (
-        <View style={styles.toast}>
-          <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
+        <View style={s.toast}>
+          <ParrotsStdText style={s.toastText}>{toastMessage}</ParrotsStdText>
         </View>
       )}
-      {loginOrRegister === "Login" ? (
-        <>
-          <View style={{
-            marginHorizontal: vw(4), marginTop: vh(6), borderRadius: vh(2),
-            backgroundColor: "rgba(255,255,255,0.3)", paddingTop: vh(2), paddingBottom: vh(4)
-          }}>
 
-            {/* Logo card */}
-            <View style={styles.logoCard}>
-              <View style={styles.imagecontainer}>
-                <LoginPageLogoComponent />
-                <Image
-                  style={styles.image}
-                  source={require("../assets/welcome.png")}
+      {/* Hero */}
+      <View style={s.hero}>
+        <Image source={require("../assets/parrotsreallife.jpg")} style={s.heroImg} resizeMode="cover" />
+        <View style={s.heroOverlay} />
+        <View style={s.heroTxt}>
+          <ParrotsStdText style={s.heroTitle} numberOfLines={1}>{title}</ParrotsStdText>
+          <ParrotsStdText style={s.heroSub} numberOfLines={1}>{sub}</ParrotsStdText>
+        </View>
+      </View>
+
+      {/* Sheet */}
+      <ScrollView style={s.sheet} contentContainerStyle={s.sheetContent} keyboardShouldPersistTaps="handled">
+
+        {loginOrRegister === "Login" && (
+          <>
+            <View style={s.field}>
+              <ParrotsStdText style={s.fieldLabel}>EMAIL</ParrotsStdText>
+              <TextInput
+                onFocus={() => setIsFocusedEmail(true)}
+                onBlur={() => setIsFocusedEmail(false)}
+                style={[s.input, isFocusedEmail && s.inputFocused]}
+                placeholder="you@example.com"
+                placeholderTextColor={FAINT}
+                value={email}
+                onChangeText={handleEmailChange}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={s.field}>
+              <ParrotsStdText style={s.fieldLabel}>PASSWORD</ParrotsStdText>
+              <View>
+                <TextInput
+                  style={[s.input, isFocusedPassword && s.inputFocused]}
+                  onFocus={() => setIsFocusedPassword(true)}
+                  onBlur={() => setIsFocusedPassword(false)}
+                  placeholder="Your password"
+                  placeholderTextColor={FAINT}
+                  secureTextEntry={isPasswordHidden}
+                  value={password}
+                  onChangeText={handlePasswordChange}
                 />
+                <TouchableOpacity style={s.eyeIcon} onPressIn={togglePasswordVisibility}>
+                  <Feather name="eye" size={20} color={FAINT} />
+                </TouchableOpacity>
               </View>
             </View>
 
-            {/* Login card */}
-            <View style={[styles.container, { flex: 0 }]}>
-              <View style={styles.formContainer}>
-                <View style={styles.loginCard}>
-                  <View style={styles.inputsContainer}>
-                    <TextInput
-                      onFocus={() => setIsFocusedEmail(true)}
-                      onBlur={() => setIsFocusedEmail(false)}
-                      style={[styles.input, isFocusedEmail && styles.inputFocused]}
-                      placeholder="Email"
-                      placeholderTextColor={parrotPlaceholderGrey}
-                      value={email}
-                      onChangeText={(text) => handleEmailChange(text)}
-                    />
-                    <View>
-                      <TextInput
-                        style={[styles.input, isFocusedPassword && styles.inputFocused]}
-                        onFocus={() => setIsFocusedPassword(true)}
-                        onBlur={() => setIsFocusedPassword(false)}
-                        placeholder="Password"
-                        placeholderTextColor={parrotPlaceholderGrey}
-                        secureTextEntry={isPasswordHidden}
-                        value={password}
-                        onChangeText={(text) => handlePasswordChange(text)}
-                      />
-                      <TouchableOpacity
-                        style={styles.eyeIcon}
-                        onPressIn={() => togglePasswordVisibility()}
-                      >
-                        <ParrotsStdText>
-                          <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
+            <TouchableOpacity
+              style={s.forgotPassword}
+              onPress={() => { resetAllForms(); setLoginOrRegister("ForgotPassword"); }}
+            >
+              <ParrotsStdText style={s.linkText}>Forgot password?</ParrotsStdText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={s.btnPri}
+              onPress={handleLogin}
+              disabled={isLoading || isLoggingIn}
+            >
+              {isLoading || isLoggingIn
+                ? <ActivityIndicator color="white" />
+                : <ParrotsStdText style={s.btnPriText}>Login</ParrotsStdText>
+              }
+            </TouchableOpacity>
+
+            <View style={s.dividerRow}>
+              <View style={s.dividerLine} />
+              <ParrotsStdText style={s.dividerText}>or</ParrotsStdText>
+              <View style={s.dividerLine} />
+            </View>
+
+            <View style={s.googleWrap}>
+              <GoogleLoginButton />
+            </View>
+
+            <TouchableOpacity
+              style={s.noAccount}
+              onPress={() => { resetAllForms(); setLoginOrRegister("Register1"); }}
+            >
+              <ParrotsStdText style={s.mutedText}>Don't have an account? </ParrotsStdText>
+              <ParrotsStdText style={s.linkText}>Sign up</ParrotsStdText>
+            </TouchableOpacity>
+
+            <View style={{ display: "none" }}>
+              <TouchableOpacity style={s.btnPri} onPress={logAllAsyncStorage} disabled={isLoading}>
+                <ParrotsStdText style={s.btnPriText}>print</ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
+
+        {loginOrRegister === "Register1" && (
+          <>
+            {/* {isFocusedUserNameR && (
+              <View style={s.validationToast}>
+                {[
+                  { label: "At least 3 characters", ok: userNameR.length >= 3 },
+                  { label: "Max 25 characters", ok: userNameR.length <= 25 },
+                  { label: "Letters, numbers, underscores only", ok: userNameR.length === 0 || /^[a-zA-Z0-9_]+$/.test(userNameR) },
+                ].map(({ label, ok }) => (
+                  <ParrotsStdText key={label} style={[s.validationItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                    {ok ? "✓" : "✗"} {label}
+                  </ParrotsStdText>
+                ))}
+              </View>
+            )}
+            {(isFocusedPasswordR || isFocusedConfirmPasswordR) && (
+              <View style={s.validationToast}>
+                {[
+                  { label: "At least 8 characters", ok: passwordR.length >= 8 },
+                  { label: "One uppercase letter", ok: /[A-Z]/.test(passwordR) },
+                  { label: "One lowercase letter", ok: /[a-z]/.test(passwordR) },
+                  { label: "One number", ok: /[0-9]/.test(passwordR) },
+                  { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
+                ].map(({ label, ok }) => (
+                  <ParrotsStdText key={label} style={[s.validationItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                    {ok ? "✓" : "✗"} {label}
+                  </ParrotsStdText>
+                ))}
+              </View>
+            )}
+            {isFocusedEmailR && (
+              <View style={s.validationToast}>
+                {[
+                  { label: "Valid email format", ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailR) },
+                ].map(({ label, ok }) => (
+                  <ParrotsStdText key={label} style={[s.validationItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
+                    {ok ? "✓" : "✗"} {label}
+                  </ParrotsStdText>
+                ))}
+              </View>
+            )} */}
+
+            <View style={s.field}>
+              <View style={s.fieldLabelRow}>
+                <ParrotsStdText style={s.fieldLabel}>USERNAME</ParrotsStdText>
+                {isFocusedUserNameR && (
+                  <View style={s.pillsGroup}>
+                    {[
+                      { label: "3+ chars", ok: userNameR.length >= 3 },
+                      { label: "Max 25", ok: userNameR.length <= 25 },
+                      { label: "a-z 0-9 _", ok: userNameR.length === 0 || /^[a-zA-Z0-9_]+$/.test(userNameR) },
+                    ].map(({ label, ok }) => (
+                      <View key={label} style={[s.rulePill, ok && s.rulePillOk]}>
+                        <ParrotsStdText style={[s.rulePillText, ok && s.rulePillTextOk]}>{label}</ParrotsStdText>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </View>
+              <TextInput
+                style={[s.input, isFocusedUserNameR && s.inputFocused]}
+                onFocus={() => setIsFocusedUserNameR(true)}
+                onBlur={() => setIsFocusedUserNameR(false)}
+                placeholderTextColor={FAINT}
+                placeholder="3-25 characters"
+                value={userNameR}
+                maxLength={25}
+                onChangeText={handleUserNameRChange}
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={s.field}>
+              <View style={s.fieldLabelRow}>
+                <ParrotsStdText style={s.fieldLabel}>EMAIL</ParrotsStdText>
+                {isFocusedEmailR && (
+                  <View style={s.pillsGroup}>
+                    {[
+                      { label: "Valid email", ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailR) },
+                    ].map(({ label, ok }) => (
+                      <View key={label} style={[s.rulePill, ok && s.rulePillOk]}>
+                        <ParrotsStdText style={[s.rulePillText, ok && s.rulePillTextOk]}>{label}</ParrotsStdText>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </View>
+              <TextInput
+                style={[s.input, isFocusedEmailR && s.inputFocused]}
+                onFocus={() => setIsFocusedEmailR(true)}
+                onBlur={() => setIsFocusedEmailR(false)}
+                placeholderTextColor={FAINT}
+                placeholder="you@example.com"
+                value={emailR}
+                onChangeText={handleEmailRChange}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={s.field}>
+              <View style={s.fieldLabelRow}>
+                <ParrotsStdText style={s.fieldLabel}>PASSWORD</ParrotsStdText>
+                {isFocusedPasswordR && (
+                  <View style={s.pillsGroup}>
+                    {[
+                      { label: "8+ chars", ok: passwordR.length >= 8 },
+                      { label: "Uppercase", ok: /[A-Z]/.test(passwordR) },
+                      { label: "Lowercase", ok: /[a-z]/.test(passwordR) },
+                      { label: "Number", ok: /[0-9]/.test(passwordR) },
+                    ].map(({ label, ok }) => (
+                      <View key={label} style={[s.rulePill, ok && s.rulePillOk]}>
+                        <ParrotsStdText style={[s.rulePillText, ok && s.rulePillTextOk]}>
+                          {label}
                         </ParrotsStdText>
-                      </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </View>
+              <View>
+                <TextInput
+                  style={[s.input, isFocusedPasswordR && s.inputFocused]}
+                  onFocus={() => setIsFocusedPasswordR(true)}
+                  onBlur={() => setIsFocusedPasswordR(false)}
+                  placeholderTextColor={FAINT}
+                  placeholder="Create a password"
+                  secureTextEntry={isPasswordHidden}
+                  value={passwordR}
+                  onChangeText={handlePasswordRChange}
+                />
+                <TouchableOpacity style={s.eyeIcon} onPressIn={togglePasswordVisibility}>
+                  <Feather name="eye" size={20} color={FAINT} />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={s.field}>
+              <View style={s.fieldLabelRow}>
+                <ParrotsStdText style={s.fieldLabel}>CONFIRM PASSWORD</ParrotsStdText>
+                {isFocusedConfirmPasswordR && (
+                  <View style={s.pillsGroup}>
+                    <View style={[s.rulePill, confirmPasswordR.length > 0 && passwordR === confirmPasswordR && s.rulePillOk]}>
+                      <ParrotsStdText style={[s.rulePillText, confirmPasswordR.length > 0 && passwordR === confirmPasswordR && s.rulePillTextOk]}>
+                        Passwords match
+                      </ParrotsStdText>
                     </View>
                   </View>
-
-                  <TouchableOpacity
-                    style={styles.forgotPassword}
-                    onPress={() => {
-                      resetAllForms();
-                      setLoginOrRegister("ForgotPassword");
-                    }}
-                  >
-                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
-                      Forgot password?
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-
-                  <View style={styles.loginContainer}>
-                    <TouchableOpacity
-                      style={styles.selection2}
-                      onPress={handleLogin}
-                      disabled={isLoading || isLoggingIn}
-                    >
-                      {isLoading || isLoggingIn
-                        ? <ActivityIndicator color="white" />
-                        : <ParrotsStdText style={styles.choiceText}>Login</ParrotsStdText>
-                      }
-                    </TouchableOpacity>
-                  </View>
-
-                  <View style={{ ...styles.loginContainer, display: "none" }}>
-                    <TouchableOpacity
-                      style={styles.selection2}
-                      onPress={logAllAsyncStorage}
-                      disabled={isLoading}
-                    >
-                      <ParrotsStdText style={styles.choiceText}>print</ParrotsStdText>
-                    </TouchableOpacity>
-                  </View>
-
-                  <TouchableOpacity
-                    style={styles.noAccount}
-                    onPress={() => {
-                      resetAllForms();
-                      setLoginOrRegister("Register1");
-                    }}
-                  >
-                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
-                      Don't have an account?{" "}
-                    </ParrotsStdText>
-                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
-                      Sign up
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
-
-                {/* Google card */}
-                <View style={styles.googleCard}>
-                  <GoogleLoginButton />
-                </View>
-
+                )}
               </View>
-            </View>
-
-          </View>
-        </>
-      ) : loginOrRegister === "Register1" ? (
-        // register screen - 1
-        <>
-          <View style={{ marginHorizontal: vw(4), marginTop: vh(6), borderRadius: vh(2), backgroundColor: "rgba(255,255,255,0.3)", paddingTop: vh(2), paddingBottom: vh(4) }}>
-            <View style={styles.logoCard}>
-              <View style={styles.imagecontainer}>
-                <View style={{ marginTop: vh(1) }}>
-                  <LoginPageLogoComponent />
-                </View>
-                <Image
-                  style={styles.imageLetsStart}
-                  source={require("../assets/letsstart.png")}
-                />
-              </View>
-            </View>
-            <View style={[registrationSuccessStyles.container, { backgroundColor: "transparent" }]}>
-              {/* {isSuccessRegisterUser ? (
-            <ParrotsStdText style={registrationSuccessStyles.successMessage}>Registration successful!</ParrotsStdText>
-          ) : ( */}
-              <View style={registrationSuccessStyles.formContainer}>
-                {isFocusedUserNameR && (
-                  <View style={[registrationSuccessStyles.usernameToast, { top: -98 }]}>
-                    {[
-                      { label: "At least 3 characters", ok: userNameR.length >= 3 },
-                      { label: "Max 25 characters", ok: userNameR.length <= 25 },
-                      { label: "Letters, numbers, underscores only", ok: userNameR.length === 0 || /^[a-zA-Z0-9_]+$/.test(userNameR) },
-                    ].map(({ label, ok }) => (
-                      <ParrotsStdText key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
-                        {ok ? "✓" : "✗"} {label}
-                      </ParrotsStdText>
-                    ))}
-                  </View>
-                )}
-                {(isFocusedPasswordR || isFocusedConfirmPasswordR) && (
-                  <View style={[registrationSuccessStyles.usernameToast, { top: -144 }]}>
-                    {[
-                      { label: "At least 8 characters", ok: passwordR.length >= 8 },
-                      { label: "One uppercase letter", ok: /[A-Z]/.test(passwordR) },
-                      { label: "One lowercase letter", ok: /[a-z]/.test(passwordR) },
-                      { label: "One number", ok: /[0-9]/.test(passwordR) },
-                      { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
-                    ].map(({ label, ok }) => (
-                      <ParrotsStdText key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
-                        {ok ? "✓" : "✗"} {label}
-                      </ParrotsStdText>
-                    ))}
-                  </View>
-                )}
-                {isFocusedEmailR && (
-                  <View style={[registrationSuccessStyles.usernameToast, { top: -46 }]}>
-                    {[
-                      { label: "Valid email format", ok: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailR) },
-                    ].map(({ label, ok }) => (
-                      <ParrotsStdText key={label} style={[registrationSuccessStyles.usernameToastItem, { color: ok ? "#a8e6cf" : "#ffb3b3" }]}>
-                        {ok ? "✓" : "✗"} {label}
-                      </ParrotsStdText>
-                    ))}
-                  </View>
-                )}
+              <View>
                 <TextInput
-                  style={[
-                    styles.input,
-                    isFocusedUserNameR && styles.inputFocused,
-                  ]}
-                  onFocus={() => setIsFocusedUserNameR(true)}
-                  onBlur={() => setIsFocusedUserNameR(false)}
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  placeholder="Username (3-25 characters)"
-                  value={userNameR}
-                  maxLength={25}
-                  onChangeText={(text) => handleUserNameRChange(text)}
+                  style={[s.input, isFocusedConfirmPasswordR && s.inputFocused]}
+                  onFocus={() => setIsFocusedConfirmPasswordR(true)}
+                  onBlur={() => setIsFocusedConfirmPasswordR(false)}
+                  placeholderTextColor={FAINT}
+                  placeholder="Type it again"
+                  secureTextEntry={isConfirmPasswordHidden}
+                  value={confirmPasswordR}
+                  onChangeText={handlePasswordR2Change}
                 />
-                <TextInput
-                  style={[styles.input, isFocusedEmailR && styles.inputFocused]}
-                  onFocus={() => setIsFocusedEmailR(true)}
-                  onBlur={() => setIsFocusedEmailR(false)}
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  placeholder="Email"
-                  value={emailR}
-                  onChangeText={(text) => handleEmailRChange(text)}
-                />
-
-                <View>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isFocusedPasswordR && styles.inputFocused,
-                    ]}
-                    onFocus={() => setIsFocusedPasswordR(true)}
-                    onBlur={() => setIsFocusedPasswordR(false)}
-                    placeholderTextColor={parrotPlaceholderGrey}
-                    placeholder="Enter Password"
-                    secureTextEntry={isPasswordHidden}
-                    value={passwordR}
-                    onChangeText={(text) => handlePasswordRChange(text)}
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPressIn={() => togglePasswordVisibility()}
-                  >
-                    <ParrotsStdText>
-                      <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
-
-                <View>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isFocusedConfirmPasswordR && styles.inputFocused,
-                    ]}
-                    onFocus={() => setIsFocusedConfirmPasswordR(true)}
-                    onBlur={() => setIsFocusedConfirmPasswordR(false)}
-                    placeholderTextColor={parrotPlaceholderGrey}
-                    placeholder="Re-enter Password"
-                    secureTextEntry={isConfirmPasswordHidden}
-                    value={confirmPasswordR}
-                    onChangeText={(text) => handlePasswordR2Change(text)}
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPressIn={() => togglePasswordVisibility2()}
-                  >
-                    <ParrotsStdText>
-                      <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.termsRow}
-                  onPress={() => setTermsAccepted(prev => !prev)}
-                  activeOpacity={0.7}
-                >
-                  <View style={[styles.checkbox, termsAccepted && styles.checkboxChecked]}>
-                    {termsAccepted && <ParrotsStdText style={styles.checkmark}>✓</ParrotsStdText>}
-                  </View>
-                  <ParrotsStdText style={styles.termsText}>
-                    I've read and agree to the{" "}
-                  </ParrotsStdText>
-                  <TouchableOpacity onPress={() => setTermsModalVisible(true)}>
-                    <ParrotsStdText style={styles.termsLink}>Terms of Use</ParrotsStdText>
-                  </TouchableOpacity>
+                <TouchableOpacity style={s.eyeIcon} onPressIn={togglePasswordVisibility2}>
+                  <Feather name="eye" size={20} color={FAINT} />
                 </TouchableOpacity>
+              </View>
+            </View>
 
-                <Modal
-                  visible={termsModalVisible}
-                  animationType="slide"
-                  onRequestClose={() => setTermsModalVisible(false)}
+            <TouchableOpacity
+              style={s.termsRow}
+              onPress={() => setTermsAccepted(prev => !prev)}
+              activeOpacity={0.7}
+            >
+              <View style={[s.checkbox, termsAccepted && s.checkboxChecked]}>
+                {termsAccepted && <ParrotsStdText style={s.checkmark}>✓</ParrotsStdText>}
+              </View>
+              <ParrotsStdText style={s.mutedText}>I've read and agree to the </ParrotsStdText>
+              <TouchableOpacity onPress={() => setTermsModalVisible(true)}>
+                <ParrotsStdText style={s.linkText}>Terms of Use</ParrotsStdText>
+              </TouchableOpacity>
+            </TouchableOpacity>
+
+            <Modal
+              visible={termsModalVisible}
+              animationType="slide"
+              onRequestClose={() => setTermsModalVisible(false)}
+            >
+              <View style={{ flex: 1 }}>
+                <TermsOfUseComponent />
+                <TouchableOpacity
+                  style={s.termsCloseButton}
+                  onPress={() => setTermsModalVisible(false)}
                 >
-                  <View style={{ flex: 1 }}>
-                    <TermsOfUseComponent />
-                    <TouchableOpacity
-                      style={styles.termsCloseButton}
-                      onPress={() => setTermsModalVisible(false)}
-                    >
-                      <ParrotsStdText style={styles.choiceText}>Close</ParrotsStdText>
-                    </TouchableOpacity>
+                  <ParrotsStdText style={s.btnPriText}>Close</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </Modal>
+
+            <TouchableOpacity
+              style={[
+                s.btnPri,
+                (isLoadingRegisterUser ||
+                  userNameR.length < 3 ||
+                  !emailR ||
+                  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailR) ||
+                  passwordR.length < 8 ||
+                  !/[A-Z]/.test(passwordR) ||
+                  !/[a-z]/.test(passwordR) ||
+                  !/[0-9]/.test(passwordR) ||
+                  passwordR !== confirmPasswordR ||
+                  !termsAccepted) && s.btnDisabled,
+              ]}
+              onPress={() => {
+                if (passwordR !== confirmPasswordR) {
+                  showToast("Passwords do not match - Please try again.");
+                }
+                if (passwordR === confirmPasswordR) {
+                  handleRegister();
+                }
+              }}
+              disabled={
+                isLoadingRegisterUser ||
+                userNameR.length < 3 ||
+                !emailR ||
+                passwordR.length < 8 ||
+                !/[A-Z]/.test(passwordR) ||
+                !/[a-z]/.test(passwordR) ||
+                !/[0-9]/.test(passwordR) ||
+                passwordR !== confirmPasswordR ||
+                !termsAccepted
+              }
+            >
+              <ParrotsStdText style={s.btnPriText}>Register</ParrotsStdText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={s.noAccount}
+              onPress={() => { resetAllForms(); setLoginOrRegister("Login"); }}
+            >
+              <ParrotsStdText style={s.mutedText}>Back to </ParrotsStdText>
+              <ParrotsStdText style={s.linkText}>Login</ParrotsStdText>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {loginOrRegister === "Register2" && (
+          <>
+            <View style={s.field}>
+              <ParrotsStdText style={s.fieldLabel}>CONFIRMATION CODE</ParrotsStdText>
+              <TextInput
+                style={[s.input, isFocusedCode && s.inputFocused]}
+                onFocus={() => setIsFocusedCode(true)}
+                onBlur={() => setIsFocusedCode(false)}
+                placeholderTextColor={FAINT}
+                placeholder="Enter 6 digit code"
+                value={registerCode}
+                onChangeText={handleRegisterCodeChange}
+                keyboardType="number-pad"
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[s.btnPri, (isLoadingConfirmUser || registerCode === "") && s.btnDisabled]}
+              onPress={() => {
+                if (passwordR !== confirmPasswordR) {
+                  showToast("Passwords do not match - Please try again.");
+                }
+                handleConfirm();
+              }}
+              disabled={isLoadingConfirmUser || registerCode === ""}
+            >
+              <ParrotsStdText style={s.btnPriText}>Confirm</ParrotsStdText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={s.noAccount}
+              onPress={() => { resetAllForms(); setLoginOrRegister("Login"); }}
+            >
+              <ParrotsStdText style={s.mutedText}>Back to </ParrotsStdText>
+              <ParrotsStdText style={s.linkText}>Login</ParrotsStdText>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {loginOrRegister === "ForgotPassword" && (
+          <>
+            <View style={s.field}>
+              <ParrotsStdText style={s.fieldLabel}>EMAIL</ParrotsStdText>
+              <TextInput
+                style={[s.input, isFocusedEmailR && s.inputFocused]}
+                onFocus={() => setIsFocusedEmailR(true)}
+                onBlur={() => setIsFocusedEmailR(false)}
+                placeholderTextColor={FAINT}
+                placeholder="you@example.com"
+                value={emailForgotPassword}
+                onChangeText={(text) => setEmailForgotPassword(text)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <TouchableOpacity style={s.btnPri} onPress={handleSendResetCode}>
+              <ParrotsStdText style={s.btnPriText}>Send Reset Code</ParrotsStdText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={s.noAccount}
+              onPress={() => { resetAllForms(); setLoginOrRegister("Login"); }}
+            >
+              <ParrotsStdText style={s.mutedText}>Back to </ParrotsStdText>
+              <ParrotsStdText style={s.linkText}>Login</ParrotsStdText>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {loginOrRegister === "ForgotPassword2" && (
+          <>
+            <View style={s.field}>
+              <View style={s.fieldLabelRow}>
+                <ParrotsStdText style={s.fieldLabel}>NEW PASSWORD</ParrotsStdText>
+                {isFocusedPasswordR && (
+                  <View style={s.pillsGroup}>
+                    {[
+                      { label: "8+ chars", ok: passwordR.length >= 8 },
+                      { label: "Uppercase", ok: /[A-Z]/.test(passwordR) },
+                      { label: "Lowercase", ok: /[a-z]/.test(passwordR) },
+                      { label: "Number", ok: /[0-9]/.test(passwordR) },
+                    ].map(({ label, ok }) => (
+                      <View key={label} style={[s.rulePill, ok && s.rulePillOk]}>
+                        <ParrotsStdText style={[s.rulePillText, ok && s.rulePillTextOk]}>{label}</ParrotsStdText>
+                      </View>
+                    ))}
                   </View>
-                </Modal>
-
-                <View style={styles.loginContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.selection2,
-                      isLoadingRegisterUser ||
-                        userNameR.length < 3 ||
-                        !emailR ||
-                        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailR) ||
-                        passwordR.length < 8 ||
-                        !/[A-Z]/.test(passwordR) ||
-                        !/[a-z]/.test(passwordR) ||
-                        !/[0-9]/.test(passwordR) ||
-                        passwordR !== confirmPasswordR ||
-                        !termsAccepted
-                        ? styles.disabled
-                        : null,
-                    ]}
-                    onPress={() => {
-                      if (passwordR !== confirmPasswordR) {
-                        showToast("Passwords do not match - Please try again.");
-                      }
-                      if (passwordR === confirmPasswordR) {
-                        handleRegister();
-                      }
-                    }}
-                    disabled={
-                      isLoadingRegisterUser ||
-                      userNameR.length < 3 ||
-                      !emailR ||
-                      passwordR.length < 8 ||
-                      !/[A-Z]/.test(passwordR) ||
-                      !/[a-z]/.test(passwordR) ||
-                      !/[0-9]/.test(passwordR) ||
-                      passwordR !== confirmPasswordR ||
-                      !termsAccepted
-                    }
-                  >
-                    <ParrotsStdText style={styles.choiceText}>Register</ParrotsStdText>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.noAccount}
-                    onPress={() => {
-                      resetAllForms();
-                      setLoginOrRegister("Login");
-                    }}
-                  >
-                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
-                      Back to{" "}
-                    </ParrotsStdText>
-                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
-                      Login
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
+                )}
               </View>
-            </View>
-          </View>
-        </>
-      ) : loginOrRegister === "Register2" ? (
-        <>
-          <View style={{ marginHorizontal: vw(4), marginTop: vh(6), borderRadius: vh(2), backgroundColor: "rgba(255,255,255,0.3)", paddingTop: vh(2), paddingBottom: vh(4) }}>
-            <View style={styles.logoCard}>
-              <View style={styles.imagecontainer}>
-                <LoginPageLogoComponent />
-                <Image
-                  style={styles.imageAlmostThere}
-                  source={require("../assets/almostthere.png")}
-                />
-              </View>
-            </View>
-
-            <View style={[registrationSuccessStyles.container, { backgroundColor: "transparent" }]}>
-              <View style={registrationSuccessStyles.formContainer}>
+              <View>
                 <TextInput
-                  style={[styles.input, isFocusedCode && styles.inputFocused]}
-                  onFocus={() => setIsFocusedCode(true)}
-                  onBlur={() => setIsFocusedCode(false)}
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  placeholder="Enter 6 Digit Code"
-                  value={registerCode}
-                  onChangeText={(text) => handleRegisterCodeChange(text)}
+                  style={[s.input, isFocusedPasswordR && s.inputFocused]}
+                  onFocus={() => setIsFocusedPasswordR(true)}
+                  onBlur={() => setIsFocusedPasswordR(false)}
+                  placeholderTextColor={FAINT}
+                  placeholder="Enter new password"
+                  secureTextEntry={isPasswordHidden}
+                  value={passwordR}
+                  onChangeText={handlePasswordRChange}
                 />
-
-                <View style={styles.loginContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.selection2,
-                      isLoadingConfirmUser || registerCode === ""
-                        ? styles.disabled
-                        : null,
-                    ]}
-                    onPress={() => {
-                      if (passwordR !== confirmPasswordR) {
-                        showToast("Passwords do not match - Please try again.");
-                      }
-                      handleConfirm();
-                    }}
-                    disabled={isLoadingConfirmUser || registerCode === ""}
-                  >
-                    <ParrotsStdText style={styles.choiceText}>Confirm</ParrotsStdText>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.noAccount}
-                    onPress={() => {
-                      resetAllForms();
-                      setLoginOrRegister("Login");
-                    }}
-                  >
-                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
-                      Back to{" "}
-                    </ParrotsStdText>
-                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
-                      Login
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={s.eyeIcon} onPressIn={togglePasswordVisibility}>
+                  <Feather name="eye" size={20} color={FAINT} />
+                </TouchableOpacity>
               </View>
             </View>
-          </View>
-        </>
-      ) : loginOrRegister === "ForgotPassword" ? (
-        <>
-          <View style={{ marginHorizontal: vw(4), marginTop: vh(6), borderRadius: vh(2), backgroundColor: "rgba(255,255,255,0.3)", paddingTop: vh(2), paddingBottom: vh(4) }}>
-            <View style={styles.logoCard}>
-              <View style={styles.imagecontainer}>
-                <LoginPageLogoComponent />
-                <Image
-                  style={styles.image}
-                  source={require("../assets/resetpassword.png")}
-                />
+            <View style={s.field}>
+              <View style={s.fieldLabelRow}>
+                <ParrotsStdText style={s.fieldLabel}>CONFIRM NEW PASSWORD</ParrotsStdText>
+                {isFocusedConfirmPasswordR && (
+                  <View style={s.pillsGroup}>
+                    <View style={[s.rulePill, confirmPasswordR.length > 0 && passwordR === confirmPasswordR && s.rulePillOk]}>
+                      <ParrotsStdText style={[s.rulePillText, confirmPasswordR.length > 0 && passwordR === confirmPasswordR && s.rulePillTextOk]}>
+                        Passwords match
+                      </ParrotsStdText>
+                    </View>
+                  </View>
+                )}
               </View>
-            </View>
-
-            <View style={[registrationSuccessStyles.container, { backgroundColor: "transparent" }]}>
-              <View style={registrationSuccessStyles.formContainer}>
+              <View>
                 <TextInput
-                  style={[styles.input, isFocusedEmailR && styles.inputFocused]}
-                  onFocus={() => setIsFocusedEmailR(true)}
-                  onBlur={() => setIsFocusedEmailR(false)}
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  placeholder="Email"
-                  value={emailForgotPassword}
-                  onChangeText={(text) => setEmailForgotPassword(text)}
+                  style={[s.input, isFocusedConfirmPasswordR && s.inputFocused]}
+                  onFocus={() => setIsFocusedConfirmPasswordR(true)}
+                  onBlur={() => setIsFocusedConfirmPasswordR(false)}
+                  placeholderTextColor={FAINT}
+                  placeholder="Type it again"
+                  secureTextEntry={isConfirmPasswordHidden}
+                  value={confirmPasswordR}
+                  onChangeText={handlePasswordR2Change}
                 />
-
-                <View style={styles.loginContainer}>
-                  <TouchableOpacity
-                    style={styles.selection2}
-                    onPress={() => {
-                      handleSendResetCode();
-                    }}
-                  >
-                    <ParrotsStdText style={styles.choiceText}>Send Reset Code</ParrotsStdText>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.noAccount}
-                    onPress={() => {
-                      resetAllForms();
-                      setLoginOrRegister("Login");
-                    }}
-                  >
-                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
-                      Back to{" "}
-                    </ParrotsStdText>
-                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
-                      Login
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity style={s.eyeIcon} onPressIn={togglePasswordVisibility2}>
+                  <Feather name="eye" size={20} color={FAINT} />
+                </TouchableOpacity>
               </View>
             </View>
-          </View>
-        </>
-      ) : loginOrRegister === "ForgotPassword2" ? (
-        <>
-          <View style={{ marginHorizontal: vw(4), marginTop: vh(6), borderRadius: vh(2), backgroundColor: "rgba(255,255,255,0.3)", paddingTop: vh(2), paddingBottom: vh(4) }}>
-            <View style={styles.logoCard}>
-              <View style={styles.imagecontainer}>
-                <LoginPageLogoComponent />
-                <Image
-                  style={styles.imageAlmostThere}
-                  source={require("../assets/checkyouremail.png")}
-                />
-              </View>
+            <View style={s.field}>
+              <ParrotsStdText style={s.fieldLabel}>RESET CODE</ParrotsStdText>
+              <TextInput
+                style={[s.input, isFocusedResetCode && s.inputFocused]}
+                onFocus={() => setIsFocusedResetCode(true)}
+                onBlur={() => setIsFocusedResetCode(false)}
+                placeholderTextColor={FAINT}
+                placeholder="Enter 6 digit code"
+                value={resetPasswordCode}
+                onChangeText={handleRegisterCode2Change}
+                keyboardType="number-pad"
+              />
             </View>
 
-            <View style={[registrationSuccessStyles.container, { backgroundColor: "transparent" }]}>
-              <View style={registrationSuccessStyles.formContainer}>
-                <View>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isFocusedPasswordR && styles.inputFocused,
-                    ]}
-                    onFocus={() => setIsFocusedPasswordR(true)}
-                    onBlur={() => setIsFocusedPasswordR(false)}
-                    placeholderTextColor={parrotPlaceholderGrey}
-                    placeholder="Enter New Password"
-                    secureTextEntry={isPasswordHidden}
-                    value={passwordR}
-                    onChangeText={(text) => handlePasswordRChange(text)}
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPressIn={() => togglePasswordVisibility()}
-                  >
-                    <ParrotsStdText>
-                      <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
+            <TouchableOpacity
+              style={[
+                s.btnPri,
+                (isLoadingRegisterUser || passwordR === "" || confirmPasswordR === "" || resetPasswordCode === "") && s.btnDisabled,
+              ]}
+              onPress={() => {
+                if (passwordR !== confirmPasswordR) {
+                  showToast("Passwords do not match - Please try again.");
+                }
+                if (passwordR === confirmPasswordR) {
+                  handleResetPassword();
+                }
+              }}
+              disabled={passwordR === "" || confirmPasswordR === "" || resetPasswordCode === ""}
+            >
+              <ParrotsStdText style={s.btnPriText}>Update Password</ParrotsStdText>
+            </TouchableOpacity>
 
-                <View>
-                  <TextInput
-                    style={[
-                      styles.input,
-                      isFocusedConfirmPasswordR && styles.inputFocused,
-                    ]}
-                    onFocus={() => setIsFocusedConfirmPasswordR(true)}
-                    onBlur={() => setIsFocusedConfirmPasswordR(false)}
-                    placeholderTextColor={parrotPlaceholderGrey}
-                    placeholder="Re-enter New Password"
-                    secureTextEntry={isConfirmPasswordHidden}
-                    value={confirmPasswordR}
-                    onChangeText={(text) => handlePasswordR2Change(text)}
-                  />
-                  <TouchableOpacity
-                    style={styles.eyeIcon}
-                    onPressIn={() => togglePasswordVisibility2()}
-                  >
-                    <ParrotsStdText>
-                      <Feather name="eye" size={24} color={parrotPlaceholderGrey} />
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
+            <TouchableOpacity
+              style={s.noAccount}
+              onPress={() => { resetAllForms(); setLoginOrRegister("Login"); }}
+            >
+              <ParrotsStdText style={s.mutedText}>Back to </ParrotsStdText>
+              <ParrotsStdText style={s.linkText}>Login</ParrotsStdText>
+            </TouchableOpacity>
+          </>
+        )}
 
-                <TextInput
-                  style={[styles.input, isFocusedResetCode && styles.inputFocused]}
-                  onFocus={() => setIsFocusedResetCode(true)}
-                  onBlur={() => setIsFocusedResetCode(false)}
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  placeholder="Enter 6 Digit Code"
-                  value={resetPasswordCode}
-                  onChangeText={(text) => handleRegisterCode2Change(text)}
-                />
-
-                <View style={styles.loginContainer}>
-                  <TouchableOpacity
-                    style={[
-                      styles.selection2,
-                      isLoadingRegisterUser ||
-                        passwordR === "" ||
-                        confirmPasswordR === "" ||
-                        resetPasswordCode === ""
-                        ? styles.disabled
-                        : null,
-                    ]}
-                    onPress={() => {
-                      if (passwordR !== confirmPasswordR) {
-                        showToast("Passwords do not match - Please try again.");
-                      }
-                      if (passwordR === confirmPasswordR) {
-                        handleResetPassword();
-                      }
-                    }}
-                    disabled={
-                      passwordR === "" ||
-                      confirmPasswordR === "" ||
-                      resetPasswordCode === ""
-                    }
-                  >
-                    <ParrotsStdText style={styles.choiceText}>Update Password</ParrotsStdText>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.noAccount}
-                    onPress={() => {
-                      resetAllForms();
-                      setLoginOrRegister("Login");
-                    }}
-                  >
-                    <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", color: parrotPlaceholderGrey }}>
-                      Back to{" "}
-                    </ParrotsStdText>
-                    <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", color: parrotPlaceholderGrey }}>
-                      Login
-                    </ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              {(passwordR.length > 0 || confirmPasswordR.length > 0) && (
-                <View style={styles.passwordChecklist}>
-                  {[
-                    { label: "At least 8 characters", ok: passwordR.length >= 8 },
-                    { label: "One uppercase letter", ok: /[A-Z]/.test(passwordR) },
-                    { label: "One lowercase letter", ok: /[a-z]/.test(passwordR) },
-                    { label: "One number", ok: /[0-9]/.test(passwordR) },
-                    { label: "Passwords match", ok: passwordR.length > 0 && passwordR === confirmPasswordR },
-                  ].map(({ label, ok }) => (
-                    <ParrotsStdText key={label} style={[styles.passwordCheckItem, { color: ok ? "#2e7d32" : "#c62828" }]}>
-                      {ok ? "✓" : "✗"} {label}
-                    </ParrotsStdText>
-                  ))}
-                </View>
-              )}
-            </View>
-          </View>
-        </>
-      ) : null}
-    </ImageBackground>
+      </ScrollView>
+    </View>
   );
 };
 
-
-
-
-
-const styles = StyleSheet.create({
-  disabled: {
-    backgroundColor: parrotBlueSemiTransparent,
-  },
-  loginContainer: {
-    marginTop: vh(2),
-  },
-  googleLoginContainer: {
-    marginTop: vh(4)
-  },
-  loginCard: {
-    width: vw(80),
-    backgroundColor: parrotLightCream,
-    borderRadius: vh(2),
-    padding: vh(2),
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.10,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  googleCard: {
-    width: vw(80),
-    backgroundColor: parrotLightCream,
-    borderRadius: vh(2),
-    paddingVertical: vh(1.5),
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.10,
-    shadowRadius: 8,
-    elevation: 4,
-    marginTop: vh(3),
-  },
-  logoCard: {
-    width: vw(80),
-    backgroundColor: "white",
-    borderRadius: vh(2),
-    paddingVertical: vh(1.5),
-    alignItems: "center",
-    alignSelf: "center",
-    marginTop: vh(2),
-    paddingTop: vh(1.5),
-    marginBottom: vh(1),
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.10,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  orDivider: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: vw(80),
-    marginVertical: vh(2),
-  },
-  orLine: {
+const s = StyleSheet.create({
+  screen: {
     flex: 1,
-    height: 1,
-    backgroundColor: parrotLightBlue,
+    backgroundColor: parrotCream,
   },
-  orText: {
-    marginHorizontal: vh(1.5),
-    fontFamily: "Nunito_600SemiBold",
-    color: parrotTextDarkBlue,
+  // Hero
+  hero: {
+    height: HERO_H,
   },
-  forgotPassword: {
-    paddingBottom: vh(1),
-    alignSelf: "flex-end",
-    paddingRight: vh(1.5),
+  heroImg: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
   },
-  noAccount: {
-    paddingVertical: vh(1),
-    alignSelf: "center",
+  heroOverlay: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(8,30,54,0.68)",
+  },
+  heroTxt: {
+    position: "absolute",
+    bottom: 38,
+    left: 24,
+    right: 24,
+  },
+  heroTitle: {
+    fontSize: 32,
+    fontFamily: "Nunito_800ExtraBold",
+    color: "#fff",
+    letterSpacing: -0.5,
+    lineHeight: 38,
+  },
+  heroSub: {
+    fontSize: 16,
+    fontFamily: "Nunito_700Bold",
+    color: "rgba(255,255,255,0.80)",
+    marginTop: 6,
+  },
+  // Sheet
+  sheet: {
+    flex: 1,
+    backgroundColor: parrotCream,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+    marginTop: -22,
+  },
+  sheetContent: {
+    paddingHorizontal: 24,
+    paddingTop: 28,
+    paddingBottom: 48,
+    gap: 12,
+  },
+  // Field wrapper + label
+  field: {
+    gap: 4,
+  },
+  fieldLabelRow: {
     flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 3,
+    justifyContent: "space-between",
+  },
+  fieldLabel: {
+    fontSize: 10,
+    fontFamily: "Nunito_800ExtraBold",
+    letterSpacing: 0.9,
+    color: FAINT,
+  },
+  // Inputs
+  input: {
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: LINE,
+    paddingHorizontal: 14,
+    fontSize: 15,
+    fontFamily: "Nunito_600SemiBold",
+    color: INK,
+  },
+  inputFocused: {
+    borderColor: BLUE,
   },
   eyeIcon: {
     position: "absolute",
-    right: vw(0),
-    paddingVertical: vh(0.8),
-    paddingHorizontal: vh(2),
+    right: 14,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
   },
-  inputsContainer: {
-    width: vw(65),
-    marginTop: vh(1),
+  // Buttons
+  btnPri: {
+    height: 50,
+    borderRadius: 999,
+    backgroundColor: BLUE,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 4,
   },
-  choiceText: {
+  btnPriText: {
     fontSize: 16,
     fontFamily: "Nunito_700Bold",
-    color: "white",
-    textAlign: "center",
+    color: "#fff",
   },
-  selection2: {
-    marginHorizontal: vh(0.25),
-    marginVertical: vh(0.25),
-    height: vh(4.5),
-    backgroundColor: parrotBlue,
-    borderRadius: vh(1.5),
-    width: vw(65),
+  btnDisabled: {
+    backgroundColor: parrotBlueSemiTransparent,
+  },
+  // Google
+  googleWrap: {
+    height: 50,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    borderColor: LINE,
+    backgroundColor: "#fff",
+    overflow: "hidden",
     alignItems: "center",
     justifyContent: "center",
   },
-  container: {
+  // Divider
+  dividerRow: {
     flexDirection: "row",
-    flex: 1,
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    paddingTop: 12,
-    paddingHorizontal: 16,
-  },
-  formContainer: {
-    marginTop: 0,
-    width: vw(80),
     alignItems: "center",
+    marginVertical: 4,
   },
-  input: {
-    backgroundColor: "white",
-    height: 40,
-    borderColor: parrotBlueMediumTransparent,
-    borderWidth: 3,
-    marginBottom: vh(1),
-    padding: 8,
-    width: vw(65),
-    borderRadius: vh(1.5),
-    color: parrotInputTextColor,
-    fontFamily: "Nunito_400Regular",
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: LINE,
   },
-  inputFocused: {
-    borderColor: parrotBlueSemiTransparent3,
-    borderWidth: 3,
-  },
-  passwordChecklist: {
-    width: vw(65),
-    marginTop: vh(1.5),
-    marginBottom: vh(1),
-    gap: 2,
-  },
-  passwordCheckItem: {
-    fontSize: 12,
+  dividerText: {
+    marginHorizontal: 12,
+    fontSize: 13,
     fontFamily: "Nunito_600SemiBold",
+    color: FAINT,
   },
+  // Misc
+  forgotPassword: {
+    alignSelf: "flex-end",
+    marginTop: -4,
+  },
+  noAccount: {
+    flexDirection: "row",
+    alignSelf: "center",
+    paddingVertical: 8,
+  },
+  mutedText: {
+    fontSize: 14,
+    fontFamily: "Nunito_600SemiBold",
+    color: FAINT,
+  },
+  linkText: {
+    fontSize: 14,
+    fontFamily: "Nunito_700Bold",
+    color: BLUE,
+  },
+  // Terms
   termsRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 8,
-    marginBottom: 4,
     flexWrap: "wrap",
-    marginLeft: 2,
+    marginTop: 4,
   },
   checkbox: {
     width: 20,
     height: 20,
     borderRadius: 4,
     borderWidth: 2,
-    borderColor: parrotBlue,
+    borderColor: BLUE,
     marginRight: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   checkboxChecked: {
-    backgroundColor: parrotBlue,
+    backgroundColor: BLUE,
   },
   checkmark: {
     color: "white",
     fontSize: 13,
     fontFamily: "Nunito_700Bold",
   },
-  termsText: {
-    fontSize: 13,
-    color: parrotPlaceholderGrey,
-    fontFamily: "Nunito_400Regular",
-  },
-  termsLink: {
-    fontSize: 13,
-    color: parrotBlue,
-    fontFamily: "Nunito_600SemiBold",
-    textDecorationLine: "underline",
-  },
   termsCloseButton: {
-    backgroundColor: parrotBlue,
+    backgroundColor: BLUE,
     margin: 16,
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: "center",
   },
-  imagecontainer: {
+  // Password checklist
+  passwordChecklist: {
+    gap: 2,
+  },
+  passwordCheckItem: {
+    fontSize: 12,
+    fontFamily: "Nunito_600SemiBold",
+  },
+  // Password rule pills
+  rules: {
     flexDirection: "row",
-    justifyContent: "center",
-    alignSelf: "center",
+    flexWrap: "wrap",
+    gap: 5,
+    marginTop: -4,
   },
-
-  image: {
-    marginTop: vh(1),
-    marginLeft: vh(2),
-    width: vw(70 * .6),
-    height: vh(15 * .6),
+  pillsGroup: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 3,
+    justifyContent: "flex-end",
+    flex: 1,
   },
-  imageLetsStart: {
-    marginTop: vh(1),
-    marginLeft: vh(2),
-    width: vw(72 * .6),
-    height: vh(17 * .6),
+  rulePill: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backgroundColor: "#F4F7FB",
   },
-  imageAlmostThere: {
-    marginTop: vh(1),
-    marginLeft: vh(2),
-    width: vw(72 * .6),
-    height: vh(15 * .6),
-    resizeMode: "contain",
+  rulePillOk: {
+    backgroundColor: "#E4F5E9",
   },
+  rulePillText: {
+    fontSize: 10,
+    fontFamily: "Nunito_800ExtraBold",
+    color: FAINT,
+  },
+  rulePillTextOk: {
+    color: "#0B6B4E",
+  },
+  hint: {
+    fontSize: 11,
+    fontFamily: "Nunito_700Bold",
+    color: "#B3261E",
+    marginTop: -6,
+  },
+  // Validation toasts (old — commented out in JSX)
+  validationToast: {
+    backgroundColor: "#1a56b0",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  validationItem: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    lineHeight: 22,
+  },
+  // Toast
   toast: {
     position: "absolute",
     bottom: vh(10),
@@ -1274,52 +1212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const registrationSuccessStyles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
-    alignItems: "center",
-    paddingTop: 12,
-    paddingHorizontal: 16,
-    backgroundColor: "transparent",
-  },
-  usernameToast: {
-    position: "absolute",
-    alignSelf: "center",
-    zIndex: 10,
-    backgroundColor: "#1a56b0",
-    borderRadius: 20,
-    paddingHorizontal: vw(4),
-    paddingVertical: vh(1),
-  },
-  usernameToastItem: {
-    fontSize: 13,
-    fontFamily: "Nunito_600SemiBold",
-    lineHeight: 22,
-  },
-  formContainer: {
-    marginTop: 0,
-    width: vw(80),
-    alignItems: "center",
-    backgroundColor: parrotLightCream,
-    borderRadius: vh(2),
-    paddingTop: vh(3),
-    paddingBottom: vh(2),
-    paddingHorizontal: vh(2),
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.10,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-});
-
 export default LoginScreen;
-
-const LoginPageLogoComponent = () => {
-  return (
-    <Image
-      style={{ width: vh(12), height: vh(12), borderRadius: vh(6), overflow: "hidden" }}
-      source={require("../assets/parrotslogologin.png")}
-    />
-  );
-};

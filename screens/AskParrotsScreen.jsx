@@ -179,7 +179,7 @@ export default function AskParrotsScreen() {
         {/* Map */}
         <SectionCard label="AROUND..."
           style={{ padding: 0, paddingTop: 10, overflow: "hidden" }} labelStyle={{ paddingHorizontal: 16 }}>
-          <View style={{ position: "relative", marginTop: -8 }}>
+          <View style={{ position: "relative", marginTop: -8, borderRadius: 16, overflow: "hidden" }}>
             <MapView
               ref={mapRef}
               provider={PROVIDER_GOOGLE}
@@ -432,7 +432,7 @@ function PillGroup({ options, selected, onSelect, colors, pillPaddingHorizontal 
               styles.pill,
               pillPaddingHorizontal != null && { paddingHorizontal: pillPaddingHorizontal },
               colors
-                ? { backgroundColor: isSelected ? color : color + "0D", borderColor: isSelected ? "transparent" : "rgba(150,150,150,0.5)" }
+                ? { backgroundColor: isSelected ? color : color + "0D", borderColor: isSelected ? "transparent" : "#E8E3DC" }
                 : isSelected && { backgroundColor: parrotBlue, borderColor: parrotBlue }
             ]}
             onPress={() => onSelect(opt)}
@@ -462,12 +462,12 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "white", borderRadius: 16, padding: 16, marginBottom: 12,
-    shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+    borderWidth: 1.5, borderColor: "#E8E3DC",
   },
   cardLabel: { fontSize: 11, fontFamily: "Nunito_800ExtraBold", color: parrotPlaceholderGrey, letterSpacing: 1, marginBottom: 10 },
   pillGroup: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   pill: {
-    borderWidth: 1.5, borderColor: parrotPlaceholderGrey, borderRadius: 20,
+    borderWidth: 1.5, borderColor: "#E8E3DC", borderRadius: 20,
     paddingHorizontal: 14, paddingVertical: 7,
   },
   pillSelected: { backgroundColor: parrotBlue, borderColor: parrotBlue },
@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
   askButtonText: { color: "white", fontSize: 16, fontFamily: "Nunito_800ExtraBold" },
   responseCard: {
     backgroundColor: "white", borderRadius: 16, padding: 16,
-    shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+    borderWidth: 1.5, borderColor: "#E8E3DC",
   },
   locationLabel: { fontSize: 15, color: "#10B981", fontFamily: "Nunito_800ExtraBold", marginBottom: 6 },
   scrollArrow: { position: "absolute", bottom: 0, right: -10, pointerEvents: "none" },
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
   noBalanceCard: {
     backgroundColor: "white", borderRadius: 16, padding: 16, marginBottom: 12,
     flexDirection: "row", alignItems: "center", gap: 12,
-    shadowColor: "#000", shadowOpacity: 0.06, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+    borderWidth: 1.5, borderColor: "#E8E3DC",
   },
   noBalanceCookie: { width: 48, height: 48 },
   noBalanceTitle: { fontSize: 14, fontFamily: "Nunito_800ExtraBold", color: parrotTextDarkBlue, marginBottom: 2 },

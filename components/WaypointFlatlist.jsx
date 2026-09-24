@@ -79,25 +79,27 @@ export const WaypointFlatListVoyageDetailsScreen = ({
 
   return (
     <FlatList
-      style={{ padding: vh(0.52) }}
-      contentContainerStyle={addedWayPoints.length === 1 ? { flex: 1, justifyContent: "center" } : {}}
+      style={{ paddingVertical: 4 }}
+      contentContainerStyle={{ gap: 8, paddingRight: 11 }}
       horizontal
+      showsHorizontalScrollIndicator={false}
       data={addedWayPoints}
       keyExtractor={(item, index) => `${item.order}-${index}`}
       renderItem={({ item, index }) => {
         let newUri = item.profileImage;
         return (
-          <View key={index} style={{ borderRadius: vh(3), marginHorizontal: vh(0.3), marginRight: vh(.5), overflow: "hidden" }}>
-            <WaypointItemVoyageDetailScreen
-              title={item.title}
-              description={item.description}
-              imageUri={newUri}
-              latitude={item.latitude}
-              longitude={item.longitude}
-              focusMap={focusMap}
-              voyageProfileImage={voyageProfileImage}
-            />
-          </View>
+          <WaypointItemVoyageDetailScreen
+            key={index}
+            title={item.title}
+            description={item.description}
+            imageUri={newUri}
+            latitude={item.latitude}
+            longitude={item.longitude}
+            focusMap={focusMap}
+            voyageProfileImage={voyageProfileImage}
+            order={index + 1}
+            total={addedWayPoints.length}
+          />
         );
       }}
     />
@@ -111,49 +113,40 @@ export const WaypointItemVoyageDetailScreen = ({
   latitude,
   longitude,
   focusMap,
-  voyageProfileImage
+  voyageProfileImage,
+  order,
+  total,
 }) => {
+  const badgeColor = order === 1 ? "#4CAF50" : order === total ? "red" : "#06B6D4";
   const [modalVisible, setModalVisible] = useState(false);
-
-  const handleFocusMap = () => {
-    focusMap(latitude, longitude);
-  };
-
-  const handleShowModal = () => {
-    setModalVisible(true);
-  };
-
-  const hasImage = typeof imageUri === 'string' && imageUri.trim().length > 0;
-
+  const hasImage = typeof imageUri === "string" && imageUri.trim().length > 0;
+  const displayImage = hasImage ? imageUri : voyageProfileImage;
 
   return (
-    <View
-      style={{
-        marginVertical: vh(0.5),
-        borderRadius: vh(3),
-      }}
-    >
-      <TouchableOpacity onPress={() => handleFocusMap()} >
-        <View style={styles.waypointCard}>
-          <View>
-            <Image
-              source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
-              style={hasImage ? styles.waypointCardImage : { ...styles.waypointCardImage, opacity: 0.5 }}
-            />
-          </View>
-
-          <View style={styles.titleAndDescription}>
-            <ParrotsStdText numberOfLines={1} style={styles.title}>
-              {title}
-            </ParrotsStdText>
-            <ParrotsStdText numberOfLines={5} style={styles.description}>
-              {description}
-            </ParrotsStdText>
+    <View>
+      <TouchableOpacity
+        style={wpStyles.card}
+        activeOpacity={0.78}
+        onPress={() => {
+          focusMap(latitude, longitude);
+          setModalVisible(true);
+        }}
+      >
+        <View>
+          <Image
+            source={{ uri: displayImage }}
+            style={[wpStyles.thumb, !hasImage && { opacity: 0.45 }]}
+          />
+          <View style={[wpStyles.orderBadge, { position: "absolute", top: 5, right: 5, backgroundColor: badgeColor }]}>
+            <ParrotsStdText style={[wpStyles.orderText, { color: "#fff" }]}>{order}</ParrotsStdText>
           </View>
         </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleShowModal()}>
-        <ParrotsStdText style={styles.seeDetails}>See Details</ParrotsStdText>
+        <View style={wpStyles.textCol}>
+          <ParrotsStdText numberOfLines={1} style={wpStyles.cardTitle}>{title}</ParrotsStdText>
+          {!!description && (
+            <ParrotsStdText numberOfLines={2} style={wpStyles.cardDesc}>{description}</ParrotsStdText>
+          )}
+        </View>
       </TouchableOpacity>
 
       <Modal
@@ -162,35 +155,22 @@ export const WaypointItemVoyageDetailScreen = ({
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(1,1,1,0.4)",
-          }}
-        >
-          {/* // modal edited // */}
-          <View style={styles.imageContainerInModal}>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.55)", justifyContent: "center", alignItems: "center" }}>
+          <View style={wpStyles.modalCard}>
             <Image
-              source={hasImage ? { uri: imageUri } : { uri: voyageProfileImage }}
-              style={hasImage ? styles.voyageImageInModal : { ...styles.voyageImageInModal, opacity: 0.5 }}
-
+              source={{ uri: displayImage }}
+              style={[wpStyles.modalImage, !hasImage && { opacity: 0.5 }]}
             />
-            <ScrollView style={styles.scrollView}>
-              <ParrotsStdText numberOfLines={2} style={styles.waypointTitleInModal2}>
-                {title}
-              </ParrotsStdText>
-              <ParrotsStdText style={styles.waypointDescriptionInModal2}>
-                {description}
-              </ParrotsStdText>
-            </ScrollView>
-
-            <TouchableOpacity
-              style={styles.closeButtonAndText}
-              onPress={() => setModalVisible(false)}
-            >
-              <View>
-                <ParrotsStdText style={styles.buttonClose}>Close</ParrotsStdText>
-              </View>
+            <View style={{ padding: 16 }}>
+              <ParrotsStdText style={wpStyles.modalTitle}>{title}</ParrotsStdText>
+              {!!description && (
+                <ScrollView style={{ maxHeight: vh(20) }}>
+                  <ParrotsStdText style={wpStyles.modalDesc}>{description}</ParrotsStdText>
+                </ScrollView>
+              )}
+            </View>
+            <TouchableOpacity style={wpStyles.modalCloseBtn} onPress={() => setModalVisible(false)}>
+              <ParrotsStdText style={wpStyles.modalCloseBtnText}>Close</ParrotsStdText>
             </TouchableOpacity>
           </View>
         </View>
@@ -474,5 +454,88 @@ const styles = StyleSheet.create({
     bottom: vh(1),
     right: vw(2),
     color: parrotBlue,
+  },
+});
+
+const wpStyles = StyleSheet.create({
+  card: {
+    width: 148,
+    borderWidth: 1.5,
+    borderColor: "#E8E3DC",
+    borderRadius: 11,
+    backgroundColor: "#fff",
+    overflow: "hidden",
+  },
+  thumb: {
+    width: "100%",
+    height: 80,
+  },
+  textCol: {
+    padding: 8,
+    gap: 2,
+    height: 68,
+  },
+  orderBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: "#E8F1FB",
+    borderRadius: 999,
+    width: 18,
+    height: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 3,
+  },
+  orderText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 10,
+    color: "#0A5FBF",
+  },
+  cardTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#1F2933",
+  },
+  cardDesc: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 10.5,
+    color: "#5A6874",
+    lineHeight: 15,
+    marginTop: 1,
+  },
+  // Modal
+  modalCard: {
+    width: vw(82),
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    overflow: "hidden",
+  },
+  modalImage: {
+    width: "100%",
+    height: vh(28),
+  },
+  modalTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 16,
+    color: "#0A5FBF",
+    marginBottom: 6,
+  },
+  modalDesc: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 13,
+    color: "#3C4A57",
+    lineHeight: 19,
+  },
+  modalCloseBtn: {
+    margin: 16,
+    marginTop: 4,
+    backgroundColor: "#0A5FBF",
+    borderRadius: 999,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  modalCloseBtnText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#fff",
   },
 });

@@ -6,7 +6,6 @@ import React from "react";
 import { useState, useRef, useEffect } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   Modal,
   TouchableOpacity,
@@ -29,6 +28,7 @@ import {
   parrotBlue,
   parrotCream,
 } from "../assets/color.jsx";
+import { Feather } from "@expo/vector-icons";
 
 export const CreateBidComponent = ({
   userProfileImage,
@@ -67,13 +67,12 @@ export const CreateBidComponent = ({
     setExistingPersons(String(userBidPersons ?? 0));
   }, [userBidPersons, userBidPrice, userBidMessage]);
 
-
   const handleIncrementPrice = () => setPrice(String((parseInt(price) || 0) + 1));
   const handleDecrementPrice = () => setPrice(String(Math.max(0, (parseInt(price) || 0) - 1)));
   const handleIncrementPersons = () => setPersons(String((parseInt(persons) || 0) + 1));
   const handleDecrementPersons = () => setPersons(String(Math.max(0, (parseInt(persons) || 0) - 1)));
 
-  const handleSendBid = (userProfileImage, userName) => {
+  const handleSendBid = async (userProfileImage, userName) => {
     let bidData = {
       personCount: parseInt(persons) || 0,
       message: message,
@@ -83,8 +82,7 @@ export const CreateBidComponent = ({
       userProfileImage,
       userName,
     };
-
-    sendBid(bidData);
+    await sendBid(bidData);
     addVoyageToFavorites({ userId, voyageId });
     dispatch(addVoyageToUserFavorites({ favoriteVoyage: voyageId }));
     setIsCreateModalVisible(false);
@@ -96,7 +94,7 @@ export const CreateBidComponent = ({
   const handleIncrementExistingPersons = () => setExistingPersons(String((parseInt(existingPersons) || 0) + 1));
   const handleDecrementExistingPersons = () => setExistingPersons(String(Math.max(0, (parseInt(existingPersons) || 0) - 1)));
 
-  const handleChangeBid = () => {
+  const handleChangeBid = async () => {
     let bidData = {
       personCount: parseInt(existingPersons) || 0,
       message: existingMessage,
@@ -105,18 +103,13 @@ export const CreateBidComponent = ({
       userId,
       bidId: userBidId,
     };
-    changeBid(bidData);
+    await changeBid(bidData);
     setIsChangeModalVisible(false);
     refetch();
   };
 
-  const handleOpenChangeModal = () => {
-    setIsChangeModalVisible(true);
-  };
-
-  const handleOpenCreateModal = () => {
-    setIsCreateModalVisible(true);
-  };
+  const handleOpenChangeModal = () => setIsChangeModalVisible(true);
+  const handleOpenCreateModal = () => setIsCreateModalVisible(true);
 
   const handleCloseChangeModal = () => {
     setIsChangeModalVisible(false);
@@ -132,170 +125,163 @@ export const CreateBidComponent = ({
     setMessage("");
   };
 
+  const disabled = !!isOwnerDeleted || isBiddingClosed;
+
   return (
     <View>
-      <View style={bidInputStyles.bidButtonContainer}>
-        {hasBidWithUserId ? (
-          <View style={bidInputStyles.modalView2}>
-            <TouchableOpacity disabled={!!isOwnerDeleted || isBiddingClosed} style={[bidInputStyles.buttonSendBidContainer, (isOwnerDeleted || isBiddingClosed) && { opacity: 0.4 }]} onPress={handleOpenChangeModal}>
-              <ParrotsStdText style={bidInputStyles.buttonSave}>Change Bid</ParrotsStdText>
-            </TouchableOpacity>
+      {/* Inline CTA */}
+      {hasBidWithUserId ? (
+        <View style={cs.bidSummaryRow}>
+          <View style={{ flex: 1 }}>
+            <ParrotsStdText style={cs.yourBidLabel}>YOUR BID</ParrotsStdText>
+            <ParrotsStdText style={cs.yourBidValue}>
+              {currency}{userBidPrice} · {userBidPersons} {userBidPersons === 1 ? "guest" : "guests"}
+            </ParrotsStdText>
+            {!!userBidMessage && (
+              <ParrotsStdText style={cs.yourBidMessage} numberOfLines={2}>{userBidMessage}</ParrotsStdText>
+            )}
           </View>
-        ) : (
-          <View style={bidInputStyles.modalView2}>
-            <TouchableOpacity disabled={!!isOwnerDeleted || isBiddingClosed} style={[bidInputStyles.buttonSendBidContainer, (isOwnerDeleted || isBiddingClosed) && { opacity: 0.4 }]} onPress={handleOpenCreateModal}>
-              <ParrotsStdText style={bidInputStyles.buttonSave}>Create Bid</ParrotsStdText>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+          <TouchableOpacity
+            disabled={disabled}
+            style={[cs.changeBtn, disabled && { opacity: 0.4 }]}
+            onPress={handleOpenChangeModal}
+          >
+            <Feather name="edit-2" size={12} color="#0A5FBF" />
+            <ParrotsStdText style={cs.changeBtnText}>Change</ParrotsStdText>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <TouchableOpacity
+          disabled={disabled}
+          style={[cs.placeBidBtn, disabled && { opacity: 0.4 }]}
+          onPress={handleOpenCreateModal}
+        >
+          <Feather name="send" size={13} color="#fff" />
+          <ParrotsStdText style={cs.placeBidText}>
+            {isBiddingClosed ? "Bidding closed" : "Place a bid"}
+          </ParrotsStdText>
+        </TouchableOpacity>
+      )}
 
-      <Modal
-        visible={isCreateModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCloseCreateModal}
-      >
-        <View style={bidInputStyles.modalContainer}>
-          <View style={bidInputStyles.innerContainer}>
-            <ParrotsStdText style={bidInputStyles.title}>Enter Your Bid</ParrotsStdText>
-            <ParrotsStdText style={bidInputStyles.subtitle}>Set your offer price and number of guests</ParrotsStdText>
+      {/* CREATE BID MODAL */}
+      <Modal visible={isCreateModalVisible} transparent animationType="fade" onRequestClose={handleCloseCreateModal}>
+        <View style={cs.modalOverlay}>
+          <View style={cs.modalCard}>
+            <ParrotsStdText style={cs.modalTitle}>Place a Bid</ParrotsStdText>
+            <ParrotsStdText style={cs.modalSubtitle}>Set your offer and number of guests</ParrotsStdText>
 
-            <View style={bidInputStyles.inputMainContainer}>
-              <ParrotsStdText style={bidInputStyles.InputName}>Offer Price ({currency})</ParrotsStdText>
-              <View style={bidInputStyles.counterContainer}>
-                <TouchableOpacity onPress={handleDecrementPrice} style={bidInputStyles.decrementButtonContainer}>
-                  <ParrotsStdText style={bidInputStyles.buttonCount}>-</ParrotsStdText>
-                </TouchableOpacity>
-                <TextInput
-                  ref={createBidTextInputRef}
-                  style={bidInputStyles.bidInput}
-                  keyboardType="numeric"
-                  selectionColor={parrotCream}
-                  value={price.toString()}
-                  onFocus={() => { if (price === "0") setPrice(""); }}
-                  onBlur={() => { if (price === "") setPrice("0"); }}
-                  onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setPrice(n === "" ? "" : String(parseInt(n, 10))); }}
-                />
-                <TouchableOpacity onPress={handleIncrementPrice} style={bidInputStyles.incrementButtonContainer}>
-                  <ParrotsStdText style={bidInputStyles.buttonCount}>+</ParrotsStdText>
-                </TouchableOpacity>
+            <View style={cs.counterRow}>
+              <View style={cs.counterBlock}>
+                <ParrotsStdText style={cs.counterLabel}>GUESTS</ParrotsStdText>
+                <View style={cs.counterInner}>
+                  <TouchableOpacity onPress={handleDecrementPersons} style={cs.counterBtn}><ParrotsStdText style={cs.counterBtnText}>−</ParrotsStdText></TouchableOpacity>
+                  <TextInput
+                    style={cs.counterValue}
+                    keyboardType="numeric"
+                    selectionColor="#0A5FBF"
+                    value={persons.toString()}
+                    onFocus={() => { if (persons === "0") setPersons(""); }}
+                    onBlur={() => { if (persons === "") setPersons("0"); }}
+                    onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setPersons(n === "" ? "" : String(parseInt(n, 10))); }}
+                  />
+                  <TouchableOpacity onPress={handleIncrementPersons} style={cs.counterBtn}><ParrotsStdText style={cs.counterBtnText}>+</ParrotsStdText></TouchableOpacity>
+                </View>
               </View>
-            </View>
-
-            <View style={bidInputStyles.inputMainContainer}>
-              <ParrotsStdText style={bidInputStyles.InputName}>Guests</ParrotsStdText>
-              <View style={bidInputStyles.counterContainer}>
-                <TouchableOpacity onPress={handleDecrementPersons} style={bidInputStyles.decrementButtonContainer}>
-                  <ParrotsStdText style={bidInputStyles.buttonCount}>-</ParrotsStdText>
-                </TouchableOpacity>
-                <TextInput
-                  style={bidInputStyles.bidInput}
-                  keyboardType="numeric"
-                  selectionColor={parrotCream}
-                  value={persons.toString()}
-                  onFocus={() => { if (persons === "0") setPersons(""); }}
-                  onBlur={() => { if (persons === "") setPersons("0"); }}
-                  onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setPersons(n === "" ? "" : String(parseInt(n, 10))); }}
-                />
-                <TouchableOpacity onPress={handleIncrementPersons} style={bidInputStyles.incrementButtonContainer}>
-                  <ParrotsStdText style={bidInputStyles.buttonCount}>+</ParrotsStdText>
-                </TouchableOpacity>
+              <View style={cs.counterDivider} />
+              <View style={cs.counterBlock}>
+                <ParrotsStdText style={cs.counterLabel}>PRICE ({currency})</ParrotsStdText>
+                <View style={cs.counterInner}>
+                  <TouchableOpacity onPress={handleDecrementPrice} style={cs.counterBtn}><ParrotsStdText style={cs.counterBtnText}>−</ParrotsStdText></TouchableOpacity>
+                  <TextInput
+                    ref={createBidTextInputRef}
+                    style={cs.counterValue}
+                    keyboardType="numeric"
+                    selectionColor="#0A5FBF"
+                    value={price.toString()}
+                    onFocus={() => { if (price === "0") setPrice(""); }}
+                    onBlur={() => { if (price === "") setPrice("0"); }}
+                    onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setPrice(n === "" ? "" : String(parseInt(n, 10))); }}
+                  />
+                  <TouchableOpacity onPress={handleIncrementPersons} style={cs.counterBtn}><ParrotsStdText style={cs.counterBtnText}>+</ParrotsStdText></TouchableOpacity>
+                </View>
               </View>
             </View>
 
             <TextInput
-              style={bidInputStyles.messageInput}
-              placeholder="Add a message (optional)"
-              placeholderTextColor="#b0b8c4"
+              style={cs.messageInput}
+              placeholder="Add a message (optional, max 100)"
+              placeholderTextColor="#9AA7B3"
               multiline
+              maxLength={100}
               value={message}
               onChangeText={(text) => setMessage(text)}
             />
 
-            <View style={bidInputStyles.buttonsContainer}>
-              <TouchableOpacity onPress={handleCloseCreateModal} style={bidInputStyles.buttonCancelContainer}>
-                <ParrotsStdText style={bidInputStyles.buttonClear}>Cancel</ParrotsStdText>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleSendBid(userProfileImage, userName)} style={bidInputStyles.buttonSendBidContainer}>
-                <ParrotsStdText style={bidInputStyles.buttonSave}>Send Bid</ParrotsStdText>
-              </TouchableOpacity>
+            <View style={cs.modalBtns}>
+              <TouchableOpacity onPress={handleCloseCreateModal} style={cs.cancelBtn}><ParrotsStdText style={cs.cancelText}>Cancel</ParrotsStdText></TouchableOpacity>
+              <TouchableOpacity onPress={() => handleSendBid(userProfileImage, userName)} style={cs.sendBtn}><ParrotsStdText style={cs.sendText}>Send Bid</ParrotsStdText></TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
 
       {/* CHANGE BID MODAL */}
-      <Modal
-        visible={isChangeModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCloseChangeModal}
-      >
-        <View style={bidInputStyles.modalContainer}>
-          <View style={bidInputStyles.innerContainer}>
-            <ParrotsStdText style={bidInputStyles.title}>Change Your Bid</ParrotsStdText>
-            <ParrotsStdText style={bidInputStyles.subtitle}>Update your offer price and number of guests</ParrotsStdText>
+      <Modal visible={isChangeModalVisible} transparent animationType="fade" onRequestClose={handleCloseChangeModal}>
+        <View style={cs.modalOverlay}>
+          <View style={cs.modalCard}>
+            <ParrotsStdText style={cs.modalTitle}>Change Your Bid</ParrotsStdText>
+            <ParrotsStdText style={cs.modalSubtitle}>Update your offer and number of guests</ParrotsStdText>
 
-            <View style={bidInputStyles.inputMainContainer1}>
-              <ParrotsStdText style={bidInputStyles.InputName}>Offer Price ({currency})</ParrotsStdText>
-              <View style={bidInputStyles.counterContainer}>
-                <TouchableOpacity onPress={handleDecrementExistingPrice} style={bidInputStyles.decrementButtonContainer}>
-                  <ParrotsStdText style={bidInputStyles.buttonCount}>-</ParrotsStdText>
-                </TouchableOpacity>
-                <TextInput
-                  ref={changeBidTextInputRef}
-                  style={bidInputStyles.bidInput}
-                  keyboardType="numeric"
-                  selectionColor={parrotCream}
-                  value={existingBidPrice.toString()}
-                  onFocus={() => { if (existingBidPrice === "0") setExistingBidPrice(""); }}
-                  onBlur={() => { if (existingBidPrice === "") setExistingBidPrice("0"); }}
-                  onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setExistingBidPrice(n === "" ? "" : String(parseInt(n, 10))); }}
-                />
-                <TouchableOpacity onPress={handleIncrementExistingPrice} style={bidInputStyles.incrementButtonContainer}>
-                  <ParrotsStdText style={bidInputStyles.buttonCount}>+</ParrotsStdText>
-                </TouchableOpacity>
+            <View style={cs.counterRow}>
+              <View style={cs.counterBlock}>
+                <ParrotsStdText style={cs.counterLabel}>GUESTS</ParrotsStdText>
+                <View style={cs.counterInner}>
+                  <TouchableOpacity onPress={handleDecrementExistingPersons} style={cs.counterBtn}><ParrotsStdText style={cs.counterBtnText}>−</ParrotsStdText></TouchableOpacity>
+                  <TextInput
+                    style={cs.counterValue}
+                    keyboardType="numeric"
+                    selectionColor="#0A5FBF"
+                    value={existingPersons.toString()}
+                    onFocus={() => { if (existingPersons === "0") setExistingPersons(""); }}
+                    onBlur={() => { if (existingPersons === "") setExistingPersons("0"); }}
+                    onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setExistingPersons(n === "" ? "" : String(parseInt(n, 10))); }}
+                  />
+                  <TouchableOpacity onPress={handleIncrementExistingPersons} style={cs.counterBtn}><ParrotsStdText style={cs.counterBtnText}>+</ParrotsStdText></TouchableOpacity>
+                </View>
               </View>
-            </View>
-
-            <View style={bidInputStyles.inputMainContainer}>
-              <ParrotsStdText style={bidInputStyles.InputName}>Guests</ParrotsStdText>
-              <View style={bidInputStyles.counterContainer}>
-                <TouchableOpacity onPress={handleDecrementExistingPersons} style={bidInputStyles.decrementButtonContainer}>
-                  <ParrotsStdText style={bidInputStyles.buttonCount}>-</ParrotsStdText>
-                </TouchableOpacity>
-                <TextInput
-                  style={bidInputStyles.bidInput}
-                  keyboardType="numeric"
-                  selectionColor={parrotCream}
-                  value={existingPersons.toString()}
-                  onFocus={() => { if (existingPersons === "0") setExistingPersons(""); }}
-                  onBlur={() => { if (existingPersons === "") setExistingPersons("0"); }}
-                  onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setExistingPersons(n === "" ? "" : String(parseInt(n, 10))); }}
-                />
-                <TouchableOpacity onPress={handleIncrementExistingPersons} style={bidInputStyles.incrementButtonContainer}>
-                  <ParrotsStdText style={bidInputStyles.buttonCount}>+</ParrotsStdText>
-                </TouchableOpacity>
+              <View style={cs.counterDivider} />
+              <View style={cs.counterBlock}>
+                <ParrotsStdText style={cs.counterLabel}>PRICE ({currency})</ParrotsStdText>
+                <View style={cs.counterInner}>
+                  <TouchableOpacity onPress={handleDecrementExistingPrice} style={cs.counterBtn}><ParrotsStdText style={cs.counterBtnText}>−</ParrotsStdText></TouchableOpacity>
+                  <TextInput
+                    ref={changeBidTextInputRef}
+                    style={cs.counterValue}
+                    keyboardType="numeric"
+                    selectionColor="#0A5FBF"
+                    value={existingBidPrice.toString()}
+                    onFocus={() => { if (existingBidPrice === "0") setExistingBidPrice(""); }}
+                    onBlur={() => { if (existingBidPrice === "") setExistingBidPrice("0"); }}
+                    onChangeText={(text) => { const n = text.replace(/[^0-9]/g, ""); setExistingBidPrice(n === "" ? "" : String(parseInt(n, 10))); }}
+                  />
+                  <TouchableOpacity onPress={handleIncrementExistingPersons} style={cs.counterBtn}><ParrotsStdText style={cs.counterBtnText}>+</ParrotsStdText></TouchableOpacity>
+                </View>
               </View>
             </View>
 
             <TextInput
-              style={bidInputStyles.messageInput}
-              placeholder="Add a message (optional)"
-              placeholderTextColor="#b0b8c4"
+              style={cs.messageInput}
+              placeholder="Add a message (optional, max 100)"
+              placeholderTextColor="#9AA7B3"
               multiline
+              maxLength={100}
               value={existingMessage}
               onChangeText={(text) => setExistingMessage(text)}
             />
 
-            <View style={bidInputStyles.buttonsContainer}>
-              <TouchableOpacity onPress={handleCloseChangeModal} style={bidInputStyles.buttonCancelContainer}>
-                <ParrotsStdText style={bidInputStyles.buttonClear}>Cancel</ParrotsStdText>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleChangeBid()} style={bidInputStyles.buttonSendBidContainer}>
-                <ParrotsStdText style={bidInputStyles.buttonSave}>Change Bid</ParrotsStdText>
-              </TouchableOpacity>
+            <View style={cs.modalBtns}>
+              <TouchableOpacity onPress={handleCloseChangeModal} style={cs.cancelBtn}><ParrotsStdText style={cs.cancelText}>Cancel</ParrotsStdText></TouchableOpacity>
+              <TouchableOpacity onPress={() => handleChangeBid()} style={cs.sendBtn}><ParrotsStdText style={cs.sendText}>Update Bid</ParrotsStdText></TouchableOpacity>
             </View>
           </View>
         </View>
@@ -304,156 +290,187 @@ export const CreateBidComponent = ({
   );
 };
 
-const bidInputStyles = StyleSheet.create({
-  modalView2: {
-    position: "absolute",
-    alignSelf: "center",
-  },
-  bidButtonContainer: {
-    width: vw(40),
-    alignSelf: "center",
-    marginTop: vh(3),
-    height: vh(4),
-    justifyContent: "center",
-    marginBottom: vh(3),
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-  },
-  innerContainer: {
-    backgroundColor: "#ffffff",
-    padding: 24,
-    borderRadius: 24,
-    width: vw(88),
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  title: {
-    fontSize: 20,
-    fontFamily: "Nunito_800ExtraBold",
-    color: parrotTextDarkBlue,
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 13,
-    fontFamily: "Nunito_400Regular",
-    color: "#9aa0aa",
-    marginBottom: 20,
-  },
-  inputMainContainer: {
-    marginBottom: 16,
-  },
-  inputMainContainer1: {
-    marginBottom: 16,
-  },
-  InputName: {
-    fontSize: 13,
-    color: "#9aa0aa",
-    fontFamily: "Nunito_600SemiBold",
-    marginBottom: 8,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-  counterContainer: {
+const cs = StyleSheet.create({
+  // Inline CTA
+  placeBidBtn: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-  },
-  decrementButtonContainer: {
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: 14,
-    width: vw(22),
-    height: vh(5.5),
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
+    gap: 7,
+    height: 40,
+    borderRadius: 11,
+    backgroundColor: "#0A5FBF",
   },
-  incrementButtonContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: 14,
-    width: vw(22),
-    height: vh(5.5),
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  buttonCount: {
-    fontSize: 26,
-    fontFamily: "Nunito_700Bold",
-    color: parrotGreen,
-    textAlign: "center",
-  },
-  bidInput: {
-    color: parrotGreen,
-    fontSize: 28,
+  placeBidText: {
     fontFamily: "Nunito_800ExtraBold",
-    width: vw(28),
-    textAlign: "center",
-  },
-  messageInput: {
     fontSize: 14,
-    color: parrotTextDarkBlue,
-    backgroundColor: "#f2f4f7",
-    fontFamily: "Nunito_600SemiBold",
-    marginBottom: 20,
-    padding: 14,
-    borderRadius: 14,
-    minHeight: vh(8),
+    color: "#fff",
   },
-  buttonsContainer: {
+  bidSummaryRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F4F7FB",
+    borderWidth: 1,
+    borderColor: "#D8E0E8",
+    borderRadius: 11,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    gap: 10,
+  },
+  yourBidLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 9,
+    letterSpacing: 1.2,
+    color: "#5A6874",
+  },
+  yourBidValue: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 13,
+    color: "#0A5FBF",
+    marginTop: 1,
+  },
+  yourBidMessage: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 11.5,
+    color: "#5A6874",
+    marginTop: 3,
+    lineHeight: 16,
+  },
+  changeBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    backgroundColor: "#E8F1FB",
+    borderRadius: 9,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+  },
+  changeBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#0A5FBF",
+  },
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalCard: {
+    backgroundColor: "#fff",
+    borderRadius: 18,
+    borderWidth: 1.5,
+    borderColor: "#D8E0E8",
+    padding: 20,
+    width: vw(88),
+  },
+  modalTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 16,
+    color: "#1F2933",
+    marginBottom: 3,
+  },
+  modalSubtitle: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 12,
+    color: "#9AA7B3",
+    marginBottom: 16,
+  },
+  counterRow: {
     flexDirection: "row",
     gap: 10,
-    marginTop: 4,
+    marginBottom: 14,
   },
-  buttonSendBidContainer: {
+  counterBlock: {
     flex: 1,
-    backgroundColor: parrotBlue,
-    borderRadius: 50,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
     alignItems: "center",
-    minWidth: vw(30),
+    gap: 6,
+    backgroundColor: "#F4F7FB",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#D8E0E8",
   },
-  buttonSave: {
-    fontSize: 16,
+  counterDivider: {
+    display: "none",
+  },
+  counterLabel: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 9,
+    letterSpacing: 1.1,
+    color: "#5A6874",
+  },
+  counterInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  counterBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    borderWidth: 1.5,
+    borderColor: "#D8E0E8",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  counterBtnText: {
+    fontSize: 20,
+    fontFamily: "Nunito_700Bold",
+    color: "#0A5FBF",
+    lineHeight: 24,
+  },
+  counterValue: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 22,
+    color: "#0A5FBF",
+    textAlign: "center",
+    minWidth: 44,
+  },
+  messageInput: {
+    fontSize: 12,
+    color: "#3C4A57",
+    backgroundColor: "#F4F7FB",
+    fontFamily: "Nunito_600SemiBold",
+    marginBottom: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#D8E0E8",
+    minHeight: vh(7),
+    textAlignVertical: "top",
+  },
+  modalBtns: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  sendBtn: {
+    flex: 1,
+    backgroundColor: "#0A5FBF",
+    borderRadius: 999,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  sendText: {
+    fontSize: 14,
     color: "white",
-    fontFamily: "Nunito_700Bold",
-    textAlign: "center",
+    fontFamily: "Nunito_800ExtraBold",
   },
-  buttonCancelContainer: {
+  cancelBtn: {
     flex: 1,
-    backgroundColor: "#f2f4f7",
-    borderRadius: 50,
-    paddingVertical: 14,
+    backgroundColor: "#F0F2F5",
+    borderRadius: 999,
+    paddingVertical: 12,
     alignItems: "center",
   },
-  buttonClear: {
-    fontSize: 16,
+  cancelText: {
+    fontSize: 14,
     fontFamily: "Nunito_700Bold",
-    color: "#9aa0aa",
+    color: "#5A6874",
     textAlign: "center",
-  },
-  count: {
-    fontSize: 18,
-    fontFamily: "Nunito_700Bold",
   },
 });

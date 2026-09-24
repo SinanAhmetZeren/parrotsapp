@@ -2,7 +2,7 @@ import { ParrotsStdText } from "./ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   parrotBlue,
   parrotGreen,
@@ -19,7 +19,6 @@ import {
 import {
   View,
   Image,
-  Text,
   TouchableOpacity,
   FlatList,
   Modal,
@@ -28,10 +27,7 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { vw, vh } from "react-native-expo-viewport-units";
-import {
-  useAcceptBidMutation,
-  useDeleteBidMutation,
-} from "../slices/VoyageSlice";
+import { useAcceptBidMutation, useDeleteBidMutation } from "../slices/VoyageSlice";
 import { Feather } from "@expo/vector-icons";
 import { invokeHub } from "../signalr/signalRHub.js";
 
@@ -44,19 +40,12 @@ export const RenderBidsComponent = ({
   currentUserId,
   refetch,
   username,
-  currency
+  currency,
 }) => {
   const visibleBids = bids?.slice(0, 5);
   const [acceptBid] = useAcceptBidMutation();
   const [deleteBid] = useDeleteBidMutation();
   const [loadingBidId, setLoadingBidId] = useState(null);
-
-
-  const chatReadyRef = useRef(false);
-  // 🟢 Create hub connection ref
-  const hubConnection = useRef(null);
-
-
 
   const handleAcceptBid = async ({ bidId, bidUserId }) => {
     const text = `[parrots-bid] Welcome aboard "${voyageName}"! Your bid has been accepted.`;
@@ -88,442 +77,246 @@ export const RenderBidsComponent = ({
     }
   };
 
-
   return (
-    <View>
+    <View style={{ gap: 6 }}>
       {visibleBids.map((bid, index) => (
-        <View key={index} style={styles.singleBidContainer}>
-          <Image
-            source={{
-              uri: bid.userProfileImage,
-            }}
-            style={styles.bidImage}
-          />
-          <View
-            style={{
-              width: vw(75),
-              flexDirection: "column",
-              padding: vh(0.1),
-              backgroundColor: "transparent",
-            }}
-          >
-            <View
-              style={{
-                width: vw(75),
-                flexDirection: "row",
-                padding: vh(0.1),
-              }}
-            >
-              <ParrotsStdText style={styles.bidUsername}>{bid.userName}</ParrotsStdText>
-              <ParrotsStdText style={styles.personCount}>
-                <Feather name="users" size={14} color={parrotTextDarkBlue} />{" "}
-                {bid.personCount}
-              </ParrotsStdText>
-              <ParrotsStdText style={styles.offerPrice}>
-                {currency} {bid.offerPrice}
-              </ParrotsStdText>
-            </View>
-
-            {ownVoyage && bid.message ? (
-              <View>
-                <ParrotsStdText style={styles.seeMessage}>
-                  {bid.message &&
-                    (bid.message.length > 50
-                      ? `${bid.message.substring(0, 47)}...`
-                      : bid.message.substring(0, 50))}
-                </ParrotsStdText>
-              </View>
-            ) : null}
-          </View>
-        </View>
+        <BidRow
+          key={index}
+          bid={bid}
+          ownVoyage={ownVoyage}
+          currency={currency}
+          loadingBidId={loadingBidId}
+          onAccept={handleAcceptBid}
+          onDelete={handleDeleteBid}
+        />
       ))}
 
+      {/* See all modal */}
       <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.flatlistContainer}>
-          <View>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "center", alignItems: "center" }}>
+          <View style={{ backgroundColor: "#fff", borderRadius: 18, borderWidth: 1.5, borderColor: "#D8E0E8", paddingHorizontal: 8, paddingTop: 18, paddingBottom: 20, width: "94%", maxHeight: "75%" }}>
+            <ParrotsStdText style={bs.sheetTitle}>All Bids</ParrotsStdText>
             <FlatList
-              style={styles.BidsFlatList}
               data={bids}
               keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item, index }) => {
-
-                if (ownVoyage) {
-                  return (
-                    <View key={index} style={styles.singleBidContainerPopup}>
-                      <View style={{ alignSelf: "flex-start" }}>
-                        <Image
-                          source={{
-                            uri: item.userProfileImage,
-                          }}
-                          style={styles.bidImage2}
-                        />
-                      </View>
-
-                      <View style={styles.modalDataContainer}>
-                        <View style={styles.nameAndPriceContainer}>
-                          <ParrotsStdText style={styles.modalUserNameText}>
-                            {item.userName}
-                          </ParrotsStdText>
-                          <ParrotsStdText style={styles.modalPersonCount}>
-                            <Feather
-                              name="users"
-                              size={14}
-                              color={parrotTextDarkBlue}
-                            />{" "}
-                            {item.personCount}
-                          </ParrotsStdText>
-                          <ParrotsStdText style={styles.modalPriceText}>
-                            {currency} {item.offerPrice.toFixed(2)}
-                          </ParrotsStdText>
-                        </View>
-                        <View
-                          style={
-                            (styles.modalMessageContainer,
-                            {
-                              display:
-                                // item.message && ownVoyage ? "flex" : "none",
-                                item.message ? "flex" : "none",
-                            })
-                          }
-                        >
-                          <ParrotsStdText
-                            style={{
-                              color: parrotTextDarkBlue,
-                              fontFamily: "Nunito_700Bold",
-                            }}
-                          >
-                            {/* {ownVoyage && item.message} */}
-                            {item.message}
-                          </ParrotsStdText>
-                        </View>
-
-                        <View
-                          style={{
-                            flexDirection: "row",
-                            marginTop: item.message ? vh(0.5) : vh(1),
-                            marginBottom: vh(1),
-                          }}
-                        >
-                          {!item.accepted ? (
-                            <TouchableOpacity
-                              style={{ flex: 1, alignItems: "center" }}
-                              onPress={() =>
-                                handleAcceptBid({
-                                  bidId: item.id,
-                                  bidUserId: item.userId,
-                                })
-                              }
-                              disabled={loadingBidId !== null}
-                            >
-                              <View style={styles.acceptTextContainer}>
-                                {loadingBidId === item.id
-                                  ? <ActivityIndicator size="small" color={parrotBlue} />
-                                  : <ParrotsStdText style={styles.acceptText}>Accept</ParrotsStdText>
-                                }
-                              </View>
-                            </TouchableOpacity>
-                          ) : (
-                            <TouchableOpacity
-                              style={{ flex: 1, alignItems: "center" }}
-                              onPress={() => { }}
-                            >
-                              <View style={styles.acceptTextContainer}>
-                                <ParrotsStdText style={styles.acceptedText}>
-                                  Accepted
-                                </ParrotsStdText>
-                              </View>
-                            </TouchableOpacity>
-                          )}
-
-                          <TouchableOpacity
-                            style={{ flex: 1, alignItems: "center" }}
-                            onPress={() => {
-                              handleDeleteBid({
-                                bidId: item.id,
-                                bidUserId: item.userId,
-                              });
-                            }}
-                            disabled={loadingBidId !== null}
-                          >
-                            <View style={styles.acceptTextContainer}>
-                              {loadingBidId === item.id
-                                ? <ActivityIndicator size="small" color={parrotRed} />
-                                : <ParrotsStdText style={styles.deleteText}>Delete</ParrotsStdText>
-                              }
-                            </View>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  );
-                } else {
-                  return (
-                    <View key={index} style={styles.singleBidContainerPopup}>
-                      <View>
-                        <Image
-                          source={{
-                            uri: item.userProfileImage,
-                          }}
-                          style={styles.bidImage2}
-                        />
-                      </View>
-
-                      <View style={styles.modalDataContainerNotOwn}>
-                        <View style={styles.nameAndPriceContainerNotOwn}>
-                          <ParrotsStdText style={styles.modalUserNameTextNotOwn}>
-                            {item.userName}
-                          </ParrotsStdText>
-                          <ParrotsStdText style={styles.modalPersonCountNotOwn}>
-                            <Feather
-                              name="users"
-                              size={14}
-                              color={parrotTextDarkBlue}
-                            />{" "}
-                            {item.personCount}
-                          </ParrotsStdText>
-                          <ParrotsStdText style={styles.modalPriceTextNotOwn}>
-                            {currency} {item.offerPrice}
-                          </ParrotsStdText>
-                          {item.accepted ? (
-                            <View style={styles.acceptTextContainer}>
-                              <ParrotsStdText style={styles.acceptedText}>Accepted</ParrotsStdText>
-                            </View>
-                          ) : (
-                            <View style={styles.acceptTextContainer}>
-                              <ParrotsStdText style={styles.acceptText}>Pending</ParrotsStdText>
-                            </View>
-                          )}
-                        </View>
-                      </View>
-                    </View>
-                  );
-                }
-              }}
+              contentContainerStyle={{ gap: 7, paddingBottom: 8 }}
+              renderItem={({ item }) => (
+                <BidRow
+                  bid={item}
+                  ownVoyage={ownVoyage}
+                  currency={currency}
+                  loadingBidId={loadingBidId}
+                  onAccept={handleAcceptBid}
+                  onDelete={handleDeleteBid}
+                  currentUserId={currentUserId}
+                />
+              )}
             />
+            <TouchableOpacity style={bs.closeBtn} onPress={() => setModalVisible(false)}>
+              <ParrotsStdText style={bs.closeBtnText}>Close</ParrotsStdText>
+            </TouchableOpacity>
           </View>
-
-          <TouchableOpacity onPress={() => setModalVisible(false)}>
-            <ParrotsStdText style={styles.buttonClose}>Close</ParrotsStdText>
-          </TouchableOpacity>
         </View>
       </Modal>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  acceptTextContainer: {
-    backgroundColor: "white",
-    borderRadius: vh(2),
-  },
-  modalMessageContainer: {
-    width: vw(72),
-    marginBottom: vh(0.5),
-    marginLeft: vw(3),
-    display: "flex",
-    flexDirection: "row",
-  },
+const BidRow = ({ bid, ownVoyage, currency, loadingBidId, onAccept, onDelete }) => {
+  const isLoading = loadingBidId === bid.id;
 
-  modalUserNameText: {
-    width: vw(43),
-    fontFamily: "Nunito_700Bold",
-    color: parrotBlue,
-  },
-  modalPersonCount: {
-    fontSize: 14,
-    fontFamily: "Nunito_700Bold",
-    width: vw(12),
-    textAlign: "right",
-    color: parrotTextDarkBlue,
-  },
-  modalPriceText: {
-    width: vw(20),
-    color: parrotTextDarkBlue,
-    fontFamily: "Nunito_700Bold",
-    textAlign: "right",
-  },
-  nameAndPriceContainer: {
-    width: vw(75),
-    display: "flex",
-    flexDirection: "row",
-  },
-  nameAndPriceContainerNotOwn: {
-    width: vw(33),
-    display: "flex",
-    flexDirection: "row",
-  },
-  modalDataContainer: {
-    width: vw(75),
-  },
-  modalUserNameTextNotOwn: {
-    width: vw(32),
-    fontFamily: "Nunito_700Bold",
-    color: parrotBlue,
-  },
-  modalPriceTextNotOwn: {
-    width: vw(10),
-    color: parrotTextDarkBlue,
-    fontFamily: "Nunito_700Bold",
-    textAlign: "right",
-    marginRight: vw(2),
-  },
-  modalPersonCountNotOwn: {
-    fontSize: 14,
-    fontFamily: "Nunito_700Bold",
-    width: vw(12),
-    textAlign: "right",
-    color: parrotTextDarkBlue,
-  },
-  modalDataContainerNotOwn: {
-    width: vw(75),
-  },
-  acceptedText: {
-    paddingVertical: vw(0.5),
-    paddingHorizontal: vw(2),
-    color: parrotGreen,
-    fontFamily: "Nunito_800ExtraBold",
-    backgroundColor: parrotGreenMediumTransparent,
-    borderRadius: vh(2),
-  },
-  acceptText: {
-    paddingVertical: vw(0.5),
-    paddingHorizontal: vw(3),
-    color: parrotBlue,
-    fontFamily: "Nunito_800ExtraBold",
-    backgroundColor: parrotBlueMediumTransparent,
-    borderRadius: vh(2),
-    width: vw(20),
-    textAlign: "center",
-  },
-  deleteText: {
-    paddingVertical: vw(0.5),
-    paddingHorizontal: vw(3),
-    color: parrotRed,
-    fontFamily: "Nunito_800ExtraBold",
-    backgroundColor: parrotRedTransparent,
-    borderRadius: vh(2),
-    width: vw(20),
-    textAlign: "center",
-  },
-  acceptButtonText: {
-    paddingVertical: vw(0.5),
-    paddingHorizontal: vw(3),
-    color: parrotBlue,
-    fontFamily: "Nunito_800ExtraBold",
-    backgroundColor: parrotBlueMediumTransparent,
-    borderRadius: vh(2),
-  },
-  buttonClose: {
-    fontSize: 16,
-    fontFamily: "Nunito_700Bold",
-    color: "white",
-    textAlign: "center",
-    alignSelf: "center",
-    marginTop: vh(1),
-    backgroundColor: parrotBlue,
-    padding: 5,
-    width: vw(30),
-    borderRadius: vh(4),
-  },
+  return (
+    <View style={bid.accepted ? bs.rowAccepted : bs.row}>
+      {/* Top line: avatar + name + actions */}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <Image source={{ uri: bid.userProfileImage }} style={bs.avatar} />
+        <ParrotsStdText style={[bs.userName, { flex: 1 }]} numberOfLines={1}>{bid.userName}</ParrotsStdText>
+        {ownVoyage && (
+          <View style={{ flexDirection: "row", gap: 6, }}>
+            {bid.accepted ? (
+              <View style={[bs.actionBtn, bs.acceptedBtnInactive]}>
+                <ParrotsStdText style={bs.acceptedBtnText}>Accepted</ParrotsStdText>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={[bs.actionBtn, bs.acceptBtn]}
+                onPress={() => onAccept({ bidId: bid.id, bidUserId: bid.userId })}
+                disabled={loadingBidId !== null || bid.accepted}
+              >
+                {isLoading
+                  ? <ActivityIndicator size="small" color="#0A5FBF" />
+                  : <ParrotsStdText style={bs.acceptBtnText}>Accept</ParrotsStdText>
+                }
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={[bs.actionBtn, bs.deleteBtn, bid.accepted && { opacity: 0.4 }]}
+              onPress={() => onDelete({ bidId: bid.id, bidUserId: bid.userId })}
+              disabled={loadingBidId !== null || bid.accepted}
+            >
+              {isLoading
+                ? <ActivityIndicator size="small" color="#C0392B" />
+                : <ParrotsStdText style={bs.deleteBtnText}>Remove</ParrotsStdText>
+              }
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
 
-  nameAndPrice: {
-    width: vw(75),
-    display: "flex",
-    flexDirection: "row",
+      {/* Message + meta pills on same row */}
+      <View style={{ flexDirection: "row", alignItems: "center", marginTop: 4, gap: 6 }}>
+        {ownVoyage && bid.message ? (
+          <ParrotsStdText style={[bs.message, { flex: 1, marginTop: 0, marginLeft: 0 }]} numberOfLines={2}>{bid.message}</ParrotsStdText>
+        ) : <View style={{ flex: 1 }} />}
+        <View style={bs.metaPill}>
+          <Feather name="users" size={10} color="#5A6874" />
+          <ParrotsStdText style={bs.metaText}>{bid.personCount}</ParrotsStdText>
+        </View>
+        <View style={bs.metaPill}>
+          <ParrotsStdText style={bs.metaText}>{currency}{bid.offerPrice}</ParrotsStdText>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const bs = StyleSheet.create({
+  row: {
+    borderWidth: 1,
+    borderColor: "#E8EFF6",
+    borderRadius: 11,
+    backgroundColor: "#F7FAFD",
+    padding: 9,
+    gap: 0,
   },
-  seeMessage: {
-    borderRadius: vh(2),
-    paddingLeft: vw(4),
-    paddingBottom: vh(0.2),
-    width: vw(75),
-    color: parrotTextDarkBlue,
-    fontFamily: "Nunito_700Bold",
+  rowAccepted: {
+    borderWidth: 1,
+    borderColor: "#B7E4CF",
+    borderRadius: 11,
+    backgroundColor: "#F0FAF5",
+    padding: 9,
+    gap: 0,
+  },
+  avatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#D8E0E8",
   },
   userName: {
-    fontSize: 14,
     fontFamily: "Nunito_700Bold",
-    marginTop: vh(0.2),
-    color: "blue",
+    fontSize: 13,
+    color: "#0A5FBF",
   },
-  bidImage: {
-    width: vh(5),
-    height: vh(5),
-    borderRadius: vh(2.5),
-    marginRight: 8,
-    backgroundColor: "grey",
-  },
-  profileImage: {
-    width: vh(3),
-    height: vh(3),
-    borderRadius: vh(2.5),
-    marginRight: 8,
-    backgroundColor: "grey",
-  },
-  bidUsername: {
-    fontSize: 14,
-    fontFamily: "Nunito_700Bold",
-    width: vw(45),
-    color: parrotBlue,
-  },
-  personCount: {
-    fontSize: 14,
-    fontFamily: "Nunito_700Bold",
-    width: vw(12),
-    textAlign: "right",
-    color: parrotTextDarkBlue,
-  },
-  offerPrice: {
-    fontSize: 14,
-    fontFamily: "Nunito_700Bold",
-    width: vw(15),
-    textAlign: "right",
-    color: parrotTextDarkBlue,
-  },
-
-  singleBidContainer: {
+  metaPill: {
     flexDirection: "row",
-    padding: vh(0.5),
-    margin: vh(0.3),
     alignItems: "center",
-    borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
+    gap: 4,
+    backgroundColor: "#EEF3F9",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
   },
-  flatlistContainer: {
-    backgroundColor: "rgba(1,1,1,0.4)",
+  metaText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 11,
+    color: "#3C4A57",
+  },
+  acceptedPill: {
+    backgroundColor: "#E4F5E9",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  acceptedText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 11,
+    color: "#0B6B4E",
+  },
+  message: {
+    fontFamily: "Nunito_600SemiBold",
+    fontSize: 11.5,
+    color: "#5A6874",
+    marginTop: 5,
+    marginLeft: 36,
+    lineHeight: 16,
+  },
+  actionBtn: {
+    height: 26,
+    width: 68,
+    borderRadius: 9,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  acceptBtn: {
+    backgroundColor: "#E8F1FB",
+  },
+  acceptBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#0A5FBF",
+  },
+  acceptedBtnInactive: {
+    backgroundColor: "#E4F5E9",
+  },
+  acceptedBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#0B6B4E",
+  },
+  deleteBtn: {
+    backgroundColor: "#FDECEA",
+  },
+  deleteBtnText: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 12,
+    color: "#C0392B",
+  },
+  // Modal sheet
+  backdrop: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "flex-end",
   },
-  BidsFlatList: {
-    width: vw(95),
-    maxHeight: vh(50),
-    marginTop: vh(20),
+  sheet: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 36,
+    maxHeight: vh(75),
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    backgroundColor: "#ccc",
+    borderRadius: 2,
     alignSelf: "center",
-    backgroundColor: "white",
-    borderRadius: vh(2),
-    paddingLeft: vh(0.5),
+    marginBottom: 14,
   },
-  singleBidContainerPopup: {
-    flexDirection: "row",
-    paddingVertical: vh(0.2),
-    marginVertical: vh(0.6),
-    alignItems: "center",
-    borderRadius: vh(2),
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
-    width: "98%",
-    margin: "auto",
-    // borderWidth: 1,
-    // borderColor: parrotBlueMediumTransparent,
+  sheetTitle: {
+    fontFamily: "Nunito_800ExtraBold",
+    fontSize: 15,
+    color: "#1F2933",
+    marginBottom: 12,
   },
-  bidImage2: {
-    width: vh(5),
-    height: vh(5),
-    borderRadius: vh(2.5),
-    marginRight: 8,
-    marginLeft: vw(2),
-    backgroundColor: "grey",
+  closeBtn: {
+    marginTop: 12,
+    alignSelf: "center",
+    backgroundColor: "#0A5FBF",
+    borderRadius: 999,
+    paddingVertical: 10,
+    paddingHorizontal: 32,
+  },
+  closeBtnText: {
+    fontFamily: "Nunito_700Bold",
+    fontSize: 14,
+    color: "#fff",
   },
 });
