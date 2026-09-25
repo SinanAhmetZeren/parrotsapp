@@ -154,6 +154,42 @@ const CreateVoyageScreen = ({ navigation }) => {
     setTimeout(() => setToastVisible(false), 2500);
   };
 
+  const parseAdviceLine = (str) => {
+    const segments = [];
+    const re = /##(.*?)##|%%(.*?)%%|&&(.*?)&&|\^\^(.*?)\^\^/g;
+    let last = 0, m;
+    while ((m = re.exec(str)) !== null) {
+      if (m.index > last) segments.push({ t: "plain", v: str.slice(last, m.index) });
+      if (m[1] !== undefined) segments.push({ t: "##", v: m[1].trim() });
+      else if (m[2] !== undefined) segments.push({ t: "%%", v: m[2].trim() });
+      else if (m[3] !== undefined) segments.push({ t: "&&", v: m[3].trim() });
+      else segments.push({ t: "^^", v: m[4].trim() });
+      last = re.lastIndex;
+    }
+    if (last < str.length) segments.push({ t: "plain", v: str.slice(last) });
+    return segments.map((s, j) => {
+      if (s.t === "##")    return <Text key={j} style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#0A2540" }}>{s.v}</Text>;
+      if (s.t === "%%")    return <Text key={j} style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "#1D4ED8" }}>{s.v}</Text>;
+      if (s.t === "&&")    return <Text key={j} style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#374151" }}>{s.v}</Text>;
+      if (s.t === "^^")    return <Text key={j} style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: "#D97706" }}>{s.v}</Text>;
+      return <Text key={j} style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#374151" }}>{s.v}</Text>;
+    });
+  };
+
+  const renderAdvice = (text) => {
+    if (!text) return null;
+    return text.split("\n").map((line, i) => {
+      const trimmed = line.trim();
+      if (!trimmed) return <View key={i} style={{ height: 6 }} />;
+      const isTitle = trimmed.startsWith("##");
+      return (
+        <Text key={i} style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, lineHeight: 20, marginBottom: 2, marginTop: isTitle && i !== 0 ? 12 : 0 }}>
+          {parseAdviceLine(trimmed)}
+        </Text>
+      );
+    });
+  };
+
   const handleAskParrots = async () => {
     if (!savedSnapshot) return;
     const selectedVehicle = userData?.usersVehicles?.find((v) => String(v.id) === String(savedSnapshot.vehicleId));
@@ -1022,13 +1058,13 @@ const CreateVoyageScreen = ({ navigation }) => {
             <View style={{ backgroundColor: "white", borderRadius: 20, padding: 20, width: "100%", maxHeight: "80%", shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 10 }}>
               <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#0A2540", marginBottom: 12 }}>🦜 Voyage Advice</ParrotsStdText>
               <ScrollView style={{ maxHeight: 360 }} showsVerticalScrollIndicator={false}>
-                <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13.5, color: "#374151", lineHeight: 21 }}>{adviceResponse}</ParrotsStdText>
+                <View style={{ paddingBottom: 4 }}>{renderAdvice(adviceResponse)}</View>
               </ScrollView>
               <View style={{ flexDirection: "row", gap: 8, marginTop: 16 }}>
                 <TouchableOpacity
                   style={{ flex: 1, borderRadius: 20, paddingVertical: 10, alignItems: "center", backgroundColor: "#6366F1" }}
                   onPress={() => {
-                    const clean = (adviceResponse ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
+                    const clean = (adviceResponse ?? "").replace(/##(.*?)##|%%(.*?)%%|&&(.*?)&&|\^\^(.*?)\^\^/g, (_, a, b, c, d) => (a ?? b ?? c ?? d ?? "").trim());
                     Clipboard.setStringAsync(clean);
                     setAdviceCopied(true);
                     setTimeout(() => setAdviceCopied(false), 2000);
@@ -1040,7 +1076,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                   style={{ flex: 1, borderRadius: 20, paddingVertical: 10, alignItems: "center", backgroundColor: "#089ADE" }}
                   onPress={async () => {
                     if (!isHubReady()) return;
-                    const clean = (adviceResponse ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
+                    const clean = (adviceResponse ?? "").replace(/##(.*?)##|%%(.*?)%%|&&(.*?)&&|\^\^(.*?)\^\^/g, (_, a, b, c, d) => (a ?? b ?? c ?? d ?? "").trim());
                     await invokeHub("SendMessage", userId, userId, `**🦜 Voyage Advice**\n\n${clean}`, true);
                     setAdviceSent(true);
                     setTimeout(() => setAdviceSent(false), 2000);
