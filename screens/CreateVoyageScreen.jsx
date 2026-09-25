@@ -45,6 +45,9 @@ import {
 } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useAcknowledgePublicProfileMutation, setAcknowledgedPublicProfile, useLazyGetParrotCrackerBalanceQuery } from "../slices/UserSlice";
+import { useVoyageAdviceMutation } from "../slices/AiSlice";
+import * as Clipboard from "expo-clipboard";
+import { invokeHub, isHubReady } from "../signalr/signalRHub";
 import CalendarPicker from "react-native-calendar-picker";
 import Checkbox from "expo-checkbox";
 import DropdownComponent from "../components/DropdownComponent";
@@ -138,10 +141,53 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [canComplete, setCanComplete] = useState(false);
   const completeTriggerRef = useRef(null);
 
+  const [voyageAdvice, { isLoading: isAdviceLoading }] = useVoyageAdviceMutation();
+  const [liveWaypoints, setLiveWaypoints] = useState([]);
+  const [adviceModalVisible, setAdviceModalVisible] = useState(false);
+  const [adviceResponse, setAdviceResponse] = useState(null);
+  const [adviceCopied, setAdviceCopied] = useState(false);
+  const [adviceSent, setAdviceSent] = useState(false);
+
   const showToast = (message) => {
     setToastMessage(message);
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 2500);
+  };
+
+  const handleAskParrots = async () => {
+    if (!savedSnapshot) return;
+    const selectedVehicle = userData?.usersVehicles?.find((v) => String(v.id) === String(savedSnapshot.vehicleId));
+    const payload = {
+      name: savedSnapshot.name,
+      brief: savedSnapshot.brief,
+      description: savedSnapshot.description,
+      vacancy: Number(savedSnapshot.vacancy),
+      currency: savedSnapshot.currency,
+      minPrice: Number(savedSnapshot.minPrice),
+      maxPrice: Number(savedSnapshot.maxPrice),
+      isAuction: savedSnapshot.isAuction,
+      isFixedPrice: savedSnapshot.isFixedPrice,
+      startDate: savedSnapshot.startDate ? new Date(savedSnapshot.startDate).toISOString() : "",
+      endDate: savedSnapshot.endDate ? new Date(savedSnapshot.endDate).toISOString() : "",
+      lastBidDate: savedSnapshot.lastBidDate ? new Date(savedSnapshot.lastBidDate).toISOString() : "",
+      vehicleType: selectedVehicle?.type ?? "",
+      vehicleCapacity: selectedVehicle?.capacity ?? 0,
+      waypoints: liveWaypoints.map((wp) => ({
+        order: wp.order,
+        title: wp.title,
+        description: wp.description ?? "",
+        latitude: wp.latitude,
+        longitude: wp.longitude,
+      })),
+      categories: ["thingsToDo", "crewTips", "timing", "bidGuidance"],
+    };
+    try {
+      const result = await voyageAdvice(payload).unwrap();
+      setAdviceResponse(result.advice);
+      setAdviceModalVisible(true);
+    } catch {
+      showToast("Could not get advice right now. Please try again.");
+    }
   };
 
   useEffect(() => { }, [startDate, endDate, lastBidDate, voyageImage]);
@@ -937,6 +983,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 onVoyagePosted={resetAllFields}
                 onCanCompleteChange={setCanComplete}
                 completeTriggerRef={completeTriggerRef}
+                onWaypointsChange={setLiveWaypoints}
               />
 
             </ScrollView>
@@ -949,6 +996,17 @@ const CreateVoyageScreen = ({ navigation }) => {
               >
                 <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Later</ParrotsStdText>
               </TouchableOpacity>
+              {savedSnapshot && (
+                <TouchableOpacity
+                  style={{ borderRadius: 999, height: 44, paddingHorizontal: 16, alignItems: "center", justifyContent: "center", backgroundColor: "#F59E0B", opacity: isAdviceLoading ? 0.6 : 1 }}
+                  onPress={handleAskParrots}
+                  disabled={isAdviceLoading}
+                >
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "white" }}>
+                    {isAdviceLoading ? "…" : "🦜 Ask"}
+                  </ParrotsStdText>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 style={{ flex: 1, borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: canComplete ? "#0A5FBF" : "rgba(10,95,191,0.4)" }}
                 onPress={() => completeTriggerRef.current && completeTriggerRef.current()}
@@ -959,6 +1017,48 @@ const CreateVoyageScreen = ({ navigation }) => {
             </View>
           </KeyboardAvoidingView>
         )}
+        <Modal visible={adviceModalVisible} transparent animationType="fade" onRequestClose={() => setAdviceModalVisible(false)}>
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.45)", paddingHorizontal: 16 }}>
+            <View style={{ backgroundColor: "white", borderRadius: 20, padding: 20, width: "100%", maxHeight: "80%", shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 10 }}>
+              <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#0A2540", marginBottom: 12 }}>🦜 Voyage Advice</ParrotsStdText>
+              <ScrollView style={{ maxHeight: 360 }} showsVerticalScrollIndicator={false}>
+                <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13.5, color: "#374151", lineHeight: 21 }}>{adviceResponse}</ParrotsStdText>
+              </ScrollView>
+              <View style={{ flexDirection: "row", gap: 8, marginTop: 16 }}>
+                <TouchableOpacity
+                  style={{ flex: 1, borderRadius: 20, paddingVertical: 10, alignItems: "center", backgroundColor: "#6366F1" }}
+                  onPress={() => {
+                    const clean = (adviceResponse ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
+                    Clipboard.setStringAsync(clean);
+                    setAdviceCopied(true);
+                    setTimeout(() => setAdviceCopied(false), 2000);
+                  }}
+                >
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "white" }}>{adviceCopied ? "Copied!" : "Copy"}</ParrotsStdText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, borderRadius: 20, paddingVertical: 10, alignItems: "center", backgroundColor: "#089ADE" }}
+                  onPress={async () => {
+                    if (!isHubReady()) return;
+                    const clean = (adviceResponse ?? "").replace(/\*\*([^*]+)\*\*/g, "$1");
+                    await invokeHub("SendMessage", userId, userId, `**🦜 Voyage Advice**\n\n${clean}`, true);
+                    setAdviceSent(true);
+                    setTimeout(() => setAdviceSent(false), 2000);
+                  }}
+                >
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "white" }}>{adviceSent ? "Sent!" : "Send Me"}</ParrotsStdText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, borderRadius: 20, paddingVertical: 10, alignItems: "center", backgroundColor: "#E5E7EB" }}
+                  onPress={() => setAdviceModalVisible(false)}
+                >
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "#374151" }}>Close</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
         {toastVisible && (
           <View style={styles.toast}>
             <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>

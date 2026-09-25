@@ -9,7 +9,14 @@ export const extendedAiApiSlice = apiSlice.injectEndpoints({
         body,
       }),
     }),
+    voyageAdvice: builder.mutation({
+      query: (body) => ({
+        url: "/api/Ai/voyage-advice",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useAskParrotsMutation } = extendedAiApiSlice;
+export const { useAskParrotsMutation, useVoyageAdviceMutation } = extendedAiApiSlice;

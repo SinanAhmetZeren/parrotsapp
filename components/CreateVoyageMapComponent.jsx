@@ -48,6 +48,7 @@ const CreateVoyageMapComponent = ({
   onVoyagePosted,
   onCanCompleteChange,
   completeTriggerRef,
+  onWaypointsChange,
 }) => {
   const [waypointInfoVisible, setWaypointInfoVisible] = useState(false);
   const [addedWayPoints, setAddedWayPoints] = useState([
@@ -310,6 +311,7 @@ const CreateVoyageMapComponent = ({
 
   useEffect(() => {
     if (onCanCompleteChange) onCanCompleteChange(addedWayPoints.length > 0);
+    if (onWaypointsChange) onWaypointsChange(addedWayPoints);
     if (completeTriggerRef) {
       completeTriggerRef.current = () => {
         if (addedWayPoints.length > 0) setShowConfirmModal(true);
