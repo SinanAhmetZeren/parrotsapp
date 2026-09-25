@@ -310,10 +310,11 @@ export const ConversationDetailScreen = ({ navigation }) => {
             >
               {messagesToDisplay?.map((msg, index) => {
                 const isMe = msg.senderId === currentUserId;
-                const isAskParrots = isMe && msg.text?.startsWith("**🦜**");
+                const isAskParrots = isMe && (msg.text?.startsWith("**🦜**") || msg.text?.startsWith("**🌍**"));
+                const isVoyageAdvice = false;
                 const isParrotsBid = msg.text?.startsWith("[parrots-bid]");
                 const displayText = isAskParrots
-                  ? msg.text.replace(/^\*\*🦜\*\*\s*/, "")
+                  ? msg.text.replace(/^\*\*[🦜🌍]\*\*\s*/, "")
                   : isParrotsBid
                   ? msg.text.replace(/^\[parrots-bid\]\s*/, "")
                   : msg.text;

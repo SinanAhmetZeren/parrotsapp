@@ -35,6 +35,23 @@ import Toast from "react-native-toast-message";
 import * as ImageManipulator from "expo-image-manipulator";
 import { USE_CAMBRIDGE_DEFAULT_LOCATION, CAMBRIDGE_REGION } from "../constants/defaultLocationFlag";
 
+const WaypointComponent = ({ description, latitude, longitude, profileImage, title, pinColor }) => {
+  const coords = { latitude, longitude };
+  return (
+    <>
+      <Marker coordinate={coords} pinColor={pinColor}>
+        <Callout>
+          <View>
+            <ParrotsStdText>{title}</ParrotsStdText>
+            <ParrotsStdText>{description}</ParrotsStdText>
+            {profileImage && <Image source={{ uri: profileImage }} style={{ width: 100, height: 100 }} />}
+          </View>
+        </Callout>
+      </Marker>
+    </>
+  );
+};
+
 const CreateVoyageMapComponent = ({
   voyageId,
   setCurrentStep,
@@ -83,35 +100,6 @@ const CreateVoyageMapComponent = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [initialRegion, setInitialRegion] = useState(null)
 
-  const WaypointComponent = ({
-    description,
-    latitude,
-    longitude,
-    profileImage,
-    title,
-    pinColor,
-  }) => {
-    const coords = { latitude, longitude };
-
-    return (
-      <>
-        <Marker coordinate={coords} pinColor={pinColor}>
-          <Callout>
-            <View>
-              <ParrotsStdText>{title}</ParrotsStdText>
-              <ParrotsStdText>{description}</ParrotsStdText>
-              {profileImage && (
-                <Image
-                  source={{ uri: profileImage }}
-                  style={{ width: 100, height: 100 }}
-                />
-              )}
-            </View>
-          </Callout>
-        </Marker>
-      </>
-    );
-  };
 
   const handleAddWaypoint = async () => {
     setIsUploadingWaypointImage(true);
@@ -213,7 +201,7 @@ const CreateVoyageMapComponent = ({
 
           return (
             <WaypointComponent
-              key={Math.floor(Math.random() * 10000000000000000)}
+              key={waypoint.waypointId ?? waypoint.order}
               description={waypoint.description}
               latitude={waypoint.latitude}
               longitude={waypoint.longitude}

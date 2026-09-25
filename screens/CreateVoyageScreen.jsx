@@ -154,25 +154,35 @@ const CreateVoyageScreen = ({ navigation }) => {
     setTimeout(() => setToastVisible(false), 2500);
   };
 
+  const parseHighlights = (str, baseStyle, j) => {
+    const re = /\^\^(.*?)\^\^/g;
+    const parts = []; let last = 0, m;
+    while ((m = re.exec(str)) !== null) {
+      if (m.index > last) parts.push(<Text key={`${j}-p${last}`} style={baseStyle}>{str.slice(last, m.index)}</Text>);
+      parts.push(<Text key={`${j}-h${m.index}`} style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: "#1D4ED8" }}>{m[1].trim()}</Text>);
+      last = re.lastIndex;
+    }
+    if (last < str.length) parts.push(<Text key={`${j}-p${last}`} style={baseStyle}>{str.slice(last)}</Text>);
+    return parts.length > 0 ? parts : <Text key={j} style={baseStyle}>{str}</Text>;
+  };
+
   const parseAdviceLine = (str) => {
     const segments = [];
-    const re = /##(.*?)##|%%(.*?)%%|&&(.*?)&&|\^\^(.*?)\^\^/g;
+    const re = /##(.*?)##|%%(.*?)%%|&&(.*?)&&/g;
     let last = 0, m;
     while ((m = re.exec(str)) !== null) {
       if (m.index > last) segments.push({ t: "plain", v: str.slice(last, m.index) });
       if (m[1] !== undefined) segments.push({ t: "##", v: m[1].trim() });
       else if (m[2] !== undefined) segments.push({ t: "%%", v: m[2].trim() });
-      else if (m[3] !== undefined) segments.push({ t: "&&", v: m[3].trim() });
-      else segments.push({ t: "^^", v: m[4].trim() });
+      else segments.push({ t: "&&", v: m[3].trim() });
       last = re.lastIndex;
     }
     if (last < str.length) segments.push({ t: "plain", v: str.slice(last) });
     return segments.map((s, j) => {
-      if (s.t === "##")    return <Text key={j} style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#0A2540" }}>{s.v}</Text>;
-      if (s.t === "%%")    return <Text key={j} style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "#1D4ED8" }}>{s.v}</Text>;
-      if (s.t === "&&")    return <Text key={j} style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#374151" }}>{s.v}</Text>;
-      if (s.t === "^^")    return <Text key={j} style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: "#D97706" }}>{s.v}</Text>;
-      return <Text key={j} style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#374151" }}>{s.v}</Text>;
+      if (s.t === "##") return <Text key={j} style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#0A2540" }}>{s.v}</Text>;
+      if (s.t === "%%") return <Text key={j} style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "#7C3AED" }}>{s.v}</Text>;
+      if (s.t === "&&") return parseHighlights(s.v, { fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#374151" }, j);
+      return parseHighlights(s.v, { fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#374151" }, j);
     });
   };
 
@@ -182,8 +192,41 @@ const CreateVoyageScreen = ({ navigation }) => {
       const trimmed = line.trim();
       if (!trimmed) return <View key={i} style={{ height: 6 }} />;
       const isTitle = trimmed.startsWith("##");
+      const isSubLabel = trimmed.startsWith("%%");
+      const indent = isTitle ? 0 : isSubLabel ? 10 : 20;
+      const titleMeta = {
+        "Things to Do":       { icon: "globe-outline",  bg: "rgba(99,102,241,0.12)", color: "#6366F1" },
+        "Practical Crew":     { icon: "people-outline", bg: "rgba(16,185,129,0.12)", color: "#10B981" },
+        "Optimal Departure":  { icon: "time-outline",   bg: "rgba(245,158,11,0.12)", color: "#F59E0B" },
+        "Pricing Assessment": { icon: "cash-outline",   bg: "rgba(8,154,222,0.12)",  color: "#089ADE" },
+      };
+      if (isTitle) {
+        const titleText = trimmed.replace(/##/g, "").trim().replace(/^\d+\.\s*/, "").trim();
+        const key = Object.keys(titleMeta).find((k) => titleText.includes(k));
+        const meta = key ? titleMeta[key] : { icon: "star-outline", bg: "rgba(0,0,0,0.08)", color: "#374151" };
+        return (
+          <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: 8, marginTop: i !== 0 ? 12 : 0, marginBottom: 2 }}>
+            <View style={{ width: 26, height: 26, borderRadius: 8, backgroundColor: meta.bg, alignItems: "center", justifyContent: "center" }}>
+              <Ionicons name={meta.icon} size={15} color={meta.color} />
+            </View>
+            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: meta.color }}>{titleText}</Text>
+          </View>
+        );
+      }
+      const isBullet = trimmed.startsWith("- ") || trimmed.startsWith("%% - %%");
+      const displayLine = isBullet ? trimmed.replace(/^%%\s*-\s*%%\s*/, "").replace(/^-\s*/, "") : trimmed;
+      if (isBullet) {
+        return (
+          <View key={i} style={{ flexDirection: "row", alignItems: "flex-start", paddingLeft: indent, marginBottom: 2 }}>
+            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "#9CA3AF", marginRight: 6, lineHeight: 20 }}>•</Text>
+            <Text style={{ flex: 1, fontFamily: "Nunito_600SemiBold", fontSize: 13, lineHeight: 20, color: "#374151" }}>
+              {parseAdviceLine(displayLine)}
+            </Text>
+          </View>
+        );
+      }
       return (
-        <Text key={i} style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, lineHeight: 20, marginBottom: 2, marginTop: isTitle && i !== 0 ? 12 : 0 }}>
+        <Text key={i} style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, lineHeight: 20, marginBottom: 2, paddingLeft: indent }}>
           {parseAdviceLine(trimmed)}
         </Text>
       );
@@ -1056,7 +1099,7 @@ const CreateVoyageScreen = ({ navigation }) => {
         <Modal visible={adviceModalVisible} transparent animationType="fade" onRequestClose={() => setAdviceModalVisible(false)}>
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.45)", paddingHorizontal: 16 }}>
             <View style={{ backgroundColor: "white", borderRadius: 20, padding: 20, width: "100%", maxHeight: "80%", shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 10 }}>
-              <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#0A2540", marginBottom: 12 }}>🦜 Voyage Advice</ParrotsStdText>
+              <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#0A5FBF", marginBottom: 12, textAlign: "center" }}>Ask Parrots Voyage Advice</ParrotsStdText>
               <ScrollView style={{ maxHeight: 360 }} showsVerticalScrollIndicator={false}>
                 <View style={{ paddingBottom: 4 }}>{renderAdvice(adviceResponse)}</View>
               </ScrollView>
@@ -1077,7 +1120,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                   onPress={async () => {
                     if (!isHubReady()) return;
                     const clean = (adviceResponse ?? "").replace(/##(.*?)##|%%(.*?)%%|&&(.*?)&&|\^\^(.*?)\^\^/g, (_, a, b, c, d) => (a ?? b ?? c ?? d ?? "").trim());
-                    await invokeHub("SendMessage", userId, userId, `**🦜 Voyage Advice**\n\n${clean}`, true);
+                    await invokeHub("SendMessage", userId, userId, `**🌍**\n\n${clean}`, true);
                     setAdviceSent(true);
                     setTimeout(() => setAdviceSent(false), 2000);
                   }}
