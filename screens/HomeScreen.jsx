@@ -224,10 +224,7 @@ export default function HomeScreen({ navigation }) {
   const [isMarkersLoading, setIsMarkersLoading] = useState(true);
   const [initialLatitude, setInitialLatitude] = useState(0);
   const [initialLongitude, setInitialLongitude] = useState(0);
-  const [latitude, setLatitude] = useState(0);
-  const [latitudeDelta, setLatitudeDelta] = useState(0);
-  const [longitude, setLongitude] = useState(0);
-  const [longitudeDelta, setLongitudeDelta] = useState(0);
+  const [region, setRegion] = useState({ latitude: 0, longitude: 0, latitudeDelta: 0, longitudeDelta: 0 });
   const [initialVoyages, setInitialVoyages] = useState([]);
   const [count, setCount] = useState(1);
   const [selectedVehicleType, setSelectedVehicleType] = useState(null);
@@ -512,8 +509,7 @@ export default function HomeScreen({ navigation }) {
       const voyages = await getVoyagesByLocation({ lon1, lon2, lat1, lat2 });
       setInitialVoyages(voyages.data || []);
       setLastLoadedCoordinates({ latitude: initialLatitude, longitude: initialLongitude });
-      setLatitude(initialLatitude);
-      setLongitude(initialLongitude);
+      setRegion(r => ({ ...r, latitude: initialLatitude, longitude: initialLongitude }));
       setIsMarkersLoading(false);
     };
 
@@ -618,10 +614,10 @@ export default function HomeScreen({ navigation }) {
     const formattedEndDate = convertDateFormat(endDate, "endDate");
 
     // console.log("Applying filters with parameters:", formattedStartDate, "---", formattedEndDate);
-    const lat = latitude == 0 ? initialLatitude : latitude;
-    const lon = longitude == 0 ? initialLongitude : longitude;
-    const latDelta = (latitude == 0 ? 0.25 : latitudeDelta) + 0.15;
-    const lonDelta = (longitude == 0 ? 0.25 : longitudeDelta) + 0.2;
+    const lat = region.latitude == 0 ? initialLatitude : region.latitude;
+    const lon = region.longitude == 0 ? initialLongitude : region.longitude;
+    const latDelta = (region.latitude == 0 ? 0.25 : region.latitudeDelta) + 0.15;
+    const lonDelta = (region.longitude == 0 ? 0.25 : region.longitudeDelta) + 0.2;
     const data = {
       latitude: lat,
       longitude: lon,
@@ -664,11 +660,13 @@ export default function HomeScreen({ navigation }) {
   }
 
   const handleRegionChangeComplete = (newRegion) => {
-    setLatitude(newRegion?.latitude);
-    setLongitude(newRegion?.longitude);
-    setLatitudeDelta(newRegion?.latitudeDelta);
-    setLongitudeDelta(newRegion?.longitudeDelta);
     if (!mapReadyRef.current) { mapReadyRef.current = true; return; }
+    setRegion({
+      latitude: newRegion?.latitude,
+      longitude: newRegion?.longitude,
+      latitudeDelta: newRegion?.latitudeDelta,
+      longitudeDelta: newRegion?.longitudeDelta,
+    });
   };
 
   const handleLogout = async () => {
@@ -876,8 +874,8 @@ export default function HomeScreen({ navigation }) {
                     </View>
                   )}
                   {!isMarkersLoading && lastLoadedCoordinates && (
-                    latitude !== lastLoadedCoordinates.latitude ||
-                    longitude !== lastLoadedCoordinates.longitude
+                    region.latitude !== lastLoadedCoordinates.latitude ||
+                    region.longitude !== lastLoadedCoordinates.longitude
                   ) && (
                       <TouchableOpacity
                         style={styles.searchAreaButton}

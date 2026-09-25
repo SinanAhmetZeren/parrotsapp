@@ -314,7 +314,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
                 const isVoyageAdvice = false;
                 const isParrotsBid = msg.text?.startsWith("[parrots-bid]");
                 const displayText = isAskParrots
-                  ? msg.text.replace(/^\*\*[🦜🌍]\*\*\s*/, "")
+                  ? msg.text
+                      .replace(/^\*\*🦜\*\*\s*/, "").replace(/^\*\*🌍\*\*\s*/, "")
+                      .replace(/##(.*?)##|%%(.*?)%%|&&(.*?)&&|\^\^(.*?)\^\^/gs, (_, a, b, c, d) => (a ?? b ?? c ?? d ?? "").trim())
                   : isParrotsBid
                   ? msg.text.replace(/^\[parrots-bid\]\s*/, "")
                   : msg.text;

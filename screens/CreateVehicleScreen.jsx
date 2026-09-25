@@ -123,7 +123,7 @@ const CreateVehicleScreen = () => {
         setCapacity(null);
         setImage("");
         setAddedVehicleImages([]);
-        setCurrentStep(2);
+        setCurrentStep(1);
         setIsUploadingImage(false);
         setIsCreatingVehicle(false);
       }

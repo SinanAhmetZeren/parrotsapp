@@ -51,7 +51,7 @@
     "react-native-dotenv": "^3.4.11",
     "react-native-element-dropdown": "^2.10.1",
     "react-native-expo-viewport-units": "^0.0.8",
-    "react-native-maps": "1.27.2",
+    "react-native-maps": "^1.29.8",
     "react-native-render-html": "^6.3.4",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",

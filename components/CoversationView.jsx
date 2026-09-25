@@ -40,6 +40,8 @@ export default function CoversationView({
 
   const preview = message?.startsWith("**🦜**")
     ? "Ask Parrots: " + message.replace(/^\*\*🦜\*\*\s*/, "")
+    : message?.startsWith("**🌍**")
+    ? "Ask Parrots: " + message.replace(/^\*\*🌍\*\*\s*/, "")
     : message?.startsWith("[parrots-bid]")
     ? "Parrots: " + message.replace(/^\[parrots-bid\]\s*/, "")
     : message;

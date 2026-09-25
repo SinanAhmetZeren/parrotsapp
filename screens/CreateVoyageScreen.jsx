@@ -1,7 +1,7 @@
 import { ParrotsStdText } from "../components/ParrotsStdText";
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from "react-native";
 
 const SCREEN_W = Dimensions.get("window").width;
@@ -126,7 +127,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(false);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -143,10 +144,25 @@ const CreateVoyageScreen = ({ navigation }) => {
 
   const [voyageAdvice, { isLoading: isAdviceLoading }] = useVoyageAdviceMutation();
   const [liveWaypoints, setLiveWaypoints] = useState([]);
+  const [askParrotsConfirmVisible, setAskParrotsConfirmVisible] = useState(false);
   const [adviceModalVisible, setAdviceModalVisible] = useState(false);
   const [adviceResponse, setAdviceResponse] = useState(null);
   const [adviceCopied, setAdviceCopied] = useState(false);
   const [adviceSent, setAdviceSent] = useState(false);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (isAdviceLoading) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, { toValue: 0.5, duration: 600, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
+        ])
+      ).start();
+    } else {
+      pulseAnim.stopAnimation();
+      pulseAnim.setValue(1);
+    }
+  }, [isAdviceLoading]);
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -264,8 +280,13 @@ const CreateVoyageScreen = ({ navigation }) => {
       const result = await voyageAdvice(payload).unwrap();
       setAdviceResponse(result.advice);
       setAdviceModalVisible(true);
-    } catch {
-      showToast("Could not get advice right now. Please try again.");
+      if (result.remainingBalance != null) fetchCrackerBalance(userId);
+    } catch (err) {
+      if (err?.status === 402) {
+        showToast("Not enough ParrotCrackers.");
+      } else {
+        showToast("Could not get advice right now. Please try again.");
+      }
     }
   };
 
@@ -853,10 +874,10 @@ const CreateVoyageScreen = ({ navigation }) => {
               <View style={cvStyles.card}>
                 <ParrotsStdText style={cvStyles.cardTitle}>Pricing</ParrotsStdText>
                 <View style={{ flexDirection: "row", gap: 8 }}>
-                  <TouchableOpacity style={{ flex: 1, backgroundColor: isAuction ? "#0A5FBF" : "#F4F7FB", borderRadius: 8, paddingVertical: 10, alignItems: "center", borderWidth: 1.5, borderColor: isAuction ? "#0A5FBF" : "#D8E0E8" }} onPress={() => setIsAuction(!isAuction)}>
+                  <TouchableOpacity style={{ flex: 1, backgroundColor: isAuction ? "#0A5FBF" : "#F4F7FB", borderRadius: 8, paddingVertical: 10, alignItems: "center", borderWidth: 1.5, borderColor: isAuction ? "#0A5FBF" : "#E8E3DC" }} onPress={() => setIsAuction(!isAuction)}>
                     <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: isAuction ? "white" : "#3C4A57" }}>Auction</ParrotsStdText>
                   </TouchableOpacity>
-                  <TouchableOpacity style={{ flex: 1, backgroundColor: isFixedPrice ? "#0A5FBF" : "#F4F7FB", borderRadius: 8, paddingVertical: 10, alignItems: "center", borderWidth: 1.5, borderColor: isFixedPrice ? "#0A5FBF" : "#D8E0E8" }} onPress={() => setIsFixedPrice(!isFixedPrice)}>
+                  <TouchableOpacity style={{ flex: 1, backgroundColor: isFixedPrice ? "#0A5FBF" : "#F4F7FB", borderRadius: 8, paddingVertical: 10, alignItems: "center", borderWidth: 1.5, borderColor: isFixedPrice ? "#0A5FBF" : "#E8E3DC" }} onPress={() => setIsFixedPrice(!isFixedPrice)}>
                     <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: isFixedPrice ? "white" : "#3C4A57" }}>Fixed price</ParrotsStdText>
                   </TouchableOpacity>
                 </View>
@@ -907,7 +928,7 @@ const CreateVoyageScreen = ({ navigation }) => {
               {/* Dates card */}
               <View style={cvStyles.card}>
                 <ParrotsStdText style={cvStyles.cardTitle}>Dates</ParrotsStdText>
-                <View style={{ borderWidth: 1.5, borderColor: "#D8E0E8", borderRadius: 11, overflow: "hidden", backgroundColor: "white" }}>
+                <View style={{ borderWidth: 1, borderColor: "#E8E3DC", borderRadius: 11, overflow: "hidden", backgroundColor: "white" }}>
                   <CalendarPicker
                     selectedRangeStartTextStyle={styles.startEndText}
                     selectedRangeEndTextStyle={styles.startEndText}
@@ -1070,22 +1091,23 @@ const CreateVoyageScreen = ({ navigation }) => {
             {/* Footer */}
             <View style={{ flexDirection: "row", gap: 8, padding: 12, paddingBottom: 36 + insets.bottom, borderTopWidth: 1, borderTopColor: "#D8E0E8", backgroundColor: parrotCream }}>
               <TouchableOpacity
-                style={{ borderWidth: 1.5, borderColor: "#D8E0E8", backgroundColor: "white", borderRadius: 999, height: 44, paddingHorizontal: 20, alignItems: "center", justifyContent: "center" }}
+                style={{ borderWidth: 1.5, borderColor: parrotCream, backgroundColor: "white", borderRadius: 999, height: 44, paddingHorizontal: 20, alignItems: "center", justifyContent: "center" }}
                 onPress={() => navigation.navigate("Home", { screen: "HomeScreen" })}
               >
-                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Later</ParrotsStdText>
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Cancel</ParrotsStdText>
               </TouchableOpacity>
-              {savedSnapshot && (
-                <TouchableOpacity
-                  style={{ borderRadius: 999, height: 44, paddingHorizontal: 16, alignItems: "center", justifyContent: "center", backgroundColor: "#F59E0B", opacity: isAdviceLoading ? 0.6 : 1 }}
-                  onPress={handleAskParrots}
-                  disabled={isAdviceLoading}
-                >
+              <TouchableOpacity
+                style={{ borderRadius: 999, height: 44, width: 110, alignItems: "center", justifyContent: "center", backgroundColor: !savedSnapshot ? "rgba(245,158,11,0.4)" : "#F59E0B" }}
+                onPress={() => setAskParrotsConfirmVisible(true)}
+                disabled={!savedSnapshot || isAdviceLoading}
+                activeOpacity={1}
+              >
+                <Animated.View style={{ opacity: pulseAnim }}>
                   <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "white" }}>
-                    {isAdviceLoading ? "…" : "🦜 Ask"}
+                    {isAdviceLoading ? "Asking..." : "Ask Parrots"}
                   </ParrotsStdText>
-                </TouchableOpacity>
-              )}
+                </Animated.View>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={{ flex: 1, borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: canComplete ? "#0A5FBF" : "rgba(10,95,191,0.4)" }}
                 onPress={() => completeTriggerRef.current && completeTriggerRef.current()}
@@ -1096,6 +1118,74 @@ const CreateVoyageScreen = ({ navigation }) => {
             </View>
           </KeyboardAvoidingView>
         )}
+        {/* Ask Parrots confirmation modal */}
+        <Modal visible={askParrotsConfirmVisible} transparent animationType="fade" onRequestClose={() => setAskParrotsConfirmVisible(false)}>
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.52)", alignItems: "center", justifyContent: "center", paddingHorizontal: 20 }}>
+            <View style={{ backgroundColor: "#fff", borderRadius: 22, padding: 20, width: "100%", gap: 14, shadowColor: "#000", shadowOpacity: 0.3, shadowRadius: 24, shadowOffset: { width: 0, height: 10 }, elevation: 14 }}>
+              {/* Header: parrot icon + title */}
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 11 }}>
+                <Image source={require("../assets/parrotslogo.png")} style={{ width: 42, height: 42 }} resizeMode="contain" />
+                <View style={{ flex: 1 }}>
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 19, color: "#E8620E", letterSpacing: -0.3, lineHeight: 22 }}>Ask Parrots</ParrotsStdText>
+                  <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, color: "#3C4A57", marginTop: 2, lineHeight: 17 }}>
+                    Parrots will review your voyage and give you advice on:
+                  </ParrotsStdText>
+                </View>
+              </View>
+              {/* 2×2 icon tile grid */}
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 7 }}>
+                {[
+                  { label: "Things to Do, See, and Eat Nearby", color: "#0A77EA", icon: { set: "Ionicons", name: "location-outline" } },
+                  { label: "Practical Crew Tips", color: "#1E9E6A", icon: { set: "Ionicons", name: "people-outline" } },
+                  { label: "Optimal Departure Timing", color: "#7C4DE0", icon: { set: "Ionicons", name: "time-outline" } },
+                  { label: "Pricing Assessment", color: "#C2306B", icon: { set: "Ionicons", name: "pricetag-outline" } },
+                ].map((item) => (
+                  <View key={item.label} style={{ width: "48%", flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: "#F4F7FB", borderRadius: 12, padding: 9 }}>
+                    <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: item.color, flexShrink: 0, alignItems: "center", justifyContent: "center" }}>
+                      <Ionicons name={item.icon.name} size={15} color="#fff" />
+                    </View>
+                    <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 12, color: "#1F2933", lineHeight: 16, flex: 1 }}>{item.label}</ParrotsStdText>
+                  </View>
+                ))}
+              </View>
+              {/* Disclaimer */}
+              <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 11.5, color: "#5A6874", lineHeight: 17 }}>
+                These tips are for inspiration, so please verify before you go.
+              </ParrotsStdText>
+              {/* Cost strip */}
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 9, backgroundColor: "#FDF0D5", borderRadius: 12, paddingVertical: 9, paddingHorizontal: 12 }}>
+                <Image source={require("../assets/parrotCracker.png")} style={{ width: 20, height: 20, flexShrink: 0 }} />
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 12.5, color: "#8A5300" }}>1 ParrotCracker</ParrotsStdText>
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 12.5, color: "#8A5300", marginLeft: "auto" }}>
+                  {`Balance ${crackerBalance?.balance ?? "?"}`}
+                </ParrotsStdText>
+              </View>
+              {/* Insufficient balance warning */}
+              {crackerBalance?.balance === 0 && (
+                <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 12, color: "#DC2626", textAlign: "center" }}>
+                  You don't have enough ParrotCrackers.
+                </ParrotsStdText>
+              )}
+              {/* Actions */}
+              <View style={{ flexDirection: "row", gap: 9 }}>
+                <TouchableOpacity
+                  style={{ width: 100, height: 44, borderRadius: 999, alignItems: "center", justifyContent: "center", backgroundColor: "#fff", borderWidth: 1.5, borderColor: "#E3E9F0" }}
+                  onPress={() => setAskParrotsConfirmVisible(false)}
+                >
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Cancel</ParrotsStdText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, height: 44, borderRadius: 999, alignItems: "center", justifyContent: "center", backgroundColor: crackerBalance?.balance === 0 ? "rgba(10,95,191,0.35)" : "#0A5FBF" }}
+                  disabled={crackerBalance?.balance === 0}
+                  onPress={() => { setAskParrotsConfirmVisible(false); handleAskParrots(); }}
+                >
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#fff" }}>Ask Parrots</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
         <Modal visible={adviceModalVisible} transparent animationType="fade" onRequestClose={() => setAdviceModalVisible(false)}>
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.45)", paddingHorizontal: 16 }}>
             <View style={{ backgroundColor: "white", borderRadius: 20, padding: 20, width: "100%", maxHeight: "80%", shadowColor: "#000", shadowOpacity: 0.2, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 10 }}>
@@ -1152,7 +1242,7 @@ export default CreateVoyageScreen;
 
 const cvStyles = StyleSheet.create({
   card: {
-    borderWidth: 1.5, borderColor: "#D8E0E8", borderRadius: 14,
+    borderWidth: 1, borderColor: "#E8E3DC", borderRadius: 14,
     backgroundColor: "white", padding: 10, gap: 8,
   },
   cardTitle: {
@@ -1164,7 +1254,7 @@ const cvStyles = StyleSheet.create({
   },
   input: {
     fontFamily: "Nunito_700Bold", fontSize: 13, color: "#1F2933",
-    backgroundColor: "#F7F9FB", borderWidth: 1.5, borderColor: "#D8E0E8",
+    backgroundColor: "#F7F9FB", borderWidth: 1, borderColor: "#E8E3DC",
     borderRadius: 8, height: 36, paddingHorizontal: 9,
   },
   field: { gap: 3 },

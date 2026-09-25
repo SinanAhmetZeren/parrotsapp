@@ -371,7 +371,7 @@ const CreateVoyageMapComponent = ({
         </View>
 
         {/* Map */}
-        <View style={{ borderRadius: 11, overflow: "hidden", height: vh(25) }}>
+        <View style={{ borderRadius: 11, overflow: "hidden", aspectRatio: 1 }}>
           <MapView
             provider={PROVIDER_GOOGLE}
             style={{ width: "100%", height: "100%" }}
