@@ -46,6 +46,7 @@ export const RenderBidsComponent = ({
   const [acceptBid] = useAcceptBidMutation();
   const [deleteBid] = useDeleteBidMutation();
   const [loadingBidId, setLoadingBidId] = useState(null);
+  const [pendingDeleteBid, setPendingDeleteBid] = useState(null);
 
   const handleAcceptBid = async ({ bidId, bidUserId }) => {
     const text = `[parrots-bid] Welcome aboard "${voyageName}"! Your bid has been accepted.`;
@@ -87,9 +88,35 @@ export const RenderBidsComponent = ({
           currency={currency}
           loadingBidId={loadingBidId}
           onAccept={handleAcceptBid}
-          onDelete={handleDeleteBid}
+          onDelete={setPendingDeleteBid}
         />
       ))}
+
+      {/* Delete bid confirmation modal */}
+      <Modal visible={!!pendingDeleteBid} transparent animationType="fade" onRequestClose={() => setPendingDeleteBid(null)}>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.45)", alignItems: "center", justifyContent: "center", paddingHorizontal: 24 }}>
+          <View style={{ backgroundColor: "#fff", borderRadius: 20, padding: 24, width: "100%" }}>
+            <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#1F2933", marginBottom: 10 }}>Delete Bid?</ParrotsStdText>
+            <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#5A6874", lineHeight: 20, marginBottom: 24 }}>
+              This will permanently delete the bid. The traveller will be notified and the bid cannot be recovered.
+            </ParrotsStdText>
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <TouchableOpacity
+                style={{ flex: 1, height: 44, borderRadius: 999, alignItems: "center", justifyContent: "center", backgroundColor: "#fff", borderWidth: 1.5, borderColor: "#E3E9F0" }}
+                onPress={() => setPendingDeleteBid(null)}
+              >
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Cancel</ParrotsStdText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ flex: 1, height: 44, borderRadius: 999, alignItems: "center", justifyContent: "center", backgroundColor: "#DC2626" }}
+                onPress={() => { const bid = pendingDeleteBid; setPendingDeleteBid(null); handleDeleteBid(bid); }}
+              >
+                <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#fff" }}>Delete</ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* See all modal */}
       <Modal
@@ -112,7 +139,7 @@ export const RenderBidsComponent = ({
                   currency={currency}
                   loadingBidId={loadingBidId}
                   onAccept={handleAcceptBid}
-                  onDelete={handleDeleteBid}
+                  onDelete={setPendingDeleteBid}
                   currentUserId={currentUserId}
                 />
               )}

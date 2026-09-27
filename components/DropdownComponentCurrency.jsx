@@ -51,7 +51,7 @@ export default DropdownComponentCurrency;
 const styles = StyleSheet.create({
   dropdown: {
     height: 42,
-    backgroundColor: "#F7F9FB",
+    backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#E8E3DC",
     borderRadius: 8,

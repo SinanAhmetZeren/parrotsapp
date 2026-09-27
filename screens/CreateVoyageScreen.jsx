@@ -96,18 +96,6 @@ const CreateVoyageScreen = ({ navigation }) => {
   const formattedseconds = seconds < 10 ? `0${seconds}` : seconds.toString();
   const timeString = `${formattedHours}:${formattedMinutes}:${formattedseconds}`;
 
-
-
-  // const getRandomString = (length = 6) => {
-  //   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  //   return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-  // };
-
-  // const getRandomNumberString = (min = 1, max = 999) => {
-  //   return String(Math.floor(Math.random() * (max - min + 1)) + min);
-  // };
-
-
   const [name, setName] = useState("");
   const [brief, setBrief] = useState("");
   const [description, setDescription] = useState("");
@@ -127,7 +115,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(false);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -141,6 +129,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [toastMessage, setToastMessage] = useState("");
   const [canComplete, setCanComplete] = useState(false);
   const completeTriggerRef = useRef(null);
+  const step2ScrollRef = useRef(null);
 
   const [voyageAdvice, { isLoading: isAdviceLoading }] = useVoyageAdviceMutation();
   const [liveWaypoints, setLiveWaypoints] = useState([]);
@@ -211,10 +200,10 @@ const CreateVoyageScreen = ({ navigation }) => {
       const isSubLabel = trimmed.startsWith("%%");
       const indent = isTitle ? 0 : isSubLabel ? 10 : 20;
       const titleMeta = {
-        "Things to Do":       { icon: "globe-outline",  bg: "rgba(99,102,241,0.12)", color: "#6366F1" },
-        "Practical Crew":     { icon: "people-outline", bg: "rgba(16,185,129,0.12)", color: "#10B981" },
-        "Optimal Departure":  { icon: "time-outline",   bg: "rgba(245,158,11,0.12)", color: "#F59E0B" },
-        "Pricing Assessment": { icon: "cash-outline",   bg: "rgba(8,154,222,0.12)",  color: "#089ADE" },
+        "Things to Do": { icon: "globe-outline", bg: "rgba(99,102,241,0.12)", color: "#6366F1" },
+        "Practical Crew": { icon: "people-outline", bg: "rgba(16,185,129,0.12)", color: "#10B981" },
+        "Optimal Departure": { icon: "time-outline", bg: "rgba(245,158,11,0.12)", color: "#F59E0B" },
+        "Pricing Assessment": { icon: "cash-outline", bg: "rgba(8,154,222,0.12)", color: "#089ADE" },
       };
       if (isTitle) {
         const titleText = trimmed.replace(/##/g, "").trim().replace(/^\d+\.\s*/, "").trim();
@@ -854,17 +843,17 @@ const CreateVoyageScreen = ({ navigation }) => {
               <View style={cvStyles.card}>
                 <ParrotsStdText style={cvStyles.cardTitle}>Basics</ParrotsStdText>
                 <View style={cvStyles.field}>
-                  <ParrotsStdText style={cvStyles.label}>Voyage name *</ParrotsStdText>
+                  <ParrotsStdText style={cvStyles.label}>VOYAGE NAME *</ParrotsStdText>
                   <TextInput style={[cvStyles.input, { height: 42 }]} placeholder="Voyage name (max 30)" placeholderTextColor={parrotPlaceholderGrey} value={name} maxLength={30} onChangeText={setName} />
                   <ParrotsStdText style={cvStyles.charCount}>{name.length} / 30</ParrotsStdText>
                 </View>
                 <View style={{ flexDirection: "row", gap: 8 }}>
                   <View style={[cvStyles.field, { flex: 1 }]}>
-                    <ParrotsStdText style={cvStyles.label}>Vehicle *</ParrotsStdText>
+                    <ParrotsStdText style={cvStyles.label}>VEHICLE *</ParrotsStdText>
                     <DropdownComponent data={dropdownData} setVehicleId={setVehicleId} vehicleId={vehicleId} />
                   </View>
                   <View style={[cvStyles.field, { width: 84 }]}>
-                    <ParrotsStdText style={cvStyles.label}>Spots</ParrotsStdText>
+                    <ParrotsStdText style={cvStyles.label}>SPOTS</ParrotsStdText>
                     <TextInput style={[cvStyles.input, { height: 42 }]} placeholder="0" placeholderTextColor={parrotPlaceholderGrey} value={vacancy} onChangeText={setVacancy} keyboardType="numeric" />
                   </View>
                 </View>
@@ -891,15 +880,15 @@ const CreateVoyageScreen = ({ navigation }) => {
                 </ParrotsStdText>
                 <View style={{ flexDirection: "row", gap: 8 }}>
                   <View style={[cvStyles.field, { flex: 1 }]}>
-                    <ParrotsStdText style={cvStyles.label}>Min</ParrotsStdText>
+                    <ParrotsStdText style={cvStyles.label}>MIN</ParrotsStdText>
                     <TextInput style={[cvStyles.input, { height: 42 }]} placeholder="0" placeholderTextColor={parrotPlaceholderGrey} value={minPrice} onChangeText={setMinPrice} keyboardType="numeric" />
                   </View>
                   <View style={[cvStyles.field, { flex: 1 }]}>
-                    <ParrotsStdText style={cvStyles.label}>Max</ParrotsStdText>
+                    <ParrotsStdText style={cvStyles.label}>MAX</ParrotsStdText>
                     <TextInput style={[cvStyles.input, { height: 42 }]} placeholder="0" placeholderTextColor={parrotPlaceholderGrey} value={maxPrice} onChangeText={setMaxPrice} keyboardType="numeric" />
                   </View>
                   <View style={[cvStyles.field, { width: 80 }]}>
-                    <ParrotsStdText style={cvStyles.label}>Currency</ParrotsStdText>
+                    <ParrotsStdText style={cvStyles.label}>CURRENCY</ParrotsStdText>
                     <DropdownComponentCurrency setCurrency={setCurrency} />
                   </View>
                 </View>
@@ -1035,7 +1024,7 @@ const CreateVoyageScreen = ({ navigation }) => {
 
         {currentStep === 2 && !hasError && (
           <KeyboardAvoidingView style={{ flex: 1, backgroundColor: parrotCream }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <ScrollView style={s2Styles.scrollview} contentContainerStyle={s2Styles.scrollContent} keyboardShouldPersistTaps="handled">
+            <ScrollView ref={step2ScrollRef} style={s2Styles.scrollview} contentContainerStyle={s2Styles.scrollContent} keyboardShouldPersistTaps="handled">
 
               {/* Voyage created badge */}
               <View style={s2Styles.createdBadge}>
@@ -1084,6 +1073,7 @@ const CreateVoyageScreen = ({ navigation }) => {
                 onCanCompleteChange={setCanComplete}
                 completeTriggerRef={completeTriggerRef}
                 onWaypointsChange={setLiveWaypoints}
+                scrollRef={step2ScrollRef}
               />
 
             </ScrollView>
@@ -1250,11 +1240,11 @@ const cvStyles = StyleSheet.create({
   },
   label: {
     fontFamily: "Nunito_800ExtraBold", fontSize: 9, letterSpacing: 1.1,
-    textTransform: "uppercase", color: "#5A6874",
+    color: "#5A6874",
   },
   input: {
     fontFamily: "Nunito_700Bold", fontSize: 13, color: "#1F2933",
-    backgroundColor: "#F7F9FB", borderWidth: 1, borderColor: "#E8E3DC",
+    backgroundColor: "#fff", borderWidth: 1, borderColor: "#E8E3DC",
     borderRadius: 8, height: 36, paddingHorizontal: 9,
   },
   field: { gap: 3 },

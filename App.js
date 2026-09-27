@@ -536,28 +536,37 @@ const TabNavigator = ({ hasUnreadMessages, isLoading }) => {
             tabBarIcon: ({ focused }) => {
               const isActive = focused || modalVisible;
               return (
-                <TouchableOpacity onPress={toggleModal} style={{ alignItems: "center" }}>
-                  <View style={{
-                    width: vw(17),
-                    height: vw(17),
-                    borderRadius: vw(17.5),
-                    backgroundColor: "#FAF6F2",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bottom: vh(-2.5),
+                <View style={{
+                  backgroundColor: "white", width: vw(17),
+                  height: vw(17),
+                  borderRadius: vw(17.5),
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bottom: vh(-2.5),
+                }}>
+                  <TouchableOpacity onPress={toggleModal} style={{ alignItems: "center" }}>
+                    <View style={{
+                      width: vw(17),
+                      height: vw(17),
+                      borderRadius: vw(17.5),
+                      backgroundColor: "#FAF6F2",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      // bottom: vh(-2.5),
 
-                  }}>
-                    <Image
-                      source={require("./assets/parrotwhiteoutlinebg.png")}
-                      style={{
-                        width: vw(17),
-                        height: vw(17), overflow: "hidden", borderRadius: vh(5)
-                      }}
-                      resizeMode="contain"
-                    />
-                  </View>
-                </TouchableOpacity>);
-
+                    }}>
+                      <Image
+                        source={require("./assets/parrotwhiteoutlinebg.png")}
+                        style={{
+                          width: vw(17),
+                          height: vw(17), overflow: "hidden", borderRadius: vh(5)
+                        }}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              )
             }
           }}
         />

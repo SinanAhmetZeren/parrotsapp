@@ -66,6 +66,7 @@ const CreateVoyageMapComponent = ({
   onCanCompleteChange,
   completeTriggerRef,
   onWaypointsChange,
+  scrollRef,
 }) => {
   const [waypointInfoVisible, setWaypointInfoVisible] = useState(false);
   const [addedWayPoints, setAddedWayPoints] = useState([
@@ -453,6 +454,7 @@ const CreateVoyageMapComponent = ({
                 maxLength={300}
                 multiline
                 numberOfLines={2}
+                onFocus={() => setTimeout(() => scrollRef?.current?.scrollToEnd({ animated: true }), 300)}
               />
             </View>
           </View>
@@ -624,7 +626,7 @@ const cmStyles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     height: 42,
     borderRadius: 8,
-    backgroundColor: "#F7F9FB",
+    backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#E8E3DC",
     paddingHorizontal: 9,
