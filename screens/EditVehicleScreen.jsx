@@ -31,7 +31,6 @@ import * as FileSystem from "expo-file-system/legacy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialIcons, Feather, Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
-import DropdownComponentType from "../components/DropdownComponentType";
 import StepBarVehicle from "../components/StepBarVehicle";
 import { useNavigation } from "@react-navigation/native";
 import { API_URL } from "@env";
@@ -198,8 +197,6 @@ const EditVehicleScreen = () => {
     navigation.navigate("Home");
   };
 
-  const dropdownData = Object.keys(VehicleTypes).map((key) => ({ label: key, value: key }));
-
   // ── Grid (identical to CreateVehicleScreen) ──
   const buildGridData = () => {
     const tiles = [];
@@ -277,9 +274,11 @@ const EditVehicleScreen = () => {
               <View style={s.divider} />
               <View style={s.field}>
                 <ParrotsStdText style={s.fieldLabel}>TYPE</ParrotsStdText>
-                <View style={{ flex: 1 }}>
-                  <DropdownComponentType data={dropdownData} setVehicleType={setVehicleType} selected={vehicleType} />
-                </View>
+                <TextInput
+                  style={[s.input, { color: "rgba(92,107,122,0.55)" }]}
+                  value={vehicleType}
+                  editable={false}
+                />
               </View>
               <View style={s.divider} />
               <View style={s.field}>

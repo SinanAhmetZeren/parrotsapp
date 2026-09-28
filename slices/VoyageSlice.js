@@ -332,6 +332,14 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         body: patchDoc,
       }),
     }),
+    setVoyageState: builder.mutation({
+      query: ({ voyageId, state }) => ({
+        url: `/api/Voyage/${voyageId}/state`,
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(state),
+      }),
+    }),
   }),
 
   overrideExisting: true,
@@ -361,4 +369,5 @@ export const {
   useDeleteWaypointMutation,
   useAddVoyageUpdateMutation,
   usePatchVoyageOwnerMutation,
+  useSetVoyageStateMutation,
 } = extendedApiSlice;

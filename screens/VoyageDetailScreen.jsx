@@ -50,6 +50,7 @@ import {
   useAddVoyageToFavoritesMutation,
   useDeleteVoyageFromFavoritesMutation,
   useAddVoyageUpdateMutation,
+  useSetVoyageStateMutation,
 } from "../slices/VoyageSlice";
 import { useFocusEffect } from "@react-navigation/native";
 import {
@@ -169,6 +170,21 @@ const VoyageDetailScreen = ({ navigation }) => {
   const [voyageReportModalVisible, setVoyageReportModalVisible] = useState(false);
   const [voyageSelectedReason, setVoyageSelectedReason] = useState(null);
   const [reportVoyage] = useReportVoyageMutation();
+  const [setVoyageState] = useSetVoyageStateMutation();
+  const [voyageStateLoading, setVoyageStateLoading] = useState(false);
+  const [pendingVoyageState, setPendingVoyageState] = useState(null);
+
+  const handleSetVoyageState = async (state) => {
+    setVoyageStateLoading(true);
+    try {
+      await setVoyageState({ voyageId: VoyageData?.id, state }).unwrap();
+      await refetch();
+    } catch (e) {
+      console.error("Failed to set voyage state", e);
+    } finally {
+      setVoyageStateLoading(false);
+    }
+  };
 
   const REPORT_REASONS = [
     { label: "Inappropriate Content", subtitle: "Offensive language, descriptions, or stolen/inappropriate imagery" },
@@ -446,6 +462,18 @@ const VoyageDetailScreen = ({ navigation }) => {
                 </View>
               )}
 
+              {VoyageData.voyageState === "Cancelled" && (
+                <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(220,38,38,0.82)" }]}>
+                  <ParrotsStdText style={ds.ownerDeletedNoticeText}>This voyage has been cancelled.</ParrotsStdText>
+                </View>
+              )}
+
+              {VoyageData.voyageState === "BidsClosed" && (
+                <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(194,65,11,0.82)" }]}>
+                  <ParrotsStdText style={ds.ownerDeletedNoticeText}>Bids are closed for this voyage.</ParrotsStdText>
+                </View>
+              )}
+
               {/* Image strip */}
               {allVoyageImages.length > 1 && (
                 <View style={{ position: "absolute", left: 0, right: 0, bottom: 24, flexDirection: "row", justifyContent: "center", gap: 2 }}>
@@ -639,7 +667,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   )}
 
                   {/* CTA */}
-                  {!ownVoyage && !VoyageData.isBlockedByOrganizer && (
+                  {!ownVoyage && !VoyageData.isBlockedByOrganizer && VoyageData.voyageState === "Active" && (
                     <CreateBidComponent
                       userName={userName}
                       userProfileImage={userProfileImage}
@@ -746,6 +774,26 @@ const VoyageDetailScreen = ({ navigation }) => {
                 <MaterialIcons name="link" size={24} color={parrotBlue} />
                 <ParrotsStdText style={[ds.sheetItemText, { color: parrotBlue }]}>Copy voyage link</ParrotsStdText>
               </TouchableOpacity>
+              {ownVoyage && VoyageData?.voyageState === "Active" && (
+                <TouchableOpacity
+                  style={ds.sheetItem}
+                  disabled={voyageStateLoading}
+                  onPress={() => { setOverflowMenuVisible(false); setPendingVoyageState("BidsClosed"); }}
+                >
+                  <Ionicons name="lock-closed-outline" size={22} color="#1D4ED8" />
+                  <ParrotsStdText style={[ds.sheetItemText, { color: "#1D4ED8" }]}>Close bids</ParrotsStdText>
+                </TouchableOpacity>
+              )}
+              {ownVoyage && VoyageData?.voyageState !== "Cancelled" && (
+                <TouchableOpacity
+                  style={ds.sheetItem}
+                  disabled={voyageStateLoading}
+                  onPress={() => { setOverflowMenuVisible(false); setPendingVoyageState("Cancelled"); }}
+                >
+                  <MaterialIcons name="cancel" size={24} color={parrotRed} />
+                  <ParrotsStdText style={[ds.sheetItemText, { color: parrotRed }]}>Cancel voyage</ParrotsStdText>
+                </TouchableOpacity>
+              )}
               {!ownVoyage && (
                 <TouchableOpacity style={ds.sheetItem} onPress={() => { setOverflowMenuVisible(false); setTimeout(() => setVoyageReportModalVisible(true), 300); }}>
                   <MaterialIcons name="flag" size={24} color={parrotRed} />
@@ -754,6 +802,36 @@ const VoyageDetailScreen = ({ navigation }) => {
               )}
             </View>
           </TouchableOpacity>
+        </Modal>
+
+        {/* Voyage state confirmation modal */}
+        <Modal visible={!!pendingVoyageState} transparent animationType="fade" onRequestClose={() => setPendingVoyageState(null)}>
+          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.45)", alignItems: "center", justifyContent: "center", paddingHorizontal: 24 }}>
+            <View style={{ backgroundColor: "#fff", borderRadius: 20, padding: 24, width: "100%" }}>
+              <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: pendingVoyageState === "Cancelled" ? "#DC2626" : "#1D4ED8", marginBottom: 10 }}>
+                {pendingVoyageState === "Cancelled" ? "Cancel this voyage?" : "Close bids?"}
+              </ParrotsStdText>
+              <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#5A6874", lineHeight: 20, marginBottom: 24 }}>
+                {pendingVoyageState === "Cancelled"
+                  ? "The voyage will remain visible but marked as cancelled. New bids will be blocked."
+                  : "No new bids will be accepted."}
+              </ParrotsStdText>
+              <View style={{ flexDirection: "row", gap: 10 }}>
+                <TouchableOpacity
+                  style={{ flex: 1, height: 44, borderRadius: 999, alignItems: "center", justifyContent: "center", backgroundColor: "#fff", borderWidth: 1.5, borderColor: "#E3E9F0" }}
+                  onPress={() => setPendingVoyageState(null)}
+                >
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Cancel</ParrotsStdText>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, height: 44, borderRadius: 999, alignItems: "center", justifyContent: "center", backgroundColor: pendingVoyageState === "Cancelled" ? "#DC2626" : "#1D4ED8" }}
+                  onPress={() => { const s = pendingVoyageState; setPendingVoyageState(null); handleSetVoyageState(s); }}
+                >
+                  <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#fff" }}>Confirm</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         </Modal>
 
         {/* Report voyage modal */}
