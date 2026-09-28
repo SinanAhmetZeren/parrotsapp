@@ -336,8 +336,8 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       query: ({ voyageId, state }) => ({
         url: `/api/Voyage/${voyageId}/state`,
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(state),
+        headers: { "Content-Type": "application/json" },
       }),
     }),
   }),

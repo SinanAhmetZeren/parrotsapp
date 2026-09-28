@@ -178,7 +178,7 @@ const VoyageDetailScreen = ({ navigation }) => {
     setVoyageStateLoading(true);
     try {
       await setVoyageState({ voyageId: VoyageData?.id, state }).unwrap();
-      await refetch();
+      await refetchVoyage();
     } catch (e) {
       console.error("Failed to set voyage state", e);
     } finally {
@@ -454,23 +454,25 @@ const VoyageDetailScreen = ({ navigation }) => {
                 )}
               />
 
-              {VoyageData.isOwnerDeleted && (
-                <View style={ds.ownerDeletedNotice}>
-                  <ParrotsStdText style={ds.ownerDeletedNoticeText}>
-                    Notice: This host has deleted their account and is no longer active on Parrots. The voyage remains visible for viewing purposes only.
-                  </ParrotsStdText>
-                </View>
-              )}
-
-              {VoyageData.voyageState === "Cancelled" && (
-                <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(220,38,38,0.82)" }]}>
-                  <ParrotsStdText style={ds.ownerDeletedNoticeText}>This voyage has been cancelled.</ParrotsStdText>
-                </View>
-              )}
-
-              {VoyageData.voyageState === "BidsClosed" && (
-                <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(194,65,11,0.82)" }]}>
-                  <ParrotsStdText style={ds.ownerDeletedNoticeText}>Bids are closed for this voyage.</ParrotsStdText>
+              {(VoyageData.isOwnerDeleted || VoyageData.voyageState === "Cancelled" || VoyageData.voyageState === "BidsClosed") && (
+                <View style={ds.ownerDeletedNoticeWrap}>
+                  {VoyageData.isOwnerDeleted && (
+                    <View style={ds.ownerDeletedNotice}>
+                      <ParrotsStdText style={ds.ownerDeletedNoticeText}>
+                        Notice: This host has deleted their account and is no longer active on Parrots. The voyage remains visible for viewing purposes only.
+                      </ParrotsStdText>
+                    </View>
+                  )}
+                  {VoyageData.voyageState === "Cancelled" && (
+                    <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(220,38,38,0.82)" }]}>
+                      <ParrotsStdText style={ds.ownerDeletedNoticeText}>This voyage has been cancelled.</ParrotsStdText>
+                    </View>
+                  )}
+                  {VoyageData.voyageState === "BidsClosed" && (
+                    <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(194,65,11,0.82)" }]}>
+                      <ParrotsStdText style={ds.ownerDeletedNoticeText}>Bids are closed for this voyage.</ParrotsStdText>
+                    </View>
+                  )}
                 </View>
               )}
 
@@ -780,8 +782,8 @@ const VoyageDetailScreen = ({ navigation }) => {
                   disabled={voyageStateLoading}
                   onPress={() => { setOverflowMenuVisible(false); setPendingVoyageState("BidsClosed"); }}
                 >
-                  <Ionicons name="lock-closed-outline" size={22} color="#1D4ED8" />
-                  <ParrotsStdText style={[ds.sheetItemText, { color: "#1D4ED8" }]}>Close bids</ParrotsStdText>
+                  <Ionicons name="lock-closed-outline" size={22} color="#C2410C" />
+                  <ParrotsStdText style={[ds.sheetItemText, { color: "#C2410C" }]}>Close bids</ParrotsStdText>
                 </TouchableOpacity>
               )}
               {ownVoyage && VoyageData?.voyageState !== "Cancelled" && (
@@ -790,7 +792,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   disabled={voyageStateLoading}
                   onPress={() => { setOverflowMenuVisible(false); setPendingVoyageState("Cancelled"); }}
                 >
-                  <MaterialIcons name="cancel" size={24} color={parrotRed} />
+                  <Ionicons name="close-circle-outline" size={24} color={parrotRed} />
                   <ParrotsStdText style={[ds.sheetItemText, { color: parrotRed }]}>Cancel voyage</ParrotsStdText>
                 </TouchableOpacity>
               )}
@@ -813,8 +815,8 @@ const VoyageDetailScreen = ({ navigation }) => {
               </ParrotsStdText>
               <ParrotsStdText style={{ fontFamily: "Nunito_600SemiBold", fontSize: 13, color: "#5A6874", lineHeight: 20, marginBottom: 24 }}>
                 {pendingVoyageState === "Cancelled"
-                  ? "The voyage will remain visible but marked as cancelled. New bids will be blocked."
-                  : "No new bids will be accepted."}
+                  ? "The voyage will remain visible but marked as cancelled. New bids will be blocked. You will need help of a ParrotsVoyages admin to reinstate it."
+                  : "No new bids will be accepted. You will need help of a ParrotsVoyages admin to reopen bids."}
               </ParrotsStdText>
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <TouchableOpacity
@@ -1196,17 +1198,19 @@ const ds = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     color: "#3D3D3D",
   },
-  ownerDeletedNotice: {
+  ownerDeletedNoticeWrap: {
     position: "absolute",
-    top: vh(8),
-    left: vw(4),
-    right: vw(4),
-    backgroundColor: "rgba(203,4,4,0.55)",
-    borderRadius: 10,
-    borderLeftWidth: 3,
-    borderLeftColor: "#B3261E",
-    padding: 12,
+    bottom: vh(3),
+    left: 0,
+    right: 0,
+    alignItems: "center",
     zIndex: 10,
+  },
+  ownerDeletedNotice: {
+    backgroundColor: "rgba(203,4,4,0.55)",
+    borderRadius: 999,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
   },
   ownerDeletedNoticeText: {
     fontFamily: "Nunito_600SemiBold",
