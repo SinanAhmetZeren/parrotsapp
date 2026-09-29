@@ -924,7 +924,7 @@ export default function HomeScreen({ navigation }) {
             </View>
           ) : !hasError ? (
             <>
-              {initialVoyages.filter(v => v.placeType === 0).length > 0 && (
+              {initialVoyages.length > 0 && (
                 <View style={styles.mainBidsContainer}>
                   <View style={styles.currentBidsAndSeeAll}>
                     <View style={{ flexDirection: "row", alignItems: "center" }}>

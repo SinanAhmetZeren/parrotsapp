@@ -515,7 +515,7 @@ const VoyageDetailScreen = ({ navigation }) => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[ds.pill, { backgroundColor: (VEHICLE_COLORS[VoyageData.vehicleType] ?? parrotBlue) + "18" }]}
-                    onPress={() => { if (VoyageData.vehicleType !== 4 && VoyageData.vehicleType !== 5 && VoyageData.vehicleType !== 10) goToVehiclePage(VoyageData.vehicle?.id); }}
+                    onPress={() => { if (VoyageData.vehicleType !== 4 && VoyageData.vehicleType !== 5 && VoyageData.vehicleType !== 10) goToVehiclePage(VoyageData.vehicleId); }}
                   >
                     {VoyageData.vehicleType === 4 || VoyageData.vehicleType === 5 || VoyageData.vehicleType === 10
                       ? <VehicleIcon type={VoyageData.vehicleType} color={VEHICLE_COLORS[VoyageData.vehicleType] ?? parrotBlue} size={12} />

@@ -42,6 +42,7 @@ export default function VoyageListHorizontal({ data, focusMap, navigation }) {
         longitude={item.waypoints[0]?.longitude}
         focusMap={focusMap}
         markerImage={item.markerImage}
+        voyageState={item.voyageState}
         navigation={navigation}
       />
     );

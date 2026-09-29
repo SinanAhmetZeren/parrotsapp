@@ -40,7 +40,9 @@ export const BookmarkedUsersComponent = ({ bookmarks, height }) => {
               <View style={styles.nameBlock}>
                 <ParrotsStdText style={styles.name} numberOfLines={1}>{item.userName}</ParrotsStdText>
                 {item.title ? (
-                  <ParrotsStdText style={styles.title} numberOfLines={1}>{item.title}</ParrotsStdText>
+                  <View style={styles.titlePill}>
+                    <ParrotsStdText style={styles.title} numberOfLines={1}>{item.title}</ParrotsStdText>
+                  </View>
                 ) : null}
               </View>
               <View style={styles.actions}>
@@ -90,7 +92,7 @@ export const BookmarkedUsersComponent = ({ bookmarks, height }) => {
 const styles = StyleSheet.create({
   list: {
     gap: 7,
-    paddingBottom: 16,
+    paddingBottom: vh(8),
   },
   card: {
     flexDirection: "row",
@@ -131,9 +133,16 @@ const styles = StyleSheet.create({
     color: "#0A5FBF",
     letterSpacing: -0.1,
   },
+  titlePill: {
+    alignSelf: "flex-start",
+    backgroundColor: "#E07B0A20",
+    borderRadius: 99,
+    paddingHorizontal: 7,
+    paddingVertical: 1,
+  },
   title: {
     fontFamily: "Nunito_800ExtraBold",
-    fontSize: 11.5,
+    fontSize: 11,
     color: "#E07B0A",
     letterSpacing: -0.005,
   },

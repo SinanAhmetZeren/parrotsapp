@@ -49,6 +49,7 @@ export default function VoyageCardProfileHorizontal({
   longitude,
   focusMap,
   markerImage,
+  voyageState,
   navigation: navProp,
 }) {
   const cardImageUrl = `${cardImage}`;
@@ -129,16 +130,25 @@ export default function VoyageCardProfileHorizontal({
               </View>
             </View>
 
-            <TouchableOpacity
-              onPress={() => {
-                panMapOnVoyage();
-              }}
-              style={styles.extendedAreaContainer}
-            >
-              <View style={styles.extendedArea}>
-                <ParrotsStdText style={styles.seeOnMap}>View on map</ParrotsStdText>
+            {voyageState === "Cancelled" ? (
+              <View style={styles.extendedAreaContainer}>
+                <View style={styles.extendedArea}>
+                  <ParrotsStdText style={[styles.seeOnMap, { color: "#B91C1C" }]}>Cancelled</ParrotsStdText>
+                </View>
               </View>
-            </TouchableOpacity>
+            ) : voyageState === "BidsClosed" ? (
+              <View style={styles.extendedAreaContainer}>
+                <View style={styles.extendedArea}>
+                  <ParrotsStdText style={[styles.seeOnMap, { color: "#E07B0A" }]}>Bids Closed</ParrotsStdText>
+                </View>
+              </View>
+            ) : (
+              <TouchableOpacity onPress={panMapOnVoyage} style={styles.extendedAreaContainer}>
+                <View style={styles.extendedArea}>
+                  <ParrotsStdText style={styles.seeOnMap}>View on map</ParrotsStdText>
+                </View>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>

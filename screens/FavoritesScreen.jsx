@@ -63,6 +63,7 @@ export default function FavoritesScreen({ navigation }) {
 
   const bookmarks = bookmarksRaw?.data ?? bookmarksRaw ?? [];
 
+
   useFocusEffect(useCallback(() => {
     console.log("entered favorites screen --> ");
     refetchVoyages().catch(() => { });
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
     paddingTop: vh(1.2),
   },
   listContent: {
-    paddingBottom: 16,
+    paddingBottom: vh(8),
   },
   emptyState: {
     flex: 1,
