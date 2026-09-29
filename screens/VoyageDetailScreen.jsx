@@ -454,27 +454,30 @@ const VoyageDetailScreen = ({ navigation }) => {
                 )}
               />
 
-              {(VoyageData.isOwnerDeleted || VoyageData.voyageState === "Cancelled" || VoyageData.voyageState === "BidsClosed") && (
-                <View style={ds.ownerDeletedNoticeWrap}>
-                  {VoyageData.isOwnerDeleted && (
-                    <View style={ds.ownerDeletedNotice}>
-                      <ParrotsStdText style={ds.ownerDeletedNoticeText}>
-                        Notice: This host has deleted their account and is no longer active on Parrots. The voyage remains visible for viewing purposes only.
-                      </ParrotsStdText>
-                    </View>
-                  )}
-                  {VoyageData.voyageState === "Cancelled" && (
-                    <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(220,38,38,0.82)" }]}>
-                      <ParrotsStdText style={ds.ownerDeletedNoticeText}>This voyage has been cancelled.</ParrotsStdText>
-                    </View>
-                  )}
-                  {VoyageData.voyageState === "BidsClosed" && (
-                    <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(194,65,11,0.82)" }]}>
-                      <ParrotsStdText style={ds.ownerDeletedNoticeText}>Bids are closed for this voyage.</ParrotsStdText>
-                    </View>
-                  )}
-                </View>
-              )}
+              <View style={ds.ownerDeletedNoticeWrap}>
+                {VoyageData.isOwnerSuspended && (
+                  <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(109,40,217,0.88)" }]}>
+                    <ParrotsStdText style={ds.ownerDeletedNoticeText}>This host has been suspended.</ParrotsStdText>
+                  </View>
+                )}
+                {VoyageData.isOwnerDeleted && (
+                  <View style={ds.ownerDeletedNotice}>
+                    <ParrotsStdText style={ds.ownerDeletedNoticeText}>
+                      Notice: This host has deleted their account and is no longer active on Parrots. The voyage remains visible for viewing purposes only.
+                    </ParrotsStdText>
+                  </View>
+                )}
+                {VoyageData.voyageState === "Cancelled" && (
+                  <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(220,38,38,0.82)" }]}>
+                    <ParrotsStdText style={ds.ownerDeletedNoticeText}>This voyage has been cancelled.</ParrotsStdText>
+                  </View>
+                )}
+                {VoyageData.voyageState === "BidsClosed" && (
+                  <View style={[ds.ownerDeletedNotice, { backgroundColor: "rgba(194,65,11,0.82)" }]}>
+                    <ParrotsStdText style={ds.ownerDeletedNoticeText}>Bids are closed for this voyage.</ParrotsStdText>
+                  </View>
+                )}
+              </View>
 
               {/* Image strip */}
               {allVoyageImages.length > 1 && (
@@ -684,6 +687,8 @@ const VoyageDetailScreen = ({ navigation }) => {
                       ownVoyage={ownVoyage}
                       currency={VoyageData.currency}
                       isOwnerDeleted={VoyageData.isOwnerDeleted}
+                      isOwnerSuspended={VoyageData.isOwnerSuspended}
+                      voyageState={VoyageData.voyageState}
                       endDate={VoyageData.endDate}
                     />
                   )}

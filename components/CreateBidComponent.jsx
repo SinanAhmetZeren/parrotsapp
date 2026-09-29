@@ -43,9 +43,12 @@ export const CreateBidComponent = ({
   refetch,
   currency,
   isOwnerDeleted,
+  isOwnerSuspended,
+  voyageState,
   endDate,
 }) => {
-  const isBiddingClosed = endDate && new Date(new Date(endDate).setHours(23, 59, 59, 999)) < Date.now();
+  const isBidDeadlinePassed = endDate && new Date(new Date(endDate).setHours(23, 59, 59, 999)) < Date.now();
+  const isBiddingClosed = isBidDeadlinePassed || voyageState === "BidsClosed" || voyageState === "Cancelled" || isOwnerDeleted || isOwnerSuspended;
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const [isChangeModalVisible, setIsChangeModalVisible] = useState(false);
   const [price, setPrice] = useState("0");
@@ -125,7 +128,7 @@ export const CreateBidComponent = ({
     setMessage("");
   };
 
-  const disabled = !!isOwnerDeleted || isBiddingClosed;
+  const disabled = isBiddingClosed;
 
   return (
     <View>
@@ -158,7 +161,7 @@ export const CreateBidComponent = ({
         >
           <Feather name="send" size={13} color="#fff" />
           <ParrotsStdText style={cs.placeBidText}>
-            {isBiddingClosed ? "Bidding closed" : "Place a bid"}
+            {isBiddingClosed ? "Bidding closed" : "Place a Bid"}
           </ParrotsStdText>
         </TouchableOpacity>
       )}
