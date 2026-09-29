@@ -208,16 +208,14 @@ const VehicleDetailScreen = () => {
     return <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><LoadingLogo size={200} /></View>;
   }
 
-  if (hasError || isError) {
+  if (hasError || isError || VehicleData?.isDeleted) {
+    setTimeout(() => navigation.goBack(), 2500);
     return (
-      <ScrollView style={{ flex: 1, backgroundColor: "#fff" }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[parrotPistachioGreen, parrotBananaLeafGreen]} tintColor={parrotBananaLeafGreen} />}>
-        <View style={{ alignItems: "center", marginTop: vh(20) }}>
-          <Image source={require("../assets/parrotslogo.png")} style={{ height: vh(25), width: vh(25), borderRadius: vh(15) }} />
-          <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: parrotBlue, marginTop: 12 }}>Something went wrong</ParrotsStdText>
-          <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: parrotBlue, opacity: 0.6 }}>Swipe down to retry</ParrotsStdText>
-        </View>
-      </ScrollView>
+      <View style={{ flex: 1, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" }}>
+        <Image source={require("../assets/parrotslogo.png")} style={{ height: vh(20), width: vh(20), borderRadius: vh(10) }} />
+        <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: parrotBlue, marginTop: 12 }}>This vehicle has been removed.</ParrotsStdText>
+        <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: parrotBlue, opacity: 0.5, marginTop: 6 }}>Taking you back...</ParrotsStdText>
+      </View>
     );
   }
 
