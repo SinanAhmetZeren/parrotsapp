@@ -187,7 +187,8 @@ tasks.whenTaskAdded { task ->
     if (task.name == "createBundleReleaseJsAndAssets" || task.name == "createBundleDebugJsAndAssets") {
         task.doFirst {
             exec {
-                commandLine 'chmod', '+x', "${project.rootDir}/../node_modules/react-native/sdks/hermesc/linux64-bin/hermesc"
+                ignoreExitValue = true
+                commandLine 'bash', '-c', "find ${project.rootDir}/../node_modules/react-native/sdks/hermesc -name hermesc -exec chmod +x {} \\; 2>&1 || true"
             }
         }
     }
