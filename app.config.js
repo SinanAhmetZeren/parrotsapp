@@ -79,7 +79,7 @@ export default {
                 { "icon": "./assets/parrotslogoblue_icon.png", "color": "#ffffff" }
             ],
             "expo-font",
-            ["expo-build-properties", { "android": { "enableHermes": true } }],
+            ["expo-build-properties", { "android": { "enableHermes": false } }],
             "expo-web-browser",
             "@react-native-google-signin/google-signin",
             "expo-splash-screen",
