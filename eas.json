@@ -17,7 +17,6 @@
       }
     },
     "production": {
-      "prebuildCommand": "chmod +x node_modules/react-native/sdks/hermesc/linux64-bin/hermesc || true",
       "android": {
         "buildType": "app-bundle"
       },
