@@ -42,7 +42,7 @@ export default {
             "softwareKeyboardLayoutMode": "resize",
             "package": "com.zenforest.parrots",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 30,
+            "versionCode": 31,
             "intentFilters": [
                 {
                     "action": "VIEW",
