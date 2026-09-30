@@ -42,7 +42,7 @@ export default {
             "softwareKeyboardLayoutMode": "resize",
             "package": "com.zenforest.parrots",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 31,
+            "versionCode": 32,
             "intentFilters": [
                 {
                     "action": "VIEW",
@@ -79,7 +79,7 @@ export default {
                 { "icon": "./assets/parrotslogoblue_icon.png", "color": "#ffffff" }
             ],
             "expo-font",
-            ["expo-build-properties", { "android": { "enableHermes": true } }],
+            ["expo-build-properties", { "android": { "enableHermes": true, "newArchEnabled": false } }],
             "expo-web-browser",
             "@react-native-google-signin/google-signin",
             "expo-splash-screen",
