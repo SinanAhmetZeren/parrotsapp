@@ -182,3 +182,13 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+tasks.whenTaskAdded { task ->
+    if (task.name == "createBundleReleaseJsAndAssets" || task.name == "createBundleDebugJsAndAssets") {
+        task.doFirst {
+            exec {
+                commandLine 'chmod', '+x', "${project.rootDir}/../node_modules/react-native/sdks/hermesc/linux64-bin/hermesc"
+            }
+        }
+    }
+}
