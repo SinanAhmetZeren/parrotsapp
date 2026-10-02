@@ -146,8 +146,13 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const [addedUserId, setAddedUserId] = useState(null);
   const [removingUserId, setRemovingUserId] = useState(null);
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const renderCountRef = useRef(0);
+  renderCountRef.current += 1;
+  console.log(`[PERF LOG 1] Component Render #${renderCountRef.current} at ${Date.now()}`);
   const scrollViewRef = useRef();
   const sendTimestampsRef = useRef([]);
+  const refetchRef = useRef(refetchMessages);
+  useEffect(() => { refetchRef.current = refetchMessages; }, [refetchMessages]);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [emojiCategory, setEmojiCategory] = useState("Smileys");
@@ -163,11 +168,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
   }, [emojiOpen]);
   const tabBarHeight = Platform.OS === "ios"
     ? (vh(100) - insets.top - insets.bottom) * 0.08
-    : vh(8);
+    : vh(8) + insets.bottom;
   const isTablet = DeviceInfo ? DeviceInfo.isTablet() : false;
-  const containerHeight = Platform.OS === "ios" || isTablet
-    ? vh(103) - tabBarHeight - insets.top - insets.bottom
-    : vh(105) - tabBarHeight;
+  const containerHeight = vh(100) - tabBarHeight;
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -245,23 +248,19 @@ export const ConversationDetailScreen = ({ navigation }) => {
     if (m) setMembers(m);
   }, [groupData]);
 
-  useEffect(() => {
-    if (scrollViewRef.current && messagesToDisplay?.length > 0) {
-      requestAnimationFrame(() => scrollViewRef.current?.scrollToEnd({ animated: true }));
-    }
-  }, [messagesToDisplay]);
 
   useEffect(() => {
-    const showSub = Keyboard.addListener("keyboardDidShow", (e) => setKeyboardHeight(e.endCoordinates.height));
-    const hideSub = Keyboard.addListener("keyboardDidHide", () => setKeyboardHeight(0));
+    const showSub = Keyboard.addListener("keyboardDidShow", (e) => {
+      console.log("[PERF LOG 4] Keyboard Show:", e.endCoordinates.height);
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const hideSub = Keyboard.addListener("keyboardDidHide", () => {
+      console.log("[PERF LOG 4] Keyboard Hide");
+      setKeyboardHeight(0);
+    });
     return () => { showSub.remove(); hideSub.remove(); };
   }, []);
 
-  useEffect(() => {
-    if (keyboardHeight > 0) {
-      requestAnimationFrame(() => scrollViewRef.current?.scrollToEnd({ animated: true }));
-    }
-  }, [keyboardHeight]);
 
   useEffect(() => {
     if (!groupId) return;
@@ -269,6 +268,8 @@ export const ConversationDetailScreen = ({ navigation }) => {
       if (!payload || payload.groupConversationId !== groupId) return;
       const incoming = payload.messages;
       if (!Array.isArray(incoming)) return;
+      console.log("[DEBUG 3 - SIGNALR RECEIVED]", { incomingCount: payload?.messages?.length, timestamp: Date.now() });
+      console.log("[PERF LOG 2] SignalR Event Received:", { count: incoming.length, time: Date.now() });
       setMessagesToDisplay((prev) => {
         const existingIds = new Set(incoming.map(m => m.id));
         const kept = (prev ?? []).filter(m => !m.tempId && m.id && !existingIds.has(m.id));
@@ -281,7 +282,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      refetchMessages().then(result => {
+      refetchRef.current().then(result => {
         if (result.data) setMessagesToDisplay(result.data);
       });
       if (isHubReady()) invokeHub("EnterGroupConversationPage", currentUserId, String(groupId));
@@ -292,12 +293,12 @@ export const ConversationDetailScreen = ({ navigation }) => {
       return () => {
         if (isHubReady()) invokeHub("LeaveGroupConversationPage", currentUserId);
       };
-    }, [refetchMessages, currentUserId, groupId])
+    }, [currentUserId, groupId])
   );
 
   useFocusEffect(
     useCallback(() => {
-      const handleReconnecting = () => {};
+      const handleReconnecting = () => { };
       const handleReconnected = () => { setToastVisible(false); };
       register_OnReconnecting(handleReconnecting);
       register_OnReconnected(handleReconnected);
@@ -315,8 +316,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
     sendTimestampsRef.current = sendTimestampsRef.current.filter((t) => now - t < 5000);
     if (sendTimestampsRef.current.length >= 5) return;
     sendTimestampsRef.current.push(now);
-
-    scrollViewRef.current?.scrollToEnd({ animated: true });
 
     const optimistic = {
       tempId: Date.now(),
@@ -343,269 +342,290 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const stackedAvatars = members.slice(0, 3);
   const extraCount = members.length > 3 ? members.length - 3 : 0;
 
-  const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight;
+  const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + vh(8) : containerHeight;
+
+  console.log("[DEBUG 1 - RENDER]", {
+    renderCount: renderCountRef.current,
+    messagesToDisplayCount: messagesToDisplay?.length,
+    keyboardHeight,
+    emojiOpen,
+    timestamp: Date.now(),
+  });
+
+  const reversedMessages = [...(messagesToDisplay ?? [])].reverse();
 
   return (
-    <TouchableWithoutFeedback onPress={() => { if (emojiOpen) setEmojiOpen(false); }} accessible={false}>
-    <View style={{ backgroundColor: "white", height: outerHeight }}>
-      <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalBox}>
-            <ParrotsStdText style={styles.modalTitle}>Group Message History</ParrotsStdText>
-            <ParrotsStdText style={styles.modalText}>
-              You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
-            </ParrotsStdText>
-            <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledgeGroupHistory}>
-              <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
+    <View style={{ backgroundColor: parrotCream, height: outerHeight }}>
+      {emojiOpen && (
+        <TouchableWithoutFeedback onPress={() => setEmojiOpen(false)}>
+          <View style={[StyleSheet.absoluteFillObject, { zIndex: 50 }]} />
+        </TouchableWithoutFeedback>
+      )}
+        <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={handleAcknowledgeGroupHistory}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalBox}>
+              <ParrotsStdText style={styles.modalTitle}>Group Message History</ParrotsStdText>
+              <ParrotsStdText style={styles.modalText}>
+                You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
+              </ParrotsStdText>
+              <TouchableOpacity style={styles.modalBtn} onPress={handleAcknowledgeGroupHistory}>
+                <ParrotsStdText style={styles.modalBtnText}>Got it</ParrotsStdText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+        <View style={[styles.mainContainer, { flex: 1 }]}>
+          {/* // HEADER // */}
+          <View style={styles.headerStyle}>
+            <View style={[styles.groupAvatar, { backgroundColor: groupColor(groupId) }]}>
+              <ParrotsStdText style={styles.groupAvatarText}>
+                {groupName?.split(" ").map(w => w.charAt(0).toUpperCase()).join("")}
+              </ParrotsStdText>
+            </View>
+            <ParrotsStdText style={styles.nameStyle} numberOfLines={1}>{groupName}</ParrotsStdText>
+            <TouchableOpacity onPress={() => { setMembersDropdownVisible(v => !v); setConfirmLeave(false); }} style={styles.stackedAvatarsBtn}>
+              {stackedAvatars.map((m, i) => (
+                <Image
+                  key={m.userId}
+                  source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }}
+                  style={[styles.stackedAvatar, { marginLeft: i === 0 ? 0 : -vw(3) }]}
+                />
+              ))}
+              {extraCount > 0 && (
+                <View style={[styles.stackedAvatar, styles.extraCountCircle, { marginLeft: -vw(3), backgroundColor: groupColor(groupId) }]}>
+                  <ParrotsStdText style={styles.extraCountText}>+{extraCount}</ParrotsStdText>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+          {/* // HEADER // */}
+
+          {/* // MEMBERS DROPDOWN // */}
+          {membersDropdownVisible && (
+            <TouchableOpacity
+              style={[StyleSheet.absoluteFillObject, { zIndex: 99, backgroundColor: "rgba(0,0,0,0.25)" }]}
+              activeOpacity={1}
+              onPress={() => { setMembersDropdownVisible(false); setConfirmLeave(false); }}
+            />
+          )}
+          <Modal animationType="fade" transparent visible={membersDropdownVisible} onRequestClose={() => { setMembersDropdownVisible(false); setConfirmLeave(false); }}>
+            <TouchableOpacity style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.25)" }} activeOpacity={1} onPress={() => { setMembersDropdownVisible(false); setConfirmLeave(false); }}>
+              <TouchableOpacity activeOpacity={1} style={styles.dropdown} onPress={() => {}}>
+                {isCreator && (
+                  <View style={styles.addMemberRow}>
+                    <TextInput
+                      style={styles.addMemberInput}
+                      placeholder="Search by username..."
+                      placeholderTextColor={parrotPlaceholderGrey}
+                      value={memberSearch}
+                      onChangeText={setMemberSearch}
+                      onSubmitEditing={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
+                    />
+                    <TouchableOpacity
+                      style={[styles.searchBtn, memberSearch.length < 3 && styles.searchBtnDisabled]}
+                      onPress={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
+                      disabled={memberSearch.length < 3}
+                    >
+                      <ParrotsStdText style={styles.searchBtnText}>Search</ParrotsStdText>
+                    </TouchableOpacity>
+                  </View>
+                )}
+
+                {searchResults?.filter((u) => !memberUserIds.includes(u.id ?? u.Id) || addedUserId === (u.id ?? u.Id)).map((u) => (
+                  <View key={u.id ?? u.Id} style={styles.memberRow}>
+                    <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.memberAvatar} />
+                    <ParrotsStdText style={styles.memberName}>{u.userName}</ParrotsStdText>
+                    <TouchableOpacity style={addedUserId === (u.id ?? u.Id) ? styles.addedBtn : styles.addBtn} disabled={!!addingUserId || !!addedUserId} onPress={() => handleAddMember(u.id ?? u.Id)}>
+                      {addingUserId === (u.id ?? u.Id)
+                        ? <ActivityIndicator size={18} color={parrotBlue} />
+                        : addedUserId === (u.id ?? u.Id)
+                          ? <Feather name="check" size={18} color="#4caf50" />
+                          : <Feather name="plus" size={18} color={parrotBlue} />}
+                    </TouchableOpacity>
+                  </View>
+                ))}
+
+                <ScrollView style={styles.memberList} nestedScrollEnabled>
+                  {members.map((m) => (
+                    <View key={m.userId} style={styles.memberRow}>
+                      <TouchableOpacity
+                        style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: vw(3) }}
+                        onPress={() => { setMembersDropdownVisible(false); navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: m.publicId, userName: m.username, userId: m.userId } }); }}>
+                        <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.memberAvatar} />
+                        <ParrotsStdText style={styles.memberName}>{m.username} {">"}</ParrotsStdText>
+                      </TouchableOpacity>
+                      {isCreator && m.userId !== currentUserId && (
+                        <TouchableOpacity onPress={() => handleRemoveMember(m.userId)} disabled={!!removingUserId} style={styles.removeBtn}>
+                          {removingUserId === m.userId
+                            ? <ActivityIndicator size={18} color={parrotRed} />
+                            : <Feather name="x" size={18} color={parrotRed} />}
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  ))}
+                </ScrollView>
+
+                {!isCreator && (
+                  confirmLeave ? (
+                    <View style={styles.confirmLeaveRow}>
+                      <ParrotsStdText style={styles.confirmLeaveText}>Are you sure?</ParrotsStdText>
+                      <TouchableOpacity style={styles.noStayBtn} onPress={() => setConfirmLeave(false)}>
+                        <ParrotsStdText style={styles.leaveBtnText}>No, Stay</ParrotsStdText>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.confirmLeaveBtn} onPress={handleExitGroup}>
+                        <ParrotsStdText style={styles.leaveBtnText}>Yes, Leave</ParrotsStdText>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <View style={styles.confirmLeaveRow}>
+                      <TouchableOpacity style={styles.leaveBtn} onPress={() => setConfirmLeave(true)}>
+                        <ParrotsStdText style={styles.leaveBtnText}>Leave Group</ParrotsStdText>
+                      </TouchableOpacity>
+                    </View>
+                  )
+                )}
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </Modal>
+          {/* // MEMBERS DROPDOWN // */}
+
+          {/* // MESSAGES // */}
+          <View style={styles.messagesWrapper}>
+            <FlatList
+              ref={scrollViewRef}
+              data={reversedMessages}
+              keyExtractor={(item, index) => item.id?.toString() || item.tempId?.toString() || index.toString()}
+              style={styles.messagesList}
+              contentContainerStyle={{ paddingTop: vh(1) }}
+              keyboardShouldPersistTaps="handled"
+              initialNumToRender={15}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              removeClippedSubviews={false}
+              inverted
+              renderItem={({ item: msg, index }) => {
+                const isMe = msg.senderId === currentUserId;
+                const [time, date] = formatDate(msg.dateTime);
+                const nextMsg = reversedMessages[index + 1];
+                const nextDate = nextMsg ? formatDate(nextMsg.dateTime)[1] : null;
+                const showDateSeparator = date !== nextDate;
+                const isFirstInGroup = !nextMsg || nextMsg.senderId !== msg.senderId || showDateSeparator;
+                return (
+                  <View>
+                    {showDateSeparator && (
+                      <View style={styles.dateSeparator}>
+                        <ParrotsStdText style={styles.dateSeparatorText}>{date}</ParrotsStdText>
+                      </View>
+                    )}
+                    {isMe ? (
+                      <View style={styles.msgRight}>
+                        <ParrotsStdText selectable style={styles.msgText}>{msg.text}</ParrotsStdText>
+                        <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
+                      </View>
+                    ) : (
+                      <View style={styles.msgRowLeft}>
+                        {isFirstInGroup ? (
+                          <TouchableOpacity onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: msg.senderPublicId, userName: msg.senderUsername, userId: msg.senderId } })}>
+                            <Image
+                              source={{ uri: msg.senderProfileThumbnailUrl || msg.senderProfileImageUrl }}
+                              style={styles.msgAvatar}
+                            />
+                          </TouchableOpacity>
+                        ) : (
+                          <View style={styles.msgAvatarPlaceholder} />
+                        )}
+                        <View style={[styles.msgColumn, isFirstInGroup && { marginTop: vh(1) }]}>
+                          {isFirstInGroup && <ParrotsStdText style={styles.msgSender}>{msg.senderUsername}</ParrotsStdText>}
+                          <View style={styles.msgLeft}>
+                            <ParrotsStdText selectable style={styles.msgText}>{msg.text}</ParrotsStdText>
+                            <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
+                          </View>
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                );
+              }}
+            />
+          </View>
+          {/* // MESSAGES // */}
+
+          <View style={[styles.sendRow, { paddingBottom: emojiOpen ? 0 : insets.bottom }]}>
+            <TouchableOpacity
+              onPress={() => {
+                Keyboard.dismiss();
+                setEmojiOpen((prev) => !prev);
+              }}
+              style={styles.emojiBtn}
+            >
+              <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 41, height: 41, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.2)" }} />
+            </TouchableOpacity>
+            <View style={{ flex: 1 }}>
+              <TextInput
+                onChangeText={(text) => setMessage(text)}
+                style={[styles.textinputStyle, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
+                multiline
+                placeholder=""
+                value={message}
+                maxLength={500}
+                onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
+                onBlur={() => setInputFocused(false)}
+              />
+              {!message && !inputFocused && !emojiOpen && (
+                <View pointerEvents="none" style={styles.inputPlaceholder}>
+                  <ParrotsStdText style={{ color: parrotPlaceholderGrey, fontSize: 15, fontFamily: "Nunito_700Bold" }}>
+                    Message <ParrotsStdText style={{ color: parrotBlue }}>{groupName?.length > 20 ? groupName.slice(0, 20) + "..." : groupName}</ParrotsStdText>
+                  </ParrotsStdText>
+                </View>
+              )}
+            </View>
+            <TouchableOpacity
+              disabled={!message.trim()}
+              onPress={handleSend}
+              style={message.trim() ? styles.sendBtn : styles.sendBtnDisabled}
+            >
+              <Feather name="send" size={20} color="white" />
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-      <View style={[styles.mainContainer, { flex: 1 }]}>
-        {/* // HEADER // */}
-        <View style={styles.headerStyle}>
-          <View style={[styles.groupAvatar, { backgroundColor: groupColor(groupId) }]}>
-            <ParrotsStdText style={styles.groupAvatarText}>
-              {groupName?.split(" ").map(w => w.charAt(0).toUpperCase()).join("")}
-            </ParrotsStdText>
-          </View>
-          <ParrotsStdText style={styles.nameStyle} numberOfLines={1}>{groupName}</ParrotsStdText>
-          <TouchableOpacity onPress={() => { setMembersDropdownVisible(v => !v); setConfirmLeave(false); }} style={styles.stackedAvatarsBtn}>
-            {stackedAvatars.map((m, i) => (
-              <Image
-                key={m.userId}
-                source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }}
-                style={[styles.stackedAvatar, { marginLeft: i === 0 ? 0 : -vw(3) }]}
-              />
-            ))}
-            {extraCount > 0 && (
-              <View style={[styles.stackedAvatar, styles.extraCountCircle, { marginLeft: -vw(3), backgroundColor: groupColor(groupId) }]}>
-                <ParrotsStdText style={styles.extraCountText}>+{extraCount}</ParrotsStdText>
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
-        {/* // HEADER // */}
 
-        {/* // MEMBERS DROPDOWN // */}
-        {membersDropdownVisible && (
-          <TouchableOpacity
-            style={styles.dropdownBackdrop}
-            activeOpacity={1}
-            onPress={() => { setMembersDropdownVisible(false); setConfirmLeave(false); }}
-          />
-        )}
-        {membersDropdownVisible && (
-          <View style={styles.dropdown}>
-            {isCreator && (
-              <View style={styles.addMemberRow}>
-                <TextInput
-                  style={styles.addMemberInput}
-                  placeholder="Search by username..."
-                  placeholderTextColor={parrotPlaceholderGrey}
-                  value={memberSearch}
-                  onChangeText={setMemberSearch}
-                  onSubmitEditing={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
-                />
+        {emojiOpen && (
+          <View style={styles.emojiPanel}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryRow} keyboardShouldPersistTaps="always">
+              {EMOJI_CATEGORIES.map((cat) => (
                 <TouchableOpacity
-                  style={[styles.searchBtn, memberSearch.length < 3 && styles.searchBtnDisabled]}
-                  onPress={() => memberSearch.length >= 3 && setMemberQuery(memberSearch)}
-                  disabled={memberSearch.length < 3}
+                  key={cat.label}
+                  onPress={() => setEmojiCategory(cat.label)}
+                  style={[styles.categoryBtn, emojiCategory === cat.label && styles.categoryBtnActive]}
                 >
-                  <ParrotsStdText style={styles.searchBtnText}>Search</ParrotsStdText>
+                  <Text style={styles.categoryIcon}>{cat.icon}</Text>
                 </TouchableOpacity>
-              </View>
-            )}
-
-            {searchResults?.filter((u) => !memberUserIds.includes(u.id ?? u.Id) || addedUserId === (u.id ?? u.Id)).map((u) => (
-              <View key={u.id ?? u.Id} style={styles.memberRow}>
-                <Image source={{ uri: u.profileImageThumbnailUrl || u.profileImageUrl }} style={styles.memberAvatar} />
-                <ParrotsStdText style={styles.memberName}>{u.userName}</ParrotsStdText>
-                <TouchableOpacity style={addedUserId === (u.id ?? u.Id) ? styles.addedBtn : styles.addBtn} disabled={!!addingUserId || !!addedUserId} onPress={() => handleAddMember(u.id ?? u.Id)}>
-                  {addingUserId === (u.id ?? u.Id)
-                    ? <ActivityIndicator size={18} color={parrotBlue} />
-                    : addedUserId === (u.id ?? u.Id)
-                      ? <Feather name="check" size={18} color="#4caf50" />
-                      : <Feather name="plus" size={18} color={parrotBlue} />}
-                </TouchableOpacity>
-              </View>
-            ))}
-
-            <ScrollView style={styles.memberList} nestedScrollEnabled>
-              {members.map((m) => (
-                <View key={m.userId} style={styles.memberRow}>
-                  <TouchableOpacity
-                    style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: vw(3) }}
-                    onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: m.publicId, userName: m.username, userId: m.userId } })}>
-                    <Image source={{ uri: m.profileImageThumbnailUrl || m.profileImageUrl }} style={styles.memberAvatar} />
-                    <ParrotsStdText style={styles.memberName}>{m.username} {">"}</ParrotsStdText>
-                  </TouchableOpacity>
-                  {isCreator && m.userId !== currentUserId && (
-                    <TouchableOpacity onPress={() => handleRemoveMember(m.userId)} disabled={!!removingUserId} style={styles.removeBtn}>
-                      {removingUserId === m.userId
-                        ? <ActivityIndicator size={18} color={parrotRed} />
-                        : <Feather name="x" size={18} color={parrotRed} />}
-                    </TouchableOpacity>
-                  )}
-                </View>
               ))}
             </ScrollView>
-
-            {!isCreator && (
-              confirmLeave ? (
-                <View style={styles.confirmLeaveRow}>
-                  <ParrotsStdText style={styles.confirmLeaveText}>Are you sure?</ParrotsStdText>
-                  <TouchableOpacity style={styles.noStayBtn} onPress={() => setConfirmLeave(false)}>
-                    <ParrotsStdText style={styles.leaveBtnText}>No, Stay</ParrotsStdText>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.confirmLeaveBtn} onPress={handleExitGroup}>
-                    <ParrotsStdText style={styles.leaveBtnText}>Yes, Leave</ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <View style={styles.confirmLeaveRow}>
-                  <TouchableOpacity style={styles.leaveBtn} onPress={() => setConfirmLeave(true)}>
-                    <ParrotsStdText style={styles.leaveBtnText}>Leave Group</ParrotsStdText>
-                  </TouchableOpacity>
-                </View>
-              )
-            )}
+            <FlatList
+              data={EMOJIS_BY_CATEGORY[emojiCategory]}
+              keyExtractor={(item) => item}
+              numColumns={8}
+              contentContainerStyle={{ paddingBottom: tabBarHeight }}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.emojiItem}
+                  onPress={() => setMessage((prev) => prev + item)}
+                >
+                  <Text style={styles.emojiText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              keyboardShouldPersistTaps="always"
+            />
           </View>
         )}
-        {/* // MEMBERS DROPDOWN // */}
 
-        {/* // MESSAGES // */}
-        <View style={styles.messagesWrapper}>
-          <ScrollView
-            ref={scrollViewRef}
-            style={styles.messagesList}
-            contentContainerStyle={{ paddingBottom: vh(2) }}
-            keyboardShouldPersistTaps="handled"
-          >
-            {messagesToDisplay?.map((msg, index) => {
-              const isMe = msg.senderId === currentUserId;
-              const [time, date] = formatDate(msg.dateTime);
-              const prevMsg = messagesToDisplay[index - 1];
-              const prevDate = prevMsg ? formatDate(prevMsg.dateTime)[1] : null;
-              const showDateSeparator = date !== prevDate;
-              const isFirstInGroup = !prevMsg || prevMsg.senderId !== msg.senderId || showDateSeparator;
-              return (
-                <View key={index}>
-                  {showDateSeparator && (
-                    <View style={styles.dateSeparator}>
-                      <ParrotsStdText style={styles.dateSeparatorText}>{date}</ParrotsStdText>
-                    </View>
-                  )}
-                  {isMe ? (
-                    <View style={styles.msgRight}>
-                      <ParrotsStdText selectable style={styles.msgText}>{msg.text}</ParrotsStdText>
-                      <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
-                    </View>
-                  ) : (
-                    <View style={styles.msgRowLeft}>
-                      {isFirstInGroup ? (
-                        <TouchableOpacity onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: msg.senderPublicId, userName: msg.senderUsername, userId: msg.senderId } })}>
-                          <Image
-                            source={{ uri: msg.senderProfileThumbnailUrl || msg.senderProfileImageUrl }}
-                            style={styles.msgAvatar}
-                          />
-                        </TouchableOpacity>
-                      ) : (
-                        <View style={styles.msgAvatarPlaceholder} />
-                      )}
-                      <View style={[styles.msgColumn, isFirstInGroup && { marginTop: vh(1) }]}>
-                        {isFirstInGroup && <ParrotsStdText style={styles.msgSender}>{msg.senderUsername}</ParrotsStdText>}
-                        <View style={styles.msgLeft}>
-                          <ParrotsStdText selectable style={styles.msgText}>{msg.text}</ParrotsStdText>
-                          <ParrotsStdText style={styles.timeDisplay}>{time}</ParrotsStdText>
-                        </View>
-                      </View>
-                    </View>
-                  )}
-                </View>
-              );
-            })}
-          </ScrollView>
-        </View>
-        {/* // MESSAGES // */}
-
-        <View style={[styles.sendRow, { paddingBottom: emojiOpen ? 0 : insets.bottom }]}>
-          <TouchableOpacity
-            onPress={() => {
-              Keyboard.dismiss();
-              setEmojiOpen((prev) => !prev);
-            }}
-            style={styles.emojiBtn}
-          >
-            <Image source={emojiOpen || inputFocused ? parrotEmojiIconBlue : parrotEmojiIcon} style={{ width: 41, height: 41, borderRadius: 30, opacity: emojiOpen || inputFocused ? 1 : 0.4, borderWidth: 2, borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.2)" }} />
-          </TouchableOpacity>
-          <View style={{ flex: 1 }}>
-            <TextInput
-              onChangeText={(text) => setMessage(text)}
-              style={[styles.textinputStyle, { borderColor: emojiOpen || inputFocused ? parrotBlueSemiTransparent2 : "rgba(128,128,128,0.08)" }]}
-              multiline
-              placeholder=""
-              value={message}
-              maxLength={500}
-              onFocus={() => { setEmojiOpen(false); setInputFocused(true); }}
-              onBlur={() => setInputFocused(false)}
-            />
-            {!message && !inputFocused && !emojiOpen && (
-              <View pointerEvents="none" style={styles.inputPlaceholder}>
-                <ParrotsStdText style={{ color: parrotPlaceholderGrey, fontSize: 15 }}>
-                  Message <ParrotsStdText style={{ color: parrotBlue }}>{groupName?.length > 20 ? groupName.slice(0, 20) + "..." : groupName}</ParrotsStdText>
-                </ParrotsStdText>
-              </View>
-            )}
+        {toastVisible && (
+          <View style={styles.toast}>
+            <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
           </View>
-          <TouchableOpacity
-            disabled={!message.trim()}
-            onPress={handleSend}
-            style={message.trim() ? styles.sendBtn : styles.sendBtnDisabled}
-          >
-            <Feather name="send" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      {emojiOpen && (
-        <View style={styles.emojiPanel}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryRow} keyboardShouldPersistTaps="always">
-            {EMOJI_CATEGORIES.map((cat) => (
-              <TouchableOpacity
-                key={cat.label}
-                onPress={() => setEmojiCategory(cat.label)}
-                style={[styles.categoryBtn, emojiCategory === cat.label && styles.categoryBtnActive]}
-              >
-                <Text style={styles.categoryIcon}>{cat.icon}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <FlatList
-            data={EMOJIS_BY_CATEGORY[emojiCategory]}
-            keyExtractor={(item) => item}
-            numColumns={8}
-            contentContainerStyle={{ paddingBottom: tabBarHeight }}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.emojiItem}
-                onPress={() => setMessage((prev) => prev + item)}
-              >
-                <Text style={styles.emojiText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-            keyboardShouldPersistTaps="always"
-          />
-        </View>
-      )}
-
-      {toastVisible && (
-        <View style={styles.toast}>
-          <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
-        </View>
-      )}
+        )}
     </View>
-    </TouchableWithoutFeedback>
   );
 };
 
@@ -653,12 +673,12 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flexDirection: "column",
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
     // paddingHorizontal: vh(2),
   },
   messagesWrapper: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
   },
   messagesList: {
     flex: 1,
@@ -668,7 +688,9 @@ const styles = StyleSheet.create({
   msgLeft: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
     borderRadius: vh(4),
     maxWidth: vw(70),
     paddingVertical: vh(0.5),
@@ -681,7 +703,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: vh(0.5),
     marginHorizontal: vw(2),
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
+    backgroundColor: "rgba(10, 119, 234, 0.08)",
     borderRadius: vh(4),
     maxWidth: vw(80),
     alignSelf: "flex-end",
@@ -722,7 +744,7 @@ const styles = StyleSheet.create({
   msgText: { flexShrink: 1, fontFamily: "Nunito_700Bold", color: "#333", fontSize: 14, marginRight: vw(2) },
   timeDisplay: {
     fontFamily: "Nunito_700Bold",
-    color: "rgba(0, 119, 234, 0.5)",
+    color: "#5A6874",
     fontSize: 11,
     flexShrink: 0,
   },
@@ -736,7 +758,7 @@ const styles = StyleSheet.create({
   },
   dateSeparatorText: {
     fontFamily: "Nunito_700Bold",
-    color: "rgba(0, 119, 234, 0.5)",
+    color: "#5A6874",
     fontSize: 12,
   },
   inputPlaceholder: {
@@ -834,7 +856,7 @@ const styles = StyleSheet.create({
   nameStyle: {
     flex: 1,
     fontFamily: "Nunito_800ExtraBold",
-    color: parrotLightBlue,
+    color: "#0A5FBF",
     fontSize: 18,
   },
   dropdownBackdrop: {
@@ -848,17 +870,15 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     position: "absolute",
-    top: vh(8),
+    top: vh(9),
     width: "90%",
     alignSelf: "center",
     left: "5%",
-    marginTop: vh(1),
     backgroundColor: "white",
     borderRadius: vh(1),
     paddingHorizontal: vw(4),
     paddingVertical: vh(1.5),
     maxHeight: vh(45),
-    zIndex: 100,
   },
   addMemberRow: { flexDirection: "row", gap: vw(2), marginBottom: vh(1) },
   addMemberInput: {

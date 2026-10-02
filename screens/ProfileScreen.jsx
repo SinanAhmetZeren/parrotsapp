@@ -17,6 +17,7 @@ import {
   Modal,
   RefreshControl,
   Platform,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Clipboard from "expo-clipboard";
@@ -45,6 +46,9 @@ import LoadingLogo from "../components/LoadingLogo";
 
 export default function ProfileScreen({ navigation }) {
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const TAB_BAR_HEIGHT = windowHeight * 0.08;
+  const adjustedBottom = insets.bottom || 16;
   const userId = useSelector((state) => state.users.userId);
   const isHubConnected = useSelector((state) => state.users.isHubConnected);
   const dispatch = useDispatch();
@@ -385,7 +389,7 @@ export default function ProfileScreen({ navigation }) {
       <>
         <TokenExpiryGuard />
         <View style={styles.mainContainer}>
-          <ScrollView style={styles.scrollView} contentContainerStyle={Platform.OS === "ios" ? { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 } : undefined}>
+          <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: TAB_BAR_HEIGHT }}>
             <View style={styles.innerContainer}>
               <View style={styles.rectangularBox}>
                 {!userData.backgroundImageUrl ? (

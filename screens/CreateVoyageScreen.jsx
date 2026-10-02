@@ -115,7 +115,7 @@ const CreateVoyageScreen = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [voyageImage, setVoyageImage] = useState(null);
   const [addedVoyageImages, setAddedVoyageImages] = useState([]);
-  const [currentStep, setCurrentStep] = useState(2);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isCreatingVoyage, setIsCreatingVoyage] = useState(false);
   const [calendarRangeAllowed, setCalendarRangeAllowed] = useState(false);
@@ -998,23 +998,23 @@ const CreateVoyageScreen = ({ navigation }) => {
             </ScrollView>
 
             {/* Footer */}
-            <View style={{ flexDirection: "row", gap: 8, padding: 12, paddingBottom: 36 + insets.bottom, borderTopWidth: 1, borderTopColor: "#D8E0E8", backgroundColor: parrotCream }}>
-              <TouchableOpacity style={{ borderWidth: 1.5, borderColor: "#D8E0E8", backgroundColor: "white", borderRadius: 999, height: 44, paddingHorizontal: 20, alignItems: "center", justifyContent: "center" }} onPress={() => navigation.navigate("Home", { screen: "HomeScreen" })}>
+            <View style={{ flexDirection: "row", gap: 8, padding: 6, paddingBottom: 28 + insets.bottom, borderTopWidth: 1, borderTopColor: "#D8E0E8", backgroundColor: parrotCream, justifyContent: "center" }}>
+              <TouchableOpacity style={{ width: vw(40), borderWidth: 1.5, borderColor: "#D8E0E8", backgroundColor: "white", borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center" }} onPress={() => navigation.navigate("Home", { screen: "HomeScreen" })}>
                 <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "#3C4A57" }}>Cancel</ParrotsStdText>
               </TouchableOpacity>
               {voyageId ? (
                 <>
                   {hasChanges && (
-                    <TouchableOpacity style={{ borderRadius: 999, height: 44, paddingHorizontal: 20, alignItems: "center", justifyContent: "center", backgroundColor: isUpdatingDetails ? "rgba(10,95,191,0.4)" : "#0A5FBF" }} onPress={handleUpdateDetails} disabled={isUpdatingDetails}>
+                    <TouchableOpacity style={{ flex: 1, borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: isUpdatingDetails ? "rgba(10,95,191,0.4)" : "#0A5FBF" }} onPress={handleUpdateDetails} disabled={isUpdatingDetails}>
                       {isUpdatingDetails ? <ActivityIndicator size="small" color="white" /> : <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "white" }}>{updateSuccess ? "Saved ✓" : "Save changes"}</ParrotsStdText>}
                     </TouchableOpacity>
                   )}
-                  <TouchableOpacity style={{ flex: 1, borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: "#0A5FBF" }} onPress={() => setCurrentStep(2)}>
+                  <TouchableOpacity style={{ width: vw(40), borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: "#0A5FBF" }} onPress={() => setCurrentStep(2)}>
                     <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "white" }}>Next: Images →</ParrotsStdText>
                   </TouchableOpacity>
                 </>
               ) : (
-                <TouchableOpacity style={{ flex: 1, borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: isFormComplete && !isCreatingVoyage ? "#0A5FBF" : "rgba(10,95,191,0.4)" }} onPress={isFormComplete && !isCreatingVoyage ? handleCreateVoyage : undefined} disabled={!isFormComplete || isCreatingVoyage}>
+                <TouchableOpacity style={{ width: vw(40), borderRadius: 999, height: 44, alignItems: "center", justifyContent: "center", backgroundColor: isFormComplete && !isCreatingVoyage ? "#0A5FBF" : "rgba(10,95,191,0.4)" }} onPress={isFormComplete && !isCreatingVoyage ? handleCreateVoyage : undefined} disabled={!isFormComplete || isCreatingVoyage}>
                   {isCreatingVoyage ? <ActivityIndicator size="small" color="white" /> : <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 14, color: "white" }}>Create voyage</ParrotsStdText>}
                 </TouchableOpacity>
               )}

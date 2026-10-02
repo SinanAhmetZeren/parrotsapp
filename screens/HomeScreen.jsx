@@ -17,6 +17,7 @@ import {
   RefreshControl,
   Linking,
   Platform,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
@@ -203,6 +204,11 @@ const VoyageListCard = memo(({ item, navigation, onClose }) => {
 
 export default function HomeScreen({ navigation }) {
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
+  const TAB_BAR_HEIGHT = windowHeight * 0.08;
+  const HEADER_HEIGHT = windowHeight * 0.105;
+  const VOYAGE_CARDS_HEIGHT = windowHeight * 0.20;
+  const mapHeight = vh(42);
 
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -725,7 +731,7 @@ export default function HomeScreen({ navigation }) {
             setSelectedVehicleType={setSelectedVehicleType}
           />
         </View>
-        <View style={{ height: vh(95) - (Platform.OS === "ios" ? insets.top + insets.bottom : 0) }}>
+        <View style={{ paddingBottom: TAB_BAR_HEIGHT + insets.bottom }}>
           <View style={styles.welcomeandFilters}>
             <TouchableOpacity onPress={openImageModal}>
               <Image
@@ -835,7 +841,7 @@ export default function HomeScreen({ navigation }) {
           </View>
 
           <View style={styles.mapWrapper}>
-            <View style={[styles.mapContainer, { height: vh(50) - (Platform.OS === "ios" ? insets.top + insets.bottom - vh(2) : 0) }]}>
+            <View style={[styles.mapContainer, { height: mapHeight }]}>
               {isMapLoading ? (
                 <View style={styles.mapPlaceholder}>
                   <ActivityIndicator size="large" color={parrotDarkCream} style={{ transform: [{ scale: 1.3 }] }} />
@@ -850,6 +856,8 @@ export default function HomeScreen({ navigation }) {
                     showsUserLocation={true}
                     onRegionChangeComplete={handleRegionChangeComplete}
                     userInterfaceStyle="light"
+                    onMapReady={() => console.log("[MAP LOG] Google Map ready")}
+                    onMapLoadError={(e) => console.log("[MAP ERROR] Load error:", e?.nativeEvent)}
                   >
                     {!isMarkersLoading && initialVoyages.map((item, index) => {
                       const waypoint = item.waypoints?.[0];
@@ -1146,7 +1154,6 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   mapContainer: {
-    height: vh(50), // overridden inline on iOS
     width: "100%",
     alignItems: "center",
     justifyContent: "center",

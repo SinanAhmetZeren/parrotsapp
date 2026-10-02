@@ -27,7 +27,7 @@ import parrotLogo from "../assets/parrotsiconpaddedtransparent.png";
 import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native";
-import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueTransparent, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey } from "../assets/color";
+import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueTransparent, parrotLightBlue, parrotLightCream, parrotCream, parrotPlaceholderGrey } from "../assets/color";
 import {
   invokeHub, isHubReady,
   register_ReceiveMessage, unregister_ReceiveMessage,
@@ -154,11 +154,9 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const tabBarHeight = Platform.OS === "ios"
     ? (vh(100) - insets.top - insets.bottom) * 0.08
-    : vh(8);
+    : vh(8) + insets.bottom;
   const isTablet = DeviceInfo ? DeviceInfo.isTablet() : false;
-  const containerHeight = Platform.OS === "ios" || isTablet
-    ? vh(103) - tabBarHeight - insets.top - insets.bottom
-    : vh(105) - tabBarHeight;
+  const containerHeight = vh(100) - tabBarHeight;
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -279,7 +277,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   const emojiPickerHeight = vh(35);
 
-  const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + tabBarHeight : containerHeight;
+  const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + vh(8) : containerHeight;
 
   return (
     <View style={{ backgroundColor: "white", height: outerHeight }}>
@@ -366,7 +364,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
                         {isFirstInGroup ? (
                           <TouchableOpacity onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: msg.senderPublicId, userName: msg.senderUsername, userId: msg.senderId } })}>
                             <Image
-                              source={{ uri: msg.senderProfileThumbnailUrl || msg.senderProfileImageUrl }}
+                              source={{ uri: profileImg }}
                               style={styles.msgAvatar}
                             />
                           </TouchableOpacity>
@@ -417,7 +415,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
               />
               {!message && !inputFocused && !emojiOpen && (
                 <View pointerEvents="none" style={styles.inputPlaceholder}>
-                  <ParrotsStdText style={{ color: parrotPlaceholderGrey, fontSize: 15 }}>
+                  <ParrotsStdText style={{ color: parrotPlaceholderGrey, fontSize: 15, fontFamily: "Nunito_700Bold" }}>
                     Write a message to <ParrotsStdText style={{ color: parrotBlue }}>{name}</ParrotsStdText>
                   </ParrotsStdText>
                 </View>
@@ -450,7 +448,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
               data={EMOJIS_BY_CATEGORY[emojiCategory]}
               keyExtractor={(item) => item}
               numColumns={8}
-              contentContainerStyle={{ paddingBottom: tabBarHeight }}
+              contentContainerStyle={{ paddingBottom: vh(2) }}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.emojiItem}
@@ -489,12 +487,12 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flexDirection: "column",
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
     // paddingHorizontal: vh(2),
   },
   messagesWrapper: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: parrotCream,
   },
   messagesList: {
     flex: 1,
@@ -504,7 +502,9 @@ const styles = StyleSheet.create({
   msgLeft: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#E8E3DC",
     borderRadius: vh(4),
     maxWidth: vw(70),
     paddingVertical: vh(0.5),
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: vh(0.5),
     marginHorizontal: vw(2),
-    backgroundColor: "rgba(0, 119, 234, 0.04)",
+    backgroundColor: "rgba(10, 119, 234, 0.08)",
     borderRadius: vh(4),
     maxWidth: vw(80),
     alignSelf: "flex-end",
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
   msgText: { flexShrink: 1, fontFamily: "Nunito_700Bold", color: "#333", fontSize: 14, marginRight: vw(2) },
   timeDisplay: {
     fontFamily: "Nunito_700Bold",
-    color: "rgba(0, 119, 234, 0.5)",
+    color: "#5A6874",
     fontSize: 11,
     flexShrink: 0,
   },
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   },
   dateSeparatorText: {
     fontFamily: "Nunito_700Bold",
-    color: "rgba(0, 119, 234, 0.5)",
+    color: "#5A6874",
     fontSize: 12,
   },
   inputPlaceholder: {
@@ -669,7 +669,7 @@ const styles = StyleSheet.create({
   nameStyle: {
     flex: 1,
     fontFamily: "Nunito_800ExtraBold",
-    color: parrotLightBlue,
+    color: "#0A5FBF",
     fontSize: 18,
   },
   toast: {
