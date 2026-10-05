@@ -182,22 +182,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
   }, [messagesData]);
 
   useEffect(() => {
-    if (scrollViewRef.current && messagesToDisplay?.length > 0) {
-      requestAnimationFrame(() => scrollViewRef.current?.scrollToEnd({ animated: true }));
-    }
-  }, [messagesToDisplay]);
-
-  useEffect(() => {
     const showSub = Keyboard.addListener("keyboardDidShow", (e) => setKeyboardHeight(e.endCoordinates.height));
     const hideSub = Keyboard.addListener("keyboardDidHide", () => setKeyboardHeight(0));
     return () => { showSub.remove(); hideSub.remove(); };
   }, []);
-
-  useEffect(() => {
-    if (keyboardHeight > 0) {
-      requestAnimationFrame(() => scrollViewRef.current?.scrollToEnd({ animated: true }));
-    }
-  }, [keyboardHeight]);
 
   useFocusEffect(
     useCallback(() => {
@@ -249,8 +237,6 @@ export const ConversationDetailScreen = ({ navigation }) => {
     if (sendTimestampsRef.current.length >= 5) return;
     sendTimestampsRef.current.push(now);
 
-    scrollViewRef.current?.scrollToEnd({ animated: true });
-
     const optimistic = {
       senderId: currentUserId,
       receiverId: conversationUserId,
@@ -278,6 +264,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const emojiPickerHeight = vh(35);
 
   const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + vh(8) : containerHeight;
+  const reversedMessages = [...(messagesToDisplay ?? [])].reverse();
 
   return (
     <View style={{ backgroundColor: "white", height: outerHeight }}>
@@ -298,18 +285,20 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
           {/* // MESSAGES // */}
           <View style={styles.messagesWrapper}>
-            <ScrollView
+            <FlatList
               ref={scrollViewRef}
+              inverted
+              data={reversedMessages}
+              keyExtractor={(_, index) => String(index)}
               style={styles.messagesList}
-              contentContainerStyle={{ paddingBottom: vh(2) }}
+              contentContainerStyle={{}}
               keyboardShouldPersistTaps="handled"
+              removeClippedSubviews={false}
               onTouchStart={() => { if (emojiOpen) setEmojiOpen(false); }}
               onScrollBeginDrag={() => { if (emojiOpen) setEmojiOpen(false); }}
-            >
-              {messagesToDisplay?.map((msg, index) => {
+              renderItem={({ item: msg, index }) => {
                 const isMe = msg.senderId === currentUserId;
                 const isAskParrots = isMe && (msg.text?.startsWith("**🦜**") || msg.text?.startsWith("**🌍**"));
-                const isVoyageAdvice = false;
                 const isParrotsBid = msg.text?.startsWith("[parrots-bid]");
                 const displayText = isAskParrots
                   ? msg.text
@@ -319,17 +308,12 @@ export const ConversationDetailScreen = ({ navigation }) => {
                   ? msg.text.replace(/^\[parrots-bid\]\s*/, "")
                   : msg.text;
                 const [time, date] = formatDate(msg.dateTime);
-                const prevMsg = messagesToDisplay[index - 1];
+                const prevMsg = reversedMessages[index + 1];
                 const prevDate = prevMsg ? formatDate(prevMsg.dateTime)[1] : null;
                 const showDateSeparator = date !== prevDate;
                 const isFirstInGroup = !prevMsg || prevMsg.senderId !== msg.senderId || showDateSeparator;
                 return (
-                  <View key={index}>
-                    {showDateSeparator && (
-                      <View style={styles.dateSeparator}>
-                        <ParrotsStdText style={styles.dateSeparatorText}>{date}</ParrotsStdText>
-                      </View>
-                    )}
+                  <View>
                     {isAskParrots ? (
                       <View style={styles.msgRowLeft}>
                         <View style={{ width: vw(8), alignItems: "center", overflow: "visible" }}>
@@ -363,10 +347,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
                       <View style={styles.msgRowLeft}>
                         {isFirstInGroup ? (
                           <TouchableOpacity onPress={() => navigation.navigate("Messages", { screen: "ProfileScreenPublic", params: { publicId: msg.senderPublicId, userName: msg.senderUsername, userId: msg.senderId } })}>
-                            <Image
-                              source={{ uri: profileImg }}
-                              style={styles.msgAvatar}
-                            />
+                            <Image source={{ uri: profileImg }} style={styles.msgAvatar} />
                           </TouchableOpacity>
                         ) : (
                           <View style={styles.msgAvatarPlaceholder} />
@@ -380,10 +361,15 @@ export const ConversationDetailScreen = ({ navigation }) => {
                         </View>
                       </View>
                     )}
+                    {showDateSeparator && (
+                      <View style={styles.dateSeparator}>
+                        <ParrotsStdText style={styles.dateSeparatorText}>{date}</ParrotsStdText>
+                      </View>
+                    )}
                   </View>
                 );
-              })}
-            </ScrollView>
+              }}
+            />
           </View>
           {/* // MESSAGES // */}
 
