@@ -1,8 +1,21 @@
 import { registerRootComponent } from 'expo';
-
+import { API_URL } from '@env';
 import App from './App';
 
-// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
-// It also ensures that whether you load the app in Expo Go or in a native build,
-// the environment is set up appropriately
+function postClientError(payload) {
+  try {
+    fetch(`${API_URL}/api/ClientError`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payload, platform: "mobile" }),
+    }).catch(() => {});
+  } catch (_) {}
+}
+
+const originalHandler = global.ErrorUtils?.getGlobalHandler?.();
+global.ErrorUtils?.setGlobalHandler?.((error, isFatal) => {
+  postClientError({ message: error?.message, stack: error?.stack, source: isFatal ? "fatal" : "non-fatal" });
+  if (originalHandler) originalHandler(error, isFatal);
+});
+
 registerRootComponent(App);

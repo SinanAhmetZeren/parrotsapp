@@ -462,6 +462,13 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
         body: expoPushToken,
       }),
     }),
+    submitRating: builder.mutation({
+      query: ({ publicId, stars }) => ({
+        url: `/api/Rating/${publicId}`,
+        method: "POST",
+        body: { stars },
+      }),
+    }),
     getParrotCrackerBalance: builder.query({
       query: (userId) => {
         if (userId) {
@@ -512,4 +519,5 @@ export const {
   useReportVoyageMutation,
   useDeleteAccountMutation,
   useClearPushTokenMutation,
+  useSubmitRatingMutation,
 } = extendedApiSlice;

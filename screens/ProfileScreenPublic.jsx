@@ -27,7 +27,7 @@ import { vw, vh } from "react-native-expo-viewport-units";
 import { Feather, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import VehicleList from "../components/VehicleList";
 import { useFocusEffect } from "@react-navigation/native";
-import { useGetUserByIdQuery, useGetUserByPublicIdQuery, useAddBookmarkMutation, useRemoveBookmarkMutation, useBlockUserMutation, useUnblockUserMutation, useReportUserMutation, useIsBlockedQuery } from "../slices/UserSlice";
+import { useGetUserByIdQuery, useGetUserByPublicIdQuery, useAddBookmarkMutation, useRemoveBookmarkMutation, useBlockUserMutation, useUnblockUserMutation, useReportUserMutation, useIsBlockedQuery, useSubmitRatingMutation } from "../slices/UserSlice";
 import { addBookmarkedUserId, removeBookmarkedUserId } from "../slices/UserSlice";
 import { useGetVoyagesByUserByIdQuery, useLazyGetVoyagesByUserByIdQuery } from "../slices/VoyageSlice";
 import { useGetVehiclesByUserByIdQuery, useLazyGetVehiclesByUserByIdQuery } from "../slices/VehicleSlice";
@@ -57,6 +57,11 @@ export default function ProfileScreenPublic({ navigation }) {
   const [reportModalVisible, setReportModalVisible] = useState(false);
   const [blockModalVisible, setBlockModalVisible] = useState(false);
   const [selectedReason, setSelectedReason] = useState("");
+
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [ratingStars, setRatingStars] = useState(0);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [submitRating] = useSubmitRatingMutation();
 
   const [blockUser] = useBlockUserMutation();
   const [unblockUser] = useUnblockUserMutation();
@@ -527,7 +532,7 @@ export default function ProfileScreenPublic({ navigation }) {
 
               {/* ------- BIO ------ */}
               <View style={styles.bioBox}>
-                <View style={styles.nameContainer}>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                   <ParrotsStdText selectable style={styles.UserNameProfile}>
                     {userData?.userName?.length <= 30 ? (
                       userData.userName
@@ -540,6 +545,23 @@ export default function ProfileScreenPublic({ navigation }) {
                       </>
                     )}
                   </ParrotsStdText>
+                  <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+                    onPress={() => { if (userData?.canRate) { setRatingStars(0); setRatingSubmitted(false); setRatingModalVisible(true); } }}
+                    activeOpacity={userData?.canRate ? 0.7 : 1}
+                  >
+                    {[1, 2, 3, 4, 5].map(s => (
+                      <FontAwesome
+                        key={s}
+                        name={s <= Math.round(userData?.averageRating ?? 0) ? "star" : "star-o"}
+                        size={16}
+                        color="#F5A623"
+                      />
+                    ))}
+                    <ParrotsStdText style={{ fontSize: 12, color: "#64748b", marginLeft: 3 }}>
+                      {userData?.averageRating != null ? `${userData.averageRating} (${userData.ratingCount})` : "0 (0)"}
+                    </ParrotsStdText>
+                  </TouchableOpacity>
                 </View>
                 <View>
                   <ParrotsStdText selectable style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
@@ -674,6 +696,55 @@ export default function ProfileScreenPublic({ navigation }) {
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
+          </Modal>
+
+          {/* Rating modal */}
+          <Modal animationType="fade" transparent={true} visible={ratingModalVisible} onRequestClose={() => setRatingModalVisible(false)}>
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center" }}>
+              <View style={styles.reportModal}>
+                {ratingSubmitted ? (
+                  <>
+                    <ParrotsStdText style={styles.reportTitle}>Rating submitted</ParrotsStdText>
+                    <ParrotsStdText style={[styles.reportSubtitle, { marginBottom: 16 }]}>Thank you for your feedback.</ParrotsStdText>
+                    <TouchableOpacity style={styles.submitButton} onPress={() => setRatingModalVisible(false)}>
+                      <ParrotsStdText style={styles.submitButtonText}>Close</ParrotsStdText>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <ParrotsStdText style={styles.reportTitle}>Rate {userData?.userName}</ParrotsStdText>
+                    <ParrotsStdText style={styles.reportSubtitle}>Your rating is anonymous.</ParrotsStdText>
+                    <View style={{ flexDirection: "row", justifyContent: "center", gap: 12, marginVertical: 16 }}>
+                      {[1, 2, 3, 4, 5].map(s => (
+                        <TouchableOpacity key={s} onPress={() => setRatingStars(s)}>
+                          <FontAwesome name={s <= ratingStars ? "star" : "star-o"} size={36} color="#F5A623" />
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                    <View style={{ flexDirection: "row", gap: 10 }}>
+                      <TouchableOpacity style={styles.cancelButton} onPress={() => setRatingModalVisible(false)}>
+                        <ParrotsStdText style={styles.cancelButtonText}>Cancel</ParrotsStdText>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.submitButton, { opacity: ratingStars ? 1 : 0.4 }]}
+                        disabled={!ratingStars}
+                        onPress={async () => {
+                          try {
+                            await submitRating({ publicId, stars: ratingStars }).unwrap();
+                            setRatingSubmitted(true);
+                            refetchUser();
+                          } catch (err) {
+                            console.error("Rating failed:", err);
+                          }
+                        }}
+                      >
+                        <ParrotsStdText style={styles.submitButtonText}>Submit</ParrotsStdText>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+              </View>
+            </View>
           </Modal>
 
           {/* Block confirmation modal */}
