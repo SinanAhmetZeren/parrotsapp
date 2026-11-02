@@ -36,7 +36,7 @@ import {
 } from "../slices/UserSlice";
 import TermsOfUseComponent from "../components/TermsOfUseComponent";
 import { registerPushTokenAsync } from "../utils/registerPushToken";
-import { TERMS_VERSION } from "../constants/TermsVersion";
+
 import GoogleLoginButton from "../components/GoogleAuthButton";
 import { parrotBlue, parrotBlueMediumTransparent, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotBlueSemiTransparent3, parrotCream, parrotDarkBlue, parrotDarkCream, parrotGreenMediumTransparent, parrotGreenTransparent, parrotInputTextColor, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotRed, parrotTextDarkBlue, parrotYellow } from "../assets/color";
 
@@ -296,7 +296,6 @@ const LoginScreen = ({ navigation }) => {
         Email: emailR,
         UserName: userNameR,
         Password: passwordR,
-        TermsVersion: TERMS_VERSION,
       }).unwrap();
 
       setUserNameR("");
