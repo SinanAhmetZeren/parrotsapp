@@ -44,6 +44,7 @@ const BLUE = "#0A5FBF";
 const LINE = "#D8E0E8";
 const INK = "#1F2933";
 const FAINT = "#5A6874";
+const PLACEHOLDER = "rgba(90,104,116,0.45)";
 const HERO_H = Dimensions.get("window").width;
 
 const HERO_TITLES = {
@@ -449,8 +450,8 @@ const LoginScreen = ({ navigation }) => {
                 onFocus={() => setIsFocusedEmail(true)}
                 onBlur={() => setIsFocusedEmail(false)}
                 style={[s.input, isFocusedEmail && s.inputFocused]}
-                placeholder="you@example.com"
-                placeholderTextColor={FAINT}
+                placeholder="Your email address"
+                placeholderTextColor={PLACEHOLDER}
                 value={email}
                 onChangeText={handleEmailChange}
                 keyboardType="email-address"
@@ -465,7 +466,7 @@ const LoginScreen = ({ navigation }) => {
                   onFocus={() => setIsFocusedPassword(true)}
                   onBlur={() => setIsFocusedPassword(false)}
                   placeholder="Your password"
-                  placeholderTextColor={FAINT}
+                  placeholderTextColor={PLACEHOLDER}
                   secureTextEntry={isPasswordHidden}
                   value={password}
                   onChangeText={handlePasswordChange}
@@ -583,7 +584,7 @@ const LoginScreen = ({ navigation }) => {
                 style={[s.input, isFocusedUserNameR && s.inputFocused]}
                 onFocus={() => setIsFocusedUserNameR(true)}
                 onBlur={() => setIsFocusedUserNameR(false)}
-                placeholderTextColor={FAINT}
+                placeholderTextColor={PLACEHOLDER}
                 placeholder="3-25 characters"
                 value={userNameR}
                 maxLength={25}
@@ -610,8 +611,8 @@ const LoginScreen = ({ navigation }) => {
                 style={[s.input, isFocusedEmailR && s.inputFocused]}
                 onFocus={() => setIsFocusedEmailR(true)}
                 onBlur={() => setIsFocusedEmailR(false)}
-                placeholderTextColor={FAINT}
-                placeholder="you@example.com"
+                placeholderTextColor={PLACEHOLDER}
+                placeholder="Your email address"
                 value={emailR}
                 onChangeText={handleEmailRChange}
                 keyboardType="email-address"
@@ -643,7 +644,7 @@ const LoginScreen = ({ navigation }) => {
                   style={[s.input, isFocusedPasswordR && s.inputFocused]}
                   onFocus={() => setIsFocusedPasswordR(true)}
                   onBlur={() => setIsFocusedPasswordR(false)}
-                  placeholderTextColor={FAINT}
+                  placeholderTextColor={PLACEHOLDER}
                   placeholder="Create a password"
                   secureTextEntry={isPasswordHidden}
                   value={passwordR}
@@ -672,7 +673,7 @@ const LoginScreen = ({ navigation }) => {
                   style={[s.input, isFocusedConfirmPasswordR && s.inputFocused]}
                   onFocus={() => setIsFocusedConfirmPasswordR(true)}
                   onBlur={() => setIsFocusedConfirmPasswordR(false)}
-                  placeholderTextColor={FAINT}
+                  placeholderTextColor={PLACEHOLDER}
                   placeholder="Type it again"
                   secureTextEntry={isConfirmPasswordHidden}
                   value={confirmPasswordR}
@@ -769,7 +770,7 @@ const LoginScreen = ({ navigation }) => {
                 style={[s.input, isFocusedCode && s.inputFocused]}
                 onFocus={() => setIsFocusedCode(true)}
                 onBlur={() => setIsFocusedCode(false)}
-                placeholderTextColor={FAINT}
+                placeholderTextColor={PLACEHOLDER}
                 placeholder="Enter 6 digit code"
                 value={registerCode}
                 onChangeText={handleRegisterCodeChange}
@@ -808,8 +809,8 @@ const LoginScreen = ({ navigation }) => {
                 style={[s.input, isFocusedEmailR && s.inputFocused]}
                 onFocus={() => setIsFocusedEmailR(true)}
                 onBlur={() => setIsFocusedEmailR(false)}
-                placeholderTextColor={FAINT}
-                placeholder="you@example.com"
+                placeholderTextColor={PLACEHOLDER}
+                placeholder="Your email address"
                 value={emailForgotPassword}
                 onChangeText={(text) => setEmailForgotPassword(text)}
                 keyboardType="email-address"
@@ -856,7 +857,7 @@ const LoginScreen = ({ navigation }) => {
                   style={[s.input, isFocusedPasswordR && s.inputFocused]}
                   onFocus={() => setIsFocusedPasswordR(true)}
                   onBlur={() => setIsFocusedPasswordR(false)}
-                  placeholderTextColor={FAINT}
+                  placeholderTextColor={PLACEHOLDER}
                   placeholder="Enter new password"
                   secureTextEntry={isPasswordHidden}
                   value={passwordR}
@@ -885,7 +886,7 @@ const LoginScreen = ({ navigation }) => {
                   style={[s.input, isFocusedConfirmPasswordR && s.inputFocused]}
                   onFocus={() => setIsFocusedConfirmPasswordR(true)}
                   onBlur={() => setIsFocusedConfirmPasswordR(false)}
-                  placeholderTextColor={FAINT}
+                  placeholderTextColor={PLACEHOLDER}
                   placeholder="Type it again"
                   secureTextEntry={isConfirmPasswordHidden}
                   value={confirmPasswordR}
@@ -902,7 +903,7 @@ const LoginScreen = ({ navigation }) => {
                 style={[s.input, isFocusedResetCode && s.inputFocused]}
                 onFocus={() => setIsFocusedResetCode(true)}
                 onBlur={() => setIsFocusedResetCode(false)}
-                placeholderTextColor={FAINT}
+                placeholderTextColor={PLACEHOLDER}
                 placeholder="Enter 6 digit code"
                 value={resetPasswordCode}
                 onChangeText={handleRegisterCode2Change}
@@ -993,7 +994,7 @@ const s = StyleSheet.create({
   sheetContent: {
     paddingHorizontal: 24,
     paddingTop: 28,
-    paddingBottom: 48,
+    paddingBottom: 12,
     gap: 12,
   },
   // Field wrapper + label

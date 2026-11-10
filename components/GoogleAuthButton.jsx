@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import { useDispatch } from 'react-redux';
 import { registerPushTokenAsync } from '../utils/registerPushToken';
 import { updateAsLoggedIn, updateUserFavorites, setBookmarkedUserIds } from '../slices/UserSlice';
-import gooogleSignin from "../assets/googleg.png";
+import gooogleSignin from "../assets/googleg_white.png";
 
 const isExpoGo = Constants.appOwnership === "expo";
 const GoogleSignin = isExpoGo ? null : require('@react-native-google-signin/google-signin').GoogleSignin;
@@ -17,7 +17,7 @@ function ButtonContent({ isLoading }) {
     <ActivityIndicator color="#fff" />
   ) : (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <Image source={gooogleSignin} style={{ height: 30, width: 30 }} />
+      <Image source={gooogleSignin} style={{ height: 21, width: 21 }} />
       <ParrotsStdText style={styles.text}>Sign in with Google</ParrotsStdText>
     </View>
   );
