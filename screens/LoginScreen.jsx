@@ -18,6 +18,8 @@ import {
   Modal,
   ScrollView,
   Dimensions,
+  Keyboard,
+  BackHandler,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -57,6 +59,7 @@ const HERO_TITLES = {
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
@@ -183,6 +186,7 @@ const LoginScreen = ({ navigation }) => {
             unreadMessages: resetPasswordResponse.unreadMessages,
             isAdmin: resetPasswordResponse.isAdmin,
             hasAcknowledgedPublicProfile: resetPasswordResponse.hasAcknowledgedPublicProfile ?? false,
+            hasAcknowledgedGroupHistory: resetPasswordResponse.hasAcknowledgedGroupHistory ?? false,
           })
         );
         dispatch(updateUserFavorites({
@@ -238,6 +242,7 @@ const LoginScreen = ({ navigation }) => {
           unreadMessages: loginResponse.unreadMessages,
           isAdmin: loginResponse.isAdmin,
           hasAcknowledgedPublicProfile: loginResponse.hasAcknowledgedPublicProfile ?? false,
+          hasAcknowledgedGroupHistory: loginResponse.hasAcknowledgedGroupHistory ?? false,
         })
       );
 
@@ -274,6 +279,7 @@ const LoginScreen = ({ navigation }) => {
           unreadMessages: pendingLoginData.unreadMessages,
           isAdmin: pendingLoginData.isAdmin,
           hasAcknowledgedPublicProfile: pendingLoginData.hasAcknowledgedPublicProfile ?? false,
+          hasAcknowledgedGroupHistory: pendingLoginData.hasAcknowledgedGroupHistory ?? false,
         })
       );
       dispatch(updateUserFavorites({
@@ -339,6 +345,7 @@ const LoginScreen = ({ navigation }) => {
             unreadMessages: confirmResponse.unreadMessages,
             isAdmin: confirmResponse.isAdmin,
             hasAcknowledgedPublicProfile: confirmResponse.hasAcknowledgedPublicProfile ?? false,
+          hasAcknowledgedGroupHistory: confirmResponse.hasAcknowledgedGroupHistory ?? false,
           })
         );
         dispatch(updateUserFavorites({
@@ -387,6 +394,24 @@ const LoginScreen = ({ navigation }) => {
     return;
   }, []);
 
+  useEffect(() => {
+    const showSub = Keyboard.addListener("keyboardDidShow", (e) => setKeyboardHeight(e.endCoordinates.height));
+    const hideSub = Keyboard.addListener("keyboardDidHide", () => setKeyboardHeight(0));
+    return () => { showSub.remove(); hideSub.remove(); };
+  }, []);
+
+  useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (loginOrRegister !== "Login") {
+        setLoginOrRegister("Login");
+        return true;
+      }
+      BackHandler.exitApp();
+      return true;
+    });
+    return () => sub.remove();
+  }, [loginOrRegister]);
+
   const { title, sub } = HERO_TITLES[loginOrRegister] || HERO_TITLES.Login;
 
   if (requiresTermsReAcceptance) {
@@ -430,7 +455,7 @@ const LoginScreen = ({ navigation }) => {
       )}
 
       {/* Hero */}
-      <View style={s.hero}>
+      <View style={[s.hero, keyboardHeight > 0 && (loginOrRegister === "Login" || loginOrRegister === "Register" || loginOrRegister === "ForgotPassword2") && { height: HERO_H * 0.4 }]}>
         <Image source={require("../assets/parrotsreallife.jpg")} style={s.heroImg} resizeMode="cover" />
         <View style={s.heroOverlay} />
         <View style={s.heroTxt}>

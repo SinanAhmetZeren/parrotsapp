@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   BackHandler,
   Platform,
+  Modal,
 } from "react-native";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,7 +29,7 @@ import LoadingLogo from "../components/LoadingLogo";
 import { TokenExpiryGuard } from "../components/TokenExpiryGuard";
 
 import { useGetMessagesByUserIdQuery } from "../slices/MessageSlice";
-import { useGetUsersByUsernameQuery } from "../slices/UserSlice";
+import { useGetUsersByUsernameQuery, useAcknowledgeGroupHistoryMutation, setAcknowledgedGroupHistory } from "../slices/UserSlice";
 import { useGetMyBidsQuery } from "../slices/VoyageSlice";
 import { useCreateGroupMutation } from "../slices/GroupSlice";
 import { markMessagesRead } from "../slices/UserSlice";
@@ -55,7 +56,11 @@ import {
 
 export default function MessagesScreen({ navigation }) {
   const userId = useSelector((state) => state.users.userId);
+  const hasAcknowledgedGroupHistory = useSelector((state) => state.users.hasAcknowledgedGroupHistory);
   const [selectedFunction, setSelectedFunction] = useState(1);
+  const [showGroupHistoryModal, setShowGroupHistoryModal] = useState(false);
+  const [pendingGroupName, setPendingGroupName] = useState("");
+  const [acknowledgeGroupHistory] = useAcknowledgeGroupHistoryMutation();
 
   // Chats
   const [refreshing, setRefreshing] = useState(false);
@@ -149,13 +154,22 @@ export default function MessagesScreen({ navigation }) {
     try { await refetch(); setHasError(false); } catch { setHasError(true); } finally { setRefreshing(false); }
   };
 
-  const handleCreateGroup = async () => {
-    if (!groupName.trim() || isCreatingGroup) return;
+  const handleAcknowledgeGroupHistory = async () => {
+    setShowGroupHistoryModal(false);
+    dispatch(setAcknowledgedGroupHistory());
+    try { await acknowledgeGroupHistory().unwrap(); } catch { }
+    if (pendingGroupName.trim()) {
+      setPendingGroupName("");
+      await doCreateGroup(pendingGroupName.trim());
+    }
+  };
+
+  const doCreateGroup = async (name) => {
     setIsCreatingGroup(true);
     try {
-      const result = await createGroup({ name: groupName.trim(), creatorId: userId }).unwrap();
+      const result = await createGroup({ name, creatorId: userId }).unwrap();
       const gId = result.id ?? result.Id ?? result.data?.id;
-      const gName = result.name ?? result.Name ?? groupName.trim();
+      const gName = result.name ?? result.Name ?? name;
       setGroupName("");
       await refetch();
       navigation.navigate("GroupConversationDetailScreen", { groupId: gId, groupName: gName });
@@ -164,6 +178,16 @@ export default function MessagesScreen({ navigation }) {
     } finally {
       setIsCreatingGroup(false);
     }
+  };
+
+  const handleCreateGroup = async () => {
+    if (!groupName.trim() || isCreatingGroup) return;
+    if (!hasAcknowledgedGroupHistory) {
+      setPendingGroupName(groupName.trim());
+      setShowGroupHistoryModal(true);
+      return;
+    }
+    await doCreateGroup(groupName.trim());
   };
 
   const handleSearchUsers = () => setUsername(searchText);
@@ -284,6 +308,23 @@ export default function MessagesScreen({ navigation }) {
           <ParrotsStdText style={styles.toastText}>{toastMessage}</ParrotsStdText>
         </View>
       )}
+
+      <Modal transparent animationType="fade" visible={showGroupHistoryModal} onRequestClose={() => setShowGroupHistoryModal(false)}>
+        <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center", paddingHorizontal: 24 }}>
+          <View style={{ backgroundColor: "#fff", borderRadius: 16, padding: 24, width: "100%" }}>
+            <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 17, color: "#0A2540", marginBottom: 10 }}>Group Message History</ParrotsStdText>
+            <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: "#555", lineHeight: 21, marginBottom: 20 }}>
+              You have access to the full message history of this group. All future members who join will also be able to see all previous messages.
+            </ParrotsStdText>
+            <TouchableOpacity
+              style={{ backgroundColor: "#0A77EA", borderRadius: 12, paddingVertical: 12, alignItems: "center" }}
+              onPress={handleAcknowledgeGroupHistory}
+            >
+              <ParrotsStdText style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#fff" }}>Got it</ParrotsStdText>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

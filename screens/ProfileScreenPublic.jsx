@@ -59,6 +59,7 @@ export default function ProfileScreenPublic({ navigation }) {
   const [selectedReason, setSelectedReason] = useState("");
 
   const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [ratingInfoModalVisible, setRatingInfoModalVisible] = useState(false);
   const [ratingStars, setRatingStars] = useState(0);
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
   const [submitRating] = useSubmitRatingMutation();
@@ -381,35 +382,12 @@ export default function ProfileScreenPublic({ navigation }) {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: parrotCream }}>
-        <View style={{ width: vw(100), height: vh(37), backgroundColor: "#d8d8d8" }} />
-        <View style={{ left: vw(6), top: vh(3), backgroundColor: parrotCream, paddingBottom: vh(3), opacity: 0 }}>
-          <View style={{ height: vh(20), width: vh(20), borderRadius: vh(15), backgroundColor: "#e0e0e0" }} />
-        </View>
-        <View style={{ paddingHorizontal: 14, paddingTop: vh(1), paddingBottom: vh(1) }}>
-          <View style={{ width: vw(45), height: 22, borderRadius: 6, backgroundColor: "#e0e0e0" }} />
-        </View>
-        <View style={{ marginHorizontal: 14, height: vh(20), borderRadius: 12, backgroundColor: "#e0e0e0" }} />
-        <LoadingLogo size={240}
-          style={{
-            position: "absolute",
-            top: vh(32) + 10,
-            left: vw(50) - 120
-          }} />
-        <View style={{ position: "absolute", top: vh(31), right: vw(2) }}>
-          <TouchableOpacity style={{
-            marginTop: vh(0.5), backgroundColor: "white", flexDirection: "row",
-            borderRadius: vh(2), padding: vw(1), opacity: 0.4
-          }} activeOpacity={0.8}>
-            <View style={{ alignSelf: "flex-end", flexDirection: "row", borderRadius: vh(2), paddingHorizontal: vw(2) }}>
-              <Feather name="message-circle" size={18} color={"white"} />
-              <ParrotsStdText style={{ fontFamily: "Nunito_700Bold", lineHeight: 22, marginLeft: vw(2), fontSize: 11, color: "white" }}>Send Message</ParrotsStdText>
-            </View>
-          </TouchableOpacity>
-        </View>
+      <View style={{ flex: 1, backgroundColor: parrotCream, alignItems: "center", justifyContent: "center" }}>
+        <LoadingLogo size={208} />
       </View>
     );
   }
+
 
   if (hasError) {
     return (
@@ -445,7 +423,7 @@ export default function ProfileScreenPublic({ navigation }) {
         <TokenExpiryGuard />
 
         <View style={styles.mainContainer}>
-          <ScrollView style={styles.scrollView} contentContainerStyle={Platform.OS === "ios" ? { paddingBottom: insets.bottom + (vh(100) - insets.top - insets.bottom) * 0.08 } : undefined}>
+          <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: insets.bottom + vh(10) }}>
             <View style={styles.innerContainer}>
               <View style={styles.rectangularBox}>
                 {/* <Image
@@ -545,23 +523,27 @@ export default function ProfileScreenPublic({ navigation }) {
                       </>
                     )}
                   </ParrotsStdText>
-                  <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
-                    onPress={() => { if (userData?.canRate) { setRatingStars(0); setRatingSubmitted(false); setRatingModalVisible(true); } }}
-                    activeOpacity={userData?.canRate ? 0.7 : 1}
-                  >
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                     {[1, 2, 3, 4, 5].map(s => (
-                      <FontAwesome
+                      <TouchableOpacity
                         key={s}
-                        name={s <= Math.round(userData?.averageRating ?? 0) ? "star" : "star-o"}
-                        size={16}
-                        color="#F5A623"
-                      />
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          if (userData?.canRate) { setRatingStars(s); setRatingSubmitted(false); setRatingModalVisible(true); }
+                          else { setRatingInfoModalVisible(true); }
+                        }}
+                      >
+                        <FontAwesome
+                          name={s <= Math.round(userData?.averageRating ?? 0) ? "star" : "star-o"}
+                          size={16}
+                          color="#F5A623"
+                        />
+                      </TouchableOpacity>
                     ))}
                     <ParrotsStdText style={{ fontSize: 12, color: "#64748b", marginLeft: 3 }}>
                       {userData?.averageRating != null ? `${userData.averageRating} (${userData.ratingCount})` : "0 (0)"}
                     </ParrotsStdText>
-                  </TouchableOpacity>
+                  </View>
                 </View>
                 <View>
                   <ParrotsStdText selectable style={styles.TitleProfile} numberOfLines={1} ellipsizeMode="tail">
@@ -698,6 +680,19 @@ export default function ProfileScreenPublic({ navigation }) {
             </TouchableOpacity>
           </Modal>
 
+          {/* Rating not available modal */}
+          <Modal animationType="fade" transparent={true} visible={ratingInfoModalVisible} onRequestClose={() => setRatingInfoModalVisible(false)}>
+            <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center" }}>
+              <View style={styles.reportModal}>
+                <ParrotsStdText style={styles.reportTitle}>Rating not available</ParrotsStdText>
+                <ParrotsStdText style={[styles.reportSubtitle, { marginBottom: 16 }]}>You can rate a user after completing a voyage together.</ParrotsStdText>
+                <TouchableOpacity style={[styles.submitButton, { flex: 0, alignSelf: "center", paddingHorizontal: 24, paddingVertical: 10 }]} onPress={() => setRatingInfoModalVisible(false)}>
+                  <ParrotsStdText style={styles.submitButtonText}>OK</ParrotsStdText>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
           {/* Rating modal */}
           <Modal animationType="fade" transparent={true} visible={ratingModalVisible} onRequestClose={() => setRatingModalVisible(false)}>
             <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center" }}>
@@ -706,7 +701,7 @@ export default function ProfileScreenPublic({ navigation }) {
                   <>
                     <ParrotsStdText style={styles.reportTitle}>Rating submitted</ParrotsStdText>
                     <ParrotsStdText style={[styles.reportSubtitle, { marginBottom: 16 }]}>Thank you for your feedback.</ParrotsStdText>
-                    <TouchableOpacity style={styles.submitButton} onPress={() => setRatingModalVisible(false)}>
+                    <TouchableOpacity style={[styles.submitButton, { flex: 0, paddingHorizontal: 32 }]} onPress={() => setRatingModalVisible(false)}>
                       <ParrotsStdText style={styles.submitButtonText}>Close</ParrotsStdText>
                     </TouchableOpacity>
                   </>

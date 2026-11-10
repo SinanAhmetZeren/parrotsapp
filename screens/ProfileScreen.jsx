@@ -329,29 +329,8 @@ export default function ProfileScreen({ navigation }) {
 
   if (isLoadingUser || !userData) {
     return (
-      <View style={{ flex: 1, backgroundColor: parrotCream }}>
-        <View style={{ width: vw(100), height: vh(37), backgroundColor: "#d8d8d8" }} />
-        <View style={{ left: vw(6), top: vh(3), backgroundColor: parrotCream, paddingBottom: vh(3), opacity: 0 }}>
-          <View style={{ height: vh(20), width: vh(20), borderRadius: vh(15), backgroundColor: "#e0e0e0" }} />
-        </View>
-        <View style={{ paddingHorizontal: 14, paddingTop: vh(1), paddingBottom: vh(1) }}>
-          <View style={{ width: vw(45), height: 22, borderRadius: 6, backgroundColor: "#e0e0e0" }} />
-        </View>
-        <View style={{ marginHorizontal: 14, height: vh(20), borderRadius: 12, backgroundColor: "#e0e0e0" }} />
-        <LoadingLogo size={240}
-          style={{
-            position: "absolute", top: vh(32) + 10,
-            left: vw(50) - 120
-          }} />
-
-        {/* three-dot menu placeholder in loading state */}
-        <View style={[styles.menuBtn, { opacity: 0.15 }]}>
-          <View style={styles.menuDots}>
-            <View style={styles.dot} />
-            <View style={styles.dot} />
-            <View style={styles.dot} />
-          </View>
-        </View>
+      <View style={{ flex: 1, backgroundColor: parrotCream, alignItems: "center", justifyContent: "center" }}>
+        <LoadingLogo size={160} />
       </View>
     );
   }
@@ -389,7 +368,7 @@ export default function ProfileScreen({ navigation }) {
       <>
         <TokenExpiryGuard />
         <View style={styles.mainContainer}>
-          <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: TAB_BAR_HEIGHT }}>
+          <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: TAB_BAR_HEIGHT + vh(2) }}>
             <View style={styles.innerContainer}>
               <View style={styles.rectangularBox}>
                 {!userData.backgroundImageUrl ? (
@@ -670,7 +649,7 @@ export default function ProfileScreen({ navigation }) {
                   </View>
                 </View>
 
-                <View style={{ marginRight: vw(12) }}>
+                <View style={{ marginRight: vw(12), marginTop: vh(1) }}>
                   <SocialRenderComponent
                     userData={userData}
                     handleEmailPress={handleEmailPress}

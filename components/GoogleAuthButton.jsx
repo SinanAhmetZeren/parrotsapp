@@ -13,9 +13,10 @@ const GoogleSignin = isExpoGo ? null : require('@react-native-google-signin/goog
 const useGoogleLoginInternalMutation = isExpoGo ? () => [null, { isLoading: false }] : require('../slices/UserSlice').useGoogleLoginInternalMutation;
 
 function ButtonContent({ isLoading }) {
-  return isLoading ? (
-    <ActivityIndicator color="#fff" />
-  ) : (
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#0A5FBF" style={{ transform: [{ scale: 0.7 }] }} />;
+  }
+  return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <Image source={gooogleSignin} style={{ height: 21, width: 21 }} />
       <ParrotsStdText style={styles.text}>Sign in with Google</ParrotsStdText>
@@ -57,6 +58,7 @@ export default function GoogleLoginButton() {
           unreadMessages: res.unreadMessages,
           isAdmin: res.isAdmin,
           hasAcknowledgedPublicProfile: res.hasAcknowledgedPublicProfile ?? false,
+          hasAcknowledgedGroupHistory: res.hasAcknowledgedGroupHistory ?? false,
         }));
         dispatch(updateUserFavorites({
           favoriteVehicles: res.favoriteVehicleIds || [],
@@ -92,7 +94,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   disabled: {
-    backgroundColor: '#a1c2fa',
+    backgroundColor: '#fff',
   },
   text: {
     fontSize: 16,

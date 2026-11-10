@@ -24,6 +24,7 @@ import { useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
 import parrotLogo from "../assets/parrotsiconpaddedtransparent.png";
+import LoadingLogo from "../components/LoadingLogo";
 import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native";
@@ -169,7 +170,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   const { conversationUserId, profileImg, name, publicId } = route.params;
   console.log("[ConversationDetail] render #" + renderCountRef.current + " | conv:" + conversationUserId?.slice(-6) + " | msgs:" + messagesToDisplay?.length);
 
-  const { data: messagesData, refetch } = useGetMessagesBetweenUsersQuery(
+  const { data: messagesData, isLoading: isLoadingMessages, refetch } = useGetMessagesBetweenUsersQuery(
     { currentUserId, conversationUserId },
     { skip: !currentUserId || !conversationUserId, refetchOnMountOrArgChange: true }
   );
@@ -265,6 +266,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
 
   const outerHeight = keyboardHeight > 0 ? containerHeight - keyboardHeight + vh(8) : containerHeight;
   const reversedMessages = [...(messagesToDisplay ?? [])].reverse();
+
+  if (isLoadingMessages) {
+    return <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><LoadingLogo size={160} /></View>;
+  }
 
   return (
     <View style={{ backgroundColor: "white", height: outerHeight }}>

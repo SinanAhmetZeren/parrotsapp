@@ -401,7 +401,7 @@ const VoyageDetailScreen = ({ navigation }) => {
   }
 
   if (isLoadingVoyages) {
-    return <LoadingLogo size={200} style={{ position: "absolute", top: vh(30), left: vw(50) - 100 }} />;
+    return <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><LoadingLogo size={160} /></View>;
   }
 
   if (isSuccessVoyages) {

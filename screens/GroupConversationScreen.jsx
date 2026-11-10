@@ -27,6 +27,7 @@ import { useRoute } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import parrotEmojiIcon from "../assets/emojipickerparrot.jpg";
 import parrotEmojiIconBlue from "../assets/emojipickerblueparrot.jpg";
+import LoadingLogo from "../components/LoadingLogo";
 import { useFocusEffect } from "@react-navigation/native";
 import { ScrollView } from "react-native";
 import { parrotBlue, parrotBlueSemiTransparent, parrotBlueSemiTransparent2, parrotCream, parrotLightBlue, parrotLightCream, parrotPlaceholderGrey, parrotRed } from "../assets/color";
@@ -192,7 +193,7 @@ export const ConversationDetailScreen = ({ navigation }) => {
   };
   const { groupId, groupName } = route.params;
 
-  const { data: groupData } = useGetGroupByIdQuery(
+  const { data: groupData, isLoading: isLoadingGroup } = useGetGroupByIdQuery(
     { groupId, userId: currentUserId },
     { skip: !groupId || !currentUserId, refetchOnMountOrArgChange: true }
   );
@@ -353,6 +354,10 @@ export const ConversationDetailScreen = ({ navigation }) => {
   });
 
   const reversedMessages = [...(messagesToDisplay ?? [])].reverse();
+
+  if (isLoadingGroup) {
+    return <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><LoadingLogo size={160} /></View>;
+  }
 
   return (
     <View style={{ backgroundColor: parrotCream, height: outerHeight }}>
