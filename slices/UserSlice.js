@@ -287,13 +287,17 @@ export const extendedApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     acceptTerms: builder.mutation({
-      query: () => ({
+      query: (arg) => ({
         url: "/api/account/accept-terms",
         method: "POST",
+        headers: arg?.token ? { Authorization: `Bearer ${arg.token}` } : undefined,
       }),
     }),
     checkRequiresTermsAcceptance: builder.query({
       query: () => "/api/account/requires-terms-acceptance",
+    }),
+    getCurrentTerms: builder.query({
+      query: () => "/api/account/current-terms",
     }),
     acknowledgePublicProfile: builder.mutation({
       query: () => ({
@@ -503,6 +507,7 @@ export const {
   useLoginUserMutation,
   useAcceptTermsMutation,
   useLazyCheckRequiresTermsAcceptanceQuery,
+  useGetCurrentTermsQuery,
   useAcknowledgePublicProfileMutation,
   useAcknowledgeGroupHistoryMutation,
   useGoogleLoginInternalMutation,

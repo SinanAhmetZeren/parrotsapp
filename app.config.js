@@ -5,7 +5,7 @@ export default {
         "name": "Parrots",
         "slug": "parrots",
         "owner": "ahmetzeren",
-        "version": "1.0.30",
+        "version": "1.0.34",
         "scheme": "parrotsapp",
         "orientation": "portrait",
         "icon": "./assets/parrotslogoblue_icon.png",
@@ -42,7 +42,7 @@ export default {
             "softwareKeyboardLayoutMode": "resize",
             "package": "com.zenforest.parrots",
             "googleServicesFile": "./google-services.json",
-            "versionCode": 32,
+            "versionCode": 34,
             "intentFilters": [
                 {
                     "action": "VIEW",
@@ -57,8 +57,7 @@ export default {
             ],
             "permissions": [
                 "android.permission.ACCESS_COARSE_LOCATION",
-                "android.permission.ACCESS_FINE_LOCATION",
-                "android.permission.RECORD_AUDIO"
+                "android.permission.ACCESS_FINE_LOCATION"
             ],
             "config": {
                 "googleMaps": {

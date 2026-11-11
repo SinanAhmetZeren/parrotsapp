@@ -266,7 +266,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleAcceptUpdatedTerms = async () => {
     try {
-      await acceptTerms().unwrap();
+      await acceptTerms({ token: pendingLoginData.token }).unwrap();
       dispatch(
         updateAsLoggedIn({
           userId: pendingLoginData.userId,
@@ -425,9 +425,9 @@ const LoginScreen = ({ navigation }) => {
             <ParrotsStdText style={{ fontSize: 14, color: "#555", marginBottom: 16, textAlign: "center" }}>
               Please read and accept the updated Terms of Use to continue using Parrots.
             </ParrotsStdText>
-            <ScrollView style={{ flex: 1, borderWidth: 1, borderColor: "#ddd", borderRadius: 8, marginBottom: 16 }}>
+            <View style={{ flex: 1, borderWidth: 1, borderColor: "#ddd", borderRadius: 8, marginBottom: 16, overflow: "hidden" }}>
               <TermsOfUseComponent />
-            </ScrollView>
+            </View>
             <TouchableOpacity
               onPress={handleAcceptUpdatedTerms}
               style={{ backgroundColor: "#007bff", borderRadius: 8, padding: 14, alignItems: "center", marginBottom: 10 }}
@@ -436,7 +436,7 @@ const LoginScreen = ({ navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => { setRequiresTermsReAcceptance(false); setPendingLoginData(null); }}
-              style={{ alignItems: "center", padding: 10 }}
+              style={{ alignItems: "center", padding: 10, marginBottom: 20 }}
             >
               <ParrotsStdText style={{ color: "#999", fontSize: 14 }}>Decline and go back</ParrotsStdText>
             </TouchableOpacity>

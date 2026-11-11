@@ -413,9 +413,10 @@ const VoyageDetailScreen = ({ navigation }) => {
       ? plainDescription
       : plainDescription.slice(0, descriptionShortenedChars) + "...";
 
-    let allVoyageImages = [
+    const rawVoyageImages = [
       { id: "0", voyageId: VoyageData.id, voyageImagePath: VoyageData.profileImage },
-    ].concat(VoyageData.voyageImages);
+    ].concat(VoyageData.voyageImages).filter(img => img?.voyageImagePath);
+    let allVoyageImages = rawVoyageImages.length > 0 ? rawVoyageImages : [{ id: "placeholder", voyageImagePath: null }];
 
     const initialRegion = getInitialRegion(waypoints);
     const formattedStartDate = require("date-fns").format(VoyageData.startDate, "d MMM yy");
@@ -449,9 +450,11 @@ const VoyageDetailScreen = ({ navigation }) => {
                 keyExtractor={(_, i) => String(i)}
                 onScroll={(e) => setHeroIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))}
                 scrollEventThrottle={16}
-                renderItem={({ item }) => (
-                  <Image source={{ uri: item.voyageImagePath }} style={{ width: SCREEN_W, height: SCREEN_W }} resizeMode="cover" />
-                )}
+                renderItem={({ item }) =>
+                  item.voyageImagePath
+                    ? <Image source={{ uri: item.voyageImagePath }} style={{ width: SCREEN_W, height: SCREEN_W }} resizeMode="cover" />
+                    : <Image source={require("../assets/parrotslogoblue_icon.png")} style={{ width: SCREEN_W, height: SCREEN_W }} resizeMode="contain" />
+                }
               />
 
               <View style={ds.ownerDeletedNoticeWrap}>
@@ -509,9 +512,16 @@ const VoyageDetailScreen = ({ navigation }) => {
 
                 {/* Host row */}
                 <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
-                  <TouchableOpacity style={[ds.pill, { backgroundColor: "#EEF3F9" }]} onPress={() => goToProfilePage(VoyageData?.user?.id)}>
-                    <Image source={{ uri: VoyageData?.user?.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={ds.pillImg} />
-                    <ParrotsStdText style={ds.hostName}>{VoyageData?.user?.userName}</ParrotsStdText>
+                  <TouchableOpacity
+                    style={[ds.pill, { backgroundColor: "#EEF3F9" }]}
+                    onPress={() => !VoyageData.isOwnerDeleted && goToProfilePage(VoyageData?.user?.id)}
+                    activeOpacity={VoyageData.isOwnerDeleted ? 1 : 0.7}
+                  >
+                    {(VoyageData?.user?.profileImageThumbnailUrl || VoyageData?.user?.profileImageUrl)
+                      ? <Image source={{ uri: VoyageData.user.profileImageThumbnailUrl || VoyageData.user.profileImageUrl }} style={ds.pillImg} />
+                      : <Image source={require("../assets/parrotslogoblue_icon.png")} style={ds.pillImg} />
+                    }
+                    <ParrotsStdText style={ds.hostName}>{VoyageData.isOwnerDeleted ? "Deleted User" : VoyageData?.user?.userName}</ParrotsStdText>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[ds.pill, { backgroundColor: (VEHICLE_COLORS[VoyageData.vehicleType] ?? parrotBlue) + "18" }]}

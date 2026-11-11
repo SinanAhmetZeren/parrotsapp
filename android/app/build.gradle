@@ -91,8 +91,8 @@ android {
         applicationId 'com.zenforest.parrots'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 32
-        versionName "1.0.30"
+        versionCode 34
+        versionName "1.0.34"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }

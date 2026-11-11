@@ -223,10 +223,11 @@ const VehicleDetailScreen = () => {
 
   const cfg = VEHICLE_CONFIG[VehicleData.type] ?? { name: "Vehicle", color: parrotBlue };
   const typeColor = cfg.color;
-  const heroImages = [
+  const heroImagesRaw = [
     VehicleData.profileImageUrl,
     ...(VehicleData.vehicleImages ?? []).map(i => i.vehicleImagePath).filter(Boolean),
   ].filter(Boolean);
+  const heroImages = heroImagesRaw.length > 0 ? heroImagesRaw : [null];
   const typeBg = typeColor + "22";
   const isOwner = userId === VehicleData.userId;
 
@@ -257,7 +258,9 @@ const VehicleDetailScreen = () => {
             onScroll={(e) => setImgIndex(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W))}
             scrollEventThrottle={16}
             renderItem={({ item }) => (
-              <Image source={{ uri: item }} style={{ width: SCREEN_W, height: SCREEN_W }} resizeMode="cover" />
+              item
+                ? <Image source={{ uri: item }} style={{ width: SCREEN_W, height: SCREEN_W }} resizeMode="cover" />
+                : <Image source={require("../assets/parrotslogoblue_icon.png")} style={{ width: SCREEN_W, height: SCREEN_W }} resizeMode="contain" />
             )}
           />
 
@@ -291,9 +294,18 @@ const VehicleDetailScreen = () => {
 
             {/* owner row */}
             <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
-              <TouchableOpacity style={styles.ownerPill} onPress={goToProfile} activeOpacity={0.8}>
-                <Image source={{ uri: VehicleData.user?.profileImageThumbnailUrl || VehicleData.user?.profileImageUrl }} style={styles.ownerAvatar} />
-                <ParrotsStdText style={styles.ownerName} numberOfLines={1}>{VehicleData.user?.userName}</ParrotsStdText>
+              <TouchableOpacity
+                style={styles.ownerPill}
+                onPress={() => VehicleData.user?.userName !== "deleted_user" && goToProfile()}
+                activeOpacity={VehicleData.user?.userName === "deleted_user" ? 1 : 0.8}
+              >
+                {(VehicleData.user?.profileImageThumbnailUrl || VehicleData.user?.profileImageUrl)
+                  ? <Image source={{ uri: VehicleData.user.profileImageThumbnailUrl || VehicleData.user.profileImageUrl }} style={styles.ownerAvatar} />
+                  : <Image source={require("../assets/parrotslogoblue_icon.png")} style={styles.ownerAvatar} />
+                }
+                <ParrotsStdText style={styles.ownerName} numberOfLines={1}>
+                  {VehicleData.user?.userName === "deleted_user" ? "Deleted User" : VehicleData.user?.userName}
+                </ParrotsStdText>
               </TouchableOpacity>
               <View style={[styles.typePill, { backgroundColor: typeColor + "18" }]}>
                 <VehicleTypeIcon type={VehicleData.type} color={typeColor} size={12} />

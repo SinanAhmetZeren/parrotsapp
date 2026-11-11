@@ -312,7 +312,7 @@ const EditProfileScreen = ({ navigation }) => {
           <View style={styles.modalCard}>
             <ParrotsStdText style={styles.modalTitle}>Delete Account</ParrotsStdText>
             <ParrotsStdText style={styles.modalBody}>
-              Your account will be deactivated. If you are a host with active voyages, your trip details will remain visible to your counterparties. As mentioned in the Terms of Use, Parrots may contact you via your registered email in the event of urgent coordination, and prompt responsiveness to guests is required for active trips and ongoing commitments.
+              This is permanent and cannot be undone. Your images (profile, voyages, vehicles) will be deleted, your username anonymized, and your pending bids removed. Active voyage listings remain visible with an anonymized profile. You remain responsible for any active voyages or accepted bids at the time of deletion.
             </ParrotsStdText>
             <TouchableOpacity
               onPress={handleDeleteAccount}
